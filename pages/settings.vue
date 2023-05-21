@@ -1,7 +1,7 @@
 <template>
   <main class="settings-page">
     <PageHeader>
-      <NuxtLink to="/">Home</NuxtLink>&nbsp; /&nbsp;Settings
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
     </PageHeader>
 
     <section class="settings-page__content">
