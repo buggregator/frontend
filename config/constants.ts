@@ -21,6 +21,7 @@ export const RAY_EVENT_TYPES = {
   //HIDE: "hide",
   MEASURE: "measure",
   //NOTIFY: "notify",
+  MAILABLE: "mailable",
   TABLE: "table",
   TRACE: "trace",
   QUERY: "executed_query",
