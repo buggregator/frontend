@@ -1,54 +1,37 @@
 <template>
   <div class="ray-type-mailable">
-    <h3 v-if="eventValue.subject" class="font-bold">
-      {{ eventValue.subject }}
-    </h3>
-    <div v-if="eventValue.mailable_class" class="event-ray__mailable-class">
-      {{ eventValue.mailable_class }}
-    </div>
-
-    <div class="text-xs font-semibold mt-3 flex flex-wrap items-center">
-      <div class="flex border border-purple-300 rounded items-center mr-3 mb-2">
-        <div class="px-3 py-1 border-r">From</div>
-        <div class="px-3 py-1 bg-gray-800 text-white font-semibold rounded-r" v-for="email in eventValue.from">{{ email.name }} [{{ email.email }}]</div>
-      </div>
-
-      <div class="flex border border-purple-300 rounded items-center mr-3 mb-2" v-for="email in eventValue.to">
-        <div class="px-3 py-1 border-r">To</div>
-        <div class="px-3 py-1 bg-blue-800 text-white font-semibold rounded-r">{{ email.name }} [{{email.email}}]</div>
-      </div>
-
-      <div class="flex border border-purple-300 rounded items-center mr-3 mb-2" v-for="email in eventValue.cc">
-        <div class="px-3 py-1 border-r">CC</div>
-        <div class="px-3 py-1 bg-red-800 text-white font-semibold rounded-r">{{ email.name }} [{{email.email}}]</div>
-      </div>
-
-      <div class="flex border border-purple-300 rounded items-center mr-3 mb-2" v-for="email in eventValue.bcc">
-        <div class="px-3 py-1 border-r">BCC</div>
-        <div class="px-3 py-1 bg-purple-800 text-white font-semibold rounded-r">{{ email.name }} [{{email.email}}]</div>
-      </div>
-
-      <div class="flex border border-purple-300 rounded items-center mr-3 mb-2" v-for="email in eventValue.reply_to">
-        <div class="px-3 py-1 border-r">Reply to</div>
-        <div class="px-3 py-1 bg-green-800 text-white font-semibold rounded-r">{{ email.name }} [{{email.email}}]</div>
-      </div>
-    </div>
-    <div class="collapsed" :class="{'cursor-pointer': !collapsed}">
-      <h3 class="collapsed__title-wrap" @click="collapsed = !collapsed">
-        HTML
+    <EventTable>
+      <EventTableRow v-if="eventValue.subject" title="Subject">
+        {{ eventValue.subject }}
+      </EventTableRow>
+      <EventTableRow v-if="eventValue.mailable_class" title="Mailable class">
+        {{ eventValue.mailable_class }}
+      </EventTableRow>
+      <EventTableRow title="From" v-if="eventValue.from && eventValue.from.length > 0">
+        {{getValuesField(eventValue.from)}}
+      </EventTableRow>
+      <EventTableRow title="To" v-if="eventValue.to && eventValue.to.length > 0">
+        {{getValuesField(eventValue.to)}}
+      </EventTableRow>
+      <EventTableRow title="Cc" v-if="eventValue.cc && eventValue.cc.length > 0">
+        {{getValuesField(eventValue.cc)}}
+      </EventTableRow>
+      <EventTableRow title="Bcc" v-if="eventValue.bcc && eventValue.bcc.length > 0">
+        {{getValuesField(eventValue.bcc)}}
+      </EventTableRow>
+      <EventTableRow title="Reply to" v-if="eventValue.reply_to && eventValue.reply_to.length > 0">
+        {{getValuesField(eventValue.reply_to)}}
+      </EventTableRow>
+    </EventTable>
+    <div class="ray-type-mailable__collapsed" :class="{'cursor-pointer': !collapsed}">
+      <h3 class="ray-type-mailable__collapsed-header" @click="collapsed = !collapsed" >
+        <span>HTML</span>
         <div class="ray-type-mailable__icon">
-          <svg viewBox="0 0 16 16"
-               fill="currentColor"
-               height="100%"
-               width="100%"
-               :class="{'transform rotate-180':  collapsed}"
-          >
-            <path d="M14,11.75a.74.74,0,0,1-.53-.22L8,6.06,2.53,11.53a.75.75,0,0,1-1.06-1.06l6-6a.75.75,0,0,1,1.06,0l6,6a.75.75,0,0,1,0,1.06A.74.74,0,0,1,14,11.75Z"></path>
-          </svg>
+          <IconSvg name="collapsed"  :class="{'transform rotate-180':  collapsed}" />
         </div>
       </h3>
 
-      <div v-if="collapsed" class="collapsed__body">
+      <div v-if="collapsed" class="ray-type-mailable__body">
         <div v-html="eventValue.html"/>
       </div>
     </div>
@@ -58,8 +41,16 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
+import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import EventTable from "~/components/EventTable/EventTable.vue";
+import IconSvg from "~/components/IconSvg/IconSvg.vue";
 
 export default defineComponent({
+  components: {
+    EventTableRow,
+    EventTable,
+    IconSvg,
+  },
   props: {
     payload: {
       type: Object as PropType<RayPayload>,
@@ -79,13 +70,25 @@ export default defineComponent({
       return this.payload.content || "";
     },
   },
+  methods: {
+    getValuesField(values: {name: string, email: string}[]): string {
+      const formattedValues = values!.map(v =>  v.name + '[' + v.email + ']') || [];
+      return formattedValues.join(', ');
+    }
+  }
 });
 </script>
 
 <style lang="scss" scoped>
 .ray-type-mailable{
   &__icon {
-    @apply w-5 h-4 border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded;
+    @apply w-5 h-4 border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded mt-0.5 flex items-center justify-center;
+    .icon-svg {
+      width: 10px;
+    }
+  }
+  &__collapsed-header {
+    @apply flex w-full justify-between my-2;
   }
 }
 </style>
