@@ -17,6 +17,7 @@ import ViewsPayload from "~/components/RayDumpPreview/RayTypesPreview/ViewsPaylo
 import EventPayload from "~/components/RayDumpPreview/RayTypesPreview/EventPayload.vue";
 import JobPayload from "~/components/RayDumpPreview/RayTypesPreview/JobPayload.vue";
 import LockPayload from "~/components/RayDumpPreview/RayTypesPreview/LockPayload.vue";
+import MailablePayload from "~/components/RayDumpPreview/RayTypesPreview/MailablePayload.vue";
 
 export default defineComponent({
   props: {
@@ -55,6 +56,8 @@ export default defineComponent({
         h(JobPayload, {payload}),
       [RAY_EVENT_TYPES.LOCK]: (payload: RayPayload) =>
         h(LockPayload, {payload}),
+      [RAY_EVENT_TYPES.MAILABLE]: (payload: RayPayload) =>
+        h(MailablePayload, {payload}),
     };
 
     if (this.payload.type === 'hide') {
