@@ -142,7 +142,7 @@ export interface Sentry {
 export interface VarDump {
   payload: {
     type: string,
-    value: string
+    value: string | number | boolean
   },
   context: {
     timestamp: number,

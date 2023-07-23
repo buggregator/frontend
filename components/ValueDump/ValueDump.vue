@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 import { useNuxtApp } from "#app";
 
 export default defineComponent({
@@ -26,9 +25,6 @@ export default defineComponent({
     };
   },
   computed: {
-    isBooleanValue(): boolean {
-      return typeof this.value === "boolean" || this.type === "boolean";
-    },
     dumpId(): string | null {
       if (!this.value) {
         return null;
