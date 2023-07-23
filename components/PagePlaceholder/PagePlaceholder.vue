@@ -2,7 +2,7 @@
   <div class="page-placeholder">
     <ul class="page-placeholder__list">
       <li class="page-placeholder__item">
-        <IconSvg name="github" class="page-placeholder__icon"/>
+        <IconSvg name="github" class="page-placeholder__icon" />
         <span>
           Bugregator&nbsp;
           <a
@@ -47,24 +47,6 @@
             class="page-placeholder__link"
           >
             {{ inspectorLinkText }}
-          </a>
-        </span>
-      </li>
-
-      <li class="page-placeholder__item">
-        <IconSvg
-          name="docs"
-          class="page-placeholder__icon page-placeholder__icon--profilers"
-        />
-
-        <span>
-          Ray URL&nbsp;
-          <a
-            href="https://spatie.be/docs/ray/v1/introduction"
-            target="_blank"
-            class="page-placeholder__link"
-          >
-            {{ rayLinkText }}
           </a>
         </span>
       </li>
@@ -142,20 +124,17 @@
 
 <script lang="ts">
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  components: {IconSvg},
+  components: { IconSvg },
 
   computed: {
     sentryLinkText() {
       return `http://sentry@${this.getHost()}/1`;
     },
     inspectorLinkText() {
-      return `http://inspector@${this.getHost()}`;
-    },
-    rayLinkText() {
-      return `http://ray@${this.getHost()}`;
+      return `http://${this.getHost()}/api/inspector`;
     },
     varDumperLinkText() {
       return `tcp://${this.getHostName()}:9912`;
@@ -164,7 +143,7 @@ export default defineComponent({
       return `tcp://${this.getHostName()}:9913`;
     },
     XHProfLinkText() {
-      return `http://profiler@${this.getHost()}`;
+      return `http://${this.getHost()}/api/profiler/store`;
     },
     smtpLinkText() {
       return `smtp://${this.getHostName()}:1025`;
