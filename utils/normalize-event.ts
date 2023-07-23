@@ -138,7 +138,7 @@ export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEv
   return {
     id: event.uuid,
     type: EVENT_TYPES.RAY_DUMP,
-    labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) == i),
+    labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
     origin: null,
     serverName: "",
     date: new Date(event.timestamp * 1000),

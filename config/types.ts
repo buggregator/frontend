@@ -159,6 +159,25 @@ export interface VarDump {
   }
 }
 
+export interface RayContent {
+  content: string,
+  label: string,
+}
+
+export interface RayContentArray {
+  values: [string | number | boolean]
+}
+
+export interface RayPayload {
+  type: string,
+  origin: {
+    file: string,
+    line_number: number,
+    hostname: string,
+  },
+  content: RayContentArray | RayContent
+}
+
 export interface RayDump {
   uuid: string,
   payloads: RayPayload[],
@@ -172,29 +191,17 @@ export interface RayDump {
   }
 }
 
-export interface RayPayload {
-  type: string,
-  origin: {
-    file: string,
-    line_number: number,
-    hostname: string,
-  },
-  content: RayContentArray | RayContent
-}
-
-export interface RayContent {
-  content: string,
-  label: string,
-}
-
-export interface RayContentArray {
-  values: [string | number | boolean]
-}
 
 export interface SmtpAttachment {
   "name": string,
   "id": string,
   "uri": string
+}
+
+export interface HttpDumpFile {
+  originalName: string,
+  mime: string,
+  size: number,
 }
 
 export interface HttpDump {
@@ -214,12 +221,6 @@ export interface HttpDump {
     },
     files: HttpDumpFile[]
   }
-}
-
-export interface HttpDumpFile {
-  originalName: string,
-  mime: string,
-  size: number,
 }
 
 export interface ProfilerCost {
