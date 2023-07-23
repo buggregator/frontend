@@ -1,14 +1,20 @@
 <template>
   <div class="dump-preview">
-    <div class="var-dump-preview__html" v-html="dumpBody" />
+    <div v-if="!isString" class="var-dump-preview__html" v-html="dumpBody" />
+
+    <CodeSnippet v-if="isString" language="php" :code="dumpBody" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#app";
+import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 
 export default defineComponent({
+  components: {
+    CodeSnippet,
+  },
   props: ["value", "type"],
   setup() {
     if (process.client) {
@@ -25,6 +31,9 @@ export default defineComponent({
     };
   },
   computed: {
+    isString() {
+      return typeof this.value === "string" && this.type === "string";
+    },
     dumpId(): string | null {
       if (!this.value) {
         return null;
@@ -37,6 +46,10 @@ export default defineComponent({
           /<(style|script)\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/(style|script)>/gi,
           ""
         );
+      }
+
+      if (this.isString) {
+        return `"${this.value}"`;
       }
 
       return this.value;

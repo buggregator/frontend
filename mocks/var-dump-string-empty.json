@@ -4,7 +4,7 @@
   "payload": {
     "payload": {
       "type": "string",
-      "value": "      "
+      "value": "\t    "
     },
     "context": {
       "timestamp": 1678271981.325951,
