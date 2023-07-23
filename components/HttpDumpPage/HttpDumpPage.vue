@@ -2,51 +2,68 @@
   <div ref="main" class="http-dump-page">
     <main class="http-dump-page__main">
       <h2 class="http-dump-page__title">
-        <span class="title-method">{{ event.payload.request.method }}</span>: <span class="title-uri">/{{ uri }}</span>
+        <span class="http-dump-page__title-method">{{
+          event.payload.request.method
+        }}</span
+        >: <span class="http-dump-page__title-uri">/{{ uri }}</span>
       </h2>
 
-      <section v-if="hasHeaders" class="section-container">
+      <section v-if="hasHeaders" class="http-dump-page__section">
         <h1>Headers</h1>
         <EventTable>
-          <EventTableRow :title="title" v-for="(value, title) in event.payload.request.headers">
+          <EventTableRow
+            v-for="(value, title) in event.payload.request.headers"
+            :key="title"
+            :title="title"
+          >
             {{ value[0] || value }}
           </EventTableRow>
         </EventTable>
       </section>
 
-      <section v-if="hasCookies" class="section-container">
+      <section v-if="hasCookies" class="http-dump-page__section">
         <h1>Cookie</h1>
         <EventTable>
-          <EventTableRow :title="title" v-for="(value, title) in event.payload.request.cookies">
+          <EventTableRow
+            v-for="(value, title) in event.payload.request.cookies"
+            :key="title"
+            :title="title"
+          >
             {{ value }}
           </EventTableRow>
         </EventTable>
       </section>
 
-      <section v-if="hasQuery" class="section-container">
+      <section v-if="hasQuery" class="http-dump-page__section">
         <h1>Query Parameters</h1>
         <EventTable>
-          <EventTableRow :title="title" v-for="(value, title) in event.payload.request.query">
+          <EventTableRow
+            v-for="(value, title) in event.payload.request.query"
+            :key="title"
+            :title="title"
+          >
             {{ value }}
           </EventTableRow>
         </EventTable>
       </section>
 
-      <section v-if="hasPostData" class="section-container">
+      <section v-if="hasPostData" class="http-dump-page__section">
         <h1>POST Data</h1>
         <EventTable>
-          <EventTableRow :title="title" v-for="(value, title) in event.payload.request.post">
+          <EventTableRow
+            v-for="(value, title) in event.payload.request.post"
+            :key="title"
+            :title="title"
+          >
             {{ value }}
           </EventTableRow>
         </EventTable>
       </section>
 
-      <section v-if="hasAttachments" class="section-container">
-        <h1>
-          Attachments ({{ event.payload.request.files.length }})
-        </h1>
+      <section v-if="hasAttachments" class="http-dump-page__section">
+        <h1>Attachments ({{ event.payload.request.files.length }})</h1>
 
-        <div class="attachments">
+        <div class="http-dump-page__attachments">
           <Attachment
             v-for="a in event.payload.request.files"
             :key="a.id"
@@ -56,9 +73,9 @@
         </div>
       </section>
 
-      <section v-if="hasBody" class="section-container">
+      <section v-if="hasBody" class="http-dump-page__section">
         <h1>Request Body</h1>
-        <code class="border p-3 block">
+        <code class="http-dump-page__section-body">
           {{ event.payload.request.body }}
         </code>
       </section>
@@ -67,8 +84,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {NormalizedEvent} from "~/config/types";
+import { defineComponent, PropType } from "vue";
+import { NormalizedEvent } from "~/config/types";
 import EventTable from "~/components/EventTable/EventTable.vue";
 import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import Attachment from "~/components/Attachment/Attachment.vue";
@@ -93,11 +110,17 @@ export default defineComponent({
       return decodeURI(this.event.payload.request.uri);
     },
     hasPostData(): boolean {
-      return this.event.payload.request.post && Object.keys(this.event.payload.request.post).length > 0;
+      return (
+        this.event.payload.request.post &&
+        Object.keys(this.event.payload.request.post).length > 0
+      );
     },
 
     hasQuery(): boolean {
-      return this.event.payload.request.query && Object.keys(this.event.payload.request.query).length > 0;
+      return (
+        this.event.payload.request.query &&
+        Object.keys(this.event.payload.request.query).length > 0
+      );
     },
 
     hasHeaders(): boolean {
@@ -109,7 +132,10 @@ export default defineComponent({
     },
 
     hasBody(): boolean {
-      return this.event.payload.request.body && this.event.payload.request.body.length > 0;
+      return (
+        this.event.payload.request.body &&
+        this.event.payload.request.body.length > 0
+      );
     },
 
     hasAttachments(): boolean {
@@ -134,24 +160,30 @@ export default defineComponent({
   @apply text-2xl;
 }
 
-.title-method {
+.http-dump-page__title-method {
   @apply font-mono;
 }
 
-.title-uri {
+.http-dump-page__title-uri {
   @apply font-mono font-bold;
 }
 
-.section-container {
+.http-dump-page__section {
   @apply flex-1;
 }
 
-.section-container h1 {
+.http-dump-page__section h1 {
   @apply mb-3 text-xl font-bold;
 }
 
-.attachments {
+.http-dump-page__attachments {
   @apply flex gap-x-3;
 }
 
+.http-dump-page__section-body {
+  @apply border p-3;
+
+  word-wrap: break-word;
+  display: block;
+}
 </style>
