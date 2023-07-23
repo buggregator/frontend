@@ -7,7 +7,7 @@
     "generate": "nuxi generate",
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
-    "prepare": "cd ../ && npx husky install",
+    "prepare": "npx husky install",
     "lint": "eslint . --fix"
   },
   "type": "module",
