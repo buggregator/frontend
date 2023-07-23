@@ -29,7 +29,7 @@ export default defineComponent({
       return [
         {
           title: "Calls",
-          value: formatDuration(this.cost.ct || 0),
+          value: this.cost.ct || 0,
         },
         {
           title: "CPU time",
