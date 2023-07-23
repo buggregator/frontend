@@ -7,3 +7,4 @@ nuxt.d.ts
 package-lock.json
 dist
 .env
+.idea/
