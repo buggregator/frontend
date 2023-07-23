@@ -1,11 +1,6 @@
 <template>
   <div class="dump-preview">
-    <CodeSnippet v-if="isBooleanValue" language="php" :code="value === 1" />
-    <div
-      v-if="!isBooleanValue"
-      class="var-dump-preview__html"
-      v-html="dumpBody"
-    />
+    <div class="var-dump-preview__html" v-html="dumpBody" />
   </div>
 </template>
 
@@ -15,9 +10,6 @@ import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 import { useNuxtApp } from "#app";
 
 export default defineComponent({
-  components: {
-    CodeSnippet,
-  },
   props: ["value", "type"],
   setup() {
     if (process.client) {
