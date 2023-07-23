@@ -4,6 +4,7 @@ import { normalizeVarDumpEvent } from "~/utils/normalize-event";
 import varDumpObjectEventMock from '~/mocks/var-dump-object.json'
 import varDumpNumberEventMock from '~/mocks/var-dump-number.json'
 import varDumpStringEventMock from '~/mocks/var-dump-string.json'
+import varDumpStringEmptyEventMock from '~/mocks/var-dump-string-empty.json'
 import varDumpArrayEventMock from '~/mocks/var-dump-array.json'
 import varDumpBoolEventMock from '~/mocks/var-dump-boolean.json'
 import VarDumpPreview from '~/components/VarDumpPreview/VarDumpPreview.vue';
@@ -39,6 +40,12 @@ export const String = Template.bind({});
 
 String.args = {
   event: normalizeVarDumpEvent(varDumpStringEventMock),
+};
+
+export const StringEmpty = Template.bind({});
+
+StringEmpty.args = {
+  event: normalizeVarDumpEvent(varDumpStringEmptyEventMock),
 };
 
 export const Boolean = Template.bind({});
