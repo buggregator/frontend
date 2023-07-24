@@ -1,18 +1,15 @@
 <template>
   <div class="dump-preview">
-    <CodeSnippet v-if="isBooleanValue" language="php" :code="value === 1" />
-    <div
-      v-if="!isBooleanValue"
-      class="var-dump-preview__html"
-      v-html="dumpBody"
-    />
+    <div v-if="!isString" class="var-dump-preview__html" v-html="dumpBody" />
+
+    <CodeSnippet v-if="isString" language="php" :code="dumpBody" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 import { useNuxtApp } from "#app";
+import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 
 export default defineComponent({
   components: {
@@ -34,8 +31,8 @@ export default defineComponent({
     };
   },
   computed: {
-    isBooleanValue(): boolean {
-      return typeof this.value === "boolean" || this.type === "boolean";
+    isString() {
+      return typeof this.value === "string" && this.type === "string";
     },
     dumpId(): string | null {
       if (!this.value) {
@@ -49,6 +46,10 @@ export default defineComponent({
           /<(style|script)\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/(style|script)>/gi,
           ""
         );
+      }
+
+      if (this.isString) {
+        return `"${this.value}"`;
       }
 
       return this.value;
