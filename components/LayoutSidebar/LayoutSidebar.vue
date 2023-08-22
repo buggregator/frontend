@@ -36,11 +36,11 @@
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
-    </nav>
 
-    <div v-if="appVersion" class="layout-sidebar__version">
-      {{ appVersion }}
-    </div>
+      <div v-if="appVersion" class="layout-sidebar__nav-version">
+        {{ appVersion }}
+      </div>
+    </nav>
   </aside>
 </template>
 
@@ -48,6 +48,7 @@
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#app";
+import { EVENT_TYPES } from "~/config/constants";
 
 export default defineComponent({
   components: { IconSvg },
@@ -57,19 +58,20 @@ export default defineComponent({
       required: true,
     },
   },
-  async setup() {
+  setup() {
     if (process.client) {
-      const { $api } = useNuxtApp();
-
-      const appVersion = await $api.getVersion();
+      const { $config } = useNuxtApp();
 
       return {
-        appVersion,
+        appVersion:
+          !$config?.version || $config.version === "0.0.1"
+            ? "@dev"
+            : `v${$config.version}`,
       };
     }
 
     return {
-      appVersion: null,
+      appVersion: "@dev",
     };
   },
 });
@@ -81,7 +83,7 @@ export default defineComponent({
 }
 
 .layout-sidebar__nav {
-  @apply divide-y divide-gray-300 dark:divide-gray-600 sticky top-0;
+  @apply divide-y divide-gray-300 dark:divide-gray-600 sticky top-0 h-screen max-h-screen;
 }
 
 .layout-sidebar__link {
@@ -90,6 +92,10 @@ export default defineComponent({
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
   }
+}
+
+.layout-sidebar__nav-version {
+  @apply flex justify-center text-xs dark:text-gray-400 p-2 absolute bottom-0 left-0 right-0;
 }
 
 .layout-sidebar__link-icon {
