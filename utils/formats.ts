@@ -15,10 +15,17 @@ export const formatDuration = (inputMs: number) => {
   };
 
   return Object.entries(time)
-    .filter((val) => val[1] !== 0)
-    .map((val) => `${val[1].toFixed(4)} ${val[1] !== 1 ? val[0] : val[0]}`)
+    .filter(([_, val]) => val !== 0)
+    .map(
+      ([key, val]) =>
+        `${
+          key === "ms" && Number(val.toFixed(4)) % 1 !== 0
+            ? val.toFixed(4)
+            : val.toFixed(0)
+        } ${key}`
+    )
     .join(", ");
-}
+};
 
 export const humanFileSize = (inputBytes: number) => {
   let bytes = inputBytes;
@@ -38,7 +45,7 @@ export const humanFileSize = (inputBytes: number) => {
   } while (
     Math.round(Math.abs(bytes) * r) / r >= thresh &&
     u < units.length - 1
-    );
+  );
 
   return `${bytes.toFixed(1)} ${units[u]}`;
-}
+};
