@@ -8,7 +8,8 @@
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
     "prepare": "npx husky install",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "vitest"
   },
   "type": "module",
   "lint-staged": {
@@ -52,13 +53,13 @@
     "sass": "^1.57.1",
     "storybook-addon-themes": "^6.1.0",
     "typescript": "^4.9.4",
+    "vitest": "^0.34.2",
     "vue-eslint-parser": "^9.1.0"
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.2",
     "@hpcc-js/wasm": "^2.8.0",
     "@pinia/nuxt": "^0.4.6",
-    "nuxt": "3.3.3",
     "@storybook/addon-actions": "^6.5.15",
     "@storybook/vue3": "^6.5.16",
     "@vue/shared": "^3.2.45",
@@ -70,6 +71,7 @@
     "highlight.js": "^11.7.0",
     "html-to-image": "^1.11.4",
     "moment": "^2.29.4",
+    "nuxt": "3.3.3",
     "pinia": "^2.0.30",
     "tailwindcss": "^3.2.4",
     "vue": "^3.2.45",
