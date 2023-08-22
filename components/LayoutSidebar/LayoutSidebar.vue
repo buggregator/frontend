@@ -17,7 +17,11 @@
         <IconSvg class="layout-sidebar__link-icon" name="smtp" />
       </NuxtLink>
 
-      <NuxtLink to="/http-dumps" title="Http dumps" class="layout-sidebar__link">
+      <NuxtLink
+        to="/http-dumps"
+        title="Http dumps"
+        class="layout-sidebar__link"
+      >
         <IconSvg class="layout-sidebar__link-icon" name="http-dumps" />
       </NuxtLink>
 
@@ -33,12 +37,17 @@
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
     </nav>
+
+    <div v-if="appVersion" class="layout-sidebar__version">
+      {{ appVersion }}
+    </div>
   </aside>
 </template>
 
 <script lang="ts">
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent } from "vue";
+import { useNuxtApp } from "#app";
 
 export default defineComponent({
   components: { IconSvg },
@@ -47,6 +56,21 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
+  },
+  async setup() {
+    if (process.client) {
+      const { $api } = useNuxtApp();
+
+      const appVersion = await $api.getVersion();
+
+      return {
+        appVersion,
+      };
+    }
+
+    return {
+      appVersion: null,
+    };
   },
 });
 </script>
