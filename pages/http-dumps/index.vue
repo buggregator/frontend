@@ -25,8 +25,12 @@ export default defineComponent({
         events: visibleEvents,
         title: "Http dumps",
         isStopUpdate,
-        stopUpdate: () => {
-          $cachedEvents.stopUpdatesByType(EVENT_TYPES.HTTP_DUMP);
+        toggleUpdate: () => {
+          if (isStopUpdate) {
+            $cachedEvents.runUpdatesByType(EVENT_TYPES.HTTP_DUMP);
+          } else {
+            $cachedEvents.stopUpdatesByType(EVENT_TYPES.HTTP_DUMP);
+          }
         },
         clearEvents: () => $events.removeByType(EVENT_TYPES.HTTP_DUMP),
       };
@@ -36,7 +40,7 @@ export default defineComponent({
       events: [],
       title: "Http dumps",
       isStopUpdate: false,
-      stopUpdate: () => {},
+      toggleUpdate: () => {},
       clearEvents: () => {},
     };
   },

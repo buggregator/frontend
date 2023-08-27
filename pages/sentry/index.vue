@@ -24,8 +24,12 @@ export default defineComponent({
         events: visibleEvents,
         title: "Sentry",
         isStopUpdate,
-        stopUpdate: () => {
-          $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
+        toggleUpdate: () => {
+          if (isStopUpdate) {
+            $cachedEvents.runUpdatesByType(EVENT_TYPES.SENTRY);
+          } else {
+            $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
+          }
         },
         clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
       };
@@ -35,7 +39,7 @@ export default defineComponent({
       events: [],
       title: "Sentry",
       isStopUpdate: false,
-      stopUpdate: () => {},
+      toggleUpdate: () => {},
       clearEvents: () => {},
     };
   },

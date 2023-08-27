@@ -40,7 +40,7 @@ export default defineComponent({
     delete(payload: boolean) {
       return payload;
     },
-    stopUpdate(payload: boolean) {
+    toggleUpdate(payload: boolean) {
       return payload;
     },
   },
@@ -49,7 +49,7 @@ export default defineComponent({
       this.$emit("delete", true);
     },
     toggleAutoEvents() {
-      this.$emit("stopUpdate", true);
+      this.$emit("toggleUpdate", true);
     },
   },
 });

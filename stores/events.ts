@@ -72,31 +72,37 @@ export const useEventStore = defineStore("useEventStore", {
         }
       });
     },
-    setCachedEvents(cachedType: OneOfValues<typeof EVENT_TYPES> | null) {
-      if (cachedType === null) {
+    getEventById(id: EventId): ServerEvent<unknown> | null {
+      return (
+        this.events.find(({ uuid }) => String(uuid) === String(id)) || null
+      );
+    },
+    setCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES> | null) {
+      if (eventType === null) {
         this.cachedEvents = this.events;
       } else {
         this.events
-          .filter(({ type }) => type === cachedType)
+          .filter(({ type }) => type === eventType)
           .forEach((event) => {
             this.cachedEvents.push(event);
           });
       }
     },
-    removeCachedEvents(cachedType: OneOfValues<typeof EVENT_TYPES> | null) {
-      if (cachedType === null) {
+    removeCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES> | null) {
+      if (eventType === null) {
         this.cachedEvents.length = 0;
       } else {
         this.cachedEvents = this.cachedEvents.filter(
-          ({ type }) => type !== cachedType
+          ({ type }) => type !== eventType
         );
       }
-
     },
-    getEventById(id: EventId): ServerEvent<unknown> | null {
-      return (
-        this.events.find(({ uuid }) => String(uuid) === String(id)) || null
-      );
+    hasChangedEvents(eventType: OneOfValues<typeof EVENT_TYPES> | null) {
+      if (eventType === null) {
+        return this.cachedEvents.length;
+      }
+
+      return this.cachedEvents.filter(({ type }) => type === eventType).length;
     },
   },
 });

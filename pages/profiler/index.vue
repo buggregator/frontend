@@ -24,8 +24,12 @@ export default defineComponent({
         events: visibleEvents,
         title: "Profiler",
         isStopUpdate,
-        stopUpdate: () => {
-          $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
+        toggleUpdate: () => {
+          if (isStopUpdate) {
+            $cachedEvents.runUpdatesByType(EVENT_TYPES.PROFILER);
+          } else {
+            $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
+          }
         },
         clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
       };
@@ -35,7 +39,7 @@ export default defineComponent({
       events: [],
       title: "Profiler",
       isStopUpdate: false,
-      stopUpdate: () => {},
+      toggleUpdate: () => {},
       clearEvents: () => {},
     };
   },

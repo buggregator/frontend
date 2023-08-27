@@ -4,7 +4,7 @@
       button-title="Clear events"
       :is-stop-update="isStopUpdate"
       @delete="clearEvents"
-      @stop-update="stopUpdate"
+      @toggle-update="toggleUpdate"
     >
       <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
@@ -50,15 +50,15 @@ export default defineComponent({
         $events.getAll();
       }
 
-      const isStopUpdate = $cachedEvents?.events?.value.length;
+      const isStopUpdate = $cachedEvents?.items?.value.length;
 
-      const visibleEvents = isStopUpdate ? $cachedEvents.events : $events.items;
+      const visibleEvents = isStopUpdate ? $cachedEvents.items : $events.items;
 
       return {
         events: visibleEvents,
         clearEvents: $events.removeAll,
         isStopUpdate,
-        stopUpdate: () => {
+        toggleUpdate: () => {
           if (isStopUpdate) {
             $cachedEvents.runUpdatesByType(null);
           } else {
@@ -73,7 +73,7 @@ export default defineComponent({
       title: "",
       isStopUpdate: false,
       clearEvents: () => {},
-      stopUpdate: () => {},
+      toggleUpdate: () => {},
     };
   },
 });

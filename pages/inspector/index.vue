@@ -9,7 +9,6 @@ export default defineComponent({
   setup() {
     if (process.client) {
       const { $events, $cachedEvents } = useNuxtApp();
-      const router = useRouter();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
@@ -26,8 +25,12 @@ export default defineComponent({
         events: visibleEvents,
         title: "Inspector",
         isStopUpdate,
-        stopUpdate: () => {
-          $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
+        toggleUpdate: () => {
+          if (isStopUpdate) {
+            $cachedEvents.runUpdatesByType(EVENT_TYPES.INSPECTOR);
+          } else {
+            $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
+          }
         },
         clearEvents: () => $events.removeByType(EVENT_TYPES.INSPECTOR),
       };
@@ -37,7 +40,7 @@ export default defineComponent({
       events: [],
       title: "Inspector",
       isStopUpdate: false,
-      stopUpdate: () => {},
+      toggleUpdate: () => {},
       clearEvents: () => {},
     };
   },
