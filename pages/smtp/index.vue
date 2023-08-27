@@ -8,16 +8,16 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events } = useNuxtApp();
+      const { $events, $cachedEvents } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
 
       const isStopUpdate =
-        $events.cachedItemsGroupByType[EVENT_TYPES.SMTP].value.length;
+        $cachedEvents.itemsGroupByType[EVENT_TYPES.SMTP].value.length;
       const visibleEvents = isStopUpdate
-        ? $events.cachedItemsGroupByType[EVENT_TYPES.SMTP]
+        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.SMTP]
         : $events.itemsGroupByType[EVENT_TYPES.SMTP];
 
       return {
@@ -25,7 +25,9 @@ export default defineComponent({
         title: "Smtp",
         isStopUpdate,
         clearEvents: () => $events.removeByType(EVENT_TYPES.SMTP),
-        stopUpdate: () => $events.stopUpdatesByType(EVENT_TYPES.SMTP),
+        stopUpdate: () => {
+          $cachedEvents.stopUpdatesByType(EVENT_TYPES.SMTP);
+        },
       };
     }
 

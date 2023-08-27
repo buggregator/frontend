@@ -8,23 +8,25 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events } = useNuxtApp();
+      const { $events, $cachedEvents } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
       const isStopUpdate =
-        $events.cachedItemsGroupByType[EVENT_TYPES.PROFILER].value.length;
+        $cachedEvents.itemsGroupByType[EVENT_TYPES.PROFILER].value.length;
 
       const visibleEvents = isStopUpdate
-        ? $events.cachedItemsGroupByType[EVENT_TYPES.PROFILER]
+        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.PROFILER]
         : $events.itemsGroupByType[EVENT_TYPES.PROFILER];
 
       return {
         events: visibleEvents,
         title: "Profiler",
         isStopUpdate,
-        stopUpdate: () => $events.stopUpdatesByType(EVENT_TYPES.PROFILER),
+        stopUpdate: () => {
+          $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
+        },
         clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
       };
     }

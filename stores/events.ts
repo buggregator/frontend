@@ -1,9 +1,5 @@
 import { defineStore } from "pinia";
-import {
-  EventId,
-  OneOfValues,
-  ServerEvent,
-} from "~/config/types";
+import { EventId, OneOfValues, ServerEvent } from "~/config/types";
 import { EVENT_TYPES } from "~/config/constants";
 
 export const useEventStore = defineStore("useEventStore", {
@@ -80,10 +76,22 @@ export const useEventStore = defineStore("useEventStore", {
       if (cachedType === null) {
         this.cachedEvents = this.events;
       } else {
-        this.cachedEvents = this.events.filter(
-          ({ type }) => type === cachedType
+        this.events
+          .filter(({ type }) => type === cachedType)
+          .forEach((event) => {
+            this.cachedEvents.push(event);
+          });
+      }
+    },
+    removeCachedEvents(cachedType: OneOfValues<typeof EVENT_TYPES> | null) {
+      if (cachedType === null) {
+        this.cachedEvents.length = 0;
+      } else {
+        this.cachedEvents = this.cachedEvents.filter(
+          ({ type }) => type !== cachedType
         );
       }
+
     },
     getEventById(id: EventId): ServerEvent<unknown> | null {
       return (

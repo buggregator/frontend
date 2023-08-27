@@ -90,9 +90,12 @@ export default defineNuxtPlugin(() => {
         removeAll,
         removeByType,
         removeById,
+      },
+      cachedEvents: {
         stopUpdatesByType: eventsStore.setCachedEvents,
-        cachedEvents,
-        cachedItemsGroupByType,
+        runUpdatesByType: eventsStore.removeCachedEvents,
+        events,
+        itemsGroupByType,
       }
     }
   }

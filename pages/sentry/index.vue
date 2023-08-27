@@ -8,23 +8,25 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events } = useNuxtApp();
+      const { $events, $cachedEvents } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
       const isStopUpdate =
-        $events.cachedItemsGroupByType[EVENT_TYPES.SENTRY].value.length;
+        $cachedEvents.itemsGroupByType[EVENT_TYPES.SENTRY].value.length;
 
       const visibleEvents = isStopUpdate
-        ? $events.cachedItemsGroupByType[EVENT_TYPES.SENTRY]
+        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.SENTRY]
         : $events.itemsGroupByType[EVENT_TYPES.SENTRY];
 
       return {
         events: visibleEvents,
         title: "Sentry",
         isStopUpdate,
-        stopUpdate: () => $events.stopUpdatesByType(EVENT_TYPES.SENTRY),
+        stopUpdate: () => {
+          $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
+        },
         clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
       };
     }

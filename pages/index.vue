@@ -44,21 +44,27 @@ export default defineComponent({
   },
   setup() {
     if (process.client) {
-      const { $events } = useNuxtApp();
+      const { $events, $cachedEvents } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
 
-      const isStopUpdate = $events?.cachedEvents?.value.length;
+      const isStopUpdate = $cachedEvents?.events?.value.length;
 
-      const visibleEvents = isStopUpdate ? $events.cachedEvents : $events.items;
+      const visibleEvents = isStopUpdate ? $cachedEvents.events : $events.items;
 
       return {
         events: visibleEvents,
         clearEvents: $events.removeAll,
         isStopUpdate,
-        stopUpdate: () => $events.stopUpdatesByType(null),
+        stopUpdate: () => {
+          if (isStopUpdate) {
+            $cachedEvents.runUpdatesByType(null);
+          } else {
+            $cachedEvents.stopUpdatesByType(null);
+          }
+        },
         title: "",
       };
     }
