@@ -1,6 +1,11 @@
 <template>
   <div class="events-page">
-    <PageHeader button-title="Clear events" @delete="clearEvents">
+    <PageHeader
+      button-title="Clear events"
+      :is-stop-update="isStopUpdate"
+      @delete="clearEvents"
+      @stop-update="stopUpdate"
+    >
       <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
       <template v-if="title">
@@ -41,16 +46,28 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
+      if (!$events?.items?.value.length) {
+        $events.getAll();
+      }
+
+      const isStopUpdate = $events?.cachedEvents?.value.length;
+
+      const visibleEvents = isStopUpdate ? $events.cachedEvents : $events.items;
+
       return {
-        events: $events.items,
+        events: visibleEvents,
         clearEvents: $events.removeAll,
+        isStopUpdate,
+        stopUpdate: () => $events.stopUpdatesByType(null),
         title: "",
       };
     }
     return {
       events: [],
       title: "",
+      isStopUpdate: false,
       clearEvents: () => {},
+      stopUpdate: () => {},
     };
   },
 });

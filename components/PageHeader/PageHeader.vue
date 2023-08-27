@@ -1,14 +1,20 @@
 <template>
   <header class="page-header">
-    <div class="page-header__title"><slot />&nbsp</div>
+    <div class="page-header__title"><slot />&nbsp;</div>
 
-    <button
-      v-if="buttonTitle"
-      class="page-header__btn-clear"
-      @click="buttonClick"
-    >
-      {{ buttonTitle }}
-    </button>
+    <div class="page-header__controls">
+      <button class="page-header__btn-auto-refresh" @click="toggleAutoEvents">
+        {{ isStopUpdate ? "❚ ❚ Stop Update" : "▶ Auto Update" }}
+      </button>
+
+      <button
+        v-if="buttonTitle"
+        class="page-header__btn-clear"
+        @click="buttonClick"
+      >
+        {{ buttonTitle }}
+      </button>
+    </div>
   </header>
 </template>
 
@@ -25,15 +31,25 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    isStopUpdate: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: {
     delete(payload: boolean) {
+      return payload;
+    },
+    stopUpdate(payload: boolean) {
       return payload;
     },
   },
   methods: {
     buttonClick() {
       this.$emit("delete", true);
+    },
+    toggleAutoEvents() {
+      this.$emit("stopUpdate", true);
     },
   },
 });
@@ -45,6 +61,14 @@ export default defineComponent({
 }
 
 .page-header__title {
+}
+
+.page-header__controls {
+  @apply flex items-center flex-row;
+}
+
+.page-header__btn-auto-refresh {
+  @apply mr-3 text-xs text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40;
 }
 
 .page-header__btn-clear {

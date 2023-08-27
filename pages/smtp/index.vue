@@ -10,21 +10,31 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
-      if (!$events?.items?.length) {
+      if (!$events?.items?.value.length) {
         $events.getAll();
       }
 
+      const isStopUpdate =
+        $events.cachedItemsGroupByType[EVENT_TYPES.SMTP].value.length;
+      const visibleEvents = isStopUpdate
+        ? $events.cachedItemsGroupByType[EVENT_TYPES.SMTP]
+        : $events.itemsGroupByType[EVENT_TYPES.SMTP];
+
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.SMTP],
+        events: visibleEvents,
         title: "Smtp",
+        isStopUpdate,
         clearEvents: () => $events.removeByType(EVENT_TYPES.SMTP),
+        stopUpdate: () => $events.stopUpdatesByType(EVENT_TYPES.SMTP),
       };
     }
 
     return {
       events: [],
       title: "Smtp",
+      isStopUpdate: false,
       clearEvents: () => {},
+      stopUpdate: () => {},
     };
   },
   head() {

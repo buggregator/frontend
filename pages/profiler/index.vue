@@ -10,9 +10,21 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
+      if (!$events?.items?.value.length) {
+        $events.getAll();
+      }
+      const isStopUpdate =
+        $events.cachedItemsGroupByType[EVENT_TYPES.PROFILER].value.length;
+
+      const visibleEvents = isStopUpdate
+        ? $events.cachedItemsGroupByType[EVENT_TYPES.PROFILER]
+        : $events.itemsGroupByType[EVENT_TYPES.PROFILER];
+
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.PROFILER],
+        events: visibleEvents,
         title: "Profiler",
+        isStopUpdate,
+        stopUpdate: () => $events.stopUpdatesByType(EVENT_TYPES.PROFILER),
         clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
       };
     }
@@ -20,6 +32,8 @@ export default defineComponent({
     return {
       events: [],
       title: "Profiler",
+      isStopUpdate: false,
+      stopUpdate: () => {},
       clearEvents: () => {},
     };
   },
