@@ -49,14 +49,7 @@ export default defineNuxtPlugin(() => {
     smtpEvents,
     rayEvents,
     httpDumpEvents,
-    cachedEvents,
-    cachedRayEvents,
-    cachedVarDumpEvents,
-    cachedSentryEvents,
-    cachedInspectorEvents,
-    cachedProfilerEvents,
-    cachedSmtpEvents,
-    cachedHttpDumpEvents
+    cachedEventsMap,
   } = storeToRefs(eventsStore)
 
   const itemsGroupByType = {
@@ -67,16 +60,6 @@ export default defineNuxtPlugin(() => {
     [EVENT_TYPES.RAY_DUMP]: rayEvents,
     [EVENT_TYPES.VAR_DUMP]: varDumpEvents,
     [EVENT_TYPES.HTTP_DUMP]: httpDumpEvents,
-  }
-
-  const cachedItemsGroupByType = {
-    [EVENT_TYPES.SENTRY]: cachedSentryEvents,
-    [EVENT_TYPES.INSPECTOR]: cachedInspectorEvents,
-    [EVENT_TYPES.PROFILER]: cachedProfilerEvents,
-    [EVENT_TYPES.SMTP]: cachedSmtpEvents,
-    [EVENT_TYPES.RAY_DUMP]: cachedRayEvents,
-    [EVENT_TYPES.VAR_DUMP]: cachedVarDumpEvents,
-    [EVENT_TYPES.HTTP_DUMP]: cachedHttpDumpEvents,
   }
 
   return {
@@ -92,11 +75,9 @@ export default defineNuxtPlugin(() => {
         removeById,
       },
       cachedEvents: {
+        savedEventsByType: cachedEventsMap,
         stopUpdatesByType: eventsStore.setCachedEvents,
         runUpdatesByType: eventsStore.removeCachedEvents,
-        items: cachedEvents,
-        hasChangedEvents: eventsStore.hasChangedEvents,
-        itemsGroupByType: cachedItemsGroupByType,
       }
     }
   }

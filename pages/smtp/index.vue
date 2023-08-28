@@ -14,20 +14,16 @@ export default defineComponent({
         $events.getAll();
       }
 
-      const isStopUpdate =
-        $cachedEvents.itemsGroupByType[EVENT_TYPES.SMTP].value.length;
-
-      const visibleEvents = isStopUpdate
-        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.SMTP]
-        : $events.itemsGroupByType[EVENT_TYPES.SMTP];
-
       return {
-        events: visibleEvents,
+        events: $events.itemsGroupByType[EVENT_TYPES.SMTP],
         title: "Smtp",
-        isStopUpdate,
+        eventsType: EVENT_TYPES.SMTP,
+        savedEventsByType: $cachedEvents.savedEventsByType,
         clearEvents: () => $events.removeByType(EVENT_TYPES.SMTP),
         toggleUpdate: () => {
-          if (isStopUpdate) {
+          if (
+            $cachedEvents.savedEventsByType.value[EVENT_TYPES.SMTP].length > 0
+          ) {
             $cachedEvents.runUpdatesByType(EVENT_TYPES.SMTP);
           } else {
             $cachedEvents.stopUpdatesByType(EVENT_TYPES.SMTP);
@@ -39,7 +35,8 @@ export default defineComponent({
     return {
       events: [],
       title: "Smtp",
-      isStopUpdate: false,
+      eventsType: EVENT_TYPES.SMTP,
+      savedEventsByType: {},
       clearEvents: () => {},
       toggleUpdate: () => {},
     };

@@ -3,7 +3,11 @@
     <div class="page-header__title"><slot />&nbsp;</div>
 
     <div class="page-header__controls">
-      <button class="page-header__btn-auto-refresh" @click="toggleAutoEvents">
+      <button
+        v-if="isVisibleStopUpdate"
+        class="page-header__btn-auto-refresh"
+        @click="toggleAutoLoad"
+      >
         {{ isStopUpdate ? "❚ ❚ Stop Update" : "▶ Auto Update" }}
       </button>
 
@@ -35,6 +39,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isVisibleStopUpdate: {
+      type: String,
+      default: null,
+    },
   },
   emits: {
     delete(payload: boolean) {
@@ -48,7 +56,7 @@ export default defineComponent({
     buttonClick() {
       this.$emit("delete", true);
     },
-    toggleAutoEvents() {
+    toggleAutoLoad() {
       this.$emit("toggleUpdate", true);
     },
   },

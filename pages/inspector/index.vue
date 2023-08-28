@@ -2,7 +2,7 @@
 import { defineComponent } from "vue";
 import PageIndex from "~/pages/index.vue";
 import { EVENT_TYPES } from "~/config/constants";
-import { useNuxtApp, useRouter } from "#app";
+import { useNuxtApp } from "#app";
 
 export default defineComponent({
   extends: PageIndex,
@@ -14,32 +14,30 @@ export default defineComponent({
         $events.getAll();
       }
 
-      const isStopUpdate =
-        $cachedEvents.itemsGroupByType[EVENT_TYPES.INSPECTOR].value.length;
-
-      const visibleEvents = isStopUpdate
-        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.INSPECTOR]
-        : $events.itemsGroupByType[EVENT_TYPES.INSPECTOR];
-
       return {
-        events: visibleEvents,
+        events: $events.itemsGroupByType[EVENT_TYPES.INSPECTOR],
         title: "Inspector",
-        isStopUpdate,
+        eventsType: EVENT_TYPES.INSPECTOR,
+        savedEventsByType: $cachedEvents.savedEventsByType,
+        clearEvents: () => $events.removeByType(EVENT_TYPES.INSPECTOR),
         toggleUpdate: () => {
-          if (isStopUpdate) {
+          if (
+            $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR]
+              .length > 0
+          ) {
             $cachedEvents.runUpdatesByType(EVENT_TYPES.INSPECTOR);
           } else {
             $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
           }
         },
-        clearEvents: () => $events.removeByType(EVENT_TYPES.INSPECTOR),
       };
     }
 
     return {
       events: [],
       title: "Inspector",
-      isStopUpdate: false,
+      eventsType: EVENT_TYPES.INSPECTOR,
+      savedEventsByType: {},
       toggleUpdate: () => {},
       clearEvents: () => {},
     };

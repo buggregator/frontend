@@ -2,7 +2,11 @@
   <div class="events-page">
     <PageHeader
       button-title="Clear events"
-      :is-stop-update="isStopUpdate"
+      :is-stop-update="
+        savedEventsByType[eventsType] &&
+        savedEventsByType[eventsType].length > 0
+      "
+      :is-visible-stop-update="Boolean(eventsType)"
       @delete="clearEvents"
       @toggle-update="toggleUpdate"
     >
@@ -44,34 +48,26 @@ export default defineComponent({
   },
   setup() {
     if (process.client) {
-      const { $events, $cachedEvents } = useNuxtApp();
+      const { $events } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
 
-      const isStopUpdate = $cachedEvents?.items?.value.length;
-
-      const visibleEvents = isStopUpdate ? $cachedEvents.items : $events.items;
-
       return {
-        events: visibleEvents,
-        clearEvents: $events.removeAll,
-        isStopUpdate,
-        toggleUpdate: () => {
-          if (isStopUpdate) {
-            $cachedEvents.runUpdatesByType(null);
-          } else {
-            $cachedEvents.stopUpdatesByType(null);
-          }
-        },
+        events: $events.items,
         title: "",
+        savedEventsByType: {},
+        eventsType: null,
+        clearEvents: $events.removeAll,
+        toggleUpdate: () => {},
       };
     }
     return {
       events: [],
       title: "",
-      isStopUpdate: false,
+      savedEventsByType: {},
+      eventsType: null,
       clearEvents: () => {},
       toggleUpdate: () => {},
     };

@@ -13,32 +13,29 @@ export default defineComponent({
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
-      const isStopUpdate =
-        $cachedEvents.itemsGroupByType[EVENT_TYPES.SENTRY].value.length;
-
-      const visibleEvents = isStopUpdate
-        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.SENTRY]
-        : $events.itemsGroupByType[EVENT_TYPES.SENTRY];
-
       return {
-        events: visibleEvents,
+        events: $events.itemsGroupByType[EVENT_TYPES.SENTRY],
         title: "Sentry",
-        isStopUpdate,
+        eventsType: EVENT_TYPES.SENTRY,
+        savedEventsByType: $cachedEvents.savedEventsByType,
+        clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
         toggleUpdate: () => {
-          if (isStopUpdate) {
+          if (
+            $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length > 0
+          ) {
             $cachedEvents.runUpdatesByType(EVENT_TYPES.SENTRY);
           } else {
             $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
           }
         },
-        clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
       };
     }
 
     return {
       events: [],
       title: "Sentry",
-      isStopUpdate: false,
+      eventsType: EVENT_TYPES.SENTRY,
+      savedEventsByType: {},
       toggleUpdate: () => {},
       clearEvents: () => {},
     };

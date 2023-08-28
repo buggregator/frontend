@@ -14,32 +14,30 @@ export default defineComponent({
         $events.getAll();
       }
 
-      const isStopUpdate =
-        $cachedEvents.itemsGroupByType[EVENT_TYPES.HTTP_DUMP].value.length;
-
-      const visibleEvents = isStopUpdate
-        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.HTTP_DUMP]
-        : $events.itemsGroupByType[EVENT_TYPES.HTTP_DUMP];
-
       return {
-        events: visibleEvents,
+        events: $events.itemsGroupByType[EVENT_TYPES.HTTP_DUMP],
         title: "Http dumps",
-        isStopUpdate,
+        eventsType: EVENT_TYPES.HTTP_DUMP,
+        savedEventsByType: $cachedEvents.savedEventsByType,
+        clearEvents: () => $events.removeByType(EVENT_TYPES.HTTP_DUMP),
         toggleUpdate: () => {
-          if (isStopUpdate) {
+          if (
+            $cachedEvents.savedEventsByType.value[EVENT_TYPES.HTTP_DUMP]
+              .length > 0
+          ) {
             $cachedEvents.runUpdatesByType(EVENT_TYPES.HTTP_DUMP);
           } else {
             $cachedEvents.stopUpdatesByType(EVENT_TYPES.HTTP_DUMP);
           }
         },
-        clearEvents: () => $events.removeByType(EVENT_TYPES.HTTP_DUMP),
       };
     }
 
     return {
       events: [],
       title: "Http dumps",
-      isStopUpdate: false,
+      eventsType: EVENT_TYPES.HTTP_DUMP,
+      savedEventsByType: {},
       toggleUpdate: () => {},
       clearEvents: () => {},
     };

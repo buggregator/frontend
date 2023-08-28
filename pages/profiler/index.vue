@@ -13,32 +13,30 @@ export default defineComponent({
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
-      const isStopUpdate =
-        $cachedEvents.itemsGroupByType[EVENT_TYPES.PROFILER].value.length;
-
-      const visibleEvents = isStopUpdate
-        ? $cachedEvents.itemsGroupByType[EVENT_TYPES.PROFILER]
-        : $events.itemsGroupByType[EVENT_TYPES.PROFILER];
-
       return {
-        events: visibleEvents,
+        events: $events.itemsGroupByType[EVENT_TYPES.PROFILER],
         title: "Profiler",
-        isStopUpdate,
+        eventsType: EVENT_TYPES.PROFILER,
+        savedEventsByType: $cachedEvents.savedEventsByType,
+        clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
         toggleUpdate: () => {
-          if (isStopUpdate) {
+          if (
+            $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length >
+            0
+          ) {
             $cachedEvents.runUpdatesByType(EVENT_TYPES.PROFILER);
           } else {
             $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
           }
         },
-        clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
       };
     }
 
     return {
       events: [],
       title: "Profiler",
-      isStopUpdate: false,
+      eventsType: EVENT_TYPES.PROFILER,
+      savedEventsByType: {},
       toggleUpdate: () => {},
       clearEvents: () => {},
     };
