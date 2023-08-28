@@ -8,66 +8,28 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events, $cachedEvents } = useNuxtApp();
+      const { $events } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.SENTRY],
+        events: $events.items,
         title: "Sentry",
-        eventsType: EVENT_TYPES.SENTRY,
+        type: EVENT_TYPES.SENTRY,
       };
     }
 
     return {
       events: [],
       title: "Sentry",
-      eventsType: EVENT_TYPES.SENTRY,
+      type: EVENT_TYPES.SENTRY,
     };
   },
   head() {
     return {
       title: `Sentry [${this.events.length}] | Buggregator`,
     };
-  },
-  computed: {
-    isEventsPaused() {
-      const { $cachedEvents } = useNuxtApp();
-
-      return (
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY] &&
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length > 0
-      );
-    },
-    hiddenEventsCount() {
-      const { $events, $cachedEvents } = useNuxtApp();
-
-      const allInspectorEvents = $events.items.value.filter(
-        ({ type }) => type === EVENT_TYPES.SENTRY
-      );
-
-      return (
-        allInspectorEvents.length -
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length
-      );
-    },
-  },
-  methods: {
-    clearEvents() {
-      const { $events } = useNuxtApp();
-
-      return $events.removeByType(EVENT_TYPES.SENTRY);
-    },
-    toggleUpdate() {
-      const { $cachedEvents } = useNuxtApp();
-
-      if (this.isEventsPaused) {
-        $cachedEvents.runUpdatesByType(EVENT_TYPES.SENTRY);
-      } else {
-        $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
-      }
-    },
   },
 });
 </script>

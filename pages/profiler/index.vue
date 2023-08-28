@@ -8,66 +8,28 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events, $cachedEvents } = useNuxtApp();
+      const { $events } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
       }
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.PROFILER],
+        events: $events.items,
         title: "Profiler",
-        eventsType: EVENT_TYPES.PROFILER,
+        type: EVENT_TYPES.PROFILER,
       };
     }
 
     return {
       events: [],
       title: "Profiler",
-      eventsType: EVENT_TYPES.PROFILER,
+      type: EVENT_TYPES.PROFILER,
     };
   },
   head() {
     return {
       title: `Profiler [${this.events.length}] | Buggregator`,
     };
-  },
-  computed: {
-    isEventsPaused() {
-      const { $cachedEvents } = useNuxtApp();
-
-      return (
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER] &&
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length > 0
-      );
-    },
-    hiddenEventsCount() {
-      const { $events, $cachedEvents } = useNuxtApp();
-
-      const allInspectorEvents = $events.items.value.filter(
-        ({ type }) => type === EVENT_TYPES.PROFILER
-      );
-
-      return (
-        allInspectorEvents.length -
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length
-      );
-    },
-  },
-  methods: {
-    clearEvents() {
-      const { $events } = useNuxtApp();
-
-      return $events.removeByType(EVENT_TYPES.PROFILER);
-    },
-    toggleUpdate() {
-      const { $cachedEvents } = useNuxtApp();
-
-      if (this.isEventsPaused) {
-        $cachedEvents.runUpdatesByType(EVENT_TYPES.PROFILER);
-      } else {
-        $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
-      }
-    },
   },
 });
 </script>

@@ -34,37 +34,16 @@ export const useEventStore = defineStore("useEventStore", {
     events: [] as ServerEvent<unknown>[],
     cachedEventsMap: initialCachedEventsMap,
   }),
-  getters: {
-    rayEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.RAY_DUMP]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.RAY_DUMP),
-    varDumpEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.VAR_DUMP]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.VAR_DUMP),
-    sentryEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.SENTRY]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.SENTRY),
-    inspectorEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.INSPECTOR]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.INSPECTOR),
-    profilerEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.PROFILER]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.PROFILER),
-    smtpEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.SMTP]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.SMTP),
-    httpDumpEvents: ({ events, cachedEventsMap }) =>
-      getNotEmptyArrayOrNull(cachedEventsMap[EVENT_TYPES.HTTP_DUMP]) ||
-      events.filter(({ type }) => type === EVENT_TYPES.HTTP_DUMP),
-  },
   actions: {
     removeEventById(eventUuid: EventId) {
-      const eventType = this.events.find(({ uuid }) => uuid === eventUuid)?.type;
+      const eventType = this.events.find(
+        ({ uuid }) => uuid === eventUuid
+      )?.type;
 
       if (eventType) {
-        this.cachedEventsMap[eventType] = this.cachedEventsMap[eventType].filter(
-          ({ uuid }) => uuid !== eventUuid
-        );
+        this.cachedEventsMap[eventType] = this.cachedEventsMap[
+          eventType
+        ].filter(({ uuid }) => uuid !== eventUuid);
       }
 
       this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
@@ -75,7 +54,7 @@ export const useEventStore = defineStore("useEventStore", {
       this.cachedEventsMap = initialCachedEventsMap;
     },
     removeEventsByType(eventType: OneOfValues<typeof EVENT_TYPES>) {
-      this.cachedEventsMap[eventType].length = 0
+      this.cachedEventsMap[eventType].length = 0;
       this.events = this.events.filter(({ type }) => type !== eventType);
     },
     addEvents(events: ServerEvent<unknown>[]) {

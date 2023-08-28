@@ -76,15 +76,15 @@ const TemplateList: Story = (args) => ({
 
     return {
       args,
-      eventsList: [monologEventMock,sentryEventMock,smtpEventMock,varDumpEventMock,profilerEventMock,inspectorEventMock,httpDumpEventMock]
+      visibleEvents: [monologEventMock,sentryEventMock,smtpEventMock,varDumpEventMock,profilerEventMock,inspectorEventMock,httpDumpEventMock]
     };
   },
-  template: `<PreviewEventMapper class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>`,
+  template: `<PreviewEventMapper class="border-b" v-for="event in visibleEvents" :event="event" :key="event.uuid"/>`,
 });
 
 
-export const EventsList = TemplateList.bind({});
+export const visibleEvents = TemplateList.bind({});
 
-EventsList.args = {
+visibleEvents.args = {
   event: inspectorEventMock,
 };

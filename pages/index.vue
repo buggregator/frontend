@@ -8,7 +8,7 @@
         <NuxtLink :disabled="true">{{ title }}</NuxtLink>
       </template>
 
-      <template v-if="Boolean(eventsType)" #controls>
+      <template v-if="Boolean(type)" #controls>
         <button
           class="events-page__btn-stop-events"
           :class="{ 'events-page__btn-stop-events--active': isEventsPaused }"
@@ -26,16 +26,16 @@
       </template>
     </PageHeader>
 
-    <main v-if="events.length" class="events-page__events">
+    <main v-if="visibleEvents.length" class="events-page__events">
       <PreviewEventMapper
-        v-for="event in events"
+        v-for="event in visibleEvents"
         :key="event.uuid"
         :event="event"
         class="events-page__event"
       />
     </main>
 
-    <section v-if="!events.length" class="events-page__welcome">
+    <section v-if="!visibleEvents.length" class="events-page__welcome">
       <PagePlaceholder class="events-page__tips" />
     </section>
   </div>
@@ -65,30 +65,65 @@ export default defineComponent({
       return {
         events: $events.items,
         title: "",
-        eventsType: null,
+        type: null,
       };
     }
     return {
       events: [],
       title: "",
-      eventsType: null,
+      type: null,
     };
   },
   computed: {
+    allEvents() {
+      const { $events } = useNuxtApp();
+
+      if (this.type) {
+        return $events.items.value.filter(({ type }) => type === this.type);
+      }
+
+      return $events.items.value;
+    },
+    cachedEvents() {
+      const { $cachedEvents } = useNuxtApp();
+
+      if (this.type) {
+        return $cachedEvents.savedEventsByType.value[this.type];
+      }
+
+      return [];
+    },
     isEventsPaused() {
-      return false;
+      return this.cachedEvents.length > 0;
+    },
+    visibleEvents() {
+      return this.isEventsPaused ? this.cachedEvents : this.allEvents;
     },
     hiddenEventsCount() {
-      return 0;
+      return this.allEvents.length - this.cachedEvents.length;
     },
   },
   methods: {
     clearEvents() {
       const { $events } = useNuxtApp();
 
+      if (this.type) {
+        return $events.removeByType(this.type);
+      }
+
       return $events.removeAll();
     },
-    toggleUpdate() {},
+    toggleUpdate() {
+      if (this.type) {
+        const { $cachedEvents } = useNuxtApp();
+
+        if (this.isEventsPaused) {
+          $cachedEvents.runUpdatesByType(this.type);
+        } else {
+          $cachedEvents.stopUpdatesByType(this.type);
+        }
+      }
+    },
   },
 });
 </script>

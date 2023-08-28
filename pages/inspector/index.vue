@@ -15,60 +15,22 @@ export default defineComponent({
       }
 
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.INSPECTOR],
+        events: $events.items,
         title: "Inspector",
-        eventsType: EVENT_TYPES.INSPECTOR,
+        type: EVENT_TYPES.INSPECTOR,
       };
     }
 
     return {
       events: [],
       title: "Inspector",
-      eventsType: EVENT_TYPES.INSPECTOR,
+      type: EVENT_TYPES.INSPECTOR,
     };
   },
   head() {
     return {
       title: `Inspector [${this.events.length}] | Buggregator`,
     };
-  },
-  computed: {
-    isEventsPaused() {
-      const { $cachedEvents } = useNuxtApp();
-
-      return (
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR] &&
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR].length > 0
-      );
-    },
-    hiddenEventsCount() {
-      const { $events, $cachedEvents } = useNuxtApp();
-
-      const allInspectorEvents = $events.items.value.filter(
-        ({ type }) => type === EVENT_TYPES.INSPECTOR
-      );
-
-      return (
-        allInspectorEvents.length -
-        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR].length
-      );
-    },
-  },
-  methods: {
-    clearEvents() {
-      const { $events } = useNuxtApp();
-
-      return $events.removeByType(EVENT_TYPES.INSPECTOR);
-    },
-    toggleUpdate() {
-      const { $cachedEvents } = useNuxtApp();
-
-      if (this.isEventsPaused) {
-        $cachedEvents.runUpdatesByType(EVENT_TYPES.INSPECTOR);
-      } else {
-        $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
-      }
-    },
   },
 });
 </script>
