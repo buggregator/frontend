@@ -8,10 +8,11 @@
         <NuxtLink :disabled="true">{{ title }}</NuxtLink>
       </template>
 
-      <template v-if="Boolean(type)" #controls>
+      <template #controls>
         <button
           class="events-page__btn-stop-events"
           :class="{ 'events-page__btn-stop-events--active': isEventsPaused }"
+          :disabled="visibleEvents.length === 0"
           @click="toggleUpdate"
         >
           {{ isEventsPaused ? "❚ ❚ Pause Fetching" : "▶ Auto Fetching" }}
@@ -146,6 +147,10 @@ export default defineComponent({
 
 .events-page__btn-stop-events {
   @apply mr-3 text-xs text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+
+  &[disabled] {
+    @apply hover:opacity-40;
+  }
 }
 
 .events-page__btn-stop-events--active {
