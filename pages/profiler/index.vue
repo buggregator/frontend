@@ -17,18 +17,6 @@ export default defineComponent({
         events: $events.itemsGroupByType[EVENT_TYPES.PROFILER],
         title: "Profiler",
         eventsType: EVENT_TYPES.PROFILER,
-        savedEventsByType: $cachedEvents.savedEventsByType,
-        clearEvents: () => $events.removeByType(EVENT_TYPES.PROFILER),
-        toggleUpdate: () => {
-          if (
-            $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length >
-            0
-          ) {
-            $cachedEvents.runUpdatesByType(EVENT_TYPES.PROFILER);
-          } else {
-            $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
-          }
-        },
       };
     }
 
@@ -36,15 +24,50 @@ export default defineComponent({
       events: [],
       title: "Profiler",
       eventsType: EVENT_TYPES.PROFILER,
-      savedEventsByType: {},
-      toggleUpdate: () => {},
-      clearEvents: () => {},
     };
   },
   head() {
     return {
       title: `Profiler [${this.events.length}] | Buggregator`,
     };
+  },
+  computed: {
+    isEventsPaused() {
+      const { $cachedEvents } = useNuxtApp();
+
+      return (
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER] &&
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length > 0
+      );
+    },
+    hiddenEventsCount() {
+      const { $events, $cachedEvents } = useNuxtApp();
+
+      const allInspectorEvents = $events.items.value.filter(
+        ({ type }) => type === EVENT_TYPES.PROFILER
+      );
+
+      return (
+        allInspectorEvents.length -
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.PROFILER].length
+      );
+    },
+  },
+  methods: {
+    clearEvents() {
+      const { $events } = useNuxtApp();
+
+      return $events.removeByType(EVENT_TYPES.PROFILER);
+    },
+    toggleUpdate() {
+      const { $cachedEvents } = useNuxtApp();
+
+      if (this.isEventsPaused) {
+        $cachedEvents.runUpdatesByType(EVENT_TYPES.PROFILER);
+      } else {
+        $cachedEvents.stopUpdatesByType(EVENT_TYPES.PROFILER);
+      }
+    },
   },
 });
 </script>

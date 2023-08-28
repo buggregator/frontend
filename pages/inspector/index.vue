@@ -8,7 +8,7 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events, $cachedEvents } = useNuxtApp();
+      const { $events } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
@@ -18,18 +18,6 @@ export default defineComponent({
         events: $events.itemsGroupByType[EVENT_TYPES.INSPECTOR],
         title: "Inspector",
         eventsType: EVENT_TYPES.INSPECTOR,
-        savedEventsByType: $cachedEvents.savedEventsByType,
-        clearEvents: () => $events.removeByType(EVENT_TYPES.INSPECTOR),
-        toggleUpdate: () => {
-          if (
-            $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR]
-              .length > 0
-          ) {
-            $cachedEvents.runUpdatesByType(EVENT_TYPES.INSPECTOR);
-          } else {
-            $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
-          }
-        },
       };
     }
 
@@ -37,15 +25,50 @@ export default defineComponent({
       events: [],
       title: "Inspector",
       eventsType: EVENT_TYPES.INSPECTOR,
-      savedEventsByType: {},
-      toggleUpdate: () => {},
-      clearEvents: () => {},
     };
   },
   head() {
     return {
       title: `Inspector [${this.events.length}] | Buggregator`,
     };
+  },
+  computed: {
+    isEventsPaused() {
+      const { $cachedEvents } = useNuxtApp();
+
+      return (
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR] &&
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR].length > 0
+      );
+    },
+    hiddenEventsCount() {
+      const { $events, $cachedEvents } = useNuxtApp();
+
+      const allInspectorEvents = $events.items.value.filter(
+        ({ type }) => type === EVENT_TYPES.INSPECTOR
+      );
+
+      return (
+        allInspectorEvents.length -
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.INSPECTOR].length
+      );
+    },
+  },
+  methods: {
+    clearEvents() {
+      const { $events } = useNuxtApp();
+
+      return $events.removeByType(EVENT_TYPES.INSPECTOR);
+    },
+    toggleUpdate() {
+      const { $cachedEvents } = useNuxtApp();
+
+      if (this.isEventsPaused) {
+        $cachedEvents.runUpdatesByType(EVENT_TYPES.INSPECTOR);
+      } else {
+        $cachedEvents.stopUpdatesByType(EVENT_TYPES.INSPECTOR);
+      }
+    },
   },
 });
 </script>

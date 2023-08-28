@@ -17,17 +17,6 @@ export default defineComponent({
         events: $events.itemsGroupByType[EVENT_TYPES.SENTRY],
         title: "Sentry",
         eventsType: EVENT_TYPES.SENTRY,
-        savedEventsByType: $cachedEvents.savedEventsByType,
-        clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
-        toggleUpdate: () => {
-          if (
-            $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length > 0
-          ) {
-            $cachedEvents.runUpdatesByType(EVENT_TYPES.SENTRY);
-          } else {
-            $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
-          }
-        },
       };
     }
 
@@ -35,15 +24,50 @@ export default defineComponent({
       events: [],
       title: "Sentry",
       eventsType: EVENT_TYPES.SENTRY,
-      savedEventsByType: {},
-      toggleUpdate: () => {},
-      clearEvents: () => {},
     };
   },
   head() {
     return {
       title: `Sentry [${this.events.length}] | Buggregator`,
     };
+  },
+  computed: {
+    isEventsPaused() {
+      const { $cachedEvents } = useNuxtApp();
+
+      return (
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY] &&
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length > 0
+      );
+    },
+    hiddenEventsCount() {
+      const { $events, $cachedEvents } = useNuxtApp();
+
+      const allInspectorEvents = $events.items.value.filter(
+        ({ type }) => type === EVENT_TYPES.SENTRY
+      );
+
+      return (
+        allInspectorEvents.length -
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.SENTRY].length
+      );
+    },
+  },
+  methods: {
+    clearEvents() {
+      const { $events } = useNuxtApp();
+
+      return $events.removeByType(EVENT_TYPES.SENTRY);
+    },
+    toggleUpdate() {
+      const { $cachedEvents } = useNuxtApp();
+
+      if (this.isEventsPaused) {
+        $cachedEvents.runUpdatesByType(EVENT_TYPES.SENTRY);
+      } else {
+        $cachedEvents.stopUpdatesByType(EVENT_TYPES.SENTRY);
+      }
+    },
   },
 });
 </script>

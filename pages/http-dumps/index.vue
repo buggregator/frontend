@@ -8,7 +8,7 @@ export default defineComponent({
   extends: PageIndex,
   setup() {
     if (process.client) {
-      const { $events, $cachedEvents } = useNuxtApp();
+      const { $events } = useNuxtApp();
 
       if (!$events?.items?.value.length) {
         $events.getAll();
@@ -18,18 +18,6 @@ export default defineComponent({
         events: $events.itemsGroupByType[EVENT_TYPES.HTTP_DUMP],
         title: "Http dumps",
         eventsType: EVENT_TYPES.HTTP_DUMP,
-        savedEventsByType: $cachedEvents.savedEventsByType,
-        clearEvents: () => $events.removeByType(EVENT_TYPES.HTTP_DUMP),
-        toggleUpdate: () => {
-          if (
-            $cachedEvents.savedEventsByType.value[EVENT_TYPES.HTTP_DUMP]
-              .length > 0
-          ) {
-            $cachedEvents.runUpdatesByType(EVENT_TYPES.HTTP_DUMP);
-          } else {
-            $cachedEvents.stopUpdatesByType(EVENT_TYPES.HTTP_DUMP);
-          }
-        },
       };
     }
 
@@ -37,15 +25,50 @@ export default defineComponent({
       events: [],
       title: "Http dumps",
       eventsType: EVENT_TYPES.HTTP_DUMP,
-      savedEventsByType: {},
-      toggleUpdate: () => {},
-      clearEvents: () => {},
     };
   },
   head() {
     return {
       title: `Http dumps [${this.events.length}] | Buggregator`,
     };
+  },
+  computed: {
+    isEventsPaused() {
+      const { $cachedEvents } = useNuxtApp();
+
+      return (
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.HTTP_DUMP] &&
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.HTTP_DUMP].length > 0
+      );
+    },
+    hiddenEventsCount() {
+      const { $events, $cachedEvents } = useNuxtApp();
+
+      const allInspectorEvents = $events.items.value.filter(
+        ({ type }) => type === EVENT_TYPES.HTTP_DUMP
+      );
+
+      return (
+        allInspectorEvents.length -
+        $cachedEvents.savedEventsByType.value[EVENT_TYPES.HTTP_DUMP].length
+      );
+    },
+  },
+  methods: {
+    clearEvents() {
+      const { $events } = useNuxtApp();
+
+      return $events.removeByType(EVENT_TYPES.HTTP_DUMP);
+    },
+    toggleUpdate() {
+      const { $cachedEvents } = useNuxtApp();
+
+      if (this.isEventsPaused) {
+        $cachedEvents.runUpdatesByType(EVENT_TYPES.HTTP_DUMP);
+      } else {
+        $cachedEvents.stopUpdatesByType(EVENT_TYPES.HTTP_DUMP);
+      }
+    },
   },
 });
 </script>

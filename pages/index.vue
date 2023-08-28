@@ -1,20 +1,28 @@
 <template>
   <div class="events-page">
-    <PageHeader
-      button-title="Clear events"
-      :is-stop-update="
-        savedEventsByType[eventsType] &&
-        savedEventsByType[eventsType].length > 0
-      "
-      :is-visible-stop-update="Boolean(eventsType)"
-      @delete="clearEvents"
-      @toggle-update="toggleUpdate"
-    >
+    <PageHeader button-title="Clear events" @delete="clearEvents">
       <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
       <template v-if="title">
         <span>&nbsp;/&nbsp;</span>
         <NuxtLink :disabled="true">{{ title }}</NuxtLink>
+      </template>
+
+      <template v-if="Boolean(eventsType)" #controls>
+        <button
+          class="events-page__btn-stop-events"
+          :class="{ 'events-page__btn-stop-events--active': isEventsPaused }"
+          @click="toggleUpdate"
+        >
+          {{ isEventsPaused ? "❚ ❚ Pause Fetching" : "▶ Auto Fetching" }}
+          <span
+            v-if="isEventsPaused && hiddenEventsCount"
+            class="events-page__btn-stop-events-count"
+            :title="hiddenEventsCount + ' new events'"
+          >
+            {{ hiddenEventsCount }}
+          </span>
+        </button>
       </template>
     </PageHeader>
 
@@ -57,20 +65,30 @@ export default defineComponent({
       return {
         events: $events.items,
         title: "",
-        savedEventsByType: {},
         eventsType: null,
-        clearEvents: $events.removeAll,
-        toggleUpdate: () => {},
       };
     }
     return {
       events: [],
       title: "",
-      savedEventsByType: {},
       eventsType: null,
-      clearEvents: () => {},
-      toggleUpdate: () => {},
     };
+  },
+  computed: {
+    isEventsPaused() {
+      return false;
+    },
+    hiddenEventsCount() {
+      return 0;
+    },
+  },
+  methods: {
+    clearEvents() {
+      const { $events } = useNuxtApp();
+
+      return $events.removeAll();
+    },
+    toggleUpdate() {},
   },
 });
 </script>
@@ -95,5 +113,19 @@ export default defineComponent({
 
 .events-page__welcome {
   @apply flex-1 p-4 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-800 w-full h-full min-h-screen;
+}
+
+.events-page__btn-stop-events {
+  @apply mr-3 text-xs text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+}
+
+.events-page__btn-stop-events--active {
+  @apply opacity-100 text-blue-500;
+}
+
+.events-page__btn-stop-events-count {
+  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
+
+  transform: translate(60%, -60%);
 }
 </style>
