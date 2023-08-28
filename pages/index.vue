@@ -47,6 +47,7 @@ import PagePlaceholder from "~/components/PagePlaceholder/PagePlaceholder.vue";
 import PageHeader from "~/components/PageHeader/PageHeader.vue";
 import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
+import { ALL_EVENTS } from "~/config/constants";
 
 export default defineComponent({
   components: {
@@ -65,33 +66,28 @@ export default defineComponent({
       return {
         events: $events.items,
         title: "",
-        type: null,
+        type: ALL_EVENTS,
       };
     }
     return {
       events: [],
       title: "",
-      type: null,
+      type: ALL_EVENTS,
     };
   },
   computed: {
     allEvents() {
       const { $events } = useNuxtApp();
 
-      if (this.type) {
-        return $events.items.value.filter(({ type }) => type === this.type);
+      if (this.type === ALL_EVENTS) {
+        return $events.items.value;
       }
-
-      return $events.items.value;
+      return $events.items.value.filter(({ type }) => type === this.type);
     },
     cachedEvents() {
       const { $cachedEvents } = useNuxtApp();
 
-      if (this.type) {
-        return $cachedEvents.savedEventsByType.value[this.type];
-      }
-
-      return [];
+      return $cachedEvents.savedEventsByType.value[this.type];
     },
     isEventsPaused() {
       return this.cachedEvents.length > 0;
@@ -107,21 +103,19 @@ export default defineComponent({
     clearEvents() {
       const { $events } = useNuxtApp();
 
-      if (this.type) {
-        return $events.removeByType(this.type);
+      if (this.type === ALL_EVENTS) {
+        return $events.removeAll();
       }
 
-      return $events.removeAll();
+      return $events.removeByType(this.type);
     },
     toggleUpdate() {
-      if (this.type) {
-        const { $cachedEvents } = useNuxtApp();
+      const { $cachedEvents } = useNuxtApp();
 
-        if (this.isEventsPaused) {
-          $cachedEvents.runUpdatesByType(this.type);
-        } else {
-          $cachedEvents.stopUpdatesByType(this.type);
-        }
+      if (this.isEventsPaused) {
+        $cachedEvents.runUpdatesByType(this.type);
+      } else {
+        $cachedEvents.stopUpdatesByType(this.type);
       }
     },
   },

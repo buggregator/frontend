@@ -9,6 +9,8 @@ export const EVENT_TYPES = {
   RAY_DUMP: "ray",
 };
 
+export const ALL_EVENTS = 'ALL EVENTS'
+
 export const RAY_EVENT_TYPES = {
   LOG: "log",
   // SIZE: "size",

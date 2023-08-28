@@ -6,13 +6,12 @@ import {
   OneOfValues,
   Profiler,
   RayDump,
+  Sentry,
   ServerEvent,
   SMTP,
   VarDump,
-  Sentry,
 } from "~/config/types";
-import { EVENT_TYPES } from "~/config/constants";
-import { getNotEmptyArrayOrNull } from "~/utils/arrays";
+import { ALL_EVENTS, EVENT_TYPES } from "~/config/constants";
 
 type TCachedEventsEmptyMap = Record<
   OneOfValues<typeof EVENT_TYPES>,
@@ -27,6 +26,7 @@ const initialCachedEventsMap: TCachedEventsEmptyMap = {
   [EVENT_TYPES.RAY_DUMP]: [] as ServerEvent<RayDump>[],
   [EVENT_TYPES.VAR_DUMP]: [] as ServerEvent<VarDump>[],
   [EVENT_TYPES.HTTP_DUMP]: [] as ServerEvent<HttpDump>[],
+  [ALL_EVENTS]: [] as ServerEvent<unknown>[],
 };
 
 export const useEventStore = defineStore("useEventStore", {
@@ -43,6 +43,12 @@ export const useEventStore = defineStore("useEventStore", {
       if (eventType) {
         this.cachedEventsMap[eventType] = this.cachedEventsMap[
           eventType
+        ].filter(({ uuid }) => uuid !== eventUuid);
+      }
+
+      if (this.cachedEventsMap[ALL_EVENTS].length) {
+        this.cachedEventsMap[ALL_EVENTS] = this.cachedEventsMap[
+          ALL_EVENTS
         ].filter(({ uuid }) => uuid !== eventUuid);
       }
 
@@ -77,14 +83,16 @@ export const useEventStore = defineStore("useEventStore", {
         this.events.find(({ uuid }) => String(uuid) === String(id)) || null
       );
     },
-    setCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES>) {
+    setCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>) {
       this.events
-        .filter(({ type }) => type === eventType)
+        .filter(({ type }) =>
+          eventType === ALL_EVENTS ? true : type === eventType
+        )
         .forEach((event) => {
           this.cachedEventsMap[eventType].push(event);
         });
     },
-    removeCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES>) {
+    removeCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>) {
       this.cachedEventsMap[eventType].length = 0;
     },
   },
