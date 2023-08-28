@@ -49,7 +49,6 @@ export default defineNuxtPlugin(() => {
     provide: {
       events: {
         items: events,
-        getItemById: eventsStore.getEventById,
         buildItemFetchUrl: makeEventUrl,
         getAll,
         removeAll,

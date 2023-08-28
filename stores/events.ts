@@ -78,11 +78,6 @@ export const useEventStore = defineStore("useEventStore", {
         }
       });
     },
-    getEventById(id: EventId): ServerEvent<unknown> | null {
-      return (
-        this.events.find(({ uuid }) => String(uuid) === String(id)) || null
-      );
-    },
     setCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>) {
       this.events
         .filter(({ type }) =>
