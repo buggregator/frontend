@@ -11,8 +11,8 @@
       :event-type="event.type"
       :event-id="event.id"
       :tags="normalizedTags"
-      :is-open="!isCollapsed && !isOptimised"
-      :is-visible-controls="isVisibleControls"
+      :is-open="!isCollapsed && !isOptimized"
+      :is-visible-controls="isVisibleControls && !isOptimized"
       @toggle-view="toggle"
       @delete="deleteEvent"
       @copy="copyCode"
@@ -20,7 +20,7 @@
     />
 
     <div
-      v-if="!isCollapsed && !isOptimised"
+      v-if="!isCollapsed && !isOptimized"
       ref="event_body"
       class="preview-card__body"
     >
@@ -29,7 +29,7 @@
 
     <PreviewCardFooter
       v-if="
-        !isCollapsed && !isOptimised && (normalizedOrigin || event.serverName)
+        !isCollapsed && !isOptimized && (normalizedOrigin || event.serverName)
       "
       class="preview-card__footer"
       :server-name="event.serverName"
@@ -77,7 +77,7 @@ export default defineComponent({
   data() {
     return {
       isCollapsed: false,
-      isOptimised: false,
+      isOptimized: false,
       isVisibleControls: true,
     };
   },
@@ -147,20 +147,23 @@ export default defineComponent({
     },
     optimiseRenderHidden() {
       return debounce(() => {
-        const { top, height } = this.$refs.event.getBoundingClientRect();
-        const extraDelta = height;
-        const isVisible =
-          top - extraDelta <= window.innerHeight &&
-          top + height + extraDelta * 2 >= 0;
+        if (this.$refs.event) {
+          const eventNode = this.$refs.event as HTMLElement;
+          const { top, height } = eventNode.getBoundingClientRect();
+          const extraDelta = height;
+          const isVisible =
+            top - extraDelta <= window.innerHeight &&
+            top + height + extraDelta * 2 >= 0;
 
-        if (!isVisible && !this.isOptimised) {
-          this.isOptimised = true;
-          this.$refs.event.style.height = `${this.$refs.event.clientHeight}px`;
-        } else if (isVisible && this.isOptimised) {
-          this.isOptimised = false;
-          this.$refs.event.style.height = "auto";
+          if (!isVisible && !this.isOptimized) {
+            this.isOptimized = true;
+            eventNode.style.height = `${eventNode.clientHeight}px`;
+          } else if (isVisible && this.isOptimized) {
+            this.isOptimized = false;
+            eventNode.style.height = "auto";
+          }
         }
-      }, 50);
+      }, 30);
     },
   },
 });
