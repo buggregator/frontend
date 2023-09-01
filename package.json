@@ -70,6 +70,7 @@
     "flame-chart-js": "^2.3.1",
     "highlight.js": "^11.7.0",
     "html-to-image": "^1.11.4",
+    "lodash.debounce": "^4.0.8",
     "moment": "^2.29.4",
     "nuxt": "3.3.3",
     "pinia": "^2.0.30",

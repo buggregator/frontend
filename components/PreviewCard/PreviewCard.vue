@@ -11,7 +11,7 @@
       :event-type="event.type"
       :event-id="event.id"
       :tags="normalizedTags"
-      :is-open="!isCollapsed"
+      :is-open="!isCollapsed && !isOptimised"
       :is-visible-controls="isVisibleControls"
       @toggle-view="toggle"
       @delete="deleteEvent"
@@ -19,12 +19,18 @@
       @download="downloadImage"
     />
 
-    <div v-if="!isCollapsed" ref="event_body" class="preview-card__body">
+    <div
+      v-if="!isCollapsed && !isOptimised"
+      ref="event_body"
+      class="preview-card__body"
+    >
       <slot />
     </div>
 
     <PreviewCardFooter
-      v-if="!isCollapsed && (normalizedOrigin || event.serverName)"
+      v-if="
+        !isCollapsed && !isOptimised && (normalizedOrigin || event.serverName)
+      "
       class="preview-card__footer"
       :server-name="event.serverName"
       :origin-config="normalizedOrigin"
@@ -34,8 +40,9 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { toPng, toBlob } from "html-to-image";
+import { toBlob, toPng } from "html-to-image";
 import download from "downloadjs";
+import debounce from "lodash.debounce";
 import PreviewCardFooter from "~/components/PreviewCardFooter/PreviewCardFooter.vue";
 import PreviewCardHeader from "~/components/PreviewCardHeader/PreviewCardHeader.vue";
 import { NormalizedEvent } from "~/config/types";
@@ -50,7 +57,7 @@ export default defineComponent({
   },
   props: {
     event: {
-      type: Object as PropType<NormalizedEvent<unknown>>,
+      type: Object as PropType<NormalizedEvent>,
       required: true,
     },
   },
@@ -70,6 +77,7 @@ export default defineComponent({
   data() {
     return {
       isCollapsed: false,
+      isOptimised: false,
       isVisibleControls: true,
     };
   },
@@ -92,6 +100,12 @@ export default defineComponent({
     fileName(): string {
       return `${this.event.type}-${this.event.id}.png`;
     },
+  },
+  mounted() {
+    window.addEventListener("scroll", this.optimiseRenderHidden());
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.optimiseRenderHidden());
   },
   methods: {
     toggle(): void {
@@ -130,6 +144,23 @@ export default defineComponent({
             this.changeVisibleControls(true);
           });
       }
+    },
+    optimiseRenderHidden() {
+      return debounce(() => {
+        const { top, height } = this.$refs.event.getBoundingClientRect();
+        const extraDelta = height;
+        const isVisible =
+          top - extraDelta <= window.innerHeight &&
+          top + height + extraDelta * 2 >= 0;
+
+        if (!isVisible && !this.isOptimised) {
+          this.isOptimised = true;
+          this.$refs.event.style.height = `${this.$refs.event.clientHeight}px`;
+        } else if (isVisible && this.isOptimised) {
+          this.isOptimised = false;
+          this.$refs.event.style.height = "auto";
+        }
+      }, 50);
     },
   },
 });
