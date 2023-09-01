@@ -40,29 +40,25 @@ export default defineNuxtPlugin(() => {
     })
   }
 
-  const {events, varDumpEvents, sentryEvents, inspectorEvents, profilerEvents, smtpEvents, rayEvents, httpDumpEvents} = storeToRefs(eventsStore)
-
-  const itemsGroupByType = {
-    [EVENT_TYPES.SENTRY]: sentryEvents,
-    [EVENT_TYPES.INSPECTOR]: inspectorEvents,
-    [EVENT_TYPES.PROFILER]: profilerEvents,
-    [EVENT_TYPES.SMTP]: smtpEvents,
-    [EVENT_TYPES.RAY_DUMP]: rayEvents,
-    [EVENT_TYPES.VAR_DUMP]: varDumpEvents,
-    [EVENT_TYPES.HTTP_DUMP]: httpDumpEvents,
-  }
+  const {
+    events,
+    cachedEventsMap,
+  } = storeToRefs(eventsStore)
 
   return {
     provide: {
       events: {
         items: events,
-        itemsGroupByType,
-        getItemById: eventsStore.getEventById,
         buildItemFetchUrl: makeEventUrl,
         getAll,
         removeAll,
         removeByType,
         removeById,
+      },
+      cachedEvents: {
+        savedEventsByType: cachedEventsMap,
+        stopUpdatesByType: eventsStore.setCachedEvents,
+        runUpdatesByType: eventsStore.removeCachedEvents,
       }
     }
   }

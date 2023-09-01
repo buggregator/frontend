@@ -10,21 +10,21 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
-      if (!$events?.items?.length) {
+      if (!$events?.items?.value?.length) {
         $events.getAll();
       }
 
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.INSPECTOR],
+        events: $events.items,
         title: "Inspector",
-        clearEvents: () => $events.removeByType(EVENT_TYPES.INSPECTOR),
+        type: EVENT_TYPES.INSPECTOR,
       };
     }
 
     return {
       events: [],
       title: "Inspector",
-      clearEvents: () => {},
+      type: EVENT_TYPES.INSPECTOR,
     };
   },
   head() {

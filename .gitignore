@@ -1,3 +1,5 @@
+# Project #
+######################
 node_modules
 *.log
 .nuxt
@@ -7,4 +9,14 @@ nuxt.d.ts
 package-lock.json
 dist
 .env
-.idea/
+
+
+# Custom #
+######################
+.cache/*
+/.idea
+/.vscode
+secrets.json
+.ruby-version
+yarn.lock
+*.orig

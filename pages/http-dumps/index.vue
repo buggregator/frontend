@@ -10,21 +10,21 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
-      if (!$events?.items?.length) {
+      if (!$events?.items?.value?.length) {
         $events.getAll();
       }
 
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.HTTP_DUMP],
+        events: $events.items,
         title: "Http dumps",
-        clearEvents: () => $events.removeByType(EVENT_TYPES.HTTP_DUMP),
+        type: EVENT_TYPES.HTTP_DUMP,
       };
     }
 
     return {
       events: [],
       title: "Http dumps",
-      clearEvents: () => {},
+      type: EVENT_TYPES.HTTP_DUMP,
     };
   },
   head() {

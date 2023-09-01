@@ -1,14 +1,18 @@
 <template>
   <header class="page-header">
-    <div class="page-header__title"><slot />&nbsp</div>
+    <div class="page-header__title"><slot />&nbsp;</div>
 
-    <button
-      v-if="buttonTitle"
-      class="page-header__btn-clear"
-      @click="buttonClick"
-    >
-      {{ buttonTitle }}
-    </button>
+    <div class="page-header__controls">
+      <slot name="controls" />
+
+      <button
+        v-if="buttonTitle"
+        class="page-header__btn-clear"
+        @click="buttonClick"
+      >
+        {{ buttonTitle }}
+      </button>
+    </div>
   </header>
 </template>
 
@@ -45,6 +49,10 @@ export default defineComponent({
 }
 
 .page-header__title {
+}
+
+.page-header__controls {
+  @apply flex items-center flex-row;
 }
 
 .page-header__btn-clear {

@@ -9,17 +9,21 @@ export default defineComponent({
   setup() {
     if (process.client) {
       const { $events } = useNuxtApp();
+
+      if (!$events?.items?.value?.length) {
+        $events.getAll();
+      }
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.SENTRY],
+        events: $events.items,
         title: "Sentry",
-        clearEvents: () => $events.removeByType(EVENT_TYPES.SENTRY),
+        type: EVENT_TYPES.SENTRY,
       };
     }
 
     return {
       events: [],
       title: "Sentry",
-      clearEvents: () => {},
+      type: EVENT_TYPES.SENTRY,
     };
   },
   head() {

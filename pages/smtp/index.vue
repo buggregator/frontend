@@ -10,21 +10,21 @@ export default defineComponent({
     if (process.client) {
       const { $events } = useNuxtApp();
 
-      if (!$events?.items?.length) {
+      if (!$events?.items?.value?.length) {
         $events.getAll();
       }
 
       return {
-        events: $events.itemsGroupByType[EVENT_TYPES.SMTP],
+        events: $events.items,
         title: "Smtp",
-        clearEvents: () => $events.removeByType(EVENT_TYPES.SMTP),
+        type: EVENT_TYPES.SMTP,
       };
     }
 
     return {
       events: [],
       title: "Smtp",
-      clearEvents: () => {},
+      type: EVENT_TYPES.SMTP,
     };
   },
   head() {

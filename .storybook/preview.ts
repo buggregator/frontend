@@ -2,6 +2,7 @@ import {createPinia} from 'pinia';
 import {addParameters, app} from '@storybook/vue3';
 import "../assets/index.css";
 import "../assets/index";
+import "./stories.css"
 import SfdumpWrap from "../vendor/dumper";
 
 addParameters({
