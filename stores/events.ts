@@ -11,7 +11,7 @@ import {
   SMTP,
   VarDump,
 } from "~/config/types";
-import { ALL_EVENTS, EVENT_TYPES } from "~/config/constants";
+import { ALL_EVENTS, EVENT_TYPES, LOCAL_STORAGE_KEYS } from "~/config/constants";
 
 type TCachedEventsEmptyMap = Record<OneOfValues<typeof EVENT_TYPES>, EventId[]>;
 
@@ -28,7 +28,7 @@ const initialCachedEventsIdsMap: TCachedEventsEmptyMap = {
 
 const { localStorage } = window;
 const getCachedEventsIdsMap = (): TCachedEventsEmptyMap => {
-  const storageValue = localStorage?.getItem("cached_events");
+  const storageValue = localStorage?.getItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS);
 
   if (storageValue) {
     return JSON.parse(storageValue) as TCachedEventsEmptyMap;
@@ -99,7 +99,7 @@ export const useEventStore = defineStore("useEventStore", {
         });
 
       localStorage?.setItem(
-        "cached_events",
+        LOCAL_STORAGE_KEYS.CACHED_EVENTS,
         JSON.stringify(this.cachedEventsIdsMap)
       );
     },
@@ -109,7 +109,7 @@ export const useEventStore = defineStore("useEventStore", {
       this.cachedEventsIdsMap[eventType].length = 0;
 
       localStorage?.setItem(
-        "cached_events",
+        LOCAL_STORAGE_KEYS.CACHED_EVENTS,
         JSON.stringify(this.cachedEventsIdsMap)
       );
     },
