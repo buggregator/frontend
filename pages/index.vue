@@ -19,7 +19,7 @@
           <span
             v-if="isEventsPaused && hiddenEventsCount"
             class="events-page__btn-stop-events-count"
-            :title="hiddenEventsCount + ' new events'"
+            :title="titleEventsCount"
           >
             {{ hiddenEventsCount }}
           </span>
@@ -49,6 +49,7 @@ import PageHeader from "~/components/PageHeader/PageHeader.vue";
 import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
 import { ALL_EVENTS } from "~/config/constants";
+import pluralize from "pluralize";
 
 export default defineComponent({
   components: {
@@ -103,6 +104,9 @@ export default defineComponent({
     },
     hiddenEventsCount() {
       return this.allEvents.length - this.visibleEvents.length;
+    },
+    titleEventsCount() {
+      return `${pluralize("new event", this.hiddenEventsCount, true)}`;
     },
   },
   methods: {
