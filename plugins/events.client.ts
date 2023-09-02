@@ -36,7 +36,14 @@ export default defineNuxtPlugin(() => {
 
   const getAll = () => {
     getEventsAll.then((events: ServerEvent<unknown>[]) => {
-      eventsStore.addEvents(events);
+      if (events.length) {
+        eventsStore.addEvents(events);
+      } else {
+        // NOTE: clear cached events hardly
+        eventsStore.removeEvents();
+      }
+    }).catch((err) => {
+      console.error('getAll err', err);
     })
   }
 
