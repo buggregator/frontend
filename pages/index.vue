@@ -155,7 +155,7 @@ export default defineComponent({
 }
 
 .events-page__btn-stop-events {
-  @apply mr-3 text-xs text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+  @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
 
   &[disabled] {
     @apply hover:opacity-40;
