@@ -85,19 +85,24 @@ export default defineComponent({
       }
       return $events.items.value.filter(({ type }) => type === this.type);
     },
-    cachedEvents() {
+    isEventsPaused() {
       const { $cachedEvents } = useNuxtApp();
 
-      return $cachedEvents.savedEventsByType.value[this.type];
-    },
-    isEventsPaused() {
-      return this.cachedEvents.length > 0;
+      return $cachedEvents.eventsIdsByType.value[this.type].length > 0;
     },
     visibleEvents() {
-      return this.isEventsPaused ? this.cachedEvents : this.allEvents;
+      if (!this.isEventsPaused) {
+        return this.allEvents;
+      }
+
+      const { $cachedEvents } = useNuxtApp();
+
+      return this.allEvents.filter(({ uuid }) =>
+        $cachedEvents.eventsIdsByType.value[this.type].includes(uuid)
+      );
     },
     hiddenEventsCount() {
-      return this.allEvents.length - this.cachedEvents.length;
+      return this.allEvents.length - this.visibleEvents.length;
     },
   },
   methods: {

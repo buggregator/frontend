@@ -15,24 +15,24 @@ import { ALL_EVENTS, EVENT_TYPES } from "~/config/constants";
 
 type TCachedEventsEmptyMap = Record<
   OneOfValues<typeof EVENT_TYPES>,
-  ServerEvent<unknown>[]
+  EventId[]
 >;
 
-const initialCachedEventsMap: TCachedEventsEmptyMap = {
-  [EVENT_TYPES.SENTRY]: [] as ServerEvent<Sentry>[],
-  [EVENT_TYPES.INSPECTOR]: [] as ServerEvent<Inspector>[],
-  [EVENT_TYPES.PROFILER]: [] as ServerEvent<Profiler>[],
-  [EVENT_TYPES.SMTP]: [] as ServerEvent<SMTP>[],
-  [EVENT_TYPES.RAY_DUMP]: [] as ServerEvent<RayDump>[],
-  [EVENT_TYPES.VAR_DUMP]: [] as ServerEvent<VarDump>[],
-  [EVENT_TYPES.HTTP_DUMP]: [] as ServerEvent<HttpDump>[],
-  [ALL_EVENTS]: [] as ServerEvent<unknown>[],
+const initialcachedEventsIdsMap: TCachedEventsEmptyMap = {
+  [EVENT_TYPES.SENTRY]: [] as EventId[],
+  [EVENT_TYPES.INSPECTOR]: [] as EventId[],
+  [EVENT_TYPES.PROFILER]: [] as EventId[],
+  [EVENT_TYPES.SMTP]: [] as EventId[],
+  [EVENT_TYPES.RAY_DUMP]: [] as EventId[],
+  [EVENT_TYPES.VAR_DUMP]: [] as EventId[],
+  [EVENT_TYPES.HTTP_DUMP]: [] as EventId[],
+  [ALL_EVENTS]: [] as EventId[],
 };
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
-    cachedEventsMap: initialCachedEventsMap,
+    cachedEventsIdsMap: initialcachedEventsIdsMap,
   }),
   actions: {
     removeEventById(eventUuid: EventId) {
@@ -41,15 +41,15 @@ export const useEventStore = defineStore("useEventStore", {
       )?.type;
 
       if (eventType) {
-        this.cachedEventsMap[eventType] = this.cachedEventsMap[
+        this.cachedEventsIdsMap[eventType] = this.cachedEventsIdsMap[
           eventType
-        ].filter(({ uuid }) => uuid !== eventUuid);
+        ].filter((uuid) => uuid !== eventUuid);
       }
 
-      if (this.cachedEventsMap[ALL_EVENTS].length) {
-        this.cachedEventsMap[ALL_EVENTS] = this.cachedEventsMap[
+      if (this.cachedEventsIdsMap[ALL_EVENTS].length) {
+        this.cachedEventsIdsMap[ALL_EVENTS] = this.cachedEventsIdsMap[
           ALL_EVENTS
-        ].filter(({ uuid }) => uuid !== eventUuid);
+        ].filter((uuid) => uuid !== eventUuid);
       }
 
       this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
@@ -57,10 +57,10 @@ export const useEventStore = defineStore("useEventStore", {
     removeEvents() {
       this.events.length = 0;
 
-      this.cachedEventsMap = initialCachedEventsMap;
+      this.cachedEventsIdsMap = initialcachedEventsIdsMap;
     },
     removeEventsByType(eventType: OneOfValues<typeof EVENT_TYPES>) {
-      this.cachedEventsMap[eventType].length = 0;
+      this.cachedEventsIdsMap[eventType].length = 0;
       this.events = this.events.filter(({ type }) => type !== eventType);
     },
     addEvents(events: ServerEvent<unknown>[]) {
@@ -84,11 +84,11 @@ export const useEventStore = defineStore("useEventStore", {
           eventType === ALL_EVENTS ? true : type === eventType
         )
         .forEach((event) => {
-          this.cachedEventsMap[eventType].push(event);
+          this.cachedEventsIdsMap[eventType].push(event.uuid);
         });
     },
     removeCachedEvents(eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>) {
-      this.cachedEventsMap[eventType].length = 0;
+      this.cachedEventsIdsMap[eventType].length = 0;
     },
   },
 });

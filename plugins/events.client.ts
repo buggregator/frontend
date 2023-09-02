@@ -42,7 +42,7 @@ export default defineNuxtPlugin(() => {
 
   const {
     events,
-    cachedEventsMap,
+    cachedEventsIdsMap,
   } = storeToRefs(eventsStore)
 
   return {
@@ -56,7 +56,7 @@ export default defineNuxtPlugin(() => {
         removeById,
       },
       cachedEvents: {
-        savedEventsByType: cachedEventsMap,
+        eventsIdsByType: cachedEventsIdsMap,
         stopUpdatesByType: eventsStore.setCachedEvents,
         runUpdatesByType: eventsStore.removeCachedEvents,
       }
