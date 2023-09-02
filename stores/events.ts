@@ -1,15 +1,8 @@
 import { defineStore } from "pinia";
 import {
   EventId,
-  HttpDump,
-  Inspector,
   OneOfValues,
-  Profiler,
-  RayDump,
-  Sentry,
   ServerEvent,
-  SMTP,
-  VarDump,
 } from "~/config/types";
 import { ALL_EVENTS, EVENT_TYPES, LOCAL_STORAGE_KEYS } from "~/config/constants";
 
