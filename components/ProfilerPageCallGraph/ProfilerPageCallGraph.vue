@@ -3,7 +3,16 @@
     class="profiler-page-call-graph"
     :class="{ 'profiler-page-call-graph--fullscreen': isFullscreen }"
   >
+    <div v-if="metricLoading" class="profiler-page-call-graph__loading-wr">
+      <div class="profiler-page-call-graph__loading">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
     <div ref="graphviz" class="profiler-page-call-graph__graphviz"></div>
+
     <div class="profiler-page-call-graph__toolbar">
       <button title="Full screen" @click="isFullscreen = !isFullscreen">
         <IconSvg
@@ -14,21 +23,21 @@
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'cpu' }"
-        @click="metric = 'cpu'"
+        @click="setMetric('cpu')"
       >
         CPU
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'pmu' }"
-        @click="metric = 'pmu'"
+        @click="setMetric('pmu')"
       >
         Memory change
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'mu' }"
-        @click="metric = 'mu'"
+        @click="setMetric('mu')"
       >
         Memory usage
       </button>
@@ -60,14 +69,12 @@ export default defineComponent({
     return {
       isFullscreen: false,
       metric: "cpu",
+      metricLoading: false,
       threshold: 1,
     };
   },
   watch: {
     threshold(): void {
-      this.renderGraph();
-    },
-    metric(): void {
       this.renderGraph();
     },
   },
@@ -78,6 +85,15 @@ export default defineComponent({
     this.graph.destroy();
   },
   methods: {
+    setMetric(metric: string): void {
+      this.metricLoading = true;
+
+      setTimeout(() => {
+        this.metric = metric;
+        this.renderGraph();
+        this.metricLoading = false;
+      }, 0);
+    },
     buildDigraph(): string {
       const builder = new DigraphBuilder(this.event.edges);
 
@@ -131,6 +147,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .profiler-page-call-graph {
   @apply relative flex rounded border border-gray-900 h-full;
 }
@@ -151,6 +169,16 @@ export default defineComponent({
 
 .profiler-page-call-graph__toolbar-action {
   @apply text-xs uppercase text-gray-600;
+}
+
+.profiler-page-call-graph__loading-wr {
+  @apply absolute m-auto top-0 left-0 right-0 bottom-0 flex justify-center items-center;
+}
+
+.profiler-page-call-graph__loading {
+  @apply z-50;
+
+  @include loading;
 }
 
 .profiler-page-call-graph__graphviz {
