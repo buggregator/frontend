@@ -42,6 +42,23 @@
         Memory usage
       </button>
     </div>
+
+    <div
+      class="profiler-page-call-graph__toolbar profiler-page-call-graph__toolbar--right"
+    >
+      <label class="profiler-page-call-graph__toolbar-input-wr">
+        Threshold:
+
+        <input
+          class="profiler-page-call-graph__toolbar-input"
+          type="number"
+          :value="threshold"
+          :min="0"
+          :max="100"
+          @input="setThreshold($event.target.value)"
+        />
+      </label>
+    </div>
   </div>
 </template>
 
@@ -55,6 +72,7 @@ import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent, PropType } from "vue";
 import { Profiler, ProfilerEdge } from "~/config/types";
 import { addSlashes, DigraphBuilder } from "~/utils/digraph-builder";
+import debounce from "lodash.debounce";
 
 export default defineComponent({
   components: { IconSvg },
@@ -73,11 +91,6 @@ export default defineComponent({
       threshold: 1,
     };
   },
-  watch: {
-    threshold(): void {
-      this.renderGraph();
-    },
-  },
   created(): void {
     this.renderGraph();
   },
@@ -94,10 +107,21 @@ export default defineComponent({
         this.metricLoading = false;
       }, 0);
     },
-    buildDigraph(): string {
-      const builder = new DigraphBuilder(this.event.edges);
+    setThreshold(threshold: number): void {
+      this.metricLoading = true;
 
-      return builder.build(this.metric, this.threshold);
+      return debounce(() => {
+        if (!threshold || this.threshold === threshold) {
+          return;
+        }
+
+        this.threshold = threshold;
+
+        setTimeout(() => {
+          this.renderGraph();
+          this.metricLoading = false;
+        }, 0);
+      }, 1000)();
     },
 
     findEdge(name: string): ProfilerEdge | null {
@@ -139,7 +163,13 @@ export default defineComponent({
           .width("100%")
           .height("100%")
           .fit(true)
-          .renderDot(this.buildDigraph(), this.nodeHandler);
+          .renderDot(
+            new DigraphBuilder(this.event.edges).build(
+              this.metric,
+              this.threshold
+            ),
+            this.nodeHandler
+          );
       });
     },
   },
@@ -163,12 +193,24 @@ export default defineComponent({
   z-index: 9999;
 }
 
+.profiler-page-call-graph__toolbar--right {
+  @apply right-5 left-auto;
+}
+
 .profiler-page-call-graph__toolbar-icon {
   @apply w-4 h-4 fill-blue-500;
 }
 
 .profiler-page-call-graph__toolbar-action {
   @apply text-xs uppercase text-gray-600;
+}
+
+.profiler-page-call-graph__toolbar-input-wr {
+  @apply text-xs uppercase text-gray-600;
+}
+
+.profiler-page-call-graph__toolbar-input {
+  @apply border-b bg-transparent border-gray-600 text-gray-600 w-8;
 }
 
 .profiler-page-call-graph__loading-wr {
