@@ -6,7 +6,7 @@
         <span>
           Bugregator&nbsp;
           <a
-            href="https://github.com/buggregator/app"
+            href="https://github.com/buggregator"
             target="_blank"
             class="page-placeholder__link"
           >
