@@ -1,0 +1,68 @@
+.profiler-page-call-graph__graphviz svg  {
+  @apply bg-gray-700;
+
+  > text {
+    @apply font-bold text-sm;
+  }
+
+  .graph {
+    > polygon {
+      @apply fill-gray-700;
+    }
+
+    > path {
+      @apply fill-transparent;
+    }
+  }
+
+  .edge {
+    > path {
+      stroke-width: 2px;
+    }
+
+    > text {
+      @apply fill-white ml-2;
+
+      transform: translate(10px, 0px);
+    }
+  }
+
+  .node {
+    @apply cursor-pointer;
+
+    > path {
+      @apply rounded;
+
+      stroke-width: 1;
+    }
+  }
+
+  .pmu {
+    > text {
+      @apply fill-white;
+    }
+
+    > path {
+      @apply fill-red-600 stroke-red-800;
+    }
+
+    &:hover > path {
+      @apply fill-red-800;
+    }
+  }
+
+  .default {
+    > text {
+      @apply fill-gray-700;
+    }
+
+    > path {
+      @apply fill-gray-200 stroke-gray-400;
+    }
+
+    &:hover > path {
+      @apply fill-gray-300;
+    }
+  }
+
+}

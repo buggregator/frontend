@@ -54,16 +54,13 @@ export default defineComponent({
       type: Object as PropType<Profiler>,
       required: true,
     },
-    threshold: {
-      type: Number,
-      default: 1,
-    },
   },
   emits: ["hover", "hide"],
   data() {
     return {
       isFullscreen: false,
       metric: "cpu",
+      threshold: 1,
     };
   },
   watch: {
@@ -158,65 +155,6 @@ export default defineComponent({
 .profiler-page-call-graph__graphviz {
   @apply flex-1 justify-items-stretch items-stretch bg-white;
 
-  .graph {
-    > polygon {
-      @apply fill-gray-700;
-    }
-
-    > path {
-      @apply fill-transparent;
-    }
-  }
-
-  .edge {
-    > path {
-      stroke-width: 2px;
-    }
-
-    > text {
-      @apply fill-white ml-2;
-    }
-  }
-
-  .node {
-    @apply cursor-pointer;
-
-    > path {
-      @apply rounded;
-      stroke-width: 1;
-    }
-
-    &.pmu {
-      > text {
-        @apply fill-white;
-      }
-
-      > path {
-        @apply fill-red-600 stroke-red-800;
-      }
-
-      &:hover > path {
-        @apply fill-red-800;
-      }
-    }
-
-    &.default {
-      > text {
-        @apply fill-gray-700;
-      }
-
-      > path {
-        @apply fill-gray-200 stroke-gray-400;
-      }
-
-      &:hover > path {
-        @apply fill-gray-300;
-      }
-    }
-
-    > text {
-      @apply font-bold text-sm;
-    }
-  }
+  max-height: 100vh;
 }
 </style>
