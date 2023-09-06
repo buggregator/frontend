@@ -37,6 +37,9 @@ export default defineComponent({
   },
   methods: {
     renderChart(canvas: HTMLCanvasElement, flameData: FlameChartNode) {
+      if (!this.$refs.flamegraph) {
+        return;
+      }
       const { width = 1, height = 1 } = (
         this.$refs.flamegraph as HTMLElement
       ).getBoundingClientRect();
