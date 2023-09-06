@@ -93,12 +93,13 @@ export default defineComponent({
         return null;
       }
 
-      return found[1] || null;
+      return found[0] || null;
     },
     nodeHandler(): void {
       selectAll("g.node")
         .on("mouseover", (e, tag) => {
           const edge = this.findEdge(tag.key);
+
           if (!edge) {
             return;
           }
