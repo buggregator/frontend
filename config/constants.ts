@@ -46,3 +46,8 @@ export const EVENT_STATUS_COLOR_MAP = {
   DEBUG: "gray",
   SUCCESS: "green",
 };
+
+export const LOCAL_STORAGE_KEYS = {
+  CACHED_EVENTS: "cached_events",
+  THEME: "theme",
+};

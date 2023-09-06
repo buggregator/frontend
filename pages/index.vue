@@ -19,7 +19,7 @@
           <span
             v-if="isEventsPaused && hiddenEventsCount"
             class="events-page__btn-stop-events-count"
-            :title="hiddenEventsCount + ' new events'"
+            :title="titleEventsCount"
           >
             {{ hiddenEventsCount }}
           </span>
@@ -49,6 +49,7 @@ import PageHeader from "~/components/PageHeader/PageHeader.vue";
 import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
 import { ALL_EVENTS } from "~/config/constants";
+import pluralize from "pluralize";
 
 export default defineComponent({
   components: {
@@ -85,19 +86,27 @@ export default defineComponent({
       }
       return $events.items.value.filter(({ type }) => type === this.type);
     },
-    cachedEvents() {
+    isEventsPaused() {
       const { $cachedEvents } = useNuxtApp();
 
-      return $cachedEvents.savedEventsByType.value[this.type];
-    },
-    isEventsPaused() {
-      return this.cachedEvents.length > 0;
+      return $cachedEvents.eventsIdsByType.value[this.type].length > 0;
     },
     visibleEvents() {
-      return this.isEventsPaused ? this.cachedEvents : this.allEvents;
+      if (!this.isEventsPaused) {
+        return this.allEvents;
+      }
+
+      const { $cachedEvents } = useNuxtApp();
+
+      return this.allEvents.filter(({ uuid }) =>
+        $cachedEvents.eventsIdsByType.value[this.type].includes(uuid)
+      );
     },
     hiddenEventsCount() {
-      return this.allEvents.length - this.cachedEvents.length;
+      return this.allEvents.length - this.visibleEvents.length;
+    },
+    titleEventsCount() {
+      return `${pluralize("new event", this.hiddenEventsCount, true)}`;
     },
   },
   methods: {
@@ -146,7 +155,7 @@ export default defineComponent({
 }
 
 .events-page__btn-stop-events {
-  @apply mr-3 text-xs text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+  @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
 
   &[disabled] {
     @apply hover:opacity-40;
