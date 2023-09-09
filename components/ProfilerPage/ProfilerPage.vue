@@ -159,7 +159,7 @@ export default defineComponent({
 }
 
 .profiler-page__callstack {
-  @apply w-full md:w-1/5 border-r border-gray-300 dark:border-gray-500;
+  @apply w-full md:w-[250px] border-r border-gray-300 dark:border-gray-500;
 }
 
 .profiler-page__stat {

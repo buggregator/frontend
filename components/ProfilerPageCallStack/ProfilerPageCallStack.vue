@@ -8,6 +8,7 @@
           Memory
         </SortWrap>
       </div>
+
       <div class="profiler-page-callstack__header-calls">
         <SortWrap :sort="sortCalls" @changeSort="changeCallsOrder">
           Calls
@@ -116,7 +117,7 @@ export default defineComponent({
 }
 
 .profiler-page-callstack__header-calls {
-  @apply w-12;
+  @apply w-16;
 }
 
 .profiler-page-callstack__calls {

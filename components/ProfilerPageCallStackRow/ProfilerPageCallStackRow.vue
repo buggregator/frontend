@@ -62,7 +62,7 @@ export default defineComponent({
 }
 
 .profiler-page-call-stack-row__calls {
-  @apply w-12 text-center text-xs py-1;
+  @apply w-16 text-center text-xs py-1;
 }
 
 .profiler-page-call-stack-row__usage {
