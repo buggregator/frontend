@@ -73,6 +73,7 @@ import { defineComponent, PropType } from "vue";
 import { Profiler, ProfilerEdge } from "~/config/types";
 import { addSlashes, DigraphBuilder } from "~/utils/digraph-builder";
 import debounce from "lodash.debounce";
+import destroy from "d3-graphviz/src/destroy";
 
 export default defineComponent({
   components: { IconSvg },
@@ -92,7 +93,14 @@ export default defineComponent({
     };
   },
   created(): void {
-    this.renderGraph();
+    Graphviz.load().then(() => {
+      this.graph = graphviz(this.$refs.graphviz, {})
+        .width("100%")
+        .height("100%")
+        .fit(true);
+
+      this.renderGraph();
+    });
   },
   beforeUnmount() {
     this.graph.destroy();
@@ -159,19 +167,15 @@ export default defineComponent({
         });
     },
     renderGraph(): void {
-      Graphviz.load().then(() => {
-        this.graph = graphviz(this.$refs.graphviz, {})
-          .width("100%")
-          .height("100%")
-          .fit(true)
-          .renderDot(
-            new DigraphBuilder(this.event.edges).build(
-              this.metric,
-              this.threshold
-            ),
-            this.nodeHandler
-          );
-      });
+      this.graph
+        .renderDot(
+          new DigraphBuilder(this.event.edges).build(
+            this.metric,
+            this.threshold
+          ),
+          this.nodeHandler
+        )
+        .resetZoom();
     },
   },
 });
