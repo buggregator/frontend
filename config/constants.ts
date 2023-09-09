@@ -51,3 +51,10 @@ export const LOCAL_STORAGE_KEYS = {
   CACHED_EVENTS: "cached_events",
   THEME: "theme",
 };
+
+
+export const SORT_ORDER = {
+  ASC: 'asc',
+  DESC: 'desc',
+  DEFAULT: 'default',
+}
