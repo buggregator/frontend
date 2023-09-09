@@ -53,8 +53,8 @@ export const LOCAL_STORAGE_KEYS = {
 };
 
 
-export const SORT_ORDER = {
-  ASC: 'asc',
-  DESC: 'desc',
-  DEFAULT: 'default',
+export enum SORT_ORDER {
+  ASC = 'asc',
+  DESC = 'desc',
+  DEFAULT = 'default',
 }
