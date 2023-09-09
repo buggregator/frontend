@@ -73,7 +73,6 @@ import { defineComponent, PropType } from "vue";
 import { Profiler, ProfilerEdge } from "~/config/types";
 import { addSlashes, DigraphBuilder } from "~/utils/digraph-builder";
 import debounce from "lodash.debounce";
-import destroy from "d3-graphviz/src/destroy";
 
 export default defineComponent({
   components: { IconSvg },
@@ -154,7 +153,7 @@ export default defineComponent({
           }
 
           this.$emit("hover", {
-            name: edge.callee,
+            callee: edge.callee,
             cost: edge.cost,
             position: {
               x: e.pageX,
