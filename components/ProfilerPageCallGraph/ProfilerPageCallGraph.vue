@@ -110,12 +110,13 @@ export default defineComponent({
     setThreshold(threshold: number): void {
       this.metricLoading = true;
 
+      const prevThreshold = this.threshold;
+      this.threshold = threshold;
+
       return debounce(() => {
-        if (!threshold || this.threshold === threshold) {
+        if (!threshold || prevThreshold === threshold) {
           return;
         }
-
-        this.threshold = threshold;
 
         setTimeout(() => {
           this.renderGraph();
