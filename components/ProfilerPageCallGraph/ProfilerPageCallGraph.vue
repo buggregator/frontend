@@ -3,7 +3,16 @@
     class="profiler-page-call-graph"
     :class="{ 'profiler-page-call-graph--fullscreen': isFullscreen }"
   >
+    <div v-if="metricLoading" class="profiler-page-call-graph__loading-wr">
+      <div class="profiler-page-call-graph__loading">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
     <div ref="graphviz" class="profiler-page-call-graph__graphviz"></div>
+
     <div class="profiler-page-call-graph__toolbar">
       <button title="Full screen" @click="isFullscreen = !isFullscreen">
         <IconSvg
@@ -14,24 +23,41 @@
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'cpu' }"
-        @click="metric = 'cpu'"
+        @click="setMetric('cpu')"
       >
         CPU
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'pmu' }"
-        @click="metric = 'pmu'"
+        @click="setMetric('pmu')"
       >
         Memory change
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === 'mu' }"
-        @click="metric = 'mu'"
+        @click="setMetric('mu')"
       >
         Memory usage
       </button>
+    </div>
+
+    <div
+      class="profiler-page-call-graph__toolbar profiler-page-call-graph__toolbar--right"
+    >
+      <label class="profiler-page-call-graph__toolbar-input-wr">
+        Threshold:
+
+        <input
+          class="profiler-page-call-graph__toolbar-input"
+          type="number"
+          :value="threshold"
+          :min="0"
+          :max="100"
+          @input="setThreshold($event.target.value)"
+        />
+      </label>
     </div>
   </div>
 </template>
@@ -46,6 +72,7 @@ import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent, PropType } from "vue";
 import { Profiler, ProfilerEdge } from "~/config/types";
 import { addSlashes, DigraphBuilder } from "~/utils/digraph-builder";
+import debounce from "lodash.debounce";
 
 export default defineComponent({
   components: { IconSvg },
@@ -54,37 +81,55 @@ export default defineComponent({
       type: Object as PropType<Profiler>,
       required: true,
     },
-    threshold: {
-      type: Number,
-      default: 1,
-    },
   },
   emits: ["hover", "hide"],
   data() {
     return {
       isFullscreen: false,
       metric: "cpu",
+      metricLoading: false,
+      threshold: 1,
     };
   },
-  watch: {
-    threshold(): void {
-      this.renderGraph();
-    },
-    metric(): void {
-      this.renderGraph();
-    },
-  },
   created(): void {
-    this.renderGraph();
+    Graphviz.load().then(() => {
+      this.graph = graphviz(this.$refs.graphviz, {})
+        .width("100%")
+        .height("100%")
+        .fit(true);
+
+      this.renderGraph();
+    });
   },
   beforeUnmount() {
     this.graph.destroy();
   },
   methods: {
-    buildDigraph(): string {
-      const builder = new DigraphBuilder(this.event.edges);
+    setMetric(metric: string): void {
+      this.metricLoading = true;
 
-      return builder.build(this.metric, this.threshold);
+      setTimeout(() => {
+        this.metric = metric;
+        this.renderGraph();
+        this.metricLoading = false;
+      }, 0);
+    },
+    setThreshold(threshold: number): void {
+      this.metricLoading = true;
+
+      const prevThreshold = this.threshold;
+      this.threshold = threshold;
+
+      return debounce(() => {
+        if (!threshold || prevThreshold === threshold) {
+          return;
+        }
+
+        setTimeout(() => {
+          this.renderGraph();
+          this.metricLoading = false;
+        }, 0);
+      }, 1000)();
     },
 
     findEdge(name: string): ProfilerEdge | null {
@@ -96,18 +141,19 @@ export default defineComponent({
         return null;
       }
 
-      return found[1] || null;
+      return found[0] || null;
     },
     nodeHandler(): void {
       selectAll("g.node")
         .on("mouseover", (e, tag) => {
           const edge = this.findEdge(tag.key);
+
           if (!edge) {
             return;
           }
 
           this.$emit("hover", {
-            name: edge.callee,
+            callee: edge.callee,
             cost: edge.cost,
             position: {
               x: e.pageX,
@@ -120,19 +166,23 @@ export default defineComponent({
         });
     },
     renderGraph(): void {
-      Graphviz.load().then(() => {
-        this.graph = graphviz(this.$refs.graphviz, {})
-          .width("100%")
-          .height("100%")
-          .fit(true)
-          .renderDot(this.buildDigraph(), this.nodeHandler);
-      });
+      this.graph
+        .renderDot(
+          new DigraphBuilder(this.event.edges).build(
+            this.metric,
+            this.threshold
+          ),
+          this.nodeHandler
+        )
+        .resetZoom();
     },
   },
 });
 </script>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .profiler-page-call-graph {
   @apply relative flex rounded border border-gray-900 h-full;
 }
@@ -147,6 +197,10 @@ export default defineComponent({
   z-index: 9999;
 }
 
+.profiler-page-call-graph__toolbar--right {
+  @apply right-5 left-auto;
+}
+
 .profiler-page-call-graph__toolbar-icon {
   @apply w-4 h-4 fill-blue-500;
 }
@@ -155,68 +209,27 @@ export default defineComponent({
   @apply text-xs uppercase text-gray-600;
 }
 
+.profiler-page-call-graph__toolbar-input-wr {
+  @apply text-xs uppercase text-gray-600;
+}
+
+.profiler-page-call-graph__toolbar-input {
+  @apply border-b bg-transparent border-gray-600 text-gray-600 w-8;
+}
+
+.profiler-page-call-graph__loading-wr {
+  @apply absolute m-auto top-0 left-0 right-0 bottom-0 flex justify-center items-center;
+}
+
+.profiler-page-call-graph__loading {
+  @apply z-50;
+
+  @include loading;
+}
+
 .profiler-page-call-graph__graphviz {
   @apply flex-1 justify-items-stretch items-stretch bg-white;
 
-  .graph {
-    > polygon {
-      @apply fill-gray-700;
-    }
-
-    > path {
-      @apply fill-transparent;
-    }
-  }
-
-  .edge {
-    > path {
-      stroke-width: 2px;
-    }
-
-    > text {
-      @apply fill-white ml-2;
-    }
-  }
-
-  .node {
-    @apply cursor-pointer;
-
-    > path {
-      @apply rounded;
-      stroke-width: 1;
-    }
-
-    &.pmu {
-      > text {
-        @apply fill-white;
-      }
-
-      > path {
-        @apply fill-red-600 stroke-red-800;
-      }
-
-      &:hover > path {
-        @apply fill-red-800;
-      }
-    }
-
-    &.default {
-      > text {
-        @apply fill-gray-700;
-      }
-
-      > path {
-        @apply fill-gray-200 stroke-gray-400;
-      }
-
-      &:hover > path {
-        @apply fill-gray-300;
-      }
-    }
-
-    > text {
-      @apply font-bold text-sm;
-    }
-  }
+  max-height: 100vh;
 }
 </style>
