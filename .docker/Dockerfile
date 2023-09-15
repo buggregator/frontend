@@ -13,7 +13,8 @@ WORKDIR /app
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
-RUN sed -i 's/"version": "0.0.1"/"version": "${APP_VERSION}"/g' "package.json"
+RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" package.json
+
 RUN npm install
 RUN npm run generate
 RUN rm -rf node_modules
