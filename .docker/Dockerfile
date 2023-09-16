@@ -4,13 +4,13 @@ FROM alpine/git as git
 ARG REPOSITORY=https://github.com/buggregator/frontend
 ARG BRANCH=master
 RUN git clone -b $BRANCH $REPOSITORY /app
-ARG APP_VERSION=1.0.0
 
 # Build JS files
 FROM node:19-alpine as frontend
 COPY --from=git /app /app
 WORKDIR /app
 
+ARG APP_VERSION=1.0.0
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
 RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" package.json
