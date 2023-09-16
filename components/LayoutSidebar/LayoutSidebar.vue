@@ -48,7 +48,6 @@
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#app";
-import { EVENT_TYPES } from "~/config/constants";
 
 export default defineComponent({
   components: { IconSvg },
