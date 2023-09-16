@@ -1,4 +1,6 @@
 import {defineNuxtConfig} from "nuxt/config";
+import pkg from './package.json';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   target: 'static',
@@ -55,4 +57,9 @@ export default defineNuxtConfig({
     host: '127.0.0.1',
     url: 'http://127.0.0.1:3000',
   },
+  runtimeConfig: {
+    public: {
+      version: pkg.version,
+    }
+  }
 });
