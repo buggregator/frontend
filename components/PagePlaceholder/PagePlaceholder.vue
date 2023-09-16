@@ -4,13 +4,13 @@
       <li class="page-placeholder__item">
         <IconSvg name="github" class="page-placeholder__icon" />
         <span>
-          Bugregator&nbsp;
+          Buggregator
           <a
-            href="https://github.com/buggregator"
+            href="https://github.com/buggregator/frontend"
             target="_blank"
             class="page-placeholder__link"
           >
-            Github repository
+            Github
           </a>
         </span>
       </li>
