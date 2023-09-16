@@ -39,11 +39,11 @@
 
       <div class="layout-sidebar__nav-versions">
         <div
-          v-if="serverVersion"
+          v-if="apiVersion"
           class="layout-sidebar__nav-version"
-          :title="`Server version: ${serverVersion}`"
+          :title="`Api version: ${apiVersion}`"
         >
-          {{ serverVersion }}
+          {{ apiVersion }}
         </div>
 
         <div
@@ -71,16 +71,17 @@ export default defineComponent({
       required: true,
     },
   },
+  // TODO: fix visible component story with async setup
   async setup() {
     if (process.client) {
       const { $config, $api } = useNuxtApp();
 
-      const serverVersion = await $api.getVersion();
+      const apiVersion = await $api.getVersion();
 
       return {
-        serverVersion: String(serverVersion).match(/^[0-9.]+.*$/)
-          ? `v${serverVersion}`
-          : `@${serverVersion}`,
+        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+          ? `v${apiVersion}`
+          : `@${apiVersion}`,
         clientVersion:
           !$config?.version || $config.version === "0.0.1"
             ? "@dev"
@@ -90,7 +91,7 @@ export default defineComponent({
 
     return {
       clientVersion: "@dev",
-      serverVersion: "@dev",
+      apiVersion: "@dev",
     };
   },
 });

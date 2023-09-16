@@ -18,5 +18,5 @@ const Template: Story = (args) => ({
 
 export const Default = Template.bind({});
 Default.args = {
-  isConnected: true
+  isConnected: true,
 };
