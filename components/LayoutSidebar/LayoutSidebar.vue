@@ -37,8 +37,22 @@
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
 
-      <div v-if="appVersion" class="layout-sidebar__nav-version">
-        {{ appVersion }}
+      <div class="layout-sidebar__nav-versions">
+        <div
+          v-if="apiVersion"
+          class="layout-sidebar__nav-version"
+          :title="`Api version: ${apiVersion}`"
+        >
+          {{ apiVersion }}
+        </div>
+
+        <div
+          v-if="clientVersion"
+          class="layout-sidebar__nav-version"
+          :title="`Client version: ${clientVersion}`"
+        >
+          {{ clientVersion }}
+        </div>
       </div>
     </nav>
   </aside>
@@ -57,12 +71,18 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  // TODO: fix visible component story with async setup
+  async setup() {
     if (process.client) {
-      const { $config } = useNuxtApp();
+      const { $config, $api } = useNuxtApp();
+
+      const apiVersion = await $api.getVersion();
 
       return {
-        appVersion:
+        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+          ? `v${apiVersion}`
+          : `@${apiVersion}`,
+        clientVersion:
           !$config?.version || $config.version === "0.0.1"
             ? "@dev"
             : `v${$config.version}`,
@@ -70,7 +90,8 @@ export default defineComponent({
     }
 
     return {
-      appVersion: "@dev",
+      clientVersion: "@dev",
+      apiVersion: "@dev",
     };
   },
 });
@@ -93,11 +114,17 @@ export default defineComponent({
   }
 }
 
-.layout-sidebar__nav-version {
-  @apply flex justify-center text-xs dark:text-gray-400 p-2 absolute bottom-0 left-0 right-0;
-}
-
 .layout-sidebar__link-icon {
   @apply fill-current;
+}
+
+.layout-sidebar__nav-versions {
+  @apply flex justify-center text-xs dark:text-gray-600 text-gray-400 py-2 px-1 absolute bottom-0 left-0 right-0 flex-col;
+}
+
+.layout-sidebar__nav-version {
+  @apply whitespace-nowrap text-center;
+
+  font-size: 0.8em;
 }
 </style>

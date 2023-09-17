@@ -70,11 +70,13 @@ export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiC
   const getEventsAll = fetch(`${REST_API_URL}/api/events`)
     .then((response) => response.json())
     .then((response) => {
-      if (response?.data?.length > 0) {
+      if (response?.data) {
         return response.data
       }
 
-      throw new Error('Fetch Error')
+      console.error('Fetch Error')
+
+      return [];
     })
     .then((events: ServerEvent<unknown>[]) => events)
 
@@ -86,6 +88,7 @@ export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiC
       }
       return null
     })
+
 
   const rayStopExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
