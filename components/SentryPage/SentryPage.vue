@@ -1,16 +1,21 @@
 <template>
   <div class="sentry-page">
     <main class="sentry-page__main">
-      <header class="sentry-page__main-header">
-        <h1 class="sentry-page__main-exception">{{ exception }}</h1>
+      <header class="sentry-page__main-header" v-if="hasException">
+        <h1 class="sentry-page__main-exception">{{ mainException.type }}</h1>
 
+        <pre class="sentry-page__main-exception-message" v-html="mainException.value" />
+        <p class="sentry-page__main-date">{{ date }}</p>
+      </header>
+
+      <header class="sentry-page__main-header" v-if="hasMessage">
         <pre class="sentry-page__main-exception-message" v-html="message" />
         <p class="sentry-page__main-date">{{ date }}</p>
       </header>
 
       <SentryPageTags :event="event.payload" class="sentry-page__section" />
 
-      <section class="sentry-page__section">
+      <section v-if="hasException" class="sentry-page__section">
         <h3 class="sentry-page__section-title">exceptions</h3>
 
         <div class="sentry-page__section-exceptions">
@@ -60,14 +65,17 @@ export default defineComponent({
     },
   },
   computed: {
+    hasMessage(): boolean {
+      return this.event.payload.message !== "";
+    },
+    message(): boolean {
+      return this.event.payload.message;
+    },
+    hasException(): boolean {
+      return this.event.payload.exception?.values?.length > 0;
+    },
     mainException() {
       return this.event.payload.exception.values[0];
-    },
-    exception(): string {
-      return this.mainException.type;
-    },
-    message(): string {
-      return this.mainException.value;
     },
     date(): string {
       return moment(this.event.payload.timestamp).toLocaleString();

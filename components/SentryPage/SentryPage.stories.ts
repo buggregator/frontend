@@ -1,6 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeSentryEvent } from "~/utils/normalize-event";
-import sentryEventMock from '~/mocks/sentry-common.json'
+import sentryCommonMock from '~/mocks/sentry-common.json'
+import sentryEventMock from '~/mocks/sentry-event.json'
 import SentryPage from '~/components/SentryPage/SentryPage.vue';
 
 export default {
@@ -18,8 +19,14 @@ const Template: Story = (args) => ({
   template: `<SentryPage v-bind="args" />`,
 });
 
-export const Page = Template.bind({});
+export const PageCommon = Template.bind({});
 
-Page.args = {
+PageCommon.args = {
+  event: normalizeSentryEvent(sentryCommonMock),
+};
+
+export const PageEvent = Template.bind({});
+
+PageEvent.args = {
   event: normalizeSentryEvent(sentryEventMock),
 };
