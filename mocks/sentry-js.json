@@ -1,0 +1,77 @@
+{
+  "id": "28482489-cbf9-4331-b4d8-90549009f777",
+  "type": "sentry",
+  "labels": ["sentry.1"],
+  "origin": null,
+  "serverName": "",
+  "date": "2023-09-17T21:51:25.000Z",
+  "payload": {
+    "exception": {
+      "values": [
+        {
+          "type": "ReferenceError",
+          "value": "myUndefinedFunction is not defined",
+          "stacktrace": {
+            "frames": [
+              {
+                "filename": "http://127.0.0.1:8000/",
+                "function": "?",
+                "in_app": true,
+                "lineno": 553,
+                "colno": 5
+              }
+            ]
+          },
+          "mechanism": {
+            "type": "onerror",
+            "handled": false
+          }
+        }
+      ]
+    },
+    "level": "error",
+    "platform": "javascript",
+    "event_id": "5c648be7c5614c83804b18dd8be36654",
+    "timestamp": 1694987485.144,
+    "environment": "production",
+    "sdk": {
+      "integrations": [
+        "InboundFilters",
+        "FunctionToString",
+        "TryCatch",
+        "Breadcrumbs",
+        "GlobalHandlers",
+        "LinkedErrors",
+        "Dedupe",
+        "HttpContext",
+        "BrowserTracing",
+        "Replay"
+      ],
+      "name": "sentry.javascript.browser",
+      "version": "7.69.0",
+      "packages": [
+        {
+          "name": "loader:@sentry/browser",
+          "version": "7.69.0"
+        }
+      ]
+    },
+    "contexts": {
+      "trace": {
+        "op": "pageload",
+        "span_id": "97088fb11b4f9d54",
+        "status": "internal_error",
+        "trace_id": "fefb24e1a72047d9b4feeb68bf56497a"
+      }
+    },
+    "tags": {
+      "transaction": "/"
+    },
+    "request": {
+      "url": "http://127.0.0.1:8000/",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+      }
+    }
+  }
+}

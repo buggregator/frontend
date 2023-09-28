@@ -1,6 +1,10 @@
 <template>
   <PreviewCard class="sentry-preview" :event="event">
-    <SentryException :exception="exception" :max-frames="maxFrames">
+    <SentryException
+      v-if="hasException"
+      :exception="exception"
+      :max-frames="maxFrames"
+    >
       <NuxtLink tag="div" :to="eventLink" class="sentry-preview__link">
         <h3 class="sentry-preview__title">
           {{ exception.type }}
@@ -9,6 +13,11 @@
         <pre class="sentry-preview__text" v-html="exception.value" />
       </NuxtLink>
     </SentryException>
+    <div v-if="hasMessage">
+      <NuxtLink tag="div" :to="eventLink" class="sentry-preview__link">
+        <pre class="sentry-preview__text" v-html="message" />
+      </NuxtLink>
+    </div>
   </PreviewCard>
 </template>
 
@@ -36,6 +45,15 @@ export default defineComponent({
   computed: {
     eventLink() {
       return `/sentry/${this.event.id}`;
+    },
+    hasException() {
+      return this.event?.payload?.exception?.values?.length > 0;
+    },
+    hasMessage(): boolean {
+      return this.event?.payload?.message !== "";
+    },
+    message(): boolean {
+      return this.event.payload.message;
     },
     exception() {
       const defaultException: object = {

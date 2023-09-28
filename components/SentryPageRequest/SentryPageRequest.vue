@@ -3,7 +3,8 @@
     <h3 class="sentry-page-request__title">request</h3>
 
     <h3 class="sentry-page-request__url">
-      <strong>{{ event.request.method }}:</strong> {{ event.request.url }}
+      <strong>{{ event.request.method || "GET" }}:</strong>
+      {{ event.request.url }}
     </h3>
 
     <h3 class="sentry-page-request__title sentry-page-request__title--sub">
@@ -15,7 +16,7 @@
         :key="title"
         :title="title"
       >
-        {{ value[0] || value }}
+        {{ Array.isArray(value) ? value[0] || value : value }}
       </EventTableRow>
     </EventTable>
   </section>

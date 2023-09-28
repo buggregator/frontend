@@ -1,0 +1,54 @@
+{
+  "id": "79e27c1d-e610-4c82-9180-aa07b51d2295",
+  "type": "sentry",
+  "labels": ["sentry.1"],
+  "origin": null,
+  "serverName": "",
+  "date": "2023-09-17T21:49:59.000Z",
+  "payload": {
+    "message": "Something went wrong",
+    "level": "info",
+    "event_id": "c3e75f2edbfb4c79bbe0e42fd14f25aa",
+    "platform": "javascript",
+    "timestamp": 1694987399.84,
+    "environment": "production",
+    "sdk": {
+      "integrations": [
+        "InboundFilters",
+        "FunctionToString",
+        "TryCatch",
+        "Breadcrumbs",
+        "GlobalHandlers",
+        "LinkedErrors",
+        "Dedupe",
+        "HttpContext",
+        "BrowserTracing",
+        "Replay"
+      ],
+      "name": "sentry.javascript.browser",
+      "version": "7.69.0",
+      "packages": [
+        {
+          "name": "loader:@sentry/browser",
+          "version": "7.69.0"
+        }
+      ]
+    },
+    "contexts": {
+      "trace": {
+        "op": "pageload",
+        "span_id": "9d251e73999c14d5",
+        "trace_id": "1c1162cb90e74b4c98447a44896ea2f9"
+      }
+    },
+    "tags": {
+      "transaction": "/"
+    },
+    "request": {
+      "url": "http://127.0.0.1:8000/",
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+      }
+    }
+  }
+}
