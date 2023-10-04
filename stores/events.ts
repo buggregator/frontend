@@ -7,6 +7,7 @@ import {
 import { ALL_EVENTS, EVENT_TYPES, LOCAL_STORAGE_KEYS } from "~/config/constants";
 
 type TCachedEventsEmptyMap = Record<OneOfValues<typeof EVENT_TYPES>, EventId[]>;
+type TCachedEventsType = OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>;
 
 const initialCachedEventsIdsMap: TCachedEventsEmptyMap = {
   [EVENT_TYPES.SENTRY]: [] as EventId[],
@@ -30,6 +31,10 @@ const getCachedEventsIdsMap = (): TCachedEventsEmptyMap => {
   return initialCachedEventsIdsMap;
 };
 
+const updateCachedEventsLocalStorage = (cachedEventMap: TCachedEventsEmptyMap) => {
+  localStorage?.setItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS, JSON.stringify(cachedEventMap));
+}
+
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
@@ -43,10 +48,11 @@ export const useEventStore = defineStore("useEventStore", {
           this.events.unshift(event);
         } else {
           this.events = this.events.map((el) => {
-            if (el.uuid === event.uuid) {
-              return event;
+            if (el.uuid !== event.uuid) {
+              return el; // add new
             }
-            return el;
+
+            return event; // replace existed
           });
         }
       });
@@ -54,14 +60,14 @@ export const useEventStore = defineStore("useEventStore", {
     removeEvents() {
       this.events.length = 0;
 
-      this.cachedEventsIdsMap = initialCachedEventsIdsMap;
+      this.clearCachedEvents();
     },
     removeEventById(eventUuid: EventId) {
       const eventType = this.events.find(
         ({ uuid }) => uuid === eventUuid
       )?.type;
 
-      if (eventType) {
+      if (eventType && this.cachedEventsIdsMap[eventType]?.length) {
         this.cachedEventsIdsMap[eventType] = this.cachedEventsIdsMap[
           eventType
         ].filter((uuid: EventId) => uuid !== eventUuid);
@@ -73,38 +79,56 @@ export const useEventStore = defineStore("useEventStore", {
         ].filter((uuid: EventId) => uuid !== eventUuid);
       }
 
+      updateCachedEventsLocalStorage(this.cachedEventsIdsMap);
+
       this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
     },
     removeEventsByType(eventType: OneOfValues<typeof EVENT_TYPES>) {
-      this.cachedEventsIdsMap[eventType].length = 0;
       this.events = this.events.filter(({ type }) => type !== eventType);
+
+      this.removeCachedEventsByType(eventType as TCachedEventsType);
     },
 
-    setCachedEvents(
-      eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>
+    setCachedEventsByType(
+      cachedType: TCachedEventsType
     ) {
       this.events
         .filter(({ type }) =>
-          eventType === ALL_EVENTS ? true : type === eventType
+          cachedType === ALL_EVENTS ? true : type === cachedType
         )
         .forEach((event) => {
-          this.cachedEventsIdsMap[eventType].push(event.uuid);
+          this.cachedEventsIdsMap[cachedType].push(event.uuid);
         });
 
-      localStorage?.setItem(
-        LOCAL_STORAGE_KEYS.CACHED_EVENTS,
-        JSON.stringify(this.cachedEventsIdsMap)
-      );
+      updateCachedEventsLocalStorage(this.cachedEventsIdsMap);
     },
-    removeCachedEvents(
-      eventType: OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>
-    ) {
-      this.cachedEventsIdsMap[eventType].length = 0;
+    removeCachedEventsByType(cachedType: TCachedEventsType) {
+      this.cachedEventsIdsMap[cachedType].length = 0;
+      updateCachedEventsLocalStorage(this.cachedEventsIdsMap);
+    },
+    clearCachedEvents() {
+      this.cachedEventsIdsMap = initialCachedEventsIdsMap;
+      updateCachedEventsLocalStorage(this.cachedEventsIdsMap);
+    },
+    sanitizeCachedEvents(events: ServerEvent<unknown>[]) {
+      if (!events.length) {
+        this.clearCachedEvents();
 
-      localStorage?.setItem(
-        LOCAL_STORAGE_KEYS.CACHED_EVENTS,
-        JSON.stringify(this.cachedEventsIdsMap)
-      );
-    },
+        return;
+      }
+
+      const cachedEventsKeys = Object.entries(this.cachedEventsIdsMap).filter(([_, value]) => value.length > 0).map(([key]) => key);
+      const eventsIds = events.map(({ uuid }) => uuid);
+
+      cachedEventsKeys.forEach((key) => {
+        const type = key as TCachedEventsType
+
+        this.cachedEventsIdsMap[type] = this.cachedEventsIdsMap[type].filter(
+          (uuid: EventId) => eventsIds.includes(uuid)
+        );
+      });
+
+      updateCachedEventsLocalStorage(this.cachedEventsIdsMap);
+    }
   },
 });

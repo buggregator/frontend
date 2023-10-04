@@ -38,6 +38,7 @@ export default defineNuxtPlugin(() => {
     getEventsAll.then((events: ServerEvent<unknown>[]) => {
       if (events.length) {
         eventsStore.addEvents(events);
+        eventsStore.sanitizeCachedEvents(events);
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeEvents();
@@ -64,8 +65,8 @@ export default defineNuxtPlugin(() => {
       },
       cachedEvents: {
         eventsIdsByType: cachedEventsIdsMap,
-        stopUpdatesByType: eventsStore.setCachedEvents,
-        runUpdatesByType: eventsStore.removeCachedEvents,
+        stopUpdatesByType: eventsStore.setCachedEventsByType,
+        runUpdatesByType: eventsStore.removeCachedEventsByType,
       }
     }
   }
