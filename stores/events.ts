@@ -38,7 +38,7 @@ const updateCachedEventsLocalStorage = (cachedEventMap: TCachedEventsEmptyMap) =
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
-    cachedEventsIdsMap: getCachedEventsIdsMap(),
+    cachedEventsIdsMap: getCachedEventsIdsMap(), // TODO: need to split to separate store
   }),
   actions: {
     addEvents(events: ServerEvent<unknown>[]) {
