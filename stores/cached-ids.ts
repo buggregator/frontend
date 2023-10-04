@@ -47,7 +47,7 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
 
       events
         .filter(({ type }) =>
-          cachedType === ALL_EVENTS ? true : type === cachedType
+          type === cachedType || cachedType === ALL_EVENTS
         )
         .forEach((event) => {
           this.cachedIds[cachedType].push(event.uuid);
@@ -72,18 +72,16 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
       this.cachedIds = initialcachedIds;
       syncLocalStorage(this.cachedIds);
     },
-    sanitizeWithEvents(events: ServerEvent<unknown>[]) {
-      if (!events.length) {
+    syncWithActive(activeIds: EventId[]) {
+      if (!activeIds.length) {
         this.removeAll();
 
         return;
       }
 
-      const eventsIds = events.map(({ uuid }) => uuid);
-
       this.cachedTypesList.forEach((type) => {
         this.cachedIds[type] = this.cachedIds[type].filter(
-          (uuid: EventId) => eventsIds.includes(uuid)
+          (uuid: EventId) => activeIds.includes(uuid)
         );
       });
 
