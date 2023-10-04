@@ -1,11 +1,12 @@
 import {apiTransport} from '~/utils/events-transport'
 import {useEventStore} from "~/stores/events";
-import {EventId, OneOfValues, ServerEvent} from "~/config/types";
-import {EVENT_TYPES} from "~/config/constants";
+import {useCachedIdsStore} from "~/stores/cached-ids";
+import { EventId, ServerEvent, TEventGroup } from "~/config/types";
 import {storeToRefs} from "pinia";
 
 export default defineNuxtPlugin(() => {
   const eventsStore = useEventStore();
+  const cachedIdsStore = useCachedIdsStore();
 
   const {
     deleteEvent,
@@ -15,33 +16,37 @@ export default defineNuxtPlugin(() => {
     makeEventUrl,
   } = apiTransport({
     onEventReceiveCb: (event: ServerEvent<unknown>) => {
-      eventsStore.addEvents([event]);
+      eventsStore.addList([event]);
     }
   });
 
   const removeAll = () => {
     deleteEventsAll();
-    eventsStore.removeEvents()
+    eventsStore.removeAll()
+    cachedIdsStore.removeAll()
   }
 
   const removeById = (eventId: EventId) => {
     deleteEvent(eventId);
-    eventsStore.removeEventById(eventId);
+    eventsStore.removeById(eventId);
+    cachedIdsStore.removeById(eventId);
   }
 
-  const removeByType = (type: OneOfValues<typeof EVENT_TYPES>) => {
+  const removeByType = (type: TEventGroup) => {
     deleteEventsByType(type);
-    eventsStore.removeEventsByType(type);
+    eventsStore.removeByType(type);
+    cachedIdsStore.removeByType(type);
   }
 
   const getAll = () => {
     getEventsAll.then((events: ServerEvent<unknown>[]) => {
       if (events.length) {
-        eventsStore.addEvents(events);
-        eventsStore.sanitizeCachedEvents(events);
+        eventsStore.addList(events);
+        cachedIdsStore.sanitizeWithEvents(events);
       } else {
         // NOTE: clear cached events hardly
-        eventsStore.removeEvents();
+        eventsStore.removeAll();
+        cachedIdsStore.removeAll();
       }
     }).catch((err) => {
       console.error('getAll err', err);
@@ -50,8 +55,11 @@ export default defineNuxtPlugin(() => {
 
   const {
     events,
-    cachedEventsIdsMap,
   } = storeToRefs(eventsStore)
+
+  const {
+    cachedIds,
+  } = storeToRefs(cachedIdsStore)
 
   return {
     provide: {
@@ -64,9 +72,9 @@ export default defineNuxtPlugin(() => {
         removeById,
       },
       cachedEvents: {
-        eventsIdsByType: cachedEventsIdsMap,
-        stopUpdatesByType: eventsStore.setCachedEventsByType,
-        runUpdatesByType: eventsStore.removeCachedEventsByType,
+        eventsIdsByType: cachedIds,
+        stopUpdatesByType: cachedIdsStore.setByType,
+        runUpdatesByType: cachedIdsStore.removeByType,
       }
     }
   }

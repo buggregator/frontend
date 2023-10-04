@@ -50,6 +50,7 @@ import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
 import { ALL_EVENTS } from "~/config/constants";
 import pluralize from "pluralize";
+import { TEventGroup } from "~/config/types";
 
 export default defineComponent({
   components: {
@@ -117,15 +118,15 @@ export default defineComponent({
         return $events.removeAll();
       }
 
-      return $events.removeByType(this.type);
+      return $events.removeByType(this.type as TEventGroup);
     },
     toggleUpdate() {
       const { $cachedEvents } = useNuxtApp();
 
       if (this.isEventsPaused) {
-        $cachedEvents.runUpdatesByType(this.type);
+        $cachedEvents.runUpdatesByType(this.type as TEventGroup);
       } else {
-        $cachedEvents.stopUpdatesByType(this.type);
+        $cachedEvents.stopUpdatesByType(this.type as TEventGroup);
       }
     },
   },
