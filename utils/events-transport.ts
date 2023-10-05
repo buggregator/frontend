@@ -1,6 +1,5 @@
 import {Centrifuge} from 'centrifuge'
-import {EventId, OneOfValues, ServerEvent} from "~/config/types";
-import {EVENT_TYPES} from "~/config/constants";
+import { EventId, ServerEvent, TEventType } from "~/config/types";
 
 // A developer not always has a possibility to configure ENV variables,
 // so we need to guess Api and WS connection urls.
@@ -63,7 +62,7 @@ export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiC
     centrifuge.rpc(`delete:api/events`, undefined)
   }
 
-  const deleteEventsByType = (type: OneOfValues<typeof EVENT_TYPES>) => {
+  const deleteEventsByType = (type: TEventType) => {
     centrifuge.rpc(`delete:api/events`, {type})
   }
 

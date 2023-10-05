@@ -1,9 +1,13 @@
-import {EVENT_TYPES} from "~/config/constants";
+import {EVENT_TYPES, ALL_EVENTS} from "~/config/constants";
 
 export type OneOfValues<T> = T[keyof T];
 export type EventId = string;
 export type StatusCode = number; // TODO: update type
 export type Email = string; // TODO: update type
+
+export type TEventType = OneOfValues<typeof EVENT_TYPES>;
+export type TEventGroup = OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>;
+
 
 type SMTPUser = {
   name: string;
@@ -314,7 +318,7 @@ export type Inspector = InspectorTransaction[] | InspectorSegment[];
 
 export interface ServerEvent<T> {
   uuid: EventId,
-  type: OneOfValues<typeof EVENT_TYPES> | string,
+  type: TEventType | string,
   payload: T,
   project_id: string | null,
   timestamp: number
@@ -322,7 +326,7 @@ export interface ServerEvent<T> {
 
 export interface NormalizedEvent {
   id: EventId,
-  type: OneOfValues<typeof EVENT_TYPES> | string,
+  type: TEventType | string,
   labels: string[],
   origin: object | null,
   serverName: string,
