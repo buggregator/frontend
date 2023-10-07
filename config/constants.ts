@@ -50,6 +50,7 @@ export const EVENT_STATUS_COLOR_MAP = {
 export const LOCAL_STORAGE_KEYS = {
   CACHED_EVENTS: "cached_events",
   THEME: "theme",
+  NAVBAR: "navbar",
 };
 
 

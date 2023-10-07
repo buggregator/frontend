@@ -16,7 +16,7 @@
 <script lang="ts">
 import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
 import { defineComponent } from "vue";
-import { THEME_MODES, useThemeStore } from "~/stores/theme";
+import { THEME_MODES, useSettingsStore } from "~/stores/settings";
 import { storeToRefs } from "pinia";
 import { useNuxtApp } from "#app";
 
@@ -26,8 +26,8 @@ export default defineComponent({
   },
 
   async setup() {
-    const themeStore = useThemeStore();
-    const { themeType } = storeToRefs(themeStore);
+    const settingsStore = useSettingsStore();
+    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
     const { $config, $api } = useNuxtApp();
 
     const apiVersion = await $api.getVersion();
@@ -41,6 +41,7 @@ export default defineComponent({
 
       return {
         themeType,
+        isFixedHeader,
         apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
           ? `v${apiVersion}`
           : `@${apiVersion}`,
@@ -53,6 +54,7 @@ export default defineComponent({
 
     return {
       themeType,
+      isFixedHeader: false,
       clientVersion: "@dev",
       apiVersion: "@dev",
     };
@@ -62,13 +64,6 @@ export default defineComponent({
       // return this.$store.getters['ws/connected']
       return false;
     },
-  },
-  mounted() {
-    if (this.themeType === THEME_MODES.DARK) {
-      document?.documentElement?.classList?.add(THEME_MODES.DARK);
-    } else {
-      document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-    }
   },
 });
 </script>

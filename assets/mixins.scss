@@ -7,7 +7,12 @@
 }
 
 @mixin layout-head {
-  @apply left-10 md:left-14 lg:left-16 h-12 right-0 fixed justify-between border-b border-gray-200 dark:border-gray-700 px-4 bg-white dark:bg-gray-800 z-50;
+  @apply left-10 md:left-14 lg:left-16 h-12 right-0 justify-between border-b border-gray-200 dark:border-gray-700 px-4 bg-white dark:bg-gray-800 z-50;
+  @apply absolute;
+
+  html.navbar-fixed & {
+    @apply fixed;
+  }
 }
 
 @mixin layout-body {

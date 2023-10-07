@@ -65,19 +65,19 @@
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 489.8 489.8"
     >
-      <circle cx="245" cy="453.9" r="26.8"/>
-      <circle cx="422.8" cy="453.9" r="26.8"/>
-      <circle cx="67" cy="453.9" r="26.8"/>
+      <circle cx="245" cy="453.9" r="26.8" />
+      <circle cx="422.8" cy="453.9" r="26.8" />
+      <circle cx="67" cy="453.9" r="26.8" />
       <path
         d="M443 31c0-17-14-31-31-31H78C61 0 47 14 47 31v69c0 8 4 15 9 21-5 6-9 13-9 21v70c0 8 4 15 9 21-5 5-9 13-9 21v69c0 17 14 31 31 31h334c17 0 31-14 31-31v-69c0-8-3-16-9-21 6-6 9-13 9-22v-69c0-8-3-16-9-21 6-6 9-13 9-21V31zM65 31c0-7 6-13 12-13h335c7 0 13 6 13 13v69c0 6-6 12-13 12H78c-7 0-13-5-13-12V31zm360 111v70c0 6-6 12-13 12H78c-7 0-13-6-13-12v-70c0-6 6-12 13-12h334c7 0 13 6 13 12zm0 181c0 7-6 13-13 13H78c-7 0-13-6-13-13v-69c0-7 6-12 13-12h334c7 0 13 5 13 12v69z"
       />
-      <path d="M241 74h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9z"/>
-      <circle cx="148.8" cy="65.1" r="10.8"/>
+      <path d="M241 74h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9z" />
+      <circle cx="148.8" cy="65.1" r="10.8" />
       <path
         d="M241 186h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9zM354 280H241c-5 0-9 4-9 9s4 9 9 9h113c5 0 9-4 9-9s-4-9-9-9z"
       />
-      <circle cx="148.8" cy="177" r="10.8"/>
-      <circle cx="148.8" cy="288.9" r="10.8"/>
+      <circle cx="148.8" cy="177" r="10.8" />
+      <circle cx="148.8" cy="288.9" r="10.8" />
       <path
         d="M423 418c-17 0-31 11-35 27H280c-4-13-13-22-26-26v-28c0-5-4-9-9-9s-9 4-9 9v28c-13 3-22 13-26 26H102a36 36 0 100 18h108a36 36 0 0070 0h108a36 36 0 1035-45zM67 472a18 18 0 010-36 18 18 0 010 36zm178 0a18 18 0 010-36 18 18 0 010 36zm178 0a18 18 0 010-36 18 18 0 010 36z"
       />
@@ -143,7 +143,7 @@
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
-      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z"/>
+      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z" />
     </svg>
 
     <svg
@@ -163,8 +163,8 @@
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
-      <path d="M6 0c.6 0 1 .4 1 1v10a1 1 0 1 1-2 0V1c0-.6.4-1 1-1Z"/>
-      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z"/>
+      <path d="M6 0c.6 0 1 .4 1 1v10a1 1 0 1 1-2 0V1c0-.6.4-1 1-1Z" />
+      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z" />
     </svg>
 
     <svg
@@ -346,7 +346,7 @@
           y2="30"
           gradientUnits="userSpaceOnUse"
         >
-          <stop class="transition-all duration-200" stop-color="#FACC15"/>
+          <stop class="transition-all duration-200" stop-color="#FACC15" />
           <stop
             class="transition-all duration-200"
             offset="1"
@@ -377,7 +377,7 @@
       <path
         d="M128 406c4 0 8-4 8-8V124a8 8 0 0 0-15 0v274c0 4 3 8 7 8zM384 264c-4 0-7 3-7 7v204c0 12-11 22-23 22H158c-12 0-22-10-22-22v-47a8 8 0 0 0-15 0v47c0 20 16 37 37 37h196c21 0 38-17 38-37V271c0-4-4-7-8-7zM354 0H158c-21 0-37 17-37 38v56a8 8 0 0 0 15 0V38c0-13 10-23 22-23h31c8 15 24 25 41 25h52c17 0 33-10 41-25h31c12 0 23 10 23 23v203a8 8 0 0 0 15 0V38c0-21-17-38-38-38zm-72 25h-52c-9 0-17-4-23-10h98c-6 6-14 10-23 10z"
       />
-      <path d="M287 478a8 8 0 0 0 0-15h-62a8 8 0 0 0 0 15h62z"/>
+      <path d="M287 478a8 8 0 0 0 0-15h-62a8 8 0 0 0 0 15h62z" />
     </svg>
 
     <svg
@@ -391,7 +391,7 @@
       <path
         d="M90 61v284a8 8 0 0 0 15 0V69h302v103a8 8 0 0 0 15 0V61c0-4-3-7-7-7H97c-4 0-7 3-7 7zM90 432c0 4 3 8 7 8h318c4 0 7-4 7-8V202a8 8 0 0 0-15 0v223H105v-50a8 8 0 0 0-15 0v57zM233 467a23 23 0 1 0 46-1 23 23 0 0 0-46 1zm31 0a8 8 0 1 1-16 0 8 8 0 0 1 16 0zM288 42a8 8 0 0 0 0-15h-34a8 8 0 0 0 0 15h34z"
       />
-      <circle cx="225.6" cy="34.3" r="7.5"/>
+      <circle cx="225.6" cy="34.3" r="7.5" />
     </svg>
 
     <svg
@@ -422,20 +422,70 @@
 
     <svg
       v-if="name === 'http-dumps'"
-      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 22">
-      <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M5 0a4 4 0 0 0-4 4v11.27A2 2 0 0 0 0 17v2a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3v-2a2 2 0 0 0-1-1.73V4a4 4 0 0 0-4-4H5Zm18 15V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11h5.5l2 1.5H15l2.25-1.5H23Zm-6.9 3.16L17.87 17H24v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2h5.83l1.47 1.1.53.4h5.77l.5-.34Zm3.02-11.35h-2.18v4.38h.87V9.88h1.32A.88.88 0 0 0 20 9V7.69a.88.88 0 0 0-.88-.88ZM17.82 9V7.69h1.3V9h-1.3Zm-6.57-1.31h-.88V6.8H13v.88h-.88v3.5h-.87v-3.5Zm4.81-.88h-2.62v.88h.87v3.5h.88v-3.5h.87V6.8ZM8.63 8.56V6.81h.87v4.38h-.88V9.44h-1.3v1.75h-.88V6.8h.87v1.75h1.32Z"/>
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 26 22"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M5 0a4 4 0 0 0-4 4v11.27A2 2 0 0 0 0 17v2a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3v-2a2 2 0 0 0-1-1.73V4a4 4 0 0 0-4-4H5Zm18 15V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11h5.5l2 1.5H15l2.25-1.5H23Zm-6.9 3.16L17.87 17H24v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2h5.83l1.47 1.1.53.4h5.77l.5-.34Zm3.02-11.35h-2.18v4.38h.87V9.88h1.32A.88.88 0 0 0 20 9V7.69a.88.88 0 0 0-.88-.88ZM17.82 9V7.69h1.3V9h-1.3Zm-6.57-1.31h-.88V6.8H13v.88h-.88v3.5h-.87v-3.5Zm4.81-.88h-2.62v.88h.87v3.5h.88v-3.5h.87V6.8ZM8.63 8.56V6.81h.87v4.38h-.88V9.44h-1.3v1.75h-.88V6.8h.87v1.75h1.32Z"
+      />
     </svg>
     <svg
       v-if="name === 'collapsed'"
-      viewBox="0 0 16 16" fill="currentColor" height="100%" width="100%">
-      <path d="M14,11.75a.74.74,0,0,1-.53-.22L8,6.06,2.53,11.53a.75.75,0,0,1-1.06-1.06l6-6a.75.75,0,0,1,1.06,0l6,6a.75.75,0,0,1,0,1.06A.74.74,0,0,1,14,11.75Z"></path>
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      height="100%"
+      width="100%"
+    >
+      <path
+        d="M14,11.75a.74.74,0,0,1-.53-.22L8,6.06,2.53,11.53a.75.75,0,0,1-1.06-1.06l6-6a.75.75,0,0,1,1.06,0l6,6a.75.75,0,0,1,0,1.06A.74.74,0,0,1,14,11.75Z"
+      ></path>
+    </svg>
+
+    <svg
+      v-if="name === 'lock'"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path
+        d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"
+      />
+      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+      <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
+    </svg>
+
+    <svg
+      v-if="name === 'lock-off'"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path
+        d="M15 11h2a2 2 0 0 1 2 2v2m0 4a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4"
+      />
+      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+      <path d="M8 11v-3m.719 -3.289a4 4 0 0 1 7.281 2.289v4" />
+      <path d="M3 3l18 18" />
     </svg>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
@@ -451,5 +501,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .icon-svg {
   @apply fill-current;
+
+  svg {
+    @apply w-full h-full;
+  }
 }
 </style>

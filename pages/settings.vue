@@ -4,29 +4,61 @@
       <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
     </PageHeader>
 
-    <section class="settings-page__content">
-      <div class="settings-page__radio">
-        <IconSvg
-          name="sun"
-          class="settings-page__radio-icon"
-          :class="{ 'settings-page__radio-icon--dark': isDarkMode }"
-        />
+    <div class="settings-page__content-wr">
+      <section class="settings-page__content">
+        <div class="settings-page__title">
+          Theme: {{ isDarkMode ? "Dark" : "Light" }}
+        </div>
 
-        <button
-          class="settings-page__radio-button"
-          :class="{ 'settings-page__radio-button--dark': isDarkMode }"
-          @click="changeTheme()"
-        >
-          <span class="settings-page__radio-button-in" />
-        </button>
+        <div class="settings-page__control">
+          <IconSvg
+            name="sun"
+            class="settings-page__control-icon"
+            :class="{ 'settings-page__control-icon--dark': isDarkMode }"
+          />
 
-        <IconSvg
-          class="settings-page__radio-icon"
-          name="moon"
-          :class="{ 'settings-page__radio-icon--dark': !isDarkMode }"
-        />
-      </div>
-    </section>
+          <button
+            class="settings-page__control-button"
+            :class="{ 'settings-page__control-button--dark': isDarkMode }"
+            @click="changeTheme"
+          >
+            <span class="settings-page__control-button-in" />
+          </button>
+
+          <IconSvg
+            class="settings-page__control-icon"
+            name="moon"
+            :class="{ 'settings-page__control-icon--dark': !isDarkMode }"
+          />
+        </div>
+
+        <div class="settings-page__title">
+          Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
+        </div>
+
+        <div class="settings-page__control">
+          <IconSvg
+            name="lock-off"
+            class="settings-page__control-icon"
+            :class="{ 'settings-page__control-icon--dark': isFixedHeader }"
+          />
+
+          <button
+            class="settings-page__control-button"
+            :class="{ 'settings-page__control-button--dark': isFixedHeader }"
+            @click="changeNavbar"
+          >
+            <span class="settings-page__control-button-in" />
+          </button>
+
+          <IconSvg
+            class="settings-page__control-icon"
+            name="lock"
+            :class="{ 'settings-page__control-icon--dark': !isFixedHeader }"
+          />
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 
@@ -35,7 +67,7 @@ import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import PageHeader from "~/components/PageHeader/PageHeader.vue";
-import { useThemeStore, THEME_MODES } from "~/stores/theme";
+import { useSettingsStore, THEME_MODES } from "~/stores/settings";
 
 export default defineComponent({
   components: {
@@ -43,13 +75,15 @@ export default defineComponent({
     PageHeader,
   },
   setup() {
-    const themeStore = useThemeStore();
-    const { themeChange } = themeStore;
-    const { themeType } = storeToRefs(themeStore);
+    const settingsStore = useSettingsStore();
+    const { changeTheme, changeNavbar } = settingsStore;
+    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
 
     return {
       themeType,
-      themeChange,
+      isFixedHeader,
+      changeTheme,
+      changeNavbar,
     };
   },
   head: {
@@ -58,24 +92,6 @@ export default defineComponent({
   computed: {
     isDarkMode() {
       return this.themeType === THEME_MODES.DARK;
-    },
-  },
-  mounted() {
-    if (this.isDarkMode) {
-      document?.documentElement?.classList?.add(THEME_MODES.DARK);
-    } else {
-      document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-    }
-  },
-  methods: {
-    changeTheme() {
-      if (this.isDarkMode) {
-        document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-      } else {
-        document?.documentElement?.classList?.add(THEME_MODES.DARK);
-      }
-
-      return this.themeChange();
     },
   },
 });
@@ -92,35 +108,38 @@ export default defineComponent({
   @include layout-head;
 }
 
-.settings-page__content {
-  @apply p-3;
+.settings-page__content-wr {
   @include layout-body;
 }
 
-.settings__title {
-  @apply text-2xl font-bold;
+.settings-page__content {
+  @apply p-4 grid grid-cols-2 gap-4 mr-auto;
 }
 
-.settings-page__radio {
+.settings-page__title {
+  @apply text-xl font-bold flex items-center;
+}
+
+.settings-page__control {
   @apply flex space-x-5 items-center my-5;
 }
 
-.settings-page__radio-icon {
+.settings-page__control-icon {
   @apply opacity-100 w-8;
 }
 
-.settings-page__radio-icon--dark {
+.settings-page__control-icon--dark {
   @apply opacity-10;
 }
 
-.settings-page__radio-button {
+.settings-page__control-button {
   @apply relative inline-flex h-8 w-16 items-center rounded-full bg-gray-200;
 }
 
-.settings-page__radio-button-in {
+.settings-page__control-button-in {
   @apply inline-block h-6 w-6 transform rounded-full transition bg-blue-600 translate-x-2;
 
-  .settings-page__radio-button--dark & {
+  .settings-page__control-button--dark & {
     @apply translate-x-8;
   }
 }
