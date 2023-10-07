@@ -70,29 +70,14 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-  },
-  // TODO: fix visible component story with async setup
-  async setup() {
-    if (process.client) {
-      const { $config, $api } = useNuxtApp();
-
-      const apiVersion = await $api.getVersion();
-
-      return {
-        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-          ? `v${apiVersion}`
-          : `@${apiVersion}`,
-        clientVersion:
-          !$config?.version || $config.version === "0.0.1"
-            ? "@dev"
-            : `v${$config.version}`,
-      };
-    }
-
-    return {
-      clientVersion: "@dev",
-      apiVersion: "@dev",
-    };
+    apiVersion: {
+      type: String,
+      default: "@dev",
+    },
+    clientVersion: {
+      type: String,
+      default: "@dev",
+    },
   },
 });
 </script>

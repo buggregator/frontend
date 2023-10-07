@@ -1,7 +1,11 @@
 <template>
   <div class="main-layout">
     <div class="main-layout__sidebar-wrap">
-      <LayoutSidebar :is-connected="isConnected" />
+      <LayoutSidebar
+        :is-connected="isConnected"
+        :api-version="apiVersion"
+        :client-version="clientVersion"
+      />
     </div>
 
     <div class="main-layout__content">
@@ -22,9 +26,12 @@ export default defineComponent({
     LayoutSidebar,
   },
 
-  setup() {
+  async setup() {
     const themeStore = useThemeStore();
     const { themeType } = storeToRefs(themeStore);
+    const { $config, $api } = useNuxtApp();
+
+    const apiVersion = await $api.getVersion();
 
     if (process.client) {
       const { $events } = useNuxtApp();
@@ -32,10 +39,23 @@ export default defineComponent({
       if (!$events?.items?.length) {
         $events.getAll();
       }
+
+      return {
+        themeType,
+        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+          ? `v${apiVersion}`
+          : `@${apiVersion}`,
+        clientVersion:
+          !$config?.version || $config.version === "0.0.1"
+            ? "@dev"
+            : `v${$config.version}`,
+      };
     }
 
     return {
       themeType,
+      clientVersion: "@dev",
+      apiVersion: "@dev",
     };
   },
   computed: {
