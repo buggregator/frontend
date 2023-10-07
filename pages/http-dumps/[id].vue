@@ -1,6 +1,10 @@
 <template>
   <main class="http-dumps-event">
-    <PageHeader button-title="Delete event" @delete="onDelete">
+    <PageHeader
+      class="http-dumps-event__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
       <NuxtLink to="/">Home</NuxtLink>&nbsp;/
       <NuxtLink to="/http-dumps">Http dumps</NuxtLink>&nbsp;/
       <NuxtLink :disabled="true">{{ event.id }}</NuxtLink>
@@ -12,7 +16,9 @@
       <div></div>
     </div>
 
-    <HttpDumpPage v-if="event" :event="event" />
+    <div class="http-dumps-event__body">
+      <HttpDumpPage v-if="event" :event="event" />
+    </div>
   </main>
 </template>
 
@@ -71,9 +77,7 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent
-        ? normalizeHttpDumpEvent(this.serverEvent)
-        : null;
+      return this.serverEvent ? normalizeHttpDumpEvent(this.serverEvent) : null;
     },
   },
   methods: {
@@ -89,9 +93,19 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "assets/mixins";
 .http-dumps-event {
-  @apply h-full w-full;
+  @include layout;
 }
+
+.http-dumps-event__head {
+  @include layout-head;
+}
+
 .http-dumps-event__loading {
   @include loading;
+  @include layout-body;
+}
+
+.http-dumps-event__body {
+  @include layout-body;
 }
 </style>

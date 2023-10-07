@@ -1,3 +1,19 @@
+@mixin layout {
+  @apply relative min-h-screen bg-white dark:bg-gray-800;
+}
+
+@mixin layout-sidebar {
+  @apply w-10 md:w-14 lg:w-16 fixed h-screen z-50;
+}
+
+@mixin layout-head {
+  @apply left-10 md:left-14 lg:left-16 h-12 right-0 fixed justify-between border-b border-gray-200 dark:border-gray-700 px-4 bg-white dark:bg-gray-800 z-50;
+}
+
+@mixin layout-body {
+  @apply flex flex-col flex-1 pt-12;
+}
+
 @mixin text-muted {
   @apply text-gray-600 dark:text-gray-400;
 }
@@ -8,10 +24,6 @@
 
 @mixin text-responsive {
   @apply text-2xs sm:text-xs md:text-sm lg:text-base;
-}
-
-@mixin border-style {
-  @apply border-gray-300 dark:border-gray-500 divide-gray-300 dark:divide-gray-500;
 }
 
 @mixin loading {

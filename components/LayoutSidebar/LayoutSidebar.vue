@@ -84,7 +84,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .layout-sidebar {
-  @apply bg-gray-200 dark:bg-gray-800 flex flex-col justify-between z-50 w-full h-full sticky top-0 h-screen max-h-screen;
+  @apply bg-gray-200 dark:bg-gray-800 flex flex-col justify-between;
 }
 
 .layout-sidebar__nav {

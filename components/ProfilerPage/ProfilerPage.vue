@@ -223,9 +223,7 @@ export default defineComponent({
 }
 
 .profiler-page__edge {
-  @apply bg-gray-800 absolute border border-gray-300 dark:border-gray-600;
-
-  z-index: 9999;
+  @apply bg-gray-800 absolute border border-gray-300 dark:border-gray-600 z-50;
 }
 
 .profiler-page__edge-title {

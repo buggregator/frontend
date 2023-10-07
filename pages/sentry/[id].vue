@@ -1,8 +1,12 @@
 <template>
   <main class="sentry-event">
-    <PageHeader button-title="Delete event" @delete="onDelete">
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/
-      <NuxtLink to="/sentry">Sentry</NuxtLink>&nbsp;/
+    <PageHeader
+      class="sentry-event__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/sentry">Sentry</NuxtLink>&nbsp;/&nbsp;
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
@@ -12,7 +16,7 @@
       <div></div>
     </div>
 
-    <SentryPage v-if="event" :event="event" />
+    <SentryPage v-if="event" :event="event" class="sentry-event__body" />
   </main>
 </template>
 
@@ -90,10 +94,19 @@ export default defineComponent({
 @import "assets/mixins";
 
 .sentry-event {
-  @apply h-full w-full;
+  @include layout;
+}
+
+.sentry-event__head {
+  @include layout-head;
 }
 
 .sentry-event__loading {
   @include loading;
+  @include layout-body;
+}
+
+.sentry-event__body {
+  @include layout-body;
 }
 </style>

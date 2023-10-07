@@ -1,8 +1,12 @@
 <template>
   <main class="inspector-event">
-    <PageHeader button-title="Delete event" @delete="onDelete">
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/
-      <NuxtLink to="/inspector">Inspector</NuxtLink>&nbsp;/
+    <PageHeader
+      class="inspector-event__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/inspector">Inspector</NuxtLink>&nbsp;/&nbsp;
       <NuxtLink :disabled="true">{{ event.id }}</NuxtLink>
     </PageHeader>
 
@@ -12,7 +16,9 @@
       <div></div>
     </div>
 
-    <InspectorPage v-if="event" :event="event" />
+    <div class="inspector-event__body">
+      <InspectorPage v-if="event" :event="event" />
+    </div>
   </main>
 </template>
 
@@ -89,9 +95,19 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "assets/mixins";
 .inspector-event {
-  @apply h-full w-full;
+  @include layout;
 }
+
+.inspector-event__head {
+  @include layout-head;
+}
+
 .inspector-event__loading {
   @include loading;
+  @include layout-body;
+}
+
+.inspector-event__body {
+  @include layout-body;
 }
 </style>

@@ -45,10 +45,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .page-header {
-  @apply p-3 flex justify-between border-b border-gray-200 dark:border-gray-700;
+  @apply flex justify-between;
 }
 
 .page-header__title {
+  @apply flex items-center flex-row;
 }
 
 .page-header__controls {

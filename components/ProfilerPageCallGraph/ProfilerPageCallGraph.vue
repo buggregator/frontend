@@ -189,12 +189,10 @@ export default defineComponent({
 
 .profiler-page-call-graph--fullscreen {
   @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full;
-  z-index: 9998;
 }
 
 .profiler-page-call-graph__toolbar {
   @apply absolute top-5 left-5 flex bg-gray-200 p-2 rounded gap-x-5;
-  z-index: 9999;
 }
 
 .profiler-page-call-graph__toolbar--right {

@@ -1,6 +1,6 @@
 <template>
   <main class="settings-page">
-    <PageHeader>
+    <PageHeader class="settings-page__header">
       <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
     </PageHeader>
 
@@ -82,11 +82,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .settings-page {
+  @include layout;
+}
+
+.settings-page__header {
+  @include layout-head;
 }
 
 .settings-page__content {
   @apply p-3;
+  @include layout-body;
 }
 
 .settings__title {

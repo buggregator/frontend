@@ -1,12 +1,11 @@
 <template>
   <div class="main-layout">
-    <div class="main-layout__sidebar-wrap">
-      <LayoutSidebar
-        :is-connected="isConnected"
-        :api-version="apiVersion"
-        :client-version="clientVersion"
-      />
-    </div>
+    <LayoutSidebar
+      class="main-layout__sidebar"
+      :is-connected="isConnected"
+      :api-version="apiVersion"
+      :client-version="clientVersion"
+    />
 
     <div class="main-layout__content">
       <slot />
@@ -75,16 +74,22 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .main-layout {
   @apply flex min-h-screen items-stretch relative;
 }
 
-.main-layout__sidebar-wrap {
-  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700;
+.main-layout__sidebar {
+  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
+}
+
+.main-layout__header {
+  @apply flex-none w-full h-10;
 }
 
 .main-layout__content {
-  @apply flex flex-col h-full flex-1 w-full min-h-screen;
+  @apply flex flex-col h-full flex-1 w-full min-h-screen absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16;
 
   & > div {
     @apply flex flex-col h-full flex-1;
@@ -92,6 +97,6 @@ export default defineComponent({
 }
 
 .main-layout__sidebar {
-  @apply w-10 md:w-14 lg:w-16 fixed h-screen;
+  @include layout-sidebar;
 }
 </style>

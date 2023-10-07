@@ -1,8 +1,12 @@
 <template>
   <main class="profiler-event">
-    <PageHeader button-title="Delete event" @delete="onDelete">
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/
-      <NuxtLink to="/profiler">Profiler</NuxtLink>&nbsp;/
+    <PageHeader
+      class="profiler-event__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/profiler">Profiler</NuxtLink>&nbsp;/&nbsp;
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
@@ -12,7 +16,9 @@
       <div></div>
     </div>
 
-    <ProfilerPage v-if="event" :event="event" />
+    <div class="profiler-event__body">
+      <ProfilerPage v-if="event" :event="event" />
+    </div>
   </main>
 </template>
 
@@ -85,23 +91,21 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "assets/mixins";
+
 .profiler-event {
-  @apply h-full w-full;
+  @include layout;
+}
 
-  > main {
-    @apply flex flex-col md:flex-row;
-  }
-
-  .call-stack__wrapper {
-    @apply w-full md:w-1/6 border-r border-gray-300 dark:border-gray-500;
-  }
-
-  .info__wrapper {
-    @apply w-full h-full flex flex-col md:w-5/6 divide-y divide-gray-300 dark:divide-gray-500;
-  }
+.profiler-event__head {
+  @include layout-head;
 }
 
 .profiler-event__loading {
   @include loading;
+  @include layout-body;
+}
+
+.profiler-event__body {
+  @include layout-body;
 }
 </style>

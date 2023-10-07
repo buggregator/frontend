@@ -1,6 +1,10 @@
 <template>
   <div class="events-page">
-    <PageHeader button-title="Clear events" @delete="clearEvents">
+    <PageHeader
+      class="events-page__head"
+      button-title="Clear events"
+      @delete="clearEvents"
+    >
       <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
       <template v-if="title">
@@ -137,12 +141,17 @@ export default defineComponent({
 @import "assets/mixins";
 
 .events-page {
-  @apply h-full w-full;
+  @include layout;
+}
+
+.events-page__head {
+  @include layout-head;
 }
 
 .events-page__events {
+  @include layout-body;
   @include border-style;
-  @apply flex flex-col divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
+  @apply divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
 }
 
 .events-page__event {
@@ -152,7 +161,8 @@ export default defineComponent({
 }
 
 .events-page__welcome {
-  @apply flex-1 p-4 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-800 w-full h-full min-h-screen;
+  @include layout-body;
+  @apply flex-1 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-800 min-h-screen;
 }
 
 .events-page__btn-stop-events {

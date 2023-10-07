@@ -1,8 +1,12 @@
 <template>
   <main class="smtp-event">
-    <PageHeader button-title="Delete event" @delete="onDelete">
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/
-      <NuxtLink to="/smtp">Smtp</NuxtLink>&nbsp;/
+    <PageHeader
+      class="smtp-event__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/smtp">Smtp</NuxtLink>&nbsp;/&nbsp;
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
@@ -12,7 +16,9 @@
       <div></div>
     </div>
 
-    <SmtpPage v-if="event" :event="event" :html-source="html" />
+    <div class="smtp-event__body">
+      <SmtpPage v-if="event" :event="event" :html-source="html" />
+    </div>
   </main>
 </template>
 
@@ -90,10 +96,19 @@ export default defineComponent({
 @import "assets/mixins";
 
 .smtp-event {
-  @apply flex-1 flex flex-col h-full w-full;
+  @include layout;
+}
+
+.smtp-event__head {
+  @include layout-head;
 }
 
 .smtp-event__loading {
   @include loading;
+  @include layout-body;
+}
+
+.smtp-event__body {
+  @include layout-body;
 }
 </style>
