@@ -14,12 +14,12 @@
           <IconSvg
             name="sun"
             class="settings-page__control-icon"
-            :class="{ 'settings-page__control-icon--dark': isDarkMode }"
+            :class="{ 'settings-page__control-icon--active': !isDarkMode }"
           />
 
           <button
             class="settings-page__control-button"
-            :class="{ 'settings-page__control-button--dark': isDarkMode }"
+            :class="{ 'settings-page__control-button--active': isDarkMode }"
             @click="changeTheme"
           >
             <span class="settings-page__control-button-in" />
@@ -28,7 +28,7 @@
           <IconSvg
             class="settings-page__control-icon"
             name="moon"
-            :class="{ 'settings-page__control-icon--dark': !isDarkMode }"
+            :class="{ 'settings-page__control-icon--active': isDarkMode }"
           />
         </div>
 
@@ -40,12 +40,12 @@
           <IconSvg
             name="lock-off"
             class="settings-page__control-icon"
-            :class="{ 'settings-page__control-icon--dark': isFixedHeader }"
+            :class="{ 'settings-page__control-icon--active': !isFixedHeader }"
           />
 
           <button
             class="settings-page__control-button"
-            :class="{ 'settings-page__control-button--dark': isFixedHeader }"
+            :class="{ 'settings-page__control-button--active': isFixedHeader }"
             @click="changeNavbar"
           >
             <span class="settings-page__control-button-in" />
@@ -54,7 +54,7 @@
           <IconSvg
             class="settings-page__control-icon"
             name="lock"
-            :class="{ 'settings-page__control-icon--dark': !isFixedHeader }"
+            :class="{ 'settings-page__control-icon--active': isFixedHeader }"
           />
         </div>
       </section>
@@ -125,11 +125,11 @@ export default defineComponent({
 }
 
 .settings-page__control-icon {
-  @apply opacity-100 w-8;
+  @apply opacity-10 w-8;
 }
 
-.settings-page__control-icon--dark {
-  @apply opacity-10;
+.settings-page__control-icon--active {
+  @apply opacity-100;
 }
 
 .settings-page__control-button {
@@ -139,7 +139,7 @@ export default defineComponent({
 .settings-page__control-button-in {
   @apply inline-block h-6 w-6 transform rounded-full transition bg-blue-600 translate-x-2;
 
-  .settings-page__control-button--dark & {
+  .settings-page__control-button--active & {
     @apply translate-x-8;
   }
 }
