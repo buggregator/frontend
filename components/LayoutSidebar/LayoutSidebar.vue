@@ -36,25 +36,25 @@
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
-
-      <div class="layout-sidebar__nav-versions">
-        <div
-          v-if="apiVersion"
-          class="layout-sidebar__nav-version"
-          :title="`Api version: ${apiVersion}`"
-        >
-          {{ apiVersion }}
-        </div>
-
-        <div
-          v-if="clientVersion"
-          class="layout-sidebar__nav-version"
-          :title="`Client version: ${clientVersion}`"
-        >
-          {{ clientVersion }}
-        </div>
-      </div>
     </nav>
+
+    <div class="layout-sidebar__versions">
+      <div
+        v-if="apiVersion"
+        class="layout-sidebar__nav-version"
+        :title="`Api version: ${apiVersion}`"
+      >
+        {{ apiVersion }}
+      </div>
+
+      <div
+        v-if="clientVersion"
+        class="layout-sidebar__nav-version"
+        :title="`Client version: ${clientVersion}`"
+      >
+        {{ clientVersion }}
+      </div>
+    </div>
   </aside>
 </template>
 
@@ -70,40 +70,25 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-  },
-  // TODO: fix visible component story with async setup
-  async setup() {
-    if (process.client) {
-      const { $config, $api } = useNuxtApp();
-
-      const apiVersion = await $api.getVersion();
-
-      return {
-        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-          ? `v${apiVersion}`
-          : `@${apiVersion}`,
-        clientVersion:
-          !$config?.version || $config.version === "0.0.1"
-            ? "@dev"
-            : `v${$config.version}`,
-      };
-    }
-
-    return {
-      clientVersion: "@dev",
-      apiVersion: "@dev",
-    };
+    apiVersion: {
+      type: String,
+      default: "@dev",
+    },
+    clientVersion: {
+      type: String,
+      default: "@dev",
+    },
   },
 });
 </script>
 
 <style lang="scss" scoped>
 .layout-sidebar {
-  @apply bg-gray-200 dark:bg-gray-800 flex flex-col justify-between z-50 w-full h-full;
+  @apply bg-gray-200 dark:bg-gray-800 flex flex-col justify-between;
 }
 
 .layout-sidebar__nav {
-  @apply divide-y divide-gray-300 dark:divide-gray-600 sticky top-0 h-screen max-h-screen;
+  @apply divide-gray-300 dark:divide-gray-600 flex-col flex overflow-auto divide-y divide-gray-300 dark:divide-gray-600 border-b border-gray-300 dark:border-gray-600;
 }
 
 .layout-sidebar__link {
@@ -118,12 +103,8 @@ export default defineComponent({
   @apply fill-current;
 }
 
-.layout-sidebar__nav-versions {
-  @apply flex justify-center text-xs dark:text-gray-600 text-gray-400 py-2 px-1 absolute bottom-0 left-0 right-0 flex-col;
-}
-
-.layout-sidebar__nav-version {
-  @apply whitespace-nowrap text-center;
+.layout-sidebar__versions {
+  @apply flex justify-center text-xs dark:text-gray-600 text-gray-400 py-2 px-1 left-0 right-0 flex-col mt-auto whitespace-nowrap text-center border-t border-gray-300 dark:border-gray-600;
 
   font-size: 0.8em;
 }

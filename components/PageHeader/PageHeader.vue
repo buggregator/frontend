@@ -13,13 +13,17 @@
         {{ buttonTitle }}
       </button>
     </div>
+
+    <IconSvg class="page-header__lock-icon" name="lock" />
   </header>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import IconSvg from "~/components/IconSvg/IconSvg.vue";
 
 export default defineComponent({
+  components: { IconSvg },
   props: {
     title: {
       type: String,
@@ -45,10 +49,11 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .page-header {
-  @apply p-3 flex justify-between border-b border-gray-200 dark:border-gray-700;
+  @apply flex justify-between;
 }
 
 .page-header__title {
+  @apply flex items-center flex-row;
 }
 
 .page-header__controls {
@@ -57,5 +62,18 @@ export default defineComponent({
 
 .page-header__btn-clear {
   @apply px-3 py-1 text-xs bg-red-800 text-white rounded-sm hover:bg-red-700 transition transition-all duration-300;
+}
+
+.page-header__lock-icon {
+  @apply absolute right-0 w-4 h-4;
+
+  top: 50%;
+  margin-top: -0.5rem;
+  display: none;
+  opacity: 0.3;
+
+  html.navbar-fixed & {
+    display: block;
+  }
 }
 </style>

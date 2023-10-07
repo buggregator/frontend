@@ -1,8 +1,11 @@
 <template>
   <div class="main-layout">
-    <div class="main-layout__sidebar-wrap">
-      <LayoutSidebar :is-connected="isConnected" />
-    </div>
+    <LayoutSidebar
+      class="main-layout__sidebar"
+      :is-connected="isConnected"
+      :api-version="apiVersion"
+      :client-version="clientVersion"
+    />
 
     <div class="main-layout__content">
       <slot />
@@ -13,7 +16,7 @@
 <script lang="ts">
 import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
 import { defineComponent } from "vue";
-import { THEME_MODES, useThemeStore } from "~/stores/theme";
+import { THEME_MODES, useSettingsStore } from "~/stores/settings";
 import { storeToRefs } from "pinia";
 import { useNuxtApp } from "#app";
 
@@ -22,9 +25,12 @@ export default defineComponent({
     LayoutSidebar,
   },
 
-  setup() {
-    const themeStore = useThemeStore();
-    const { themeType } = storeToRefs(themeStore);
+  async setup() {
+    const settingsStore = useSettingsStore();
+    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
+    const { $config, $api } = useNuxtApp();
+
+    const apiVersion = await $api.getVersion();
 
     if (process.client) {
       const { $events } = useNuxtApp();
@@ -32,10 +38,25 @@ export default defineComponent({
       if (!$events?.items?.length) {
         $events.getAll();
       }
+
+      return {
+        themeType,
+        isFixedHeader,
+        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+          ? `v${apiVersion}`
+          : `@${apiVersion}`,
+        clientVersion:
+          !$config?.version || $config.version === "0.0.1"
+            ? "@dev"
+            : `v${$config.version}`,
+      };
     }
 
     return {
       themeType,
+      isFixedHeader: false,
+      clientVersion: "@dev",
+      apiVersion: "@dev",
     };
   },
   computed: {
@@ -44,27 +65,26 @@ export default defineComponent({
       return false;
     },
   },
-  mounted() {
-    if (this.themeType === THEME_MODES.DARK) {
-      document?.documentElement?.classList?.add(THEME_MODES.DARK);
-    } else {
-      document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-    }
-  },
 });
 </script>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .main-layout {
   @apply flex min-h-screen items-stretch relative;
 }
 
-.main-layout__sidebar-wrap {
-  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700;
+.main-layout__sidebar {
+  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
+}
+
+.main-layout__header {
+  @apply flex-none w-full h-10;
 }
 
 .main-layout__content {
-  @apply flex flex-col h-full flex-1 w-full min-h-screen;
+  @apply flex flex-col h-full flex-1 w-full min-h-screen absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16;
 
   & > div {
     @apply flex flex-col h-full flex-1;
@@ -72,6 +92,6 @@ export default defineComponent({
 }
 
 .main-layout__sidebar {
-  @apply w-10 md:w-14 lg:w-16 fixed h-screen;
+  @include layout-sidebar;
 }
 </style>
