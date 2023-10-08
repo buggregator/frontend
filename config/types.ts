@@ -8,7 +8,6 @@ export type Email = string; // TODO: update type
 export type TEventType = OneOfValues<typeof EVENT_TYPES>;
 export type TEventGroup = OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>;
 
-
 type SMTPUser = {
   name: string;
   email: Email;
