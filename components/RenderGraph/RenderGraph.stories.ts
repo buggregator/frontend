@@ -22,28 +22,21 @@ TestData.args = {
   data: {
     elements: {
       nodes: [
-        { data: { id: 'j', name: 'Jerry', weight: 65, faveColor: '#6FB1FC', faveShape: 'triangle' } },
-        { data: { id: 'e', name: 'Elaine', weight: 45, faveColor: '#EDA1ED', faveShape: 'ellipse' } },
-        { data: { id: 'k', name: 'Kramer', weight: 75, faveColor: '#86B342', faveShape: 'octagon' } },
-        { data: { id: 'g', name: 'George', weight: 70, faveColor: '#F5A45D', faveShape: 'rectangle' } }
+        { data: { id: 'e10', name: 'Spiral\\Core\\AbstractCore::callAction', weight: 70, faveColor: '#6FB1FC' } },
+        { data: { id: 'e11', name: 'Spiral\\Core\\AbstractCore::Spiral\\Core\\{closure}', weight: 70, faveColor: '#EDA1ED' } },
+        { data: { id: 'e12', name: 'App\\Controller\\HomeController::email', weight: 70, faveColor: '#86B342' } },
+        { data: { id: 'e13', name: 'Spiral\\SendIt\\MailQueue::send', weight: 70, faveColor: '#F5A45D' } },
+        { data: { id: 'e14', name: 'Spiral\\Queue\\Queue::push', weight: 70, faveColor: '#F5A45D' } }
       ],
       edges: [
-        { data: { source: 'j', target: 'e', faveColor: '#6FB1FC', strength: 90 } },
-        { data: { source: 'j', target: 'e', faveColor: '#000000', strength: 120 } },
-        { data: { source: 'j', target: 'k', faveColor: '#6FB1FC', strength: 70 } },
-        { data: { source: 'j', target: 'g', faveColor: '#6FB1FC', strength: 80 } },
-
-        { data: { source: 'e', target: 'j', faveColor: '#EDA1ED', strength: 95 } },
-        { data: { source: 'e', target: 'k', faveColor: '#EDA1ED', strength: 60 }, classes: 'questionable' },
-
-        { data: { source: 'k', target: 'j', faveColor: '#86B342', strength: 100 } },
-        { data: { source: 'k', target: 'e', faveColor: '#86B342', strength: 100 } },
-        { data: { source: 'k', target: 'g', faveColor: '#86B342', strength: 100 } },
-
-        { data: { source: 'g', target: 'j', faveColor: '#F5A45D', strength: 90 } },
-        { data: { source: 'g', target: 'g', faveColor: '#F5A45D', strength: 90 } },
-        { data: { source: 'g', target: 'g', faveColor: '#F5A45D', strength: 90 } },
-        { data: { source: 'g', target: 'g', faveColor: '#F5A45D', strength: 90 } }
+        { data: { source: 'e10', target: 'e11', faveColor: '#6FB1FC' } },
+        { data: { source: 'e11', target: 'e12', faveColor: '#6FB1FC' } },
+        { data: { source: 'e12', target: 'e13', faveColor: '#6FB1FC' } },
+        { data: { source: 'e13', target: 'e14', faveColor: '#EDA1ED' } },
+        { data: { source: 'e14', target: 'e14', faveColor: '#EDA1ED' } },
+        { data: { source: 'e14', target: 'e14', faveColor: '#EDA1ED' } },
+        { data: { source: 'e14', target: 'e10', faveColor: '#EDA1ED' } },
+        { data: { source: 'e14', target: 'e14', faveColor: '#EDA1ED' } },
       ]
     },
   },

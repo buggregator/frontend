@@ -18,9 +18,11 @@
 import { defineComponent, PropType } from "vue";
 import type { ProfilerEdge } from "~/config/types";
 
-import cytoscape from "cytoscape";
+import cytoscape, { NodePositionFunction, NodePositionMap } from "cytoscape";
 import type { CytoscapeOptions } from "cytoscape";
+import dagre from "cytoscape-dagre";
 // import StatBoard from "~/components/StatBoard/StatBoard.vue";
+cytoscape.use(dagre);
 
 export default defineComponent({
   // components: { StatBoard },
@@ -69,50 +71,65 @@ export default defineComponent({
     this.renderer = cytoscape({
       container: this.$refs.renderer as HTMLElement,
 
-      elements: this.data.elements,
+      elements: this.data!.elements,
+      boxSelectionEnabled: false,
+      autounselectify: true,
+      layout: {
+        name: "dagre",
+        nodeSep: 100,
+        edgeSep: 100,
+        rankSep: 100,
+        rankDir: "TB",
+      },
+      edge: {},
       style: [
         {
           selector: "node",
           style: {
-            "background-color": "#3498db",
+            "background-color": "#e74c3c",
             label: "data(label)",
             content: "data(name)",
             "text-valign": "center",
-            "text-outline-width": 2,
-            "text-outline-color": "data(faveColor)",
+            "text-outline-width": 0,
             color: "#fff",
+            shape: "round-rectangle",
+            "padding-top": "10px",
+            "padding-left": "10px",
+            "padding-right": "10px",
+            "padding-bottom": "10px",
+            "text-wrap": "wrap",
+            width: "label",
+            height: "label",
+            "border-width": "1px",
+            "border-color": "#333",
           },
         },
         {
           selector: "edge",
+
           style: {
             "line-color": "#e74c3c",
-            "curve-style": "bezier",
             "target-arrow-shape": "triangle",
-          },
-        },
-        {
-          selector: "edge.questionable",
-          style: {
-            "line-style": "dotted",
-            "target-arrow-shape": "diamond",
+            "target-arrow-color": "#e74c3c",
+            label: "data(label)",
+            width: 1.5,
+            "curve-style": "bezier",
+            "loop-direction": "90deg",
           },
         },
       ],
     });
 
-    this.renderer.on("mouseover", "node", (event) => {
-      // console.log('node', node.data())
-
+    this.renderer?.on("mouseover", "node", (event) => {
       this.activeEdgePosition = event.position;
     });
 
-    this.renderer.on("mouseout", () => {
-      this.activeEdgePosition = { x: 0, y: 0 };
+    this.renderer?.on("mouseout", () => {
+      this.activeEdgePosition = null;
     });
   },
   beforeUnmount() {
-    this.renderer.destroy();
+    this.renderer?.destroy();
   },
 });
 </script>

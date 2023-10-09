@@ -67,6 +67,7 @@
     "@vue/shared": "^3.2.45",
     "centrifuge": "^3.1.0",
     "cytoscape": "^3.26.0",
+    "cytoscape-dagre": "^2.5.0",
     "d3-graphviz": "^5.0.2",
     "d3-selection": "^3.0.0",
     "downloadjs": "^1.4.7",
