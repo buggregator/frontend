@@ -2975,7 +2975,14 @@
   "resolved" "https://registry.npmjs.org/@types/chai/-/chai-4.3.5.tgz"
   "version" "4.3.5"
 
-"@types/cytoscape@^3.8.0":
+"@types/cytoscape-dagre@^2.3.1":
+  "integrity" "sha512-4tLRpQxICUC+YooRTTs3pfTkctsOgu0/ID4A3u2knGDQykh3Tz+Go8MgUifPP1xV7VzGBogSdOqz3l/P9NTUZQ=="
+  "resolved" "https://registry.npmjs.org/@types/cytoscape-dagre/-/cytoscape-dagre-2.3.1.tgz"
+  "version" "2.3.1"
+  dependencies:
+    "@types/cytoscape" "*"
+
+"@types/cytoscape@*", "@types/cytoscape@^3.8.0":
   "integrity" "sha512-ny4i4BOoZxdc9DrSa9RrasXHPRFgt0PeINgj/CegzKu7CJO+UQP0KnjebYJ+KoLymyUbCX86vmqz5B3LK10w5Q=="
   "resolved" "https://registry.npmjs.org/@types/cytoscape/-/cytoscape-3.19.11.tgz"
   "version" "3.19.11"

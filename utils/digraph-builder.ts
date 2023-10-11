@@ -1,30 +1,27 @@
 import {humanFileSize, formatDuration} from "~/utils/formats";
-import {ProfilerEdge, ProfilerEdges} from "~/config/types";
+import { GraphTypes, ProfilerEdge, ProfilerEdges, TGraphEdge, TGraphNode } from "~/config/types";
 
 const labelsStrigifier = (labels: object): string => Object.entries(labels)
     .map(([label, value]) => `${label}="${value}"`)
     .join(' ')
 
 const formatValue = (value: number, metric: string): string | number => {
-    switch (metric) {
-        case 'p_mu':
-        case 'p_pmu':
-        case 'p_cpu':
-        case 'p_wt':
-            return `${value}%`
-        case 'mu':
-        case 'd_mu':
-        case 'pmu':
-        case 'd_pmu':
-            return humanFileSize(value)
-        case 'cpu':
-        case 'd_cpu':
-        case 'wt':
-        case 'd_wt':
-            return formatDuration(value)
-        default:
-            return value
-    }
+  const metricFormatMap: Record<string, (v: number) => string|number> = {
+    p_mu: (a: number) => `${a}%`,
+    p_pmu: (a: number) => `${a}%`,
+    p_cpu: (a: number) => `${a}%`,
+    p_wt: (a: number) => `${a}%`,
+    mu: humanFileSize,
+    d_mu: humanFileSize,
+    pmu: humanFileSize,
+    d_pmu: humanFileSize,
+    cpu: formatDuration,
+    d_cpu: formatDuration,
+    wt: formatDuration,
+    d_wt: formatDuration,
+  }
+
+  return metricFormatMap[metric]?.(value) || value
 }
 
 export const addSlashes = (str: string): string => str.replace(/\\/g, '\\\\');
@@ -128,3 +125,50 @@ digraph xhprof {
         return `${digram} }`
     }
 }
+
+
+export const calcGraphData: (
+  edges: ProfilerEdges,
+  metric: GraphTypes,
+  threshold: number
+) => ({
+  nodes: TGraphNode[],
+  edges: TGraphEdge[]
+}) =
+  (edges: ProfilerEdges, metric , threshold = 1) => Object.values(edges)
+    .reduce((arr, edge: ProfilerEdge, index) => {
+      const metricKey = `p_${metric}`;
+
+      const isImportantNode = edge.cost.p_pmu > 10;
+
+      if (!isImportantNode && edge.cost[metricKey] <= threshold) {
+        return arr
+      }
+
+      arr.nodes.push({
+        data: {
+          id: edge.callee,
+          name: edge.callee as string,
+          color: edge.cost[metricKey] > 10 ? '#e74c3c' : '#fff',
+          textColor: edge.cost[metricKey] > 10 ? '#fff' : '#000'
+        }
+      })
+
+      const hasNodeSource = arr.nodes.find(node => node.data.id === edge.caller);
+
+      if (index > 0 && hasNodeSource) {
+        const postfix = edge.cost.ct > 1 ? ` - ${edge.cost.ct  }x` : '';
+
+        arr.edges.push({ data: {
+            source: edge.caller || '',
+            target: edge.callee,
+            color: edge.cost.p_pmu > 10 ? '#e74c3c' : '#fff',
+            label: `${formatValue(edge.cost[metricKey], metricKey)}${postfix}`
+          }})
+      }
+
+      return arr
+    }, {
+      nodes: [] as TGraphNode[],
+      edges: [] as TGraphEdge[]
+    });

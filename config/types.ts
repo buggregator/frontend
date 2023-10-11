@@ -332,3 +332,28 @@ export interface NormalizedEvent {
   date: Date,
   payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
 }
+
+export type TGraphNode = {
+  data: {
+    id: string,
+    name: string,
+    color?: string,
+    textColor?: string
+  }
+}
+
+export type TGraphEdge = {
+  data: {
+    id?: string,
+    source: string,
+    target: string,
+    label?: string,
+    color?: string,
+  }
+}
+
+export enum GraphTypes {
+  CPU= 'cpu' ,
+  MEMORY_CHANGE = 'pmu',
+  MEMORY = 'mu'
+}
