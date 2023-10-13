@@ -146,7 +146,7 @@ export default defineComponent({
 }
 
 .profiler-page-call-graph__board-title {
-  @apply px-4 py-2 font-bold truncate text-gray-300 border-b border-gray-600;
+  @apply px-4 py-2 font-bold truncate text-gray-300;
 }
 
 .profiler-page-call-graph__toolbar {
