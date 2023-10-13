@@ -124,15 +124,19 @@ export default defineComponent({
       const { clientHeight: height = 0, clientWidth: width = 0 } = this.$refs
         .tooltip as HTMLElement;
 
+      const { offsetHeight: parentHeight = 0, offsetWidth: parentWidth = 0 } =
+        this.$refs.parent as HTMLElement;
+
       let top = y;
       let left = x;
 
-      if (width + x > window.innerWidth - 80) {
-        const deltaX = width + x - window.innerWidth + 100;
+      if (width + x > parentWidth - 80) {
+        const deltaX = width + x - parentWidth + 100;
+
         left -= deltaX;
       }
 
-      if (height + y > window.innerHeight) {
+      if (height + y > parentHeight) {
         top = y - height;
       }
 

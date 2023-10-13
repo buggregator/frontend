@@ -138,7 +138,7 @@ export default defineComponent({
 }
 
 .profiler-page-call-graph--fullscreen {
-  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full bg-gray-800;
+  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full bg-gray-800 z-[99999];
 }
 
 .profiler-page-call-graph__board {
