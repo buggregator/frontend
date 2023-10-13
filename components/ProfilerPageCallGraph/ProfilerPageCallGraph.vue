@@ -10,13 +10,13 @@
       :elements="graphElements"
       :height="graphHeight"
     >
-      <template #default="{ data }">
+      <template #default="{ data: { name, cost } }">
         <div class="profiler-page-call-graph__board">
           <h4 class="profiler-page-call-graph__board-title">
-            {{ data.id }}
+            {{ name }}
           </h4>
 
-          <StatBoard :cost="data.cost" />
+          <StatBoard :cost="cost" />
         </div>
       </template>
     </RenderGraph>

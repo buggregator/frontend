@@ -33,19 +33,19 @@ export default defineComponent({
         },
         {
           title: "CPU time",
-          value: formatDuration(this.cost.cpu || 0),
+          value: formatDuration(this.cost.cpu || 0) || "—",
         },
         {
           title: "Wall time",
-          value: formatDuration(this.cost.wt || 0),
+          value: formatDuration(this.cost.wt || 0) || "—",
         },
         {
           title: "Memory usage",
-          value: humanFileSize(this.cost.mu || 0),
+          value: humanFileSize(this.cost.mu || 0) || "—",
         },
         {
           title: "Change memory",
-          value: humanFileSize(this.cost.pmu || 0),
+          value: humanFileSize(this.cost.pmu || 0) || "—",
         },
       ];
     },
