@@ -75,7 +75,7 @@ import IconSvg from "~/components/IconSvg/IconSvg.vue";
 
 import { defineComponent, PropType } from "vue";
 import { GraphTypes, Profiler } from "~/config/types";
-import { calcGraphData } from "~/utils/digraph-builder";
+import { calcGraphData } from "~/utils/calc-graph-data";
 import RenderGraph from "~/components/RenderGraph/RenderGraph.vue";
 import StatBoard from "~/components/StatBoard/StatBoard.vue";
 

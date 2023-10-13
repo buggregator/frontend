@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import RenderGraph from '~/components/RenderGraph/RenderGraph.vue';
 import profilerEventMock from '~/mocks/profiler.json'
 import { GraphTypes } from "~/config/types";
-import { calcGraphData } from "~/utils/digraph-builder";
+import { calcGraphData } from "~/utils/calc-graph-data";
 
 export default {
   title: "Components/RenderGraph",
