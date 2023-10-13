@@ -149,8 +149,9 @@ export const calcGraphData: (
         data: {
           id: edge.callee,
           name: edge.callee as string,
-          color: edge.cost[metricKey] > 10 ? '#e74c3c' : '#fff',
-          textColor: edge.cost[metricKey] > 10 ? '#fff' : '#000'
+          cost: edge.cost,
+          color: isImportantNode ? '#e74c3c' : '#fff',
+          textColor: isImportantNode ? '#fff' : '#000'
         }
       })
 

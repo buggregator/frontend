@@ -22,7 +22,6 @@ const Template: Story = (args) => ({
 export const TestData = Template.bind({});
 
 TestData.args = {
-  data: {
     elements: {
       nodes: [
         { data: { id: 'e10', name: 'Spiral\\Core\\AbstractCore::callAction', color: '#6FB1FC' } },
@@ -42,7 +41,6 @@ TestData.args = {
         { data: { source: 'e14', target: 'e14', label: '100%' } },
       ]
     },
-  },
 };
 
 
@@ -50,23 +48,17 @@ TestData.args = {
 export const ProfilerData = Template.bind({});
 
 ProfilerData.args = {
-  data: {
-    elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.CPU, 1)
-  }
+  elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.CPU, 1)
 };
 
 export const ProfilerMemoryData = Template.bind({});
 
 ProfilerMemoryData.args = {
-  data: {
-    elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.MEMORY, 1)
-  }
+  elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.MEMORY, 1)
 };
 
 export const ProfilerMemoryChangeData = Template.bind({});
 
 ProfilerMemoryChangeData.args = {
-  data: {
-    elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
-  }
+  elements: calcGraphData(profilerEventMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
 };

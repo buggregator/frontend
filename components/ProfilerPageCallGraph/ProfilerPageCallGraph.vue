@@ -1,17 +1,25 @@
 <template>
   <div
+    ref="container"
     class="profiler-page-call-graph"
     :class="{ 'profiler-page-call-graph--fullscreen': isFullscreen }"
   >
-    <div v-if="metricLoading" class="profiler-page-call-graph__loading-wr">
-      <div class="profiler-page-call-graph__loading">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
+    <RenderGraph
+      v-if="isReadyGraph && graphKey"
+      :key="graphKey"
+      :elements="graphElements"
+      :height="graphHeight"
+    >
+      <template #default="{ data }">
+        <div class="profiler-page-call-graph__board">
+          <h4 class="profiler-page-call-graph__board-title">
+            {{ data.id }}
+          </h4>
 
-    <div ref="graphviz" class="profiler-page-call-graph__graphviz"></div>
+          <StatBoard :cost="data.cost" />
+        </div>
+      </template>
+    </RenderGraph>
 
     <div class="profiler-page-call-graph__toolbar">
       <button title="Full screen" @click="isFullscreen = !isFullscreen">
@@ -22,22 +30,22 @@
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
-        :class="{ 'font-bold': metric === 'cpu' }"
-        @click="setMetric('cpu')"
+        :class="{ 'font-bold': metric === graphMetrics.CPU }"
+        @click="setMetric(graphMetrics.CPU)"
       >
         CPU
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
-        :class="{ 'font-bold': metric === 'pmu' }"
-        @click="setMetric('pmu')"
+        :class="{ 'font-bold': metric === graphMetrics.MEMORY_CHANGE }"
+        @click="setMetric(graphMetrics.MEMORY_CHANGE)"
       >
         Memory change
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
-        :class="{ 'font-bold': metric === 'mu' }"
-        @click="setMetric('mu')"
+        :class="{ 'font-bold': metric === graphMetrics.MEMORY }"
+        @click="setMetric(graphMetrics.MEMORY)"
       >
         Memory usage
       </button>
@@ -63,19 +71,16 @@
 </template>
 
 <script lang="ts">
-import { selectAll } from "d3-selection";
-import { graphviz } from "d3-graphviz";
-import { Graphviz } from "@hpcc-js/wasm/graphviz";
-
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 
 import { defineComponent, PropType } from "vue";
-import { Profiler, ProfilerEdge } from "~/config/types";
-import { addSlashes, DigraphBuilder } from "~/utils/digraph-builder";
-import debounce from "lodash.debounce";
+import { GraphTypes, Profiler } from "~/config/types";
+import { calcGraphData } from "~/utils/digraph-builder";
+import RenderGraph from "~/components/RenderGraph/RenderGraph.vue";
+import StatBoard from "~/components/StatBoard/StatBoard.vue";
 
 export default defineComponent({
-  components: { IconSvg },
+  components: { StatBoard, RenderGraph, IconSvg },
   props: {
     event: {
       type: Object as PropType<Profiler>,
@@ -86,95 +91,40 @@ export default defineComponent({
   data() {
     return {
       isFullscreen: false,
-      metric: "cpu",
-      metricLoading: false,
+      metric: GraphTypes.CPU as GraphTypes,
       threshold: 1,
+      isReadyGraph: false,
     };
   },
-  created(): void {
-    Graphviz.load().then(() => {
-      this.graph = graphviz(this.$refs.graphviz, {})
-        .width("100%")
-        .height("100%")
-        .fit(true);
-
-      this.renderGraph();
-    });
+  computed: {
+    graphElements() {
+      return calcGraphData(this.event.edges, this.metric, this.threshold);
+    },
+    graphKey() {
+      return `${this.metric}-${this.threshold}`;
+    },
+    graphMetrics() {
+      return GraphTypes;
+    },
+    graphHeight() {
+      return this.isFullscreen
+        ? window.innerHeight
+        : (this.$refs.container as HTMLElement).offsetHeight;
+    },
   },
-  beforeUnmount() {
-    this.graph.destroy();
+  mounted() {
+    // NOTE: need to show graph after parent render
+    this.setReadyGraph();
   },
   methods: {
-    setMetric(metric: string): void {
-      this.metricLoading = true;
-
-      setTimeout(() => {
-        this.metric = metric;
-        this.renderGraph();
-        this.metricLoading = false;
-      }, 0);
+    setMetric(metric: GraphTypes): void {
+      this.metric = metric;
     },
     setThreshold(threshold: number): void {
-      this.metricLoading = true;
-
-      const prevThreshold = this.threshold;
       this.threshold = threshold;
-
-      return debounce(() => {
-        if (!threshold || prevThreshold === threshold) {
-          return;
-        }
-
-        setTimeout(() => {
-          this.renderGraph();
-          this.metricLoading = false;
-        }, 0);
-      }, 1000)();
     },
-
-    findEdge(name: string): ProfilerEdge | null {
-      const found = Object.values(this.event.edges).filter(
-        (v) => addSlashes(v.callee) === name
-      );
-
-      if (!found || found.length === 0) {
-        return null;
-      }
-
-      return found[0] || null;
-    },
-    nodeHandler(): void {
-      selectAll("g.node")
-        .on("mouseover", (e, tag) => {
-          const edge = this.findEdge(tag.key);
-
-          if (!edge) {
-            return;
-          }
-
-          this.$emit("hover", {
-            callee: edge.callee,
-            cost: edge.cost,
-            position: {
-              x: e.pageX,
-              y: e.pageY,
-            },
-          });
-        })
-        .on("mouseout", () => {
-          this.$emit("hide");
-        });
-    },
-    renderGraph(): void {
-      this.graph
-        .renderDot(
-          new DigraphBuilder(this.event.edges).build(
-            this.metric,
-            this.threshold
-          ),
-          this.nodeHandler
-        )
-        .resetZoom();
+    setReadyGraph(): void {
+      this.isReadyGraph = true;
     },
   },
 });
@@ -184,11 +134,19 @@ export default defineComponent({
 @import "assets/mixins";
 
 .profiler-page-call-graph {
-  @apply relative flex rounded border border-gray-900 h-full;
+  @apply relative flex rounded border border-gray-900 min-h-min min-w-min;
 }
 
 .profiler-page-call-graph--fullscreen {
-  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full;
+  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full bg-gray-800;
+}
+
+.profiler-page-call-graph__board {
+  @apply border border-gray-600 bg-gray-800 h-full;
+}
+
+.profiler-page-call-graph__board-title {
+  @apply px-4 py-2 font-bold truncate text-gray-300 border-b border-gray-600;
 }
 
 .profiler-page-call-graph__toolbar {
@@ -213,21 +171,5 @@ export default defineComponent({
 
 .profiler-page-call-graph__toolbar-input {
   @apply border-b bg-transparent border-gray-600 text-gray-600 w-8;
-}
-
-.profiler-page-call-graph__loading-wr {
-  @apply absolute m-auto top-0 left-0 right-0 bottom-0 flex justify-center items-center;
-}
-
-.profiler-page-call-graph__loading {
-  @apply z-50;
-
-  @include loading;
-}
-
-.profiler-page-call-graph__graphviz {
-  @apply flex-1 justify-items-stretch items-stretch bg-white;
-
-  max-height: 100vh;
 }
 </style>

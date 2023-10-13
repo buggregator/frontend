@@ -337,6 +337,7 @@ export type TGraphNode = {
   data: {
     id: string,
     name: string,
+    cost?: ProfilerCost,
     color?: string,
     textColor?: string
   }
