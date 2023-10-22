@@ -1,5 +1,4 @@
 @import "vendor.css";
-@import "digraph-builder.scss";
 
 body {
   @apply bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-50 p-0;

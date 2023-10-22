@@ -43,6 +43,7 @@ export default defineNuxtConfig({
   },
   css: ["~/assets/index.css"],
   plugins: [
+    {src: '~/plugins/api.client.ts'},
     {src: '~/plugins/events.client.ts'},
     {src: '~/plugins/vendors.client.ts'},
   ],

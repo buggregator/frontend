@@ -21,6 +21,7 @@
           <Tabs :options="{ useUrlFragment: false }" @changed="tabChange">
             <Tab name="Call graph">
               <ProfilerPageCallGraph
+                v-if="activeTab === 'Call graph'"
                 :event="event.payload"
                 @hover="setActiveEdge"
                 @hide="setActiveEdge"
@@ -28,6 +29,7 @@
             </Tab>
             <Tab name="Flamechart">
               <ProfilePageFlamegraph
+                v-if="activeTab === 'Flamechart'"
                 :key="activeTab"
                 :data-key="activeTab"
                 :edges="event.payload.edges"

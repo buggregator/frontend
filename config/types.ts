@@ -8,7 +8,6 @@ export type Email = string; // TODO: update type
 export type TEventType = OneOfValues<typeof EVENT_TYPES>;
 export type TEventGroup = OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>;
 
-
 type SMTPUser = {
   name: string;
   email: Email;
@@ -332,4 +331,30 @@ export interface NormalizedEvent {
   serverName: string,
   date: Date,
   payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
+}
+
+export type TGraphNode = {
+  data: {
+    id: string,
+    name: string,
+    cost?: ProfilerCost,
+    color?: string,
+    textColor?: string
+  }
+}
+
+export type TGraphEdge = {
+  data: {
+    id?: string,
+    source: string,
+    target: string,
+    label?: string,
+    color?: string,
+  }
+}
+
+export enum GraphTypes {
+  CPU= 'cpu' ,
+  MEMORY_CHANGE = 'pmu',
+  MEMORY = 'mu'
 }
