@@ -2,6 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import RayDumpPreview from '~/components/RayDumpPreview/RayDumpPreview.vue';
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import rayQueryEventMock from '~/mocks/ray-laravel-query.json'
+import rayQuery2EventMock from '~/mocks/ray-laravel-query-no-bindings.json'
 import rayEloquentEventMock from '~/mocks/ray-laravel-eloquent.json'
 import rayViewsEventMock from '~/mocks/ray-laravel-views.json'
 import rayEventsEventMock from '~/mocks/ray-laravel-events.json'
@@ -24,6 +25,9 @@ const Template: Story = (args) => ({
 
 export const Query = Template.bind({});
 Query.args = {event: normalizeRayDumpEvent(rayQueryEventMock),};
+
+export const Query2 = Template.bind({});
+Query2.args = {event: normalizeRayDumpEvent(rayQuery2EventMock),};
 
 export const Eloquent = Template.bind({});
 Eloquent.args = {event: normalizeRayDumpEvent(rayEloquentEventMock),};
