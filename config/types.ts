@@ -190,6 +190,27 @@ export interface RayContentException {
   message?: string,
   frames: RayContentFrame[]
 }
+export interface RayContentSQL {
+  sql: string,
+  bindings: string[],
+  connection_name: string
+  time: number
+}
+export interface RayContentEloquent {
+  class_name: string,
+  attributes: string
+}
+export interface RayContentViews {
+  view_path: string,
+  view_path_relative_to_project_root: string,
+  data: string
+}
+export interface RayContentJobs {
+  event_name: string,
+  job: string,
+  exception: string | null
+}
+
 
 export interface RayPayload {
   type: string,
@@ -202,6 +223,10 @@ export interface RayPayload {
     | RayContentArray
     | RayContent
     | RayContentCarbone
+    | RayContentSQL
+    | RayContentEloquent
+    | RayContentViews
+    | RayContentJobs
     | { frame: RayContentFrame }
     | { value: string }
     | { color: string }
