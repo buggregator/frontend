@@ -171,14 +171,27 @@ export interface RayContentArray {
   values: [string | number | boolean]
 }
 
+export interface RayContentException {
+  class: string,
+  message: string,
+  frames: {
+    file_name: string,
+    line_number: number,
+    class: string,
+    method: string,
+    vendor_frame: boolean,
+    snippet: { line_number: number, text: string }[]
+  }[]
+}
+
 export interface RayPayload {
   type: string,
-  origin: {
+  origin?: {
     file: string,
     line_number: number,
     hostname: string,
   },
-  content: RayContentArray | RayContent
+  content: RayContentArray | RayContent | RayContentException
 }
 
 export interface RayDump {
