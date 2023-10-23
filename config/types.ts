@@ -162,26 +162,33 @@ export interface VarDump {
   }
 }
 
+interface RayContentFrame {
+  file_name: string,
+  line_number: number,
+  class: string | null,
+  method: string,
+  vendor_frame: boolean,
+  snippet?: { line_number: number, text: string }[]
+}
 export interface RayContent {
   content: string,
   label: string,
 }
 
+export interface RayContentCarbone {
+  formatted: string,
+  timestamp: number,
+  timezone: string
+}
+
 export interface RayContentArray {
-  values: [string | number | boolean]
+  values: string[] | number[] | boolean[]
 }
 
 export interface RayContentException {
-  class: string,
-  message: string,
-  frames: {
-    file_name: string,
-    line_number: number,
-    class: string,
-    method: string,
-    vendor_frame: boolean,
-    snippet: { line_number: number, text: string }[]
-  }[]
+  class?: string,
+  message?: string,
+  frames: RayContentFrame[]
 }
 
 export interface RayPayload {
@@ -191,7 +198,17 @@ export interface RayPayload {
     line_number: number,
     hostname: string,
   },
-  content: RayContentArray | RayContent | RayContentException
+  content: RayContentException
+    | RayContentArray
+    | RayContent
+    | RayContentCarbone
+    | { frame: RayContentFrame }
+    | { value: string }
+    | { color: string }
+    | { label: string }
+    | { name: string }
+    | { size: string }
+    | never[]
 }
 
 export interface RayDump {
