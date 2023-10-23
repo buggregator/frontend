@@ -184,7 +184,7 @@ export interface RayPayload {
 export interface RayDump {
   uuid: string,
   payloads: RayPayload[],
-  meta: {
+  meta?: {
     php_version: string,
     php_version_id: number,
     project_name: string,
@@ -320,7 +320,7 @@ export interface ServerEvent<T> {
   type: TEventType | string,
   payload: T,
   project_id: string | null,
-  timestamp: number
+  timestamp?: number // unavailable for some ray dump events
 }
 
 export interface NormalizedEvent {

@@ -19,6 +19,7 @@ import rayTableEventMock from '~/mocks/ray-table.json'
 import rayTextEventMock from '~/mocks/ray-text.json'
 import rayTraceEventMock from '~/mocks/ray-trace.json'
 import rayLockEventMock from '~/mocks/ray-lock.json'
+import rayIssue44EventMock from '~/mocks/ray-github-issue-44.json'
 
 export default {
   title: "RayDump/RayDumpPreview/Common",
@@ -89,3 +90,6 @@ Caller.args = {event: normalizeRayDumpEvent(rayCallerEventMock),};
 
 export const Lock = Template.bind({});
 Lock.args = {event: normalizeRayDumpEvent(rayLockEventMock),};
+
+export const Issue44 = Template.bind({});
+Issue44.args = {event: normalizeRayDumpEvent(rayIssue44EventMock),};

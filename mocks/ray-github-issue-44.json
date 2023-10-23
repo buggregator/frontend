@@ -1,0 +1,146 @@
+{
+  "project_id": null,
+  "uuid": "b3ee69b0-60e1-4fc0-add5-2c5677dd2b8c",
+  "type": "ray",
+  "payload": {
+    "uuid": "b3ee69b0-60e1-4fc0-add5-2c5677dd2b8c",
+    "payloads": [
+      {
+        "type": "exception",
+        "content": {
+          "class": "Illuminate\\Encryption\\MissingAppKeyException",
+          "message": "No application encryption key has been specified.",
+          "frames": [
+            {
+              "file_name": "/var/www/modules/ApiV1/Routes/api.php",
+              "line_number": 7,
+              "class": "Illuminate\\Routing\\RouteFileRegistrar",
+              "method": " {closure}",
+              "vendor_frame": false,
+              "snippet": [
+                {
+                  "line_number": 1,
+                  "text": "<?php"
+                },
+                {
+                  "line_number": 2,
+                  "text": ""
+                },
+                {
+                  "line_number": 3,
+                  "text": "use Illuminate\\Http\\Request;"
+                },
+                {
+                  "line_number": 4,
+                  "text": "use Illuminate\\Support\\Facades\\Route;"
+                },
+                {
+                  "line_number": 5,
+                  "text": ""
+                },
+                {
+                  "line_number": 6,
+                  "text": "Route::get('test', static function (Request $request) {"
+                },
+                {
+                  "line_number": 7,
+                  "text": "ROUTES FROM LARAVEL PASSPORT"
+                }
+              ]
+            },
+            {
+              "file_name": "/var/www/vendor/laravel/framework/src/Illuminate/Routing/CallableDispatcher.php",
+              "line_number": 40,
+              "class": "Illuminate\\Routing\\CallableDispatcher",
+              "method": "dispatch",
+              "vendor_frame": false,
+              "snippet": [
+                {
+                  "line_number": 34,
+                  "text": " @param \\Illuminate\\Routing\\Route $route"
+                },
+                {
+                  "line_number": 35,
+                  "text": " * @param callable Scallable"
+                },
+                {
+                  "line_number": 36,
+                  "text": " @return mixed"
+                },
+                {
+                  "line_number": 37,
+                  "text": " */"
+                },
+                {
+                  "line_number": 38,
+                  "text": " public function dispatch(Route $route, Scallable)"
+                },
+                {
+                  "line_number": 39,
+                  "text": " {"
+                },
+                {
+                  "line_number": 40,
+                  "text": " return Scallable(...array_values($this->resolveParameters($route, Scallable)));"
+                },
+                {
+                  "line_number": 41,
+                  "text": " }"
+                },
+                {
+                  "line_number": 42,
+                  "text": ""
+                },
+                {
+                  "line_number": 43,
+                  "text": " /**"
+                },
+                {
+                  "line_number": 44,
+                  "text": " Resolve the parameters for the callable."
+                },
+                {
+                  "line_number": 45,
+                  "text": " *"
+                }
+              ]
+            },
+            {
+              "file_name": "/var/www/vendor/laravel/framework/src/Illuminate/Routing/Route.php",
+              "line_number": 237,
+              "class": "Illuminate\\Routing\\Route",
+              "method": "runCallable",
+              "vendor_frame": false,
+              "snippet": [
+                {
+                  "line_number": 231,
+                  "text": "Scallable = $this->action['uses'];"
+                },
+                {
+                  "line_number": 232,
+                  "text": ""
+                },
+                {
+                  "line_number": 233,
+                  "text": "Scallable = unserialize($this->action['uses'])->getClosure();"
+                },
+                {
+                  "line_number": 235,
+                  "text": ">container[CallableDispatcher::class]->dispatch($this, Scallable);"
+                },
+                {
+                  "line_number": 238,
+                  "text": " Determine if the route action is a serialized Closure."
+                },
+                {
+                  "line_number": 242,
+                  "text": "     *"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
