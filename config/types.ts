@@ -251,9 +251,11 @@ export interface RayDump {
 
 
 export interface SmtpAttachment {
-  "name": string,
-  "id": string,
-  "uri": string
+  name: string,
+  id: string,
+  uri: string,
+  size?: number,
+  mime?: string,
 }
 
 export interface HttpDumpFile {
