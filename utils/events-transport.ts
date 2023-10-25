@@ -1,9 +1,8 @@
 import { EventId, TEventType } from "~/config/types";
 import { useEventsRequests } from "~/utils/io/events-requests";
 import { logger } from "~/utils/io/logger";
-import { useCentrifuge } from "./io/centrifuge";
-import type { ApiConnection } from "./io/types";
-import { REST_API_URL } from "./io/constants";
+import { useCentrifuge } from "./io";
+import type { ApiConnection } from "./io";
 
 
 const { centrifuge } = useCentrifuge()
@@ -12,7 +11,8 @@ const {
   getSingle,
   deleteAll,
   deleteSingle,
-  deleteByType
+  deleteByType,
+  getRestUrl
 } = useEventsRequests()
 
 export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
@@ -71,6 +71,6 @@ export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
     deleteEventsByType,
     rayStopExecution,
     rayContinueExecution,
-    makeEventUrl: (id: EventId) => `${REST_API_URL}/api/event/${id}`
+    getUrl: getRestUrl,
   }
 }

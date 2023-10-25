@@ -1,4 +1,4 @@
-import { REST_API_URL } from "~/utils/events-transport";
+import { REST_API_URL } from "~/utils/io";
 
 export default defineNuxtPlugin(() => {
   const getAppVersion = () => fetch(`${REST_API_URL}/api/version`)

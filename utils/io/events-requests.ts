@@ -7,9 +7,12 @@ type TUseEventsRequests = () => {
   deleteAll: () => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: TEventType) => Promise<void | Response>,
+  getRestUrl: (param: EventId | undefined) => string
 }
 
 export const useEventsRequests: TUseEventsRequests = () => {
+  const getRestUrl = (param?: string) => `${REST_API_URL}/api/events${param ? `/${param}` : ''}`
+
   const getAll: Promise<ServerEvent<unknown>[]> = fetch(`${REST_API_URL}/api/events`)
     .then((response) => response.json())
     .then((response) => {
@@ -24,7 +27,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     .then((events: ServerEvent<unknown>[]) => events)
 
 
-  const getSingle = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}`)
+  const getSingle = (id: EventId) => fetch(getRestUrl(id))
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -33,17 +36,17 @@ export const useEventsRequests: TUseEventsRequests = () => {
       return null;
     })
 
-  const deleteSingle = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}`, { method: 'DELETE' })
+  const deleteSingle = (id: EventId) => fetch(getRestUrl(id), { method: 'DELETE' })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(`${REST_API_URL}/api/events`, { method: 'DELETE' })
+  const deleteAll = () => fetch(getRestUrl(), { method: 'DELETE' })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: TEventType) => fetch(`${REST_API_URL}/api/events`, { method: 'DELETE', body: JSON.stringify({type}) })
+  const deleteByType = (type: TEventType) => fetch(getRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
@@ -53,6 +56,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     getSingle,
     deleteAll,
     deleteSingle,
-    deleteByType
+    deleteByType,
+    getRestUrl
   }
 }

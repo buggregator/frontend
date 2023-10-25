@@ -48,7 +48,7 @@ import PreviewCardHeader from "~/components/PreviewCardHeader/PreviewCardHeader.
 import { NormalizedEvent } from "~/config/types";
 import moment from "moment";
 import { useNuxtApp } from "#app";
-import { REST_API_URL } from "~/utils/events-transport";
+import { REST_API_URL } from "~/utils/io";
 
 export default defineComponent({
   components: {
