@@ -88,6 +88,7 @@ export default defineComponent({
   mounted() {
     const cy: Cytoscape = cytoscape({
       container: this.$refs.renderer as HTMLElement,
+      wheelSensitivity: 0.4,
       elements: this.elements,
       layout: {
         name: "dagre",
