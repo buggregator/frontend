@@ -1,58 +1,21 @@
-import {Centrifuge} from 'centrifuge'
-import { EventId, ServerEvent, TEventType } from "~/config/types";
+import { EventId, TEventType } from "~/config/types";
+import { useEventsRequests } from "~/utils/io/events-requests";
+import { useCentrifuge } from "./io/centrifuge";
+import type { ApiConnection } from "./io/types";
+import { REST_API_URL } from "./io/constants";
 
-// A developer not always has a possibility to configure ENV variables,
-// so we need to guess Api and WS connection urls.
-const guessWsConnection = (): string => {
-  const WS_HOST = window.location.host
-  const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss' : 'ws'
 
-  return `${WS_PROTOCOL}://${WS_HOST}/connection/websocket`;
-}
+const { centrifuge } = useCentrifuge()
+const { getAll, getSingle } = useEventsRequests()
 
-const guessRestApiConnection = (): string => {
-  const API_HOST = window.location.host
-  const API_PROTOCOL = window.location.protocol === 'https:' ? 'https' : 'http'
-
-  return `${API_PROTOCOL}://${API_HOST}`;
-}
-
-export const REST_API_URL = (import.meta.env.VITE_EVENTS_REST_API as string) || guessRestApiConnection()
-export const WS_URL = (import.meta.env.VITE_EVENTS_WS_API as string) || guessWsConnection()
-
-export type LoggerParams = [string, unknown]
-
-export interface ApiConnection {
-  onEventReceiveCb: (param: ServerEvent<unknown>) => void
-  loggerCb?: (params: LoggerParams) => void
-}
-
-const defaultLogger = (params: LoggerParams) => {
-  console.info(`[ApiConnection logger]:Centrifuge "${params[0]}" called with params: "${JSON.stringify(params[1])}"`)
-}
-
-export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiConnection) => {
-  const centrifuge = new Centrifuge(WS_URL)
-
-  centrifuge.on('connected', (ctx) => {
-    loggerCb(['connected', ctx]);
-  });
-
+export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
   centrifuge.on('publication', (ctx) => {
-    loggerCb(['publication', ctx]);
-
     // We need to handle only events from the channel 'events' with event name 'event.received'
     if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
       const event = ctx?.data?.data || null
       onEventReceiveCb(event)
     }
   });
-
-  centrifuge.on('disconnected', (ctx) => {
-    loggerCb(['disconnected', ctx]);
-  });
-
-  centrifuge.connect();
 
   const deleteEvent = (eventId: EventId) => {
     centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
@@ -66,29 +29,6 @@ export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiC
     centrifuge.rpc(`delete:api/events`, {type})
   }
 
-  const getEventsAll = fetch(`${REST_API_URL}/api/events`)
-    .then((response) => response.json())
-    .then((response) => {
-      if (response?.data) {
-        return response.data
-      }
-
-      console.error('Fetch Error')
-
-      return [];
-    })
-    .then((events: ServerEvent<unknown>[]) => events)
-
-  const getEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}`)
-    .then((response) => response.json())
-    .then((response) => {
-      if (response?.data) {
-        return response.data as ServerEvent<unknown>[]
-      }
-      return null
-    })
-
-
   const rayStopExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
       stop_execution: true
@@ -96,12 +36,12 @@ export const apiTransport = ({onEventReceiveCb, loggerCb = defaultLogger,}: ApiC
   }
 
   const rayContinueExecution = (hash: string) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`)
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, undefined)
   }
 
   return {
-    getEventsAll,
-    getEvent,
+    getEventsAll: getAll,
+    getEvent: getSingle,
     deleteEvent,
     deleteEventsAll,
     deleteEventsByType,
