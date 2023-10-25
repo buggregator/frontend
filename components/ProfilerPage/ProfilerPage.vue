@@ -3,7 +3,7 @@
     <div class="profiler-page__head"></div>
     <main class="profiler-page__main">
       <section ref="calls" class="profiler-page__callstack">
-        <PerfectScrollbar :style="{ height: '100vh' }">
+        <PerfectScrollbar :style="{ height: 'calc(100vh - 48px)' }">
           <ProfilerPageCallStack
             :event="event.payload"
             @hover="setActiveEdge"
