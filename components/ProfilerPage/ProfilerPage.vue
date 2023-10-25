@@ -165,7 +165,7 @@ export default defineComponent({
 }
 
 .profiler-page__stat {
-  @apply w-full flex flex-col md:w-4/5 divide-y divide-gray-300 dark:divide-gray-500;
+  @apply w-full flex flex-col divide-y divide-gray-300 dark:divide-gray-500;
 }
 
 .profiler-page__stat-board {
