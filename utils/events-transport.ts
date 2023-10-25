@@ -1,12 +1,19 @@
 import { EventId, TEventType } from "~/config/types";
 import { useEventsRequests } from "~/utils/io/events-requests";
+import { logger } from "~/utils/io/logger";
 import { useCentrifuge } from "./io/centrifuge";
 import type { ApiConnection } from "./io/types";
 import { REST_API_URL } from "./io/constants";
 
 
 const { centrifuge } = useCentrifuge()
-const { getAll, getSingle } = useEventsRequests()
+const {
+  getAll,
+  getSingle,
+  deleteAll,
+  deleteSingle,
+  deleteByType
+} = useEventsRequests()
 
 export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
   centrifuge.on('publication', (ctx) => {
@@ -19,22 +26,39 @@ export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
 
   const deleteEvent = (eventId: EventId) => {
     centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
+      .catch((err) => {
+        logger(['Delete event Error', err])
+
+        return deleteSingle(eventId)
+      })
   }
 
   const deleteEventsAll = () => {
     centrifuge.rpc(`delete:api/events`, undefined)
+      .catch((err) => {
+        logger(['Delete event Error', err])
+
+        return deleteAll()
+      })
   }
 
   const deleteEventsByType = (type: TEventType) => {
     centrifuge.rpc(`delete:api/events`, {type})
+      .catch((err) => {
+        logger(['Delete event Error', err])
+
+        return deleteByType(type)
+      })
   }
 
+  // NOTE: works only with ws
   const rayStopExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
       stop_execution: true
     })
   }
 
+  // NOTE: works only with ws
   const rayContinueExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, undefined)
   }
