@@ -2,7 +2,6 @@
   <div class="main-layout">
     <LayoutSidebar
       class="main-layout__sidebar"
-      :is-connected="isConnected"
       :api-version="apiVersion"
       :client-version="clientVersion"
     />
@@ -58,12 +57,6 @@ export default defineComponent({
       clientVersion: "@dev",
       apiVersion: "@dev",
     };
-  },
-  computed: {
-    isConnected() {
-      // return this.$store.getters['ws/connected']
-      return false;
-    },
   },
 });
 </script>
