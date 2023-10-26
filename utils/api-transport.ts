@@ -1,11 +1,12 @@
 import { EventId, TEventType } from "~/config/types";
 import { useEventsRequests } from "~/utils/io/events-requests";
 import { logger } from "~/utils/io/logger";
+import { useEventStore } from "~/stores/events";
 import { useCentrifuge } from "./io";
-import type { ApiConnection } from "./io";
 
 
 const { centrifuge } = useCentrifuge()
+const eventsStore = useEventStore()
 const {
   getAll,
   getSingle,
@@ -15,12 +16,12 @@ const {
   getRestUrl
 } = useEventsRequests()
 
-export const apiTransport = ({onEventReceiveCb}: ApiConnection) => {
+export const apiTransport = () => {
   centrifuge.on('publication', (ctx) => {
     // We need to handle only events from the channel 'events' with event name 'event.received'
     if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
       const event = ctx?.data?.data || null
-      onEventReceiveCb(event)
+      eventsStore.addList([event]);
     }
   });
 

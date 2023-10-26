@@ -1,4 +1,4 @@
-import {apiTransport} from '~/utils/events-transport'
+import {apiTransport} from '~/utils/api-transport'
 import {useEventStore} from "~/stores/events";
 import {useCachedIdsStore} from "~/stores/cached-ids";
 import { EventId, ServerEvent, TEventGroup } from "~/config/types";
@@ -15,11 +15,7 @@ export default defineNuxtPlugin(() => {
     getEventsAll,
     getEvent,
     getUrl
-  } = apiTransport({
-    onEventReceiveCb: (event: ServerEvent<unknown>) => {
-      eventsStore.addList([event]);
-    }
-  });
+  } = apiTransport();
 
   const removeAll = () => {
     deleteEventsAll();
