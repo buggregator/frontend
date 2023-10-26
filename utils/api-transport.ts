@@ -1,6 +1,5 @@
 import { EventId, TEventType } from "~/config/types";
 import { useEventsRequests } from "~/utils/io/events-requests";
-import { logger } from "~/utils/io/logger";
 import { useEventStore } from "~/stores/events";
 import { useConnectionStore } from "~/stores/connections";
 import { useCentrifuge } from "./io";
@@ -60,30 +59,27 @@ export const apiTransport = () => {
   })
 
   const deleteEvent = (eventId: EventId) => {
-    centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
-      .catch((err) => {
-        logger(['Delete event Error', err])
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
+    }
 
-        return deleteSingle(eventId)
-      })
+    return deleteSingle(eventId);
   }
 
   const deleteEventsAll = () => {
-    centrifuge.rpc(`delete:api/events`, undefined)
-      .catch((err) => {
-        logger(['Delete event Error', err])
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/events`, undefined)
+    }
 
-        return deleteAll()
-      })
+    return deleteAll();
   }
 
   const deleteEventsByType = (type: TEventType) => {
-    centrifuge.rpc(`delete:api/events`, {type})
-      .catch((err) => {
-        logger(['Delete event Error', err])
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/events`, {type})
+    }
 
-        return deleteByType(type)
-      })
+    return deleteByType(type);
   }
 
   // NOTE: works only with ws

@@ -19,22 +19,31 @@ export default defineNuxtPlugin(() => {
     rayStopExecution,
   } = apiTransport();
 
-  const removeAll = () => {
-    deleteEventsAll();
-    eventsStore.removeAll()
-    cachedIdsStore.removeAll()
+  const removeAll = async () => {
+    const res = await deleteEventsAll()
+
+    if (res) {
+      eventsStore.removeAll()
+      cachedIdsStore.removeAll()
+    }
   }
 
-  const removeById = (eventId: EventId) => {
-    deleteEvent(eventId);
-    eventsStore.removeById(eventId);
-    cachedIdsStore.removeById(eventId);
+  const removeById = async (eventId: EventId) => {
+    const res = await deleteEvent(eventId)
+
+    if (res) {
+      eventsStore.removeById(eventId);
+      cachedIdsStore.removeById(eventId);
+    }
   }
 
-  const removeByType = (type: TEventGroup) => {
-    deleteEventsByType(type);
-    eventsStore.removeByType(type);
-    cachedIdsStore.removeByType(type);
+  const removeByType = async (type: TEventGroup) => {
+    const res = await deleteEventsByType(type)
+
+    if (res) {
+      eventsStore.removeByType(type);
+      cachedIdsStore.removeByType(type);
+    }
   }
 
   const getAll = () => {
