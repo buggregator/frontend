@@ -2,7 +2,7 @@ import { EventId, ServerEvent, TEventType } from "~/config/types";
 import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
-  getAll: Promise<ServerEvent<unknown>[]>,
+  getAll: () => Promise<ServerEvent<unknown>[]>,
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: () => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
@@ -10,10 +10,12 @@ type TUseEventsRequests = () => {
   getRestUrl: (param: EventId | undefined) => string
 }
 
+const EVENTS_GETTING_INTERVAL = 10000
+
 export const useEventsRequests: TUseEventsRequests = () => {
   const getRestUrl = (param?: string) => `${REST_API_URL}/api/events${param ? `/${param}` : ''}`
 
-  const getAll: Promise<ServerEvent<unknown>[]> = fetch(`${REST_API_URL}/api/events`)
+  const getAll = () => fetch(`${REST_API_URL}/api/events`)
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -26,6 +28,15 @@ export const useEventsRequests: TUseEventsRequests = () => {
     })
     .then((events: ServerEvent<unknown>[]) => events)
 
+  const recursiveGetEventsRequest = async (cb: (events: ServerEvent<unknown>[]) => void) => {
+    const events = await getAll()
+
+    cb(events);
+
+    setTimeout(() => {
+      recursiveGetEventsRequest(cb)
+    }, EVENTS_GETTING_INTERVAL)
+  }
 
   const getSingle = (id: EventId) => fetch(getRestUrl(id))
     .then((response) => response.json())
@@ -57,6 +68,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteAll,
     deleteSingle,
     deleteByType,
+    recursiveGetEventsRequest,
     getRestUrl
   }
 }

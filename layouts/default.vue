@@ -16,7 +16,7 @@
 <script lang="ts">
 import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
 import { defineComponent } from "vue";
-import { THEME_MODES, useSettingsStore } from "~/stores/settings";
+import { useSettingsStore } from "~/stores/settings";
 import { storeToRefs } from "pinia";
 import { useNuxtApp } from "#app";
 

@@ -2,11 +2,12 @@ import { EventId, TEventType } from "~/config/types";
 import { useEventsRequests } from "~/utils/io/events-requests";
 import { logger } from "~/utils/io/logger";
 import { useEventStore } from "~/stores/events";
+import { useConnectionStore } from "~/stores/connections";
 import { useCentrifuge } from "./io";
-
 
 const { centrifuge } = useCentrifuge()
 const eventsStore = useEventStore()
+const connectionStore = useConnectionStore()
 const {
   getAll,
   getSingle,
@@ -16,14 +17,39 @@ const {
   getRestUrl
 } = useEventsRequests()
 
+
+const CHECK_CONNECTION_INTERVAL = 10000
+const checkWSConnectionFail = (onConnectionLost: () => void) => {
+  if(connectionStore.isConnectedWS) {
+    onConnectionLost()
+  }
+  setTimeout(() => {
+    checkWSConnectionFail(onConnectionLost)
+  }, CHECK_CONNECTION_INTERVAL)
+}
+
 export const apiTransport = () => {
+  centrifuge.on('connected', () => {
+    connectionStore.addWSConnection()
+  });
+
+  centrifuge.on('disconnected', () => {
+    connectionStore.removeWSConnection()
+  });
+
   centrifuge.on('publication', (ctx) => {
     // We need to handle only events from the channel 'events' with event name 'event.received'
     if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
       const event = ctx?.data?.data || null
-      eventsStore.addList([event]);
+      eventsStore.addList([ event ]);
     }
   });
+
+  checkWSConnectionFail(async () => {
+    const events = await getAll();
+
+    eventsStore.addList(events);
+  })
 
   const deleteEvent = (eventId: EventId) => {
     centrifuge.rpc(`delete:api/event/${eventId}`, undefined)

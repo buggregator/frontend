@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 import { EventId, ServerEvent, TEventType } from "~/config/types";
 
-
-
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],

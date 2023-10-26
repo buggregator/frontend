@@ -1,8 +1,8 @@
-import {apiTransport} from '~/utils/api-transport'
-import {useEventStore} from "~/stores/events";
-import {useCachedIdsStore} from "~/stores/cached-ids";
+import { apiTransport } from '~/utils/api-transport'
+import { useEventStore } from "~/stores/events";
+import { useCachedIdsStore } from "~/stores/cached-ids";
 import { EventId, ServerEvent, TEventGroup } from "~/config/types";
-import {storeToRefs} from "pinia";
+import { storeToRefs } from "pinia";
 
 export default defineNuxtPlugin(() => {
   const eventsStore = useEventStore();
@@ -36,7 +36,7 @@ export default defineNuxtPlugin(() => {
   }
 
   const getAll = () => {
-    getEventsAll.then((events: ServerEvent<unknown>[]) => {
+    getEventsAll().then((events: ServerEvent<unknown>[]) => {
       if (events.length) {
         eventsStore.addList(events);
         cachedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));

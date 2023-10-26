@@ -5,7 +5,6 @@ import { WS_URL } from "./constants";
 type TUseCentrifuge = () => {
   centrifuge: Centrifuge
 }
-
 export const useCentrifuge: TUseCentrifuge = () => {
   const centrifuge = new Centrifuge(WS_URL)
 
