@@ -5,30 +5,30 @@ import { useEventStore } from "~/stores/events";
 import { useConnectionStore } from "~/stores/connections";
 import { useCentrifuge } from "./io";
 
-const { centrifuge } = useCentrifuge()
-const eventsStore = useEventStore()
-const connectionStore = useConnectionStore()
-const {
-  getAll,
-  getSingle,
-  deleteAll,
-  deleteSingle,
-  deleteByType,
-  getRestUrl
-} = useEventsRequests()
-
-
-const CHECK_CONNECTION_INTERVAL = 10000
-const checkWSConnectionFail = (onConnectionLost: () => void) => {
-  if(connectionStore.isConnectedWS) {
-    onConnectionLost()
-  }
-  setTimeout(() => {
-    checkWSConnectionFail(onConnectionLost)
-  }, CHECK_CONNECTION_INTERVAL)
-}
-
 export const apiTransport = () => {
+  const { centrifuge } = useCentrifuge()
+  const eventsStore = useEventStore()
+  const connectionStore = useConnectionStore()
+  const {
+    getAll,
+    getSingle,
+    deleteAll,
+    deleteSingle,
+    deleteByType,
+    getEventRestUrl
+  } = useEventsRequests()
+
+
+  const CHECK_CONNECTION_INTERVAL = 10000
+  const checkWSConnectionFail = (onConnectionLost: () => void) => {
+    if(connectionStore.isConnectedWS) {
+      onConnectionLost()
+    }
+    setTimeout(() => {
+      checkWSConnectionFail(onConnectionLost)
+    }, CHECK_CONNECTION_INTERVAL)
+  }
+
   centrifuge.on('connected', () => {
     connectionStore.addWSConnection()
   });
@@ -98,6 +98,6 @@ export const apiTransport = () => {
     deleteEventsByType,
     rayStopExecution,
     rayContinueExecution,
-    getUrl: getRestUrl,
+    getUrl: getEventRestUrl,
   }
 }

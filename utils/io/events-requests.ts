@@ -7,15 +7,15 @@ type TUseEventsRequests = () => {
   deleteAll: () => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: TEventType) => Promise<void | Response>,
-  getRestUrl: (param: EventId | undefined) => string
+  getEventRestUrl: (param: EventId | undefined) => string
 }
 
 const EVENTS_GETTING_INTERVAL = 10000
 
 export const useEventsRequests: TUseEventsRequests = () => {
-  const getRestUrl = (param?: string) => `${REST_API_URL}/api/events${param ? `/${param}` : ''}`
+  const getEventRestUrl = (param?: string) => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 
-  const getAll = () => fetch(`${REST_API_URL}/api/events`)
+  const getAll = () => fetch(getEventRestUrl())
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -38,7 +38,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     }, EVENTS_GETTING_INTERVAL)
   }
 
-  const getSingle = (id: EventId) => fetch(getRestUrl(id))
+  const getSingle = (id: EventId) => fetch(getEventRestUrl(id))
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -47,17 +47,17 @@ export const useEventsRequests: TUseEventsRequests = () => {
       return null;
     })
 
-  const deleteSingle = (id: EventId) => fetch(getRestUrl(id), { method: 'DELETE' })
+  const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), { method: 'DELETE' })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getRestUrl(), { method: 'DELETE' })
+  const deleteAll = () => fetch(getEventRestUrl(), { method: 'DELETE' })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: TEventType) => fetch(getRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
+  const deleteByType = (type: TEventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
@@ -69,6 +69,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteSingle,
     deleteByType,
     recursiveGetEventsRequest,
-    getRestUrl
+    getEventRestUrl
   }
 }
