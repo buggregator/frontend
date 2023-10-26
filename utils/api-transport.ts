@@ -5,6 +5,7 @@ import { useEventStore } from "~/stores/events";
 import { useConnectionStore } from "~/stores/connections";
 import { useCentrifuge } from "./io";
 
+const CHECK_CONNECTION_INTERVAL = 10000
 export const apiTransport = () => {
   const { centrifuge } = useCentrifuge()
   const eventsStore = useEventStore()
@@ -18,10 +19,9 @@ export const apiTransport = () => {
     getEventRestUrl
   } = useEventsRequests()
 
-
-  const CHECK_CONNECTION_INTERVAL = 10000
+  const getWSConnection = () => connectionStore.isConnectedWS
   const checkWSConnectionFail = (onConnectionLost: () => void) => {
-    if(connectionStore.isConnectedWS) {
+    if(!getWSConnection()) {
       onConnectionLost()
     }
     setTimeout(() => {

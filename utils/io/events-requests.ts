@@ -28,16 +28,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     })
     .then((events: ServerEvent<unknown>[]) => events)
 
-  const recursiveGetEventsRequest = async (cb: (events: ServerEvent<unknown>[]) => void) => {
-    const events = await getAll()
-
-    cb(events);
-
-    setTimeout(() => {
-      recursiveGetEventsRequest(cb)
-    }, EVENTS_GETTING_INTERVAL)
-  }
-
   const getSingle = (id: EventId) => fetch(getEventRestUrl(id))
     .then((response) => response.json())
     .then((response) => {
@@ -68,7 +58,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteAll,
     deleteSingle,
     deleteByType,
-    recursiveGetEventsRequest,
     getEventRestUrl
   }
 }

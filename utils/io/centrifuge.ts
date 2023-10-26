@@ -22,6 +22,5 @@ export const useCentrifuge: TUseCentrifuge = () => {
 
   centrifuge.connect();
 
-
   return { centrifuge }
 }
