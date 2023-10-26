@@ -45,8 +45,8 @@ const stylesConfig: Stylesheet[] = [
       "text-wrap": "wrap",
       width: "label",
       height: "label",
-      "border-width": "1px",
-      "border-color": "#333",
+      "border-width": "2px",
+      "border-color": "#000",
     },
   },
   {
@@ -54,15 +54,17 @@ const stylesConfig: Stylesheet[] = [
     style: {
       "line-color": "data(color)",
       "background-color": "data(color)",
-      "text-outline-width": "5px",
-      width: 1.5,
+      "text-outline-width": "2px",
+      width: 2,
       height: "label",
       "target-arrow-shape": "triangle",
       "target-arrow-color": "data(color)",
       content: "data(label)",
       color: "#fff",
-      "curve-style": "bezier",
-      "loop-direction": "90deg",
+      "curve-style": "taxi",
+      "taxi-direction": "downward",
+      "edge-distances": "node-position",
+      "control-point-distance": "5px",
     },
   },
 ];
@@ -94,7 +96,7 @@ export default defineComponent({
         name: "dagre",
         nodeSep: 10,
         edgeSep: 10,
-        rankSep: 50,
+        rankSep: 80,
         rankDir: "TB",
       } as DagreLayoutOptions,
       style: stylesConfig,
@@ -112,8 +114,6 @@ export default defineComponent({
     cy.on("mouseout", "node", () => {
       this.hoverNodeData = null;
     });
-
-    cy.nodes().ungrabify();
 
     this.renderer = cy;
   },
