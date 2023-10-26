@@ -29,7 +29,7 @@ import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { normalizeSMTPEvent } from "~/utils/normalize-event";
 import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
 import PageHeader from "~/components/PageHeader/PageHeader.vue";
-import { REST_API_URL } from "~/utils/events-transport";
+import { REST_API_URL } from "~/utils/io";
 
 export default defineComponent({
   components: { SmtpPage, PageHeader },
@@ -40,20 +40,17 @@ export default defineComponent({
 
     if (process.client) {
       const { $events } = useNuxtApp();
-      const { data: event, pending } = await useFetch(
-        $events.buildItemFetchUrl(eventId),
-        {
-          onResponse({ response }) {
-            return response.data;
-          },
-          onResponseError() {
-            router.push("/404");
-          },
-          onRequestError() {
-            router.push("/404");
-          },
-        }
-      );
+      const { data: event, pending } = await useFetch($events.getUrl(eventId), {
+        onResponse({ response }) {
+          return response.data;
+        },
+        onResponseError() {
+          router.push("/404");
+        },
+        onRequestError() {
+          router.push("/404");
+        },
+      });
 
       return {
         serverEvent: event,

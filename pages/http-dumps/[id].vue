@@ -40,20 +40,17 @@ export default defineComponent({
 
     if (process.client) {
       const { $events } = useNuxtApp();
-      const { data: event, pending } = await useFetch(
-        $events.buildItemFetchUrl(eventId),
-        {
-          onResponse({ response }) {
-            return response.data;
-          },
-          onResponseError() {
-            router.push("/404");
-          },
-          onRequestError() {
-            router.push("/404");
-          },
-        }
-      );
+      const { data: event, pending } = await useFetch($events.getUrl(eventId), {
+        onResponse({ response }) {
+          return response.data;
+        },
+        onResponseError() {
+          router.push("/404");
+        },
+        onRequestError() {
+          router.push("/404");
+        },
+      });
 
       return {
         serverEvent: event,

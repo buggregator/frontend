@@ -39,6 +39,12 @@
     </nav>
 
     <div class="layout-sidebar__versions">
+      <IconSvg
+        class="layout-sidebar__connection-icon"
+        :name="connectionStatus"
+        :title="connectionText"
+      />
+
       <div
         v-if="apiVersion"
         class="layout-sidebar__nav-version"
@@ -61,15 +67,12 @@
 <script lang="ts">
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 import { defineComponent } from "vue";
-import { useNuxtApp } from "#app";
+import { useConnectionStore } from "~/stores/connections";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
   components: { IconSvg },
   props: {
-    isConnected: {
-      type: Boolean,
-      required: true,
-    },
     apiVersion: {
       type: String,
       default: "@dev",
@@ -77,6 +80,17 @@ export default defineComponent({
     clientVersion: {
       type: String,
       default: "@dev",
+    },
+  },
+  computed: {
+    connectionStatus() {
+      const connectionStore = useConnectionStore();
+      const { isConnectedWS } = storeToRefs(connectionStore);
+
+      return isConnectedWS.value ? "connected" : "disconnected";
+    },
+    connectionText() {
+      return `WS connection is ${this.connectionStatus}`;
     },
   },
 });
@@ -88,7 +102,7 @@ export default defineComponent({
 }
 
 .layout-sidebar__nav {
-  @apply divide-gray-300 dark:divide-gray-600 flex-col flex overflow-auto divide-y divide-gray-300 dark:divide-gray-600 border-b border-gray-300 dark:border-gray-600;
+  @apply flex-col flex overflow-auto divide-y divide-gray-300 dark:divide-gray-600 border-b border-gray-300 dark:border-gray-600;
 }
 
 .layout-sidebar__link {
@@ -101,6 +115,10 @@ export default defineComponent({
 
 .layout-sidebar__link-icon {
   @apply fill-current;
+}
+
+.layout-sidebar__connection-icon {
+  @apply fill-current w-10 h-10 m-auto;
 }
 
 .layout-sidebar__versions {

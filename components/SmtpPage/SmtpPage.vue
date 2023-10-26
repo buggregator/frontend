@@ -83,7 +83,7 @@
               </h3>
 
               <div class="flex gap-x-3">
-                <Attachment
+                <SmtpAttachment
                   v-for="a in attachments"
                   :key="a.id"
                   :event="event"
@@ -108,7 +108,7 @@ import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
 import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
 import EventTable from "~/components/EventTable/EventTable.vue";
 import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
-import Attachment from "~/components/Attachment/Attachment.vue";
+import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
 
 export default defineComponent({
   components: {
@@ -119,7 +119,7 @@ export default defineComponent({
     CodeSnippet,
     Tabs,
     Tab,
-    Attachment,
+    SmtpAttachment,
   },
   props: {
     event: {

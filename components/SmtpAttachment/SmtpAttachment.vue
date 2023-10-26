@@ -22,8 +22,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { NormalizedEvent, Attachment } from "~/config/types";
-import { REST_API_URL } from "~/utils/events-transport";
+import { NormalizedEvent, SmtpAttachment } from "~/config/types";
+import { REST_API_URL } from "~/utils/io";
 import { humanFileSize } from "~/utils/formats";
 
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
       required: true,
     },
     attachment: {
-      type: Object as PropType<Attachment>,
+      type: Object as PropType<SmtpAttachment>,
       required: true,
     },
   },
@@ -42,7 +42,7 @@ export default defineComponent({
       return `${REST_API_URL}/api/smtp/${this.event.id}/attachment/${this.attachment.id}`;
     },
     size(): string {
-      return humanFileSize(this.attachment.size);
+      return humanFileSize(this.attachment.size || 0);
     },
   },
 });
@@ -60,7 +60,7 @@ export default defineComponent({
 }
 
 .attachment--meta {
-  @apple flex flex-col justify-start;
+  @apply flex flex-col justify-start;
 }
 
 .attachment--name {

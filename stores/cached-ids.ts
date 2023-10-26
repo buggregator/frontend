@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { EventId, ServerEvent, TEventGroup, TEventType } from "~/config/types";
+import { EventId, TEventGroup, TEventType } from "~/config/types";
 import { ALL_EVENTS, EVENT_TYPES, LOCAL_STORAGE_KEYS } from "~/config/constants";
 import { useEventStore } from "~/stores/events";
 

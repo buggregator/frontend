@@ -2,7 +2,6 @@
   <div class="main-layout">
     <LayoutSidebar
       class="main-layout__sidebar"
-      :is-connected="isConnected"
       :api-version="apiVersion"
       :client-version="clientVersion"
     />
@@ -16,7 +15,7 @@
 <script lang="ts">
 import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
 import { defineComponent } from "vue";
-import { THEME_MODES, useSettingsStore } from "~/stores/settings";
+import { useSettingsStore } from "~/stores/settings";
 import { storeToRefs } from "pinia";
 import { useNuxtApp } from "#app";
 
@@ -58,12 +57,6 @@ export default defineComponent({
       clientVersion: "@dev",
       apiVersion: "@dev",
     };
-  },
-  computed: {
-    isConnected() {
-      // return this.$store.getters['ws/connected']
-      return false;
-    },
   },
 });
 </script>
