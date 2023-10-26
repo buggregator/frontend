@@ -14,7 +14,9 @@ export default defineNuxtPlugin(() => {
     deleteEventsByType,
     getEventsAll,
     getEvent,
-    getUrl
+    getUrl,
+    rayContinueExecution,
+    rayStopExecution,
   } = apiTransport();
 
   const removeAll = () => {
@@ -73,6 +75,10 @@ export default defineNuxtPlugin(() => {
         eventsIdsByType: cachedIds,
         stopUpdatesByType: cachedIdsStore.setByType,
         runUpdatesByType: cachedIdsStore.removeByType,
+      },
+      rayExecution: {
+        continue: rayContinueExecution,
+        stop: rayStopExecution,
       }
     }
   }

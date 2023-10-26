@@ -36,9 +36,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import { apiTransport } from "~/utils/api-transport";
-
-const { rayStopExecution, rayContinueExecution } = apiTransport();
+import { useNuxtApp } from "#app";
 
 export default defineComponent({
   props: {
@@ -46,6 +44,21 @@ export default defineComponent({
       type: Object as PropType<RayPayload>,
       required: true,
     },
+  },
+  setup() {
+    if (process.client) {
+      const { $rayExecution } = useNuxtApp();
+
+      return {
+        rayContinueExecution: $rayExecution.continue,
+        rayStopExecution: $rayExecution.stop,
+      };
+    }
+
+    return {
+      rayContinueExecution: () => undefined,
+      rayStopExecution: () => undefined,
+    };
   },
   data() {
     return {
@@ -60,11 +73,11 @@ export default defineComponent({
   methods: {
     continueExecution() {
       this.disabled = true;
-      rayContinueExecution(this.hash);
+      this.rayContinueExecution(this.hash);
     },
     stopExecution() {
       this.disabled = true;
-      rayStopExecution(this.hash);
+      this.rayStopExecution(this.hash);
     },
   },
 });
