@@ -10,8 +10,6 @@ type TUseEventsRequests = () => {
   getEventRestUrl: (param: EventId | undefined) => string
 }
 
-const EVENTS_GETTING_INTERVAL = 10000
-
 export const useEventsRequests: TUseEventsRequests = () => {
   const getEventRestUrl = (param?: string) => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 

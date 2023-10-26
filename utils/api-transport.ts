@@ -37,6 +37,14 @@ export const apiTransport = () => {
     connectionStore.removeWSConnection()
   });
 
+  centrifuge.on('error', () => {
+    connectionStore.removeWSConnection()
+  })
+
+  centrifuge.on('message', () => {
+    connectionStore.addWSConnection()
+  })
+
   centrifuge.on('publication', (ctx) => {
     // We need to handle only events from the channel 'events' with event name 'event.received'
     if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {

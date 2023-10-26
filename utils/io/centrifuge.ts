@@ -20,6 +20,10 @@ export const useCentrifuge: TUseCentrifuge = () => {
     logger(['disconnected', ctx]);
   });
 
+  centrifuge.on('error', (ctx) => {
+    logger(['error', ctx]);
+  })
+
   centrifuge.connect();
 
   return { centrifuge }
