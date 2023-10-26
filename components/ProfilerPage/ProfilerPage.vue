@@ -3,7 +3,7 @@
     <div class="profiler-page__head"></div>
     <main class="profiler-page__main">
       <section ref="calls" class="profiler-page__callstack">
-        <PerfectScrollbar :style="{ height: '100vh' }">
+        <PerfectScrollbar :style="{ height: 'calc(100vh - 48px)' }">
           <ProfilerPageCallStack
             :event="event.payload"
             @hover="setActiveEdge"
@@ -165,7 +165,7 @@ export default defineComponent({
 }
 
 .profiler-page__stat {
-  @apply w-full flex flex-col md:w-4/5 divide-y divide-gray-300 dark:divide-gray-500;
+  @apply w-full flex flex-col divide-y divide-gray-300 dark:divide-gray-500;
 }
 
 .profiler-page__stat-board {

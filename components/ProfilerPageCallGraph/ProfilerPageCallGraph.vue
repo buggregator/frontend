@@ -7,6 +7,7 @@
     <RenderGraph
       v-if="isReadyGraph && graphKey"
       :key="graphKey"
+      class="profiler-page-call-graph__graph"
       :elements="graphElements"
       :height="graphHeight"
     >
@@ -134,7 +135,11 @@ export default defineComponent({
 @import "assets/mixins";
 
 .profiler-page-call-graph {
-  @apply relative flex rounded border border-gray-900 min-h-min min-w-min;
+  @apply relative flex rounded border border-gray-900 min-h-min min-w-min h-full;
+}
+
+.profiler-page-call-graph__graph {
+  @apply w-full h-full flex;
 }
 
 .profiler-page-call-graph--fullscreen {
