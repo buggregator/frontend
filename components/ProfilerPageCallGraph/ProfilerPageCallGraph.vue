@@ -56,14 +56,15 @@
       class="profiler-page-call-graph__toolbar profiler-page-call-graph__toolbar--right"
     >
       <label class="profiler-page-call-graph__toolbar-input-wr">
-        Threshold:
+        Threshold
 
         <input
           class="profiler-page-call-graph__toolbar-input"
           type="number"
           :value="threshold"
           :min="0"
-          :max="100"
+          :max="10"
+          :step="0.1"
           @input="setThreshold($event.target.value)"
         />
       </label>
@@ -155,11 +156,11 @@ export default defineComponent({
 }
 
 .profiler-page-call-graph__toolbar {
-  @apply absolute top-5 left-5 flex bg-gray-200 p-2 rounded gap-x-5;
+  @apply absolute top-5 left-5 flex bg-gray-200 p-2 rounded gap-x-5 shadow-lg;
 }
 
 .profiler-page-call-graph__toolbar--right {
-  @apply right-5 left-auto;
+  @apply right-5 left-auto py-1;
 }
 
 .profiler-page-call-graph__toolbar-icon {
@@ -175,6 +176,6 @@ export default defineComponent({
 }
 
 .profiler-page-call-graph__toolbar-input {
-  @apply border-b bg-transparent border-gray-600 text-gray-600 w-8;
+  @apply border-gray-600 text-gray-600 w-10 font-bold text-right bg-gray-300 ml-1 py-1 rounded;
 }
 </style>
