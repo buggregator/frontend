@@ -1,11 +1,7 @@
 <template>
-  <div class="ray-type-query">
-    <CodeSnippet
-      language="sql"
-      class="event-ray__query-snippet"
-      :code="formattedSql"
-    />
-    <EventTable class="event-ray__query-table">
+  <div class="query-payload">
+    <CodeSnippet language="sql" :code="formattedSql" />
+    <EventTable>
       <EventTableRow title="Connection name">
         {{ payload.content.connection_name }}
       </EventTableRow>
@@ -36,7 +32,7 @@ export default defineComponent({
   computed: {
     formattedSql() {
       return (this.payload.content?.bindings || []).reduce(
-        (result, binding) => result.replace(/\?/, `'${binding}'`),
+        (result, binding) => (result || "").replace(/\?/, `'${binding}'`),
         this.payload.content?.sql || ""
       );
     },
@@ -44,4 +40,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.query-payload {
+  width: 100%;
+}
+</style>

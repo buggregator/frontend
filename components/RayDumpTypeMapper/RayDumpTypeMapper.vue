@@ -1,7 +1,7 @@
 <script lang="ts">
-import {defineComponent, h, PropType} from "vue";
-import {RayPayload} from "~/config/types";
-import {RAY_EVENT_TYPES} from "~/config/constants";
+import { defineComponent, h, PropType } from "vue";
+import { RayPayload } from "~/config/types";
+import { RAY_EVENT_TYPES } from "~/config/constants";
 
 import LogPayload from "~/components/RayDumpPreview/RayTypesPreview/LogPayload.vue";
 import CustomPayload from "~/components/RayDumpPreview/RayTypesPreview/CustomPayload.vue";
@@ -11,6 +11,7 @@ import TracePayload from "~/components/RayDumpPreview/RayTypesPreview/TracePaylo
 import ExceptionPayload from "~/components/RayDumpPreview/RayTypesPreview/ExceptionPayload.vue";
 import TablePayload from "~/components/RayDumpPreview/RayTypesPreview/TablePayload.vue";
 import MeasurePayload from "~/components/RayDumpPreview/RayTypesPreview/MeasurePayload.vue";
+import NotifyPayload from "~/components/RayDumpPreview/RayTypesPreview/NotifyPayload.vue";
 import QueryPayload from "~/components/RayDumpPreview/RayTypesPreview/QueryPayload.vue";
 import EloquentPayload from "~/components/RayDumpPreview/RayTypesPreview/EloquentPayload.vue";
 import ViewsPayload from "~/components/RayDumpPreview/RayTypesPreview/ViewsPayload.vue";
@@ -29,38 +30,40 @@ export default defineComponent({
   render() {
     const TYPE_RENDER_MAP = {
       [RAY_EVENT_TYPES.LOG]: (payload: RayPayload) =>
-        h(LogPayload, {payload}),
+        h(LogPayload, { payload }),
       [RAY_EVENT_TYPES.CUSTOM]: (payload: RayPayload) =>
-        h(CustomPayload, {payload}),
+        h(CustomPayload, { payload }),
       [RAY_EVENT_TYPES.CALLER]: (payload: RayPayload) =>
-        h(CallerPayload, {payload}),
+        h(CallerPayload, { payload }),
       [RAY_EVENT_TYPES.CARBON]: (payload: RayPayload) =>
-        h(CarbonPayload, {payload}),
+        h(CarbonPayload, { payload }),
       [RAY_EVENT_TYPES.TRACE]: (payload: RayPayload) =>
-        h(TracePayload, {payload}),
+        h(TracePayload, { payload }),
       [RAY_EVENT_TYPES.EXCEPTION]: (payload: RayPayload) =>
-        h(ExceptionPayload, {payload}),
+        h(ExceptionPayload, { payload }),
       [RAY_EVENT_TYPES.TABLE]: (payload: RayPayload) =>
-        h(TablePayload, {payload}),
+        h(TablePayload, { payload }),
       [RAY_EVENT_TYPES.MEASURE]: (payload: RayPayload) =>
-        h(MeasurePayload, {payload}),
+        h(MeasurePayload, { payload }),
       [RAY_EVENT_TYPES.QUERY]: (payload: RayPayload) =>
-        h(QueryPayload, {payload}),
+        h(QueryPayload, { payload }),
       [RAY_EVENT_TYPES.ELOQUENT]: (payload: RayPayload) =>
-        h(EloquentPayload, {payload}),
+        h(EloquentPayload, { payload }),
       [RAY_EVENT_TYPES.VIEW]: (payload: RayPayload) =>
-        h(ViewsPayload, {payload}),
+        h(ViewsPayload, { payload }),
       [RAY_EVENT_TYPES.EVENT]: (payload: RayPayload) =>
-        h(EventPayload, {payload}),
+        h(EventPayload, { payload }),
       [RAY_EVENT_TYPES.JOB]: (payload: RayPayload) =>
-        h(JobPayload, {payload}),
+        h(JobPayload, { payload }),
       [RAY_EVENT_TYPES.LOCK]: (payload: RayPayload) =>
-        h(LockPayload, {payload}),
+        h(LockPayload, { payload }),
       [RAY_EVENT_TYPES.MAILABLE]: (payload: RayPayload) =>
-        h(MailablePayload, {payload}),
+        h(MailablePayload, { payload }),
+      [RAY_EVENT_TYPES.NOTIFY]: (payload: RayPayload) =>
+        h(NotifyPayload, { payload }),
     };
 
-    if (this.payload.type === 'hide') {
+    if (this.payload.type === "hide") {
       this.$emit("toggleView", true);
     }
 
