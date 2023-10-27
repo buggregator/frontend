@@ -95,7 +95,7 @@ export default defineComponent({
 
 .sentry-preview__text {
   @include text-muted;
-  @apply text-sm break-all mb-3 p-3 dark:bg-gray-800;
+  @apply text-sm break-all mb-3 p-3 dark:bg-gray-800 overflow-auto;
 }
 
 .sentry-preview__frames {
