@@ -2,9 +2,9 @@
   <div class="ray-type-model">
     <h3 class="ray-type-model__title">
       Class name:
-      <code class="ray-type-model__title-in">{{
-        payload.content.class_name
-      }}</code>
+      <code class="ray-type-model__title-in">
+        {{ payload.content.class_name }}
+      </code>
     </h3>
     <ValueDump :value="payload.content.attributes" />
   </div>
