@@ -7,9 +7,9 @@
         file.line_number
       }`"
     >
-      <code class="ray-type-caller__code"
-        >{{ file.class || "null" }}:{{ file.method }}</code
-      >
+      <code class="ray-type-caller__code">
+        {{ file.class || "null" }}:{{ file.method }}
+      </code>
     </a>
   </div>
 </template>

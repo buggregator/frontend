@@ -1,20 +1,27 @@
 <template>
   <div class="ray-type-event">
-    <ValueDump v-if="payload.content.class_based_event" :value="payload.content.event"/>
-    <h3>
-      Event: <code>{{ payload.content.name }}</code>
+    <ValueDump
+      v-if="payload.content.class_based_event"
+      :value="payload.content.event"
+    />
+    <h3 class="ray-type-event__text">
+      Event:
+      <code class="ray-type-event__text-in">{{ payload.content.name }}</code>
     </h3>
-    <ValueDump v-if="payload.content.payload" :value="payload.content.payload"/>
+    <ValueDump
+      v-if="payload.content.payload"
+      :value="payload.content.payload"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {RayPayload} from "~/config/types";
+import { defineComponent, PropType } from "vue";
+import { RayPayload } from "~/config/types";
 import ValueDump from "~/components/ValueDump/ValueDump.vue";
 
 export default defineComponent({
-  components: {ValueDump},
+  components: { ValueDump },
   props: {
     payload: {
       type: Object as PropType<RayPayload>,
@@ -28,11 +35,11 @@ export default defineComponent({
 .ray-type-event {
 }
 
-.ray-type-event h3 {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800;
+.ray-type-event__text {
+  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800 flex w-full overflow-auto;
 }
 
-.ray-type-event code {
-  @apply font-semibold;
+.ray-type-event__text-in {
+  @apply font-semibold ml-1;
 }
 </style>
