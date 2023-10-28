@@ -2,50 +2,49 @@
   <section v-if="hasApp" class="sentry-page-app">
     <h3 class="sentry-page-app__title">app</h3>
 
-    <EventTable>
-      <EventTableRow v-if="app.type" title="App type">
+    <TableBase>
+      <TableBaseRow v-if="app.type" title="App type">
         {{ app.type }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.app_build" title="App Build">
+      <TableBaseRow v-if="app.app_build" title="App Build">
         {{ app.app_build }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.app_identifier" title="Build ID">
+      <TableBaseRow v-if="app.app_identifier" title="Build ID">
         {{ app.app_identifier }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.app_id" title="ID">
+      <TableBaseRow v-if="app.app_id" title="ID">
         {{ app.app_id }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.app_name" title="Build Name">
+      <TableBaseRow v-if="app.app_name" title="Build Name">
         {{ app.app_name }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.app_version" title="Version">
+      <TableBaseRow v-if="app.app_version" title="Version">
         {{ app.app_version }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="app.permissions" title="Permissions">
+      <TableBaseRow v-if="app.permissions" title="Permissions">
         <CodeSnippet class="mt-3" language="json" :code="app.permissions" />
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
-import EventTable from "~/components/EventTable/EventTable.vue";
 import { CodeSnippet } from "~/src/widgets/ui";
+import { TableBaseRow, TableBase } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
     CodeSnippet,
-    EventTable,
-    EventTableRow,
+    TableBase,
+    TableBaseRow,
   },
   props: {
     event: {

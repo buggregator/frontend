@@ -10,54 +10,54 @@
 
       <section v-if="hasHeaders" class="http-dump-page__section">
         <h1>Headers</h1>
-        <EventTable>
-          <EventTableRow
+        <TableBase>
+          <TableBaseRow
             v-for="(value, title) in event.payload.request.headers"
             :key="title"
-            :title="title"
+            :title="String(title)"
           >
             {{ value[0] || value }}
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
 
       <section v-if="hasCookies" class="http-dump-page__section">
         <h1>Cookie</h1>
-        <EventTable>
-          <EventTableRow
+        <TableBase>
+          <TableBaseRow
             v-for="(value, title) in event.payload.request.cookies"
             :key="title"
-            :title="title"
+            :title="String(title)"
           >
             {{ value }}
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
 
       <section v-if="hasQuery" class="http-dump-page__section">
         <h1>Query Parameters</h1>
-        <EventTable>
-          <EventTableRow
+        <TableBase>
+          <TableBaseRow
             v-for="(value, title) in event.payload.request.query"
             :key="title"
-            :title="title"
+            :title="String(title)"
           >
             {{ value }}
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
 
       <section v-if="hasPostData" class="http-dump-page__section">
         <h1>POST Data</h1>
-        <EventTable>
-          <EventTableRow
+        <TableBase>
+          <TableBaseRow
             v-for="(value, title) in event.payload.request.post"
             :key="title"
-            :title="title"
+            :title="String(title)"
           >
             {{ value }}
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
 
       <section v-if="hasAttachments" class="http-dump-page__section">
@@ -86,14 +86,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
 
 export default defineComponent({
   components: {
-    EventTable,
-    EventTableRow,
+    TableBase,
+    TableBaseRow,
     SmtpAttachment,
   },
   props: {

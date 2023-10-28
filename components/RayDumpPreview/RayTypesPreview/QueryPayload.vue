@@ -1,26 +1,25 @@
 <template>
   <div class="query-payload">
     <CodeSnippet language="sql" :code="formattedSql" />
-    <EventTable>
-      <EventTableRow title="Connection name">
+    <TableBase>
+      <TableBaseRow title="Connection name">
         {{ payload.content.connection_name }}
-      </EventTableRow>
-      <EventTableRow title="Time"> {{ payload.content.time }}ms </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+      <TableBaseRow title="Time"> {{ payload.content.time }}ms </TableBaseRow>
+    </TableBase>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import { CodeSnippet } from "~/src/widgets/ui";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
     CodeSnippet,
   },
   props: {

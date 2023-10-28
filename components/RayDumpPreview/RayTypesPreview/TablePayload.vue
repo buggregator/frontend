@@ -1,29 +1,28 @@
 <template>
   <div class="ray-type-table">
-    <EventTable>
-      <EventTableRow
+    <TableBase>
+      <TableBaseRow
         v-for="(value, title) in eventValue.values"
         :key="title"
         :title="title"
       >
         <ValueDump :value="value" />
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import ValueDump from "~/components/ValueDump/ValueDump.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
     ValueDump,
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
   },
   props: {
     payload: {

@@ -49,32 +49,32 @@
           <Tab name="Tech Info">
             <section>
               <h3 class="mb-3 font-bold">Email Headers</h3>
-              <EventTable>
-                <EventTableRow title="Id">
+              <TableBase>
+                <TableBaseRow title="Id">
                   {{ event.payload.id }}
-                </EventTableRow>
-                <EventTableRow title="Subject">
+                </TableBaseRow>
+                <TableBaseRow title="Subject">
                   {{ event.payload.subject }}
-                </EventTableRow>
-                <EventTableRow title="From">
+                </TableBaseRow>
+                <TableBaseRow title="From">
                   <SmtpPageAddresses :addresses="event.payload.from" />
-                </EventTableRow>
-                <EventTableRow title="To">
+                </TableBaseRow>
+                <TableBaseRow title="To">
                   <SmtpPageAddresses :addresses="event.payload.to" />
-                </EventTableRow>
-                <EventTableRow v-if="event.payload.cc.length" title="Cc">
+                </TableBaseRow>
+                <TableBaseRow v-if="event.payload.cc.length" title="Cc">
                   <SmtpPageAddresses :addresses="event.payload.cc" />
-                </EventTableRow>
-                <EventTableRow v-if="event.payload.bcc.length" title="Bcc">
+                </TableBaseRow>
+                <TableBaseRow v-if="event.payload.bcc.length" title="Bcc">
                   <SmtpPageAddresses :addresses="event.payload.bcc" />
-                </EventTableRow>
-                <EventTableRow
+                </TableBaseRow>
+                <TableBaseRow
                   v-if="event.payload.reply_to.length"
                   title="Reply to"
                 >
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
-                </EventTableRow>
-              </EventTable>
+                </TableBaseRow>
+              </TableBase>
             </section>
 
             <section v-if="attachments.length">
@@ -105,15 +105,14 @@ import moment from "moment";
 import { Tab, Tabs } from "vue3-tabs-component";
 import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
 import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
 import { CodeSnippet } from "~/src/widgets/ui";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
     SmtpPagePreview,
     SmtpPageAddresses,
     CodeSnippet,

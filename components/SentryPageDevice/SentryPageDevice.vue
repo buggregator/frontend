@@ -2,120 +2,120 @@
   <section v-if="hasDevice" class="sentry-page-device">
     <h3 class="sentry-page-device__title">device</h3>
 
-    <EventTable>
-      <EventTableRow v-if="device.archs" title="Architectures">
+    <TableBase>
+      <TableBaseRow v-if="device.archs" title="Architectures">
         <CodeSnippet class="mt-3" language="json" :code="device.archs" />
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.battery_level" title="Battery Level">
+      <TableBaseRow v-if="device.battery_level" title="Battery Level">
         {{ parseInt(device.battery_level) }}%
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.boot_time" title="Boot Time">
+      <TableBaseRow v-if="device.boot_time" title="Boot Time">
         {{ formatDate(device.boot_time) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.brand" title="Brand">
+      <TableBaseRow v-if="device.brand" title="Brand">
         {{ device.brand }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.charging" title="Charging">
+      <TableBaseRow v-if="device.charging" title="Charging">
         {{ device.charging }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.family" title="Family">
+      <TableBaseRow v-if="device.family" title="Family">
         {{ device.family }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.free_memory" title="Free Memory">
+      <TableBaseRow v-if="device.free_memory" title="Free Memory">
         {{ humanFileSize(device.free_memory) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.free_storage" title="Free Storage">
+      <TableBaseRow v-if="device.free_storage" title="Free Storage">
         {{ humanFileSize(device.free_storage) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.id" title="Id">
+      <TableBaseRow v-if="device.id" title="Id">
         {{ device.id }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.language" title="Language">
+      <TableBaseRow v-if="device.language" title="Language">
         {{ device.language }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.low_memory" title="Low Memory">
+      <TableBaseRow v-if="device.low_memory" title="Low Memory">
         {{ device.low_memory }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.manufacturer" title="Manufacturer">
+      <TableBaseRow v-if="device.manufacturer" title="Manufacturer">
         {{ device.manufacturer }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.memory_size" title="Memory Size">
+      <TableBaseRow v-if="device.memory_size" title="Memory Size">
         {{ humanFileSize(device.memory_size) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.model" title="Model">
+      <TableBaseRow v-if="device.model" title="Model">
         {{ device.model }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.model_id" title="Model Id">
+      <TableBaseRow v-if="device.model_id" title="Model Id">
         {{ device.model_id }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.name" title="Name">
+      <TableBaseRow v-if="device.name" title="Name">
         {{ device.name }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.orientation" title="Orientation">
+      <TableBaseRow v-if="device.orientation" title="Orientation">
         {{ device.orientation }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.screen_density" title="Screen Density">
+      <TableBaseRow v-if="device.screen_density" title="Screen Density">
         {{ parseInt(device.screen_density) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.screen_dpi" title="Screen DPI">
+      <TableBaseRow v-if="device.screen_dpi" title="Screen DPI">
         {{ device.screen_dpi }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow
+      <TableBaseRow
         v-if="device.screen_height_pixels"
         title="Screen Height Pixels"
       >
         {{ device.screen_height_pixels }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow
+      <TableBaseRow
         v-if="device.screen_width_pixels"
         title="Screen Width Pixels"
       >
         {{ device.screen_width_pixels }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.simulator" title="Simulator">
+      <TableBaseRow v-if="device.simulator" title="Simulator">
         {{ device.simulator }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.storage_size" title="Storage Size">
+      <TableBaseRow v-if="device.storage_size" title="Storage Size">
         {{ humanFileSize(device.storage_size) }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.timezone" title="Timezone">
+      <TableBaseRow v-if="device.timezone" title="Timezone">
         {{ device.timezone }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow
+      <TableBaseRow
         v-if="device.battery_temperature"
         title="Battery Temperature"
       >
         {{ device.battery_temperature }}
-      </EventTableRow>
+      </TableBaseRow>
 
-      <EventTableRow v-if="device.locale" :title="'Locale'">
+      <TableBaseRow v-if="device.locale" :title="'Locale'">
         {{ device.locale }}
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </section>
 </template>
 
@@ -124,14 +124,13 @@ import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
 import { humanFileSize } from "~/utils/formats";
 import moment from "moment";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import { CodeSnippet } from "~/src/widgets/ui";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
     CodeSnippet,
   },
   props: {

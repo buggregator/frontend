@@ -1,19 +1,17 @@
+<script lang="ts" setup></script>
+
 <template>
-  <div class="event-table">
+  <div class="table-base">
     <slot></slot>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({});
-</script>
-
 <style lang="scss" scoped>
 @import "assets/mixins";
-.event-table {
+.table-base {
   @include border-style;
   @apply bg-gray-100 dark:bg-gray-800 text-sm border divide-y;
 }
 </style>
+
+<style lang="scss" scoped></style>

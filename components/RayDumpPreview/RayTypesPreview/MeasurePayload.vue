@@ -4,28 +4,27 @@
       Start measuring performance...
     </h3>
 
-    <EventTable v-else>
-      <EventTableRow title="Total time"> {{ totalTime }} s </EventTableRow>
-      <EventTableRow title="Time since last call">
+    <TableBase v-else>
+      <TableBaseRow title="Total time"> {{ totalTime }} s </TableBaseRow>
+      <TableBaseRow title="Time since last call">
         {{ timeSinceLastCall }} s
-      </EventTableRow>
-      <EventTableRow title="Maximum memory usage">
+      </TableBaseRow>
+      <TableBaseRow title="Maximum memory usage">
         {{ maxMemoryUsage }}
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
   },
   props: {
     payload: {

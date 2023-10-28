@@ -15,21 +15,21 @@
 
       <section class="inspector-page__body">
         <h3 class="inspector-page__body-text">Url</h3>
-        <EventTable class="inspector-page__body-table">
-          <EventTableRow
+        <TableBase class="inspector-page__body-table">
+          <TableBaseRow
             v-for="(value, name) in transaction.http.url"
             :key="name"
             :title="name"
           >
             {{ value }}
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
 
       <section>
         <h3 class="inspector-page__body-text">Request</h3>
-        <EventTable class="inspector-page__body-table">
-          <EventTableRow
+        <TableBase class="inspector-page__body-table">
+          <TableBaseRow
             v-for="(value, name) in transaction.http.request"
             :key="name"
             :title="name"
@@ -38,12 +38,12 @@
               {{ value }}
             </template>
             <template v-else-if="!Array.isArray(value)">
-              <EventTableRow v-for="(v, n) in value" :key="n" :title="n">
+              <TableBaseRow v-for="(v, n) in value" :key="n" :title="n">
                 {{ v }}
-              </EventTableRow>
+              </TableBaseRow>
             </template>
-          </EventTableRow>
-        </EventTable>
+          </TableBaseRow>
+        </TableBase>
       </section>
     </main>
   </div>
@@ -55,13 +55,12 @@ import { InspectorTransaction, NormalizedEvent } from "~/config/types";
 import moment from "moment/moment";
 import InspectorPageTimeline from "~/components/InspectorPageTimeline/InspectorPageTimeline.vue";
 import InspectorStatBoard from "~/components/InspectorStatBoard/InspectorStatBoard.vue";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
     InspectorPageTimeline,
     InspectorStatBoard,
   },

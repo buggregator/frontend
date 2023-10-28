@@ -10,28 +10,28 @@
     <h3 class="sentry-page-request__title sentry-page-request__title--sub">
       headers
     </h3>
-    <EventTable>
-      <EventTableRow
+
+    <TableBase>
+      <TableBaseRow
         v-for="(value, title) in headers"
         :key="title"
         :title="title"
       >
         {{ Array.isArray(value) ? value[0] || value : value }}
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
   },
   props: {
     event: {

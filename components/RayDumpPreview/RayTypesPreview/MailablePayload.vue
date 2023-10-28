@@ -1,43 +1,37 @@
 <template>
   <div class="ray-type-mailable">
-    <EventTable>
-      <EventTableRow v-if="eventValue.subject" title="Subject">
+    <TableBase>
+      <TableBaseRow v-if="eventValue.subject" title="Subject">
         {{ eventValue.subject }}
-      </EventTableRow>
-      <EventTableRow v-if="eventValue.mailable_class" title="Mailable class">
+      </TableBaseRow>
+      <TableBaseRow v-if="eventValue.mailable_class" title="Mailable class">
         {{ eventValue.mailable_class }}
-      </EventTableRow>
-      <EventTableRow
+      </TableBaseRow>
+      <TableBaseRow
         v-if="eventValue.from && eventValue.from.length > 0"
         title="From"
       >
         {{ getValuesField(eventValue.from) }}
-      </EventTableRow>
-      <EventTableRow
-        v-if="eventValue.to && eventValue.to.length > 0"
-        title="To"
-      >
+      </TableBaseRow>
+      <TableBaseRow v-if="eventValue.to && eventValue.to.length > 0" title="To">
         {{ getValuesField(eventValue.to) }}
-      </EventTableRow>
-      <EventTableRow
-        v-if="eventValue.cc && eventValue.cc.length > 0"
-        title="Cc"
-      >
+      </TableBaseRow>
+      <TableBaseRow v-if="eventValue.cc && eventValue.cc.length > 0" title="Cc">
         {{ getValuesField(eventValue.cc) }}
-      </EventTableRow>
-      <EventTableRow
+      </TableBaseRow>
+      <TableBaseRow
         v-if="eventValue.bcc && eventValue.bcc.length > 0"
         title="Bcc"
       >
         {{ getValuesField(eventValue.bcc) }}
-      </EventTableRow>
-      <EventTableRow
+      </TableBaseRow>
+      <TableBaseRow
         v-if="eventValue.reply_to && eventValue.reply_to.length > 0"
         title="Reply to"
       >
         {{ getValuesField(eventValue.reply_to) }}
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
     <div
       class="ray-type-mailable__collapsed"
       :class="{ 'cursor-pointer': !collapsed }"
@@ -65,14 +59,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import { IconSvg } from "~/src/shared/ui";
+import { IconSvg, TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
     IconSvg,
   },
   props: {

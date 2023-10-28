@@ -1,29 +1,28 @@
 <template>
   <div class="ray-type-carbon">
-    <EventTable>
-      <EventTableRow title="Formatted">
+    <TableBase>
+      <TableBaseRow title="Formatted">
         {{ eventValue.formatted }}
-      </EventTableRow>
-      <EventTableRow title="Timezone">
+      </TableBaseRow>
+      <TableBaseRow title="Timezone">
         {{ eventValue.timezone }}
-      </EventTableRow>
-      <EventTableRow title="Timestamp">
+      </TableBaseRow>
+      <TableBaseRow title="Timestamp">
         {{ eventValue.timestamp }}
-      </EventTableRow>
-    </EventTable>
+      </TableBaseRow>
+    </TableBase>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import EventTable from "~/components/EventTable/EventTable.vue";
-import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
-    EventTableRow,
-    EventTable,
+    TableBaseRow,
+    TableBase,
   },
   props: {
     payload: {
