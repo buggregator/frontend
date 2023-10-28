@@ -1,6 +1,46 @@
+<script lang="ts" setup>
+import highlightPlugin from "@highlightjs/vue-plugin";
+import isString from "lodash/isString";
+import { ref, computed } from "vue";
+import { IconSvg } from "~/src/shared/ui";
+
+const CondeHighlight = highlightPlugin.component;
+
+type Props = {
+  code: string | unknown;
+  language: string;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  language: "plaintext",
+});
+
+const isCopied = ref(false);
+
+const normalizedCode = computed(() =>
+  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code
+);
+
+const copyCode = (): void => {
+  isCopied.value = true;
+
+  navigator.clipboard
+    .writeText(normalizedCode.value)
+    .then(() => {
+      setTimeout(() => {
+        isCopied.value = false;
+      }, 200);
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+};
+</script>
+
 <template>
   <div class="code-snippet">
     <CondeHighlight :language="language" :code="normalizedCode" />
+
     <button
       type="button"
       class="code-snippet__copy"
@@ -8,61 +48,10 @@
       @click="copyCode"
     >
       <IconSvg name="copy" class="code-snippet__copy-icon" />
-      copy
+      Copy
     </button>
   </div>
 </template>
-
-<script lang="ts">
-import hljsVuePlugin from "@highlightjs/vue-plugin";
-import { defineComponent } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    IconSvg,
-    CondeHighlight: hljsVuePlugin.component,
-  },
-  props: {
-    code: {
-      type: [String, Object],
-      required: true,
-    },
-    language: {
-      type: String,
-      default: "plaintext",
-    },
-  },
-  data() {
-    return {
-      isCopied: false,
-    };
-  },
-  computed: {
-    normalizedCode(): string {
-      return typeof this.code === "string"
-        ? this.code
-        : JSON.stringify(this.code, null, " ");
-    },
-  },
-  methods: {
-    copyCode(): void {
-      this.isCopied = true;
-
-      navigator.clipboard
-        .writeText(this.normalizedCode)
-        .then(() => {
-          setTimeout(() => {
-            this.isCopied = false;
-          }, 200);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .code-snippet {
