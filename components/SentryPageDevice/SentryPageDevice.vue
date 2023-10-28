@@ -122,11 +122,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 import { humanFileSize } from "~/utils/formats";
 import moment from "moment";
 import EventTable from "~/components/EventTable/EventTable.vue";
 import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
+import { CodeSnippet } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

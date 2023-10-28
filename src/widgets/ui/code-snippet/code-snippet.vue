@@ -1,6 +1,6 @@
 <template>
   <div class="code-snippet">
-    <highlightjs :language="language" :code="normalizedCode" />
+    <CondeHighlight :language="language" :code="normalizedCode" />
     <button
       type="button"
       class="code-snippet__copy"
@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import { IconSvg } from "~/src/shared/ui";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import { defineComponent } from "vue";
+import { IconSvg } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
     IconSvg,
-    highlightjs: hljsVuePlugin.component,
+    CondeHighlight: hljsVuePlugin.component,
   },
   props: {
     code: {

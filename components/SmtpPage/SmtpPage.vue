@@ -103,12 +103,12 @@ import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
 import moment from "moment";
 import { Tab, Tabs } from "vue3-tabs-component";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
 import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
 import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
 import EventTable from "~/components/EventTable/EventTable.vue";
 import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
 import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
+import { CodeSnippet } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

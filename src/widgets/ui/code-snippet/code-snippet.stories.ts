@@ -1,10 +1,10 @@
 import { Meta, Story } from "@storybook/vue3";
 import { EVENT_TYPES } from "~/config/constants";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
-import { HTML } from '@/mocks/mail';
+import { HTMLCode, PHPCode } from '@/src/shared/mocks';
+import CodeSnippet from "./code-snippet.vue";
 
 export default {
-  title: "Components/CodeSnippet",
+  title: "FSD/Widgets/CodeSnippet",
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 
@@ -17,6 +17,12 @@ const Template: Story = (args) => ({
   },
   template: `<CodeSnippet v-bind="args" />`,
 });
+
+export const Default = Template.bind({});
+Default.args = {
+  code: "Hello World!",
+  language: 'text'
+};
 
 export const Object = Template.bind({});
 Object.args = {
@@ -36,30 +42,9 @@ Object.args = {
 
 export const HTMLString = Template.bind({});
 HTMLString.args = {
-  code: HTML,
+  code: HTMLCode,
   language: 'html'
 };
-
-const PHPCode = `use RoadRunner\\Centrifugo\\CentrifugoApiInterface;
-
-final class UserBanService
-{
-    public function __construct(
-        private readonly UserRepository $repository,
-        private readonly CentrifugoApiInterface $ws
-    ) {}
-
-    public function handle(string $userUuid): void
-    {
-        $user = $this->repository->findByPK($userUuid);
-
-        // Ban user...
-
-        // Disconnect from webscoket server
-        $this->ws->disconnect($user->getId());
-    }
-}
-`
 
 export const PHPString = Template.bind({});
 PHPString.args = {

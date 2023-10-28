@@ -15,7 +15,7 @@ import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
 import EventTable from "~/components/EventTable/EventTable.vue";
 import EventTableRow from "~/components/EventTableRow/EventTableRow.vue";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
+import { CodeSnippet } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

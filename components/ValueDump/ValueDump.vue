@@ -1,15 +1,15 @@
 <template>
   <div class="dump-preview">
-    <div v-if="!isString" class="var-dump-preview__html" v-html="dumpBody"/>
+    <div v-if="!isString" class="var-dump-preview__html" v-html="dumpBody" />
 
-    <CodeSnippet v-if="isString" language="php" :code="dumpBody"/>
+    <CodeSnippet v-if="isString" language="php" :code="dumpBody" />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {useNuxtApp} from "#app";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
+import { defineComponent } from "vue";
+import { useNuxtApp } from "#app";
+import { CodeSnippet } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {
@@ -18,7 +18,7 @@ export default defineComponent({
   props: ["value", "type"],
   setup() {
     if (process.client) {
-      const {$vendors} = useNuxtApp();
+      const { $vendors } = useNuxtApp();
 
       return {
         Sfdump: $vendors.sfdump,
@@ -41,8 +41,8 @@ export default defineComponent({
       return this.value.toString().match(/(sf-dump-[0-9]+)/i)?.[0] || null;
     },
     dumpBody(): string | unknown {
-      if (this.type === 'boolean') {
-        return this.value === '1' ? 'true' : 'false';
+      if (this.type === "boolean") {
+        return this.value === "1" ? "true" : "false";
       }
 
       if (this.dumpId) {

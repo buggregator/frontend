@@ -8,7 +8,7 @@
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
 import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
-import CodeSnippet from "~/components/CodeSnippet/CodeSnippet.vue";
+import { CodeSnippet } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {
