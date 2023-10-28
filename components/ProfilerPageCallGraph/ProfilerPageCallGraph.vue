@@ -73,13 +73,15 @@
 </template>
 
 <script lang="ts">
-import { IconSvg } from "~/src/shared/ui";
-
 import { defineComponent, PropType } from "vue";
 import { GraphTypes, Profiler } from "~/config/types";
-import { calcGraphData } from "~/utils/calc-graph-data";
-import RenderGraph from "~/components/RenderGraph/RenderGraph.vue";
 import StatBoard from "~/components/StatBoard/StatBoard.vue";
+import { IconSvg } from "~/src/shared/ui";
+import { RenderGraph } from "~/src/widgets/ui";
+import { useCytoscape } from "~/src/shared/lib/cytoscape";
+
+// TODO: move buildData to renderGraph context instead of cytoscape context.
+const { buildData } = useCytoscape();
 
 export default defineComponent({
   components: { StatBoard, RenderGraph, IconSvg },
@@ -100,7 +102,7 @@ export default defineComponent({
   },
   computed: {
     graphElements() {
-      return calcGraphData(this.event.edges, this.metric, this.threshold);
+      return buildData(this.event.edges, this.metric, this.threshold);
     },
     graphKey() {
       return `${this.metric}-${this.threshold}`;

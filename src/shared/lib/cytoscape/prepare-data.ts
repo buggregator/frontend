@@ -1,16 +1,18 @@
-import {humanFileSize, formatDuration} from "~/utils/formats";
 import { GraphTypes, ProfilerEdge, ProfilerEdges, TGraphEdge, TGraphNode } from "~/config/types";
+import {useFormats} from "../formats";
+// TODO: need to move types to FSD structure
 
+const { formatDuration, formatFileSize } = useFormats();
 const formatValue = (value: number, metric: string): string | number => {
   const metricFormatMap: Record<string, (v: number) => string|number> = {
     p_mu: (a: number) => `${a}%`,
     p_pmu: (a: number) => `${a}%`,
     p_cpu: (a: number) => `${a}%`,
     p_wt: (a: number) => `${a}%`,
-    mu: humanFileSize,
-    d_mu: humanFileSize,
-    pmu: humanFileSize,
-    d_pmu: humanFileSize,
+    mu: formatFileSize,
+    d_mu: formatFileSize,
+    pmu: formatFileSize,
+    d_pmu: formatFileSize,
     cpu: formatDuration,
     d_cpu: formatDuration,
     wt: formatDuration,
@@ -20,7 +22,7 @@ const formatValue = (value: number, metric: string): string | number => {
   return metricFormatMap[metric]?.(value) || value
 }
 
-export const calcGraphData: (
+export const prepareData: (
   edges: ProfilerEdges,
   metric: GraphTypes,
   threshold: number
