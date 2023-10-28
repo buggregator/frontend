@@ -1,7 +1,13 @@
 <script lang="ts" setup>
 // TODO: need to fix cytoscape console warnings
 import type { ElementsDefinition, NodeSingular } from "cytoscape";
-import { defineProps, ref } from "vue";
+import {
+  defineProps,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+} from "vue";
 import { useCytoscape } from "~/src/shared/lib/cytoscape";
 
 type Props = {
@@ -11,14 +17,22 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const hoverNodeData = ref<unknown>(null);
-const tooltipPosition = ref<{ top: string; left: string } | null>(null);
+const hoverNodeData = ref<unknown>();
+const tooltipPosition = ref<{ top: string; left: string } | undefined>();
+const destroyFn = ref();
 
 const renderer = ref<HTMLElement>();
 const parent = ref<HTMLElement>();
 const tooltip = ref<HTMLElement>();
 
-const onNodeHover = (target: NodeSingular, event: MouseEvent) => {
+const onNodeHover = (target?: NodeSingular, event?: MouseEvent) => {
+  if (!target || !event) {
+    hoverNodeData.value = undefined;
+    tooltipPosition.value = undefined;
+
+    return;
+  }
+
   hoverNodeData.value = target.data();
 
   const x = event.offsetX;
@@ -50,10 +64,16 @@ const onNodeHover = (target: NodeSingular, event: MouseEvent) => {
 
 const { initialize } = useCytoscape();
 
-initialize({
-  container: renderer.value as HTMLElement,
-  elements: props.elements,
-  onNodeHover,
+onMounted(() => {
+  destroyFn.value = initialize({
+    container: renderer.value as HTMLElement,
+    elements: props.elements,
+    onNodeHover,
+  });
+});
+
+onBeforeUnmount(() => {
+  destroyFn.value();
 });
 </script>
 

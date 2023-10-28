@@ -17,7 +17,7 @@ const Template: Story = (args) => ({
       args,
     };
   },
-  template: `<RenderGraph v-bind="args" />`,
+  template: `<RenderGraph v-bind="args" :height="500" />`,
 });
 
 export const TestData = Template.bind({});

@@ -2,21 +2,21 @@ import cytoscape, { Core as Cytoscape, ElementsDefinition, EventObjectNode, Node
 import dagre, { DagreLayoutOptions } from "cytoscape-dagre";
 import { cytoscapeStyles } from "./config";
 
+cytoscape.use(dagre);
+
 type TInitializeProps = {
   elements: ElementsDefinition,
   container: HTMLElement,
-  onNodeHover: (node: NodeSingular, event: MouseEvent) => void
+  onNodeHover: (node?: NodeSingular, event?: MouseEvent) => void,
 }
 
-type TInitialize = (data: TInitializeProps) => void;
+type TInitialize = (data: TInitializeProps) => () => void;
 
 const initialize: TInitialize = ({
   elements,
   container,
   onNodeHover,
 }) => {
-  cytoscape.use(dagre);
-
   const cy: Cytoscape = cytoscape({
     container,
     wheelSensitivity: 0.4,
@@ -34,8 +34,14 @@ const initialize: TInitialize = ({
   cy.on("mouseover", "node", (event: EventObjectNode) => {
     onNodeHover(event.target, event.originalEvent);
   });
+
+  cy.on("mouseout", "node", (event: EventObjectNode) => {
+    onNodeHover(undefined, undefined);
+  });
+
+  return () => cy.destroy();
 }
 
 export {
-  initialize
+  initialize,
 };
