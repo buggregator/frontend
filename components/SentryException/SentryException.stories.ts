@@ -1,8 +1,8 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeSentryEvent } from "~/utils/normalize-event";
-import sentryEventMock from '~/mocks/sentry-common.json'
 import { Sentry } from "~/config/types";
 import SentryException from '~/components/SentryException/SentryException.vue';
+import { sentryCommonMock } from '~/src/entities/sentry/mocks';
 
 export default {
   title: "Sentry/Components/SentryException",
@@ -22,5 +22,5 @@ const Template: Story = (args) => ({
 export const Exception = Template.bind({});
 
 Exception.args = {
-  exception: (normalizeSentryEvent(sentryEventMock)?.payload as Sentry)?.exception?.values[0],
+  exception: (normalizeSentryEvent(sentryCommonMock)?.payload as Sentry)?.exception?.values[0],
 };

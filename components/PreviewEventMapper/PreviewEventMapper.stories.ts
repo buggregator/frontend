@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
-import sentryEventMock from "~/mocks/sentry-spiral.json";
 import varDumpEventMock from "~/mocks/var-dump-object.json";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { monologMock } from '~/src/entities/monolog/mocks';
 import { inspectorMock } from '~/src/entities/inspector/mocks';
 import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
 import { httpDumpMock } from '~/src/entities/http-dump/mocks';
+import { sentrySpiralMock } from '~/src/entities/sentry/mocks';
 
 export default {
   title: "Preview/PreviewEventMapper",
@@ -38,7 +38,7 @@ Monolog.args = {
 export const Sentry = Template.bind({});
 
 Sentry.args = {
-  event: sentryEventMock,
+  event: sentrySpiralMock,
 };
 
 export const Smtp = Template.bind({});
@@ -72,7 +72,7 @@ HttpDump.args = {
 
 const eventsList = [
   monologMock,
-  sentryEventMock,
+  sentrySpiralMock,
   smtpWelcomeMock,
   varDumpEventMock,
   profilerMock,

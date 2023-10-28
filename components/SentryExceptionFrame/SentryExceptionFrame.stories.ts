@@ -1,8 +1,8 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeSentryEvent } from "~/utils/normalize-event";
-import sentrySpiralEventMock from '~/mocks/sentry-spiral.json'
 import { Sentry } from "~/config/types";
 import SentryExceptionFrame from '~/components/SentryExceptionFrame/SentryExceptionFrame.vue';
+import { sentrySpiralMock } from '~/src/entities/sentry/mocks';
 
 export default {
   title: "Sentry/Components/SentryExceptionFrame",
@@ -23,5 +23,5 @@ export const Frame = Template.bind({});
 
 Frame.args = {
   isOpen: true,
-  frame: (normalizeSentryEvent(sentrySpiralEventMock)?.payload as Sentry)?.exception?.values[0]?.stacktrace?.frames[1],
+  frame: (normalizeSentryEvent(sentrySpiralMock)?.payload as Sentry)?.exception?.values[0]?.stacktrace?.frames[1],
 };

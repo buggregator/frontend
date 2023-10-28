@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeSentryEvent } from "~/utils/normalize-event";
-import sentryEventMock from '~/mocks/sentry-common.json'
 import SentryPageDevice from '~/components/SentryPageDevice/SentryPageDevice.vue';
+import { sentryCommonMock } from '~/src/entities/sentry/mocks';
 
 export default {
   title: "Sentry/Page/SentryPageDevice",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const Device = Template.bind({});
 
 Device.args = {
-  event: normalizeSentryEvent(sentryEventMock).payload,
+  event: normalizeSentryEvent(sentryCommonMock).payload,
 };
