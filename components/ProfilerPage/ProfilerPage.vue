@@ -59,7 +59,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import StatBoard from "~/components/StatBoard/StatBoard.vue";
+import { StatBoard } from "~/src/widgets/ui";
 import ProfilerPageCallStack from "~/components/ProfilerPageCallStack/ProfilerPageCallStack.vue";
 import ProfilerPageCallGraph from "~/components/ProfilerPageCallGraph/ProfilerPageCallGraph.vue";
 import ProfilePageFlamegraph from "~/components/ProfilePageFlamegraph/ProfilePageFlamegraph.vue";

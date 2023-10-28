@@ -75,9 +75,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { GraphTypes, Profiler } from "~/config/types";
-import StatBoard from "~/components/StatBoard/StatBoard.vue";
 import { IconSvg } from "~/src/shared/ui";
-import { RenderGraph } from "~/src/widgets/ui";
+import { RenderGraph, StatBoard } from "~/src/widgets/ui";
 import { useCytoscape } from "~/src/shared/lib/cytoscape";
 
 // TODO: move buildData to renderGraph context instead of cytoscape context.

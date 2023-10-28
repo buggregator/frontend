@@ -10,7 +10,7 @@
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
 import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
-import StatBoard from "~/components/StatBoard/StatBoard.vue";
+import { StatBoard } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

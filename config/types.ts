@@ -391,7 +391,7 @@ export interface NormalizedEvent {
 
 
 export enum GraphTypes {
-  CPU= 'cpu' ,
+  CPU = 'cpu' ,
   MEMORY_CHANGE = 'pmu',
   MEMORY = 'mu'
 }

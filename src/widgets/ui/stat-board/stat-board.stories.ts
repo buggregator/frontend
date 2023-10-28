@@ -1,11 +1,14 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeProfilerEvent } from "~/utils/normalize-event";
-import StatBoard from "~/components/StatBoard/StatBoard.vue";
-import profilerEventMock from "~/mocks/profiler.json";
+// TODO: move type to entities
 import type { Profiler } from "~/config/types";
+import { useNormalizeEvent } from "~/src/entities/lib";
+import { profilerMock } from  "~/src/entities/profiler/mocks";
+import StatBoard from "./stat-board.vue";
+
+const { normalizeProfilerEvent } = useNormalizeEvent()
 
 export default {
-  title: "Components/StatBoard",
+  title: "FSD/widgets/StatBoard",
   component: StatBoard,
 } as Meta<typeof StatBoard>;
 
@@ -16,13 +19,13 @@ const Template: Story = (args) => ({
       args,
     };
   },
-  template: `<stat-board v-bind="args" />`,
+  template: `<StatBoard v-bind="args" />`,
 });
 
 export const Default = Template.bind({});
 
 Default.args = {
-  cost: (normalizeProfilerEvent(profilerEventMock).payload as Profiler)?.peaks,
+  cost: (normalizeProfilerEvent(profilerMock).payload as Profiler)?.peaks,
 };
 
 export const LargePeaks = Template.bind({});

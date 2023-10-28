@@ -4,7 +4,7 @@ import { HTMLCode, PHPCode } from '@/src/shared/mocks';
 import CodeSnippet from "./code-snippet.vue";
 
 export default {
-  title: "FSD/Widgets/CodeSnippet",
+  title: "FSD/widgets/CodeSnippet",
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 
