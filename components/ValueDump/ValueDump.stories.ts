@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 
 import ValueDump from '~/components/ValueDump/ValueDump.vue';
-import varDumpObjectEventMock from '~/mocks/var-dump-object.json'
+import { varDumpObjectMock } from '~/src/entities/var-dump/mocks';
 
 export default {
   title: "Components/ValueDump",
@@ -34,5 +34,5 @@ Boolean.args = {
 export const SfDump = Template.bind({});
 
 SfDump.args = {
-  value: varDumpObjectEventMock.payload.payload.value,
+  value: varDumpObjectMock.payload.payload.value,
 };

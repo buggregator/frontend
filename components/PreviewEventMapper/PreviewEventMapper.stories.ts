@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/vue3";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
-import varDumpEventMock from "~/mocks/var-dump-object.json";
+import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { monologMock } from '~/src/entities/monolog/mocks';
 import { inspectorMock } from '~/src/entities/inspector/mocks';
@@ -50,7 +50,7 @@ Smtp.args = {
 export const VarDump = Template.bind({});
 
 VarDump.args = {
-  event: varDumpEventMock,
+  event: varDumpObjectMock,
 };
 
 export const Profiler = Template.bind({});
@@ -74,7 +74,7 @@ const eventsList = [
   monologMock,
   sentrySpiralMock,
   smtpWelcomeMock,
-  varDumpEventMock,
+  varDumpObjectMock,
   profilerMock,
   inspectorMock,
   httpDumpMock,
