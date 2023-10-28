@@ -7,9 +7,7 @@
       {
         "type": "log",
         "content": {
-          "values": [
-            "this is green"
-          ]
+          "values": ["this is green"]
         },
         "origin": {
           "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayCommon.php",

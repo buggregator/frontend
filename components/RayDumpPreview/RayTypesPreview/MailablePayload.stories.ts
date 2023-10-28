@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
-import eventMock from '~/mocks/ray-laravel-mailable.json';
 import MailablePayload from "~/components/RayDumpPreview/RayTypesPreview/MailablePayload.vue";
+import { rayLaravelMailableMock } from '~/src/entities/ray/mocks-laravel'
 
 export default {
   title: "RayDump/Types/Mailable",
@@ -19,5 +19,5 @@ const Template: Story = (args) => ({
 });
 
 export const Mailable = Template.bind({});
-Mailable.args = {payload: normalizeRayDumpEvent(eventMock).payload.payload.payloads[0]};
+Mailable.args = {payload: normalizeRayDumpEvent(rayLaravelMailableMock).payload.payload.payloads[0]};
 

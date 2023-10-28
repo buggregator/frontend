@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import CarbonPayload from '~/components/RayDumpPreview/RayTypesPreview/CarbonPayload.vue';
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
-import eventMock from '~/mocks/ray-carbon.json'
+import { rayCarbonMock } from '~/src/entities/ray/mocks'
 
 export default {
   title: "RayDump/Types/Carbon",
@@ -19,4 +19,4 @@ const Template: Story = (args) => ({
 });
 
 export const Carbon = Template.bind({});
-Carbon.args = {payload: normalizeRayDumpEvent(eventMock).payload.payload.payloads[0]};
+Carbon.args = {payload: normalizeRayDumpEvent(rayCarbonMock).payload.payload.payloads[0]};

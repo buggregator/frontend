@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import LogPayload from '~/components/RayDumpPreview/RayTypesPreview/LogPayload.vue';
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
-import eventMock from '~/mocks/ray-color.json'
+import { rayColorMock } from '~/src/entities/ray/mocks'
 
 export default {
   title: "RayDump/Types/Log",
@@ -19,4 +19,4 @@ const Template: Story = (args) => ({
 });
 
 export const Log = Template.bind({});
-Log.args = {payload: normalizeRayDumpEvent(eventMock).payload.payload.payloads[0]};
+Log.args = {payload: normalizeRayDumpEvent(rayColorMock).payload.payload.payloads[0]};

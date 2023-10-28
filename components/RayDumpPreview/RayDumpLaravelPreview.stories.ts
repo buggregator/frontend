@@ -1,12 +1,14 @@
 import { Meta, Story } from "@storybook/vue3";
 import RayDumpPreview from '~/components/RayDumpPreview/RayDumpPreview.vue';
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
-import rayQueryEventMock from '~/mocks/ray-laravel-query.json'
-import rayQuery2EventMock from '~/mocks/ray-laravel-query-no-bindings.json'
-import rayEloquentEventMock from '~/mocks/ray-laravel-eloquent.json'
-import rayViewsEventMock from '~/mocks/ray-laravel-views.json'
-import rayEventsEventMock from '~/mocks/ray-laravel-events.json'
-import rayJobsEventMock from '~/mocks/ray-laravel-jobs.json'
+import {
+  rayLaravelQueryMock,
+  rayLaravelQueryNoBindingsMock,
+  rayLaravelEloquentMock,
+  rayLaravelViewsMock,
+  rayLaravelEventsMock,
+  rayLaravelJobsMock,
+} from '~/src/entities/ray/mocks-laravel';
 
 export default {
   title: "RayDump/RayDumpPreview/Laravel",
@@ -24,19 +26,19 @@ const Template: Story = (args) => ({
 });
 
 export const Query = Template.bind({});
-Query.args = {event: normalizeRayDumpEvent(rayQueryEventMock),};
+Query.args = {event: normalizeRayDumpEvent(rayLaravelQueryMock),};
 
 export const Query2 = Template.bind({});
-Query2.args = {event: normalizeRayDumpEvent(rayQuery2EventMock),};
+Query2.args = {event: normalizeRayDumpEvent(rayLaravelQueryNoBindingsMock),};
 
 export const Eloquent = Template.bind({});
-Eloquent.args = {event: normalizeRayDumpEvent(rayEloquentEventMock),};
+Eloquent.args = {event: normalizeRayDumpEvent(rayLaravelEloquentMock),};
 
 export const Views = Template.bind({});
-Views.args = {event: normalizeRayDumpEvent(rayViewsEventMock),};
+Views.args = {event: normalizeRayDumpEvent(rayLaravelViewsMock),};
 
 export const Events = Template.bind({});
-Events.args = {event: normalizeRayDumpEvent(rayEventsEventMock),};
+Events.args = {event: normalizeRayDumpEvent(rayLaravelEventsMock),};
 
 export const Jobs = Template.bind({});
-Jobs.args = {event: normalizeRayDumpEvent(rayJobsEventMock),};
+Jobs.args = {event: normalizeRayDumpEvent(rayLaravelJobsMock),};

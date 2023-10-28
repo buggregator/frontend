@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import CustomPayload from '~/components/RayDumpPreview/RayTypesPreview/CustomPayload.vue';
 import { normalizeRayDumpEvent } from "~/utils/normalize-event";
-import eventMock from '~/mocks/ray-text.json'
+import { rayTextMock } from '~/src/entities/ray/mocks'
 
 export default {
   title: "RayDump/Types/Custom",
@@ -19,4 +19,4 @@ const Template: Story = (args) => ({
 });
 
 export const Custom = Template.bind({});
-Custom.args = {payload: normalizeRayDumpEvent(eventMock).payload.payload.payloads[0]};
+Custom.args = {payload: normalizeRayDumpEvent(rayTextMock).payload.payload.payloads[0]};

@@ -8,9 +8,7 @@
         "type": "executed_query",
         "content": {
           "sql": "select * from \"users\" where \"email\" = ? limit 1",
-          "bindings": [
-            "john@example.com"
-          ],
+          "bindings": ["john@example.com"],
           "connection_name": "sqlite",
           "time": 0.38
         },
