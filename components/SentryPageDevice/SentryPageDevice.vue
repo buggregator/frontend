@@ -122,10 +122,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
-import { humanFileSize } from "~/utils/formats";
 import moment from "moment";
 import { CodeSnippet } from "~/src/widgets/ui";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import { useFormats } from "~/src/shared/lib/formats";
+
+const { formatFileSize } = useFormats();
 
 export default defineComponent({
   components: {
@@ -148,7 +150,9 @@ export default defineComponent({
     },
   },
   methods: {
-    humanFileSize,
+    humanFileSize(data: number) {
+      return formatFileSize(data);
+    },
     formatDate(date: string) {
       return moment(date).toLocaleString();
     },

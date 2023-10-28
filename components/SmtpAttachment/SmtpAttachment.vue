@@ -24,7 +24,9 @@
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent, SmtpAttachment } from "~/config/types";
 import { REST_API_URL } from "~/utils/io";
-import { humanFileSize } from "~/utils/formats";
+import { useFormats } from "~/src/shared/lib/formats";
+
+const { formatFileSize } = useFormats();
 
 export default defineComponent({
   props: {
@@ -42,7 +44,7 @@ export default defineComponent({
       return `${REST_API_URL}/api/smtp/${this.event.id}/attachment/${this.attachment.id}`;
     },
     size(): string {
-      return humanFileSize(this.attachment.size || 0);
+      return formatFileSize(this.attachment.size || 0);
     },
   },
 });

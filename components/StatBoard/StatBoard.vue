@@ -15,7 +15,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { ProfilerCost } from "~/config/types";
-import { humanFileSize, formatDuration } from "~/utils/formats";
+import { useFormats } from "~/src/shared/lib/formats";
+
+const { formatDuration, formatFileSize } = useFormats();
 
 export default defineComponent({
   props: {
@@ -41,11 +43,11 @@ export default defineComponent({
         },
         {
           title: "Memory usage",
-          value: humanFileSize(this.cost.mu || 0) || "—",
+          value: formatFileSize(this.cost.mu || 0) || "—",
         },
         {
           title: "Change memory",
-          value: humanFileSize(this.cost.pmu || 0) || "—",
+          value: formatFileSize(this.cost.pmu || 0) || "—",
         },
       ];
     },
