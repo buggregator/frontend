@@ -3,10 +3,10 @@ import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapp
 import sentryEventMock from "~/mocks/sentry-spiral.json";
 import smtpEventMock from "~/mocks/smtp-welcome.json";
 import varDumpEventMock from "~/mocks/var-dump-object.json";
-import inspectorEventMock from "~/mocks/inspector.json";
 import httpDumpEventMock from "~/mocks/http-dump.json";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { monologMock } from '~/src/entities/monolog/mocks'
+import { monologMock } from '~/src/entities/monolog/mocks';
+import { inspectorMock } from '~/src/entities/inspector/mocks';
 
 export default {
   title: "Preview/PreviewEventMapper",
@@ -62,7 +62,7 @@ Profiler.args = {
 export const Inspector = Template.bind({});
 
 Inspector.args = {
-  event: inspectorEventMock,
+  event: inspectorMock,
 };
 
 export const HttpDump = Template.bind({});
@@ -76,7 +76,7 @@ const eventsList = [
   smtpEventMock,
   varDumpEventMock,
   profilerMock,
-  inspectorEventMock,
+  inspectorMock,
   httpDumpEventMock,
 ];
 
@@ -94,7 +94,7 @@ const TemplateList: Story = (args) => ({
 export const EventsList = TemplateList.bind({});
 
 EventsList.args = {
-  event: inspectorEventMock,
+  event: inspectorMock,
 };
 
 const TemplateListVirtual: Story = (args) => ({
@@ -122,5 +122,5 @@ const TemplateListVirtual: Story = (args) => ({
 export const EventsListVirtual = TemplateListVirtual.bind({});
 
 EventsListVirtual.args = {
-  event: inspectorEventMock,
+  event: inspectorMock,
 };

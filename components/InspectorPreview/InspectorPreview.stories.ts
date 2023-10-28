@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeInspectorEvent } from "~/utils/normalize-event";
-import inspectorEventMock from '~/mocks/inspector.json'
 import InspectorPreview from '~/components/InspectorPreview/InspectorPreview.vue';
+import { inspectorMock } from '~/src/entities/inspector/mocks'
 
 export default {
   title: "Inspector/Components/InspectorPreview",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const Event = Template.bind({});
 
 Event.args = {
-  event: normalizeInspectorEvent(inspectorEventMock),
+  event: normalizeInspectorEvent(inspectorMock),
 };

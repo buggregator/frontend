@@ -1,7 +1,7 @@
 import {Meta, Story} from "@storybook/vue3";
 import {normalizeInspectorEvent} from "~/utils/normalize-event";
-import inspectorEventMock from '~/mocks/inspector.json'
 import InspectorStatBoard from '~/components/InspectorStatBoard/InspectorStatBoard.vue';
+import { inspectorMock } from '~/src/entities/inspector/mocks'
 
 export default {
   title: "Inspector/Components/InspectorStatBoard",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const StatBoardStories = Template.bind({});
 
 StatBoardStories.args = {
-  transaction: normalizeInspectorEvent(inspectorEventMock).payload[0]
+  transaction: normalizeInspectorEvent(inspectorMock).payload[0]
 };
