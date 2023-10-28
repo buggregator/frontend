@@ -4,7 +4,6 @@ import {
   InspectorTransaction,
   Monolog,
   NormalizedEvent,
-  Profiler,
   RayDump,
   Sentry,
   ServerEvent,
@@ -43,16 +42,6 @@ export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): Normaliz
   }
 }
 
-export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): NormalizedEvent => ({
-  id: event.uuid,
-  type: EVENT_TYPES.PROFILER,
-  labels: [EVENT_TYPES.PROFILER],
-  origin: {name: event.payload.app_name, ...event.payload.tags},
-  serverName: event.payload.hostname,
-  date: new Date(event.timestamp * 1000),
-  payload: event.payload
-})
-
 export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): NormalizedEvent => ({
   id: event.uuid,
   type: EVENT_TYPES.HTTP_DUMP,
@@ -62,7 +51,6 @@ export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): Normalized
   date: new Date(event.timestamp * 1000),
   payload: event.payload
 })
-
 
 export const normalizeMonologEvent = (event: ServerEvent<Monolog>): NormalizedEvent => ({
   id: event.uuid,

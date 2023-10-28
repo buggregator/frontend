@@ -1,11 +1,10 @@
 import { NormalizedEvent, Profiler, ServerEvent } from "~/config/types";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
-// TODO: need to move types to FSD structure
 
-type TUseNormalizer = () => {
+type TUseProfiler = () => {
   normalizeProfilerEvent: (event: ServerEvent<Profiler>) => NormalizedEvent
 }
 
-export const useNormalizeEvent: TUseNormalizer = () => ({
+export const useProfiler: TUseProfiler = () => ({
   normalizeProfilerEvent
 })

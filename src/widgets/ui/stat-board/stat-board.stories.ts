@@ -1,11 +1,11 @@
 import { Meta, Story } from "@storybook/vue3";
 // TODO: move type to entities
 import type { Profiler } from "~/config/types";
-import { useNormalizeEvent } from "~/src/entities/lib";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
+import { useProfiler } from "~/src/entities/profiler";
+import { profilerMock } from "~/src/entities/profiler/mocks";
 import StatBoard from "./stat-board.vue";
 
-const { normalizeProfilerEvent } = useNormalizeEvent()
+const { normalizeProfilerEvent } = useProfiler()
 
 export default {
   title: "FSD/widgets/StatBoard",

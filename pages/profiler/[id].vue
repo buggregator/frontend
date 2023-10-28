@@ -26,9 +26,11 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/config/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeProfilerEvent } from "~/utils/normalize-event";
 import ProfilerPage from "~/components/ProfilerPage/ProfilerPage.vue";
 import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { useProfiler } from "~/src/entities/profiler/lib";
+
+const { normalizeProfilerEvent } = useProfiler();
 
 export default defineComponent({
   components: { ProfilerPage, PageHeader },

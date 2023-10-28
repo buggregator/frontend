@@ -18,7 +18,6 @@ import {
   normalizeVarDumpEvent,
   normalizeSentryEvent,
   normalizeInspectorEvent,
-  normalizeProfilerEvent,
   normalizeHttpDumpEvent,
   normalizeFallbackEvent,
   normalizeRayDumpEvent,
@@ -32,13 +31,23 @@ import ProfilerPreview from "~/components/ProfilerPreview/ProfilerPreview.vue";
 import InspectorPreview from "~/components/InspectorPreview/InspectorPreview.vue";
 import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
 import HttpDumpPreview from "~/components/HttpDumpPreview/HttpDumpPreview.vue";
+import { useProfiler } from "~/src/entities/profiler";
 
+const { normalizeProfilerEvent } = useProfiler();
 export default defineComponent({
   props: {
     event: {
       type: Object as PropType<
         ServerEvent<
-          Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump  | RayDump | unknown
+          | Monolog
+          | SMTP
+          | Sentry
+          | VarDump
+          | Profiler
+          | Inspector
+          | HttpDump
+          | RayDump
+          | unknown
         >
       >,
       required: true,

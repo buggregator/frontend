@@ -1,8 +1,10 @@
 import {Meta, Story} from "@storybook/vue3";
-import {normalizeProfilerEvent} from "~/utils/normalize-event";
 import { Profiler } from "~/config/types";
 import ProfilePageFlamegraph from '~/components/ProfilePageFlamegraph/ProfilePageFlamegraph.vue';
 import { profilerMock } from  "~/src/entities/profiler/mocks";
+import { useProfiler } from "~/src/entities/profiler/lib";
+
+const { normalizeProfilerEvent } = useProfiler();
 
 export default {
   title: "Profiler/Page/ProfilePageFlamegraph",
