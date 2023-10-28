@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/vue3";
-import { HTML } from '@/mocks/mail';
 import SmtpPagePreview from '~/components/SmtpPagePreview/SmtpPagePreview.vue';
+import { HTMLCode } from '~/src/shared/mocks'
 
 export default {
   title: "Smtp/Page/SmtpPagePreview",
@@ -14,7 +14,7 @@ const Template: Story = (args) => ({
       args,
     };
   },
-  template: `<SmtpPagePreview v-bind="args">${HTML}</SmtpPagePreview>`,
+  template: `<SmtpPagePreview v-bind="args">${HTMLCode}</SmtpPagePreview>`,
 });
 
 export const Tablet = Template.bind({});
