@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeFallbackEvent } from "~/utils/normalize-event";
-import monologEventMock from '~/mocks/monolog.json'
 import PreviewFallback from '~/components/PreviewFallback/PreviewFallback.vue';
+import { monologMock } from '~/src/entities/monolog/mocks'
 
 export default {
   title: "Preview/PreviewFallback",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  event: normalizeFallbackEvent({ ...monologEventMock, type: 'unknown' }),
+  event: normalizeFallbackEvent({ ...monologMock, type: 'unknown' }),
 };

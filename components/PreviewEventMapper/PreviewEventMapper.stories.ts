@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
-import monologEventMock from "~/mocks/monolog.json";
 import sentryEventMock from "~/mocks/sentry-spiral.json";
 import smtpEventMock from "~/mocks/smtp-welcome.json";
 import varDumpEventMock from "~/mocks/var-dump-object.json";
 import inspectorEventMock from "~/mocks/inspector.json";
 import httpDumpEventMock from "~/mocks/http-dump.json";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
+import { monologMock } from '~/src/entities/monolog/mocks'
 
 export default {
   title: "Preview/PreviewEventMapper",
@@ -32,7 +32,7 @@ Default.args = {
 export const Monolog = Template.bind({});
 
 Monolog.args = {
-  event: monologEventMock,
+  event: monologMock,
 };
 
 export const Sentry = Template.bind({});
@@ -71,11 +71,11 @@ HttpDump.args = {
 };
 
 const eventsList = [
-  monologEventMock,
+  monologMock,
   sentryEventMock,
   smtpEventMock,
   varDumpEventMock,
-  profilerEventMock,
+  profilerMock,
   inspectorEventMock,
   httpDumpEventMock,
 ];

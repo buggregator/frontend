@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeMonologEvent } from "~/utils/normalize-event";
-import monologEventMock from '~/mocks/monolog.json'
 import MonologPreview from '~/components/MonologPreview/MonologPreview.vue';
+import { monologMock } from '~/src/entities/monolog/mocks'
 
 export default {
   title: "Monolog/Components/Preview",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const Event = Template.bind({});
 
 Event.args = {
-  event: normalizeMonologEvent(monologEventMock),
+  event: normalizeMonologEvent(monologMock),
 };
