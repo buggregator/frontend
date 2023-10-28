@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
-import httpDumpEventMock from '~/mocks/http-dump.json'
 import HttpDumpPreview from '~/components/HttpDumpPreview/HttpDumpPreview.vue';
+import { httpDumpMock } from '~/src/entities/http-dump/mocks';
 
 export default {
   title: "HttpDump/Components/HttpDumpPreview",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const Event = Template.bind({});
 
 Event.args = {
-  event: normalizeHttpDumpEvent(httpDumpEventMock),
+  event: normalizeHttpDumpEvent(httpDumpMock),
 };

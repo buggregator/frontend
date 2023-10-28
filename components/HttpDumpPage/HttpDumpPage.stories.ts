@@ -1,8 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
-import httpDumpEventMock from '~/mocks/http-dump.json'
-import httpDumpPDFEventMock from '~/mocks/http-dump-with-pdf.json'
 import HttpDumpPage from "~/components/HttpDumpPage/HttpDumpPage.vue";
+import { httpDumpMock, httpDumpPdfMock } from '~/src/entities/http-dump/mocks';
 
 export default {
   title: "HttpDump/Page/HttpDumpPage",
@@ -23,10 +22,10 @@ export const Default = Template.bind({});
 
 
 Default.args = {
-  event: normalizeHttpDumpEvent(httpDumpEventMock),
+  event: normalizeHttpDumpEvent(httpDumpMock),
 };
 
 export const WithPdf = Template.bind({});
 WithPdf.args = {
-  event: normalizeHttpDumpEvent(httpDumpPDFEventMock),
+  event: normalizeHttpDumpEvent(httpDumpPdfMock),
 };

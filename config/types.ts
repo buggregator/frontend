@@ -259,9 +259,12 @@ export interface SmtpAttachment {
 }
 
 export interface HttpDumpFile {
-  originalName: string,
+  originalName?: string,
   mime: string,
   size: number,
+  id: string;
+  name?: string;
+  uri?: string
 }
 
 export interface HttpDump {
