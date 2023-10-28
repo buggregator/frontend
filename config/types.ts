@@ -285,7 +285,6 @@ export interface HttpDump {
 
 export interface ProfilerCost {
   [key: string]: number,
-
   "ct": number,
   "wt": number,
   "cpu": number,
@@ -390,25 +389,6 @@ export interface NormalizedEvent {
   payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
 }
 
-export type TGraphNode = {
-  data: {
-    id: string,
-    name: string,
-    cost?: ProfilerCost,
-    color?: string,
-    textColor?: string
-  }
-}
-
-export type TGraphEdge = {
-  data: {
-    id?: string,
-    source: string,
-    target: string,
-    label?: string,
-    color?: string,
-  }
-}
 
 export enum GraphTypes {
   CPU= 'cpu' ,

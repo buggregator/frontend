@@ -1,6 +1,7 @@
-import { GraphTypes, ProfilerEdge, ProfilerEdges, TGraphEdge, TGraphNode } from "~/config/types";
-import {useFormats} from "../formats";
 // TODO: need to move types to FSD structure
+import { GraphTypes, ProfilerEdge, ProfilerEdges } from "~/config/types";
+import { useFormats } from "../formats";
+import { TEdge, TNode } from "./types";
 
 const { formatDuration, formatFileSize } = useFormats();
 const formatValue = (value: number, metric: string): string | number => {
@@ -27,8 +28,8 @@ export const prepareData: (
   metric: GraphTypes,
   threshold: number
 ) => ({
-  nodes: TGraphNode[],
-  edges: TGraphEdge[]
+  nodes: TNode[],
+  edges: TEdge[]
 }) =
   (edges: ProfilerEdges, metric , threshold = 1) => Object.values(edges)
     .reduce((arr, edge: ProfilerEdge, index) => {
@@ -65,6 +66,6 @@ export const prepareData: (
 
       return arr
     }, {
-      nodes: [] as TGraphNode[],
-      edges: [] as TGraphEdge[]
+      nodes: [] as TNode[],
+      edges: [] as TEdge[]
     });
