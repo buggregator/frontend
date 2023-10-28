@@ -13,7 +13,12 @@
   "parser": "vue-eslint-parser",
   "plugins": ["@typescript-eslint"],
   "root": true,
-  "ignorePatterns": ["package.json", "postcss.config.js","tailwind.config.js", "vendor/"],
+  "ignorePatterns": [
+    "package.json",
+    "postcss.config.js",
+    "tailwind.config.js",
+    "vendor/"
+  ],
   "parserOptions": {
     "project": "./tsconfig.json",
     "extraFileExtensions": [".vue"],
@@ -24,10 +29,14 @@
   },
   "rules": {
     "import/prefer-default-export": "off",
-    "no-console": ["error", { "allow": ["info","warn", "error"] }],
-    "vue/component-name-in-template-casing": ["error", "PascalCase", {
-      "registeredComponentsOnly": true,
-      "ignores": []
-    }]
+    "no-console": ["error", { "allow": ["info", "warn", "error"] }],
+    "vue/component-name-in-template-casing": [
+      "error",
+      "PascalCase",
+      {
+        "registeredComponentsOnly": true,
+        "ignores": []
+      }
+    ]
   }
 }

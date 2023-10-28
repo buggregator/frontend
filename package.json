@@ -28,6 +28,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "devDependencies": {
+    "@conarti/eslint-plugin-feature-sliced": "^1.0.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/tailwindcss": "^6.2.0",
     "@storybook/addon-essentials": "^6.5.15",
@@ -46,6 +47,7 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-vue": "^9.9.0",
     "husky": "^8.0.3",
