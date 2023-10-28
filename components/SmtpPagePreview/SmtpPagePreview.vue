@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

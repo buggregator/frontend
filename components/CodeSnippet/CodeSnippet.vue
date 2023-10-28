@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import { defineComponent } from "vue";
 

@@ -14,7 +14,7 @@
     </svg>
 
     <svg
-      v-if="name === 'docs'"
+      v-else-if="name === 'docs'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 22"
     >
@@ -26,7 +26,7 @@
     </svg>
 
     <svg
-      v-if="name === 'fullscreen'"
+      v-else-if="name === 'fullscreen'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
     >
@@ -38,7 +38,7 @@
     </svg>
 
     <svg
-      v-if="name === 'github'"
+      v-else-if="name === 'github'"
       viewBox="0 0 1024 1024"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -49,7 +49,7 @@
     </svg>
 
     <svg
-      v-if="name === 'heartBeat'"
+      v-else-if="name === 'heartBeat'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 114 40"
     >
@@ -61,7 +61,7 @@
     </svg>
 
     <svg
-      v-if="name === 'host'"
+      v-else-if="name === 'host'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 489.8 489.8"
     >
@@ -84,7 +84,7 @@
     </svg>
 
     <svg
-      v-if="name === 'inspector'"
+      v-else-if="name === 'inspector'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
@@ -106,7 +106,7 @@
     </svg>
 
     <svg
-      v-if="name === 'logo'"
+      v-else-if="name === 'logo'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 117 24"
     >
@@ -129,7 +129,7 @@
     </svg>
 
     <svg
-      v-if="name === 'logout'"
+      v-else-if="name === 'logout'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 22"
     >
@@ -139,7 +139,7 @@
     </svg>
 
     <svg
-      v-if="name === 'minus'"
+      v-else-if="name === 'minus'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
@@ -147,7 +147,7 @@
     </svg>
 
     <svg
-      v-if="name === 'newScreen'"
+      v-else-if="name === 'newScreen'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
     >
@@ -159,7 +159,7 @@
     </svg>
 
     <svg
-      v-if="name === 'plus'"
+      v-else-if="name === 'plus'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
@@ -168,7 +168,7 @@
     </svg>
 
     <svg
-      v-if="name === 'screen'"
+      v-else-if="name === 'screen'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
     >
@@ -180,7 +180,7 @@
     </svg>
 
     <svg
-      v-if="name === 'sentry'"
+      v-else-if="name === 'sentry'"
       viewBox="0 0 256 230"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMinYMin meet"
@@ -191,7 +191,7 @@
     </svg>
 
     <svg
-      v-if="name === 'times'"
+      v-else-if="name === 'times'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 10 10"
     >
@@ -201,7 +201,7 @@
     </svg>
 
     <svg
-      v-if="name === 'dd'"
+      v-else-if="name === 'dd'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 16 16"
     >
@@ -211,7 +211,7 @@
     </svg>
 
     <svg
-      v-if="name === 'connected'"
+      v-else-if="name === 'connected'"
       xmlns="http://www.w3.org/2000/svg"
       width="100%"
       height="100%"
@@ -261,7 +261,7 @@
     </svg>
 
     <svg
-      v-if="name === 'disconnected'"
+      v-else-if="name === 'disconnected'"
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
@@ -277,7 +277,7 @@
     </svg>
 
     <svg
-      v-if="name === 'events'"
+      v-else-if="name === 'events'"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -287,7 +287,7 @@
     </svg>
 
     <svg
-      v-if="name === 'profiler'"
+      v-else-if="name === 'profiler'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 25 26"
     >
@@ -299,7 +299,7 @@
     </svg>
 
     <svg
-      v-if="name === 'smtp'"
+      v-else-if="name === 'smtp'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
@@ -309,7 +309,7 @@
     </svg>
 
     <svg
-      v-if="name === 'settings'"
+      v-else-if="name === 'settings'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
@@ -324,7 +324,7 @@
     </svg>
 
     <svg
-      v-if="name === 'sun'"
+      v-else-if="name === 'sun'"
       class="svg-icon"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -357,7 +357,7 @@
     </svg>
 
     <svg
-      v-if="name === 'moon'"
+      v-else-if="name === 'moon'"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -370,7 +370,7 @@
     </svg>
 
     <svg
-      v-if="name === 'mobile-device'"
+      v-else-if="name === 'mobile-device'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512.1 512.1"
     >
@@ -381,7 +381,7 @@
     </svg>
 
     <svg
-      v-if="name === 'tablet-device'"
+      v-else-if="name === 'tablet-device'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512.1 512.1"
     >
@@ -395,7 +395,7 @@
     </svg>
 
     <svg
-      v-if="name === 'desktop-device'"
+      v-else-if="name === 'desktop-device'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 510.5 510.5"
     >
@@ -408,7 +408,7 @@
     </svg>
 
     <svg
-      v-if="name === 'trash-bin'"
+      v-else-if="name === 'trash-bin'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
     >
@@ -421,7 +421,7 @@
     </svg>
 
     <svg
-      v-if="name === 'http-dumps'"
+      v-else-if="name === 'http-dumps'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 26 22"
     >
@@ -432,7 +432,7 @@
       />
     </svg>
     <svg
-      v-if="name === 'collapsed'"
+      v-else-if="name === 'collapsed'"
       viewBox="0 0 16 16"
       fill="currentColor"
       height="100%"
@@ -444,7 +444,7 @@
     </svg>
 
     <svg
-      v-if="name === 'lock'"
+      v-else-if="name === 'lock'"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -463,7 +463,7 @@
     </svg>
 
     <svg
-      v-if="name === 'lock-off'"
+      v-else-if="name === 'lock-off'"
       width="24"
       height="24"
       viewBox="0 0 24 24"

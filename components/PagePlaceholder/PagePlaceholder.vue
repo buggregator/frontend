@@ -123,7 +123,7 @@
 </template>
 
 <script lang="ts">
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 import { defineComponent } from "vue";
 
 export default defineComponent({

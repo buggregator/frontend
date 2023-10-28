@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 import { defineComponent } from "vue";
 import { useConnectionStore } from "~/stores/connections";
 import { storeToRefs } from "pinia";

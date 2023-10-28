@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 
 import { defineComponent, PropType } from "vue";
 import { GraphTypes, Profiler } from "~/config/types";

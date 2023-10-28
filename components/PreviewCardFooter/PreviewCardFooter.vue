@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 
 interface OriginConfig {
   [key: string]: string;

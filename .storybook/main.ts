@@ -68,7 +68,7 @@ module.exports = {
     };
   },
   env: (config) => {
-    const iconComponentFolder = path.resolve(__dirname, '../components/IconSvg');
+    const iconComponentFolder = path.resolve(__dirname, '../src/shared/ui/icon-svg/icon-svg-originals');
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
       ? []
       : fs

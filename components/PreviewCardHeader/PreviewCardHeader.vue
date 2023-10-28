@@ -63,7 +63,7 @@
 import { defineComponent, PropType } from "vue";
 import { EVENT_TYPES } from "~/config/constants";
 import { TEventType } from "~/config/types";
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import { IconSvg } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

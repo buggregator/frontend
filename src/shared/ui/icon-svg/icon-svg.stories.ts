@@ -1,10 +1,10 @@
 import { Meta, Story } from "@storybook/vue3";
-import IconSvg from "~/components/IconSvg/IconSvg.vue";
+import IconSvg from "./icon-svg.vue";
 
 const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || '').split(',');
 
 export default {
-  title: "Components/IconSvg",
+  title: "FSD/Shared/IconSvg",
   component: IconSvg,
   argTypes: {
     name: {
