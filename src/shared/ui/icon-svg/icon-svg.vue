@@ -1,3 +1,11 @@
+<script setup lang="ts">
+type Props = {
+  name: string;
+};
+
+const props = defineProps<Props>();
+</script>
+
 <template>
   <div class="icon-svg">
     <svg
@@ -483,20 +491,6 @@
     </svg>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  props: {
-    name: {
-      type: String,
-      default: "",
-      required: true,
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .icon-svg {
