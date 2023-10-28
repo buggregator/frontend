@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/vue3";
 import { GraphTypes } from "~/config/types";
-import profilerEventMock from '~/mocks/profiler.json'
+import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { useCytoscape } from "~/src/shared/lib/cytoscape";
 import RenderGraph from './render-graph.vue';
 
@@ -49,17 +49,17 @@ TestData.args = {
 export const ProfilerData = Template.bind({});
 
 ProfilerData.args = {
-  elements: buildData(profilerEventMock.payload.edges, GraphTypes.CPU, 1)
+  elements: buildData(profilerMock.payload.edges, GraphTypes.CPU, 1)
 };
 
 export const ProfilerMemoryData = Template.bind({});
 
 ProfilerMemoryData.args = {
-  elements: buildData(profilerEventMock.payload.edges, GraphTypes.MEMORY, 1)
+  elements: buildData(profilerMock.payload.edges, GraphTypes.MEMORY, 1)
 };
 
 export const ProfilerMemoryChangeData = Template.bind({});
 
 ProfilerMemoryChangeData.args = {
-  elements: buildData(profilerEventMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
+  elements: buildData(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
 };

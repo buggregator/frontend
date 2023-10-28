@@ -1,8 +1,8 @@
 import {Meta, Story} from "@storybook/vue3";
 import {normalizeProfilerEvent} from "~/utils/normalize-event";
-import profilerEventMock from '~/mocks/profiler.json'
 import { Profiler } from "~/config/types";
 import ProfilePageFlamegraph from '~/components/ProfilePageFlamegraph/ProfilePageFlamegraph.vue';
+import { profilerMock } from  "~/src/entities/profiler/mocks";
 
 export default {
   title: "Profiler/Page/ProfilePageFlamegraph",
@@ -22,5 +22,5 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  edges: (normalizeProfilerEvent(profilerEventMock).payload as Profiler).edges,
+  edges: (normalizeProfilerEvent(profilerMock).payload as Profiler).edges,
 };

@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeProfilerEvent } from "~/utils/normalize-event";
 import ProfilerPageCallStack from '~/components/ProfilerPageCallStack/ProfilerPageCallStack.vue';
-import profilerEventMock from '~/mocks/profiler.json'
+import { profilerMock } from  "~/src/entities/profiler/mocks";
 
 export default {
   title: "Profiler/Page/ProfilerPageCallStack",
@@ -21,5 +21,5 @@ const Template: Story = (args) => ({
 export const List = Template.bind({});
 
 List.args = {
-  event: normalizeProfilerEvent(profilerEventMock).payload,
+  event: normalizeProfilerEvent(profilerMock).payload,
 };
