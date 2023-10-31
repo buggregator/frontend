@@ -1,10 +1,10 @@
-import { Meta, Story } from "@storybook/vue3";
-import SortWrap from "~/components/SortWrap/SortWrap.vue";
-import { SORT_ORDER } from "~/config/constants";
 import { action } from "@storybook/addon-actions";
+import { Meta, Story } from "@storybook/vue3";
+import { SORTING_ORDER } from "./constants";
+import SortWrap from "./sorting-wrapper.vue";
 
 export default {
-  title: "Components/SortWrap",
+  title: "FSD/shared/SortingWrapper",
   component: SortWrap,
 } as Meta<typeof SortWrap>;
 
@@ -16,7 +16,7 @@ const Template: Story = (args) => ({
   setup() {
     return {
       args,
-      SORT_ORDER,
+      SORTING_ORDER,
     };
   },
 
@@ -33,7 +33,7 @@ const Template: Story = (args) => ({
       <div>
         <sort-wrap
           @changeSort="(a) => action('Change Sort')(a)"
-          :sort="SORT_ORDER.ASC"
+          :sort="SORTING_ORDER.ASC"
         >
           ASC sort
         </sort-wrap>
@@ -42,7 +42,7 @@ const Template: Story = (args) => ({
       <div>
         <sort-wrap
           @changeSort="(a) => action('Change Sort')(a)"
-          :sort="SORT_ORDER.DESC"
+          :sort="SORTING_ORDER.DESC"
         >
           DESC sort
         </sort-wrap>

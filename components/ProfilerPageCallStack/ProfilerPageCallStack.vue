@@ -2,17 +2,19 @@
   <div class="profiler-page-callstack">
     <header class="profiler-page-callstack__header">
       <div class="profiler-page-callstack__header-cpu">
-        <SortWrap :sort="sortCPU" @changeSort="changeCPUOrder"> CPU </SortWrap>
+        <SortingWrapper :sort="sortCPU" @change-sort="changeCPUOrder">
+          CPU
+        </SortingWrapper>
         /
-        <SortWrap :sort="sortMemory" @changeSort="changeMemoryOrder">
+        <SortingWrapper :sort="sortMemory" @change-sort="changeMemoryOrder">
           Memory
-        </SortWrap>
+        </SortingWrapper>
       </div>
 
       <div class="profiler-page-callstack__header-calls">
-        <SortWrap :sort="sortCalls" @changeSort="changeCallsOrder">
+        <SortingWrapper :sort="sortCalls" @change-sort="changeCallsOrder">
           Calls
-        </SortWrap>
+        </SortingWrapper>
       </div>
     </header>
 
@@ -32,13 +34,12 @@
 import { defineComponent, PropType } from "vue";
 import { Profiler } from "~/config/types";
 import ProfilerPageCallStackRow from "~/components/ProfilerPageCallStackRow/ProfilerPageCallStackRow.vue";
-import SortWrap from "~/components/SortWrap/SortWrap.vue";
-import { SORT_ORDER } from "~/config/constants";
+import { SortingWrapper, SORTING_ORDER } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
     ProfilerPageCallStackRow,
-    SortWrap,
+    SortingWrapper,
   },
   props: {
     event: {
@@ -49,30 +50,30 @@ export default defineComponent({
   emits: ["hover", "hide"],
   data() {
     return {
-      sortCPU: SORT_ORDER.ASC,
-      sortMemory: SORT_ORDER.DEFAULT,
-      sortCalls: SORT_ORDER.DEFAULT,
+      sortCPU: SORTING_ORDER.ASC,
+      sortMemory: SORTING_ORDER.DEFAULT,
+      sortCalls: SORTING_ORDER.DEFAULT,
     };
   },
   computed: {
     sortedEdges() {
       const sortEdgesEntries = ([, a], [, b]) => {
-        if (this.sortCPU === SORT_ORDER.ASC) {
+        if (this.sortCPU === SORTING_ORDER.ASC) {
           return b.cost.p_cpu - a.cost.p_cpu;
         }
-        if (this.sortCPU === SORT_ORDER.DESC) {
+        if (this.sortCPU === SORTING_ORDER.DESC) {
           return a.cost.p_cpu - b.cost.p_cpu;
         }
-        if (this.sortMemory === SORT_ORDER.ASC) {
+        if (this.sortMemory === SORTING_ORDER.ASC) {
           return b.cost.p_mu - a.cost.p_mu;
         }
-        if (this.sortMemory === SORT_ORDER.DESC) {
+        if (this.sortMemory === SORTING_ORDER.DESC) {
           return a.cost.p_mu - b.cost.p_mu;
         }
-        if (this.sortCalls === SORT_ORDER.ASC) {
+        if (this.sortCalls === SORTING_ORDER.ASC) {
           return b.cost.ct - a.cost.ct;
         }
-        if (this.sortCalls === SORT_ORDER.DESC) {
+        if (this.sortCalls === SORTING_ORDER.DESC) {
           return a.cost.ct - b.cost.ct;
         }
 
@@ -85,19 +86,19 @@ export default defineComponent({
     },
   },
   methods: {
-    changeCPUOrder(sortValue: SORT_ORDER) {
+    changeCPUOrder(sortValue: SORTING_ORDER) {
       this.sortCPU = sortValue;
-      this.sortMemory = SORT_ORDER.DEFAULT;
-      this.sortCalls = SORT_ORDER.DEFAULT;
+      this.sortMemory = SORTING_ORDER.DEFAULT;
+      this.sortCalls = SORTING_ORDER.DEFAULT;
     },
-    changeMemoryOrder(sortValue: SORT_ORDER) {
-      this.sortCPU = SORT_ORDER.DEFAULT;
+    changeMemoryOrder(sortValue: SORTING_ORDER) {
+      this.sortCPU = SORTING_ORDER.DEFAULT;
       this.sortMemory = sortValue;
-      this.sortCalls = SORT_ORDER.DEFAULT;
+      this.sortCalls = SORTING_ORDER.DEFAULT;
     },
-    changeCallsOrder(sortValue: SORT_ORDER) {
-      this.sortCPU = SORT_ORDER.DEFAULT;
-      this.sortMemory = SORT_ORDER.DEFAULT;
+    changeCallsOrder(sortValue: SORTING_ORDER) {
+      this.sortCPU = SORTING_ORDER.DEFAULT;
+      this.sortMemory = SORTING_ORDER.DEFAULT;
       this.sortCalls = sortValue;
     },
   },

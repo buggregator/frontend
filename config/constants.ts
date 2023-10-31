@@ -53,9 +53,3 @@ export const LOCAL_STORAGE_KEYS = {
   NAVBAR: "navbar",
 };
 
-
-export enum SORT_ORDER {
-  ASC = 'asc',
-  DESC = 'desc',
-  DEFAULT = 'default',
-}
