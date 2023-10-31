@@ -49,7 +49,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PagePlaceholder from "~/components/PagePlaceholder/PagePlaceholder.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { PageHeader } from "~/src/widgets/ui";
 import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
 import { ALL_EVENTS } from "~/config/constants";

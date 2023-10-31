@@ -1,3 +1,27 @@
+<script lang="ts" setup>
+import { IconSvg } from "~/src/shared/ui";
+
+type Props = {
+  title: string;
+  buttonTitle: string;
+};
+
+type Emits = {
+  delete: [value: boolean];
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  title: "",
+  buttonTitle: "",
+});
+
+const emit = defineEmits<Emits>();
+
+const buttonClick = () => {
+  emit("delete", true);
+};
+</script>
+
 <template>
   <header class="page-header">
     <div class="page-header__title"><slot />&nbsp;</div>
@@ -17,35 +41,6 @@
     <IconSvg class="page-header__lock-icon" name="lock" />
   </header>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: { IconSvg },
-  props: {
-    title: {
-      type: String,
-      default: "",
-    },
-    buttonTitle: {
-      type: String,
-      default: "",
-    },
-  },
-  emits: {
-    delete(payload: boolean) {
-      return payload;
-    },
-  },
-  methods: {
-    buttonClick() {
-      this.$emit("delete", true);
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .page-header {

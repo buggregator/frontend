@@ -1,10 +1,10 @@
 import { action } from '@storybook/addon-actions'
 import { Meta, Story } from "@storybook/vue3";
 import { EVENT_TYPES } from '~/config/constants';
-import PageHeader from '~/components/PageHeader/PageHeader.vue';
+import PageHeader from "./page-header.vue";
 
 export default {
-  title: "Components/PageHeader",
+  title: "FSD/widgets/PageHeader",
   component: PageHeader,
   argTypes: {
     eventType: {

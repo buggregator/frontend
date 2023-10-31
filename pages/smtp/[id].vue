@@ -28,7 +28,7 @@ import { EventId } from "~/config/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { normalizeSMTPEvent } from "~/utils/normalize-event";
 import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { PageHeader } from "~/src/widgets/ui";
 import { REST_API_URL } from "~/utils/io";
 
 export default defineComponent({

@@ -26,7 +26,7 @@ import { EventId } from "~/config/types";
 import { useNuxtApp, useRoute, useRouter, useFetch } from "#app";
 import { normalizeSentryEvent } from "~/utils/normalize-event";
 import SentryPage from "~/components/SentryPage/SentryPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { PageHeader } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {
