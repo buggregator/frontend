@@ -1,16 +1,11 @@
-import {EVENT_TYPES, ALL_EVENTS} from "~/config/constants";
+import { EventId, EventType } from "~/src/shared/types";
 
-export type OneOfValues<T> = T[keyof T];
-export type EventId = string;
 export type StatusCode = number; // TODO: update type
 export type Email = string; // TODO: update type
 
-export type TEventType = OneOfValues<typeof EVENT_TYPES>;
-export type TEventGroup = OneOfValues<typeof EVENT_TYPES | typeof ALL_EVENTS>;
-
 type SMTPUser = {
   name: string;
-  email: Email;
+  Email: Email;
 }
 
 export interface Monolog {
@@ -277,8 +272,8 @@ export interface HttpDump {
       [key: string]: string[]
     },
     body: string,
-    query: any,
-    post: any,
+    query: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    post: any, // eslint-disable-line @typescript-eslint/no-explicit-any
     cookies: {
       [key: string]: string
     },
@@ -374,17 +369,9 @@ export interface InspectorSegment {
 
 export type Inspector = InspectorTransaction[] | InspectorSegment[];
 
-export interface ServerEvent<T> {
-  uuid: EventId,
-  type: TEventType | string,
-  payload: T,
-  project_id: string | null,
-  timestamp?: number // unavailable for some ray dump events
-}
-
 export interface NormalizedEvent {
   id: EventId,
-  type: TEventType | string,
+  type: EventType | string,
   labels: string[],
   origin: object | null,
   serverName: string,

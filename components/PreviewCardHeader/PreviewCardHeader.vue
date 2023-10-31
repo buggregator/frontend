@@ -61,8 +61,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { EVENT_TYPES } from "~/config/constants";
-import { TEventType } from "~/config/types";
+import { EVENT_TYPES, EventType } from "~/src/shared/types";
 import { IconSvg } from "~/src/shared/ui";
 
 export default defineComponent({
@@ -76,7 +75,7 @@ export default defineComponent({
     },
     eventType: {
       type: String,
-      validator: (val: TEventType) => Object.values(EVENT_TYPES).includes(val),
+      validator: (val: EventType) => Object.values(EVENT_TYPES).includes(val),
       required: true,
     },
     eventId: {

@@ -2,7 +2,6 @@
 import { defineComponent, h, PropType } from "vue";
 import { RayPayload } from "~/config/types";
 import { RAY_EVENT_TYPES } from "~/config/constants";
-
 import LogPayload from "~/components/RayDumpPreview/RayTypesPreview/LogPayload.vue";
 import CustomPayload from "~/components/RayDumpPreview/RayTypesPreview/CustomPayload.vue";
 import CallerPayload from "~/components/RayDumpPreview/RayTypesPreview/CallerPayload.vue";

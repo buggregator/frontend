@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/config/types";
+import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
 import HttpDumpPage from "~/components/HttpDumpPage/HttpDumpPage.vue";

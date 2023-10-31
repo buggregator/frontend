@@ -3,7 +3,6 @@ import { defineComponent, PropType, h } from "vue";
 import {
   Monolog,
   Sentry,
-  ServerEvent,
   VarDump,
   SMTP,
   Profiler,
@@ -11,7 +10,7 @@ import {
   RayDump,
   HttpDump,
 } from "~/config/types";
-import { EVENT_TYPES } from "~/config/constants";
+import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
   normalizeMonologEvent,
   normalizeSMTPEvent,

@@ -1,16 +1,3 @@
-export const EVENT_TYPES = {
-  VAR_DUMP: "var-dump",
-  SMTP: "smtp",
-  SENTRY: "sentry",
-  PROFILER: "profiler",
-  MONOLOG: "monolog",
-  INSPECTOR: "inspector",
-  HTTP_DUMP: "http-dump",
-  RAY_DUMP: "ray",
-};
-
-export const ALL_EVENTS = 'ALL EVENTS'
-
 export const RAY_EVENT_TYPES = {
   LOG: "log",
   // SIZE: "size",
@@ -33,23 +20,4 @@ export const RAY_EVENT_TYPES = {
   JOB: "job_event",
   LOCK: "create_lock",
 }
-
-// TODO: colors should depends on level for some tools
-export const EVENT_STATUS_COLOR_MAP = {
-  CRITICAL: "red",
-  ERROR: "red",
-  ALERT: "red",
-  EMERGENCY: "red",
-  WARNING: "orange",
-  INFO: "blue",
-  NOTICE: "blue",
-  DEBUG: "gray",
-  SUCCESS: "green",
-};
-
-export const LOCAL_STORAGE_KEYS = {
-  CACHED_EVENTS: "cached_events",
-  THEME: "theme",
-  NAVBAR: "navbar",
-};
 

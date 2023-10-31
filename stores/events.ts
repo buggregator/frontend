@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { EventId, ServerEvent, TEventType } from "~/config/types";
+import { EventId, EventType, ServerEvent } from '~/src/shared/types';
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
@@ -28,7 +28,7 @@ export const useEventStore = defineStore("useEventStore", {
     removeById(eventUuid: EventId) {
       this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
     },
-    removeByType(eventType: TEventType) {
+    removeByType(eventType: EventType) {
       this.events = this.events.filter(({ type }) => type !== eventType);
     },
 

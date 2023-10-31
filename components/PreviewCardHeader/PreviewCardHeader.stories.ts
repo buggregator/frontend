@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { Meta, Story } from "@storybook/vue3";
-import { EVENT_TYPES } from '~/config/constants';
+import { EVENT_TYPES } from "~/src/shared/types";
 import PreviewCardHeader from '~/components/PreviewCardHeader/PreviewCardHeader.vue';
 
 export default {

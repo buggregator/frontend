@@ -52,9 +52,9 @@ import PagePlaceholder from "~/components/PagePlaceholder/PagePlaceholder.vue";
 import { PageHeader } from "~/src/widgets/ui";
 import { useNuxtApp } from "#app";
 import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
-import { ALL_EVENTS } from "~/config/constants";
+import { PAGE_TYPES } from "~/src/shared/constants";
 import pluralize from "pluralize";
-import { TEventGroup } from "~/config/types";
+import { EventType } from "~/src/shared/types";
 
 export default defineComponent({
   components: {
@@ -73,20 +73,20 @@ export default defineComponent({
       return {
         events: $events.items,
         title: "",
-        type: ALL_EVENTS,
+        type: PAGE_TYPES.ALL_EVENTS,
       };
     }
     return {
       events: [],
       title: "",
-      type: ALL_EVENTS,
+      type: PAGE_TYPES.ALL_EVENTS,
     };
   },
   computed: {
     allEvents() {
       const { $events } = useNuxtApp();
 
-      if (this.type === ALL_EVENTS) {
+      if (this.type === PAGE_TYPES.ALL_EVENTS) {
         return $events.items.value;
       }
       return $events.items.value.filter(({ type }) => type === this.type);
@@ -118,19 +118,19 @@ export default defineComponent({
     clearEvents() {
       const { $events } = useNuxtApp();
 
-      if (this.type === ALL_EVENTS) {
+      if (this.type === PAGE_TYPES.ALL_EVENTS) {
         return $events.removeAll();
       }
 
-      return $events.removeByType(this.type as TEventGroup);
+      return $events.removeByType(this.type as EventType);
     },
     toggleUpdate() {
       const { $cachedEvents } = useNuxtApp();
 
       if (this.isEventsPaused) {
-        $cachedEvents.runUpdatesByType(this.type as TEventGroup);
+        $cachedEvents.runUpdatesByType(this.type);
       } else {
-        $cachedEvents.stopUpdatesByType(this.type as TEventGroup);
+        $cachedEvents.stopUpdatesByType(this.type);
       }
     },
   },

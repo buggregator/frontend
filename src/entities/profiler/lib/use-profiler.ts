@@ -1,4 +1,5 @@
-import { NormalizedEvent, Profiler, ServerEvent } from "~/config/types";
+import { NormalizedEvent, Profiler } from "~/config/types";
+import { ServerEvent } from '~/src/shared/types';
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 
 type TUseProfiler = () => {

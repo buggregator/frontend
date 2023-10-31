@@ -1,4 +1,4 @@
-import { EventId, TEventType } from "~/config/types";
+import { EventId, EventType } from '~/src/shared/types';
 import { useEventsRequests } from "~/utils/io/events-requests";
 import { useEventStore } from "~/stores/events";
 import { useConnectionStore } from "~/stores/connections";
@@ -74,7 +74,7 @@ export const apiTransport = () => {
     return deleteAll();
   }
 
-  const deleteEventsByType = (type: TEventType) => {
+  const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
       return centrifuge.rpc(`delete:api/events`, {type})
     }

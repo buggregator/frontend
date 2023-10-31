@@ -1,4 +1,4 @@
-import { EventId, ServerEvent, TEventType } from "~/config/types";
+import { EventId, EventType , ServerEvent } from '~/src/shared/types';
 import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
@@ -6,7 +6,7 @@ type TUseEventsRequests = () => {
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: () => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
-  deleteByType: (type: TEventType) => Promise<void | Response>,
+  deleteByType: (type: EventType) => Promise<void | Response>,
   getEventRestUrl: (param: EventId | undefined) => string
 }
 
@@ -45,7 +45,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: TEventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
+  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
     .catch((err) => {
       console.error('Fetch Error', err)
     })

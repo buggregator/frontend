@@ -6,11 +6,11 @@ import {
   NormalizedEvent,
   RayDump,
   Sentry,
-  ServerEvent,
   SMTP,
   VarDump
 } from "~/config/types";
-import {EVENT_TYPES, RAY_EVENT_TYPES} from "~/config/constants";
+import { RAY_EVENT_TYPES } from "~/config/constants";
+import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 
 const normalizeObjectValue = (object: object | unknown[]): object =>
   Object.entries(object).reduce((acc: object, [key, value]) => ({

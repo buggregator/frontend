@@ -1,5 +1,5 @@
-import { EVENT_TYPES } from "~/config/constants";
-import { NormalizedEvent, Profiler, ServerEvent } from "~/config/types";
+import { NormalizedEvent, Profiler } from "~/config/types";
+import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 // TODO: need to move types to FSD structure
 
 export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): NormalizedEvent => ({

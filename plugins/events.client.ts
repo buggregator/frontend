@@ -1,7 +1,7 @@
 import { apiTransport } from '~/utils/api-transport'
 import { useEventStore } from "~/stores/events";
 import { useCachedIdsStore } from "~/stores/cached-ids";
-import { EventId, ServerEvent, TEventGroup } from "~/config/types";
+import { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { storeToRefs } from "pinia";
 
 export default defineNuxtPlugin(() => {
@@ -37,7 +37,7 @@ export default defineNuxtPlugin(() => {
     }
   }
 
-  const removeByType = async (type: TEventGroup) => {
+  const removeByType = async (type: EventType) => {
     const res = await deleteEventsByType(type)
 
     if (res) {
