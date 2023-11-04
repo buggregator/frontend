@@ -1,14 +1,8 @@
 import { Meta, Story } from "@storybook/vue3";
-// TODO: move type to entities
-import type { Profiler } from "~/config/types";
-import { useProfiler } from "~/src/entities/profiler";
-import { profilerMock } from "~/src/entities/profiler/mocks";
 import StatBoard from "./stat-board.vue";
 
-const { normalizeProfilerEvent } = useProfiler()
-
 export default {
-  title: "FSD/widgets/StatBoard",
+  title: "FSD/shared/StatBoard",
   component: StatBoard,
 } as Meta<typeof StatBoard>;
 
@@ -25,7 +19,13 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  cost: (normalizeProfilerEvent(profilerMock).payload as Profiler)?.peaks,
+  cost: {
+    ct: 1,
+    wt: 206270,
+    cpu: 44750,
+    mu: 3112176,
+    pmu: 3001416
+},
 };
 
 export const LargePeaks = Template.bind({});

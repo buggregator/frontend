@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, defineProps } from "vue";
 import type { ProfilerCost } from "~/config/types";
-import { useFormats } from "~/src/shared/lib/formats";
+import { useFormats } from "../../lib/formats";
 
 const { formatDuration, formatFileSize } = useFormats();
 

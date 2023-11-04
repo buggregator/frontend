@@ -4,3 +4,4 @@ export * from './sorting-wrapper';
 export * from './preview-card';
 export * from './value-dump';
 export * from './code-snippet';
+export * from './stat-board';

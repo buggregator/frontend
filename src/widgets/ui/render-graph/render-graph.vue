@@ -1,13 +1,7 @@
 <script lang="ts" setup>
 // TODO: need to fix cytoscape console warnings
 import type { ElementsDefinition, NodeSingular } from "cytoscape";
-import {
-  defineProps,
-  onBeforeMount,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-} from "vue";
+import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
 import { useCytoscape } from "~/src/shared/lib/cytoscape";
 
 type Props = {
