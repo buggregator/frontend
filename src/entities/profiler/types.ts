@@ -26,7 +26,3 @@ export interface Profiler {
   peaks: ProfilerCost,
   edges: ProfilerEdges
 }
-
-export interface NormalizedProfiler extends Omit<NormalizedEvent<Profiler>, 'date'> {
-  date: Date | null
-}

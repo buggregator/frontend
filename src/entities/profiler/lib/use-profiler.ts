@@ -1,10 +1,9 @@
-import { Profiler } from "~/config/types";
-import { ServerEvent } from '~/src/shared/types';
-import { NormalizedProfiler } from "../types";
+import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import { Profiler } from "../types";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 
 type TUseProfiler = () => {
-  normalizeProfilerEvent: (event: ServerEvent<Profiler>) => NormalizedProfiler
+  normalizeProfilerEvent: (event: ServerEvent<Profiler>) => NormalizedEvent<Profiler>
 }
 
 export const useProfiler: TUseProfiler = () => ({

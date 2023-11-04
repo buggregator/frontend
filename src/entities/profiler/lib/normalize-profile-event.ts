@@ -1,7 +1,7 @@
-import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
-import { NormalizedProfiler, Profiler } from "../types";
+import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { Profiler } from "../types";
 
-export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): NormalizedProfiler => ({
+export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): NormalizedEvent<Profiler> => ({
   id: event.uuid,
   type: EVENT_TYPES.PROFILER,
   labels: [EVENT_TYPES.PROFILER],
