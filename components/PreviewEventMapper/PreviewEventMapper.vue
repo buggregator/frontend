@@ -22,11 +22,13 @@ import {
 import SentryPreview from "~/components/SentryPreview/SentryPreview.vue";
 import SmtpPreview from "~/components/SmtpPreview/SmtpPreview.vue";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
-import ProfilerPreview from "~/components/ProfilerPreview/ProfilerPreview.vue";
 import InspectorPreview from "~/components/InspectorPreview/InspectorPreview.vue";
 import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
 import HttpDumpPreview from "~/components/HttpDumpPreview/HttpDumpPreview.vue";
-import { useProfiler } from "~/src/entities/profiler";
+import {
+  useProfiler,
+  PreviewCard as PreviewProfiler,
+} from "~/src/entities/profiler";
 import {
   useMonolog,
   PreviewCard as PreviewMonolog,
@@ -72,7 +74,7 @@ export default defineComponent({
       [EVENT_TYPES.SMTP]: (event: ServerEvent<SMTP>) =>
         h(SmtpPreview, { event: normalizeSMTPEvent(event) }),
       [EVENT_TYPES.PROFILER]: (event: ServerEvent<Profiler>) =>
-        h(ProfilerPreview, { event: normalizeProfilerEvent(event) }),
+        h(PreviewProfiler, { event: normalizeProfilerEvent(event) }),
       [EVENT_TYPES.INSPECTOR]: (event: ServerEvent<Inspector>) =>
         h(InspectorPreview, { event: normalizeInspectorEvent(event) }),
       [EVENT_TYPES.HTTP_DUMP]: (event: ServerEvent<HttpDump>) =>
