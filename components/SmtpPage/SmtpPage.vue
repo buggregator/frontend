@@ -83,11 +83,11 @@
               </h3>
 
               <div class="flex gap-x-3">
-                <SmtpAttachment
-                  v-for="a in attachments"
-                  :key="a.id"
-                  :event="event"
-                  :attachment="a"
+                <FileAttachment
+                  v-for="attachment in attachments"
+                  :key="attachment.id"
+                  :event-id="event.id"
+                  :attachment="attachment"
                 />
               </div>
             </section>
@@ -105,8 +105,13 @@ import moment from "moment";
 import { Tab, Tabs } from "vue3-tabs-component";
 import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
 import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
-import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
-import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
+import {
+  TableBase,
+  TableBaseRow,
+  CodeSnippet,
+  FileAttachment,
+} from "~/src/shared/ui";
+import type { Attachment } from "~/src/shared/types";
 
 export default defineComponent({
   components: {
@@ -117,7 +122,7 @@ export default defineComponent({
     CodeSnippet,
     Tabs,
     Tab,
-    SmtpAttachment,
+    FileAttachment,
   },
   props: {
     event: {
@@ -163,7 +168,7 @@ export default defineComponent({
       return moment(this.event.timestamp).format("DD.MM.YYYY HH:mm:ss");
     },
     attachments() {
-      return Object.values(this.event.payload.attachments);
+      return Object.values(this.event.payload.attachments) as Attachment[];
     },
   },
 });

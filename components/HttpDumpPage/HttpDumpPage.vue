@@ -64,10 +64,10 @@
         <h1>Attachments ({{ event.payload.request.files.length }})</h1>
 
         <div class="http-dump-page__attachments">
-          <SmtpAttachment
+          <FileAttachment
             v-for="a in event.payload.request.files"
             :key="a.id"
-            :event="event"
+            :event-i-d="event.id"
             :attachment="a"
           />
         </div>
@@ -86,14 +86,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
-import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
+import { TableBase, TableBaseRow, FileAttachment } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {
     TableBase,
     TableBaseRow,
-    SmtpAttachment,
+    FileAttachment,
   },
   props: {
     event: {
