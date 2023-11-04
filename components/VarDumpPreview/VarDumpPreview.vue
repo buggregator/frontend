@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent, VarDump } from "~/config/types";
-import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
+import { PreviewCard } from "~/src/shared/ui";
 import { ValueDump } from "~/src/widgets/ui";
 
 export default defineComponent({

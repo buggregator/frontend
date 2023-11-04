@@ -18,7 +18,7 @@
 import { defineComponent, PropType } from "vue";
 import moment from "moment";
 import { NormalizedEvent } from "~/config/types";
-import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
+import { PreviewCard } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

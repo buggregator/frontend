@@ -9,7 +9,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
+import { PreviewCard } from "~/src/shared/ui";
 import { StatBoard } from "~/src/widgets/ui";
 
 export default defineComponent({

@@ -1,3 +1,52 @@
+<script lang="ts" setup>
+import { computed, PropType } from "vue";
+import { EVENT_TYPES } from "../../types";
+import { IconSvg } from "../icon-svg";
+
+type Props = {
+  eventType: EVENT_TYPES;
+  eventId: string;
+  eventUrl: string;
+  tags: PropType<string[]>;
+  isOpen: boolean;
+  isVisibleControls: boolean;
+};
+
+type Emits = {
+  delete: [value: boolean];
+  toggleView: [value: boolean];
+  copy: [value: boolean];
+  download: [value: boolean];
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  tags: () => [],
+  eventUrl: "",
+  isOpen: true,
+  isVisibleControls: true,
+});
+
+const emit = defineEmits<Emits>();
+
+const changeView = () => {
+  emit("toggleView", true);
+};
+
+const onDeleteButtonClick = () => {
+  emit("delete", true);
+};
+
+const onCopyButtonRightClick = () => {
+  emit("copy", true);
+};
+
+const onCopyButtonClick = () => {
+  emit("download", true);
+};
+
+const isVisibleTags = computed(() => props.tags.length > 0);
+</script>
+
 <template>
   <div class="preview-card-header">
     <div class="preview-card-header__tags">
@@ -10,7 +59,7 @@
         JSON
       </a>
 
-      <template v-if="tags.length">
+      <template v-if="isVisibleTags">
         <div
           v-for="tag in tags"
           :key="tag"
@@ -59,81 +108,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { EVENT_TYPES, EventType } from "~/src/shared/types";
-import { IconSvg } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    IconSvg,
-  },
-  props: {
-    eventUrl: {
-      type: String,
-      default: "",
-    },
-    eventType: {
-      type: String,
-      validator: (val: EventType) => Object.values(EVENT_TYPES).includes(val),
-      required: true,
-    },
-    eventId: {
-      type: String,
-      required: true,
-    },
-    tags: {
-      type: Array as PropType<string[]>,
-      default: () => [],
-    },
-    isOpen: {
-      type: Boolean,
-      default: true,
-    },
-    isVisibleControls: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: {
-    delete(payload: boolean) {
-      return payload;
-    },
-    toggleView(payload: boolean) {
-      return payload;
-    },
-    copy(payload: boolean) {
-      return payload;
-    },
-    download(payload: boolean) {
-      return payload;
-    },
-  },
-  data() {
-    return {
-      exportableEl: null,
-    };
-  },
-  methods: {
-    calcModByEventType(defaultClassName: string): string {
-      return `${defaultClassName}--${this.eventType}`;
-    },
-    changeView() {
-      this.$emit("toggleView", true);
-    },
-    onDeleteButtonClick() {
-      this.$emit("delete", true);
-    },
-    onCopyButtonRightClick() {
-      this.$emit("copy", true);
-    },
-    onCopyButtonClick() {
-      this.$emit("download", true);
-    },
-  },
-});
-</script>
-
 <style lang="scss" scoped>
 $eventTypeColorsMap: (
   "var-dump" "red",
@@ -147,7 +121,7 @@ $eventTypeColorsMap: (
 );
 
 .preview-card-header {
-  @apply w-full flex flex-col sm:flex-row flex-col-reverse justify-between gap-y-3;
+  @apply w-full flex sm:flex-row flex-col-reverse justify-between gap-y-3;
 }
 
 .preview-card-header__container {
@@ -186,7 +160,7 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button {
-  @apply w-5 h-5 md:w-4 md:h-4 rounded-full opacity-90 hover:opacity-100 transition transition-all hover:ring-4 ring-offset-1;
+  @apply w-5 h-5 md:w-4 md:h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
   /* Applied tailwind classes depends on event type
    Need to keep declaration for tailwind correct work:
    'var-dump' 'bg-red-600 ring-red-300',
@@ -212,7 +186,7 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--json {
-  @apply text-white bg-gray-600 ring-gray-300 bg-blue-700 hover:bg-blue-500;
+  @apply text-white ring-gray-300 bg-blue-700 hover:bg-blue-500;
 }
 
 .preview-card-header__button--delete {

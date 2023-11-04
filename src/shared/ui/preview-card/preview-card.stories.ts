@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { EVENT_TYPES } from "~/src/shared/types";
-import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
+import { EVENT_TYPES } from "../../types";
+import PreviewCard from "./preview-card.vue";
 
 export default {
-  title: "Preview/PreviewCard",
+  title: "FSD/shared/PreviewCard",
   component: PreviewCard
 }as Meta<typeof PreviewCard>;
 

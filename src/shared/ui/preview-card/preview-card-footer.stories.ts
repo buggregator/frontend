@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
-import PreviewCardFooter from "~/components/PreviewCardFooter/PreviewCardFooter.vue";
+import PreviewCardFooter from "./preview-card-footer.vue";
 
 export default {
-  title: "Preview/PreviewCardFooter",
+  title: "FSD/shared/PreviewCardFooter",
   component: PreviewCardFooter,
 }as Meta<typeof PreviewCardFooter>;
 
-const Template: Story = (args: typeof Object) => ({
+const Template: Story = (args) => ({
   components: { PreviewCardFooter },
   setup() {
     return {

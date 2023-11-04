@@ -1,7 +1,8 @@
 <template>
   <PreviewCard class="http-dumps-preview" :event="event">
     <NuxtLink tag="div" :to="eventLink" class="http-dumps-preview__link">
-      <span class="title-method">{{ event.payload.request.method }}</span>: <span class="title-uri">/{{ uri }}</span>
+      <span class="title-method">{{ event.payload.request.method }}</span
+      >: <span class="title-uri">/{{ uri }}</span>
     </NuxtLink>
   </PreviewCard>
 </template>
@@ -9,7 +10,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
+import { PreviewCard } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

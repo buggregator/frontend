@@ -1,10 +1,10 @@
 import { action } from '@storybook/addon-actions'
 import { Meta, Story } from "@storybook/vue3";
-import { EVENT_TYPES } from "~/src/shared/types";
-import PreviewCardHeader from '~/components/PreviewCardHeader/PreviewCardHeader.vue';
+import { EVENT_TYPES } from "../../types";
+import PreviewCardHeader from './preview-card-header.vue';
 
 export default {
-  title: "Preview/PreviewCardHeader",
+  title: "FSD/shared/PreviewCardHeader",
   component: PreviewCardHeader,
   argTypes: {
     eventType: {

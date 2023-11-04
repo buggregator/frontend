@@ -1,3 +1,20 @@
+<script lang="ts" setup>
+import { withDefaults, defineProps } from "vue";
+import { IconSvg } from "../icon-svg";
+
+type Props = {
+  serverName: string;
+  originConfig: {
+    [key: string]: string;
+  } | null;
+};
+
+withDefaults(defineProps<Props>(), {
+  serverName: "",
+  originConfig: null,
+});
+</script>
+
 <template>
   <div class="preview-card-footer">
     <div class="preview-card-footer__tags">
@@ -20,31 +37,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-
-interface OriginConfig {
-  [key: string]: string;
-}
-
-export default defineComponent({
-  components: {
-    IconSvg,
-  },
-  props: {
-    serverName: {
-      type: String,
-      default: "",
-    },
-    originConfig: {
-      type: Object as PropType<OriginConfig>,
-      default: null,
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .preview-card-footer {
