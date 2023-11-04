@@ -31,6 +31,6 @@ export interface NormalizedEvent<T> {
   labels: string[],
   origin: object | null,
   serverName: string,
-  date: Date,
+  date: Date | null,
   payload: T
 }

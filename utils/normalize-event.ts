@@ -2,21 +2,13 @@ import {
   HttpDump,
   Inspector,
   InspectorTransaction,
-  Monolog,
   NormalizedEvent,
   RayDump,
   Sentry,
   SMTP,
-  VarDump
 } from "~/config/types";
 import { RAY_EVENT_TYPES } from "~/config/constants";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
-
-const normalizeObjectValue = (object: object | unknown[]): object =>
-  Object.entries(object).reduce((acc: object, [key, value]) => ({
-    ...acc,
-    [key]: value
-  }), {})
 
 export const normalizeFallbackEvent = (event: ServerEvent<unknown>): NormalizedEvent => ({
   id: event.uuid,
@@ -50,20 +42,6 @@ export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): Normalized
   serverName: event.payload.host,
   date: new Date(event.timestamp * 1000),
   payload: event.payload
-})
-
-export const normalizeMonologEvent = (event: ServerEvent<Monolog>): NormalizedEvent => ({
-  id: event.uuid,
-  type: EVENT_TYPES.MONOLOG,
-  labels: [EVENT_TYPES.MONOLOG, event.payload.level_name],
-  origin: null,
-  serverName: event.payload.channel,
-  date: new Date(event.timestamp * 1000),
-  payload: {
-    ...event.payload,
-    context: normalizeObjectValue(event.payload.context),
-    extra: normalizeObjectValue(event.payload.extra)
-  }
 })
 
 export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent => ({

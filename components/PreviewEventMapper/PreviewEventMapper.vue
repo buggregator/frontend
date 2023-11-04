@@ -12,7 +12,6 @@ import {
 } from "~/config/types";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
-  normalizeMonologEvent,
   normalizeSMTPEvent,
   normalizeSentryEvent,
   normalizeInspectorEvent,
@@ -20,7 +19,6 @@ import {
   normalizeFallbackEvent,
   normalizeRayDumpEvent,
 } from "~/utils/normalize-event";
-import MonologPreview from "~/components/MonologPreview/MonologPreview.vue";
 import SentryPreview from "~/components/SentryPreview/SentryPreview.vue";
 import SmtpPreview from "~/components/SmtpPreview/SmtpPreview.vue";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
@@ -30,12 +28,17 @@ import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
 import HttpDumpPreview from "~/components/HttpDumpPreview/HttpDumpPreview.vue";
 import { useProfiler } from "~/src/entities/profiler";
 import {
+  useMonolog,
+  PreviewCard as PreviewMonolog,
+} from "~/src/entities/monolog";
+import {
   useVarDump,
   PreviewCard as PreviewVarDump,
 } from "~/src/entities/var-dump";
 
 const { normalizeProfilerEvent } = useProfiler();
 const { normalizeVarDumpEvent } = useVarDump();
+const { normalizeMonologEvent } = useMonolog();
 
 export default defineComponent({
   props: {
@@ -61,7 +64,7 @@ export default defineComponent({
       [EVENT_TYPES.SENTRY]: (event: ServerEvent<Sentry>) =>
         h(SentryPreview, { event: normalizeSentryEvent(event) }),
       [EVENT_TYPES.MONOLOG]: (event: ServerEvent<Monolog>) =>
-        h(MonologPreview, { event: normalizeMonologEvent(event) }),
+        h(PreviewMonolog, { event: normalizeMonologEvent(event) }),
       [EVENT_TYPES.VAR_DUMP]: (event: ServerEvent<VarDump>) =>
         h(PreviewVarDump, { event: normalizeVarDumpEvent(event) }),
       [EVENT_TYPES.RAY_DUMP]: (event: ServerEvent<RayDump>) =>
