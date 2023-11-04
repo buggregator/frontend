@@ -1,7 +1,7 @@
-import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
-import { Monolog, NormalizedMonolog } from "../types";
+import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { Monolog } from "../types";
 
-export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedMonolog => ({
+export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<Monolog> => ({
   id: event.uuid,
   type: EVENT_TYPES.VAR_DUMP,
   labels: [EVENT_TYPES.VAR_DUMP],

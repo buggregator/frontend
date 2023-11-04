@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { defineComponent, PropType } from "vue";
-import { NormalizedEvent } from "~/config/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, CodeSnippet } from "~/src/shared/ui";
-import { NormalizedMonolog } from "../../types";
+import type { Monolog } from "../../types";
 
 type Props = {
-  event: NormalizedMonolog;
+  event: NormalizedEvent<Monolog>;
 };
 
 const props = defineProps<Props>();

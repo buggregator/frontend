@@ -1,9 +1,9 @@
-import { ServerEvent } from '~/src/shared/types';
-import { NormalizedMonolog, Monolog } from "../types";
+import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import { Monolog } from "../types";
 import { normalizeMonolog } from "./normalize-monolog";
 
 type TUseMonolog = () => {
-  normalizeMonologEvent: (event: ServerEvent<Monolog>) => NormalizedMonolog
+  normalizeMonologEvent: (event: ServerEvent<Monolog>) => NormalizedEvent<Monolog>
 }
 
 export const useMonolog: TUseMonolog = () => ({

@@ -1,7 +1,7 @@
-import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
-import { VarDump, NormalizedVarDump } from "../types";
+import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { VarDump } from "../types";
 
-export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedVarDump => ({
+export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent<VarDump> => ({
   id: event.uuid,
   type: EVENT_TYPES.VAR_DUMP,
   labels: [EVENT_TYPES.VAR_DUMP],

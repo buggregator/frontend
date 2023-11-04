@@ -1,9 +1,9 @@
-import { ServerEvent } from '~/src/shared/types';
-import { NormalizedVarDump, VarDump } from "../types";
+import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import { VarDump } from "../types";
 import { normalizeVarDumpEvent } from "./normalize-var-dump-event";
 
 type TUseVarDump = () => {
-  normalizeVarDumpEvent: (event: ServerEvent<VarDump>) => NormalizedVarDump
+  normalizeVarDumpEvent: (event: ServerEvent<VarDump>) => NormalizedEvent<VarDump>
 }
 
 export const useVarDump: TUseVarDump = () => ({

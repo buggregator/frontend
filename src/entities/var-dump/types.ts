@@ -19,7 +19,3 @@ export interface VarDump {
     }
   }
 }
-
-export interface NormalizedVarDump extends Omit<NormalizedEvent<VarDump>, 'date'> {
-  date: Date | null
-}

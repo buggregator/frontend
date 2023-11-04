@@ -14,7 +14,3 @@ export interface Monolog {
   extra: object,
 }
 
-export interface NormalizedMonolog extends Omit<NormalizedEvent<Monolog>, 'date'> {
-  date: Date | null
-}
-
