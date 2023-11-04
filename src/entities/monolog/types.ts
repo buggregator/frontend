@@ -1,4 +1,4 @@
-import { NormalizedEvent, Source } from "~/src/shared/types";
+import { Source } from "~/src/shared/types";
 
 export type StatusCode = number; // TODO: update type
 
