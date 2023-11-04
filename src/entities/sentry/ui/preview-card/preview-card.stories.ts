@@ -1,21 +1,23 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeSentryEvent } from "~/utils/normalize-event";
-import SentryPreview from '~/components/SentryPreview/SentryPreview.vue';
-import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
+import { PreviewCard } from '~/src/shared/ui';
+import { useSentry } from "../../lib";
+import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } from '../../mocks';
+
+const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Sentry/Components/SentryPreview",
-  component: SentryPreview
-} as Meta<typeof SentryPreview>;
+  title: "FSD/entities/sentry/PreviewCard",
+  component: PreviewCard
+} as Meta<typeof PreviewCard>;
 
 const Template: Story = (args) => ({
-  components: { SentryPreview },
+  components: { PreviewCard },
   setup() {
     return {
       args,
     };
   },
-  template: `<SentryPreview v-bind="args" />`,
+  template: `<PreviewCard v-bind="args" />`,
 });
 
 export const Spiral = Template.bind({});

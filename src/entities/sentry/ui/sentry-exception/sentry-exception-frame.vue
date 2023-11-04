@@ -1,3 +1,31 @@
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+import { IconSvg } from "~/src/shared/ui";
+import { SentryFrame } from "../../types";
+
+type Props = {
+  frame: SentryFrame;
+  isOpen: boolean;
+};
+
+const props = defineProps<Props>();
+const isFrameOpen = ref(props.isOpen);
+
+const hasBody = computed(() =>
+  Boolean(
+    props.frame.context_line ||
+      props.frame.post_context ||
+      props.frame.pre_context
+  )
+);
+
+const toggleOpen = () => {
+  if (hasBody.value) {
+    isFrameOpen.value = !isFrameOpen.value;
+  }
+};
+</script>
+
 <template>
   <div
     class="sentry-exception-frame"
@@ -70,58 +98,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-
-export interface SentryFrame {
-  filename: string;
-  lineno: number;
-  in_app: boolean;
-  abs_path: string;
-  pre_context: string[];
-  context_line: string;
-  post_context: string[];
-}
-
-export default defineComponent({
-  components: {
-    IconSvg,
-  },
-  props: {
-    frame: {
-      type: Object as PropType<SentryFrame>,
-      required: true,
-    },
-    isOpen: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  data() {
-    return {
-      isFrameOpen: this.isOpen,
-    };
-  },
-  computed: {
-    hasBody() {
-      return (
-        this.frame.context_line ||
-        this.frame.post_context ||
-        this.frame.pre_context
-      );
-    },
-  },
-  methods: {
-    toggleOpen(): void {
-      if (this.hasBody) {
-        this.isFrameOpen = !this.isFrameOpen;
-      }
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

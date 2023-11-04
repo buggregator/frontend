@@ -1,3 +1,28 @@
+<script lang="ts" setup>
+import { computed, defineProps, withDefaults } from "vue";
+import { SentryException } from "../../types";
+import SentryExceptionFrame from "./sentry-exception-frame.vue";
+
+type Props = {
+  exception: SentryException;
+  maxFrames: number;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  maxFrames: 3,
+});
+
+const exceptionFrames = computed(() => {
+  const frames = props.exception.stacktrace.frames || [];
+
+  if (props.maxFrames > 0) {
+    return frames.reverse().slice(0, props.maxFrames);
+  }
+
+  return frames;
+});
+</script>
+
 <template>
   <div class="sentry-exception">
     <slot>
@@ -18,47 +43,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import {
-  SentryException,
-  SentryFrame as SentryFrameType,
-} from "~/config/types";
-import SentryExceptionFrame from "~/components/SentryExceptionFrame/SentryExceptionFrame.vue";
-
-export default defineComponent({
-  components: {
-    SentryExceptionFrame,
-  },
-  props: {
-    exception: {
-      type: Object as PropType<SentryException>,
-      required: true,
-    },
-    maxFrames: {
-      type: Number,
-      default: 0,
-    },
-  },
-  computed: {
-    exceptionFrames(): SentryFrameType[] {
-      const frames = this.exception.stacktrace.frames || [];
-
-      if (this.maxFrames > 0) {
-        return frames.reverse().slice(0, this.maxFrames);
-      }
-
-      return frames;
-    },
-  },
-  methods: {
-    isVisibleFrame(index: number): boolean {
-      return index === 0;
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

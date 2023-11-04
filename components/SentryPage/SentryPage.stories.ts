@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeSentryEvent } from "~/utils/normalize-event";
 import SentryPage from '~/components/SentryPage/SentryPage.vue';
 import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from '~/src/entities/sentry/mocks';
+import { useSentry } from "~/src/entities/sentry";
+
+const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Sentry/Page/SentryPage",

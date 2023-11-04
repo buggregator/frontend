@@ -1,9 +1,10 @@
 {
-  "id": "17d252f1-a602-4ab5-9a1f-837cf8ba9be6",
+  "uuid": "17d252f1-a602-4ab5-9a1f-837cf8ba9be6",
   "type": "sentry",
   "labels": ["sentry.1"],
   "origin": null,
-  "serverName": "",
+  "server_name": "",
+  "project_id": null,
   "date": "2023-09-17T20:33:28.000Z",
   "payload": {
     "event_id": "16f48014895e405ab3f94dd18018d34d",

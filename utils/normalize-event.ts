@@ -4,7 +4,6 @@ import {
   InspectorTransaction,
   NormalizedEvent,
   RayDump,
-  Sentry,
   SMTP,
 } from "~/config/types";
 import { RAY_EVENT_TYPES } from "~/config/constants";
@@ -40,19 +39,6 @@ export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): Normalized
   labels: [EVENT_TYPES.HTTP_DUMP],
   origin: {uri: event.payload.request.uri},
   serverName: event.payload.host,
-  date: new Date(event.timestamp * 1000),
-  payload: event.payload
-})
-
-export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent => ({
-  id: event.uuid,
-  type: EVENT_TYPES.SENTRY,
-  labels: [EVENT_TYPES.SENTRY, 'exception'],
-  origin: {
-    logger: event.payload.logger,
-    environment: event.payload.environment
-  },
-  serverName: event.payload.server_name,
   date: new Date(event.timestamp * 1000),
   payload: event.payload
 })

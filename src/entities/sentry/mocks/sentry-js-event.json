@@ -1,9 +1,9 @@
 {
-  "id": "79e27c1d-e610-4c82-9180-aa07b51d2295",
+  "uuid": "79e27c1d-e610-4c82-9180-aa07b51d2295",
   "type": "sentry",
   "labels": ["sentry.1"],
   "origin": null,
-  "serverName": "",
+  "server_name": "",
   "date": "2023-09-17T21:49:59.000Z",
   "payload": {
     "message": "Something went wrong",
@@ -12,6 +12,7 @@
     "platform": "javascript",
     "timestamp": 1694987399.84,
     "environment": "production",
+    "server_name": "ButschsterLpp",
     "sdk": {
       "integrations": [
         "InboundFilters",
@@ -50,5 +51,6 @@
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
       }
     }
-  }
+  },
+  "project_id": null
 }

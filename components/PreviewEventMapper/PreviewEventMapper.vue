@@ -13,13 +13,11 @@ import {
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
   normalizeSMTPEvent,
-  normalizeSentryEvent,
   normalizeInspectorEvent,
   normalizeHttpDumpEvent,
   normalizeFallbackEvent,
   normalizeRayDumpEvent,
 } from "~/utils/normalize-event";
-import SentryPreview from "~/components/SentryPreview/SentryPreview.vue";
 import SmtpPreview from "~/components/SmtpPreview/SmtpPreview.vue";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
 import InspectorPreview from "~/components/InspectorPreview/InspectorPreview.vue";
@@ -37,10 +35,12 @@ import {
   useVarDump,
   PreviewCard as PreviewVarDump,
 } from "~/src/entities/var-dump";
+import { useSentry, PreviewCard as PreviewSentry } from "~/src/entities/sentry";
 
 const { normalizeProfilerEvent } = useProfiler();
 const { normalizeVarDumpEvent } = useVarDump();
 const { normalizeMonologEvent } = useMonolog();
+const { normalizeSentryEvent } = useSentry();
 
 export default defineComponent({
   props: {
@@ -64,7 +64,7 @@ export default defineComponent({
   render() {
     const EVENT_TYPE_RENDER_MAP = {
       [EVENT_TYPES.SENTRY]: (event: ServerEvent<Sentry>) =>
-        h(SentryPreview, { event: normalizeSentryEvent(event) }),
+        h(PreviewSentry, { event: normalizeSentryEvent(event) }),
       [EVENT_TYPES.MONOLOG]: (event: ServerEvent<Monolog>) =>
         h(PreviewMonolog, { event: normalizeMonologEvent(event) }),
       [EVENT_TYPES.VAR_DUMP]: (event: ServerEvent<VarDump>) =>

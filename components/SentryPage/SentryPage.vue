@@ -1,14 +1,17 @@
 <template>
   <div class="sentry-page">
     <main class="sentry-page__main">
-      <header class="sentry-page__main-header" v-if="hasException">
+      <header v-if="hasException" class="sentry-page__main-header">
         <h1 class="sentry-page__main-exception">{{ mainException.type }}</h1>
 
-        <pre class="sentry-page__main-exception-message" v-html="mainException.value" />
+        <pre
+          class="sentry-page__main-exception-message"
+          v-html="mainException.value"
+        />
         <p class="sentry-page__main-date">{{ date }}</p>
       </header>
 
-      <header class="sentry-page__main-header" v-if="hasMessage">
+      <header v-if="hasMessage" class="sentry-page__main-header">
         <pre class="sentry-page__main-exception-message" v-html="message" />
         <p class="sentry-page__main-date">{{ date }}</p>
       </header>
@@ -41,7 +44,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import SentryException from "~/components/SentryException/SentryException.vue";
+import { SentryException } from "~/src/entities/sentry";
 import SentryPageBreadcrumbs from "~/components/SentryPageBreadcrumbs/SentryPageBreadcrumbs.vue";
 import SentryPageTags from "~/components/SentryPageTags/SentryPageTags.vue";
 import SentryPageRequest from "~/components/SentryPageRequest/SentryPageRequest.vue";
