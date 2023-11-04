@@ -14,7 +14,6 @@ import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
   normalizeMonologEvent,
   normalizeSMTPEvent,
-  normalizeVarDumpEvent,
   normalizeSentryEvent,
   normalizeInspectorEvent,
   normalizeHttpDumpEvent,
@@ -31,8 +30,11 @@ import InspectorPreview from "~/components/InspectorPreview/InspectorPreview.vue
 import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
 import HttpDumpPreview from "~/components/HttpDumpPreview/HttpDumpPreview.vue";
 import { useProfiler } from "~/src/entities/profiler";
+import { useVarDump } from "~/src/entities/var-dump";
 
 const { normalizeProfilerEvent } = useProfiler();
+const { normalizeVarDumpEvent } = useVarDump();
+
 export default defineComponent({
   props: {
     event: {

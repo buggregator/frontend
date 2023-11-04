@@ -1,5 +1,4 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeVarDumpEvent } from "~/utils/normalize-event";
 import VarDumpPreview from '~/components/VarDumpPreview/VarDumpPreview.vue';
 import {
   varDumpArrayMock,
@@ -10,6 +9,9 @@ import {
   varDumpStringMock,
   varDumpEmptyStringMock,
 } from '~/src/entities/var-dump/mocks';
+import { useVarDump } from "~/src/entities/var-dump";
+
+const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
   title: "VarDump/Components/Preview",

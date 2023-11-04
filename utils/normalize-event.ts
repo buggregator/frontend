@@ -89,20 +89,6 @@ export const normalizeSMTPEvent = (event: ServerEvent<SMTP>): NormalizedEvent =>
   payload: event.payload
 })
 
-export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent => ({
-  id: event.uuid,
-  type: EVENT_TYPES.VAR_DUMP,
-  labels: [EVENT_TYPES.VAR_DUMP],
-  origin: {
-    file: event.payload.context.source.file,
-    name: event.payload.context.source.name,
-    line_number: event.payload.context.source.line,
-  },
-  serverName: "",
-  date: new Date(event.timestamp * 1000),
-  payload: event.payload
-})
-
 export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEvent => {
   const labels = event.payload.payloads
     .filter(payload => payload.type === 'label')
