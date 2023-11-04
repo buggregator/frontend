@@ -1,7 +1,9 @@
 import {Meta, Story} from "@storybook/vue3";
-import {normalizeInspectorEvent} from "~/utils/normalize-event";
 import InspectorPageTimeline from '~/components/InspectorPageTimeline/InspectorPageTimeline.vue';
 import { inspectorMock } from '~/src/entities/inspector/mocks'
+import { useInspector } from "~/src/entities/inspector/lib";
+
+const { normalizeInspectorEvent } = useInspector();
 
 export default {
   title: "Inspector/Page/InspectorPageTimeline",

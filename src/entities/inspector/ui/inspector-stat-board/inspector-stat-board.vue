@@ -1,47 +1,44 @@
+<script lang="ts" setup>
+import moment from "moment";
+import { defineProps, computed } from "vue";
+import { InspectorTransaction } from "~/config/types";
+
+type Props = {
+  transaction: InspectorTransaction;
+};
+
+const props = defineProps<Props>();
+
+const processDate = computed(() =>
+  moment(props.transaction.timestamp).toLocaleString()
+);
+const processResult = computed(() =>
+  (props.transaction.result || "success").toUpperCase()
+);
+</script>
+
 <template>
   <section class="inspector-stat-board">
     <div class="inspector-stat-board__item">
       <h4 class="inspector-stat-board__item-name">Timestamp</h4>
-      <strong class="inspector-stat-board__item-value">{{
-        processDate
-      }}</strong>
+      <strong class="inspector-stat-board__item-value">
+        {{ processDate }}
+      </strong>
     </div>
+
     <div class="inspector-stat-board__item">
       <h4 class="inspector-stat-board__item-name">Duration</h4>
-      <strong class="inspector-stat-board__item-value"
-        >{{ transaction.duration }} ms</strong
-      >
+      <strong class="inspector-stat-board__item-value">
+        {{ transaction.duration }} ms
+      </strong>
     </div>
+
     <div class="inspector-stat-board__item">
       <h4 class="inspector-stat-board__item-name">Result</h4>
       <span class="inspector-stat-board__item-value">{{ processResult }}</span>
     </div>
   </section>
 </template>
-
-<script lang="ts">
-// TODO: need to move logic into InspectorPage
-import { defineComponent, PropType } from "vue";
-import { InspectorTransaction } from "~/config/types";
-import moment from "moment";
-
-export default defineComponent({
-  props: {
-    transaction: {
-      type: Object as PropType<InspectorTransaction>,
-      required: true,
-    },
-  },
-  computed: {
-    processDate(): string {
-      return moment(this.transaction.timestamp).toLocaleString();
-    },
-    processResult(): string {
-      return (this.transaction.result || "success").toUpperCase();
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .inspector-stat-board {

@@ -1,10 +1,12 @@
 import {Meta, Story} from "@storybook/vue3";
-import {normalizeInspectorEvent} from "~/utils/normalize-event";
-import InspectorStatBoard from '~/components/InspectorStatBoard/InspectorStatBoard.vue';
-import { inspectorMock } from '~/src/entities/inspector/mocks'
+import { useInspector } from "../../lib";
+import { inspectorMock } from '../../mocks'
+import InspectorStatBoard from './inspector-stat-board.vue';
+
+const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Inspector/Components/InspectorStatBoard",
+  title: "FSD/entities/inspector/InspectorStatBoard",
   component: InspectorStatBoard
 } as Meta<typeof InspectorStatBoard>;
 

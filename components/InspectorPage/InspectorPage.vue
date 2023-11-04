@@ -54,7 +54,7 @@ import { defineComponent, PropType } from "vue";
 import { InspectorTransaction, NormalizedEvent } from "~/config/types";
 import moment from "moment/moment";
 import InspectorPageTimeline from "~/components/InspectorPageTimeline/InspectorPageTimeline.vue";
-import InspectorStatBoard from "~/components/InspectorStatBoard/InspectorStatBoard.vue";
+import { InspectorStatBoard } from "~/src/entities/inspector";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({
