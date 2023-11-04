@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { varDumpObjectMock } from '~/src/entities/var-dump/mocks';
+import { SFDumpCode, HTMLEscapedString } from "../../mocks";
 import ValueDump from './value-dump.vue';
 
 export default {
-  title: "FSD/widgets/ValueDump",
+  title: "FSD/shared/ValueDump",
   component: ValueDump
 } as Meta<typeof ValueDump>;
 
@@ -20,7 +20,7 @@ const Template: Story = (args) => ({
 export const String = Template.bind({});
 
 String.args = {
-  value: `&lt;?xml&nbsp;version="1.0"?&gt;<br>&lt;one&gt;<br>&nbsp;&nbsp;&lt;two&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;three&gt;3&lt;/three&gt;<br>&nbsp;&nbsp;&lt;/two&gt;<br>&lt;/one&gt;`,
+  value: HTMLEscapedString,
   type: 'string',
 };
 
@@ -33,5 +33,5 @@ Boolean.args = {
 export const SfDump = Template.bind({});
 
 SfDump.args = {
-  value: varDumpObjectMock.payload.payload.value,
+  value: SFDumpCode,
 };

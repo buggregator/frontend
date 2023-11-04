@@ -2,7 +2,7 @@
 import highlightPlugin from "@highlightjs/vue-plugin";
 import isString from "lodash/isString";
 import { ref, computed } from "vue";
-import { IconSvg } from "~/src/shared/ui";
+import { IconSvg } from "../icon-svg";
 
 const CondeHighlight = highlightPlugin.component;
 

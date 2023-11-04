@@ -73,7 +73,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
-import { CodeSnippet } from "~/src/widgets/ui";
+import { CodeSnippet } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

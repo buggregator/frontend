@@ -7,8 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent } from "~/config/types";
-import { PreviewCard } from "~/src/shared/ui";
-import { CodeSnippet } from "~/src/widgets/ui";
+import { PreviewCard, CodeSnippet } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

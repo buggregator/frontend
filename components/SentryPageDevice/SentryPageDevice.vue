@@ -123,8 +123,7 @@
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
 import moment from "moment";
-import { CodeSnippet } from "~/src/widgets/ui";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
 import { useFormats } from "~/src/shared/lib/formats";
 
 const { formatFileSize } = useFormats();

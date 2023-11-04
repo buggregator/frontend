@@ -106,8 +106,7 @@ import { Tab, Tabs } from "vue3-tabs-component";
 import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
 import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
 import SmtpAttachment from "~/components/SmtpAttachment/SmtpAttachment.vue";
-import { CodeSnippet } from "~/src/widgets/ui";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

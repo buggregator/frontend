@@ -1,5 +1,5 @@
 import { Meta, Story } from "@storybook/vue3";
-import VarDumpPreview from '~/components/VarDumpPreview/VarDumpPreview.vue';
+import { useVarDump } from "../../lib";
 import {
   varDumpArrayMock,
   varDumpFalseMock,
@@ -8,24 +8,24 @@ import {
   varDumpObjectMock,
   varDumpStringMock,
   varDumpEmptyStringMock,
-} from '~/src/entities/var-dump/mocks';
-import { useVarDump } from "~/src/entities/var-dump";
+} from '../../mocks';
+import PreviewCard from './preview-card.vue';
 
 const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
-  title: "VarDump/Components/Preview",
-  component: VarDumpPreview
-} as Meta<typeof VarDumpPreview>;
+  title: "FSD/entities/var-dump/PreviewCard",
+  component: PreviewCard
+} as Meta<typeof PreviewCard>;
 
 const Template: Story = (args) => ({
-  components: { VarDumpPreview },
+  components: { PreviewCard },
   setup() {
     return {
       args,
     };
   },
-  template: `<VarDumpPreview v-bind="args" />`,
+  template: `<PreviewCard v-bind="args" />`,
 });
 
 export const Object = Template.bind({});

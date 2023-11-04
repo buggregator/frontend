@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { RayPayload } from "~/config/types";
-import { ValueDump } from "~/src/widgets/ui";
+import { ValueDump } from "~/src/shared/ui";
 
 export default defineComponent({
   components: { ValueDump },

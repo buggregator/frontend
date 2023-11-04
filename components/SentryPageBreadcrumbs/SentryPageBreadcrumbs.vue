@@ -63,7 +63,7 @@
 import { defineComponent, PropType } from "vue";
 import { Sentry } from "~/config/types";
 import moment from "moment";
-import { CodeSnippet } from "~/src/widgets/ui";
+import { CodeSnippet } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

@@ -1,10 +1,10 @@
 import { Meta, Story } from "@storybook/vue3";
-import { HTMLCode, PHPCode } from '@/src/shared/mocks';
-import { EVENT_TYPES } from "~/src/shared/types";
+import { HTMLCode, PHPCode } from '../../mocks';
+import { EVENT_TYPES } from "../../types";
 import CodeSnippet from "./code-snippet.vue";
 
 export default {
-  title: "FSD/widgets/CodeSnippet",
+  title: "FSD/shared/CodeSnippet",
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 
