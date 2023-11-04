@@ -1,10 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-
-import ValueDump from '~/components/ValueDump/ValueDump.vue';
 import { varDumpObjectMock } from '~/src/entities/var-dump/mocks';
+import ValueDump from './value-dump.vue';
 
 export default {
-  title: "Components/ValueDump",
+  title: "FSD/widgets/ValueDump",
   component: ValueDump
 } as Meta<typeof ValueDump>;
 

@@ -1,9 +1,6 @@
 <template>
   <PreviewCard class="var-dump-preview" :event="event">
-    <ValueDump
-     :value="eventValue"
-     :type="event.payload.payload.type"
-    />
+    <ValueDump :value="eventValue" :type="event.payload.payload.type" />
   </PreviewCard>
 </template>
 
@@ -11,7 +8,7 @@
 import { defineComponent, PropType } from "vue";
 import { NormalizedEvent, VarDump } from "~/config/types";
 import PreviewCard from "~/components/PreviewCard/PreviewCard.vue";
-import ValueDump from "~/components/ValueDump/ValueDump.vue";
+import { ValueDump } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

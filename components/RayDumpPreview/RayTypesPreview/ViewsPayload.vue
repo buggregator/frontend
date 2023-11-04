@@ -1,19 +1,20 @@
 <template>
   <div class="ray-type-view">
     <h3>
-      View: <code>{{ payload.content.view_path_relative_to_project_root }}</code>
+      View:
+      <code>{{ payload.content.view_path_relative_to_project_root }}</code>
     </h3>
-    <ValueDump :value="payload.content.data"/>
+    <ValueDump :value="payload.content.data" />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {RayPayload} from "~/config/types";
-import ValueDump from "~/components/ValueDump/ValueDump.vue";
+import { defineComponent, PropType } from "vue";
+import { RayPayload } from "~/config/types";
+import { ValueDump } from "~/src/widgets/ui";
 
 export default defineComponent({
-  components: {ValueDump},
+  components: { ValueDump },
   props: {
     payload: {
       type: Object as PropType<RayPayload>,
