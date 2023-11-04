@@ -26,10 +26,12 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeSMTPEvent } from "~/utils/normalize-event";
 import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
 import { PageHeader } from "~/src/widgets/ui";
 import { REST_API_URL } from "~/utils/io";
+import { useSmtp } from "~/src/entities/smtp";
+
+const { normalizeSmtpEvent } = useSmtp();
 
 export default defineComponent({
   components: { SmtpPage, PageHeader },
@@ -76,7 +78,7 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent ? normalizeSMTPEvent(this.serverEvent) : null;
+      return this.serverEvent ? normalizeSmtpEvent(this.serverEvent) : null;
     },
   },
   methods: {

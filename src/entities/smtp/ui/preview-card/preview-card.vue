@@ -1,3 +1,21 @@
+<script lang="ts" setup>
+import moment from "moment";
+import { computed } from "vue";
+import { NormalizedEvent } from "~/src/shared/types";
+import { PreviewCard } from "~/src/shared/ui";
+import { SMTP } from "../../types";
+
+type Props = {
+  event: NormalizedEvent<SMTP>;
+};
+
+const props = defineProps<Props>();
+
+const dateFormat = computed(() => moment(props.event.date).fromNow());
+
+const eventLink = computed(() => `/smtp/${props.event.id}`);
+</script>
+
 <template>
   <PreviewCard class="smtp-preview" :event="event">
     <NuxtLink :to="eventLink" class="smtp-preview__link">
@@ -13,33 +31,6 @@
     </NuxtLink>
   </PreviewCard>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import moment from "moment";
-import { NormalizedEvent } from "~/config/types";
-import { PreviewCard } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    PreviewCard,
-  },
-  props: {
-    event: {
-      type: Object as PropType<NormalizedEvent>,
-      required: true,
-    },
-  },
-  computed: {
-    dateFormat() {
-      return moment(this.event.date).fromNow();
-    },
-    eventLink() {
-      return `/smtp/${this.event.id}`;
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

@@ -12,13 +12,11 @@ import {
 } from "~/config/types";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
-  normalizeSMTPEvent,
   normalizeInspectorEvent,
   normalizeHttpDumpEvent,
   normalizeFallbackEvent,
   normalizeRayDumpEvent,
 } from "~/utils/normalize-event";
-import SmtpPreview from "~/components/SmtpPreview/SmtpPreview.vue";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
 import InspectorPreview from "~/components/InspectorPreview/InspectorPreview.vue";
 import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
@@ -36,11 +34,13 @@ import {
   PreviewCard as PreviewVarDump,
 } from "~/src/entities/var-dump";
 import { useSentry, PreviewCard as PreviewSentry } from "~/src/entities/sentry";
+import { useSmtp, PreviewCard as PreviewSMTP } from "~/src/entities/smtp";
 
 const { normalizeProfilerEvent } = useProfiler();
 const { normalizeVarDumpEvent } = useVarDump();
 const { normalizeMonologEvent } = useMonolog();
 const { normalizeSentryEvent } = useSentry();
+const { normalizeSmtpEvent } = useSmtp();
 
 export default defineComponent({
   props: {
@@ -72,7 +72,7 @@ export default defineComponent({
       [EVENT_TYPES.RAY_DUMP]: (event: ServerEvent<RayDump>) =>
         h(RayDumpPreview, { event: normalizeRayDumpEvent(event) }),
       [EVENT_TYPES.SMTP]: (event: ServerEvent<SMTP>) =>
-        h(SmtpPreview, { event: normalizeSMTPEvent(event) }),
+        h(PreviewSMTP, { event: normalizeSmtpEvent(event) }),
       [EVENT_TYPES.PROFILER]: (event: ServerEvent<Profiler>) =>
         h(PreviewProfiler, { event: normalizeProfilerEvent(event) }),
       [EVENT_TYPES.INSPECTOR]: (event: ServerEvent<Inspector>) =>

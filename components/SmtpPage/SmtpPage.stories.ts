@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeSMTPEvent } from "~/utils/normalize-event";
 import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
 import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
+import { useSmtp } from "~/src/entities/smtp";
+
+const { normalizeSmtpEvent } = useSmtp();
 
 export default {
   title: "Smtp/Page/SmtpPage",
@@ -20,7 +22,7 @@ const Template: Story = (args) => ({
 
 export const Default = Template.bind({});
 
-const normalizeEvent = normalizeSMTPEvent(smtpWelcomeMock)
+const normalizeEvent = normalizeSmtpEvent(smtpWelcomeMock)
 
 Default.args = {
   event: normalizeEvent,
