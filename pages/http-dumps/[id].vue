@@ -26,9 +26,11 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
 import HttpDumpPage from "~/components/HttpDumpPage/HttpDumpPage.vue";
 import { PageHeader } from "~/src/widgets/ui";
+import { useHttpDump } from "~/src/entities/http-dump";
+
+const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default defineComponent({
   components: { HttpDumpPage, PageHeader },

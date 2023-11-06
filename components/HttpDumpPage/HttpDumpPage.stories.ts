@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
 import HttpDumpPage from "~/components/HttpDumpPage/HttpDumpPage.vue";
 import { httpDumpMock, httpDumpPdfMock } from '~/src/entities/http-dump/mocks';
+import { useHttpDump } from '~/src/entities/http-dump';
+
+const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
   title: "HttpDump/Page/HttpDumpPage",

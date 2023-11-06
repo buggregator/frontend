@@ -33,16 +33,6 @@ export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): Normaliz
   }
 }
 
-export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): NormalizedEvent => ({
-  id: event.uuid,
-  type: EVENT_TYPES.HTTP_DUMP,
-  labels: [EVENT_TYPES.HTTP_DUMP],
-  origin: {uri: event.payload.request.uri},
-  serverName: event.payload.host,
-  date: new Date(event.timestamp * 1000),
-  payload: event.payload
-})
-
 export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEvent => {
   const labels = event.payload.payloads
     .filter(payload => payload.type === 'label')

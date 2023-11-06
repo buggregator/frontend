@@ -12,13 +12,11 @@ import {
 } from "~/config/types";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import {
-  normalizeHttpDumpEvent,
   normalizeFallbackEvent,
   normalizeRayDumpEvent,
 } from "~/utils/normalize-event";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
 import PreviewFallback from "~/components/PreviewFallback/PreviewFallback.vue";
-import HttpDumpPreview from "~/components/HttpDumpPreview/HttpDumpPreview.vue";
 import {
   useProfiler,
   PreviewCard as PreviewProfiler,
@@ -37,6 +35,10 @@ import {
   useInspector,
   PreviewCard as PreviewInspector,
 } from "~/src/entities/inspector";
+import {
+  useHttpDump,
+  PreviewCard as PreviewHttpDump,
+} from "~/src/entities/http-dump";
 
 const { normalizeProfilerEvent } = useProfiler();
 const { normalizeVarDumpEvent } = useVarDump();
@@ -44,6 +46,7 @@ const { normalizeMonologEvent } = useMonolog();
 const { normalizeSentryEvent } = useSentry();
 const { normalizeSmtpEvent } = useSmtp();
 const { normalizeInspectorEvent } = useInspector();
+const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default defineComponent({
   props: {
@@ -81,7 +84,7 @@ export default defineComponent({
       [EVENT_TYPES.INSPECTOR]: (event: ServerEvent<Inspector>) =>
         h(PreviewInspector, { event: normalizeInspectorEvent(event) }),
       [EVENT_TYPES.HTTP_DUMP]: (event: ServerEvent<HttpDump>) =>
-        h(HttpDumpPreview, { event: normalizeHttpDumpEvent(event) }),
+        h(PreviewHttpDump, { event: normalizeHttpDumpEvent(event) }),
     };
 
     if (Object.values(EVENT_TYPES).includes(this.event.type)) {
