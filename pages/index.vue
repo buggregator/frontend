@@ -32,7 +32,7 @@
     </PageHeader>
 
     <main v-if="visibleEvents.length" class="events-page__events">
-      <PreviewEventMapper
+      <EventCard
         v-for="event in visibleEvents"
         :key="event.uuid"
         :event="event"
@@ -49,9 +49,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PagePlaceholder from "~/components/PagePlaceholder/PagePlaceholder.vue";
-import { PageHeader } from "~/src/widgets/ui";
+import { PageHeader, EventCard } from "~/src/widgets/ui";
 import { useNuxtApp } from "#app";
-import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import pluralize from "pluralize";
 import { EventType } from "~/src/shared/types";
@@ -59,7 +58,7 @@ import { EventType } from "~/src/shared/types";
 export default defineComponent({
   components: {
     PagePlaceholder,
-    PreviewEventMapper,
+    EventCard,
     PageHeader,
   },
   setup() {

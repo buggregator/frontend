@@ -5,7 +5,7 @@ export type Email = string; // TODO: update type
 
 type SMTPUser = {
   name: string;
-  Email: Email;
+  email: Email;
 }
 
 export interface Monolog {

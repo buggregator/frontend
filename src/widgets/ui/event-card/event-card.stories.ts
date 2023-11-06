@@ -1,26 +1,26 @@
 import { Meta, Story } from "@storybook/vue3";
-import PreviewEventMapper from "~/components/PreviewEventMapper/PreviewEventMapper.vue";
-import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { monologMock } from '~/src/entities/monolog/mocks';
-import { inspectorMock } from '~/src/entities/inspector/mocks';
-import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
 import { httpDumpMock } from '~/src/entities/http-dump/mocks';
+import { inspectorMock } from '~/src/entities/inspector/mocks';
+import { monologMock } from '~/src/entities/monolog/mocks';
+import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { sentrySpiralMock } from '~/src/entities/sentry/mocks';
+import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
+import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
+import PreviewCard from "./event-card.vue";
 
 export default {
-  title: "Preview/PreviewEventMapper",
-  component: PreviewEventMapper,
-} as Meta<typeof PreviewEventMapper>;
+  title: "FSD/widgets/PreviewCard",
+  component: PreviewCard,
+} as Meta<typeof PreviewCard>;
 
 const Template: Story = (args) => ({
-  components: { PreviewEventMapper },
+  components: { PreviewCard },
   setup() {
     return {
       args,
     };
   },
-  template: `<PreviewEventMapper v-bind="args" />`,
+  template: `<PreviewCard v-bind="args" />`,
 });
 
 export const Default = Template.bind({});
@@ -81,14 +81,14 @@ const eventsList = [
 ];
 
 const TemplateList: Story = (args) => ({
-  components: { PreviewEventMapper },
+  components: { PreviewCard },
   setup() {
     return {
       args,
       eventsList,
     };
   },
-  template: `<PreviewEventMapper class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>`,
+  template: `<PreviewCard class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>`,
 });
 
 export const EventsList = TemplateList.bind({});
@@ -98,7 +98,7 @@ EventsList.args = {
 };
 
 const TemplateListVirtual: Story = (args) => ({
-  components: { PreviewEventMapper },
+  components: { PreviewCard },
   setup() {
     return {
       args,
@@ -114,7 +114,7 @@ const TemplateListVirtual: Story = (args) => ({
   },
   template: `
     <template v-for="item in eventsList">
-      <PreviewEventMapper class="border-b" :event="item" />
+      <PreviewCard class="border-b" :event="item" />
     </template>
   `,
 });

@@ -3,7 +3,7 @@ import { OneOfValues } from "./generics";
 // TODO: add T prefix to all types
 
 export enum EVENT_TYPES {
-  VAR_DUMP= "var-dump",
+  VAR_DUMP = "var-dump",
   SMTP = "smtp",
   SENTRY = "sentry",
   PROFILER = "profiler",
