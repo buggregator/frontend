@@ -90,12 +90,13 @@ const optimiseRenderHidden = debounce(() => {
   if (eventRef.value) {
     const eventNode = eventRef.value as HTMLElement;
     const { top, height } = eventNode.getBoundingClientRect();
+
     const extraDelta = height;
     const isVisible =
       top - extraDelta <= window.innerHeight &&
       top + height + extraDelta * 2 >= 0;
 
-    if (!isVisible && isOptimized.value) {
+    if (!isVisible && !isOptimized.value) {
       isOptimized.value = true;
       eventNode.style.height = `${eventNode.clientHeight}px`;
     } else if (isVisible && isOptimized.value) {

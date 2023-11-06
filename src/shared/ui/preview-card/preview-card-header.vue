@@ -22,8 +22,6 @@ type Emits = {
 const props = withDefaults(defineProps<Props>(), {
   tags: () => [],
   eventUrl: "",
-  isOpen: true,
-  isVisibleControls: true,
 });
 
 const emit = defineEmits<Emits>();
