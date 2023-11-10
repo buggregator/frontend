@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
-import SentryPageDevice from '~/components/SentryPageDevice/SentryPageDevice.vue';
-import { sentryCommonMock } from '~/src/entities/sentry/mocks';
 import { useSentry } from "~/src/entities/sentry";
+import { sentryCommonMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
+import SentryPageDevice from './sentry-page-device.vue';
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Sentry/Page/SentryPageDevice",
+  title: "FSD/screens/sentry/SentryPageDevice",
   component: SentryPageDevice
 } as Meta<typeof SentryPageDevice>;
 
@@ -23,5 +23,11 @@ const Template: Story = (args) => ({
 export const Device = Template.bind({});
 
 Device.args = {
-  event: normalizeSentryEvent(sentryCommonMock).payload,
+  device: normalizeSentryEvent(sentryCommonMock).payload.contexts.device,
+};
+
+export const Spiral = Template.bind({});
+
+Spiral.args = {
+  device: normalizeSentryEvent(sentrySpiralMock).payload.contexts.device,
 };

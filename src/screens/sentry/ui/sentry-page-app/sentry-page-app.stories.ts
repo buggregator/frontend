@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
-import SentryPageApp from '~/components/SentryPageApp/SentryPageApp.vue';
-import { sentryCommonMock } from '~/src/entities/sentry/mocks';
 import { useSentry } from "~/src/entities/sentry";
+import { sentryCommonMock } from '~/src/entities/sentry/mocks';
+import SentryPageApp from './sentry-page-app.vue';
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Sentry/Page/SentryPageApp",
+  title: "FSD/screens/sentry/SentryPageApp",
   component: SentryPageApp
 } as Meta<typeof SentryPageApp>;
 
@@ -20,8 +20,8 @@ const Template: Story = (args) => ({
   template: `<SentryPageApp v-bind="args" />`,
 });
 
-export const App = Template.bind({});
+export const Default = Template.bind({});
 
-App.args = {
-  event: normalizeSentryEvent(sentryCommonMock).payload,
+Default.args = {
+  app: normalizeSentryEvent(sentryCommonMock).payload.contexts.app,
 };

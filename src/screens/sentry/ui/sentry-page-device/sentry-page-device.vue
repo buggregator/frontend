@@ -1,14 +1,33 @@
+<script lang="ts" setup>
+import moment from "moment";
+import { SentryDevice } from "~/src/entities/sentry/types";
+import { useFormats } from "~/src/shared/lib/formats";
+import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
+
+const { formatFileSize } = useFormats();
+
+type Props = {
+  device: SentryDevice;
+};
+
+defineProps<Props>();
+
+const formatDate = (date: string) => moment(date).toLocaleString();
+
+const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
+</script>
+
 <template>
-  <section v-if="hasDevice" class="sentry-page-device">
+  <section class="sentry-page-device">
     <h3 class="sentry-page-device__title">device</h3>
 
     <TableBase>
-      <TableBaseRow v-if="device.archs" title="Architectures">
-        <CodeSnippet class="mt-3" language="json" :code="device.archs" />
+      <TableBaseRow v-if="device.arch" title="Architectures">
+        <CodeSnippet class="mt-3" language="json" :code="device.arch" />
       </TableBaseRow>
 
       <TableBaseRow v-if="device.battery_level" title="Battery Level">
-        {{ parseInt(device.battery_level) }}%
+        {{ formatBatteryLevel(device.battery_level) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.boot_time" title="Boot Time">
@@ -28,11 +47,11 @@
       </TableBaseRow>
 
       <TableBaseRow v-if="device.free_memory" title="Free Memory">
-        {{ humanFileSize(device.free_memory) }}
+        {{ formatFileSize(device.free_memory) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.free_storage" title="Free Storage">
-        {{ humanFileSize(device.free_storage) }}
+        {{ formatFileSize(device.free_storage) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.id" title="Id">
@@ -52,7 +71,7 @@
       </TableBaseRow>
 
       <TableBaseRow v-if="device.memory_size" title="Memory Size">
-        {{ humanFileSize(device.memory_size) }}
+        {{ formatFileSize(device.memory_size) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.model" title="Model">
@@ -72,7 +91,7 @@
       </TableBaseRow>
 
       <TableBaseRow v-if="device.screen_density" title="Screen Density">
-        {{ parseInt(device.screen_density) }}
+        {{ parseInt(String(device.screen_density)) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.screen_dpi" title="Screen DPI">
@@ -98,7 +117,7 @@
       </TableBaseRow>
 
       <TableBaseRow v-if="device.storage_size" title="Storage Size">
-        {{ humanFileSize(device.storage_size) }}
+        {{ formatFileSize(device.storage_size) }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device.timezone" title="Timezone">
@@ -118,46 +137,6 @@
     </TableBase>
   </section>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { Sentry } from "~/config/types";
-import moment from "moment";
-import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
-import { useFormats } from "~/src/shared/lib/formats";
-
-const { formatFileSize } = useFormats();
-
-export default defineComponent({
-  components: {
-    TableBaseRow,
-    TableBase,
-    CodeSnippet,
-  },
-  props: {
-    event: {
-      type: Object as PropType<Sentry>,
-      required: true,
-    },
-  },
-  computed: {
-    hasDevice() {
-      return this.event.contexts?.device !== undefined;
-    },
-    device() {
-      return this.event.contexts.device;
-    },
-  },
-  methods: {
-    humanFileSize(data: number) {
-      return formatFileSize(data);
-    },
-    formatDate(date: string) {
-      return moment(date).toLocaleString();
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

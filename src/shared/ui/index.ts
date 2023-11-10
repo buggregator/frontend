@@ -7,5 +7,3 @@ export * from './code-snippet';
 export * from './stat-board';
 export * from './file-attachment';
 
-export class FileAttachmnet {
-}

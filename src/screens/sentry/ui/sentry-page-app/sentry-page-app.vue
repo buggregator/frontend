@@ -1,5 +1,16 @@
+<script lang="ts" setup>
+import { SentryApp } from "~/src/entities/sentry/types";
+import { TableBaseRow, TableBase, CodeSnippet } from "~/src/shared/ui";
+
+type Props = {
+  app: SentryApp;
+};
+
+defineProps<Props>();
+</script>
+
 <template>
-  <section v-if="hasApp" class="sentry-page-app">
+  <section class="sentry-page-app">
     <h3 class="sentry-page-app__title">app</h3>
 
     <TableBase>
@@ -33,34 +44,6 @@
     </TableBase>
   </section>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { Sentry } from "~/config/types";
-import { TableBaseRow, TableBase, CodeSnippet } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    CodeSnippet,
-    TableBase,
-    TableBaseRow,
-  },
-  props: {
-    event: {
-      type: Object as PropType<Sentry>,
-      required: true,
-    },
-  },
-  computed: {
-    hasApp() {
-      return this.event.contexts?.app !== undefined;
-    },
-    app() {
-      return this.event.contexts.app;
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

@@ -1,5 +1,22 @@
+<script lang="ts" setup>
+import moment from "moment";
+import { SentryBreadcrumb } from "~/src/entities/sentry/types";
+import { CodeSnippet } from "~/src/shared/ui";
+
+type Props = {
+  breadcrumbs: SentryBreadcrumb[];
+};
+
+withDefaults(defineProps<Props>(), {
+  breadcrumbs: () => [] as SentryBreadcrumb[],
+});
+
+const formatDate = (timestamp: number): string =>
+  moment.unix(timestamp).fromNow();
+</script>
+
 <template>
-  <section v-if="hasBreadcrumbs" class="sentry-page-breadcrumbs">
+  <section class="sentry-page-breadcrumbs">
     <h3 class="sentry-page-breadcrumbs__title">breadcrumbs</h3>
     <div class="sentry-page-breadcrumbs__in">
       <nav
@@ -11,11 +28,10 @@
         <div class="sentry-page-breadcrumbs__nav-col-title">time</div>
       </nav>
 
-      <div class="sentry-page-breadcrumbs__cols-wr">
+      <div v-if="breadcrumbs" class="sentry-page-breadcrumbs__cols-wr">
         <div
-          v-for="b in event.breadcrumbs.values"
+          v-for="b in breadcrumbs"
           :key="b"
-          style="grid-template-columns: 1fr 100px 200px"
           class="sentry-page-breadcrumbs__cols"
         >
           <div class="sentry-page-breadcrumbs__col">
@@ -51,42 +67,13 @@
             {{ b.level }}
           </div>
           <div class="sentry-page-breadcrumbs__col">
-            {{ date(b.timestamp) }}
+            {{ formatDate(b.timestamp) }}
           </div>
         </div>
       </div>
     </div>
   </section>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { Sentry } from "~/config/types";
-import moment from "moment";
-import { CodeSnippet } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    CodeSnippet,
-  },
-  props: {
-    event: {
-      type: Object as PropType<Sentry>,
-      required: true,
-    },
-  },
-  computed: {
-    hasBreadcrumbs() {
-      return this.event.breadcrumbs?.values.length > 0;
-    },
-  },
-  methods: {
-    date(timestamp: number): string {
-      return moment.unix(timestamp).fromNow();
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";
@@ -119,6 +106,7 @@ export default defineComponent({
 
 .sentry-page-breadcrumbs__cols {
   @apply grid text-xs;
+  grid-template-columns: 1fr 100px 200px;
 }
 
 .sentry-page-breadcrumbs__col {

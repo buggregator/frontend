@@ -24,7 +24,7 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/src/shared/types";
 import { useNuxtApp, useRoute, useRouter, useFetch } from "#app";
-import SentryPage from "~/components/SentryPage/SentryPage.vue";
+import { SentryPage } from "~/src/screens/sentry";
 import { PageHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 

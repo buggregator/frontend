@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
-import SentryPageTags from '~/components/SentryPageTags/SentryPageTags.vue';
-import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
 import { useSentry } from "~/src/entities/sentry";
+import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
+import SentryPageTags from './sentry-page-tags.vue';
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Sentry/Page/SentryPageTags",
+  title: "FSD/screens/sentry/SentryPageTags",
   component: SentryPageTags
 } as Meta<typeof SentryPageTags>;
 
@@ -23,11 +23,11 @@ const Template: Story = (args) => ({
 export const Laravel = Template.bind({});
 
 Laravel.args = {
-  event: normalizeSentryEvent(sentryLaravelMock).payload,
+  payload: normalizeSentryEvent(sentryLaravelMock).payload,
 };
 
 export const Spiral = Template.bind({});
 
 Spiral.args = {
-  event: normalizeSentryEvent(sentrySpiralMock).payload,
+  payload: normalizeSentryEvent(sentrySpiralMock).payload,
 };

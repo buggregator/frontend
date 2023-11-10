@@ -1,3 +1,30 @@
+<script lang="ts" setup>
+import { computed } from "vue";
+import type { Sentry } from "~/src/entities/sentry/types";
+import { SentryVersion } from "~/src/entities/sentry/types";
+import { CodeSnippet } from "~/src/shared/ui";
+
+type Props = {
+  payload: Sentry;
+};
+
+const props = defineProps<Props>();
+
+const contextsRuntime = computed(() => {
+  const { name = "", version = "" } =
+    (props.payload.contexts?.runtime as SentryVersion) || {};
+
+  return { name, version };
+});
+
+const contextsOS = computed(() => {
+  const { name = "", version = "" } =
+    (props.payload.contexts?.os as SentryVersion) || {};
+
+  return { name, version };
+});
+</script>
+
 <template>
   <section class="sentry-page-tags">
     <h3 class="sentry-page-tags__title">tags</h3>
@@ -19,11 +46,11 @@
         </p>
       </div>
 
-      <div v-if="event.sdk.name" class="sentry-page-tags__box">
+      <div v-if="payload.sdk.name" class="sentry-page-tags__box">
         <span class="sentry-page-tags__box-title">sdk</span>
-        <h4 class="sentry-page-tags__box-name">{{ event.sdk.name }}</h4>
+        <h4 class="sentry-page-tags__box-name">{{ payload.sdk.name }}</h4>
         <p class="sentry-page-tags__box-value">
-          Version: {{ event.sdk.version }}
+          Version: {{ payload.sdk.version }}
         </p>
       </div>
     </div>
@@ -32,13 +59,13 @@
       <div class="sentry-page-tags__label">
         <div class="sentry-page-tags__label-name">env</div>
         <div class="sentry-page-tags__label-value">
-          {{ event.environment }}
+          {{ payload.environment }}
         </div>
       </div>
-      <div v-if="event.logger" class="sentry-page-tags__label">
+      <div v-if="payload.logger" class="sentry-page-tags__label">
         <div class="sentry-page-tags__label-name">logger</div>
         <div class="sentry-page-tags__label-value">
-          {{ event.logger }}
+          {{ payload.logger }}
         </div>
       </div>
       <div v-if="contextsOS.name" class="sentry-page-tags__label">
@@ -53,50 +80,22 @@
           {{ contextsRuntime.name }} {{ contextsRuntime.version }}
         </div>
       </div>
-      <div v-if="event.serverName" class="sentry-page-tags__label">
+      <div v-if="payload.server_name" class="sentry-page-tags__label">
         <div class="sentry-page-tags__label-name">server name</div>
         <div class="sentry-page-tags__label-value">
-          {{ event.serverName }}
+          {{ payload.server_name }}
         </div>
       </div>
     </div>
 
     <CodeSnippet
-      v-if="event.tags"
+      v-if="payload.tags"
       class="mt-3"
       language="json"
-      :code="event.tags"
+      :code="payload.tags"
     />
   </section>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { Sentry } from "~/config/types";
-import { CodeSnippet } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    CodeSnippet,
-  },
-  props: {
-    event: {
-      type: Object as PropType<Sentry>,
-      required: true,
-    },
-  },
-  computed: {
-    contextsRuntime() {
-      const runtime = this.event?.contexts?.runtime || {};
-      return { name: runtime?.name, version: runtime?.version };
-    },
-    contextsOS() {
-      const os = this.event?.contexts?.os || {};
-      return { name: os?.name, version: os?.version };
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";
