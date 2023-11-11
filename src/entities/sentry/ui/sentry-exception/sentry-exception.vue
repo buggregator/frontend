@@ -5,7 +5,7 @@ import SentryExceptionFrame from "./sentry-exception-frame.vue";
 
 type Props = {
   exception: SentryException;
-  maxFrames: number;
+  maxFrames?: number;
 };
 
 const props = withDefaults(defineProps<Props>(), {

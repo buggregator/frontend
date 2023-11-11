@@ -35,7 +35,7 @@ const initialize: TInitialize = ({
     onNodeHover(event.target, event.originalEvent);
   });
 
-  cy.on("mouseout", "node", (event: EventObjectNode) => {
+  cy.on("mouseout", "node", () => {
     onNodeHover(undefined, undefined);
   });
 

@@ -1,10 +1,8 @@
 import {
-  HttpDump,
   Inspector,
   InspectorTransaction,
   NormalizedEvent,
   RayDump,
-  SMTP,
 } from "~/config/types";
 import { RAY_EVENT_TYPES } from "~/config/constants";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";

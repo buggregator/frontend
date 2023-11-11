@@ -1,3 +1,14 @@
 {
-  "extends": ["../.eslintrc.json", "plugin:@conarti/feature-sliced/recommended"]
+  "extends": [
+    "../.eslintrc.json",
+    "plugin:@conarti/feature-sliced/recommended"
+  ],
+  "parserOptions": {
+    "project": "../tsconfig.json",
+    "extraFileExtensions": [".vue"],
+    "parser": {
+      "ts": "@typescript-eslint/parser",
+      "<template>": "espree"
+    }
+  }
 }

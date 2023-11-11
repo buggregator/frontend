@@ -1,5 +1,3 @@
-import { NormalizedEvent } from "~/src/shared/types";
-
 export interface ProfilerCost {
   [key: string]: number,
   "ct": number,
