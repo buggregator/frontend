@@ -23,5 +23,5 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  app: normalizeSentryEvent(sentryCommonMock).payload.contexts.app,
+  app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app,
 };

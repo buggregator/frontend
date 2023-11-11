@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { SentryApp } from "~/src/entities/sentry/types";
+import { SentryContextApp } from "~/src/entities/sentry/types";
 import { TableBaseRow, TableBase, CodeSnippet } from "~/src/shared/ui";
 
 type Props = {
-  app: SentryApp;
+  app: SentryContextApp;
 };
 
 defineProps<Props>();

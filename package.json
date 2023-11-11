@@ -65,6 +65,7 @@
     "@highlightjs/vue-plugin": "^2.1.2",
     "@hpcc-js/wasm": "^2.8.0",
     "@pinia/nuxt": "^0.4.6",
+    "@sentry/types": "^7.80.0",
     "@storybook/addon-actions": "^6.5.15",
     "@storybook/vue3": "^6.5.16",
     "@types/lodash": "^4.14.200",

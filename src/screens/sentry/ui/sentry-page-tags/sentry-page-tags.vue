@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { Sentry } from "~/src/entities/sentry/types";
-import { SentryVersion } from "~/src/entities/sentry/types";
+import type {
+  Sentry,
+  SentryContextRuntime,
+  SentryContextOS,
+} from "~/src/entities/sentry/types";
 import { CodeSnippet } from "~/src/shared/ui";
 
 type Props = {
@@ -12,14 +15,14 @@ const props = defineProps<Props>();
 
 const contextsRuntime = computed(() => {
   const { name = "", version = "" } =
-    (props.payload.contexts?.runtime as SentryVersion) || {};
+    (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
   return { name, version };
 });
 
 const contextsOS = computed(() => {
   const { name = "", version = "" } =
-    (props.payload.contexts?.os as SentryVersion) || {};
+    (props.payload.contexts?.os as SentryContextOS) || {};
 
   return { name, version };
 });
@@ -46,7 +49,7 @@ const contextsOS = computed(() => {
         </p>
       </div>
 
-      <div v-if="payload.sdk.name" class="sentry-page-tags__box">
+      <div v-if="payload.sdk && payload.sdk.name" class="sentry-page-tags__box">
         <span class="sentry-page-tags__box-title">sdk</span>
         <h4 class="sentry-page-tags__box-name">{{ payload.sdk.name }}</h4>
         <p class="sentry-page-tags__box-value">

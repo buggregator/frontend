@@ -17,7 +17,8 @@
     "package.json",
     "postcss.config.js",
     "tailwind.config.js",
-    "vendor/"
+    "vendor/",
+    "src/.eslintrc.json"
   ],
   "parserOptions": {
     "project": "./tsconfig.json",
