@@ -13,6 +13,8 @@ import {
 } from "~/config/types";
 import {EVENT_TYPES, RAY_EVENT_TYPES} from "~/config/constants";
 
+import {pick} from "lodash";
+
 const normalizeObjectValue = (object: object | unknown[]): object =>
   Object.entries(object).reduce((acc: object, [key, value]) => ({
     ...acc,
@@ -116,6 +118,21 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
 })
 
 export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEvent => {
+  let origin = {
+    php_version: event.payload.meta?.php_version,
+    laravel_version: event.payload.meta?.laravel_version,
+  }
+
+  event.payload.payloads
+    .forEach(payload => {
+      if (payload.hasOwnProperty('origin')) {
+        origin = {
+          ...origin,
+          ...pick(payload.origin, ['file', 'line_number', 'hostname']),
+        }
+      }
+    })
+
   const labels = event.payload.payloads
     .filter(payload => payload.type === 'label')
     .map(payload => payload.content.label)
@@ -139,7 +156,7 @@ export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEv
     id: event.uuid,
     type: EVENT_TYPES.RAY_DUMP,
     labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
-    origin: null,
+    origin: origin,
     serverName: "",
     date: new Date(event.timestamp * 1000),
     color,
