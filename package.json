@@ -9,7 +9,9 @@
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
     "prepare": "npx husky install",
-    "lint": "eslint . --fix",
+    "lint": "yarn codestyle && yarn typecheck",
+    "codestyle": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
   "type": "module",
@@ -17,11 +19,8 @@
     "*.{js,ts}": [
       "eslint --fix"
     ],
-    "*.{vue,html}": [
+    "*.{vue,html,json}": [
       "eslint --fix",
-      "prettier --write"
-    ],
-    "*.json": [
       "prettier --write"
     ],
     "*.js": "eslint --cache --fix",

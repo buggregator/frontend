@@ -262,7 +262,8 @@ export interface NormalizedEvent {
   labels: string[],
   origin: object | null,
   serverName: string,
-  date: Date,
+  date: Date | null,
+  color?: string,
   payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
 }
 

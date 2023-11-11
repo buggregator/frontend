@@ -2,7 +2,7 @@ import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
 import { Monolog } from "../types";
 
 export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<Monolog> => {
-  const origin = event.payload.context?.source || null;
+  const origin = event.payload?.context?.source || null;
 
   return {
     id: event.uuid,

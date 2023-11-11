@@ -5,8 +5,9 @@ export type StatusCode = number; // TODO: update type
 export interface Monolog {
   message: string,
   context: {
-    source: Source
-  } | Record<string, unknown> | unknown,
+    source?: Source,
+    [key: string]: unknown
+  },
   level: StatusCode,
   level_name: string,
   channel: string,

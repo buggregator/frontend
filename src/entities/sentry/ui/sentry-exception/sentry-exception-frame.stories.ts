@@ -24,5 +24,5 @@ export const Frame = Template.bind({});
 
 Frame.args = {
   isOpen: true,
-  frame: normalizeSentryEvent(sentrySpiralMock).payload.exception?.values[0]?.stacktrace?.frames[1],
+  frame: normalizeSentryEvent(sentrySpiralMock).payload?.exception?.values?.[0]?.stacktrace?.frames?.[1],
 };

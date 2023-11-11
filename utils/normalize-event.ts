@@ -13,7 +13,7 @@ export const normalizeFallbackEvent = (event: ServerEvent<unknown>): NormalizedE
   labels: [event.type],
   origin: null,
   serverName: "",
-  date: new Date(event.timestamp * 1000),
+  date: event.timestamp ? new Date(event.timestamp * 1000) : null,
   payload: event.payload
 })
 
@@ -26,7 +26,7 @@ export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): Normaliz
     labels: [EVENT_TYPES.INSPECTOR],
     origin: {name: transaction.host.hostname, ip: transaction.host.ip, os: transaction.host.os},
     serverName: transaction.host.hostname,
-    date: new Date(event.timestamp * 1000),
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload
   }
 }
@@ -45,11 +45,11 @@ export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEv
 
   const color = event.payload.payloads
     .filter(payload => payload.type === 'color')
-    .map(payload => payload.content.color).shift() || 'black'
+    .map(payload => payload.content?.color).shift() || 'black'
 
   const size = event.payload.payloads
     .filter(payload => payload.type === 'size')
-    .map(payload => payload.content.size).shift() || 'md'
+    .map(payload => payload.content?.size).shift() || 'md'
 
   return {
     id: event.uuid,
@@ -57,7 +57,7 @@ export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEv
     labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
     origin: null,
     serverName: "",
-    date: new Date(event.timestamp * 1000),
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     color,
     size,
     payload: event

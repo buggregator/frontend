@@ -23,11 +23,11 @@ const Template: Story = (args) => ({
 export const Device = Template.bind({});
 
 Device.args = {
-  device: normalizeSentryEvent(sentryCommonMock).payload.contexts.device,
+  device: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.device,
 };
 
 export const Spiral = Template.bind({});
 
 Spiral.args = {
-  device: normalizeSentryEvent(sentrySpiralMock).payload.contexts.device,
+  device: normalizeSentryEvent(sentrySpiralMock).payload?.contexts?.device,
 };
