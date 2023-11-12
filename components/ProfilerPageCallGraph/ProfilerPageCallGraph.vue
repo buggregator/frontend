@@ -17,7 +17,7 @@
             {{ name }}
           </h4>
 
-          <StatBoard :cost="cost" />
+          <StatBoard :cost="cost"/>
         </div>
       </template>
     </RenderGraph>
@@ -38,6 +38,13 @@
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
+        :class="{ 'font-bold': metric === graphMetrics.MEMORY }"
+        @click="setMetric(graphMetrics.MEMORY)"
+      >
+        Memory usage
+      </button>
+      <button
+        class="profiler-page-call-graph__toolbar-action"
         :class="{ 'font-bold': metric === graphMetrics.MEMORY_CHANGE }"
         @click="setMetric(graphMetrics.MEMORY_CHANGE)"
       >
@@ -45,17 +52,17 @@
       </button>
       <button
         class="profiler-page-call-graph__toolbar-action"
-        :class="{ 'font-bold': metric === graphMetrics.MEMORY }"
-        @click="setMetric(graphMetrics.MEMORY)"
+        :class="{ 'font-bold': metric === graphMetrics.CALLS }"
+        @click="setMetric(graphMetrics.CALLS)"
       >
-        Memory usage
+        Calls
       </button>
     </div>
 
     <div
       class="profiler-page-call-graph__toolbar profiler-page-call-graph__toolbar--right"
     >
-      <label class="profiler-page-call-graph__toolbar-input-wr">
+      <label class="profiler-page-call-graph__toolbar-input-wr" v-if="metric !== graphMetrics.CALLS">
         Threshold
 
         <input
@@ -68,6 +75,21 @@
           @input="setThreshold($event.target.value)"
         />
       </label>
+
+
+      <label class="profiler-page-call-graph__toolbar-input-wr">
+        {{ percentLabel }}
+
+        <input
+          class="profiler-page-call-graph__toolbar-input"
+          type="number"
+          :value="min_percent"
+          :min="metric === graphMetrics.CALLS ? 1 : 0"
+          :max="metric === graphMetrics.CALLS ? 1000 : 100"
+          :step="metric === graphMetrics.CALLS ? 10 : 5"
+          @input="setMinPercent($event.target.value)"
+        />
+      </label>
     </div>
   </div>
 </template>
@@ -75,14 +97,14 @@
 <script lang="ts">
 import IconSvg from "~/components/IconSvg/IconSvg.vue";
 
-import { defineComponent, PropType } from "vue";
-import { GraphTypes, Profiler } from "~/config/types";
-import { calcGraphData } from "~/utils/calc-graph-data";
+import {defineComponent, PropType} from "vue";
+import {GraphTypes, Profiler} from "~/config/types";
+import {calcGraphData} from "~/utils/calc-graph-data";
 import RenderGraph from "~/components/RenderGraph/RenderGraph.vue";
 import StatBoard from "~/components/StatBoard/StatBoard.vue";
 
 export default defineComponent({
-  components: { StatBoard, RenderGraph, IconSvg },
+  components: {StatBoard, RenderGraph, IconSvg},
   props: {
     event: {
       type: Object as PropType<Profiler>,
@@ -95,15 +117,19 @@ export default defineComponent({
       isFullscreen: false,
       metric: GraphTypes.CPU as GraphTypes,
       threshold: 1,
+      min_percent: 10,
       isReadyGraph: false,
     };
   },
   computed: {
+    percentLabel() {
+      return this.metric === GraphTypes.CALLS ? "Min calls" : "Percent";
+    },
     graphElements() {
-      return calcGraphData(this.event.edges, this.metric, this.threshold);
+      return calcGraphData(this.event.edges, this.metric, this.threshold, this.min_percent);
     },
     graphKey() {
-      return `${this.metric}-${this.threshold}`;
+      return `${this.metric}-${this.threshold}-${this.min_percent}`;
     },
     graphMetrics() {
       return GraphTypes;
@@ -124,6 +150,9 @@ export default defineComponent({
     },
     setThreshold(threshold: number): void {
       this.threshold = threshold;
+    },
+    setMinPercent(percent: number): void {
+      this.min_percent = percent;
     },
     setReadyGraph(): void {
       this.isReadyGraph = true;

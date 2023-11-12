@@ -3,6 +3,10 @@
     <div v-for="item in statItems" :key="item.title" class="stat-board__item">
       <h4 class="stat-board__item-name">
         {{ item.title }}
+
+        <span class="stat-board__item-percent" v-if="item.percent > 0">
+          [{{ item.percent }}%]
+        </span>
       </h4>
 
       <strong class="stat-board__item-value">
@@ -13,9 +17,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { ProfilerCost } from "~/config/types";
-import { humanFileSize, formatDuration } from "~/utils/formats";
+import {defineComponent, PropType} from "vue";
+import {ProfilerCost} from "~/config/types";
+import {humanFileSize, formatDuration} from "~/utils/formats";
 
 export default defineComponent({
   props: {
@@ -26,26 +30,39 @@ export default defineComponent({
   },
   computed: {
     statItems() {
+
+      const undef = '—';
+
+      let cpu = formatDuration(this.cost.cpu || 0) || undef;
+      let wt = formatDuration(this.cost.wt || 0) || undef;
+      let mu = humanFileSize(this.cost.mu || 0) || undef;
+      let pmu = humanFileSize(this.cost.pmu || 0) || undef;
+
       return [
         {
           title: "Calls",
           value: this.cost.ct || 0,
+          percent: null,
         },
         {
           title: "CPU time",
-          value: formatDuration(this.cost.cpu || 0) || "—",
+          value: cpu,
+          percent: this.cost?.p_cpu,
         },
         {
           title: "Wall time",
-          value: formatDuration(this.cost.wt || 0) || "—",
+          value: wt,
+          percent: this.cost?.p_wt,
         },
         {
           title: "Memory usage",
-          value: humanFileSize(this.cost.mu || 0) || "—",
+          value: mu,
+          percent: this.cost?.p_mu,
         },
         {
           title: "Change memory",
-          value: humanFileSize(this.cost.pmu || 0) || "—",
+          value: pmu,
+          percent: this.cost?.p_pmu,
         },
       ];
     },
@@ -80,5 +97,9 @@ export default defineComponent({
 
 .stat-board__item-value {
   @apply text-2xs sm:text-xs md:text-base truncate;
+}
+
+.stat-board__item-percent {
+  @apply text-2xs truncate ml-1;
 }
 </style>

@@ -61,7 +61,7 @@ const stylesConfig: Stylesheet[] = [
       "target-arrow-color": "data(color)",
       content: "data(label)",
       color: "#fff",
-      "curve-style": "taxi",
+      "curve-style": "bezier",
       "taxi-direction": "downward",
       "edge-distances": "node-position",
       "control-point-distance": "5px",
