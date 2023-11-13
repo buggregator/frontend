@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
-import { GraphTypes } from "~/config/types";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { useCytoscape } from "~/src/shared/lib/cytoscape";
+import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';
 
 const { buildData } = useCytoscape();

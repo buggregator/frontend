@@ -1,5 +1,7 @@
 // TODO: need to move types to FSD structure
-import { GraphTypes, ProfilerEdge, ProfilerEdges } from "~/config/types";
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
+import { GraphTypes } from "../../types";
 import { useFormats } from "../formats";
 import { TEdge, TNode } from "./types";
 

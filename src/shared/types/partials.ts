@@ -12,3 +12,9 @@ export interface Attachment {
   mime: string,
   uri: string
 }
+
+export enum GraphTypes {
+  CPU = 'cpu' ,
+  MEMORY_CHANGE = 'pmu',
+  MEMORY = 'mu'
+}

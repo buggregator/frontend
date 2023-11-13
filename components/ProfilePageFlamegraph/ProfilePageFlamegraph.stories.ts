@@ -1,5 +1,5 @@
 import {Meta, Story} from "@storybook/vue3";
-import { Profiler } from "~/config/types";
+import { Profiler } from "~/src/entities/profiler/types";
 import ProfilePageFlamegraph from '~/components/ProfilePageFlamegraph/ProfilePageFlamegraph.vue';
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { useProfiler } from "~/src/entities/profiler/lib";

@@ -1,12 +1,12 @@
 import { Meta, Story } from "@storybook/vue3";
-import ProfilerPage from '~/components/ProfilerPage/ProfilerPage.vue';
+import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { useProfiler } from "~/src/entities/profiler/lib";
+import ProfilerPage from './profiler-page.vue';
 
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "Profiler/Page/ProfilerPage",
+  title: "FSD/screens/profiler/ProfilerPage",
   component: ProfilerPage
 } as Meta<typeof ProfilerPage>;
 

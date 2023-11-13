@@ -1,4 +1,5 @@
-import { ProfilerCost } from "~/config/types";
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { ProfilerCost } from "~/src/entities/profiler/types";
 
 export type TNode = {
   data: {

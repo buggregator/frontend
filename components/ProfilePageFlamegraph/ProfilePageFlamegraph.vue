@@ -10,7 +10,7 @@
 <script lang="ts">
 import { FlameChart, FlameChartNode } from "flame-chart-js";
 import { defineComponent, PropType } from "vue";
-import { ProfilerEdges } from "~/config/types";
+import { ProfilerEdges } from "~/src/entities/profiler/types";
 import FlamegraphBuilder from "~/utils/flamegraph-builder";
 
 export default defineComponent({

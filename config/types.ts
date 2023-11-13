@@ -1,5 +1,6 @@
 import { EventId, EventType } from "~/src/shared/types";
 import { Sentry } from "~/src/entities/sentry/types";
+import { Profiler } from "~/src/entities/profiler/types";
 
 export type StatusCode = number; // TODO: update type
 export type Email = string; // TODO: update type
@@ -168,34 +169,6 @@ export interface HttpDump {
   }
 }
 
-export interface ProfilerCost {
-  [key: string]: number,
-  "ct": number,
-  "wt": number,
-  "cpu": number,
-  "mu": number,
-  "pmu": number
-}
-
-export interface ProfilerEdge {
-  caller: string | null,
-  callee: string,
-  cost: ProfilerCost
-}
-
-export type ProfilerEdges = Record<string, ProfilerEdge>
-
-export interface Profiler {
-  tags: {
-    [key: string]: string | null | number
-  },
-  app_name: string,
-  hostname: string,
-  date: number,
-  peaks: ProfilerCost,
-  edges: ProfilerEdges
-}
-
 export interface InspectorTransaction {
   model: string,
   name: string,
@@ -267,9 +240,3 @@ export interface NormalizedEvent {
   payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
 }
 
-
-export enum GraphTypes {
-  CPU = 'cpu' ,
-  MEMORY_CHANGE = 'pmu',
-  MEMORY = 'mu'
-}
