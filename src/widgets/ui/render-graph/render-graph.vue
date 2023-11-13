@@ -2,7 +2,7 @@
 // TODO: need to fix cytoscape console warnings
 import type { ElementsDefinition, NodeSingular } from "cytoscape";
 import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
-import { useCytoscape } from "~/src/shared/lib/cytoscape";
+import { useRenderGraph } from "./use-render-graph";
 
 type Props = {
   elements: ElementsDefinition;
@@ -56,7 +56,7 @@ const onNodeHover = (target?: NodeSingular, event?: MouseEvent) => {
   };
 };
 
-const { initialize } = useCytoscape();
+const { initialize } = useRenderGraph();
 
 onMounted(() => {
   destroyFn.value = initialize({

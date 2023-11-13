@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue";
-import { RenderGraph } from "~/src/widgets/ui";
+import { RenderGraph, useRenderGraph } from "~/src/widgets/ui";
 import type { Profiler } from "~/src/entities/profiler/types";
-import { useCytoscape } from "~/src/shared/lib/cytoscape";
 import { GraphTypes } from "~/src/shared/types";
 import { IconSvg } from "~/src/shared/ui";
 import { CallStatBoard } from "../call-stat-board";
 
-// TODO: move buildData to renderGraph context instead of cytoscape context.
-const { buildData } = useCytoscape();
+const { prepare } = useRenderGraph();
 
 type Props = {
   payload: Profiler;
@@ -24,7 +22,7 @@ const isReadyGraph = ref(false);
 const container = ref<HTMLElement>();
 
 const graphElements = computed(() =>
-  buildData(props.payload.edges, metric.value, threshold.value)
+  prepare(props.payload.edges, metric.value, threshold.value)
 );
 
 const graphKey = computed(() => `${metric.value}-${threshold.value}`);

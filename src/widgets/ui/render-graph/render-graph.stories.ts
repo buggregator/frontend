@@ -1,10 +1,10 @@
 import { Meta, Story } from "@storybook/vue3";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { useCytoscape } from "~/src/shared/lib/cytoscape";
 import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';
+import { useRenderGraph } from "./use-render-graph";
 
-const { buildData } = useCytoscape();
+const { prepare } = useRenderGraph();
 export default {
   title: "FSD/widgets/RenderGraph",
   component: RenderGraph
@@ -49,17 +49,17 @@ TestData.args = {
 export const ProfilerData = Template.bind({});
 
 ProfilerData.args = {
-  elements: buildData(profilerMock.payload.edges, GraphTypes.CPU, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1)
 };
 
 export const ProfilerMemoryData = Template.bind({});
 
 ProfilerMemoryData.args = {
-  elements: buildData(profilerMock.payload.edges, GraphTypes.MEMORY, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1)
 };
 
 export const ProfilerMemoryChangeData = Template.bind({});
 
 ProfilerMemoryChangeData.args = {
-  elements: buildData(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
 };

@@ -1,8 +1,6 @@
-// TODO: need to move types to FSD structure
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
 import { ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
-import { GraphTypes } from "../../types";
-import { useFormats } from "../formats";
+import { useFormats } from "~/src/shared/lib/formats";
+import { GraphTypes } from "~/src/shared/types";
 import { TEdge, TNode } from "./types";
 
 const { formatDuration, formatFileSize } = useFormats();
