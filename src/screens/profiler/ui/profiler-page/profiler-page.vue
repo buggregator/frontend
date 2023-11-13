@@ -2,7 +2,6 @@
 import { computed, ref } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import { Tabs, Tab } from "vue3-tabs-component";
-import ProfilePageFlamegraph from "~/components/ProfilePageFlamegraph/ProfilePageFlamegraph.vue";
 import type { Profiler, ProfilerEdge } from "~/src/entities/profiler/types";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { StatBoard } from "~/src/shared/ui";
@@ -10,6 +9,7 @@ import type { CallStackHoverData } from "../../types";
 import { CallGraph } from "../call-graph";
 import { CallStack } from "../call-stack";
 import { CallStatBoard } from "../call-stat-board";
+import { FlameGraph } from "../flame-graph";
 
 type Props = {
   event: NormalizedEvent<Profiler>;
@@ -92,7 +92,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
             </Tab>
 
             <Tab name="Flamechart">
-              <ProfilePageFlamegraph
+              <FlameGraph
                 v-if="activeTab === 'Flamechart'"
                 :key="activeTab"
                 :data-key="activeTab"

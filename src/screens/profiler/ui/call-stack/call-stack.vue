@@ -11,7 +11,7 @@ type Props = {
 
 type Emits = {
   hover: [value: CallStackHoverData];
-  hide: [value: boolean];
+  hide: [];
 };
 
 const props = defineProps<Props>();
