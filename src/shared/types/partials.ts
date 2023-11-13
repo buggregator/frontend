@@ -16,5 +16,6 @@ export interface Attachment {
 export enum GraphTypes {
   CPU = 'cpu' ,
   MEMORY_CHANGE = 'pmu',
-  MEMORY = 'mu'
+  MEMORY = 'mu',
+  CALLS = 'calls',
 }

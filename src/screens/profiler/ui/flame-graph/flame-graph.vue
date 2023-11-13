@@ -98,6 +98,6 @@ onMounted(() => {
 }
 
 .flame-graph__canvas {
-  @apply bg-gray-300 w-full h-full;
+  @apply bg-gray-300 w-full h-full px-5;
 }
 </style>

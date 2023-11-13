@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, defineProps } from "vue";
-import type { ProfilerCost } from "~/config/types";
+import type { ProfilerCost } from "~/src/entities/profiler/types";
 import { useFormats } from "../../lib/formats";
 
 const { formatDuration, formatFileSize } = useFormats();
@@ -15,22 +15,27 @@ const statItems = computed(() => [
   {
     title: "Calls",
     value: props.cost.ct || 0,
+    percent: null,
   },
   {
     title: "CPU time",
     value: formatDuration(props.cost.cpu || 0) || "—",
+    percent: props.cost?.p_cpu,
   },
   {
     title: "Wall time",
     value: formatDuration(props.cost.wt || 0) || "—",
+    percent: props.cost?.p_wt,
   },
   {
     title: "Memory usage",
     value: formatFileSize(props.cost.mu || 0) || "—",
+    percent: props.cost?.p_mu,
   },
   {
     title: "Change memory",
     value: formatFileSize(props.cost.pmu || 0) || "—",
+    percent: props.cost?.p_pmu,
   },
 ]);
 </script>
@@ -40,6 +45,10 @@ const statItems = computed(() => [
     <div v-for="item in statItems" :key="item.title" class="stat-board__item">
       <h4 class="stat-board__item-name">
         {{ item.title }}
+
+        <span v-if="item.percent > 0" class="stat-board__item-name-detail">
+          [{{ item.percent }}%]
+        </span>
       </h4>
 
       <strong class="stat-board__item-value">
@@ -73,6 +82,10 @@ const statItems = computed(() => [
 
 .stat-board__item-name {
   @apply text-gray-600 dark:text-gray-300 font-bold text-2xs mb-1 uppercase truncate;
+}
+
+.stat-board__item-name-detail {
+  @apply text-2xs truncate ml-1;
 }
 
 .stat-board__item-value {

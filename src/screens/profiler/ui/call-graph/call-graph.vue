@@ -17,15 +17,22 @@ const props = defineProps<Props>();
 const isFullscreen = ref(false);
 const metric = ref(GraphTypes.CPU as GraphTypes);
 const threshold = ref(1);
+const percent = ref(10);
 const isReadyGraph = ref(false);
 
 const container = ref<HTMLElement>();
 
 const graphElements = computed(() =>
-  prepare(props.payload.edges, metric.value, threshold.value)
+  prepare(props.payload.edges, metric.value, threshold.value, percent.value)
 );
 
-const graphKey = computed(() => `${metric.value}-${threshold.value}`);
+const percentLabel = computed(() =>
+  metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"
+);
+
+const graphKey = computed(
+  () => `${metric.value}-${threshold.value}-${percent.value}`
+);
 
 const graphHeight = computed(() =>
   isFullscreen.value
@@ -44,6 +51,10 @@ const setMetric = (value: GraphTypes) => {
 
 const setThreshold = (value: number) => {
   threshold.value = value;
+};
+
+const setMinPercent = (value: number) => {
+  percent.value = value;
 };
 </script>
 
@@ -97,10 +108,22 @@ const setThreshold = (value: number) => {
       >
         Memory usage
       </button>
+      <button
+        class="call-graph__toolbar-action"
+        :class="{
+          'call-graph__toolbar-action--active': metric === GraphTypes.CALLS,
+        }"
+        @click="setMetric(GraphTypes.CALLS)"
+      >
+        Calls
+      </button>
     </div>
 
     <div class="call-graph__toolbar call-graph__toolbar--right">
-      <label class="call-graph__toolbar-input-wr">
+      <label
+        v-if="metric !== GraphTypes.CALLS"
+        class="call-graph__toolbar-input-wr"
+      >
         Threshold
 
         <input
@@ -111,6 +134,20 @@ const setThreshold = (value: number) => {
           :max="10"
           :step="0.1"
           @input="setThreshold($event.target.value)"
+        />
+      </label>
+
+      <label class="call-graph__toolbar-input-wr">
+        {{ percentLabel }}
+
+        <input
+          class="call-graph__toolbar-input"
+          type="number"
+          :value="percent"
+          :min="metric === GraphTypes.CALLS ? 1 : 0"
+          :max="metric === GraphTypes.CALLS ? 1000 : 100"
+          :step="metric === GraphTypes.CALLS ? 10 : 5"
+          @input="setMinPercent($event.target.value)"
         />
       </label>
     </div>

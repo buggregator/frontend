@@ -80,6 +80,7 @@
     "html-to-image": "^1.11.4",
     "lodash.debounce": "^4.0.8",
     "lodash.isstring": "^4.0.1",
+    "lodash.pick": "^4.4.0",
     "moment": "^2.29.4",
     "nuxt": "3.3.3",
     "pinia": "^2.0.30",
