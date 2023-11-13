@@ -4,13 +4,11 @@ import { computed } from "vue";
 import { SentryException } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
 import { NormalizedEvent } from "~/src/shared/types";
-import {
-  SentryPageTags,
-  SentryPageRequest,
-  SentryPageDevice,
-  SentryPageBreadcrumbs,
-  SentryPageApp,
-} from "./ui";
+import { SentryPageApp } from "../sentry-page-app";
+import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs";
+import { SentryPageDevice } from "../sentry-page-device";
+import { SentryPageRequest } from "../sentry-page-request";
+import { SentryPageTags } from "../sentry-page-tags";
 
 type Props = {
   event: NormalizedEvent<Sentry>;
