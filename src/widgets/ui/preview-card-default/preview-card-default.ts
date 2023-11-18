@@ -1,21 +1,21 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeFallbackEvent } from "~/utils/normalize-event";
-import PreviewFallback from '~/components/PreviewFallback/PreviewFallback.vue';
 import { monologMock } from '~/src/entities/monolog/mocks'
+import PreviewCardDefault from './preview-card-default.vue';
 
 export default {
-  title: "Preview/PreviewFallback",
-  component: PreviewFallback
-} as Meta<typeof PreviewFallback>;
+  title: "FSD/widgets/PreviewCardDefault",
+  component: PreviewCardDefault
+} as Meta<typeof PreviewCardDefault>;
 
 const Template: Story = (args) => ({
-  components: { PreviewFallback },
+  components: { PreviewCardDefault },
   setup() {
     return {
       args,
     };
   },
-  template: `<PreviewFallback v-bind="args" />`,
+  template: `<PreviewCardDefault v-bind="args" />`,
 });
 
 export const Default = Template.bind({});
