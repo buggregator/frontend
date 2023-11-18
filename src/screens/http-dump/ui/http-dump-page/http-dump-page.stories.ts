@@ -6,7 +6,7 @@ import HttpDumpPage from "./http-dump-page.vue";
 const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
-  title: "HttpDump/Page/HttpDumpPage",
+  title: "FSD/screens/http-dump/HttpDumpPage",
   component: HttpDumpPage
 } as Meta<typeof HttpDumpPage>;
 
