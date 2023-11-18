@@ -31,17 +31,45 @@
 
       <section class="smtp-page__body">
         <Tabs :options="{ useUrlFragment: false }">
-          <Tab name="Preview">
+          <Tab
+            v-if="isHtml"
+            id="html-preview"
+            name="Preview"
+            suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
+          >
             <SmtpPagePreview device="tablet">
               <div v-html="htmlSource" />
             </SmtpPagePreview>
           </Tab>
-          <Tab name="HTML">
+          <Tab v-if="isHtml" name="HTML">
             <CodeSnippet
               language="html"
               class="max-w-full"
               :code="event.payload.html"
             />
+          </Tab>
+          <Tab v-if="isText" name="Text">
+            <CodeSnippet
+              language="html"
+              class="max-w-full"
+              :code="event.payload.text"
+            />
+          </Tab>
+          <Tab
+            v-if="attachments.length"
+            name="Attachments"
+            :suffix="`<span class='smtp-page__body-tab-badge'>${attachments.length}</span>`"
+          >
+            <section class="mb-5">
+              <div class="flex gap-x-3">
+                <FileAttachment
+                  v-for="a in attachments"
+                  :key="a.id"
+                  :event="event"
+                  :attachment="a"
+                />
+              </div>
+            </section>
           </Tab>
           <Tab name="Raw">
             <CodeSnippet language="html" :code="event.payload.raw" />
@@ -75,21 +103,6 @@
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>
-            </section>
-
-            <section v-if="attachments.length">
-              <h3 class="mt-3 mb-3 font-bold">
-                Attachments ({{ attachments.length }})
-              </h3>
-
-              <div class="flex gap-x-3">
-                <FileAttachment
-                  v-for="attachment in attachments"
-                  :key="attachment.id"
-                  :event-id="event.id"
-                  :attachment="attachment"
-                />
-              </div>
             </section>
           </Tab>
         </Tabs>
@@ -131,7 +144,8 @@ export default defineComponent({
     },
     htmlSource: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
   },
   data() {
@@ -161,6 +175,16 @@ export default defineComponent({
     };
   },
   computed: {
+    isHtml(): boolean {
+      return (
+        this.event.payload?.html !== null && this.event.payload?.html !== ""
+      );
+    },
+    isText(): boolean {
+      return (
+        this.event.payload?.text !== null && this.event.payload?.text !== ""
+      );
+    },
     mail() {
       return this.event.payload;
     },
@@ -244,5 +268,9 @@ export default defineComponent({
   .tabs-component-panel {
     @apply flex-1 flex flex-col;
   }
+}
+
+.smtp-page__body-tab-badge {
+  @apply bg-red-800 ml-2 text-2xs px-2 py-1 rounded text-white uppercase;
 }
 </style>
