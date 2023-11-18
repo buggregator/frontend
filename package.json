@@ -19,8 +19,11 @@
     "*.{js,ts}": [
       "eslint --fix"
     ],
-    "*.{vue,html,json}": [
+    "*.{vue,html}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json}": [
       "prettier --write"
     ],
     "*.js": "eslint --cache --fix",
