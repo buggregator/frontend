@@ -48,8 +48,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import PagePlaceholder from "~/components/PagePlaceholder/PagePlaceholder.vue";
-import { PageHeader, EventCard } from "~/src/widgets/ui";
+import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
 import { useNuxtApp } from "#app";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import pluralize from "pluralize";
