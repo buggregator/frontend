@@ -1,12 +1,4 @@
-
-export interface HttpDumpFile {
-  originalName?: string,
-  mime: string,
-  size: number,
-  id: string;
-  name?: string;
-  uri?: string
-}
+import { Attachment } from "~/src/shared/types";
 
 export interface HttpDump {
   received_at: string,
@@ -23,6 +15,6 @@ export interface HttpDump {
     cookies: {
       [key: string]: string
     },
-    files: HttpDumpFile[]
+    files: Attachment[]
   }
 }

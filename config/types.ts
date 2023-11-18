@@ -1,6 +1,4 @@
 import { EventId, EventType } from "~/src/shared/types";
-import { Sentry } from "~/src/entities/sentry/types";
-import { Profiler } from "~/src/entities/profiler/types";
 
 export type StatusCode = number; // TODO: update type
 export type Email = string; // TODO: update type
@@ -141,34 +139,6 @@ export interface RayDump {
   }
 }
 
-export interface HttpDumpFile {
-  originalName?: string,
-  mime: string,
-  size: number,
-  id: string;
-  name?: string;
-  uri?: string
-}
-
-export interface HttpDump {
-  received_at: string,
-  host: string,
-  request: {
-    method: string,
-    uri: string,
-    headers: {
-      [key: string]: string[]
-    },
-    body: string,
-    query: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    post: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    cookies: {
-      [key: string]: string
-    },
-    files: HttpDumpFile[]
-  }
-}
-
 export interface InspectorTransaction {
   model: string,
   name: string,
@@ -237,6 +207,6 @@ export interface NormalizedEvent {
   serverName: string,
   date: Date | null,
   color?: string,
-  payload: Monolog | SMTP | Sentry | VarDump | Profiler | Inspector | HttpDump | RayDump | unknown
+  payload: Monolog | SMTP | VarDump | Inspector | RayDump | unknown
 }
 
