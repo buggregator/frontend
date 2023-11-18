@@ -31,17 +31,36 @@
 
       <section class="smtp-page__body">
         <Tabs :options="{ useUrlFragment: false }">
-          <Tab name="Preview">
+          <Tab id="html-preview" name="Preview" suffix="<span class='preview-tab-badge'>HTML</span>" v-if="isHtml">
             <SmtpPagePreview device="tablet">
               <div v-html="htmlSource" />
             </SmtpPagePreview>
           </Tab>
-          <Tab name="HTML">
+          <Tab name="HTML" v-if="isHtml">
             <CodeSnippet
               language="html"
               class="max-w-full"
               :code="event.payload.html"
             />
+          </Tab>
+          <Tab name="Text" v-if="isText">
+            <CodeSnippet
+              language="html"
+              class="max-w-full"
+              :code="event.payload.text"
+            />
+          </Tab>
+          <Tab name="Attachments" :suffix="`<span class='preview-tab-badge'>${attachments.length}</span>`" v-if="attachments.length">
+            <section class="mb-5">
+              <div class="flex gap-x-3">
+                <SmtpAttachment
+                  v-for="a in attachments"
+                  :key="a.id"
+                  :event="event"
+                  :attachment="a"
+                />
+              </div>
+            </section>
           </Tab>
           <Tab name="Raw">
             <CodeSnippet language="html" :code="event.payload.raw" />
@@ -75,21 +94,6 @@
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </EventTableRow>
               </EventTable>
-            </section>
-
-            <section v-if="attachments.length">
-              <h3 class="mt-3 mb-3 font-bold">
-                Attachments ({{ attachments.length }})
-              </h3>
-
-              <div class="flex gap-x-3">
-                <SmtpAttachment
-                  v-for="a in attachments"
-                  :key="a.id"
-                  :event="event"
-                  :attachment="a"
-                />
-              </div>
             </section>
           </Tab>
         </Tabs>
@@ -128,7 +132,11 @@ export default defineComponent({
     },
     htmlSource: {
       type: String,
-      required: true,
+      required: false,
+    },
+    textSource: {
+      type: String,
+      required: false,
     },
   },
   data() {
@@ -158,6 +166,12 @@ export default defineComponent({
     };
   },
   computed: {
+    isHtml(): boolean {
+      return this.event.payload.html !== null && this.event.payload.html !== "";
+    },
+    isText(): boolean {
+      return this.event.payload.text !== null && this.event.payload.text !== "";
+    },
     mail() {
       return this.event.payload;
     },
