@@ -1,4 +1,4 @@
- 
+
 import { ProfilerCost } from "~/src/entities/profiler/types";
 
 export type TNode = {
@@ -7,7 +7,7 @@ export type TNode = {
     name: string,
     cost?: ProfilerCost,
     color?: string,
-    textColor?: string
+    textColor?: string,
   }
 }
 
@@ -18,5 +18,6 @@ export type TEdge = {
     target: string,
     label?: string,
     color?: string,
+    weight?: number,
   }
 }
