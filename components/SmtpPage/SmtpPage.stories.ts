@@ -1,6 +1,8 @@
 import { Meta, Story } from "@storybook/vue3";
 import { normalizeSMTPEvent } from "~/utils/normalize-event";
-import smtpEventMock from '~/mocks/smtp-welcome.json'
+import smtpEventWelcomeMock from '~/mocks/smtp-welcome.json'
+import smtpEventOrderMock from '~/mocks/smtp-order.json'
+import smtpEventTextMock from '~/mocks/smtp-text.json'
 import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
 
 export default {
@@ -18,11 +20,24 @@ const Template: Story = (args) => ({
   template: `<SmtpPage v-bind="args" />`,
 });
 
+const normalizeEventWelcome = normalizeSMTPEvent(smtpEventWelcomeMock)
+const normalizeEventOrder = normalizeSMTPEvent(smtpEventOrderMock)
+const normalizeEventText = normalizeSMTPEvent(smtpEventTextMock)
+
 export const Default = Template.bind({});
-
-const normalizeEvent = normalizeSMTPEvent(smtpEventMock)
-
 Default.args = {
-  event: normalizeEvent,
-  htmlSource: normalizeEvent.payload.html
+  event: normalizeEventWelcome,
+  htmlSource: normalizeEventWelcome.payload.html
+};
+
+export const Order = Template.bind({});
+Order.args = {
+  event: normalizeEventOrder,
+  htmlSource: normalizeEventOrder.payload.html
+};
+
+export const Text = Template.bind({});
+Text.args = {
+  event: normalizeEventText,
+  htmlSource: normalizeEventText.payload.html
 };
