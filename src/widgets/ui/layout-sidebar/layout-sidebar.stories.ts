@@ -1,8 +1,8 @@
 import { Meta, Story } from "@storybook/vue3";
-import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
+import LayoutSidebar from "./layout-sidebar.vue";
 
 export default {
-  title: "Components/LayoutSidebar",
+  title: "FSD/widgets/LayoutSidebar",
   component: LayoutSidebar
 }as Meta<typeof LayoutSidebar>;
 
@@ -18,5 +18,6 @@ const Template: Story = (args) => ({
 
 export const Default = Template.bind({});
 Default.args = {
-  isConnected: true,
+  apiVersion: "v1.0.0",
+  clientVersion: "v1.0.0",
 };

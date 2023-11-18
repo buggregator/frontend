@@ -1,3 +1,28 @@
+<script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { useConnectionStore } from "~/stores/connections";
+import { IconSvg } from "~/src/shared/ui";
+
+type Props = {
+  apiVersion: string;
+  clientVersion: string;
+};
+
+defineProps<Props>();
+
+const connectionStore = useConnectionStore();
+const { isConnectedWS } = storeToRefs(connectionStore);
+
+const connectionStatus = computed(() =>
+  isConnectedWS.value ? "connected" : "disconnected"
+);
+
+const connectionText = computed(
+  () => `WS connection is ${connectionStatus.value}`
+);
+</script>
+
 <template>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
@@ -63,38 +88,6 @@
     </div>
   </aside>
 </template>
-
-<script lang="ts">
-import { IconSvg } from "~/src/shared/ui";
-import { defineComponent } from "vue";
-import { useConnectionStore } from "~/stores/connections";
-import { storeToRefs } from "pinia";
-
-export default defineComponent({
-  components: { IconSvg },
-  props: {
-    apiVersion: {
-      type: String,
-      default: "@dev",
-    },
-    clientVersion: {
-      type: String,
-      default: "@dev",
-    },
-  },
-  computed: {
-    connectionStatus() {
-      const connectionStore = useConnectionStore();
-      const { isConnectedWS } = storeToRefs(connectionStore);
-
-      return isConnectedWS.value ? "connected" : "disconnected";
-    },
-    connectionText() {
-      return `WS connection is ${this.connectionStatus}`;
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .layout-sidebar {

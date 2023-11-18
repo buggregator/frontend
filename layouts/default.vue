@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import LayoutSidebar from "~/components/LayoutSidebar/LayoutSidebar.vue";
+import { LayoutSidebar } from "~/src/widgets/ui";
 import { defineComponent } from "vue";
 import { useSettingsStore } from "~/stores/settings";
 import { storeToRefs } from "pinia";
