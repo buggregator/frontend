@@ -139,66 +139,6 @@ export interface RayDump {
   }
 }
 
-export interface InspectorTransaction {
-  model: string,
-  name: string,
-  type: string,
-  hash: string,
-  host: {
-    hostname: string,
-    ip: string
-    os: string,
-  },
-  http: {
-    request: {
-      method: string,
-      version: string,
-      socket: {
-        remote_address: string,
-        [key: string]: string
-      },
-      cookies: {
-        [key: string]: string
-      },
-      headers: {
-        [key: string]: string
-      }
-    },
-    url: {
-      protocol: string,
-      port: number | string,
-      path: string,
-      search: string,
-      full: string,
-    },
-  },
-  result: string,
-  timestamp: number,
-  memory_peak: number,
-  duration: number,
-}
-
-export interface InspectorSegment {
-  model: string,
-  type: string,
-  label: string,
-  host: {
-    hostname: string,
-    ip: string
-    os: string,
-  },
-  transaction: {
-    name: string,
-    timestamp: number,
-  },
-  start: number,
-  timestamp: number,
-  context: object
-  duration: number,
-}
-
-export type Inspector = InspectorTransaction[] | InspectorSegment[];
-
 export interface NormalizedEvent {
   id: EventId,
   type: EventType | string,
@@ -207,6 +147,6 @@ export interface NormalizedEvent {
   serverName: string,
   date: Date | null,
   color?: string,
-  payload: Monolog | SMTP | VarDump | Inspector | RayDump | unknown
+  payload: Monolog | SMTP | VarDump | RayDump | unknown
 }
 

@@ -1,3 +1,106 @@
+<script lang="ts" setup>
+import { computed, Ref } from "vue";
+import {
+  InspectorSegment,
+  InspectorTransaction,
+  Inspector,
+} from "~/src/entities/inspector/types";
+
+type Props = {
+  payload: Inspector;
+};
+
+const props = defineProps<Props>();
+
+const segmentColor = (color: string): string => {
+  switch (color) {
+    case "sqlite":
+      return "orange";
+    case "view":
+      return "blue";
+    case "artisan":
+      return "purple";
+    default:
+      return "gray";
+  }
+};
+
+const transaction: Ref<InspectorTransaction> = computed(
+  () => props.payload[0] as InspectorTransaction
+);
+
+const grid = computed(() => {
+  let { duration } = transaction.value;
+
+  const totalCells = 5;
+  const width = duration / totalCells + 1;
+  const widthPercent = (100 / (totalCells + 1)).toFixed(2);
+
+  const segments = [duration];
+  for (let i = 0; i < totalCells; i += 1) {
+    const d = Math.abs((duration -= width));
+    segments.push(Math.floor(d));
+  }
+
+  return {
+    segments: segments.reverse(),
+    width,
+    widthPercent,
+  };
+});
+
+interface InspectorItemType {
+  segment: InspectorSegment;
+  transaction: InspectorTransaction;
+}
+
+const segments: Ref<InspectorSegment[]> = computed(() =>
+  (props.payload as Array<InspectorSegment | InspectorTransaction>)
+    .filter(
+      (
+        <T extends keyof InspectorItemType>(type: T) =>
+        (
+          action: InspectorItemType[keyof InspectorItemType]
+        ): action is InspectorItemType[T] =>
+          action.model === type
+      )("segment")
+    )
+    .filter(
+      (segment: InspectorSegment) =>
+        transaction.value.hash === segment?.transaction?.hash
+    )
+);
+
+const segmentTypes = computed(() =>
+  [...new Set(segments.value.map((data) => data.type))].map((type) => ({
+    color: `bg-${segmentColor(type)}-600`,
+    type,
+  }))
+);
+
+const series = computed(() => {
+  const { duration } = transaction.value;
+
+  return segments.value.map((segment: InspectorSegment) => {
+    const widthPercent = Math.max(
+      Number(((segment.duration * 100) / duration).toFixed(2)),
+      0.5
+    );
+
+    const marginPercent = (((segment.start || 0) * 100) / duration).toFixed();
+
+    return {
+      widthPercent,
+      marginPercent,
+      segment,
+      color: `bg-${segmentColor(segment.type)}-600`,
+    };
+  });
+});
+
+// TODO: add hover on time line rows with details
+</script>
+
 <template>
   <section class="inspector-page-timeline">
     <h3 class="inspector-page-timeline__title">Timeline</h3>
@@ -15,9 +118,9 @@
           :class="type.color"
           class="inspector-page-timeline__segment-type__color-box"
         ></div>
-        <span class="inspector-page-timeline__segment-type__label">{{
-          type.type
-        }}</span>
+        <span class="inspector-page-timeline__segment-type__label">
+          {{ type.type }}
+        </span>
       </div>
     </div>
 
@@ -31,6 +134,7 @@
           {{ segment }} ms
         </div>
       </div>
+
       <div
         class="inspector-page-timeline__series"
         :style="{ 'background-size': `${grid.widthPercent}% 20%` }"
@@ -62,108 +166,15 @@
         </div>
       </div>
     </div>
-    <div v-else class="flex w-full flex-col items-center mt-5">
-      <div class="w-1/5">
-        <HeartBeat class="text-blue-300" />
-      </div>
-      <h3 class="text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300">
-        No data
-      </h3>
+
+    <div
+      v-if="series.length === 0"
+      class="inspector-page-timeline__no-segments"
+    >
+      <h3 class="inspector-page-timeline__no-segments-placeholder">No data</h3>
     </div>
   </section>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import {
-  InspectorSegment,
-  InspectorTransaction,
-  Inspector,
-  NormalizedEvent,
-} from "~/config/types";
-
-const segmentColor = (color: string): string => {
-  switch (color) {
-    case "sqlite":
-      return "orange";
-    case "view":
-      return "blue";
-    case "artisan":
-      return "purple";
-    default:
-      return "gray";
-  }
-};
-
-// TODO: add hover on time line rows with details
-// and remove details from the label
-
-export default defineComponent({
-  props: {
-    event: {
-      type: Object as PropType<NormalizedEvent>,
-      required: true,
-    },
-  },
-  computed: {
-    transaction(): InspectorTransaction {
-      return this.event.payload[0];
-    },
-    grid() {
-      let { duration } = this.transaction;
-
-      const totalCells = 5;
-      const width = duration / totalCells + 1;
-      const widthPercent = (100 / (totalCells + 1)).toFixed(2);
-
-      const segments = [duration];
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < totalCells; i++) {
-        const d = Math.abs((duration -= width));
-        segments.push(Math.floor(d));
-      }
-
-      return {
-        segments: segments.reverse(),
-        width,
-        widthPercent,
-      };
-    },
-    segmentTypes(): { color: string; type: string }[] {
-      return [...new Set(this.segments.map((data) => data.type))].map(
-        (type) => ({
-          color: `bg-${segmentColor(type)}-600`,
-          type,
-        })
-      );
-    },
-    segments(): InspectorSegment[] {
-      return this.event.payload.filter(
-        (i: Inspector): boolean =>
-          i.model === "segment" && this.transaction.hash === i.transaction.hash
-      );
-    },
-    series(): object[] {
-      const { duration } = this.transaction;
-
-      return this.segments.map((segment: InspectorSegment) => {
-        const widthPercent = Math.max(
-          ((segment.duration * 100) / duration).toFixed(2),
-          0.5
-        );
-        const marginPercent = ((segment.start * 100) / duration).toFixed();
-
-        return {
-          widthPercent,
-          marginPercent,
-          segment,
-          color: `bg-${segmentColor(segment.type)}-600`,
-        };
-      });
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";
@@ -255,5 +266,13 @@ export default defineComponent({
 .inspector-page-timeline__series-segment-time,
 .inspector-page-timeline__series-segment-end {
   @apply h-4 md:h-5 lg:h-6;
+}
+
+.inspector-page-timeline__no-segments {
+  @apply flex w-full flex-col items-center mt-5;
+}
+
+.inspector-page-timeline__no-segments-placeholder {
+  @apply text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300;
 }
 </style>

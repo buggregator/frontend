@@ -1,12 +1,12 @@
 import {Meta, Story} from "@storybook/vue3";
-import InspectorPageTimeline from '~/components/InspectorPageTimeline/InspectorPageTimeline.vue';
+import { useInspector } from "~/src/entities/inspector";
 import { inspectorMock } from '~/src/entities/inspector/mocks'
-import { useInspector } from "~/src/entities/inspector/lib";
+import InspectorPageTimeline from './inspector-page-timeline.vue';
 
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Inspector/Page/InspectorPageTimeline",
+  title: "FSD/screens/inspector/InspectorPageTimeline",
   component: InspectorPageTimeline
 } as Meta<typeof InspectorPageTimeline>;
 
@@ -23,5 +23,5 @@ const Template: Story = (args) => ({
 export const Timeline = Template.bind({});
 
 Timeline.args = {
-  event: normalizeInspectorEvent(inspectorMock)
+  payload: normalizeInspectorEvent(inspectorMock).payload,
 };

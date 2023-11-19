@@ -26,9 +26,11 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeInspectorEvent } from "~/utils/normalize-event";
-import InspectorPage from "~/components/InspectorPage/InspectorPage.vue";
+import { useInspector } from "~/src/entities/inspector";
+import { InspectorPage } from "~/src/screens/inspector";
 import { PageHeader } from "~/src/widgets/ui";
+
+const { normalizeInspectorEvent } = useInspector();
 
 export default defineComponent({
   components: { InspectorPage, PageHeader },

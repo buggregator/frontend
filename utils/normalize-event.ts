@@ -1,6 +1,4 @@
 import {
-  Inspector,
-  InspectorTransaction,
   NormalizedEvent,
   RayDump,
 } from "~/config/types";
@@ -17,20 +15,6 @@ export const normalizeFallbackEvent = (event: ServerEvent<unknown>): NormalizedE
   date: event.timestamp ? new Date(event.timestamp * 1000) : null,
   payload: event.payload
 })
-
-export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): NormalizedEvent => {
-  const transaction = event.payload[0] as InspectorTransaction;
-
-  return {
-    id: event.uuid,
-    type: EVENT_TYPES.INSPECTOR,
-    labels: [EVENT_TYPES.INSPECTOR],
-    origin: {name: transaction.host.hostname, ip: transaction.host.ip, os: transaction.host.os},
-    serverName: transaction.host.hostname,
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
-  }
-}
 
 export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEvent => {
   let origin = {

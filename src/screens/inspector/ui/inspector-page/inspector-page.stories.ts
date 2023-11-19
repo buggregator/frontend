@@ -1,12 +1,12 @@
 import {Meta, Story} from "@storybook/vue3";
-import InspectorPage from '~/components/InspectorPage/InspectorPage.vue';
+import { useInspector } from "~/src/entities/inspector";
 import { inspectorMock } from '~/src/entities/inspector/mocks'
-import { useInspector } from "~/src/entities/inspector/lib";
+import InspectorPage from './inspector-page.vue';
 
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Inspector/Page/InspectorPage",
+  title: "FSD/screens/inspector/InspectorPage",
   component: InspectorPage
 } as Meta<typeof InspectorPage>;
 
@@ -21,6 +21,7 @@ const Template: Story = (args) => ({
 });
 
 export const Default = Template.bind({});
+
 
 Default.args = {
   event: normalizeInspectorEvent(inspectorMock),

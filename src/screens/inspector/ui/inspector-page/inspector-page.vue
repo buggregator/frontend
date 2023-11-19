@@ -1,3 +1,25 @@
+<script lang="ts" setup>
+import moment from "moment/moment";
+import { computed } from "vue";
+import { InspectorStatBoard } from "~/src/entities/inspector";
+import { Inspector } from "~/src/entities/inspector/types";
+import { NormalizedEvent } from "~/src/shared/types";
+import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import { InspectorPageTimeline } from "../inspector-page-timeline";
+
+type Props = {
+  event: NormalizedEvent<Inspector>;
+};
+
+const props = defineProps<Props>();
+
+const transaction = computed(() => props.event?.payload[0]);
+
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
+);
+</script>
+
 <template>
   <div ref="main" class="inspector-page">
     <main class="inspector-page__in">
@@ -11,7 +33,7 @@
       </header>
 
       <InspectorStatBoard :transaction="transaction" />
-      <InspectorPageTimeline :event="event" />
+      <InspectorPageTimeline :payload="event.payload" />
 
       <section class="inspector-page__body">
         <h3 class="inspector-page__body-text">Url</h3>
@@ -19,7 +41,7 @@
           <TableBaseRow
             v-for="(value, name) in transaction.http.url"
             :key="name"
-            :title="name"
+            :title="String(name)"
           >
             {{ value }}
           </TableBaseRow>
@@ -32,13 +54,16 @@
           <TableBaseRow
             v-for="(value, name) in transaction.http.request"
             :key="name"
-            :title="name"
+            :title="String(name)"
           >
             <template v-if="typeof value === 'string'">
               {{ value }}
             </template>
+            <template v-else-if="Array.isArray(value)">
+              {{ value.join(", ") }}
+            </template>
             <template v-else-if="!Array.isArray(value)">
-              <TableBaseRow v-for="(v, n) in value" :key="n" :title="n">
+              <TableBaseRow v-for="(v, n) in value" :key="n" :title="String(n)">
                 {{ v }}
               </TableBaseRow>
             </template>
@@ -48,38 +73,6 @@
     </main>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { InspectorTransaction, NormalizedEvent } from "~/config/types";
-import moment from "moment/moment";
-import InspectorPageTimeline from "~/components/InspectorPageTimeline/InspectorPageTimeline.vue";
-import { InspectorStatBoard } from "~/src/entities/inspector";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    TableBaseRow,
-    TableBase,
-    InspectorPageTimeline,
-    InspectorStatBoard,
-  },
-  props: {
-    event: {
-      type: Object as PropType<NormalizedEvent>,
-      required: true,
-    },
-  },
-  computed: {
-    transaction(): InspectorTransaction {
-      return this.event?.payload[0] as unknown;
-    },
-    date() {
-      return moment(this.event.timestamp).format("DD.MM.YYYY HH:mm:ss");
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

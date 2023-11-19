@@ -1,5 +1,5 @@
 export interface InspectorTransaction {
-  model: string,
+  model: 'transaction' | string,
   name?: string,
   type: string,
   hash?: string,
@@ -38,7 +38,7 @@ export interface InspectorTransaction {
 }
 
 export interface InspectorSegment {
-  model: string,
+  model: 'segment' | string,
   type: string,
   label?: string,
   host: {
@@ -49,6 +49,7 @@ export interface InspectorSegment {
   transaction?: {
     name: string,
     timestamp: number,
+    hash: string,
   },
   start?: number,
   timestamp: number,
