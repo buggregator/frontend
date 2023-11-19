@@ -11,9 +11,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { NormalizedEvent } from "~/config/types";
+import { NormalizedEvent } from "~/src/shared/types";
 import RayDumpTypeMapper from "~/components/RayDumpTypeMapper/RayDumpTypeMapper.vue";
 import { PreviewCard } from "~/src/shared/ui";
+import { RayDump } from "~/src/entities/ray/types";
 
 export default defineComponent({
   components: {
@@ -22,7 +23,7 @@ export default defineComponent({
   },
   props: {
     event: {
-      type: Object as PropType<NormalizedEvent>,
+      type: Object as PropType<NormalizedEvent<RayDump>>,
       required: true,
     },
   },

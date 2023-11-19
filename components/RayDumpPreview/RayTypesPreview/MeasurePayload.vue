@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { RayPayload } from "~/config/types";
+import { RayPayload } from "~/src/entities/ray/types";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 export default defineComponent({

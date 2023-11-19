@@ -48,6 +48,20 @@ export interface RayContentJobs {
   exception: string | null
 }
 
+export interface RayContentLabel {
+  label: string,
+  [key: string]: unknown
+}
+
+export interface RayContentColor {
+  color: string,
+  [key: string]: unknown
+}
+
+export interface RayContentSize {
+  size: string,
+  [key: string]: unknown
+}
 
 export interface RayPayload {
   type: string,
@@ -66,11 +80,11 @@ export interface RayPayload {
     | RayContentJobs
     | { frame: RayContentFrame }
     | { value: string }
-    | { color: string }
-    | { label: string }
+    | RayContentColor
+    | RayContentLabel
     | { name: string }
-    | { size: string }
-    | never[]
+    | RayContentSize
+    | never
 }
 
 export interface RayDump {

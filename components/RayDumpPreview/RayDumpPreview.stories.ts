@@ -1,6 +1,5 @@
 import { Meta, Story } from "@storybook/vue3";
 import RayDumpPreview from '~/components/RayDumpPreview/RayDumpPreview.vue';
-import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import {
   rayCallerMock,
   rayCarbonMock,
@@ -22,6 +21,9 @@ import {
   rayTraceMock,
   rayLockMock,
 } from '~/src/entities/ray/mocks';
+import { useRay } from "~/src/entities/ray";
+
+const { normalizeRayEvent } = useRay()
 
 export default {
   title: "RayDump/RayDumpPreview/Common",
@@ -40,58 +42,58 @@ const Template: Story = (args) => ({
 
 export const Text = Template.bind({});
 
-Text.args = {event: normalizeRayDumpEvent(rayTextMock),};
+Text.args = {event: normalizeRayEvent(rayTextMock),};
 
 export const Trace = Template.bind({});
-Trace.args = {event: normalizeRayDumpEvent(rayTraceMock),};
+Trace.args = {event: normalizeRayEvent(rayTraceMock),};
 
 export const Table = Template.bind({});
-Table.args = {event: normalizeRayDumpEvent(rayTableMock),};
+Table.args = {event: normalizeRayEvent(rayTableMock),};
 
 export const Size = Template.bind({});
-Size.args = {event: normalizeRayDumpEvent(raySizeMock),};
+Size.args = {event: normalizeRayEvent(raySizeMock),};
 
 export const Notify = Template.bind({});
-Notify.args = {event: normalizeRayDumpEvent(rayNotifyMock),};
+Notify.args = {event: normalizeRayEvent(rayNotifyMock),};
 
 export const Measure = Template.bind({});
-Measure.args = {event: normalizeRayDumpEvent(rayMeasureStartMock),};
+Measure.args = {event: normalizeRayEvent(rayMeasureStartMock),};
 
 export const Label = Template.bind({});
-Label.args = {event: normalizeRayDumpEvent(rayLabelMock),};
+Label.args = {event: normalizeRayEvent(rayLabelMock),};
 
 export const Json = Template.bind({});
-Json.args = {event: normalizeRayDumpEvent(rayJsonMock),};
+Json.args = {event: normalizeRayEvent(rayJsonMock),};
 
 export const Image = Template.bind({});
-Image.args = {event: normalizeRayDumpEvent(rayImageMock),};
+Image.args = {event: normalizeRayEvent(rayImageMock),};
 
 export const Hide = Template.bind({});
-Hide.args = {event: normalizeRayDumpEvent(rayHideMock),};
+Hide.args = {event: normalizeRayEvent(rayHideMock),};
 
 export const Exception = Template.bind({});
-Exception.args = {event: normalizeRayDumpEvent(rayExceptionMock),};
+Exception.args = {event: normalizeRayEvent(rayExceptionMock),};
 
 export const Dump = Template.bind({});
-Dump.args = {event: normalizeRayDumpEvent(rayDumpMock),};
+Dump.args = {event: normalizeRayEvent(rayDumpMock),};
 
 export const Counter = Template.bind({});
-Counter.args = {event: normalizeRayDumpEvent(rayCounterMock),};
+Counter.args = {event: normalizeRayEvent(rayCounterMock),};
 
 export const Color = Template.bind({});
-Color.args = {event: normalizeRayDumpEvent(rayColorMock),};
+Color.args = {event: normalizeRayEvent(rayColorMock),};
 
 export const Carbon = Template.bind({});
-Carbon.args = {event: normalizeRayDumpEvent(rayCarbonMock),};
+Carbon.args = {event: normalizeRayEvent(rayCarbonMock),};
 
 export const Int = Template.bind({});
-Int.args = {event: normalizeRayDumpEvent(rayIntegerMock),};
+Int.args = {event: normalizeRayEvent(rayIntegerMock),};
 
 export const Caller = Template.bind({});
-Caller.args = {event: normalizeRayDumpEvent(rayCallerMock),};
+Caller.args = {event: normalizeRayEvent(rayCallerMock),};
 
 export const Lock = Template.bind({});
-Lock.args = {event: normalizeRayDumpEvent(rayLockMock),};
+Lock.args = {event: normalizeRayEvent(rayLockMock),};
 
 export const Issue44 = Template.bind({});
-Issue44.args = {event: normalizeRayDumpEvent(rayEmptyStringMock),};
+Issue44.args = {event: normalizeRayEvent(rayEmptyStringMock),};

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, h, PropType } from "vue";
-import { RayPayload } from "~/config/types";
+import { RayPayload } from "~/src/entities/ray/types";
 import { RAY_EVENT_TYPES } from "~/config/constants";
 import LogPayload from "~/components/RayDumpPreview/RayTypesPreview/LogPayload.vue";
 import CustomPayload from "~/components/RayDumpPreview/RayTypesPreview/CustomPayload.vue";

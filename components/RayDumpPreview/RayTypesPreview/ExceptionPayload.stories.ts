@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
 import ExceptionPayload from '~/components/RayDumpPreview/RayTypesPreview/ExceptionPayload.vue';
-import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import { rayExceptionMock } from '~/src/entities/ray/mocks';
+import { useRay } from "~/src/entities/ray";
+
+const { normalizeRayEvent } = useRay();
 
 export default {
   title: "RayDump/Types/Exception",
@@ -19,4 +21,4 @@ const Template: Story = (args) => ({
 });
 
 export const Exception = Template.bind({});
-Exception.args = {payload: normalizeRayDumpEvent(rayExceptionMock).payload.payload.payloads[0]};
+Exception.args = {payload: normalizeRayEvent(rayExceptionMock).payload.payloads[0]};

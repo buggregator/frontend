@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
 import CallerPayload from '~/components/RayDumpPreview/RayTypesPreview/CallerPayload.vue';
-import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import { rayCallerMock } from '~/src/entities/ray/mocks';
+import { useRay } from "~/src/entities/ray";
+
+const { normalizeRayEvent } = useRay();
 
 export default {
   title: "RayDump/Types/Caller",
@@ -19,4 +21,4 @@ const Template: Story = (args) => ({
 });
 
 export const Caller = Template.bind({});
-Caller.args = {payload: normalizeRayDumpEvent(rayCallerMock).payload.payload.payloads[0]};
+Caller.args = {payload: normalizeRayEvent(rayCallerMock).payload.payloads[0]};

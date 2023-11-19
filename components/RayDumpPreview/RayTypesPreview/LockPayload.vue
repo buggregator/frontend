@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { RayPayload } from "~/config/types";
+import { RayPayload } from "~/src/entities/ray/types";
 import { useNuxtApp } from "#app";
 
 export default defineComponent({

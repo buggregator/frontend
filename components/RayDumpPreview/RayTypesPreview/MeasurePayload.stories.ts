@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
 import MeasurePayload from '~/components/RayDumpPreview/RayTypesPreview/MeasurePayload.vue';
-import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import { rayMeasureMock, rayMeasureStartMock } from '~/src/entities/ray/mocks'
+import { useRay } from "~/src/entities/ray";
+
+const { normalizeRayEvent } = useRay();
 
 export default {
   title: "RayDump/Types/Measure",
@@ -19,7 +21,7 @@ const Template: Story = (args) => ({
 });
 
 export const Default = Template.bind({});
-Default.args = {payload: normalizeRayDumpEvent(rayMeasureMock).payload.payload.payloads[0]};
+Default.args = {payload: normalizeRayEvent(rayMeasureMock).payload.payloads[0]};
 
 export const Start = Template.bind({});
-Start.args = {payload: normalizeRayDumpEvent(rayMeasureStartMock).payload.payload.payloads[0]};
+Start.args = {payload: normalizeRayEvent(rayMeasureStartMock).payload.payloads[0]};

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { RayPayload } from "~/config/types";
+import { RayPayload } from "~/src/entities/ray/types";
 import File from "~/components/FileView/FileView.vue";
 
 export default defineComponent({
