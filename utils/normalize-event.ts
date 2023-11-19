@@ -6,16 +6,6 @@ import { RAY_EVENT_TYPES } from "~/config/constants";
 import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
 import pick from 'lodash/pick';
 
-export const normalizeFallbackEvent = (event: ServerEvent<unknown>): NormalizedEvent => ({
-  id: event.uuid,
-  type: 'unknown',
-  labels: [event.type],
-  origin: null,
-  serverName: "",
-  date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-  payload: event.payload
-})
-
 export const normalizeRayDumpEvent = (event: ServerEvent<RayDump>): NormalizedEvent => {
   let origin = {
     php_version: event.payload.meta?.php_version,

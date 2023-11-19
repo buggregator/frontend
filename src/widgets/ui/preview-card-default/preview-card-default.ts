@@ -1,7 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import { normalizeFallbackEvent } from "~/utils/normalize-event";
 import { monologMock } from '~/src/entities/monolog/mocks'
+import { useEvents } from "~/src/shared/lib/use-events";
 import PreviewCardDefault from './preview-card-default.vue';
+
+const { normalizeUnknownEvent } = useEvents();
 
 export default {
   title: "FSD/widgets/PreviewCardDefault",
@@ -21,5 +23,5 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  event: normalizeFallbackEvent({ ...monologMock, type: 'unknown' }),
+  event: normalizeUnknownEvent({ ...monologMock, type: 'unknown' }),
 };

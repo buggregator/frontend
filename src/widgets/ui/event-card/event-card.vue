@@ -1,10 +1,7 @@
 <script lang="ts" setup generic="T">
 import { defineProps } from "vue";
 import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
-import {
-  normalizeFallbackEvent,
-  normalizeRayDumpEvent,
-} from "~/utils/normalize-event";
+import { normalizeRayDumpEvent } from "~/utils/normalize-event";
 import {
   useHttpDump,
   PreviewCard as PreviewHttpDump,
@@ -27,6 +24,7 @@ import {
   useVarDump,
   PreviewCard as PreviewVarDump,
 } from "~/src/entities/var-dump";
+import { useEvents } from "~/src/shared/lib/use-events";
 import { EVENT_TYPES, ServerEvent, EventType } from "~/src/shared/types";
 import { PreviewCardDefault } from "../preview-card-default";
 
@@ -37,6 +35,7 @@ const { normalizeSentryEvent } = useSentry();
 const { normalizeSmtpEvent } = useSmtp();
 const { normalizeInspectorEvent } = useInspector();
 const { normalizeHttpDumpEvent } = useHttpDump();
+const { normalizeUnknownEvent } = useEvents();
 
 type Props = {
   event: ServerEvent<T>;
@@ -79,7 +78,7 @@ const EVENT_TYPE_COMPONENTS_MAP = {
   },
   unknown: {
     view: PreviewCardDefault,
-    normalize: normalizeFallbackEvent,
+    normalize: normalizeUnknownEvent,
   },
 };
 
