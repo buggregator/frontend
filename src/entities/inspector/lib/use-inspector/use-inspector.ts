@@ -1,5 +1,5 @@
 import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
-import { Inspector } from "../types";
+import { Inspector } from "../../types";
 import { normalizeInspectorEvent } from "./normalize-inspector-event";
 
 type TUseInspector = () => {

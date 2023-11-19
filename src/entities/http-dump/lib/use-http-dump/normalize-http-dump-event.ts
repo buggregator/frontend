@@ -1,5 +1,5 @@
 import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { HttpDump } from "../types";
+import { HttpDump } from "../../types";
 
 export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDump>): NormalizedEvent<HttpDump> => ({
   id: event.uuid,
