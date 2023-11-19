@@ -3,7 +3,7 @@ import {addParameters, app} from '@storybook/vue3';
 import "../assets/index.css";
 import "../assets/index";
 import "./stories.css"
-import SfdumpWrap from "../vendor/dumper";
+import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
 
 addParameters({
   actions: {argTypesRegex: "^on[A-Z].*"},

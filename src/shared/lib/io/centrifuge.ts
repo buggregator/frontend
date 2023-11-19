@@ -1,6 +1,6 @@
 import { Centrifuge } from "centrifuge";
-import { logger } from "./logger";
 import { WS_URL } from "./constants";
+import { logger } from "./logger";
 
 type TUseCentrifuge = () => {
   centrifuge: Centrifuge

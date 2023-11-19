@@ -24,12 +24,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/src/shared/types";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { SmtpPage } from "~/src/screens/smtp";
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { PageHeader } from "~/src/widgets/ui";
-import { REST_API_URL } from "~/utils/io";
 import { useSmtp } from "~/src/entities/smtp";
+import { REST_API_URL } from "~/src/shared/lib/io";
+import { EventId } from "~/src/shared/types";
 
 const { normalizeSmtpEvent } = useSmtp();
 

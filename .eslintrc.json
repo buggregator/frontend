@@ -8,7 +8,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "prettier",
-    "plugin:nuxt/recommended"
+    "plugin:nuxt/recommended",
+    "plugin:@conarti/feature-sliced/recommended"
   ],
   "parser": "vue-eslint-parser",
   "plugins": ["@typescript-eslint"],
@@ -17,7 +18,7 @@
     "package.json",
     "postcss.config.js",
     "tailwind.config.js",
-    "vendor/",
+    "src/shared/lib/vendor/",
     "src/.eslintrc.json"
   ],
   "parserOptions": {

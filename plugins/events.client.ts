@@ -1,8 +1,8 @@
-import { apiTransport } from '~/utils/api-transport'
-import { useEventStore } from "~/stores/events";
-import { useCachedIdsStore } from "~/stores/cached-ids";
-import { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { storeToRefs } from "pinia";
+import { useCachedIdsStore } from "~/stores/cached-ids";
+import { useEventStore } from "~/stores/events";
+import { useApiTransport } from '~/src/shared/lib/use-api-transport'
+import { EventId, EventType, ServerEvent } from '~/src/shared/types';
 
 export default defineNuxtPlugin(() => {
   const eventsStore = useEventStore();
@@ -17,7 +17,7 @@ export default defineNuxtPlugin(() => {
     getUrl,
     rayContinueExecution,
     rayStopExecution,
-  } = apiTransport();
+  } = useApiTransport();
 
   const removeAll = async () => {
     const res = await deleteEventsAll()

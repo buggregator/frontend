@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { REST_API_URL } from "~/utils/io";
 import { useFormats } from "../../lib/formats";
+import { REST_API_URL } from "../../lib/io";
 import { Attachment } from "../../types";
 
 const { formatFileSize } = useFormats();

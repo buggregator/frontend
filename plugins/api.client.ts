@@ -1,4 +1,4 @@
-import { REST_API_URL } from "~/utils/io";
+import { REST_API_URL } from "~/src/shared/lib/io";
 
 export default defineNuxtPlugin(() => {
   const getAppVersion = () => fetch(`${REST_API_URL}/api/version`)

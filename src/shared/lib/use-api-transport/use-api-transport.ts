@@ -1,11 +1,10 @@
-import { EventId, EventType } from '~/src/shared/types';
-import { useEventsRequests } from "~/utils/io/events-requests";
-import { useEventStore } from "~/stores/events";
 import { useConnectionStore } from "~/stores/connections";
-import { useCentrifuge } from "./io";
+import { useEventStore } from "~/stores/events";
+import { EventId, EventType } from '../../types';
+import { useCentrifuge, useEventsRequests } from "../io";
 
 const CHECK_CONNECTION_INTERVAL = 10000
-export const apiTransport = () => {
+export const useApiTransport = () => {
   const { centrifuge } = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()

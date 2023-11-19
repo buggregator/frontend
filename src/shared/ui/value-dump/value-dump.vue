@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import isString from "lodash/isString";
 import { onMounted } from "vue";
-import SfdumpWrap from "~/vendor/dumper";
+import SfdumpWrap from "../../lib/vendor/dumper";
 import { CodeSnippet } from "../code-snippet";
 
 type Props = {

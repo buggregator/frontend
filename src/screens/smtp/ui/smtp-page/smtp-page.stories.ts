@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
-import { REST_API_URL } from "~/utils/io";
 import { useSmtp } from "~/src/entities/smtp";
 import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '~/src/entities/smtp/mocks';
+import { REST_API_URL } from "~/src/shared/lib/io";
 import SmtpPage from "./smtp-page.vue";
 
 const { normalizeSmtpEvent } = useSmtp();

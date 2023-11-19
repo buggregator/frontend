@@ -5,8 +5,8 @@ import { toBlob, toPng } from "html-to-image";
 import debounce from "lodash.debounce";
 import moment from "moment";
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { REST_API_URL } from "~/utils/io";
 import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { REST_API_URL } from "../../lib/io";
 import { NormalizedEvent } from "../../types";
 import PreviewCardFooter from "./preview-card-footer.vue";
 import PreviewCardHeader from "./preview-card-header.vue";
