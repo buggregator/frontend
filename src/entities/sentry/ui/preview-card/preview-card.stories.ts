@@ -1,7 +1,7 @@
 import { Meta, Story } from "@storybook/vue3";
-import { PreviewCard } from '~/src/shared/ui';
 import { useSentry } from "../../lib";
 import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } from '../../mocks';
+import PreviewCard from './preview-card.vue';
 
 const { normalizeSentryEvent } = useSentry();
 

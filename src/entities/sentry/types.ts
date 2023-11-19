@@ -16,6 +16,11 @@ export type SentryContextApp = SentryTypes.AppContext
 
 export type SentryDevice = Omit<SentryTypes.DeviceContext, 'orientation'> & {
   orientation: SentryTypes.DeviceContext['orientation'] | string
+  language?: string
+  id?: string
+  timezone?: string
+  battery_temperature?: string
+  locale?: string
 }
 
 type SentryLevel = SentryTypes.Breadcrumb['level'] | string

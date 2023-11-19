@@ -23,11 +23,11 @@ const Template: Story = (args) => ({
 export const Laravel = Template.bind({});
 
 Laravel.args = {
-  payload: normalizeSentryEvent(sentryLaravelMock).payload,
+  request: normalizeSentryEvent(sentryLaravelMock).payload.request,
 };
 
 export const Spiral = Template.bind({});
 
 Spiral.args = {
-  payload: normalizeSentryEvent(sentrySpiralMock).payload,
+  request: normalizeSentryEvent(sentrySpiralMock).payload.request,
 };

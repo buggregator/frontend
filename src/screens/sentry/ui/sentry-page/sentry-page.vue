@@ -88,13 +88,13 @@ const mainException = computed(
       />
 
       <SentryPageApp
-        v-if="event.payload.contexts.app"
+        v-if="event.payload.contexts && event.payload.contexts.app"
         :app="event.payload.contexts.app"
         class="sentry-page__section"
       />
 
       <SentryPageDevice
-        v-if="event.payload.contexts.device"
+        v-if="event.payload.contexts && event.payload.contexts.device"
         :device="event.payload.contexts.device"
         class="sentry-page__section"
       />

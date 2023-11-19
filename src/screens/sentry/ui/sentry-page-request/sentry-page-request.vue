@@ -16,7 +16,7 @@ const normalizeHeaderValue = (value: unknown) =>
   <section class="sentry-page-request">
     <h3 class="sentry-page-request__title">request</h3>
 
-    <h3 class="sentry-page-request__url">
+    <h3 v-if="request" class="sentry-page-request__url">
       <strong>{{ request.method || "GET" }}:</strong>
       {{ request.url }}
     </h3>
@@ -25,7 +25,7 @@ const normalizeHeaderValue = (value: unknown) =>
       headers
     </h3>
 
-    <TableBase v-if="request.headers">
+    <TableBase v-if="request && request.headers">
       <TableBaseRow
         v-for="(value, title) in request.headers"
         :key="title"

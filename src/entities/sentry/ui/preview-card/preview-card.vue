@@ -16,27 +16,25 @@ const props = withDefaults(defineProps<Props>(), {
 
 const eventLink = computed(() => `/sentry/${props.event.id}`);
 
-const hasException = computed(
-  () => props.event?.payload?.exception?.values?.length > 0
+const exceptionValues = computed(
+  () => props.event?.payload?.exception?.values || []
 );
+
+const hasException = computed(() => exceptionValues.value.length > 0);
 
 const message = computed(() => props.event.payload?.message || "");
 
-const exception: Ref<Exception> = computed(() => {
-  const defaultException: object = {
-    type: "Unknown",
-    value: "Something went wrong",
-    stacktrace: {
-      frames: [],
-    },
-  };
-
-  const eventExceptionValues = props.event?.payload?.exception?.values;
-
-  return eventExceptionValues.length > 0
-    ? eventExceptionValues[0]
-    : defaultException;
-});
+const exception: Ref<Exception> = computed(() =>
+  exceptionValues.value.length > 0
+    ? exceptionValues.value[0]
+    : {
+        type: "Unknown",
+        value: "Something went wrong",
+        stacktrace: {
+          frames: [],
+        },
+      }
+);
 </script>
 
 <template>
