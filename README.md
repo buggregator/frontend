@@ -1,93 +1,21 @@
-# frontend
+<a href="https://discord.gg/FTpBM7xU"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
+[![Downloads](https://img.shields.io/docker/pulls/butschster/buggregator.svg)](https://hub.docker.com/repository/docker/butschster/buggregator)
+[![Twitter](https://img.shields.io/badge/twitter-Follow-blue)](https://twitter.com/buggregator)
 
-## Build Setup
+![Cover image](https://user-images.githubusercontent.com/773481/208718792-eeae35a6-c5a8-4be4-9474-2b96d222e750.png)
 
-```bash
-# install dependencies
-$ npm run install
+# Buggregator Frontend SPA
 
-# serve with hot reload at localhost:3000
-$ npm run dev
+Welcome to the official repository for the Buggregator Frontend Single Page Application (SPA), a crucial component of the Buggregator. This repository focuses exclusively on the frontend aspect of Buggregator, developed using Nuxt.js framework and enriched with Storybook for an enhanced component-driven development experience.
 
-# build for production and launch server
-$ npm run build
-$ npm run start
+## Overview
 
-# generate static project
-$ npm run generate
+Buggregator is a comprehensive, lightweight server designed for debugging applications written on PHP, JS, etc. This repository is tailored to work seamlessly with the Buggregator server, providing a user-friendly interface and interactive features that make debugging more efficient and less cumbersome.
 
-# run storybook server
-$ npm run sb
-```
+## Contribution
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+Contributions to the Buggregator Frontend SPA are always welcome. Whether it's fixing bugs, improving documentation, or suggesting new features, your input is valuable. Please read our contribution guidelines before submitting your pull request.
 
-## Special Directories
+## Support
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
-
-### `assets`
-
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
-
-### `components`
-
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
-
-### `layouts`
-
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
-
-### `pages`
-
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
-
-### `plugins`
-
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
-
-### `static`
-
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
-
-
-## Contributing
-
-We enthusiastically invite you to contribute to Buggregator Server! Whether you've uncovered a bug, have innovative feature suggestions, or wish to contribute in any other capacity, we warmly welcome your participation. Simply open an issue or submit a pull request on our GitHub repository to get started.
-
-We use the [help wanted]([https://github.com/buggregator/frontend/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%2](https://github.com/buggregator/spiral-app/issues)2) label to categorize all issues that would benefit from your help in the repository. 
-
-### Why Should Developers Contribute to Open Source?
-
-Open source contributions, such as to Buggregator Server, present a unique and rewarding opportunity, especially for junior developers. 
-
-Here are a few reasons why you should consider contributing:
-
-1. **Experiment with New Technologies:** Open source projects can expose you to technologies and frameworks you might not encounter in your daily job. It's an excellent opportunity to learn and try out new things.
-2. **Expand Your Network:** Collaborating on open source projects connects you with a global community of developers. You can learn from their experiences, and they can learn from yours.
-3. **Improve Your Résumé:** Potential employers often value open source contributions. They demonstrate initiative, technical competency, and the ability to work collaboratively
-4. **Learn Best Practices:** Code reviews and feedback in open source projects are valuable learning tools. They expose you to different perspectives and ways to improve your code.
-5. **Create Impact:** Your contributions can help others and make a meaningful impact on the project. The feeling of seeing your code being used by others is immensely satisfying.
-
-**Remember, every great developer was once a beginner. Contributing to open source projects is a step in your journey to becoming a better developer. So, don't hesitate to jump in and start contributing!**
+If you encounter any issues or have questions, feel free to open an issue in this repository. For more detailed discussions or support, join our community on [Discord](https://discord.gg/FTpBM7xU).
