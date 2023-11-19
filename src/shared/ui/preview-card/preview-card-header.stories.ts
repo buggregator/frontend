@@ -4,7 +4,7 @@ import { EVENT_TYPES } from "../../types";
 import PreviewCardHeader from './preview-card-header.vue';
 
 export default {
-  title: "FSD/shared/PreviewCardHeader",
+  title: "Shared/PreviewCardHeader",
   component: PreviewCardHeader,
   argTypes: {
     eventType: {

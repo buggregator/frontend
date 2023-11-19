@@ -3,7 +3,7 @@ import { EVENT_TYPES } from "../../types";
 import PreviewCard from "./preview-card.vue";
 
 export default {
-  title: "FSD/shared/PreviewCard",
+  title: "Shared/PreviewCard",
   component: PreviewCard
 }as Meta<typeof PreviewCard>;
 

@@ -6,7 +6,7 @@ import { useRenderGraph } from "./use-render-graph";
 
 const { prepare } = useRenderGraph();
 export default {
-  title: "FSD/widgets/RenderGraph",
+  title: "Widgets/RenderGraph",
   component: RenderGraph
 } as Meta<typeof RenderGraph>;
 

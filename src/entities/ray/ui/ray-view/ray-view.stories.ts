@@ -7,7 +7,7 @@ import RayViews from './ray-view.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayView",
+  title: "Entities/ray/RayView",
   component: RayViews
 } as Meta<typeof RayViews>;
 

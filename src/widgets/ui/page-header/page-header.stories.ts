@@ -4,7 +4,7 @@ import { EVENT_TYPES } from "~/src/shared/types";
 import PageHeader from "./page-header.vue";
 
 export default {
-  title: "FSD/widgets/PageHeader",
+  title: "Widgets/PageHeader",
   component: PageHeader,
   argTypes: {
     eventType: {

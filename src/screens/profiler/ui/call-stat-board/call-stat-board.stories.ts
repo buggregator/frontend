@@ -6,7 +6,7 @@ import CallStatBoard from './call-stat-board.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/CallStatBoard",
+  title: "Screens/profiler/CallStatBoard",
   component: CallStatBoard
 } as Meta<typeof CallStatBoard>;
 

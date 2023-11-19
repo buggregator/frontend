@@ -7,7 +7,7 @@ import RayEloquent from './ray-eloquent.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayEloquent",
+  title: "Entities/ray/RayEloquent",
   component: RayEloquent
 } as Meta<typeof RayEloquent>;
 

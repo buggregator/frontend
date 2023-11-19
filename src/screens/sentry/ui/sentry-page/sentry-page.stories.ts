@@ -6,7 +6,7 @@ import SentryPage from './sentry-page.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "FSD/screens/sentry/SentryPage",
+  title: "Screens/sentry/SentryPage",
   component: SentryPage
 } as Meta<typeof SentryPage>;
 

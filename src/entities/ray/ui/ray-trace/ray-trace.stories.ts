@@ -7,7 +7,7 @@ import RayTrace from './ray-trace.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayTrace",
+  title: "Entities/ray/RayTrace",
   component: RayTrace
 } as Meta<typeof RayTrace>;
 

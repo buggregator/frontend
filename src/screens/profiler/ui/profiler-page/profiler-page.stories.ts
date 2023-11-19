@@ -6,7 +6,7 @@ import ProfilerPage from './profiler-page.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/ProfilerPage",
+  title: "Screens/profiler/ProfilerPage",
   component: ProfilerPage
 } as Meta<typeof ProfilerPage>;
 

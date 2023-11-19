@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import StatBoard from "./stat-board.vue";
 
 export default {
-  title: "FSD/shared/StatBoard",
+  title: "Shared/StatBoard",
   component: StatBoard,
 } as Meta<typeof StatBoard>;
 

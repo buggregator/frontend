@@ -7,7 +7,7 @@ import RayCarbon from './ray-carbone.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayCarbon",
+  title: "Entities/ray/RayCarbon",
   component: RayCarbon
 } as Meta<typeof RayCarbon>;
 

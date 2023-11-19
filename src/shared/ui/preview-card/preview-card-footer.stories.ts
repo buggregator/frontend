@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import PreviewCardFooter from "./preview-card-footer.vue";
 
 export default {
-  title: "FSD/shared/PreviewCardFooter",
+  title: "Shared/PreviewCardFooter",
   component: PreviewCardFooter,
 }as Meta<typeof PreviewCardFooter>;
 

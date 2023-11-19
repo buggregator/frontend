@@ -6,7 +6,7 @@ import InspectorPage from './inspector-page.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "FSD/screens/inspector/InspectorPage",
+  title: "Screens/inspector/InspectorPage",
   component: InspectorPage
 } as Meta<typeof InspectorPage>;
 

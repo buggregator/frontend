@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
-  title: "FSD/entities/http-dump/PreviewCard",
+  title: "Entities/http-dump/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

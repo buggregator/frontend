@@ -31,7 +31,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeRayEvent } = useRay()
 
 export default {
-  title: "FSD/entities/ray/PreviewCard",
+  title: "Entities/ray/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

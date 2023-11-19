@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import LayoutSidebar from "./layout-sidebar.vue";
 
 export default {
-  title: "FSD/widgets/LayoutSidebar",
+  title: "Widgets/LayoutSidebar",
   component: LayoutSidebar
 }as Meta<typeof LayoutSidebar>;
 

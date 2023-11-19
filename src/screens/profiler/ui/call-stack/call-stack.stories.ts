@@ -6,7 +6,7 @@ import CallStack from './call-stack.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/CallStack",
+  title: "Screens/profiler/CallStack",
   component: CallStack
 } as Meta<typeof CallStack>;
 

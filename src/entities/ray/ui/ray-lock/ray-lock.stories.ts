@@ -7,7 +7,7 @@ import RayLock from './ray-lock.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayLock",
+  title: "Entities/ray/RayLock",
   component: RayLock
 } as Meta<typeof RayLock>;
 

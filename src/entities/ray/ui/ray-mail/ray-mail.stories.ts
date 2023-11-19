@@ -7,7 +7,7 @@ import RayMail from "./ray-mail.vue";
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayMail",
+  title: "Entities/ray/RayMail",
   component: RayMail
 } as Meta<typeof RayMail>;
 

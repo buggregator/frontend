@@ -6,7 +6,7 @@ import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } fr
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "FSD/entities/sentry/PreviewCard",
+  title: "Entities/sentry/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

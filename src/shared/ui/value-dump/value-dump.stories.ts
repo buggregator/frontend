@@ -3,7 +3,7 @@ import { SFDumpCode, HTMLEscapedString } from "../../mocks";
 import ValueDump from './value-dump.vue';
 
 export default {
-  title: "FSD/shared/ValueDump",
+  title: "Shared/ValueDump",
   component: ValueDump
 } as Meta<typeof ValueDump>;
 

@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeSmtpEvent } = useSmtp();
 
 export default {
-  title: "FSD/entities/SMTP/PreviewCard",
+  title: "Entities/SMTP/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

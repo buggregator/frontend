@@ -3,7 +3,7 @@ import { HTMLCode } from '~/src/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 
 export default {
-  title: "FSD/screens/smtp/SmtpPagePreview",
+  title: "Screens/smtp/SmtpPagePreview",
   component: SmtpPagePreview
 } as Meta<typeof SmtpPagePreview>;
 

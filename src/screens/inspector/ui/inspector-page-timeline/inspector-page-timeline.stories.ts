@@ -6,7 +6,7 @@ import InspectorPageTimeline from './inspector-page-timeline.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "FSD/screens/inspector/InspectorPageTimeline",
+  title: "Screens/inspector/InspectorPageTimeline",
   component: InspectorPageTimeline
 } as Meta<typeof InspectorPageTimeline>;
 

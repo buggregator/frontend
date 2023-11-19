@@ -4,7 +4,7 @@ import { EVENT_TYPES } from "../../types";
 import CodeSnippet from "./code-snippet.vue";
 
 export default {
-  title: "FSD/shared/CodeSnippet",
+  title: "Shared/CodeSnippet",
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 

@@ -7,7 +7,7 @@ import FlameGraph from './flame-graph.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/FlameGraph",
+  title: "Screens/profiler/FlameGraph",
   component: FlameGraph
 } as Meta<typeof FlameGraph>;
 

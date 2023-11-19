@@ -2,7 +2,7 @@ import {Meta, Story} from "@storybook/vue3";
 import FileAttachment from './file-attachment.vue';
 
 export default {
-  title: "FSD/shared/FileAttachment",
+  title: "Shared/FileAttachment",
   component: FileAttachment
 } as Meta<typeof FileAttachment>;
 

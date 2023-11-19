@@ -7,7 +7,7 @@ import SmtpPage from "./smtp-page.vue";
 const { normalizeSmtpEvent } = useSmtp();
 
 export default {
-  title: "FSD/screens/smtp/SmtpPage",
+  title: "Screens/smtp/SmtpPage",
   component: SmtpPage
 } as Meta<typeof SmtpPage>;
 

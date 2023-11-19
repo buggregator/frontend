@@ -9,7 +9,7 @@ import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
 import PreviewCard from "./event-card.vue";
 
 export default {
-  title: "FSD/widgets/PreviewCard",
+  title: "Widgets/PreviewCard",
   component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 

@@ -6,7 +6,7 @@ import SentryException from './sentry-exception.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "FSD/entities/sentry/SentryException",
+  title: "Entities/sentry/SentryException",
   component: SentryException
 } as Meta<typeof SentryException>;
 

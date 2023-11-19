@@ -6,7 +6,7 @@ import CallGraph from './call-graph.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/CallGraph",
+  title: "Screens/profiler/CallGraph",
   component: CallGraph
 } as Meta<typeof CallGraph>;
 

@@ -7,7 +7,7 @@ import RayFrame from './ray-frame.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayFrame",
+  title: "Entities/ray/RayFrame",
   component: RayFrame
 } as Meta<typeof RayFrame>;
 

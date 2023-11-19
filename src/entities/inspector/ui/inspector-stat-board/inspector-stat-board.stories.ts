@@ -6,7 +6,7 @@ import InspectorStatBoard from './inspector-stat-board.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "FSD/entities/inspector/InspectorStatBoard",
+  title: "Entities/inspector/InspectorStatBoard",
   component: InspectorStatBoard
 } as Meta<typeof InspectorStatBoard>;
 

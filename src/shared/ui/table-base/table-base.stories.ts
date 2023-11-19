@@ -3,7 +3,7 @@ import TableBaseRow from "./table-base-row.vue";
 import TableBase from "./table-base.vue";
 
 export default {
-  title: "FSD/shared/TableBase",
+  title: "Shared/TableBase",
   component: TableBase
 } as Meta<typeof TableBase>;
 

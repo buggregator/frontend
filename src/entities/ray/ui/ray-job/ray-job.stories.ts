@@ -7,7 +7,7 @@ import RayJob from './ray-job.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "FSD/entities/ray/RayJob",
+  title: "Entities/ray/RayJob",
   component: RayJob
 } as Meta<typeof RayJob>;
 

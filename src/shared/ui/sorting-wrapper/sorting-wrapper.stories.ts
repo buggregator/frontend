@@ -4,7 +4,7 @@ import { SORTING_ORDER } from "./constants";
 import SortWrap from "./sorting-wrapper.vue";
 
 export default {
-  title: "FSD/shared/SortingWrapper",
+  title: "Shared/SortingWrapper",
   component: SortWrap,
 } as Meta<typeof SortWrap>;
 

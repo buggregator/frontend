@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/vue3";
 import PagePlaceholder from "./page-placeholder.vue";
 
 export default {
-  title: "FSD/widgets/PagePlaceholder",
+  title: "Widgets/PagePlaceholder",
   component: PagePlaceholder
 }as Meta<typeof PagePlaceholder>;
 

@@ -6,7 +6,7 @@ import PreviewCardDefault from './preview-card-default.vue';
 const { normalizeUnknownEvent } = useEvents();
 
 export default {
-  title: "FSD/widgets/PreviewCardDefault",
+  title: "Widgets/PreviewCardDefault",
   component: PreviewCardDefault
 } as Meta<typeof PreviewCardDefault>;
 

@@ -4,7 +4,7 @@ import IconSvg from "./icon-svg.vue";
 const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || '').split(',');
 
 export default {
-  title: "FSD/shared/IconSvg",
+  title: "Shared/IconSvg",
   component: IconSvg,
   argTypes: {
     name: {

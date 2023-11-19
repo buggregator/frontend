@@ -6,7 +6,7 @@ import CallStackRow from './call-stack-row.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "FSD/screens/profiler/CallStackRow",
+  title: "Screens/profiler/CallStackRow",
   component: CallStackRow
 } as Meta<typeof CallStackRow>;
 
