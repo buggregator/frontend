@@ -1,23 +1,2 @@
-export const RAY_EVENT_TYPES = {
-  LOG: "log",
-  // SIZE: "size",
-  CUSTOM: "custom",
-  // LABEL: "label",
-  CALLER: "caller",
-  CARBON: "carbon",
-  // COLOR: "color",
-  EXCEPTION: "exception",
-  // HIDE: "hide",
-  MEASURE: "measure",
-  NOTIFY: "notify",
-  MAILABLE: "mailable",
-  TABLE: "table",
-  TRACE: "trace",
-  QUERY: "executed_query",
-  ELOQUENT: "eloquent_model",
-  VIEW: "view",
-  EVENT: "event",
-  JOB: "job_event",
-  LOCK: "create_lock",
-}
+
 

@@ -1,6 +1,5 @@
 <script lang="ts" setup generic="T">
 import { defineProps } from "vue";
-import RayDumpPreview from "~/components/RayDumpPreview/RayDumpPreview.vue";
 import {
   useHttpDump,
   PreviewCard as PreviewHttpDump,
@@ -17,7 +16,7 @@ import {
   useProfiler,
   PreviewCard as PreviewProfiler,
 } from "~/src/entities/profiler";
-import { useRay } from "~/src/entities/ray";
+import { useRay, PreviewCard as PreviewRay } from "~/src/entities/ray";
 import { useSentry, PreviewCard as PreviewSentry } from "~/src/entities/sentry";
 import { useSmtp, PreviewCard as PreviewSMTP } from "~/src/entities/smtp";
 import {
@@ -59,7 +58,7 @@ const EVENT_TYPE_COMPONENTS_MAP = {
     normalize: normalizeVarDumpEvent,
   },
   [EVENT_TYPES.RAY_DUMP]: {
-    view: RayDumpPreview,
+    view: PreviewRay,
     normalize: normalizeRayEvent,
   },
   [EVENT_TYPES.SMTP]: {
