@@ -49,17 +49,17 @@ TestData.args = {
 export const ProfilerData = Template.bind({});
 
 ProfilerData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1, 10)
 };
 
 export const ProfilerMemoryData = Template.bind({});
 
 ProfilerMemoryData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1, 10)
 };
 
 export const ProfilerMemoryChangeData = Template.bind({});
 
 ProfilerMemoryChangeData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1)
+  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1, 10)
 };

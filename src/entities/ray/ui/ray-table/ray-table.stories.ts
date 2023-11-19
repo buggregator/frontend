@@ -1,6 +1,6 @@
 import { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
-import { rayMeasureMock, rayTableMock } from '../../mocks'
+import { rayTableMock } from '../../mocks'
 import { RayContentMeasure } from "../../types";
 import RayTable from './ray-table.vue';
 
