@@ -1,3 +1,27 @@
+<script lang="ts" setup>
+import { computed, ref, onBeforeMount } from "vue";
+import { IconSvg } from "~/src/shared/ui";
+
+type Props = {
+  device: string;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  device: "desktop",
+});
+
+const currentDevice = ref(props.device);
+
+const deviceClassMod = computed(() => {
+  const deviceTypeClassMap: Record<string, string> = {
+    desktop: "smtp-page-preview__device--desktop",
+    tablet: "smtp-page-preview__device--tablet",
+    mobile: "smtp-page-preview__device--mobile",
+  };
+  return deviceTypeClassMap[currentDevice.value];
+});
+</script>
+
 <template>
   <div class="smtp-page-preview">
     <div class="smtp-page-preview__in">
@@ -34,43 +58,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-
-export default defineComponent({
-  components: {
-    IconSvg,
-  },
-  props: {
-    device: {
-      type: String,
-      default() {
-        return "desktop";
-      },
-    },
-  },
-  data() {
-    return {
-      currentDevice: "desktop",
-    };
-  },
-  computed: {
-    deviceClassMod(): string {
-      const deviceTypeClassMap: Record<string, string> = {
-        desktop: "smtp-page-preview__device--desktop",
-        tablet: "smtp-page-preview__device--tablet",
-        mobile: "smtp-page-preview__device--mobile",
-      };
-      return deviceTypeClassMap[this.currentDevice];
-    },
-  },
-  created() {
-    this.currentDevice = this.device;
-  },
-});
-</script>
 
 <style lang="scss">
 @import "assets/mixins";

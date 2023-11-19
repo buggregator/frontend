@@ -1,12 +1,13 @@
 import { Meta, Story } from "@storybook/vue3";
-import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
-import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '~/src/entities/smtp/mocks';
+import { REST_API_URL } from "~/utils/io";
 import { useSmtp } from "~/src/entities/smtp";
+import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '~/src/entities/smtp/mocks';
+import SmtpPage from "./smtp-page.vue";
 
 const { normalizeSmtpEvent } = useSmtp();
 
 export default {
-  title: "Smtp/Page/SmtpPage",
+  title: "FSD/screens/smtp/SmtpPage",
   component: SmtpPage
 } as Meta<typeof SmtpPage>;
 
@@ -23,18 +24,21 @@ const Template: Story = (args) => ({
 export const Default = Template.bind({});
 
 Default.args = {
-  event: normalizeSmtpEvent(smtpWelcomeMock),
-  htmlSource: normalizeSmtpEvent(smtpWelcomeMock).payload.html
+  event: normalizeSmtpEvent(smtpWelcomeMock)
 };
 
 export const Order = Template.bind({});
 Order.args = {
-  event: normalizeSmtpEvent(smtpOrderMock),
-  htmlSource: normalizeSmtpEvent(smtpOrderMock).payload.html
+  event: normalizeSmtpEvent(smtpOrderMock)
 };
 
 export const Text = Template.bind({});
 Text.args = {
+  event: normalizeSmtpEvent(smtpTextMock)
+};
+
+export const withSource = Template.bind({});
+withSource.args = {
   event: normalizeSmtpEvent(smtpTextMock),
-  htmlSource: normalizeSmtpEvent(smtpTextMock).payload.html
+  htmlSource: `<iframe src="${REST_API_URL}/api/smtp/${normalizeSmtpEvent(smtpTextMock).id}/html"/>`
 };

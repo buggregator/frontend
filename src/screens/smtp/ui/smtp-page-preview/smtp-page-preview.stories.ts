@@ -1,9 +1,9 @@
 import { Meta, Story } from "@storybook/vue3";
-import SmtpPagePreview from '~/components/SmtpPagePreview/SmtpPagePreview.vue';
 import { HTMLCode } from '~/src/shared/mocks'
+import SmtpPagePreview from './smtp-page-preview.vue';
 
 export default {
-  title: "Smtp/Page/SmtpPagePreview",
+  title: "FSD/screens/smtp/SmtpPagePreview",
   component: SmtpPagePreview
 } as Meta<typeof SmtpPagePreview>;
 
@@ -17,6 +17,9 @@ const Template: Story = (args) => ({
   template: `<SmtpPagePreview v-bind="args">${HTMLCode}</SmtpPagePreview>`,
 });
 
+export const Default = Template.bind({});
+
+Default.args = {};
 export const Tablet = Template.bind({});
 
 Tablet.args = {

@@ -1,3 +1,74 @@
+<script lang="ts" setup>
+import moment from "moment";
+import { computed, ref } from "vue";
+import { Tab, Tabs } from "vue3-tabs-component";
+import { SMTP } from "~/src/entities/smtp/types";
+import { NormalizedEvent } from "~/src/shared/types";
+import type { Attachment } from "~/src/shared/types";
+import {
+  TableBase,
+  TableBaseRow,
+  CodeSnippet,
+  FileAttachment,
+} from "~/src/shared/ui";
+import { SmtpPageAddresses } from "../smtp-page-addresses";
+import { SmtpPagePreview } from "../smtp-page-preview";
+
+type Props = {
+  event: NormalizedEvent<SMTP>;
+  htmlSource: string;
+};
+
+const props = defineProps<Props>();
+
+const htmlSource = ref(props.htmlSource || props.event.payload.html);
+
+const senders = computed(() => [
+  {
+    title: "From",
+    address: props.event.payload.from,
+  },
+  {
+    title: "To",
+    address: props.event.payload.to,
+  },
+  {
+    title: "CC",
+    address: props.event.payload.cc,
+  },
+  {
+    title: "BCC",
+    address: props.event.payload.bcc,
+  },
+  {
+    title: "Reply to",
+    address: props.event.payload.reply_to,
+  },
+]);
+
+const isHtml = computed(
+  () =>
+    props.event.payload?.html !== undefined && props.event.payload?.html !== ""
+);
+
+const isText = computed(
+  () =>
+    props.event.payload?.text !== undefined && props.event.payload?.text !== ""
+);
+
+const mail = computed(() => props.event.payload);
+
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
+);
+
+const attachments = computed(() =>
+  Array.isArray(props.event.payload.attachments)
+    ? props.event.payload.attachments
+    : (Object.values(props.event.payload.attachments || {}) as Attachment[])
+);
+</script>
+
 <template>
   <div ref="main" class="smtp-page">
     <main class="smtp-page__main">
@@ -65,6 +136,7 @@
                 <FileAttachment
                   v-for="a in attachments"
                   :key="a.id"
+                  :event-id="event.id"
                   :event="event"
                   :attachment="a"
                 />
@@ -110,93 +182,6 @@
     </main>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { NormalizedEvent } from "~/config/types";
-import moment from "moment";
-import { Tab, Tabs } from "vue3-tabs-component";
-import SmtpPagePreview from "~/components/SmtpPagePreview/SmtpPagePreview.vue";
-import SmtpPageAddresses from "~/components/SmtpPageAddresses/SmtpPageAddresses.vue";
-import {
-  TableBase,
-  TableBaseRow,
-  CodeSnippet,
-  FileAttachment,
-} from "~/src/shared/ui";
-import type { Attachment } from "~/src/shared/types";
-
-export default defineComponent({
-  components: {
-    TableBaseRow,
-    TableBase,
-    SmtpPagePreview,
-    SmtpPageAddresses,
-    CodeSnippet,
-    Tabs,
-    Tab,
-    FileAttachment,
-  },
-  props: {
-    event: {
-      type: Object as PropType<NormalizedEvent>,
-      required: true,
-    },
-    htmlSource: {
-      type: String,
-      default: "",
-      required: false,
-    },
-  },
-  data() {
-    return {
-      senders: [
-        {
-          title: "From",
-          address: this.event.payload.from,
-        },
-        {
-          title: "To",
-          address: this.event.payload.to,
-        },
-        {
-          title: "CC",
-          address: this.event.payload.cc,
-        },
-        {
-          title: "BCC",
-          address: this.event.payload.bcc,
-        },
-        {
-          title: "Reply to",
-          address: this.event.payload.reply_to,
-        },
-      ],
-    };
-  },
-  computed: {
-    isHtml(): boolean {
-      return (
-        this.event.payload?.html !== null && this.event.payload?.html !== ""
-      );
-    },
-    isText(): boolean {
-      return (
-        this.event.payload?.text !== null && this.event.payload?.text !== ""
-      );
-    },
-    mail() {
-      return this.event.payload;
-    },
-    date() {
-      return moment(this.event.timestamp).format("DD.MM.YYYY HH:mm:ss");
-    },
-    attachments() {
-      return Object.values(this.event.payload.attachments) as Attachment[];
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";

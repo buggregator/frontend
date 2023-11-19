@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+import type { SMTPUser } from "~/src/entities/smtp/types";
+
+type Props = {
+  addresses: SMTPUser[];
+};
+
+defineProps<Props>();
+</script>
+
 <template>
   <div class="smtp-page-addresses">
     <div
@@ -5,26 +15,16 @@
       :key="user.email"
       class="smtp-page-addresses__item"
     >
-      <span v-if="user.name" class="smtp-page-addresses__item-name">{{
-        user.name
-      }}</span>
-      <span>{{ user.email }}</span>
+      <span v-if="user.name" class="smtp-page-addresses__item-name">
+        {{ user.name }}
+      </span>
+
+      <span>
+        {{ user.email }}
+      </span>
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  props: {
-    addresses: {
-      type: Array,
-      required: true,
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 .smtp-page-addresses {

@@ -1,8 +1,8 @@
 import { Attachment } from '~/src/shared/types';
 
-type SMTPUser = {
-  name: string;
-  email: string;
+export interface SMTPUser {
+  name: string,
+  email: string,
 }
 export interface SMTP {
   id: string,

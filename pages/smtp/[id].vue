@@ -26,7 +26,7 @@
 import { defineComponent } from "vue";
 import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
+import { SmtpPage } from "~/src/screens/smtp";
 import { PageHeader } from "~/src/widgets/ui";
 import { REST_API_URL } from "~/utils/io";
 import { useSmtp } from "~/src/entities/smtp";
