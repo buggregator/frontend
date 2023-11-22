@@ -24,11 +24,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/config/types";
+import { EventId, ServerEvent } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeHttpDumpEvent } from "~/utils/normalize-event";
-import HttpDumpPage from "~/components/HttpDumpPage/HttpDumpPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { PageHeader } from "~/src/widgets/ui";
+import { useHttpDump } from "~/src/entities/http-dump";
+import { HttpDumpPage } from "~/src/screens/http-dump";
+import { HttpDump } from "~/src/entities/http-dump/types";
+
+const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default defineComponent({
   components: { HttpDumpPage, PageHeader },
@@ -74,7 +77,9 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent ? normalizeHttpDumpEvent(this.serverEvent) : null;
+      return this.serverEvent
+        ? normalizeHttpDumpEvent(this.serverEvent as ServerEvent<HttpDump>)
+        : null;
     },
   },
   methods: {

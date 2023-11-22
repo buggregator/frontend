@@ -24,11 +24,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/config/types";
+import { EventId } from "~/src/shared/types";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeProfilerEvent } from "~/utils/normalize-event";
-import ProfilerPage from "~/components/ProfilerPage/ProfilerPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { ProfilerPage } from "~/src/screens/profiler";
+import { PageHeader } from "~/src/widgets/ui";
+import { useProfiler } from "~/src/entities/profiler/lib";
+
+const { normalizeProfilerEvent } = useProfiler();
 
 export default defineComponent({
   components: { ProfilerPage, PageHeader },

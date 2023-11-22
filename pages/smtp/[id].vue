@@ -24,12 +24,15 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/config/types";
+import { SmtpPage } from "~/src/screens/smtp";
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { normalizeSMTPEvent } from "~/utils/normalize-event";
-import SmtpPage from "~/components/SmtpPage/SmtpPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
-import { REST_API_URL } from "~/utils/io";
+import { PageHeader } from "~/src/widgets/ui";
+import { useSmtp } from "~/src/entities/smtp";
+import { REST_API_URL } from "~/src/shared/lib/io";
+import { EventId } from "~/src/shared/types";
+
+const { normalizeSmtpEvent } = useSmtp();
 
 export default defineComponent({
   components: { SmtpPage, PageHeader },
@@ -76,7 +79,7 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent ? normalizeSMTPEvent(this.serverEvent) : null;
+      return this.serverEvent ? normalizeSmtpEvent(this.serverEvent) : null;
     },
   },
   methods: {

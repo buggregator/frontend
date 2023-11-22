@@ -22,11 +22,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/config/types";
+import { EventId } from "~/src/shared/types";
 import { useNuxtApp, useRoute, useRouter, useFetch } from "#app";
-import { normalizeSentryEvent } from "~/utils/normalize-event";
-import SentryPage from "~/components/SentryPage/SentryPage.vue";
-import PageHeader from "~/components/PageHeader/PageHeader.vue";
+import { SentryPage } from "~/src/screens/sentry";
+import { PageHeader } from "~/src/widgets/ui";
+import { useSentry } from "~/src/entities/sentry";
+
+const { normalizeSentryEvent } = useSentry();
 
 export default defineComponent({
   components: {

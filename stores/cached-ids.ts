@@ -1,20 +1,21 @@
 import { defineStore } from "pinia";
-import { EventId, TEventGroup, TEventType } from "~/config/types";
-import { ALL_EVENTS, EVENT_TYPES, LOCAL_STORAGE_KEYS } from "~/config/constants";
+import { EventId, LOCAL_STORAGE_KEYS, OneOfValues } from '~/src/shared/types';
+import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEventStore } from "~/stores/events";
 
+type TEventsGroup = OneOfValues<typeof PAGE_TYPES>
 
-type TCachedEventsEmptyMap = Record<TEventType, EventId[]>;
+type TCachedEventsEmptyMap = Record<TEventsGroup, EventId[]>;
 
-const initialcachedIds: TCachedEventsEmptyMap = {
-  [EVENT_TYPES.SENTRY]: [] as EventId[],
-  [EVENT_TYPES.INSPECTOR]: [] as EventId[],
-  [EVENT_TYPES.PROFILER]: [] as EventId[],
-  [EVENT_TYPES.SMTP]: [] as EventId[],
-  [EVENT_TYPES.RAY_DUMP]: [] as EventId[],
-  [EVENT_TYPES.VAR_DUMP]: [] as EventId[],
-  [EVENT_TYPES.HTTP_DUMP]: [] as EventId[],
-  [ALL_EVENTS]: [] as EventId[],
+const initialCachedIds: TCachedEventsEmptyMap = {
+  [PAGE_TYPES.SENTRY]: [] as EventId[],
+  [PAGE_TYPES.INSPECTOR]: [] as EventId[],
+  [PAGE_TYPES.PROFILER]: [] as EventId[],
+  [PAGE_TYPES.SMTP]: [] as EventId[],
+  [PAGE_TYPES.RAY_DUMP]: [] as EventId[],
+  [PAGE_TYPES.VAR_DUMP]: [] as EventId[],
+  [PAGE_TYPES.HTTP_DUMP]: [] as EventId[],
+  [PAGE_TYPES.ALL_EVENTS]: [] as EventId[],
 };
 
 const { localStorage } = window;
@@ -25,7 +26,7 @@ const getCachedIds = (): TCachedEventsEmptyMap => {
     return JSON.parse(storageValue) as TCachedEventsEmptyMap;
   }
 
-  return initialcachedIds;
+  return initialCachedIds;
 };
 
 const syncLocalStorage = (cachedEventMap: TCachedEventsEmptyMap) => {
@@ -38,16 +39,16 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
   }),
   getters: {
     cachedTypesList(state) {
-      return Object.entries(state.cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key)
+      return Object.entries(state.cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     }
   },
   actions: {
-    setByType(cachedType: TEventGroup) {
+    setByType(cachedType: TEventsGroup) {
       const { events } =  useEventStore();
 
       events
         .filter(({ type }) =>
-          type === cachedType || cachedType === ALL_EVENTS
+          type === cachedType || cachedType === PAGE_TYPES.ALL_EVENTS
         )
         .forEach((event) => {
           this.cachedIds[cachedType].push(event.uuid);
@@ -55,7 +56,7 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
 
       syncLocalStorage(this.cachedIds);
     },
-    removeByType(type: TEventGroup) {
+    removeByType(type: TEventsGroup) {
       this.cachedIds[type].length = 0;
       syncLocalStorage(this.cachedIds);
     },
@@ -69,7 +70,7 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
       syncLocalStorage(this.cachedIds);
     },
     removeAll() {
-      this.cachedIds = initialcachedIds;
+      this.cachedIds = initialCachedIds;
       syncLocalStorage(this.cachedIds);
     },
     syncWithActive(activeIds: EventId[]) {

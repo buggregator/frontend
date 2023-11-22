@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PageIndex from "~/pages/index.vue";
-import { EVENT_TYPES } from "~/config/constants";
+import { PAGE_TYPES } from "~/src/shared/constants";
 import { useNuxtApp } from "#app";
 
 export default defineComponent({
@@ -17,14 +17,14 @@ export default defineComponent({
       return {
         events: $events.items,
         title: "Inspector",
-        type: EVENT_TYPES.INSPECTOR,
+        type: PAGE_TYPES.INSPECTOR,
       };
     }
 
     return {
       events: [],
       title: "Inspector",
-      type: EVENT_TYPES.INSPECTOR,
+      type: PAGE_TYPES.INSPECTOR,
     };
   },
   head() {

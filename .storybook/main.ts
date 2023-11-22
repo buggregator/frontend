@@ -10,6 +10,7 @@ module.exports = {
     "../components/**/*.stories.@(js|jsx|ts|tsx)",
     "../layouts/**/*.stories.@(js|jsx|ts|tsx)",
     "../pages/**/*.stories.@(js|jsx|ts|tsx)",
+    "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
   addons: [
     "@storybook/addon-links",
@@ -67,7 +68,7 @@ module.exports = {
     };
   },
   env: (config) => {
-    const iconComponentFolder = path.resolve(__dirname, '../components/IconSvg');
+    const iconComponentFolder = path.resolve(__dirname, '../src/shared/ui/icon-svg/icon-svg-originals');
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
       ? []
       : fs
