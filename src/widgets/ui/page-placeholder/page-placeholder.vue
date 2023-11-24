@@ -7,48 +7,19 @@ const getHostName = () => window?.location?.hostname || "localhost";
 const items = [
   {
     iconName: "github",
-    title: "Buggregator",
-    linkName: "Github",
+    title: "Github repository",
     linkUrl: "https://github.com/buggregator",
   },
   {
-    iconName: "sentry",
-    title: "Sentry DSN",
-    linkName: `http://sentry@${getHost()}/1`,
-    linkUrl: "https://docs.sentry.io/product/sentry-basics/dsn-explainer/",
-  },
-  {
-    iconName: "inspector",
-    title: "Inspector URL",
-    linkName: `http://${getHost()}/api/inspector`,
-    linkUrl: "https://docs.inspector.dev/raw-php",
-  },
-  {
     iconName: "docs",
-    title: "Var Dumper URL",
-    linkName: `tcp://${getHostName()}:9912`,
-    linkUrl:
-      "https://symfony.com/doc/current/components/var_dumper.html#the-dump-server",
+    title: "Documentation",
+    linkUrl: "https://docs.buggregator.dev",
   },
   {
-    iconName: "docs",
-    title: "Monolog",
-    linkName: `tcp://${getHostName()}:9913`,
-    linkUrl: "https://github.com/Seldaek/monolog/blob/main/doc/sockets.md",
-  },
-  {
-    iconName: "profiler",
-    title: "XHProf URL",
-    linkName: `http://${getHost()}/api/profiler/store`,
-    linkUrl: "https://github.com/spiral/profiler/tree/3.0",
-  },
-  {
-    iconName: "smtp",
-    title: "SMTP URL",
-    linkName: `smtp://${getHostName()}:1025`,
-    linkUrl:
-      "https://github.com/buggregator/spiral-app#3-fake-smtp-server-for-catching-mail",
-  },
+    iconName: "discord",
+    title: "Join our discord",
+    linkUrl: "https://discord.gg/vDsCD3EKUB",
+  }
 ];
 </script>
 
