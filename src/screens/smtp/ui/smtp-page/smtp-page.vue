@@ -187,7 +187,7 @@ const attachments = computed(() =>
 @import "assets/mixins";
 
 .smtp-page {
-  @apply relative flex-1 flex flex-col;
+  @apply relative flex-1 flex flex-col h-full;
 }
 
 .smtp-page__main {

@@ -4,7 +4,6 @@ import { IconSvg } from "~/src/shared/ui";
 type Props = {
   iconName: string;
   title: string;
-  linkName: string;
   linkUrl: string;
 };
 
@@ -15,9 +14,8 @@ defineProps<Props>();
   <li class="page-placeholder-item">
     <IconSvg :name="iconName" class="page-placeholder-item__icon" />
     <span>
-      {{ title }}
       <a :href="linkUrl" class="page-placeholder-item__link" target="_blank">
-        {{ linkName }}
+        {{ title }}
       </a>
     </span>
   </li>
