@@ -16,7 +16,7 @@
 }
 
 @mixin layout-body {
-  @apply flex flex-col flex-1 pt-12 h-full;
+  @apply flex flex-col flex-1 pt-12;
 }
 
 @mixin text-muted {

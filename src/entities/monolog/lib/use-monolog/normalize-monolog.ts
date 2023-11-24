@@ -6,8 +6,8 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
 
   return {
     id: event.uuid,
-    type: EVENT_TYPES.VAR_DUMP,
-    labels: [EVENT_TYPES.VAR_DUMP],
+    type: EVENT_TYPES.MONOLOG,
+    labels: [EVENT_TYPES.MONOLOG],
     origin,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,

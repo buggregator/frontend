@@ -110,5 +110,6 @@ export default defineComponent({
 
 .smtp-event__body {
   @include layout-body;
+  @apply h-full;
 }
 </style>
