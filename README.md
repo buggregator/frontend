@@ -1,4 +1,4 @@
-<a href="https://discord.gg/FTpBM7xU"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
+<a href="https://discord.gg/vDsCD3EKUB"><img src="https://img.shields.io/badge/discord-chat-magenta.svg"></a>
 [![Downloads](https://img.shields.io/docker/pulls/butschster/buggregator.svg)](https://hub.docker.com/repository/docker/butschster/buggregator)
 [![Twitter](https://img.shields.io/badge/twitter-Follow-blue)](https://twitter.com/buggregator)
 
