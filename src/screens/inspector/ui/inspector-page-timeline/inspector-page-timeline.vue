@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, Ref } from "vue";
+import {computed, Ref} from "vue";
 import {
   InspectorSegment,
   InspectorTransaction,
@@ -30,7 +30,7 @@ const transaction: Ref<InspectorTransaction> = computed(
 );
 
 const grid = computed(() => {
-  let { duration } = transaction.value;
+  let {duration} = transaction.value;
 
   const totalCells = 5;
   const width = duration / totalCells + 1;
@@ -59,10 +59,10 @@ const segments: Ref<InspectorSegment[]> = computed(() =>
     .filter(
       (
         <T extends keyof InspectorItemType>(type: T) =>
-        (
-          action: InspectorItemType[keyof InspectorItemType]
-        ): action is InspectorItemType[T] =>
-          action.model === type
+          (
+            action: InspectorItemType[keyof InspectorItemType]
+          ): action is InspectorItemType[T] =>
+            action.model === type
       )("segment")
     )
     .filter(
@@ -73,13 +73,13 @@ const segments: Ref<InspectorSegment[]> = computed(() =>
 
 const segmentTypes = computed(() =>
   [...new Set(segments.value.map((data) => data.type))].map((type) => ({
-    color: `bg-${segmentColor(type)}-600`,
+    color: segmentColor(type),
     type,
   }))
 );
 
 const series = computed(() => {
-  const { duration } = transaction.value;
+  const {duration} = transaction.value;
 
   return segments.value.map((segment: InspectorSegment) => {
     const widthPercent = Math.max(
@@ -93,7 +93,7 @@ const series = computed(() => {
       widthPercent,
       marginPercent,
       segment,
-      color: `bg-${segmentColor(segment.type)}-600`,
+      color: segmentColor(segment.type),
     };
   });
 });
@@ -153,7 +153,7 @@ const series = computed(() => {
               class="inspector-page-timeline__series-segment-start"
             >
               <span class="inspector-page-timeline__series-segment-start-label"
-                >{{ row.segment.start }} ms</span
+              >{{ row.segment.start }} ms</span
               >
             </div>
             <div
@@ -200,10 +200,6 @@ const series = computed(() => {
   @apply w-4 h-4 rounded mr-2;
 }
 
-.inspector-page-timeline__segment-type__label {
-  @apply text-xs font-bold;
-}
-
 .inspector-page-timeline__segments {
   @apply overflow-x-scroll border border-gray-50 dark:border-gray-600;
 }
@@ -222,23 +218,24 @@ const series = computed(() => {
 
 .dark .inspector-page-timeline__series {
   background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.04) 1px,
-    transparent 1px
+      to right,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
   );
 }
 
 .inspector-page-timeline__series-segment {
-  @apply mt-5 text-right;
+  @apply mt-4 text-right;
 }
 
 .inspector-page-timeline__series-segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap;
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1;
 }
 
 .inspector-page-timeline__series-segment-start {
   @apply flex items-center justify-end;
 }
+
 .inspector-page-timeline__series-segment-end,
 .inspector-page-timeline__series-segment-start {
   background-color: rgba(177 177 177 / 17%);
@@ -274,5 +271,30 @@ const series = computed(() => {
 
 .inspector-page-timeline__no-segments-placeholder {
   @apply text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300;
+}
+
+
+.inspector-page-timeline__series-segment-time,
+.inspector-page-timeline__segment-type__color-box {
+  @apply bg-gray-600;
+}
+
+.inspector-page-timeline__series-segment-time.orange,
+.inspector-page-timeline__segment-type__color-box.orange {
+  @apply bg-orange-600;
+}
+
+.inspector-page-timeline__series-segment-time.blue,
+.inspector-page-timeline__segment-type__color-box.blue {
+  @apply bg-blue-600;
+}
+
+.inspector-page-timeline__series-segment-time.purple,
+.inspector-page-timeline__segment-type__color-box.purple {
+  @apply bg-purple-600;
+}
+
+.inspector-page-timeline__segment-type__label {
+  @apply text-xs font-bold;
 }
 </style>
