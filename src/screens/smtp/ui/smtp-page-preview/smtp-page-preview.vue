@@ -85,9 +85,14 @@ const deviceClassMod = computed(() => {
 .smtp-page-preview__device {
   @apply flex-1 flex flex-col items-center bg-gray-50 dark:bg-gray-900;
 
+  html.dark & {
+    @apply text-gray-800;
+  }
+
   iframe {
+    @apply flex-1 rounded-md w-full h-full text-gray-800;
+
     transition-property: width !important;
-    @apply flex-1 rounded-md w-full h-full;
   }
 }
 
