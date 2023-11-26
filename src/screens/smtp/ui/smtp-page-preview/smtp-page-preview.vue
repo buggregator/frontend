@@ -11,15 +11,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const currentDevice = ref(props.device);
-
-const deviceClassMod = computed(() => {
-  const deviceTypeClassMap: Record<string, string> = {
-    desktop: "smtp-page-preview__device--desktop",
-    tablet: "smtp-page-preview__device--tablet",
-    mobile: "smtp-page-preview__device--mobile",
-  };
-  return deviceTypeClassMap[currentDevice.value];
-});
 </script>
 
 <template>
@@ -53,8 +44,17 @@ const deviceClassMod = computed(() => {
         <IconSvg class="smtp-page-preview__btn-icon" name="desktop-device" />
       </button>
     </div>
-    <div class="smtp-page-preview__device" :class="deviceClassMod">
-      <div><slot></slot></div>
+    <div
+      class="smtp-page-preview__device"
+      :class="{
+        'smtp-page-preview__device--desktop': currentDevice === 'desktop',
+        'smtp-page-preview__device--tablet': currentDevice === 'tablet',
+        'smtp-page-preview__device--mobile': currentDevice === 'mobile',
+      }"
+    >
+      <div class="smtp-page-preview__device-in">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -96,18 +96,42 @@ const deviceClassMod = computed(() => {
   }
 }
 
-.smtp-page-preview__device--desktop {
-  @apply w-full h-full border rounded-md;
+.smtp-page-preview__device-in {
+  @apply rounded-md bg-white ease-in duration-150;
+  transition-property: width !important;
 
-  > div {
-    @apply flex-1 flex flex-col w-full h-full rounded-md bg-white ease-in duration-150;
-
-    transition-property: width !important;
+  .smtp-page-preview__device--desktop & {
+    @apply flex-1 flex flex-col w-full h-full;
 
     > div {
       @apply flex-1 flex flex-col w-full h-full;
     }
   }
+
+  .smtp-page-preview__device--tablet & {
+    height: 1004px;
+    width: 768px;
+    @apply border;
+
+    > div {
+      @apply w-full h-full;
+    }
+  }
+
+  .smtp-page-preview__device--mobile & {
+    @apply border;
+    height: 568px;
+    width: 320px;
+    overflow: auto;
+
+    > div {
+      @apply w-full h-full;
+    }
+  }
+}
+
+.smtp-page-preview__device--desktop {
+  @apply w-full h-full border rounded-md;
 }
 
 .smtp-page-preview__device--tablet {
@@ -126,17 +150,6 @@ const deviceClassMod = computed(() => {
     @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
     content: "";
   }
-
-  > div {
-    height: 1004px;
-    width: 768px;
-    transition-property: width !important;
-    @apply border rounded-md bg-white ease-in duration-150;
-
-    > div {
-      @apply w-full h-full;
-    }
-  }
 }
 
 .smtp-page-preview__device--mobile {
@@ -152,16 +165,6 @@ const deviceClassMod = computed(() => {
     @include border-style;
     @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
     content: "";
-  }
-
-  > div {
-    height: 568px;
-    width: 320px;
-    transition-property: width !important;
-    @apply border rounded-md bg-white ease-in duration-150;
-    > div {
-      @apply w-full h-full;
-    }
   }
 }
 </style>
