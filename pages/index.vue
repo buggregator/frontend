@@ -47,11 +47,11 @@
 </template>
 
 <script lang="ts">
+import pluralize from "pluralize"; // eslint-disable-line @conarti/feature-sliced/public-api
 import { defineComponent } from "vue";
+import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
-import { useNuxtApp } from "#app";
 import { PAGE_TYPES } from "~/src/shared/constants";
-import pluralize from "pluralize";
 import { EventType } from "~/src/shared/types";
 
 export default defineComponent({
@@ -92,7 +92,7 @@ export default defineComponent({
     isEventsPaused() {
       const { $cachedEvents } = useNuxtApp();
 
-      return $cachedEvents.eventsIdsByType.value[this.type].length > 0;
+      return $cachedEvents.eventsIdsByType.value[this.type]?.length > 0;
     },
     visibleEvents() {
       if (!this.isEventsPaused) {
@@ -102,7 +102,7 @@ export default defineComponent({
       const { $cachedEvents } = useNuxtApp();
 
       return this.allEvents.filter(({ uuid }) =>
-        $cachedEvents.eventsIdsByType.value[this.type].includes(uuid)
+        $cachedEvents.eventsIdsByType.value[this.type]?.includes(uuid)
       );
     },
     hiddenEventsCount() {
