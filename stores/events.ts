@@ -10,7 +10,7 @@ export const useEventStore = defineStore("useEventStore", {
       events.forEach((event) => {
         const isExistedEvent = this.events.some((el) => el.uuid === event.uuid);
         if (!isExistedEvent) {
-          this.events.unshift(event);
+          this.events.push(event);
         } else {
           this.events = this.events.map((el) => {
             if (el.uuid !== event.uuid) {
