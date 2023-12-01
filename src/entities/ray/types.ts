@@ -54,6 +54,10 @@ export interface RayContentEloquent {
   attributes: string
 }
 
+export interface RayContentApplicationLog {
+  value: string
+}
+
 export interface RayContentView {
   view_path: string,
   view_path_relative_to_project_root: string,
@@ -142,6 +146,7 @@ export interface RayPayload {
     | RayContentObject
     | RayContentCarbone
     | RayContentSQL
+    | RayContentApplicationLog
     | RayContentEloquent
     | RayContentView
     | RayContentJob
@@ -196,6 +201,7 @@ export enum RAY_EVENT_TYPES {
   TABLE = "table",
   TRACE = "trace",
   QUERY = "executed_query",
+  APPLICATION_LOG = "application_log",
   ELOQUENT = "eloquent_model",
   VIEW = "view",
   EVENT = "event",

@@ -24,7 +24,7 @@ import {
 import {
   rayLaravelEloquentMock, rayLaravelEventsMock, rayLaravelJobsMock,
   rayLaravelQueryMock,
-  rayLaravelQueryNoBindingsMock, rayLaravelViewsMock
+  rayLaravelQueryNoBindingsMock, rayLaravelViewsMock, rayLaravelApplicationLogMock
 } from "../../mocks-laravel";
 import PreviewCard from './preview-card.vue';
 
@@ -119,3 +119,7 @@ LaravelEvents.args = {event: normalizeRayEvent(rayLaravelEventsMock),};
 
 export const LaravelJobs = Template.bind({});
 LaravelJobs.args = {event: normalizeRayEvent(rayLaravelJobsMock),};
+
+export const LaravelApplicationLog = Template.bind({});
+LaravelApplicationLog.args = {event: normalizeRayEvent(rayLaravelApplicationLogMock),};
+

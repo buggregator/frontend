@@ -1,0 +1,30 @@
+{
+  "uuid": "1fcae0a3-3965-4f1f-a4f7-f2171ccb1764",
+  "type": "ray",
+  "payload": {
+    "uuid": "1fcae0a3-3965-4f1f-a4f7-f2171ccb1764",
+    "payloads": [
+      {
+        "type": "application_log",
+        "content": {
+          "value": "{\"request\":\"a\",\"response\":\"a\"}"
+        },
+        "origin": {
+          "file": "\/var\/www\/html\/vendor\/psy\/psysh\/src\/ExecutionLoopClosure.php(53) : eval()'d code",
+          "line_number": 1,
+          "hostname": "f5813cb9520f"
+        }
+      }
+    ],
+    "meta": {
+      "php_version": "8.2.10",
+      "php_version_id": 80210,
+      "project_name": "ThailandPostMart.com",
+      "laravel_version": "10.31.0",
+      "laravel_ray_package_version": "1.33.0.0",
+      "ray_package_version": "1.40.0.0"
+    }
+  },
+  "timestamp": 1701161948,
+  "project_id": null
+}
