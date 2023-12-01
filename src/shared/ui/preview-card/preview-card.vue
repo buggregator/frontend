@@ -51,7 +51,7 @@ const changeVisibleControls = (value = true) => {
 const deleteEvent = () => {
   const { $events } = useNuxtApp();
 
-  return $events?.removeById;
+  return $events?.removeById(props.event.id);
 };
 
 const downloadImage = () => {
