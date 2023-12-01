@@ -7,6 +7,7 @@ import {
   RayContentCarbone,
   RayContentCustom,
   RayContentEloquent,
+  RayContentApplicationLog,
   RayContentEvent,
   RayContentException,
   RayContentFrame,
@@ -25,7 +26,8 @@ import {
 } from "../../types";
 import { RayCarbone } from "../ray-carbone";
 import { RayCustom } from "../ray-custom";
-import { RayEloquent } from "../ray-eloquent";
+import { RayEloquent } from "../ray-eloquent"
+import { RayApplicationLog } from "../ray-application-log";
 import { RayEvent } from "../ray-event";
 import { RayException } from "../ray-exception";
 import { RayFrame } from "../ray-frame";
@@ -116,6 +118,12 @@ const COMPONENT_TYPE_MAP = {
     view: RayEloquent,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentEloquent,
+    }),
+  },
+  [RAY_EVENT_TYPES.APPLICATION_LOG]: {
+    view: RayApplicationLog,
+    getProps: (payload: RayPayload) => ({
+      content: payload.content as RayContentApplicationLog,
     }),
   },
   [RAY_EVENT_TYPES.VIEW]: {
