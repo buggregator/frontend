@@ -13,21 +13,12 @@
       </template>
 
       <template #controls>
-        <button
-          class="events-page__btn-stop-events"
-          :class="{ 'events-page__btn-stop-events--active': isEventsPaused }"
+        <PauseButton
           :disabled="visibleEvents.length === 0"
-          @click="toggleUpdate"
-        >
-          {{ isEventsPaused ? "❚ ❚ Pause Fetching" : "▶ Auto Fetching" }}
-          <span
-            v-if="isEventsPaused && hiddenEventsCount"
-            class="events-page__btn-stop-events-count"
-            :title="titleEventsCount"
-          >
-            {{ hiddenEventsCount }}
-          </span>
-        </button>
+          :is-paused="isEventsPaused"
+          :total-new-events-count="hiddenEventsCount"
+          @toggleUpdate="toggleUpdate"
+        />
       </template>
     </PageHeader>
 
@@ -51,6 +42,7 @@ import pluralize from "pluralize"; // eslint-disable-line @conarti/feature-slice
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
+import { PauseButton } from "~/src/screens/events/ui/pause-button";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { EventType } from "~/src/shared/types";
 
@@ -59,6 +51,7 @@ export default defineComponent({
     PagePlaceholder,
     EventCard,
     PageHeader,
+    PauseButton,
   },
   setup() {
     if (process.client) {
