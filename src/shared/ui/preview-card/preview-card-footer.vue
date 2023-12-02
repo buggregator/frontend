@@ -1,6 +1,16 @@
 <script lang="ts" setup>
-import { withDefaults, defineProps } from "vue";
-import { IconSvg } from "../icon-svg";
+import {withDefaults, defineProps, computed} from "vue";
+import {IconSvg} from "../icon-svg";
+
+// TODO: Move this to a shared file
+const KEY_MAP = {
+  'php_version': 'php',
+  'laravel_version': 'laravel',
+  'symfony_version': 'symfony',
+  'line_number': 'line',
+  'hostname': 'host',
+  'environment': 'env',
+}
 
 type Props = {
   serverName: string;
@@ -9,23 +19,33 @@ type Props = {
   } | null;
 };
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   serverName: "",
   originConfig: null,
 });
+
+let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
+  // Filter out empty values
+  if(!value || value === 'undefined') return acc;
+
+  const mappedKey = KEY_MAP[key] || key;
+  acc[mappedKey] = value;
+  return acc;
+}, {} as {[key: string]: string}) : {});
 </script>
 
 <template>
   <div class="preview-card-footer">
     <div class="preview-card-footer__tags">
-      <template v-if="originConfig">
-        <span
-          v-for="(value, key) in originConfig"
+      <template v-if="mappedOrigins">
+        <div
+          v-for="(value, key) in mappedOrigins"
           :key="key"
           class="preview-card-footer__tag"
         >
-          <strong>{{ key }}: </strong>{{ value }}
-        </span>
+          <span class="preview-card-footer__tag-key">{{ key }}:</span>
+          <span class="preview-card-footer__tag-value">{{ value }}</span>
+        </div>
       </template>
     </div>
 
@@ -44,11 +64,19 @@ withDefaults(defineProps<Props>(), {
 }
 
 .preview-card-footer__tags {
-  @apply flex flex-wrap items-center;
+  @apply flex flex-wrap items-center space-x-2;
 }
 
 .preview-card-footer__tag {
-  @apply pr-4 text-xs text-gray-400;
+  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap space-x-1 leading-none cursor-pointer;
+}
+
+.preview-card-footer__tag-key {
+  @apply text-gray-500 dark:text-gray-300 font-bold;
+}
+
+.preview-card-footer__tag-value {
+  @apply text-gray-700 dark:text-gray-100 font-bold;
 }
 
 .preview-card-footer__host {

@@ -12,7 +12,7 @@
           "time": 0.38
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayLaravel.php",
+          "file": "/app/Modules/Ray/RayLaravel.php",
           "line_number": 20,
           "hostname": "ButschsterLpp"
         }

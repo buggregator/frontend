@@ -44,7 +44,7 @@
           "subject": "Voluptas fuga vitae ut quas aperiam illum vero."
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayLaravel.php",
+          "file": "/app/Modules/Ray/RayLaravel.php",
           "line_number": 100,
           "hostname": "ButschsterLpp"
         }

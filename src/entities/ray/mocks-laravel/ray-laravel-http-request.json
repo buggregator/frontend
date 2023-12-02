@@ -23,7 +23,7 @@
           "label": "Http"
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php",
+          "file": "/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php",
           "line_number": 826,
           "hostname": "ButschsterLpp"
         }

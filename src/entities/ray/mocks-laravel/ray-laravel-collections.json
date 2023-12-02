@@ -10,7 +10,7 @@
           "values": ["uppercased collection"]
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayLaravel.php",
+          "file": "/app/Modules/Ray/RayLaravel.php",
           "line_number": 117,
           "hostname": "ButschsterLpp"
         }
@@ -23,7 +23,7 @@
           ]
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayLaravel.php",
+          "file": "/app/Modules/Ray/RayLaravel.php",
           "line_number": 117,
           "hostname": "ButschsterLpp"
         }

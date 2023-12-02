@@ -10,7 +10,7 @@
           "value": "This is my notification"
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/app/Modules/Ray/RayCommon.php",
+          "file": "/app/Modules/Ray/RayCommon.php",
           "line_number": 241,
           "hostname": "ButschsterLpp"
         }
