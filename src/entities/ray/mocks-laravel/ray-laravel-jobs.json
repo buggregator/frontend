@@ -12,7 +12,7 @@
           "exception": null
         },
         "origin": {
-          "file": "/root/repos/buggreagtor/examples/vendor/laravel/framework/src/Illuminate/Queue/SyncQueue.php",
+          "file": "/vendor/laravel/framework/src/Illuminate/Queue/SyncQueue.php",
           "line_number": 45,
           "hostname": "ButschsterLpp"
         }

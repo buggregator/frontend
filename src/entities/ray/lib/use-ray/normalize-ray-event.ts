@@ -5,7 +5,12 @@ import { EnhancedRayEvent, RayContentColor, RayContentLabel, RayContentSize, Ray
 export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent => {
   let origin = {
     php_version: event.payload.meta?.php_version,
-    laravel_version: event.payload.meta?.laravel_version,
+  }
+
+  if (event.payload.meta?.laravel_version) {
+    origin['laravel_version'] = event.payload.meta?.laravel_version
+  } else if (event.payload.meta?.symfony_version) {
+    origin['symfony_version'] = event.payload.meta?.symfony_version
   }
 
   event.payload.payloads
