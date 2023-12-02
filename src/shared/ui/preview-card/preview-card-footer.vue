@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import {withDefaults, defineProps, computed} from "vue";
-import {IconSvg} from "../icon-svg";
+import { withDefaults, defineProps, computed } from "vue";
+import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
 const KEY_MAP = {
@@ -26,12 +26,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
   // Filter out empty values
-  if(!value || value === 'undefined') return acc;
+  if (!value || value === 'undefined') return acc;
 
   const mappedKey = KEY_MAP[key] || key;
   acc[mappedKey] = value;
   return acc;
-}, {} as {[key: string]: string}) : {});
+}, {} as { [key: string]: string }) : {});
 </script>
 
 <template>
@@ -50,7 +50,7 @@ let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.ori
     </div>
 
     <div v-if="serverName" class="preview-card-footer__host">
-      <IconSvg name="host" class="preview-card-footer__host-icon" />
+      <IconSvg name="host" class="preview-card-footer__host-icon"/>
       <span class="preview-card-footer__host-name">
         {{ serverName }}
       </span>
