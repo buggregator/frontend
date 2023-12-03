@@ -22,11 +22,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/src/shared/types";
-import { useNuxtApp, useRoute, useRouter, useFetch } from "#app";
 import { SentryPage } from "~/src/screens/sentry";
+import { useNuxtApp, useRoute, useRouter, useFetch } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
+import { EventId } from "~/src/shared/types";
 
 const { normalizeSentryEvent } = useSentry();
 

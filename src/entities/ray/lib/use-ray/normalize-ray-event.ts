@@ -8,9 +8,9 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
   }
 
   if (event.payload.meta?.laravel_version) {
-    origin['laravel_version'] = event.payload.meta?.laravel_version
+    origin.laravel_version = event.payload.meta?.laravel_version
   } else if (event.payload.meta?.symfony_version) {
-    origin['symfony_version'] = event.payload.meta?.symfony_version
+    origin.symfony_version = event.payload.meta?.symfony_version
   }
 
   event.payload.payloads

@@ -13,11 +13,11 @@
 </template>
 
 <script lang="ts">
-import { LayoutSidebar } from "~/src/widgets/ui";
+import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import { useSettingsStore } from "~/stores/settings";
-import { storeToRefs } from "pinia";
 import { useNuxtApp } from "#app";
+import { LayoutSidebar } from "~/src/widgets/ui";
 
 export default defineComponent({
   components: {

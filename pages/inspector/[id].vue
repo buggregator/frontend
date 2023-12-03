@@ -24,11 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/src/shared/types";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
-import { useInspector } from "~/src/entities/inspector";
 import { InspectorPage } from "~/src/screens/inspector";
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
+import { useInspector } from "~/src/entities/inspector";
+import { EventId } from "~/src/shared/types";
 
 const { normalizeInspectorEvent } = useInspector();
 

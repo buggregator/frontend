@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import { EventId, LOCAL_STORAGE_KEYS, OneOfValues } from '~/src/shared/types';
-import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEventStore } from "~/stores/events";
+import { PAGE_TYPES } from "~/src/shared/constants";
+import { EventId, LOCAL_STORAGE_KEYS, OneOfValues } from '~/src/shared/types';
 
 type TEventsGroup = OneOfValues<typeof PAGE_TYPES>
 

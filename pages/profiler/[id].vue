@@ -24,11 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { EventId } from "~/src/shared/types";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app";
 import { ProfilerPage } from "~/src/screens/profiler";
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useProfiler } from "~/src/entities/profiler/lib";
+import { EventId } from "~/src/shared/types";
 
 const { normalizeProfilerEvent } = useProfiler();
 

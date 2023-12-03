@@ -63,11 +63,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
-import { IconSvg } from "~/src/shared/ui";
-import { PageHeader } from "~/src/widgets/ui";
+import { defineComponent } from "vue";
 import { useSettingsStore, THEME_MODES } from "~/stores/settings";
+import { PageHeader } from "~/src/widgets/ui";
+import { IconSvg } from "~/src/shared/ui";
 
 export default defineComponent({
   components: {

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { useNuxtApp } from "#app";
+import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { RayContentLock } from "../../types";
 
 type Props = {

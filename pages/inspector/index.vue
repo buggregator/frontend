@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import PageIndex from "~/pages/index.vue";
+import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PAGE_TYPES } from "~/src/shared/constants";
-import { useNuxtApp } from "#app";
+import PageIndex from "../index.vue"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 
 export default defineComponent({
   extends: PageIndex,
