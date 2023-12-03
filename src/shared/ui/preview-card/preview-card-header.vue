@@ -113,7 +113,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
       <button
         class="preview-card-header__button preview-card-header__button--lock"
         :class="{
-          'preview-card-header__button--unlock': isLocked,
+          'preview-card-header__button--locked': isLocked,
         }"
         @click="lockEvent"
       >
@@ -213,14 +213,18 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--lock {
-  @apply text-gray-700 bg-gray-200 hover:bg-blue-700 hover:text-white;
+  @apply text-gray-700 dark:bg-gray-400 bg-gray-200 hover:bg-green-700 hover:text-white;
 }
 
-.preview-card-header__button--unlock {
-  @apply dark:text-white dark:bg-blue-700;
+.preview-card-header__button--locked {
+  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
 }
 
 .preview-card-header__button-icon {
   @apply p-1 dark:fill-white;
+
+  .preview-card-header__button--lock & {
+    @apply p-0.5;
+  }
 }
 </style>
