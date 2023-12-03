@@ -30,15 +30,15 @@ const changeView = () => {
   emit("toggleView", true);
 };
 
-const onDeleteButtonClick = () => {
+const deleteEvent = () => {
   emit("delete", true);
 };
 
-const onCopyButtonRightClick = () => {
+const copyEvent = () => {
   emit("copy", true);
 };
 
-const onCopyButtonClick = () => {
+const downloadEvent = () => {
   emit("download", true);
 };
 
@@ -73,8 +73,8 @@ const isVisibleTags = computed(() => props.tags.length > 0);
     <div v-if="isVisibleControls" class="preview-card-header__container">
       <button
         class="preview-card-header__button preview-card-header__button--copy"
-        @click="onCopyButtonClick"
-        @click.right.prevent="onCopyButtonRightClick"
+        @click="downloadEvent"
+        @click.right.prevent="copyEvent"
       >
         <IconSvg name="copy" class="preview-card-header__button-icon" />
       </button>
@@ -98,7 +98,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--delete"
-        @click="onDeleteButtonClick"
+        @click="deleteEvent"
       >
         <IconSvg name="times" class="preview-card-header__button-icon" />
       </button>
