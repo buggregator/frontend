@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
+import { useLockedIdsStore } from "~/stores/locked-ids";
+
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
@@ -23,14 +25,25 @@ export const useEventStore = defineStore("useEventStore", {
       });
     },
     removeAll() {
-      this.events.length = 0;
+      const { lockedIds } = useLockedIdsStore();
+
+      if (!lockedIds.length) {
+        this.events.length = 0;
+      } else {
+        this.events = this.events.filter(({ uuid }) => lockedIds.includes(uuid));
+      }
     },
     removeById(eventUuid: EventId) {
       this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
     },
     removeByType(eventType: EventType) {
-      this.events = this.events.filter(({ type }) => type !== eventType);
-    },
+      const { lockedIds } = useLockedIdsStore();
 
+      if (!lockedIds.length) {
+        this.events = this.events.filter(({ type }) => type !== eventType);
+      } else {
+        this.events = this.events.filter(({ type, uuid }) => type !== eventType && !lockedIds.includes(uuid));
+      }
+    },
   },
 });

@@ -3,10 +3,12 @@ import { useApiTransport } from '~/src/shared/lib/use-api-transport'
 import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { useCachedIdsStore } from "~/stores/cached-ids";
 import { useEventStore } from "~/stores/events";
+import { useLockedIdsStore } from "~/stores/locked-ids";
 
 export default defineNuxtPlugin(() => {
   const eventsStore = useEventStore();
   const cachedIdsStore = useCachedIdsStore();
+  const lockedIdsStore = useLockedIdsStore();
 
   const {
     deleteEvent,
@@ -51,6 +53,7 @@ export default defineNuxtPlugin(() => {
       if (events.length) {
         eventsStore.addList(events);
         cachedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));
+        lockedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();
@@ -68,6 +71,10 @@ export default defineNuxtPlugin(() => {
   const {
     cachedIds,
   } = storeToRefs(cachedIdsStore)
+
+  const {
+    lockedIds,
+  } = storeToRefs(lockedIdsStore)
 
   return {
     provide: {
@@ -88,6 +95,11 @@ export default defineNuxtPlugin(() => {
       rayExecution: {
         continue: rayContinueExecution,
         stop: rayStopExecution,
+      },
+      lockedEvents: {
+        items: lockedIds,
+        add: lockedIdsStore.addId,
+        remove: lockedIdsStore.removeId,
       }
     }
   }
