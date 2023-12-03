@@ -173,6 +173,8 @@ export interface RayDump {
     php_version_id: number,
     project_name: string,
     ray_package_version: string,
+    symfony_version?: string,
+    laravel_version?: string,
   }
 }
 
