@@ -12,5 +12,5 @@ export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEven
   },
   serverName: event.payload?.server_name || '',
   date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-  payload: event.payload
+  payload: event.payload,
 })
