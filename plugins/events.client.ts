@@ -49,7 +49,7 @@ export default defineNuxtPlugin(() => {
   const getAll = () => {
     getEventsAll().then((events: ServerEvent<unknown>[]) => {
       if (events.length) {
-        eventsStore.addList(events);
+        eventsStore.initialize(events);
         cachedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));
       } else {
         // NOTE: clear cached events hardly
