@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import CallStack from './call-stack.vue';

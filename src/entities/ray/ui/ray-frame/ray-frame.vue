@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { RayFrame } from "../../types";
+import type { RayFrame } from "../../types";
 
 type Props = {
   frame: RayFrame;

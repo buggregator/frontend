@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { SORTING_ORDER } from "./constants";
 import SortWrap from "./sorting-wrapper.vue";
 

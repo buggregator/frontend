@@ -15,9 +15,9 @@
 <script lang="ts">
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
-import { useSettingsStore } from "~/stores/settings";
 import { useNuxtApp } from "#app";
 import { LayoutSidebar } from "~/src/widgets/ui";
+import { useSettingsStore } from "~/stores/settings";
 
 export default defineComponent({
   components: {

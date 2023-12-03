@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { HTMLCode } from '~/src/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 

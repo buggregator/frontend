@@ -65,9 +65,9 @@
 <script lang="ts">
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
-import { useSettingsStore, THEME_MODES } from "~/stores/settings";
 import { PageHeader } from "~/src/widgets/ui";
 import { IconSvg } from "~/src/shared/ui";
+import { useSettingsStore, THEME_MODES } from "~/stores/settings";
 
 export default defineComponent({
   components: {

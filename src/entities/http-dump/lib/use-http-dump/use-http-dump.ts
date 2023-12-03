@@ -1,5 +1,5 @@
-import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
-import { HttpDump } from "../../types";
+import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { HttpDump } from "../../types";
 import { normalizeHttpDumpEvent } from "./normalize-http-dump-event";
 
 type TUseInspector = () => {

@@ -1,5 +1,6 @@
-import cytoscape, { Core as Cytoscape, ElementsDefinition, EventObjectNode, NodeSingular, Stylesheet } from "cytoscape";
-import dagre, { DagreLayoutOptions } from "cytoscape-dagre";
+import cytoscape from 'cytoscape';
+import type { Core as Cytoscape, ElementsDefinition, EventObjectNode, NodeSingular, Stylesheet } from "cytoscape";
+import dagre, { type DagreLayoutOptions } from "cytoscape-dagre";
 import { cytoscapeStyles } from "./config";
 
 cytoscape.use(dagre);

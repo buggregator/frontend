@@ -1,7 +1,7 @@
-import {Meta, Story} from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { Profiler } from "~/src/entities/profiler/types";
+import type { Profiler } from "~/src/entities/profiler/types";
 import FlameGraph from './flame-graph.vue';
 
 const { normalizeProfilerEvent } = useProfiler();

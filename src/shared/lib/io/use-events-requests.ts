@@ -1,4 +1,4 @@
-import { EventId, EventType , ServerEvent } from '../../types';
+import type { EventId, EventType , ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {

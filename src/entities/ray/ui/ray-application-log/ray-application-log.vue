@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RayContentApplicationLog } from "../../types";
+import type { RayContentApplicationLog } from "../../types";
 
 type Props = {
   content: RayContentApplicationLog;

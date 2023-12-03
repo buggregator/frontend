@@ -1,5 +1,6 @@
-import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { SMTP } from "../types";
+import { EVENT_TYPES } from "~/src/shared/types";
+import type {  ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import type { SMTP } from "../types";
 
 export const normalizeSmtpEvent = (event: ServerEvent<SMTP>): NormalizedEvent<SMTP> => ({
   id: event.uuid,

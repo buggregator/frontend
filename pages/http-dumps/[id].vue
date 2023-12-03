@@ -24,12 +24,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { HttpDumpPage } from "~/src/screens/http-dump";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
-import { HttpDump } from "~/src/entities/http-dump/types";
-import { EventId, ServerEvent } from "~/src/shared/types";
+import type { HttpDump } from "~/src/entities/http-dump/types";
+import type { EventId, ServerEvent } from "~/src/shared/types";
+import { HttpDumpPage } from "~/src/screens/http-dump";
 
 const { normalizeHttpDumpEvent } = useHttpDump();
 

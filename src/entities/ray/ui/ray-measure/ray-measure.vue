@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
-import { RayContentMeasure } from "../../types";
+import type { RayContentMeasure } from "../../types";
 
 type Props = {
   measure: RayContentMeasure;

@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelJobsMock } from '../../mocks-laravel';
-import { RayContentJob } from '../../types';
+import type { RayContentJob } from '../../types';
 import RayJob from './ray-job.vue';
 
 const { normalizeRayEvent } = useRay();

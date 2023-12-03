@@ -1,5 +1,5 @@
-import { ServerEvent } from '~/src/shared/types';
-import { EnhancedRayEvent, RayDump } from "../../types";
+import type { ServerEvent } from '~/src/shared/types';
+import type { EnhancedRayEvent, RayDump } from "../../types";
 import { normalizeRayEvent } from "./normalize-ray-event";
 
 type TUseRay = () => {

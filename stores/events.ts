@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { EventId, EventType, ServerEvent } from '~/src/shared/types';
+import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({

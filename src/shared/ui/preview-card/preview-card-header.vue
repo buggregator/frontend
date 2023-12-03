@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, PropType } from "vue";
+import { computed } from "vue";
 import { EVENT_TYPES } from "../../types";
 import { IconSvg } from "../icon-svg";
 
@@ -7,7 +7,7 @@ type Props = {
   eventType: EVENT_TYPES;
   eventId: string;
   eventUrl: string;
-  tags: PropType<string[]>;
+  tags: string[];
   isOpen: boolean;
   isVisibleControls: boolean;
 };

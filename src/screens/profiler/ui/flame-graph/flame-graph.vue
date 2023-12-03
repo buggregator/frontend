@@ -2,10 +2,10 @@
 import { FlameChart } from "flame-chart-js";
 import debounce from "lodash.debounce";
 import { ref, onMounted, nextTick } from "vue";
-import { CallStackHoverData } from "~/src/screens/profiler/types";
 import { useFlameChart } from "~/src/features/lib/flame-chart";
-import { ProfilerEdges } from "~/src/entities/profiler/types";
+import type { ProfilerEdges } from "~/src/entities/profiler/types";
 import { GraphTypes } from "~/src/shared/types";
+import type { CallStackHoverData } from "~/src/screens/profiler/types";
 
 type Props = {
   edges: ProfilerEdges;

@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useHttpDump } from "../../lib";
 import { httpDumpMock } from '../../mocks';
 import PreviewCard from './preview-card.vue';

@@ -1,5 +1,5 @@
-import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
-import { SMTP } from "../types";
+import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { SMTP } from "../types";
 import { normalizeSmtpEvent } from "./normalize-smtp-event";
 
 type TUseSmtp = () => {

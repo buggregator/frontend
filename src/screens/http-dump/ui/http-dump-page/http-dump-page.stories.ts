@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useHttpDump } from '~/src/entities/http-dump';
 import { httpDumpMock, httpDumpPdfMock } from '~/src/entities/http-dump/mocks';
 import HttpDumpPage from "./http-dump-page.vue";

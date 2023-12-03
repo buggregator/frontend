@@ -1,4 +1,4 @@
-import { Attachment } from '~/src/shared/types';
+import type { Attachment } from '~/src/shared/types';
 
 export interface SMTPUser {
   name: string,

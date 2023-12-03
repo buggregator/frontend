@@ -1,5 +1,6 @@
-import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { Monolog } from "../../types";
+import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { EVENT_TYPES } from "~/src/shared/types";
+import type { Monolog } from "../../types";
 
 export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<Monolog> => {
   const origin = event.payload?.context?.source || null;

@@ -1,5 +1,5 @@
-import {FlameChartNode} from "flame-chart-js/dist/types";
-import { ProfilerCost, ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
+import type { FlameChartNode } from "flame-chart-js/dist/types";
+import type { ProfilerCost, ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
 import { GraphTypes } from "~/src/shared/types";
 
 type FlameChartData = FlameChartNode & {

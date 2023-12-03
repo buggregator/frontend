@@ -1,7 +1,7 @@
-import { ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
+import type { ProfilerEdge, ProfilerEdges } from "~/src/entities/profiler/types";
 import { useFormats } from "~/src/shared/lib/formats";
 import { GraphTypes } from "~/src/shared/types";
-import { TEdge, TNode } from "./types";
+import type { TEdge, TNode } from "./types";
 
 const { formatDuration, formatFileSize } = useFormats();
 

@@ -3,7 +3,7 @@ import moment from "moment";
 import { computed } from "vue";
 import { SentryException } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { SentryPageApp } from "../sentry-page-app";
 import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs";
 import { SentryPageDevice } from "../sentry-page-device";

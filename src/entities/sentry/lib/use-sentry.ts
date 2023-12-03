@@ -1,5 +1,5 @@
-import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
-import { Sentry } from "../types";
+import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { Sentry } from "../types";
 import { normalizeSentryEvent } from "./normalize-sentry-event";
 
 type TUseSentry = () => {

@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { SFDumpCode, HTMLEscapedString } from "../../mocks";
 import ValueDump from './value-dump.vue';
 

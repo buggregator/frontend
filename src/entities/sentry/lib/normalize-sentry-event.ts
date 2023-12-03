@@ -1,5 +1,6 @@
-import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { Sentry } from "../types";
+import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { EVENT_TYPES } from "~/src/shared/types";
+import type { Sentry } from "../types";
 
 export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent<Sentry> => ({
   id: event.uuid,

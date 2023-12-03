@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useSentry } from "~/src/entities/sentry";
 import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks'
 import SentryPageBreadcrumbs from './sentry-page-breadcrumbs.vue';

@@ -1,4 +1,4 @@
-import {Meta, Story} from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import SmtpPageAddresses from './smtp-page-addresses.vue';
 
 export default {

@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelMailableMock } from '../../mocks-laravel'
-import { RayContentMail } from "../../types";
+import type { RayContentMail } from "../../types";
 import RayMail from "./ray-mail.vue";
 
 const { normalizeRayEvent } = useRay();

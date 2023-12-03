@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useSmtp } from "../../lib";
 import { smtpOrderMock, smtpWelcomeMock } from '../../mocks';
 import PreviewCard from './preview-card.vue';

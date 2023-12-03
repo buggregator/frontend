@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { CodeSnippet, PreviewCard } from "~/src/shared/ui";
 
 type Props = {

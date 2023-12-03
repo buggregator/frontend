@@ -1,8 +1,8 @@
 import { storeToRefs } from "pinia";
+import { useApiTransport } from '~/src/shared/lib/use-api-transport'
+import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { useCachedIdsStore } from "~/stores/cached-ids";
 import { useEventStore } from "~/stores/events";
-import { useApiTransport } from '~/src/shared/lib/use-api-transport'
-import { EventId, EventType, ServerEvent } from '~/src/shared/types';
 
 export default defineNuxtPlugin(() => {
   const eventsStore = useEventStore();

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { CallStackHoverData } from "~/src/screens/profiler/types";
-import { ProfilerEdge } from "~/src/entities/profiler/types";
+import type { ProfilerEdge } from "~/src/entities/profiler/types";
+import type { CallStackHoverData } from "~/src/screens/profiler/types";
 
 type Props = {
   edge: ProfilerEdge;

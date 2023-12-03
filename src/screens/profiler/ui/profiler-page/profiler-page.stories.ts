@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import ProfilerPage from './profiler-page.vue';
