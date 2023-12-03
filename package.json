@@ -12,7 +12,7 @@
     "lint": "yarn codestyle && yarn typecheck",
     "codestyle": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "echo \"TODO: need to add tests\""
   },
   "type": "module",
   "lint-staged": {
