@@ -22,12 +22,12 @@ export const useLockedIdsStore = defineStore("useLockedIdsStore", {
     lockedIds: getLockedIds() || [],
   }),
   actions: {
-    removeId(eventUuid: EventId) {
-      this.lockedIds.filter((id) => id !== eventUuid);
+    remove(eventUuid: EventId) {
+      this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
 
       syncLocalStorage(this.lockedIds);
     },
-    addId(eventUuid: EventId) {
+    add(eventUuid: EventId) {
       this.lockedIds.push(eventUuid);
 
       syncLocalStorage(this.lockedIds);

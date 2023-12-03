@@ -9,6 +9,7 @@ type Props = {
   eventUrl: string;
   tags: string[];
   isOpen: boolean;
+  isLocked: boolean;
   isVisibleControls: boolean;
 };
 
@@ -17,6 +18,7 @@ type Emits = {
   toggleView: [value: boolean];
   copy: [value: boolean];
   download: [value: boolean];
+  lock: [value: boolean];
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -40,6 +42,10 @@ const copyEvent = () => {
 
 const downloadEvent = () => {
   emit("download", true);
+};
+
+const lockEvent = () => {
+  emit("lock", true);
 };
 
 const isVisibleTags = computed(() => props.tags.length > 0);
@@ -98,9 +104,20 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--delete"
+        :disabled="isLocked"
         @click="deleteEvent"
       >
         <IconSvg name="times" class="preview-card-header__button-icon" />
+      </button>
+
+      <button
+        class="preview-card-header__button preview-card-header__button--lock"
+        :class="{
+          'preview-card-header__button--unlock': isLocked,
+        }"
+        @click="lockEvent"
+      >
+        <IconSvg name="lock" class="preview-card-header__button-icon" />
       </button>
     </div>
   </div>
@@ -177,6 +194,10 @@ $eventTypeColorsMap: (
       @apply bg-#{$color}-600 ring-#{$color}-300;
     }
   }
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 
 .preview-card-header__button--collapse {
@@ -189,6 +210,14 @@ $eventTypeColorsMap: (
 
 .preview-card-header__button--delete {
   @apply text-red-700 bg-white dark:bg-red-700 hover:bg-red-700 hover:text-white;
+}
+
+.preview-card-header__button--lock {
+  @apply text-gray-700 bg-gray-200 hover:bg-blue-700 hover:text-white;
+}
+
+.preview-card-header__button--unlock {
+  @apply dark:text-white dark:bg-blue-700;
 }
 
 .preview-card-header__button-icon {

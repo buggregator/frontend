@@ -28,7 +28,7 @@ export interface ServerEvent<T> {
 
 export interface NormalizedEvent<T> {
   id: EventId,
-  type: EventType | string,
+  type: EventType,
   labels: string[],
   origin: object | null,
   serverName: string,

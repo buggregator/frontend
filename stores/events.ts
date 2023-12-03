@@ -27,23 +27,38 @@ export const useEventStore = defineStore("useEventStore", {
     removeAll() {
       const { lockedIds } = useLockedIdsStore();
 
-      if (!lockedIds.length) {
-        this.events.length = 0;
-      } else {
+      if (lockedIds.length) {
         this.events = this.events.filter(({ uuid }) => lockedIds.includes(uuid));
+
+        return
       }
+
+      this.events.length = 0;
+    },
+    removeByIds(eventUuids: EventId[]) {
+      const { lockedIds } = useLockedIdsStore();
+
+      if (lockedIds.length) {
+        this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid) || lockedIds.includes(uuid));
+
+        return
+      }
+
+      this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid));
     },
     removeById(eventUuid: EventId) {
-      this.events = this.events.filter(({ uuid }) => uuid !== eventUuid);
+      this.removeByIds([eventUuid]);
     },
     removeByType(eventType: EventType) {
       const { lockedIds } = useLockedIdsStore();
 
-      if (!lockedIds.length) {
-        this.events = this.events.filter(({ type }) => type !== eventType);
-      } else {
-        this.events = this.events.filter(({ type, uuid }) => type !== eventType && !lockedIds.includes(uuid));
+      if (lockedIds.length) {
+        this.events = this.events.filter(({ type, uuid }) => type !== eventType || lockedIds.includes(uuid));
+
+        return
       }
+
+      this.events = this.events.filter(({ type }) => type !== eventType);
     },
   },
 });

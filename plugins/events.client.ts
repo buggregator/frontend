@@ -11,8 +11,17 @@ export default defineNuxtPlugin(() => {
   const lockedIdsStore = useLockedIdsStore();
 
   const {
+    lockedIds,
+  } = storeToRefs(lockedIdsStore)
+
+  const {
+    events,
+  } = storeToRefs(eventsStore)
+
+  const {
     deleteEvent,
     deleteEventsAll,
+    deleteEventsList,
     deleteEventsByType,
     getEventsAll,
     getEvent,
@@ -21,7 +30,36 @@ export default defineNuxtPlugin(() => {
     rayStopExecution,
   } = useApiTransport();
 
+  const removeList = async (uuids: EventId[]) => {
+    if (uuids.length === 1) {
+      const res = await deleteEvent(uuids[0])
+
+      if (res) {
+        eventsStore.removeById(uuids[0]);
+        cachedIdsStore.removeById(uuids[0]);
+      }
+
+      return
+    }
+
+    const res = await deleteEventsList(uuids)
+
+    if (res) {
+      eventsStore.removeByIds(uuids);
+      cachedIdsStore.removeByIds(uuids);
+    }
+  }
   const removeAll = async () => {
+    if (lockedIds.value.length) {
+      const removedIds = events.value
+        .filter(({ uuid }) => !lockedIds.value.includes(uuid))
+        .map(({ uuid }) => uuid)
+
+      await removeList(removedIds)
+
+      return
+    }
+
     const res = await deleteEventsAll()
 
     if (res) {
@@ -31,29 +69,34 @@ export default defineNuxtPlugin(() => {
   }
 
   const removeById = async (eventId: EventId) => {
-    const res = await deleteEvent(eventId)
-
-    if (res) {
-      eventsStore.removeById(eventId);
-      cachedIdsStore.removeById(eventId);
-    }
+    await removeList([eventId])
   }
 
-  const removeByType = async (type: EventType) => {
-    const res = await deleteEventsByType(type)
+  const removeByType = async (eventType: EventType) => {
+    if (lockedIds.value.length) {
+      const removedIds = events.value
+        .filter(({ type, uuid }) => type !== eventType || lockedIds.value.includes(uuid))
+        .map(({ uuid }) => uuid)
+
+      await removeList(removedIds)
+
+      return
+    }
+
+    const res = await deleteEventsByType(eventType)
 
     if (res) {
-      eventsStore.removeByType(type);
-      cachedIdsStore.removeByType(type);
+      eventsStore.removeByType(eventType);
+      cachedIdsStore.removeByType(eventType);
     }
   }
 
   const getAll = () => {
-    getEventsAll().then((events: ServerEvent<unknown>[]) => {
-      if (events.length) {
-        eventsStore.addList(events);
-        cachedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));
-        lockedIdsStore.syncWithActive(events.map(({ uuid }) => uuid));
+    getEventsAll().then((allEvents: ServerEvent<unknown>[]) => {
+      if (allEvents.length) {
+        eventsStore.addList(allEvents);
+        cachedIdsStore.syncWithActive(allEvents.map(({ uuid }) => uuid));
+        lockedIdsStore.syncWithActive(allEvents.map(({ uuid }) => uuid));
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();
@@ -65,16 +108,8 @@ export default defineNuxtPlugin(() => {
   }
 
   const {
-    events,
-  } = storeToRefs(eventsStore)
-
-  const {
     cachedIds,
   } = storeToRefs(cachedIdsStore)
-
-  const {
-    lockedIds,
-  } = storeToRefs(lockedIdsStore)
 
   return {
     provide: {
@@ -96,10 +131,10 @@ export default defineNuxtPlugin(() => {
         continue: rayContinueExecution,
         stop: rayStopExecution,
       },
-      lockedEvents: {
+      lockedIds: {
         items: lockedIds,
-        add: lockedIdsStore.addId,
-        remove: lockedIdsStore.removeId,
+        add: lockedIdsStore.add,
+        remove: lockedIdsStore.remove,
       }
     }
   }

@@ -12,6 +12,7 @@ export const useApiTransport = () => {
     getAll,
     getSingle,
     deleteAll,
+    deleteList,
     deleteSingle,
     deleteByType,
     getEventRestUrl
@@ -73,6 +74,14 @@ export const useApiTransport = () => {
     return deleteAll();
   }
 
+  const deleteEventsList = (uuids: EventId[]) => {
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/events`, { uuids })
+    }
+
+    return deleteList(uuids);
+  }
+
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
       return centrifuge.rpc(`delete:api/events`, {type})
@@ -98,6 +107,7 @@ export const useApiTransport = () => {
     getEvent: getSingle,
     deleteEvent,
     deleteEventsAll,
+    deleteEventsList,
     deleteEventsByType,
     rayStopExecution,
     rayContinueExecution,
