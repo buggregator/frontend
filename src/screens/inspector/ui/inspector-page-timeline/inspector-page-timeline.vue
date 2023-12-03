@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import {computed, Ref} from "vue";
+import { computed } from "vue";
+import type { Ref } from "vue";
 import {
   InspectorSegment,
   InspectorTransaction,
@@ -30,7 +31,7 @@ const transaction: Ref<InspectorTransaction> = computed(
 );
 
 const grid = computed(() => {
-  let {duration} = transaction.value;
+  let { duration } = transaction.value;
 
   const totalCells = 5;
   const width = duration / totalCells + 1;
@@ -59,10 +60,10 @@ const segments: Ref<InspectorSegment[]> = computed(() =>
     .filter(
       (
         <T extends keyof InspectorItemType>(type: T) =>
-          (
-            action: InspectorItemType[keyof InspectorItemType]
-          ): action is InspectorItemType[T] =>
-            action.model === type
+        (
+          action: InspectorItemType[keyof InspectorItemType]
+        ): action is InspectorItemType[T] =>
+          action.model === type
       )("segment")
     )
     .filter(
@@ -79,7 +80,7 @@ const segmentTypes = computed(() =>
 );
 
 const series = computed(() => {
-  const {duration} = transaction.value;
+  const { duration } = transaction.value;
 
   return segments.value.map((segment: InspectorSegment) => {
     const widthPercent = Math.max(
@@ -153,7 +154,7 @@ const series = computed(() => {
               class="inspector-page-timeline__series-segment-start"
             >
               <span class="inspector-page-timeline__series-segment-start-label"
-              >{{ row.segment.start }} ms</span
+                >{{ row.segment.start }} ms</span
               >
             </div>
             <div
@@ -218,9 +219,9 @@ const series = computed(() => {
 
 .dark .inspector-page-timeline__series {
   background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.04) 1px,
-      transparent 1px
+    to right,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px
   );
 }
 
@@ -272,7 +273,6 @@ const series = computed(() => {
 .inspector-page-timeline__no-segments-placeholder {
   @apply text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300;
 }
-
 
 .inspector-page-timeline__series-segment-time,
 .inspector-page-timeline__segment-type__color-box {

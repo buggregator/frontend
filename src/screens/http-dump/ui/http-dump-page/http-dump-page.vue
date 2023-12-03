@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { defineProps, computed } from "vue";
-import { HttpDump } from "~/src/entities/http-dump/types";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { HttpDump } from "~/src/entities/http-dump/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { TableBase, TableBaseRow, FileAttachment } from "~/src/shared/ui";
 
 type Props = {

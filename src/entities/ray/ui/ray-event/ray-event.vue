@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ValueDump } from "~/src/shared/ui";
-import { RayContentEvent } from "../../types";
+import type { RayContentEvent } from "../../types";
 
 type Props = {
   content: RayContentEvent;

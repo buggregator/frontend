@@ -3,8 +3,7 @@ import moment from "moment";
 import { computed, ref } from "vue";
 import { Tab, Tabs } from "vue3-tabs-component";
 import { SMTP } from "~/src/entities/smtp/types";
-import { NormalizedEvent } from "~/src/shared/types";
-import type { Attachment } from "~/src/shared/types";
+import type { NormalizedEvent, Attachment } from "~/src/shared/types";
 import {
   TableBase,
   TableBaseRow,

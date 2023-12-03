@@ -1,4 +1,4 @@
-import { Source } from "~/src/shared/types";
+import type { Source } from "~/src/shared/types";
 
 export type StatusCode = number; // TODO: update type
 

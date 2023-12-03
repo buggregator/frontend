@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayCarbonMock } from '../../mocks'
-import { RayContentCarbone } from "../../types";
+import type { RayContentCarbone } from "../../types";
 import RayCarbon from './ray-carbone.vue';
 
 const { normalizeRayEvent } = useRay();

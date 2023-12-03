@@ -2,7 +2,7 @@
 // TODO: need to rename component
 import { ref, computed } from "vue";
 import { IconSvg } from "~/src/shared/ui";
-import { RayFrame } from "../../types";
+import type { RayFrame } from "../../types";
 
 type Props = {
   file: RayFrame;

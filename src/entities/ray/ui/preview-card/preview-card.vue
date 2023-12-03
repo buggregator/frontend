@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
-import {
+import type {
   EnhancedRayEvent,
   RayContentCarbone,
   RayContentCustom,
@@ -22,12 +22,12 @@ import {
   RayContentView,
   RayDump,
   RayPayload,
-  RAY_EVENT_TYPES,
 } from "../../types";
+import { RAY_EVENT_TYPES } from "../../types";
+import { RayApplicationLog } from "../ray-application-log";
 import { RayCarbone } from "../ray-carbone";
 import { RayCustom } from "../ray-custom";
-import { RayEloquent } from "../ray-eloquent"
-import { RayApplicationLog } from "../ray-application-log";
+import { RayEloquent } from "../ray-eloquent";
 import { RayEvent } from "../ray-event";
 import { RayException } from "../ray-exception";
 import { RayFrame } from "../ray-frame";

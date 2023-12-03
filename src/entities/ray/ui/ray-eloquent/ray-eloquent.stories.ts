@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelEloquentMock } from '../../mocks-laravel';
-import { RayContentEloquent } from '../../types';
+import type { RayContentEloquent } from '../../types';
 import RayEloquent from './ray-eloquent.vue';
 
 const { normalizeRayEvent } = useRay();

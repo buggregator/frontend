@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
-import { RayContentSQL } from "../../types";
+import type { RayContentSQL } from "../../types";
 
 type Props = {
   content: RayContentSQL;

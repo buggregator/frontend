@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import { IconSvg } from "~/src/shared/ui";
-import { SentryFrame } from "../../types";
+import type { SentryFrame } from "../../types";
 
 type Props = {
   frame: SentryFrame;

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
-import { RayContentCarbone } from "../../types";
+import type { RayContentCarbone } from "../../types";
 
 type Props = {
   carbone: RayContentCarbone;

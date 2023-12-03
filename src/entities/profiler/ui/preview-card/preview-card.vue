@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, StatBoard } from "~/src/shared/ui";
-import { Profiler } from "../../types";
+import type { Profiler } from "../../types";
 
 type Props = {
   event: NormalizedEvent<Profiler>;

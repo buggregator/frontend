@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import moment from "moment";
 import { computed } from "vue";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
-import { SMTP } from "../../types";
+import type { SMTP } from "../../types";
 
 type Props = {
   event: NormalizedEvent<SMTP>;

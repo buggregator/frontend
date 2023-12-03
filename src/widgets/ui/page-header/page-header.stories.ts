@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { EVENT_TYPES } from "~/src/shared/types";
 import PageHeader from "./page-header.vue";
 

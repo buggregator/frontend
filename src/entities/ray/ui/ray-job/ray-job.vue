@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ValueDump } from "~/src/shared/ui";
-import { RayContentJob } from "../../types";
+import type { RayContentJob } from "../../types";
 
 type Props = {
   content: RayContentJob;

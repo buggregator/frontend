@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { EVENT_TYPES } from "../../types";
 import PreviewCard from "./preview-card.vue";
 

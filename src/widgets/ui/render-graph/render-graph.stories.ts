@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';

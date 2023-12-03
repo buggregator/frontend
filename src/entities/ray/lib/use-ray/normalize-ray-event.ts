@@ -1,6 +1,8 @@
 import pick from "lodash/pick";
-import { EVENT_TYPES, ServerEvent } from "~/src/shared/types";
-import { EnhancedRayEvent, RayContentColor, RayContentLabel, RayContentSize, RayDump, RAY_EVENT_TYPES } from "../../types";
+import type { ServerEvent } from "~/src/shared/types";
+import { EVENT_TYPES } from "~/src/shared/types";
+import type { EnhancedRayEvent, RayContentColor, RayContentLabel, RayContentSize, RayDump } from "../../types";
+import { RAY_EVENT_TYPES } from "../../types";
 
 export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent => {
   let origin = {

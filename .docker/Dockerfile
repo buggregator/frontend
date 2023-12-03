@@ -6,7 +6,7 @@ ARG BRANCH=master
 RUN git clone -b $BRANCH $REPOSITORY /app
 
 # Build JS files
-FROM node:19-alpine as frontend
+FROM node:20-alpine as frontend
 COPY --from=git /app /app
 WORKDIR /app
 

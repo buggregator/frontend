@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { httpDumpMock } from '~/src/entities/http-dump/mocks';
 import { inspectorMock } from '~/src/entities/inspector/mocks';
 import { monologMock } from '~/src/entities/monolog/mocks';

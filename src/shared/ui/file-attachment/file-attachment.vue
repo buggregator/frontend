@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useFormats } from "../../lib/formats";
 import { REST_API_URL } from "../../lib/io";
-import { Attachment } from "../../types";
+import type { Attachment } from "../../types";
 
 const { formatFileSize } = useFormats();
 

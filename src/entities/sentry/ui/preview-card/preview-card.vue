@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, Ref } from "vue";
-import { NormalizedEvent } from "~/src/shared/types";
+import { computed } from "vue";
+import type { Ref } from "vue";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
 import type { Sentry, SentryException as Exception } from "../../types";
 import { SentryException } from "../sentry-exception";

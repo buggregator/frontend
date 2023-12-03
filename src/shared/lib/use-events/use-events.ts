@@ -1,4 +1,4 @@
-import { ServerEvent, NormalizedEvent } from '../../types';
+import type { ServerEvent, NormalizedEvent } from '../../types';
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 
 type TUseEvents = () => {

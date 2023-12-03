@@ -15,7 +15,7 @@ export type SentryContextOS = SentryTypes.OsContext
 export type SentryContextApp = SentryTypes.AppContext
 
 export type SentryDevice = Omit<SentryTypes.DeviceContext, 'orientation'> & {
-  orientation: SentryTypes.DeviceContext['orientation'] | string
+  orientation?: SentryTypes.DeviceContext['orientation'] | string
   language?: string
   id?: string
   timezone?: string
@@ -35,11 +35,14 @@ export type SentryRequest = Omit<SentryTypes.Request, 'headers'> & {
   }
 }
 
-export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' | 'breadcrumbs' | 'level'> {
-  contexts?: Omit<SentryTypes.Contexts, 'device'> & {
-    runtime?: SentryTypes.Runtime;
-    device?: SentryDevice
-  },
+export type SentryContexts = Omit<SentryTypes.Contexts, 'device' | 'app'> & {
+  runtime?: SentryTypes.Runtime;
+  device?: SentryDevice;
+  app?: unknown;
+}
+
+export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' | 'breadcrumbs' | 'level' | 'contexts'> {
+  contexts?: SentryContexts,
   request?: SentryRequest,
   exception?: {
     values: SentryException[]

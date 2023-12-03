@@ -40,11 +40,11 @@
 <script lang="ts">
 import pluralize from "pluralize"; // eslint-disable-line @conarti/feature-sliced/public-api
 import { defineComponent } from "vue";
-import { PauseButton } from "~/src/screens/events/ui/pause-button";
 import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
 import { PAGE_TYPES } from "~/src/shared/constants";
-import { EventType } from "~/src/shared/types";
+import type { EventType } from "~/src/shared/types";
+import { PauseButton } from "~/src/screens/events/ui/pause-button";
 
 export default defineComponent({
   components: {

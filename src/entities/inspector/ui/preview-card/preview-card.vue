@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, defineProps } from "vue";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
-import { Inspector } from "../../types";
+import type { Inspector } from "../../types";
 import InspectorStatBoard from "../inspector-stat-board/inspector-stat-board.vue";
 
 type Props = {

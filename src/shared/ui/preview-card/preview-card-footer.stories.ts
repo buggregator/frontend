@@ -1,4 +1,4 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import PreviewCardFooter from "./preview-card-footer.vue";
 
 export default {

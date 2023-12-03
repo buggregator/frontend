@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, ValueDump } from "~/src/shared/ui";
-import { VarDump } from "../../types";
+import type { VarDump } from "../../types";
 
 type Props = {
   event: NormalizedEvent<VarDump>;

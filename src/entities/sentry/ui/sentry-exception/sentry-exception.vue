@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, defineProps, withDefaults } from "vue";
-import { SentryException } from "../../types";
+import type { SentryException } from "../../types";
 import SentryExceptionFrame from "./sentry-exception-frame.vue";
 
 type Props = {

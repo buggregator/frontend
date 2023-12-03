@@ -1,4 +1,4 @@
-import { OneOfValues } from "./generics";
+import type { OneOfValues } from "./generics";
 
 // TODO: add T prefix to all types
 

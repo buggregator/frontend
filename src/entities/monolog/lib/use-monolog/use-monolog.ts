@@ -1,5 +1,5 @@
-import { ServerEvent, NormalizedEvent } from '~/src/shared/types';
-import { Monolog } from "../../types";
+import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { Monolog } from "../../types";
 import { normalizeMonolog } from "./normalize-monolog";
 
 type TUseMonolog = () => {

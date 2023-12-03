@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayTraceMock } from '../../mocks';
-import { RayContentFrames } from '../../types';
+import type { RayContentFrames } from '../../types';
 import RayTrace from './ray-trace.vue';
 
 const { normalizeRayEvent } = useRay();

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { Ref, computed } from "vue";
-import { RayFrame, RayPayloadOrigin } from "../../types";
+import { computed } from "vue";
+import type { Ref } from "vue";
+import type { RayFrame, RayPayloadOrigin } from "../../types";
 import { RayFile } from "../ray-file";
 
 type Props = {

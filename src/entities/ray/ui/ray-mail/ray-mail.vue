@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, defineProps } from "vue";
 import { IconSvg, TableBase, TableBaseRow } from "~/src/shared/ui";
-import { RayContentMail, RayUser } from "../../types";
+import type { RayContentMail, RayUser } from "../../types";
 
 type Props = {
   content: RayContentMail;

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RayFrame } from "../../types";
+import type { RayFrame } from "../../types";
 import { RayFile } from "../ray-file";
 
 type Props = {

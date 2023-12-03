@@ -1,5 +1,6 @@
-import { EVENT_TYPES, ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { Inspector, InspectorTransaction } from "../../types";
+import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
+import { EVENT_TYPES } from "~/src/shared/types";
+import type { Inspector, InspectorTransaction } from "../../types";
 
 export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): NormalizedEvent<Inspector> => {
   const transaction = event.payload[0] as InspectorTransaction;

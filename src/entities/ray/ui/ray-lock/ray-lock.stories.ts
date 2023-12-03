@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLockMock } from '../../mocks'
-import { RayContentLock } from '../../types'
+import type { RayContentLock } from '../../types'
 import RayLock from './ray-lock.vue';
 
 const { normalizeRayEvent } = useRay();

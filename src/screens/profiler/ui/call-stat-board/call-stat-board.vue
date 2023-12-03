@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { defineProps } from "vue";
-import { ProfilerEdge } from "~/src/entities/profiler/types";
+import type { ProfilerEdge } from "~/src/entities/profiler/types";
 import { StatBoard } from "~/src/shared/ui";
 
 type Props = {

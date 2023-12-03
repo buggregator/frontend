@@ -1,4 +1,4 @@
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 
 export interface RayFrame {
   file_name: string,

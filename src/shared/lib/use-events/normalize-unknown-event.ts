@@ -1,4 +1,4 @@
-import { ServerEvent, NormalizedEvent } from "../../types";
+import type { ServerEvent, NormalizedEvent } from "../../types";
 
 export const normalizeUnknownEvent = (event: ServerEvent<unknown>): NormalizedEvent<unknown> => ({
   id: event.uuid,

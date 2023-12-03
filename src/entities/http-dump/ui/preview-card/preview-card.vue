@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
-import { HttpDump } from "../../types";
+import type { HttpDump } from "../../types";
 
 type Props = {
   event: NormalizedEvent<HttpDump>;

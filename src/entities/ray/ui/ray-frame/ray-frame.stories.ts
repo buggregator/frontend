@@ -1,7 +1,7 @@
-import { Meta, Story } from "@storybook/vue3";
+import type { Meta, Story } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayCallerMock } from '../../mocks';
-import { RayContentFrame } from '../../types';
+import type { RayContentFrame } from '../../types';
 import RayFrame from './ray-frame.vue';
 
 const { normalizeRayEvent } = useRay();

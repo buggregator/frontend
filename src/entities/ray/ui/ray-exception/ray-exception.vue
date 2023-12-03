@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RayContentException } from "../../types";
+import type { RayContentException } from "../../types";
 import { RayFile } from "../ray-file";
 
 type Props = {

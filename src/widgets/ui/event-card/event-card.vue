@@ -24,7 +24,8 @@ import {
   PreviewCard as PreviewVarDump,
 } from "~/src/entities/var-dump";
 import { useEvents } from "~/src/shared/lib/use-events";
-import { EVENT_TYPES, ServerEvent, EventType } from "~/src/shared/types";
+import type { ServerEvent, EventType } from "~/src/shared/types";
+import { EVENT_TYPES } from "~/src/shared/types";
 import { PreviewCardDefault } from "../preview-card-default";
 
 const { normalizeRayEvent } = useRay();

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import moment from "moment";
 import { defineProps, computed } from "vue";
-import { InspectorTransaction } from "~/config/types";
+import type { InspectorTransaction } from "../../types";
 
 type Props = {
   transaction: InspectorTransaction;
