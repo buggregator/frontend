@@ -9,6 +9,7 @@ type Props = {
   eventUrl: string;
   tags: string[];
   isOpen: boolean;
+  isLocked: boolean;
   isVisibleControls: boolean;
 };
 
@@ -17,6 +18,7 @@ type Emits = {
   toggleView: [value: boolean];
   copy: [value: boolean];
   download: [value: boolean];
+  lock: [value: boolean];
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,16 +32,20 @@ const changeView = () => {
   emit("toggleView", true);
 };
 
-const onDeleteButtonClick = () => {
+const deleteEvent = () => {
   emit("delete", true);
 };
 
-const onCopyButtonRightClick = () => {
+const copyEvent = () => {
   emit("copy", true);
 };
 
-const onCopyButtonClick = () => {
+const downloadEvent = () => {
   emit("download", true);
+};
+
+const lockEvent = () => {
+  emit("lock", true);
 };
 
 const isVisibleTags = computed(() => props.tags.length > 0);
@@ -73,8 +79,8 @@ const isVisibleTags = computed(() => props.tags.length > 0);
     <div v-if="isVisibleControls" class="preview-card-header__container">
       <button
         class="preview-card-header__button preview-card-header__button--copy"
-        @click="onCopyButtonClick"
-        @click.right.prevent="onCopyButtonRightClick"
+        @click="downloadEvent"
+        @click.right.prevent="copyEvent"
       >
         <IconSvg name="copy" class="preview-card-header__button-icon" />
       </button>
@@ -98,9 +104,20 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--delete"
-        @click="onDeleteButtonClick"
+        :disabled="isLocked"
+        @click="deleteEvent"
       >
         <IconSvg name="times" class="preview-card-header__button-icon" />
+      </button>
+
+      <button
+        class="preview-card-header__button preview-card-header__button--lock"
+        :class="{
+          'preview-card-header__button--locked': isLocked,
+        }"
+        @click="lockEvent"
+      >
+        <IconSvg name="lock" class="preview-card-header__button-icon" />
       </button>
     </div>
   </div>
@@ -177,6 +194,10 @@ $eventTypeColorsMap: (
       @apply bg-#{$color}-600 ring-#{$color}-300;
     }
   }
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }
 
 .preview-card-header__button--collapse {
@@ -191,7 +212,19 @@ $eventTypeColorsMap: (
   @apply text-red-700 bg-white dark:bg-red-700 hover:bg-red-700 hover:text-white;
 }
 
+.preview-card-header__button--lock {
+  @apply text-gray-700 dark:bg-gray-400 bg-gray-200 hover:bg-green-700 hover:text-white;
+}
+
+.preview-card-header__button--locked {
+  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
+}
+
 .preview-card-header__button-icon {
   @apply p-1 dark:fill-white;
+
+  .preview-card-header__button--lock & {
+    @apply p-0.5;
+  }
 }
 </style>

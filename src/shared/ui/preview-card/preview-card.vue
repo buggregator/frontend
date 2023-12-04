@@ -17,7 +17,12 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const {
+  $lockedIds: { items },
+} = useNuxtApp();
+
 const isCollapsed = ref(false);
+const isLocked = ref((items || []).value.includes(props.event.id));
 const isOptimized = ref(false);
 const isVisibleControls = ref(true);
 
@@ -52,6 +57,20 @@ const deleteEvent = () => {
   const { $events } = useNuxtApp();
 
   return $events?.removeById(props.event.id);
+};
+
+const toggleEventLock = () => {
+  const { $lockedIds } = useNuxtApp();
+
+  if (($lockedIds?.items.value || []).includes(props.event.id)) {
+    $lockedIds?.remove(props.event.id);
+
+    isLocked.value = false;
+  } else {
+    $lockedIds?.add(props.event.id);
+
+    isLocked.value = true;
+  }
 };
 
 const downloadImage = () => {
@@ -129,11 +148,13 @@ onBeforeUnmount(() => {
       :event-id="event.id"
       :tags="normalizedTags"
       :is-open="!isCollapsed && !isOptimized"
+      :is-locked="isLocked"
       :is-visible-controls="isVisibleControls && !isOptimized"
       @toggle-view="toggleView"
       @delete="deleteEvent"
       @copy="copyCode"
       @download="downloadImage"
+      @lock="toggleEventLock"
     />
 
     <div

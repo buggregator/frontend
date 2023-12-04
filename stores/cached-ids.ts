@@ -61,14 +61,17 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
       this.cachedIds[type].length = 0;
       syncLocalStorage(this.cachedIds);
     },
-    removeById(eventUuid: EventId) {
+    removeByIds(uuids: EventId[]) {
       this.cachedTypesList.forEach((type) => {
         this.cachedIds[type] = this.cachedIds[type].filter(
-          (uuid: EventId) => uuid !== eventUuid
+          (uuid: EventId) => uuids.includes(uuid)
         );
       });
 
       syncLocalStorage(this.cachedIds);
+    },
+    removeById(eventUuid: EventId) {
+      this.removeByIds([eventUuid]);
     },
     removeAll() {
       this.cachedIds = initialCachedIds;

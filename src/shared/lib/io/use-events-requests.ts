@@ -5,6 +5,7 @@ type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: () => Promise<void | Response>,
+  deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: EventType) => Promise<void | Response>,
   getEventRestUrl: (param: EventId | undefined) => string
@@ -45,6 +46,11 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
+  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), { method: 'DELETE',  body: JSON.stringify({ uuids }) })
+    .catch((err) => {
+      console.error('Fetch Error', err)
+    })
+
   const deleteByType = (type: EventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
     .catch((err) => {
       console.error('Fetch Error', err)
@@ -54,6 +60,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     getAll,
     getSingle,
     deleteAll,
+    deleteList,
     deleteSingle,
     deleteByType,
     getEventRestUrl
