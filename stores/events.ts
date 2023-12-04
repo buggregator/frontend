@@ -8,11 +8,14 @@ export const useEventStore = defineStore("useEventStore", {
     events: [] as ServerEvent<unknown>[],
   }),
   actions: {
+    initialize(events: ServerEvent<unknown>[]) {
+      this.events = events;
+    },
     addList(events: ServerEvent<unknown>[]) {
       events.forEach((event) => {
         const isExistedEvent = this.events.some((el) => el.uuid === event.uuid);
         if (!isExistedEvent) {
-          this.events.push(event);
+          this.events.unshift(event);
         } else {
           this.events = this.events.map((el) => {
             if (el.uuid !== event.uuid) {
