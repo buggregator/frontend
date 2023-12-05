@@ -10,14 +10,14 @@ type Emits = {
   delete: [value: boolean];
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   title: "",
   buttonTitle: "",
 });
 
 const emit = defineEmits<Emits>();
 
-const buttonClick = () => {
+const clearEvents = () => {
   emit("delete", true);
 };
 </script>
@@ -32,7 +32,7 @@ const buttonClick = () => {
       <button
         v-if="buttonTitle"
         class="page-header__btn-clear"
-        @click="buttonClick"
+        @click="clearEvents"
       >
         {{ buttonTitle }}
       </button>

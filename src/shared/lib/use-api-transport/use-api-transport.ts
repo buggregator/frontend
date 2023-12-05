@@ -75,6 +75,14 @@ export const useApiTransport = () => {
   }
 
   const deleteEventsList = (uuids: EventId[]) => {
+    if (!uuids.length) {
+      return Promise.resolve();
+    }
+
+    if (uuids.length === 1) {
+      return deleteEvent(uuids[0]);
+    }
+
     if (getWSConnection()) {
       return centrifuge.rpc(`delete:api/events`, { uuids })
     }

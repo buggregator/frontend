@@ -19,7 +19,6 @@ export default defineNuxtPlugin(() => {
   } = storeToRefs(eventsStore)
 
   const {
-    deleteEvent,
     deleteEventsAll,
     deleteEventsList,
     deleteEventsByType,
@@ -31,17 +30,6 @@ export default defineNuxtPlugin(() => {
   } = useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
-    if (uuids.length === 1) {
-      const res = await deleteEvent(uuids[0])
-
-      if (res) {
-        eventsStore.removeById(uuids[0]);
-        cachedIdsStore.removeById(uuids[0]);
-      }
-
-      return
-    }
-
     const res = await deleteEventsList(uuids)
 
     if (res) {
@@ -49,6 +37,7 @@ export default defineNuxtPlugin(() => {
       cachedIdsStore.removeByIds(uuids);
     }
   }
+
   const removeAll = async () => {
     if (lockedIds.value.length) {
       const removedIds = events.value
@@ -75,7 +64,7 @@ export default defineNuxtPlugin(() => {
   const removeByType = async (eventType: EventType) => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ type, uuid }) => type !== eventType || lockedIds.value.includes(uuid))
+        .filter(({ type, uuid }) => type === eventType && !lockedIds.value.includes(uuid))
         .map(({ uuid }) => uuid)
 
       await removeList(removedIds)
