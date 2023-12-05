@@ -198,7 +198,7 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--collapse-closed {
-  @apply text-white bg-blue-700 ring-blue-300 dark:bg-blue-700;
+  @apply text-white bg-blue-700 ring-blue-300 dark:bg-blue-700 hover:bg-blue-700;
 }
 
 .preview-card-header__button--delete {
