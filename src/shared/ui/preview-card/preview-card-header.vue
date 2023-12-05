@@ -58,7 +58,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         v-if="eventUrl"
         :href="eventUrl"
         target="_blank"
-        class="preview-card-header__tag preview-card-header__button--json"
+        class="preview-card-header__tag preview-card-header__tag--json"
       >
         JSON
       </a>
@@ -87,7 +87,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--collapse"
-        :class="`preview-card-header__button--${eventType}`"
+        :class="{ 'preview-card-header__button--collapse-closed': !isOpen }"
         @click="changeView"
       >
         <IconSvg
@@ -103,14 +103,6 @@ const isVisibleTags = computed(() => props.tags.length > 0);
       </button>
 
       <button
-        class="preview-card-header__button preview-card-header__button--delete"
-        :disabled="isLocked"
-        @click="deleteEvent"
-      >
-        <IconSvg name="times" class="preview-card-header__button-icon" />
-      </button>
-
-      <button
         class="preview-card-header__button preview-card-header__button--lock"
         :class="{
           'preview-card-header__button--locked': isLocked,
@@ -118,6 +110,14 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         @click="lockEvent"
       >
         <IconSvg name="lock" class="preview-card-header__button-icon" />
+      </button>
+
+      <button
+        class="preview-card-header__button preview-card-header__button--delete"
+        :disabled="isLocked"
+        @click="deleteEvent"
+      >
+        <IconSvg name="times" class="preview-card-header__button-icon" />
       </button>
     </div>
   </div>
@@ -174,50 +174,47 @@ $eventTypeColorsMap: (
   }
 }
 
+.preview-card-header__tag--json {
+  @apply bg-blue-600 text-blue-50 border-blue-600;
+
+  &:hover {
+    @apply bg-blue-500 dark:bg-blue-500;
+  }
+}
+
 .preview-card-header__button {
   @apply w-5 h-5 md:w-4 md:h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
-  /* Applied tailwind classes depends on event type
-   Need to keep declaration for tailwind correct work:
-   'var-dump' 'bg-red-600 ring-red-300',
-   'Smtp' 'bg-orange-600 ring-orange-300',
-   'Sentry' 'bg-pink-600 ring-pink-300',
-   'profiler' 'bg-purple-600 ring-purple-300',
-   'monolog' 'bg-gray-600 ring-gray-300',
-   'inspector' 'bg-gray-600 ring-gray-300',
-   'ray' 'bg-gray-600 ring-gray-300' */
+  @apply text-white bg-gray-300 dark:bg-gray-600 ring-blue-200 dark:ring-blue-800;
+}
 
-  @each $map in $eventTypeColorsMap {
-    $name: nth($map, 1);
-    $color: nth($map, 2);
-
-    &--#{$name} {
-      @apply bg-#{$color}-600 ring-#{$color}-300;
-    }
-  }
-
-  &:disabled {
-    @apply opacity-50 cursor-not-allowed;
-  }
+.preview-card-header__button--copy {
+  @apply text-gray-800 dark:text-white bg-transparent dark:bg-transparent;
 }
 
 .preview-card-header__button--collapse {
-  @apply text-white bg-gray-600 ring-gray-300;
+  &:hover {
+    @apply text-white bg-gray-500;
+  }
 }
 
-.preview-card-header__button--json {
-  @apply text-white ring-gray-300 bg-blue-700 hover:bg-blue-500;
+.preview-card-header__button--collapse-closed {
+  @apply text-white bg-blue-700 ring-blue-300 dark:bg-blue-700;
 }
 
 .preview-card-header__button--delete {
-  @apply text-red-700 bg-white dark:bg-red-700 hover:bg-red-700 hover:text-white;
+  @apply text-white dark:text-white bg-red-700 dark:bg-red-700 ring-red-200 dark:ring-red-800;
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
 }
 
 .preview-card-header__button--lock {
-  @apply text-gray-700 dark:bg-gray-400 bg-gray-200 hover:bg-green-700 hover:text-white;
+  @apply hover:bg-green-700 hover:dark:bg-green-700;
 }
 
 .preview-card-header__button--locked {
-  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
+  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 dark:ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
 }
 
 .preview-card-header__button-icon {
