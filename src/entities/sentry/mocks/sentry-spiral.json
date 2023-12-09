@@ -12,6 +12,7 @@
     "logger": "php",
     "server_name": "ButschsterLpp",
     "environment": "production",
+    "release": "0.4.0",
     "modules": {
       "brick/math": "0.10.2",
       "clue/stream-filter": "v1.6.0",

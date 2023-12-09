@@ -35,7 +35,6 @@ const mainException = computed(
           class="sentry-page__main-exception-message"
           v-html="mainException.value"
         />
-        <p class="sentry-page__main-date">{{ formattedTimestamp }}</p>
       </header>
 
       <header
