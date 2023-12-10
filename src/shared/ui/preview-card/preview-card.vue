@@ -121,6 +121,7 @@ const copyCode = () => {
   changeVisibleControls(false);
 
   if (eventRef.value) {
+    // TODO: fix console error on copy
     toBlob(eventRef.value as HTMLElement)
       .then((blob) => {
         if (blob) {
