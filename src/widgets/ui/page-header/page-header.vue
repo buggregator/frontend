@@ -2,7 +2,7 @@
 import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
-  title: string;
+  title?: string;
   buttonTitle: string;
 };
 

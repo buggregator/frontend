@@ -8,7 +8,7 @@ import { SentryException } from "../sentry-exception";
 
 type Props = {
   event: NormalizedEvent<Sentry>;
-  maxFrames: number;
+  maxFrames?: number;
 };
 
 const props = withDefaults(defineProps<Props>(), {
