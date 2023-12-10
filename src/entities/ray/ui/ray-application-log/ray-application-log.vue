@@ -13,7 +13,10 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .ray-application-log {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800 flex w-full overflow-auto;
+  @include code-example();
+  @apply flex w-full overflow-auto;
 }
 </style>
