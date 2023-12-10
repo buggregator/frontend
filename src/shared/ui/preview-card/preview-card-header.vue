@@ -211,27 +211,20 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__buttons-expand {
-  @apply relative left-[2px] flex overflow-hidden border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
+  @apply relative left-[2px] flex border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
 
   &:hover {
-    @apply overflow-visible bg-gray-200 dark:bg-gray-700 ring-1 ring-gray-200 dark:ring-gray-700 border-gray-200 dark:border-gray-700;
+    @apply bg-gray-200 dark:bg-gray-700 ring-1 ring-gray-200 dark:ring-gray-700 border-gray-200 dark:border-gray-700;
   }
 }
 
-.preview-card-header__buttons-expand-main {
-  @apply space-x-2;
-}
-
 .preview-card-header__buttons-expand-list {
-  @apply flex flex-row justify-end space-x-2 pr-2;
+  @apply flex flex-row justify-end space-x-2 pr-2 transition-all;
+  @apply hidden overflow-hidden opacity-0;
   order: -1;
-  width: 0;
-  opacity: 0;
-  transition: grid-template-columns, grid-template-rows 0.3s ease-in-out;
 
   .preview-card-header__buttons-expand:hover & {
-    opacity: 1;
-    width: auto;
+    @apply flex overflow-visible opacity-100;
   }
 }
 
