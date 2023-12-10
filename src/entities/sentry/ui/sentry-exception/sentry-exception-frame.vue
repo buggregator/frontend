@@ -132,7 +132,8 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__body {
-  @apply bg-gray-900 p-2 overflow-x-scroll;
+  @include code-example();
+  @apply overflow-x-scroll;
 }
 
 .sentry-exception-frame__body-line {

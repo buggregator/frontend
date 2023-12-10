@@ -95,3 +95,7 @@
       transform: translate(24px, 0);
     }
 }
+
+@mixin code-example {
+  @apply text-white border bg-gray-800 p-2 border-gray-300 dark:border-gray-600;
+}

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moment from "moment";
-import { SentryDevice } from "~/src/entities/sentry/types";
+import type { SentryDevice } from "~/src/entities/sentry/types";
 import { useFormats } from "~/src/shared/lib/formats";
 import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
 

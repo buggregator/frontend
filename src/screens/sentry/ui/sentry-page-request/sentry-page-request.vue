@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SentryRequest } from "~/src/entities/sentry/types";
+import type { SentryRequest } from "~/src/entities/sentry/types";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 type Props = {
