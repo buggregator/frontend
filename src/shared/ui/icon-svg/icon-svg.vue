@@ -530,6 +530,48 @@ defineProps<Props>();
       <path d="M8 11v-3m.719 -3.289a4 4 0 0 1 7.281 2.289v4" />
       <path d="M3 3l18 18" />
     </svg>
+
+    <svg
+      v-else-if="name === 'image-download'"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      stroke-width="2"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M15 8h.01" />
+      <path
+        d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v6.5"
+      />
+      <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4" />
+      <path d="M14 14l1 -1c.653 -.629 1.413 -.815 2.13 -.559" />
+      <path d="M19 16v6" />
+      <path d="M22 19l-3 3l-3 -3" />
+    </svg>
+
+    <svg
+      v-else-if="name === 'file-download'"
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      stroke-width="2"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+      <path
+        d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
+      />
+      <path d="M12 17v-6" />
+      <path d="M9.5 14.5l2.5 2.5l2.5 -2.5" />
+    </svg>
   </div>
 </template>
 
