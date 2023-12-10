@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moment from "moment";
-import { SentryBreadcrumb } from "~/src/entities/sentry/types";
+import type { SentryBreadcrumb } from "~/src/entities/sentry/types";
 import { CodeSnippet } from "~/src/shared/ui";
 
 type Props = {
