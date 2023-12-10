@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { EVENT_TYPES } from "../../types";
+import type { EventType } from "../../types";
 import { IconSvg } from "../icon-svg";
+import { DownloadType } from "./types";
 
 type Props = {
-  eventType: EVENT_TYPES;
+  eventType: EventType | "unknown";
   eventId: string;
   eventUrl: string;
   tags: string[];
@@ -17,7 +18,7 @@ type Emits = {
   delete: [value: boolean];
   toggleView: [value: boolean];
   copy: [value: boolean];
-  download: [value: boolean];
+  download: [value: DownloadType];
   lock: [value: boolean];
 };
 
@@ -40,8 +41,12 @@ const copyEvent = () => {
   emit("copy", true);
 };
 
-const downloadEvent = () => {
-  emit("download", true);
+const downloadImageEvent = () => {
+  emit("download", DownloadType.Image);
+};
+
+const downloadFile = () => {
+  emit("download", DownloadType.File);
 };
 
 const lockEvent = () => {
@@ -76,14 +81,37 @@ const isVisibleTags = computed(() => props.tags.length > 0);
       </template>
     </div>
 
-    <div v-if="isVisibleControls" class="preview-card-header__container">
-      <button
-        class="preview-card-header__button preview-card-header__button--copy"
-        @click="downloadEvent"
-        @click.right.prevent="copyEvent"
-      >
-        <IconSvg name="copy" class="preview-card-header__button-icon" />
-      </button>
+    <div v-if="isVisibleControls" class="preview-card-header__buttons">
+      <div class="preview-card-header__buttons-expand">
+        <button
+          class="preview-card-header__button preview-card-header__button--copy"
+          @click="copyEvent"
+        >
+          <IconSvg name="copy" class="preview-card-header__button-icon" />
+        </button>
+
+        <div class="preview-card-header__buttons-expand-list">
+          <button
+            class="preview-card-header__button preview-card-header__button--copy"
+            @click="downloadFile"
+          >
+            <IconSvg
+              name="file-download"
+              class="preview-card-header__button-icon"
+            />
+          </button>
+
+          <button
+            class="preview-card-header__button preview-card-header__button--copy"
+            @click="downloadImageEvent"
+          >
+            <IconSvg
+              name="image-download"
+              class="preview-card-header__button-icon"
+            />
+          </button>
+        </div>
+      </div>
 
       <button
         class="preview-card-header__button preview-card-header__button--collapse"
@@ -139,10 +167,6 @@ $eventTypeColorsMap: (
   @apply w-full flex sm:flex-row flex-col-reverse justify-between gap-y-3;
 }
 
-.preview-card-header__container {
-  @apply flex justify-end space-x-2;
-}
-
 .preview-card-header__tags {
   @apply flex flex-wrap gap-3;
 }
@@ -182,6 +206,35 @@ $eventTypeColorsMap: (
   }
 }
 
+.preview-card-header__buttons {
+  @apply flex justify-end space-x-2;
+}
+
+.preview-card-header__buttons-expand {
+  @apply relative left-[2px] flex overflow-hidden border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
+
+  &:hover {
+    @apply overflow-visible bg-gray-200 dark:bg-gray-700 ring-1 ring-gray-200 dark:ring-gray-700 border-gray-200 dark:border-gray-700;
+  }
+}
+
+.preview-card-header__buttons-expand-main {
+  @apply space-x-2;
+}
+
+.preview-card-header__buttons-expand-list {
+  @apply flex flex-row justify-end space-x-2 pr-2;
+  order: -1;
+  width: 0;
+  opacity: 0;
+  transition: grid-template-columns, grid-template-rows 0.3s ease-in-out;
+
+  .preview-card-header__buttons-expand:hover & {
+    opacity: 1;
+    width: auto;
+  }
+}
+
 .preview-card-header__button {
   @apply w-5 h-5 md:w-4 md:h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
   @apply text-white bg-gray-300 dark:bg-gray-600 ring-blue-200 dark:ring-blue-800;
@@ -218,10 +271,14 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button-icon {
-  @apply p-1 dark:fill-white;
+  @apply p-0.5 dark:fill-white;
 
-  .preview-card-header__button--lock & {
-    @apply p-0.5;
+  .preview-card-header__button--collapse & {
+    @apply p-1;
+  }
+
+  .preview-card-header__button--delete & {
+    @apply p-1;
   }
 }
 </style>
