@@ -6,5 +6,5 @@
 
 <script lang="ts" setup>
 import "./assets/index.css";
-import "./assets/index";
+import "./assets/vendor";
 </script>

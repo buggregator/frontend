@@ -5,11 +5,12 @@ import { toBlob, toPng } from "html-to-image";
 import debounce from "lodash.debounce";
 import moment from "moment";
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "../../lib/io";
 import type { NormalizedEvent } from "../../types";
 import PreviewCardFooter from "./preview-card-footer.vue";
 import PreviewCardHeader from "./preview-card-header.vue";
+import { DownloadType } from "./types";
 
 type Props = {
   event: NormalizedEvent<T>;
@@ -88,10 +89,39 @@ const downloadImage = () => {
   }
 };
 
+const downloadFile = async () => {
+  const { $events } = useNuxtApp();
+
+  if ($events) {
+    try {
+      const { data } = await useFetch($events.getUrl(props.event.id));
+
+      if (data.value) {
+        download(
+          JSON.stringify(data.value, null, 2),
+          `${props.event.type}-${props.event.id}.json`,
+          "application/json"
+        );
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
+
+const downloadEvent = (type: DownloadType) => {
+  if (type === DownloadType.Image) {
+    downloadImage();
+  } else {
+    downloadFile();
+  }
+};
+
 const copyCode = () => {
   changeVisibleControls(false);
 
   if (eventRef.value) {
+    // TODO: fix console error on copy
     toBlob(eventRef.value as HTMLElement)
       .then((blob) => {
         if (blob) {
@@ -153,7 +183,7 @@ onBeforeUnmount(() => {
       @toggle-view="toggleView"
       @delete="deleteEvent"
       @copy="copyCode"
-      @download="downloadImage"
+      @download="downloadEvent"
       @lock="toggleEventLock"
     />
 
