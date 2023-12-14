@@ -146,7 +146,7 @@ const contextsOS = computed(() => {
 }
 
 .sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-lg;
+  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
 }
 
 .sentry-page-tags__label {

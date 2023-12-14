@@ -17,7 +17,11 @@ const formatDate = (timestamp: number): string =>
 
 <template>
   <section class="sentry-page-breadcrumbs">
-    <h3 class="sentry-page-breadcrumbs__title">breadcrumbs</h3>
+    <h3 class="sentry-page-breadcrumbs__title">
+      breadcrumbs
+
+      <span v-if="breadcrumbs.length > 0" class="sentry-page-breadcrumbs__counter">{{ breadcrumbs.length }}</span>
+    </h3>
     <div class="sentry-page-breadcrumbs__in">
       <nav
         style="grid-template-columns: 1fr 100px 200px 17px"
@@ -39,7 +43,7 @@ const formatDate = (timestamp: number): string =>
 
             <CodeSnippet
               v-if="b.data"
-              class="mt-3"
+              class="sentry-page-breadcrumbs__col-data"
               language="json"
               :code="b.data"
             />
@@ -64,7 +68,7 @@ const formatDate = (timestamp: number): string =>
             </div>
           </div>
           <div class="sentry-page-breadcrumbs__col">
-            {{ b.level }}
+            <span class="sentry-page-breadcrumbs__col-level-badge" :class="b.level?.toLowerCase()">{{ b.level }}</span>
           </div>
           <div class="sentry-page-breadcrumbs__col">
             {{ formatDate(b.timestamp) }}
@@ -87,8 +91,12 @@ const formatDate = (timestamp: number): string =>
   @apply font-bold uppercase text-sm mb-5;
 }
 
+.sentry-page-breadcrumbs__counter {
+  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+}
+
 .sentry-page-breadcrumbs__in {
-  @apply flex flex-col border border-purple-300 dark:border-purple-700 rounded;
+  @apply flex flex-col border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
   max-height: 600px;
 }
 
@@ -113,6 +121,10 @@ const formatDate = (timestamp: number): string =>
   @apply p-3;
 }
 
+.sentry-page-breadcrumbs__col-data {
+  @apply mt-3  rounded-md overflow-hidden;
+}
+
 .sentry-page-breadcrumbs__col-message {
   @apply font-bold;
 }
@@ -131,5 +143,25 @@ const formatDate = (timestamp: number): string =>
 
 .sentry-page-breadcrumbs__col-detail-value {
   @apply px-2 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
+}
+
+.sentry-page-breadcrumbs__col-level-badge {
+  @apply uppercase text-2xs font-bold rounded-full px-2 py-1;
+}
+
+.sentry-page-breadcrumbs__col-level-badge.debug {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-100;
+}
+
+.sentry-page-breadcrumbs__col-level-badge.error {
+  @apply bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-100;
+}
+
+.sentry-page-breadcrumbs__col-level-badge.warning {
+  @apply bg-yellow-100 dark:bg-yellow-800 text-yellow-600 dark:text-yellow-100;
+}
+
+.sentry-page-breadcrumbs__col-level-badge.info {
+  @apply bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-100;
 }
 </style>
