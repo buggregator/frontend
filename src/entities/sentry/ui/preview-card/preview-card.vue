@@ -78,7 +78,7 @@ const exception: Ref<Exception> = computed(() =>
 
 .preview-card__text {
   @include code-example();
-  @apply text-sm break-all mb-3 overflow-auto text-opacity-60;
+  @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60;
 }
 
 .preview-card__frames {

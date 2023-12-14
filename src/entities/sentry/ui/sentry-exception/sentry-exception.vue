@@ -31,7 +31,7 @@ const exceptionFrames = computed(() => {
           {{ exception.type }}
         </h3>
 
-        <pre class="sentry-exception__text" v-html="exception.value" />
+        <pre class="sentry-exception__text" v-html="exception.value"/>
       </header>
     </slot>
 
@@ -40,7 +40,7 @@ const exceptionFrames = computed(() => {
         v-for="(frame, index) in exceptionFrames"
         :key="frame.context_line"
       >
-        <SentryExceptionFrame :frame="frame" :is-open="index === 0" />
+        <SentryExceptionFrame :frame="frame" :is-open="index === 0"/>
       </template>
     </div>
   </div>
@@ -56,6 +56,7 @@ const exceptionFrames = computed(() => {
 .sentry-exception__link {
   @apply cursor-pointer pb-2 flex-grow;
 }
+
 .sentry-exception__header {
   @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
 }
@@ -66,7 +67,7 @@ const exceptionFrames = computed(() => {
 
 .sentry-exception__text {
   @include code-example();
-  @apply text-sm break-all rounded text-opacity-60;
+  @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 
 .sentry-exception__frames {
