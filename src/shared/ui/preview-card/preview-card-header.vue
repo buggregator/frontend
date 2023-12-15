@@ -64,6 +64,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         :href="eventUrl"
         target="_blank"
         class="preview-card-header__tag preview-card-header__tag--json"
+        title="Open JSON payload for this event in new tab"
       >
         JSON
       </a>
@@ -85,6 +86,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
       <div class="preview-card-header__buttons-expand">
         <button
           class="preview-card-header__button preview-card-header__button--copy"
+          title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
           <IconSvg name="copy" class="preview-card-header__button-icon" />
@@ -93,6 +95,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         <div class="preview-card-header__buttons-expand-list">
           <button
             class="preview-card-header__button preview-card-header__button--copy"
+            title="Download event as JSON file"
             @click="downloadFile"
           >
             <IconSvg
@@ -104,6 +107,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
           <button
             class="preview-card-header__button preview-card-header__button--copy"
             @click="downloadImageEvent"
+            title="Download event as PNG image"
           >
             <IconSvg
               name="image-download"
@@ -116,6 +120,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
       <button
         class="preview-card-header__button preview-card-header__button--collapse"
         :class="{ 'preview-card-header__button--collapse-closed': !isOpen }"
+        title="Collapse event"
         @click="changeView"
       >
         <IconSvg
@@ -132,6 +137,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--lock"
+        title="Lock event. Locked events will not be deleted"
         :class="{
           'preview-card-header__button--locked': isLocked,
         }"
@@ -142,6 +148,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
       <button
         class="preview-card-header__button preview-card-header__button--delete"
+        title="Delete event"
         :disabled="isLocked"
         @click="deleteEvent"
       >

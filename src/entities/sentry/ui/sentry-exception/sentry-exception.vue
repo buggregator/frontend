@@ -26,11 +26,13 @@ const exceptionFrames = computed(() => {
 <template>
   <div class="sentry-exception">
     <slot>
-      <h3 class="sentry-exception__title">
-        {{ exception.type }}
-      </h3>
+      <header class="sentry-exception__header">
+        <h3 class="sentry-exception__title">
+          {{ exception.type }}
+        </h3>
 
-      <pre class="sentry-exception__text" v-html="exception.value" />
+        <pre class="sentry-exception__text" v-html="exception.value"/>
+      </header>
     </slot>
 
     <div v-if="exceptionFrames.length" class="sentry-exception__frames">
@@ -38,7 +40,7 @@ const exceptionFrames = computed(() => {
         v-for="(frame, index) in exceptionFrames"
         :key="frame.context_line"
       >
-        <SentryExceptionFrame :frame="frame" :is-open="index === 0" />
+        <SentryExceptionFrame :frame="frame" :is-open="index === 0"/>
       </template>
     </div>
   </div>
@@ -48,28 +50,27 @@ const exceptionFrames = computed(() => {
 @import "assets/mixins";
 
 .sentry-exception {
-  @apply flex flex-col;
+  @apply flex flex-col ;
 }
 
 .sentry-exception__link {
   @apply cursor-pointer pb-2 flex-grow;
 }
 
-.sentry-exception__text {
-  @include text-muted;
-  @apply text-sm break-all mb-3 p-3 dark:bg-gray-800;
+.sentry-exception__header {
+  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
 }
 
 .sentry-exception__title {
-  @apply mb-3 font-semibold;
+  @apply mb-3 font-semibold text-lg;
 }
 
 .sentry-exception__text {
-  @include text-muted;
-  @apply text-sm break-all mb-3 p-3 dark:bg-gray-800;
+  @include code-example();
+  @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 
 .sentry-exception__frames {
-  @apply border border-purple-200 dark:border-gray-600 flex-col justify-center w-full;
+  @apply border border-purple-200 dark:border-gray-600 flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
 }
 </style>

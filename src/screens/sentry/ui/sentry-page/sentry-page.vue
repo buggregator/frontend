@@ -35,23 +35,20 @@ const mainException = computed(
           class="sentry-page__main-exception-message"
           v-html="mainException.value"
         />
-      </header>
 
-      <header
-        v-if="event.payload.message !== ''"
-        class="sentry-page__main-header"
-      >
-        <pre
-          class="sentry-page__main-exception-message"
-          v-html="event.payload.message"
-        />
         <p class="sentry-page__main-date">{{ formattedTimestamp }}</p>
       </header>
 
       <SentryPageTags :payload="event.payload" class="sentry-page__section" />
 
       <section v-if="mainException" class="sentry-page__section">
-        <h3 class="sentry-page__section-title">exceptions</h3>
+        <h3 class="sentry-page__section-title">
+          exceptions
+
+          <span v-if="event?.payload?.exception?.values?.length > 0" class="sentry-page__section-title__counter">
+            {{ event.payload.exception.values.length }}
+          </span>
+        </h3>
 
         <div class="sentry-page__section-exceptions">
           <template
@@ -65,6 +62,8 @@ const mainException = computed(
               v-for="e in event.payload.exception.values"
               :key="`exception-${e.value}-${e.type}`"
               :exception="e"
+              :max-frames="null"
+              class="sentry-page__section-exceptions__exception"
             />
           </template>
         </div>
@@ -126,19 +125,28 @@ const mainException = computed(
 }
 
 .sentry-page__main-exception-message {
-  @apply text-sm;
+  @include code-example();
+  @apply text-sm rounded text-opacity-60;
 }
 
 .sentry-page__section {
   @apply py-5 px-4;
 }
 
-.sentry-page__section-exceptions {
-  @apply flex flex-col gap-y-10;
-}
-
 .sentry-page__section-title {
   @include text-muted;
   @apply font-bold uppercase text-sm mb-5;
+}
+
+.sentry-page__section-title__counter {
+  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+}
+
+.sentry-page__section-exceptions {
+  @apply flex flex-col -mx-4;
+}
+
+.sentry-page__section-exceptions__exception {
+  @apply p-4;
 }
 </style>

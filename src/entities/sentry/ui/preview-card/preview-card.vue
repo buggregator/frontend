@@ -69,7 +69,7 @@ const exception: Ref<Exception> = computed(() =>
 }
 
 .preview-card__link {
-  @apply cursor-pointer pb-2 flex-grow;
+  @apply cursor-pointer dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
 }
 
 .preview-card__title {
@@ -78,7 +78,7 @@ const exception: Ref<Exception> = computed(() =>
 
 .preview-card__text {
   @include code-example();
-  @apply text-sm break-all mb-3 overflow-auto text-opacity-60;
+  @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60;
 }
 
 .preview-card__frames {

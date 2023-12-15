@@ -16,24 +16,26 @@ const normalizeHeaderValue = (value: unknown) =>
   <section class="sentry-page-request">
     <h3 class="sentry-page-request__title">request</h3>
 
-    <h3 v-if="request" class="sentry-page-request__url">
-      <strong>{{ request.method || "GET" }}:</strong>
-      {{ request.url }}
-    </h3>
+    <div class="sentry-page-request__wrapper">
+      <code v-if="request" class="sentry-page-request__url">
+        <strong>{{ request.method || "GET" }}:</strong>
+        {{ request.url }}
+      </code>
 
-    <h3 class="sentry-page-request__title sentry-page-request__title--sub">
-      headers
-    </h3>
+      <h3 class="sentry-page-request__title sentry-page-request__title--sub">
+        headers
+      </h3>
 
-    <TableBase v-if="request && request.headers">
-      <TableBaseRow
-        v-for="(value, title) in request.headers"
-        :key="title"
-        :title="title"
-      >
-        {{ normalizeHeaderValue(value) }}
-      </TableBaseRow>
-    </TableBase>
+      <TableBase v-if="request && request.headers">
+        <TableBaseRow
+          v-for="(value, title) in request.headers"
+          :key="title"
+          :title="title"
+        >
+          {{ normalizeHeaderValue(value) }}
+        </TableBaseRow>
+      </TableBase>
+    </div>
   </section>
 </template>
 
@@ -41,6 +43,10 @@ const normalizeHeaderValue = (value: unknown) =>
 @import "assets/mixins";
 
 .sentry-page-request {
+}
+
+.sentry-page-request__wrapper {
+  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-md border border-purple-300 dark:border-gray-400;
 }
 
 .sentry-page-request__title {
