@@ -3,7 +3,7 @@ const path = require('path');
 const postcss = require('postcss');
 
 //storybook-tailwind-dark-mode
-module.exports = {
+const config = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
@@ -88,7 +88,6 @@ module.exports = {
       STORYBOOK_ICON_SVG_NAMES: allIconNamesList,
     }},
 
-  docs: {
-    autodocs: true
-  }
 };
+
+export default config;
