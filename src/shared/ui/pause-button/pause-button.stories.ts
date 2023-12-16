@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3";
 import PauseButton from './pause-button.vue';
 
 export default {
-  title: "Screens/events/PauseButton",
+  title: "Shared/PauseButton",
   component: PauseButton
 } as Meta<typeof PauseButton>;
 

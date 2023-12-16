@@ -44,7 +44,7 @@ import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-slice
 import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import type { EventType } from "~/src/shared/types";
-import { PauseButton } from "~/src/screens/events/ui/pause-button";
+import { PauseButton } from "~/src/shared/ui/pause-button";
 
 export default defineComponent({
   components: {
