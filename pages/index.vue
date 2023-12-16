@@ -17,7 +17,7 @@
           :disabled="visibleEvents.length === 0"
           :is-paused="isEventsPaused"
           :total-new-events-count="hiddenEventsCount"
-          @toggleUpdate="toggleUpdate"
+          @toggle-update="toggleUpdate"
         />
       </template>
     </PageHeader>
