@@ -12,27 +12,30 @@ module.exports = {
     "../pages/**/*.stories.@(js|jsx|ts|tsx)",
     "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
+
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "storybook-addon-themes",
-    {
-      name: "@storybook/addon-postcss",
-      options: {
-        cssLoaderOptions: {
-          importLoaders: 1,
-        },
-        postcssLoaderOptions: {
-          implementation: postcss,
-        },
-      },
-    },
+    // {
+    //   name: "@storybook/addon-postcss",
+    //   options: {
+    //     cssLoaderOptions: {
+    //       importLoaders: 1,
+    //     },
+    //     postcssLoaderOptions: {
+    //       implementation: postcss,
+    //     },
+    //   },
+    // },
   ],
-  core: {
-    builder: "@storybook/builder-vite",
+
+  framework: {
+    name: "@storybook/vue3-vite",
+    options: {}
   },
-  framework: "@storybook/vue3",
+
   async viteFinal(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -67,6 +70,7 @@ module.exports = {
       },
     };
   },
+
   env: (config) => {
     const iconComponentFolder = path.resolve(__dirname, '../src/shared/ui/icon-svg/icon-svg-originals');
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
@@ -83,4 +87,8 @@ module.exports = {
       ...config,
       STORYBOOK_ICON_SVG_NAMES: allIconNamesList,
     }},
+
+  docs: {
+    autodocs: true
+  }
 };
