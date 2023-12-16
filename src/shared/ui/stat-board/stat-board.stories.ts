@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import StatBoard from "./stat-board.vue";
 
 export default {
@@ -6,7 +6,7 @@ export default {
   component: StatBoard,
 } as Meta<typeof StatBoard>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { StatBoard },
   setup() {
     return {

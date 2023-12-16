@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSmtp } from "~/src/entities/smtp";
 import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '~/src/entities/smtp/mocks';
 import { REST_API_URL } from "~/src/shared/lib/io";
@@ -11,7 +11,7 @@ export default {
   component: SmtpPage
 } as Meta<typeof SmtpPage>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SmtpPage },
   setup() {
     return {

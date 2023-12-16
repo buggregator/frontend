@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useInspector } from "../../lib";
 import { inspectorMock } from '../../mocks'
 import InspectorStatBoard from './inspector-stat-board.vue';
@@ -10,7 +10,7 @@ export default {
   component: InspectorStatBoard
 } as Meta<typeof InspectorStatBoard>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: {InspectorStatBoard},
   setup() {
     return {

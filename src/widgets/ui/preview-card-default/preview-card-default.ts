@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { monologMock } from '~/src/entities/monolog/mocks'
 import { useEvents } from "~/src/shared/lib/use-events";
 import PreviewCardDefault from './preview-card-default.vue';
@@ -10,7 +10,7 @@ export default {
   component: PreviewCardDefault
 } as Meta<typeof PreviewCardDefault>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PreviewCardDefault },
   setup() {
     return {

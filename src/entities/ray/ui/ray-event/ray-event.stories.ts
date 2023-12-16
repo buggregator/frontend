@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelEventsMock } from '../../mocks-laravel';
 import type { RayContentEvent } from '../../types';
@@ -11,7 +11,7 @@ export default {
   component: RayEvent
 } as Meta<typeof RayEvent>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayEvent },
   setup() {
     return {

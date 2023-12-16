@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayTableMock } from '../../mocks'
 import type { RayContentMeasure } from "../../types";
@@ -11,7 +11,7 @@ export default {
   component: RayTable
 } as Meta<typeof RayTable>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayTable },
   setup() {
     return {

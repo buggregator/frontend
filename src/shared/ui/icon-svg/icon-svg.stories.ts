@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import IconSvg from "./icon-svg.vue";
 
 const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || '').split(',');
@@ -14,7 +14,7 @@ export default {
   }
 }as Meta<typeof IconSvg>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { IconSvg },
   setup() {
     return {
@@ -29,7 +29,7 @@ Default.args = {
   name: "github"
 };
 
-export const AllIcons: Story = () => ({
+export const AllIcons: StoryObj = () => ({
   components: { IconSvg },
   setup() {
     return {

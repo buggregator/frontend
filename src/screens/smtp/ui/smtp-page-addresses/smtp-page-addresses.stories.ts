@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import SmtpPageAddresses from './smtp-page-addresses.vue';
 
 export default {
@@ -6,7 +6,7 @@ export default {
     component: SmtpPageAddresses
 } as Meta<typeof SmtpPageAddresses>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
     components: {SmtpPageAddresses},
     setup() {
         return {

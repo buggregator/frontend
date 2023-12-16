@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { httpDumpMock } from '~/src/entities/http-dump/mocks';
 import { inspectorMock } from '~/src/entities/inspector/mocks';
 import { monologMock } from '~/src/entities/monolog/mocks';
@@ -13,7 +13,7 @@ export default {
   component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PreviewCard },
   setup() {
     return {
@@ -80,7 +80,7 @@ const eventsList = [
   httpDumpMock,
 ];
 
-const TemplateList: Story = (args) => ({
+const TemplateList: StoryObj = (args: unknown) => ({
   components: { PreviewCard },
   setup() {
     return {
@@ -97,7 +97,7 @@ EventsList.args = {
   event: inspectorMock,
 };
 
-const TemplateListVirtual: Story = (args) => ({
+const TemplateListVirtual: StoryObj = (args: unknown) => ({
   components: { PreviewCard },
   setup() {
     return {

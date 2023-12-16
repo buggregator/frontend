@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayCallerMock } from '../../mocks';
 import type { RayContentFrame } from '../../types';
@@ -11,7 +11,7 @@ export default {
   component: RayFrame
 } as Meta<typeof RayFrame>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayFrame },
   setup() {
     return {

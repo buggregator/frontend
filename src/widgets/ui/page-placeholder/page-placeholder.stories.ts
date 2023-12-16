@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import PagePlaceholder from "./page-placeholder.vue";
 
 export default {
@@ -6,7 +6,7 @@ export default {
   component: PagePlaceholder
 }as Meta<typeof PagePlaceholder>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PagePlaceholder },
   setup() {
     return {

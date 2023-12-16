@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { EVENT_TYPES } from "../../types";
 import PreviewCard from "./preview-card.vue";
 
@@ -7,7 +7,7 @@ export default {
   component: PreviewCard
 }as Meta<typeof PreviewCard>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PreviewCard },
   setup() {
     return {

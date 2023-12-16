@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import type { Profiler } from "~/src/entities/profiler/types";
@@ -11,7 +11,7 @@ export default {
   component: FlameGraph
 } as Meta<typeof FlameGraph>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: {FlameGraph},
   setup() {
     return {

@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "../../lib";
 import { sentrySpiralMock } from '../../mocks';
 import SentryExceptionFrame from './sentry-exception-frame.vue';
@@ -10,7 +10,7 @@ export default {
   component: SentryExceptionFrame
 } as Meta<typeof SentryExceptionFrame>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SentryExceptionFrame },
   setup() {
     return {

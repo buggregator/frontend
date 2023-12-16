@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';
@@ -10,7 +10,7 @@ export default {
   component: RenderGraph
 } as Meta<typeof RenderGraph>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RenderGraph },
   setup() {
     return {

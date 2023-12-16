@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayExceptionMock } from '../../mocks';
 import type { RayContentException } from "../../types";
@@ -11,7 +11,7 @@ export default {
   component: RayException
 } as Meta<typeof RayException>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayException },
   setup() {
     return {

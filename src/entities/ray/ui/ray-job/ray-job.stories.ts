@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelJobsMock } from '../../mocks-laravel';
 import type { RayContentJob } from '../../types';
@@ -11,7 +11,7 @@ export default {
   component: RayJob
 } as Meta<typeof RayJob>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayJob },
   setup() {
     return {

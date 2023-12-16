@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useInspector } from "~/src/entities/inspector";
 import { inspectorMock } from '~/src/entities/inspector/mocks'
 import InspectorPage from './inspector-page.vue';
@@ -10,7 +10,7 @@ export default {
   component: InspectorPage
 } as Meta<typeof InspectorPage>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: {InspectorPage},
   setup() {
     return {

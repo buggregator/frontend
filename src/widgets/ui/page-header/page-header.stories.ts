@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { EVENT_TYPES } from "~/src/shared/types";
 import PageHeader from "./page-header.vue";
 
@@ -15,7 +15,7 @@ export default {
   }
 } as Meta<typeof PageHeader>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PageHeader },
   methods: {
     action
@@ -41,7 +41,7 @@ Default.args = {
 };
 
 
-const TemplateWithActions: Story = (args) => ({
+const TemplateWithActions: StoryObj = (args: unknown) => ({
   components: { PageHeader },
   methods: {
     action

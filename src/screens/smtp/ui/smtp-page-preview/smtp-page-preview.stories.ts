@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { HTMLCode } from '~/src/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 
@@ -7,7 +7,7 @@ export default {
   component: SmtpPagePreview
 } as Meta<typeof SmtpPagePreview>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SmtpPagePreview },
   setup() {
     return {

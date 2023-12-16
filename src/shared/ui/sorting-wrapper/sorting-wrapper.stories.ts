@@ -1,5 +1,5 @@
 import { action } from "@storybook/addon-actions";
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { SORTING_ORDER } from "./constants";
 import SortWrap from "./sorting-wrapper.vue";
 
@@ -8,7 +8,7 @@ export default {
   component: SortWrap,
 } as Meta<typeof SortWrap>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SortWrap },
   methods: {
     action

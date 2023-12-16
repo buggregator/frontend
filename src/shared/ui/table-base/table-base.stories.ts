@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import TableBaseRow from "./table-base-row.vue";
 import TableBase from "./table-base.vue";
 
@@ -7,7 +7,7 @@ export default {
   component: TableBase
 } as Meta<typeof TableBase>;
 
-const TableTemplate: Story = (args) => ({
+const TableTemplate: StoryObj = (args: unknown) => ({
   components: { TableBase, TableBaseRow },
   setup() {
     return {
@@ -30,7 +30,7 @@ const TableTemplate: Story = (args) => ({
 export const Default = TableTemplate.bind({});
 Default.args = {};
 
-const TableWithoutTitlesTemplate: Story = (args) => ({
+const TableWithoutTitlesTemplate: StoryObj = (args: unknown) => ({
   components: { TableBase, TableBaseRow },
   setup() {
     return {
@@ -52,7 +52,7 @@ const TableWithoutTitlesTemplate: Story = (args) => ({
 export const NoTitles = TableWithoutTitlesTemplate.bind({});
 NoTitles.args = {};
 
-const RowOnlyTemplate: Story = (args) => ({
+const RowOnlyTemplate: StoryObj = (args: unknown) => ({
   components: { TableBase, TableBaseRow },
   setup() {
     return {

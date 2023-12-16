@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { EVENT_TYPES } from "../../types";
 import PreviewCardHeader from './preview-card-header.vue';
 
@@ -15,7 +15,7 @@ export default {
   }
 } as Meta<typeof PreviewCardHeader>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { PreviewCardHeader },
   methods: {
     action

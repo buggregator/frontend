@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLockMock } from '../../mocks'
 import type { RayContentLock } from '../../types'
@@ -11,7 +11,7 @@ export default {
   component: RayLock
 } as Meta<typeof RayLock>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayLock },
   setup() {
     return {

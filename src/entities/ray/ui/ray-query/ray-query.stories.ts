@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelQueryMock, rayLaravelQueryNoBindingsMock } from '../../mocks-laravel';
 import type { RayContentSQL } from '../../types';
@@ -11,7 +11,7 @@ export default {
   component: RayQuery
 } as Meta<typeof RayQuery>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayQuery },
   setup() {
     return {

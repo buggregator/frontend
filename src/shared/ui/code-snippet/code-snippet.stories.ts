@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { HTMLCode, PHPCode } from '../../mocks';
 import { EVENT_TYPES } from "../../types";
 import CodeSnippet from "./code-snippet.vue";
@@ -8,7 +8,7 @@ export default {
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { CodeSnippet },
   setup() {
     return {

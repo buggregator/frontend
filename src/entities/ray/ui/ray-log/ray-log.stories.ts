@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayColorMock } from '../../mocks'
 import type { RayContentLog } from '../../types'
@@ -11,7 +11,7 @@ export default {
   component: RayLog
 } as Meta<typeof RayLog>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayLog },
   setup() {
     return {

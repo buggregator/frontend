@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import FileAttachment from './file-attachment.vue';
 
 export default {
@@ -6,7 +6,7 @@ export default {
   component: FileAttachment
 } as Meta<typeof FileAttachment>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: {FileAttachment},
   setup() {
     return {

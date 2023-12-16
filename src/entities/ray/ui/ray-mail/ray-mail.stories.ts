@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelMailableMock } from '../../mocks-laravel'
 import type { RayContentMail } from "../../types";
@@ -11,7 +11,7 @@ export default {
   component: RayMail
 } as Meta<typeof RayMail>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { RayMail},
   setup() {
     return {

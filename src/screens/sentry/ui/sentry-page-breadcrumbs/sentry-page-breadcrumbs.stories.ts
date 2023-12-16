@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "~/src/entities/sentry";
 import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks'
 import SentryPageBreadcrumbs from './sentry-page-breadcrumbs.vue';
@@ -10,7 +10,7 @@ export default {
   component: SentryPageBreadcrumbs
 } as Meta<typeof SentryPageBreadcrumbs>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SentryPageBreadcrumbs },
   setup() {
     return {

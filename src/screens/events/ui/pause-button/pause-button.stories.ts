@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import PauseButton from './pause-button.vue';
 
 export default {
@@ -6,7 +6,7 @@ export default {
   component: PauseButton
 } as Meta<typeof PauseButton>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: {PauseButton},
   setup() {
     return {

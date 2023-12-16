@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { SFDumpCode, HTMLEscapedString } from "../../mocks";
 import ValueDump from './value-dump.vue';
 
@@ -7,7 +7,7 @@ export default {
   component: ValueDump
 } as Meta<typeof ValueDump>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { ValueDump },
   setup() {
     return {

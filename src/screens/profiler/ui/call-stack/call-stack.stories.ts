@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import CallStack from './call-stack.vue';
@@ -10,7 +10,7 @@ export default {
   component: CallStack
 } as Meta<typeof CallStack>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { CallStack },
   setup() {
     return {

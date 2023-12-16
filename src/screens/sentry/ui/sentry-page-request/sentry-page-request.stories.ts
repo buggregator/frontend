@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "~/src/entities/sentry";
 import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
 import SentryPageRequest from './sentry-page-request.vue';
@@ -10,7 +10,7 @@ export default {
   component: SentryPageRequest
 } as Meta<typeof SentryPageRequest>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SentryPageRequest },
   setup() {
     return {

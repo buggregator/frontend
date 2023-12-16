@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "~/src/entities/sentry";
 import { sentryCommonMock, sentrySpiralMock } from '~/src/entities/sentry/mocks';
 import SentryPageDevice from './sentry-page-device.vue';
@@ -10,7 +10,7 @@ export default {
   component: SentryPageDevice
 } as Meta<typeof SentryPageDevice>;
 
-const Template: Story = (args) => ({
+const Template: StoryObj = (args: unknown) => ({
   components: { SentryPageDevice },
   setup() {
     return {
