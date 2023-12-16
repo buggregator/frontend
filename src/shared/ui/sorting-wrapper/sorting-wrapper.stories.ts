@@ -1,55 +1,55 @@
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
 import { SORTING_ORDER } from "./constants";
-import SortWrap from "./sorting-wrapper.vue";
+import SortingWrapper from "./sorting-wrapper.vue";
+
 
 export default {
   title: "Shared/SortingWrapper",
-  component: SortWrap,
-} as Meta<typeof SortWrap>;
-
-const Template: StoryObj = (args: unknown) => ({
-  components: { SortWrap },
-  methods: {
-    action
-  },
-  setup() {
-    return {
-      args,
-      SORTING_ORDER,
-    };
-  },
-
-  template: `
+  component: SortingWrapper,
+  render: (args: ComponentProps<typeof SortingWrapper>) => ({
+    components: { SortingWrapper },
+    methods: {
+      action
+    },
+    setup() {
+      return {
+        args,
+        SORTING_ORDER,
+      };
+    },
+    template: `
     <div>
       <div>
-        <sort-wrap
-          @changeSort="(a) => action('Change Sort')(a)"
+        <sorting-wrapper
+          @change-sort="(a) => action('Change Sort')(a)"
         >
           Default sort
-        </sort-wrap>
+        </sorting-wrapper>
       </div>
       <br>
       <div>
-        <sort-wrap
-          @changeSort="(a) => action('Change Sort')(a)"
+        <sorting-wrapper
+          @change-sort="(a) => action('Change Sort')(a)"
           :sort="SORTING_ORDER.ASC"
         >
           ASC sort
-        </sort-wrap>
+        </sorting-wrapper>
       </div>
       <br>
       <div>
-        <sort-wrap
-          @changeSort="(a) => action('Change Sort')(a)"
+        <sorting-wrapper
+          @change-sort="(a) => action('Change Sort')(a)"
           :sort="SORTING_ORDER.DESC"
         >
           DESC sort
-        </sort-wrap>
+        </sorting-wrapper>
       </div>
     </div>`,
-});
+  })
+} as Meta<typeof SortingWrapper>;
 
-export const Default = Template.bind({});
-Default.args = {
+export const Default: StoryObj<typeof SortingWrapper> = {
+  args: {}
 };

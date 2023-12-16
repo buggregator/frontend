@@ -4,34 +4,25 @@ import ValueDump from './value-dump.vue';
 
 export default {
   title: "Shared/ValueDump",
-  component: ValueDump
-} as Meta<typeof ValueDump>;
+  component: ValueDump,
+} as  Meta<typeof ValueDump>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { ValueDump },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<ValueDump v-bind="args" />`,
-});
 
-export const String = Template.bind({});
-
-String.args = {
-  value: HTMLEscapedString,
-  type: 'string',
+export const String: StoryObj<typeof ValueDump> = {
+  args: {
+    value: HTMLEscapedString,
+    type: 'string',
+  }
 };
 
-export const Boolean = Template.bind({});
-
-Boolean.args = {
-  value: true,
+export const Boolean: StoryObj<typeof ValueDump> = {
+  args: {
+    value: true,
+  }
 };
 
-export const SfDump = Template.bind({});
-
-SfDump.args = {
-  value: SFDumpCode,
+export const SfDump: StoryObj<typeof ValueDump> = {
+  args: {
+    value: SFDumpCode,
+  }
 };

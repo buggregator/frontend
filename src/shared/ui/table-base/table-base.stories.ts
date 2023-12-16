@@ -4,17 +4,13 @@ import TableBase from "./table-base.vue";
 
 export default {
   title: "Shared/TableBase",
-  component: TableBase
+  component: TableBase,
 } as Meta<typeof TableBase>;
 
-const TableTemplate: StoryObj = (args: unknown) => ({
-  components: { TableBase, TableBaseRow },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<TableBase>
+export const Default: StoryObj<typeof TableBase> = {
+  render: () => ({
+    components: { TableBase, TableBaseRow },
+    template: `<TableBase>
     <TableBaseRow title="Row 1">
       This is a row 1
     </TableBaseRow>
@@ -25,19 +21,13 @@ const TableTemplate: StoryObj = (args: unknown) => ({
       This is a row 3
     </TableBaseRow>
   </TableBase>`,
-});
+  })
+};
 
-export const Default = TableTemplate.bind({});
-Default.args = {};
-
-const TableWithoutTitlesTemplate: StoryObj = (args: unknown) => ({
-  components: { TableBase, TableBaseRow },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<TableBase>
+export const NoTitles: StoryObj<typeof TableBase> = {
+  render: () => ({
+    components: { TableBase, TableBaseRow },
+    template: `<TableBase>
     <TableBaseRow>
       This is a row 1
     </TableBaseRow>
@@ -48,18 +38,12 @@ const TableWithoutTitlesTemplate: StoryObj = (args: unknown) => ({
       This is a row 3
     </TableBaseRow>
   </TableBase>`,
-});
-export const NoTitles = TableWithoutTitlesTemplate.bind({});
-NoTitles.args = {};
+  })
+};
 
-const RowOnlyTemplate: StoryObj = (args: unknown) => ({
-  components: { TableBase, TableBaseRow },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<TableBaseRow title="">This is a row 1</TableBaseRow>`,
-});
-export const RowOnly = RowOnlyTemplate.bind({});
-RowOnly.args = {};
+export const RowOnly: StoryObj<typeof TableBase> = {
+  render: () => ({
+    components: { TableBase, TableBaseRow },
+    template: `<TableBaseRow title="">This is a row 1</TableBaseRow>`,
+  }),
+};

@@ -6,36 +6,28 @@ export default {
   component: StatBoard,
 } as Meta<typeof StatBoard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { StatBoard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<StatBoard v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-
-Default.args = {
-  cost: {
-    ct: 1,
-    wt: 206270,
-    cpu: 44750,
-    mu: 3112176,
-    pmu: 3001416
-},
+export const Default: StoryObj<typeof StatBoard> = {
+  args: {
+    cost: {
+      ct: 1,
+      wt: 206270,
+      cpu: 44750,
+      mu: 3112176,
+      pmu: 3001416
+    },
+  }
 };
 
-export const LargePeaks = Template.bind({});
 
-LargePeaks.args = {
-  cost: {
-    ct: 1,
-    wt: 2062700000,
-    cpu: 447500000,
-    mu: 31121760000,
-    pmu: 30014160000,
-  },
+export const LargePeaks: StoryObj<typeof StatBoard> = {
+  args: {
+    cost: {
+      ct: 1,
+      wt: 2062700000,
+      cpu: 447500000,
+      mu: 31121760000,
+      pmu: 30014160000,
+    },
+  }
 };

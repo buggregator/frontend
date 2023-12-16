@@ -8,46 +8,40 @@ export default {
   component: CodeSnippet,
 } as Meta<typeof CodeSnippet>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { CodeSnippet },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<CodeSnippet v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-Default.args = {
-  code: "Hello World!",
-  language: 'text'
+export const Default: StoryObj<typeof CodeSnippet> = {
+  args: {
+    code: "Hello World!",
+    language: 'text'
+  }
 };
 
-export const Object = Template.bind({});
-Object.args = {
-  code: {
-    id: 'da076402-6f98-4ada-bae2-d77d405cf427',
-    type: EVENT_TYPES.MONOLOG,
-    serverName: "My server",
-    origin: {
-      one: 1,
-      two: 2,
+export const Object: StoryObj<typeof CodeSnippet> = {
+  args: {
+    code: {
+      id: 'da076402-6f98-4ada-bae2-d77d405cf427',
+      type: EVENT_TYPES.MONOLOG,
+      serverName: "My server",
+      origin: {
+        one: 1,
+        two: 2,
+      },
+      date: new Date(1673266869 * 1000),
+      labels: [ 'Monolog', '200' ]
     },
-    date: new Date(1673266869 * 1000),
-    labels: ['Monolog', '200' ]
-  },
-  language: 'javascript'
-};
+    language: 'javascript'
+  }
+}
 
-export const HTMLString = Template.bind({});
-HTMLString.args = {
-  code: HTMLCode,
-  language: 'html'
-};
+export const HTMLString:StoryObj<typeof CodeSnippet> = {
+  args: {
+    code: HTMLCode,
+    language: 'html'
+  }
+}
 
-export const PHPString = Template.bind({});
-PHPString.args = {
-  code: PHPCode,
-  language: 'php'
-};
+export const PHPString = {
+  args: {
+    code: PHPCode,
+    language: 'php'
+  }
+}

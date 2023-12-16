@@ -1,38 +1,37 @@
+import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/vue3";
 import PauseButton from './pause-button.vue';
 
 export default {
   title: "Shared/PauseButton",
-  component: PauseButton
+  component: PauseButton,
+  argTypes: {
+    onToggleUpdate: action('Toggle pause'),
+    onToggleView: action('Toggle event'),
+  }
 } as Meta<typeof PauseButton>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: {PauseButton},
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<div style="padding: 20px"><PauseButton v-bind="args"/></div>`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  disabled: false,
-  isPaused: false,
-  totalNewEventsCount: 10,
+export const Default: StoryObj<typeof PauseButton> = {
+  args: {
+    disabled: false,
+    isPaused: false,
+    totalNewEventsCount: 10,
+  }
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  disabled: true,
-  isPaused: false,
-  totalNewEventsCount: 10,
+export const Disabled: StoryObj<typeof PauseButton> = {
+  args: {
+    disabled: true,
+    isPaused: false,
+    totalNewEventsCount: 10,
+  }
 }
 
-export const Paused = Template.bind({});
-Paused.args = {
-  disabled: false,
-  isPaused: true,
-  totalNewEventsCount: 10,
+export const Paused: StoryObj<typeof PauseButton> = {
+  args: {
+    disabled: false,
+    isPaused: true,
+    totalNewEventsCount: 10,
+  }
 }
