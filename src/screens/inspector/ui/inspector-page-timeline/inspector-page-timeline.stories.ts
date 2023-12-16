@@ -10,18 +10,9 @@ export default {
   component: InspectorPageTimeline
 } as Meta<typeof InspectorPageTimeline>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: {InspectorPageTimeline},
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<InspectorPageTimeline v-bind="args"/>`,
-});
+export const Default: StoryObj<typeof InspectorPageTimeline> = {
+  args: {
+    payload: normalizeInspectorEvent(inspectorMock).payload,
+  }
+}
 
-export const Timeline = Template.bind({});
-
-Timeline.args = {
-  payload: normalizeInspectorEvent(inspectorMock).payload,
-};

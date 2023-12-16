@@ -10,19 +10,9 @@ export default {
   component: InspectorPage
 } as Meta<typeof InspectorPage>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: {InspectorPage},
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<InspectorPage v-bind="args"/>`,
-});
 
-export const Default = Template.bind({});
-
-
-Default.args = {
-  event: normalizeInspectorEvent(inspectorMock),
-};
+export const Default: StoryObj<typeof InspectorPage> = {
+  args: {
+    event: normalizeInspectorEvent(inspectorMock),
+  }
+}

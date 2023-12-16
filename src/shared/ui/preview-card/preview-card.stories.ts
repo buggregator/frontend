@@ -8,7 +8,7 @@ export default {
 }as Meta<typeof PreviewCard>;
 
 
-export const Default: StoryObj<typeof PreviewCard<EVENT_TYPES>> = {
+export const Default: StoryObj<typeof PreviewCard> = {
   args: {
     slot: 'Hello world!',
     event: {

@@ -29,7 +29,7 @@ export const Text: StoryObj<typeof SmtpPage> = {
   }
 };
 
-export const withSource: StoryObj<typeof SmtpPage> = {
+export const WithSource: StoryObj<typeof SmtpPage> = {
   args: {
     event: normalizeSmtpEvent(smtpTextMock),
     htmlSource: `<iframe src="${REST_API_URL}/api/smtp/${normalizeSmtpEvent(smtpTextMock).id}/html"/>`

@@ -7,7 +7,6 @@ import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { sentrySpiralMock } from '~/src/entities/sentry/mocks';
 import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
 import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
-import type { EVENT_TYPES } from "~/src/shared/types";
 import EventCard from "./event-card.vue";
 
 export default {
@@ -77,7 +76,7 @@ export const EventsList = {
   args: {
     event: inspectorMock,
   },
-  render: (args: ComponentProps<typeof EventCard<EVENT_TYPES>>) => ({
+  render: (args: ComponentProps<typeof EventCard>) => ({
     components: { EventCard },
     setup() {
       return {

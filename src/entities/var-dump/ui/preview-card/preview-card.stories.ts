@@ -18,54 +18,44 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
+export const Default: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpObjectMock),
+  }
+}
 
-export const Object = Template.bind({});
+export const Number: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpNumberMock),
+  }
+}
 
-Object.args = {
-  event: normalizeVarDumpEvent(varDumpObjectMock),
-};
+export const String: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpStringMock),
+  }
+}
 
-export const Number = Template.bind({});
+export const StringEmpty: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpEmptyStringMock),
+  }
+}
 
-Number.args = {
-  event: normalizeVarDumpEvent(varDumpNumberMock),
-};
+export const BooleanTrue: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpTrueMock),
+  }
+}
 
-export const String = Template.bind({});
+export const BooleanFalse: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpFalseMock),
+  }
+}
 
-String.args = {
-  event: normalizeVarDumpEvent(varDumpStringMock),
-};
-
-export const StringEmpty = Template.bind({});
-
-StringEmpty.args = {
-  event: normalizeVarDumpEvent(varDumpEmptyStringMock),
-};
-
-export const BooleanTrue = Template.bind({});
-
-BooleanTrue.args = {
-  event: normalizeVarDumpEvent(varDumpTrueMock),
-};
-
-export const BooleanFalse = Template.bind({});
-BooleanFalse.args = {
-  event: normalizeVarDumpEvent(varDumpFalseMock),
-};
-
-
-export const Array = Template.bind({});
-
-Array.args = {
-  event: normalizeVarDumpEvent(varDumpArrayMock),
-};
+export const Array: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varDumpArrayMock),
+  }
+}

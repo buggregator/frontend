@@ -10,31 +10,21 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
+export const Default: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeMonologEvent(monologMock),
+  }
+}
 
-export const Event = Template.bind({});
-
-Event.args = {
-  event: normalizeMonologEvent(monologMock),
-};
-
-export const WithOrigin = Template.bind({});
-
-WithOrigin.args = {
-  event: {
-    ...normalizeMonologEvent(monologMock),
-    origin: {
-      file: "/var/www/html/vendor/symfony/http-kernel/HttpKernel.php",
-      line_number: 151,
-      name: "Symfony\\Component\\HttpKernel\\HttpKernel->handleRaw",
+export const WithOrigin: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: {
+      ...normalizeMonologEvent(monologMock),
+      origin: {
+        file: "/var/www/html/vendor/symfony/http-kernel/HttpKernel.php",
+        line_number: 151,
+        name: "Symfony\\Component\\HttpKernel\\HttpKernel->handleRaw",
+      }
     }
-  },
-};
+  }
+}

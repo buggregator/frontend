@@ -10,18 +10,9 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
+export const Default: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpMock),
+  }
+}
 
-export const Event = Template.bind({});
-
-Event.args = {
-  event: normalizeHttpDumpEvent(httpDumpMock),
-};

@@ -10,24 +10,14 @@ export default {
   component: HttpDumpPage
 } as Meta<typeof HttpDumpPage>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { HttpDumpPage },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<HttpDumpPage v-bind="args" />`,
-});
+export const Default: StoryObj<typeof HttpDumpPage> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpMock),
+  }
+}
 
-export const Default = Template.bind({});
-
-
-Default.args = {
-  event: normalizeHttpDumpEvent(httpDumpMock),
-};
-
-export const WithPdf = Template.bind({});
-WithPdf.args = {
-  event: normalizeHttpDumpEvent(httpDumpPdfMock),
-};
+export const WithPdf: StoryObj<typeof HttpDumpPage> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpPdfMock),
+  }
+}
