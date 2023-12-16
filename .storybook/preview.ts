@@ -1,9 +1,10 @@
 import {createPinia} from 'pinia';
-import {addParameters, app} from '@storybook/vue3';
+import { setup } from '@storybook/vue3';
 import "../assets/index.css";
 import "../assets/vendor";
 import "./stories.css"
 import SfdumpWrap from "../src/shared/lib/vendor/dumper";
+import 'tailwindcss/tailwind.css'
 
 export const parameters = {
   actions: {argTypesRegex: "^on[A-Z].*"},
@@ -35,7 +36,9 @@ export const parameters = {
 
 const pinia = createPinia();
 
-app.use(pinia);
+setup((app) => {
+  app.use(pinia)
+})
 
 declare global {
   interface Window {
