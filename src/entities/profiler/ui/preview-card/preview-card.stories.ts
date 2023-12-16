@@ -10,18 +10,8 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
-
-export const Event = Template.bind({});
-
-Event.args = {
-  event: normalizeProfilerEvent(profilerMock),
+export const Event: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeProfilerEvent(profilerMock),
+  }
 };

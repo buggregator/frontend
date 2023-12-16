@@ -10,18 +10,8 @@ export default {
   component: ProfilerPage
 } as Meta<typeof ProfilerPage>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { ProfilerPage },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<ProfilerPage v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-
-Default.args = {
-  event: normalizeProfilerEvent(profilerMock),
+export const Default: StoryObj<typeof ProfilerPage> = {
+  args: {
+    event: normalizeProfilerEvent(profilerMock),
+  }
 };

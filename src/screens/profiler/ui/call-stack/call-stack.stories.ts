@@ -10,18 +10,9 @@ export default {
   component: CallStack
 } as Meta<typeof CallStack>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { CallStack },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<CallStack v-bind="args" />`,
-});
+export const Default: StoryObj<typeof CallStack> = {
+  args: {
+    payload: normalizeProfilerEvent(profilerMock).payload,
+  }
+}
 
-export const Default = Template.bind({});
-
-Default.args = {
-  payload: normalizeProfilerEvent(profilerMock).payload,
-};

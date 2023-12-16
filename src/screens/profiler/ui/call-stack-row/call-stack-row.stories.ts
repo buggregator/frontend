@@ -10,18 +10,8 @@ export default {
   component: CallStackRow
 } as Meta<typeof CallStackRow>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { CallStackRow },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<CallStackRow v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-
-Default.args = {
-  edge: normalizeProfilerEvent(profilerMock).payload.edges.e5,
+export const Default: StoryObj<typeof CallStackRow> = {
+  args: {
+    edge: normalizeProfilerEvent(profilerMock).payload.edges.e5,
+  }
 };

@@ -10,18 +10,9 @@ export default {
   component: CallGraph
 } as Meta<typeof CallGraph>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { CallGraph },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<CallGraph v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-
-Default.args = {
-  payload: normalizeProfilerEvent(profilerMock).payload,
+export const Default: StoryObj<typeof CallGraph> = {
+  args: {
+    payload: normalizeProfilerEvent(profilerMock).payload,
+  }
 };

@@ -10,18 +10,8 @@ export default {
   component: CallStatBoard
 } as Meta<typeof CallStatBoard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { CallStatBoard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<CallStatBoard v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-
-Default.args = {
-  edge: normalizeProfilerEvent(profilerMock).payload.edges.e5
+export const Default: StoryObj<typeof CallStatBoard> = {
+  args: {
+    edge: normalizeProfilerEvent(profilerMock).payload.edges.e5
+  }
 };
