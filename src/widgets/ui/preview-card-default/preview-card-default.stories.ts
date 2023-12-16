@@ -10,18 +10,8 @@ export default {
   component: PreviewCardDefault
 } as Meta<typeof PreviewCardDefault>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCardDefault },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCardDefault v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-
-Default.args = {
-  event: normalizeUnknownEvent({ ...monologMock, type: 'unknown' }),
-};
+export const Default: StoryObj<typeof PreviewCardDefault> = {
+  args: {
+    event: normalizeUnknownEvent({ ...monologMock, type: 'unknown' }),
+  }
+}

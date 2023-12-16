@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IconSvg } from "~/src/shared/ui";
+// import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
   title?: string;
@@ -38,7 +38,7 @@ const clearEvents = () => {
       </button>
     </div>
 
-    <IconSvg class="page-header__lock-icon" name="lock" />
+    <!--    <IconSvg class="page-header__lock-icon" name="lock" />-->
   </header>
 </template>
 

@@ -6,16 +6,6 @@ export default {
   component: PagePlaceholder
 }as Meta<typeof PagePlaceholder>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PagePlaceholder },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: '<PagePlaceholder v-bind="args" />',
-});
-
-export const Default = Template.bind({});
-Default.args = {
+export const Default: StoryObj<typeof PagePlaceholder> = {
+  args: {}
 };

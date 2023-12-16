@@ -1,73 +1,77 @@
 import { action } from '@storybook/addon-actions'
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, ArgTypes, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
 import { EVENT_TYPES } from "~/src/shared/types";
 import PageHeader from "./page-header.vue";
 
-export default {
+const PageHeaderMeta: Meta<typeof PageHeader> = {
   title: "Widgets/PageHeader",
   component: PageHeader,
   argTypes: {
+    onDelete: action('Delete event'),
     eventType: {
       control: { type: 'select' },
       options: Object.values(EVENT_TYPES),
       mapping: EVENT_TYPES
     },
-  }
-} as Meta<typeof PageHeader>;
-
-const Template: StoryObj = (args: unknown) => ({
-  components: { PageHeader },
-  methods: {
-    action
+    slots: {
+      default: 'Page title',
+      controls: ''
+    },
   },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `
+  render: (args: ComponentProps<typeof PageHeader>, { argTypes }: { argTypes: ArgTypes }) => ({
+    // props: Object.keys(argTypes as object),
+    components: { PageHeader },
+    methods: {
+      action
+    },
+    setup() {
+      return {
+        args,
+        argTypes
+      };
+    },
+    template: `
     <PageHeader
       v-bind="args"
-      @delete="(a) => action('Delete event')(a)"
     >
-      Page title
+      <template v-slot>${argTypes.slots.default}</template>
+      <template v-slot:controls>${argTypes.slots.controls}</template>
     </PageHeader>
 `,
-});
-
-export const Default = Template.bind({});
-Default.args = {
-  buttonTitle: "Delete event",
+  }),
 };
 
+export default PageHeaderMeta;
 
-const TemplateWithActions: StoryObj = (args: unknown) => ({
-  components: { PageHeader },
-  methods: {
-    action
-  },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `
-    <PageHeader
-      v-bind="args"
-      @delete="(a) => action('Delete event')(a)"
-    >
-      Page title
+export const Default: StoryObj<typeof PageHeader> = {
+  args: {
+    buttonTitle: "Delete event",
 
-      <template #controls>
-        <button class="flex mr-3 rounded-sm bg-blue-500 text-xs p-1" @click="(a) => action('Custom action event')(a)">
+  },
+  argTypes: {
+    ...PageHeaderMeta.argTypes,
+    slots: {
+      default: 'Page title'
+    },
+  }
+};
+
+export const WithActions: StoryObj<typeof PageHeader> = {
+  args: {
+    buttonTitle: "Delete event",
+  },
+  argTypes: {
+    ...PageHeaderMeta.argTypes,
+    slots: {
+      default: `Page title`,
+      controls:
+        `<button
+          class="flex mr-3 rounded-sm bg-blue-500 text-xs p-1"
+          @click="(a) => action('Custom action event')(a)"
+        >
           Additional button
-        </button>
-      </template>
-    </PageHeader>
-`,
-});
-
-export const WithActions = TemplateWithActions.bind({});
-WithActions.args = {
-  buttonTitle: "Delete event",
+        </button>`,
+    }
+  }
 };

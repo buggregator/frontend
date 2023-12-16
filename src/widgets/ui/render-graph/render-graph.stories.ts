@@ -1,28 +1,27 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';
-import { useRenderGraph } from "./use-render-graph";
+import { useRenderGraph } from './use-render-graph';
 
 const { prepare } = useRenderGraph();
 export default {
   title: "Widgets/RenderGraph",
-  component: RenderGraph
+  component: RenderGraph,
+  render: (args: ComponentProps<typeof RenderGraph>) => ({
+    components: { RenderGraph },
+    setup() {
+      return {
+        args,
+      };
+    },
+    template: `<RenderGraph v-bind="args" :height="500" />`,
+  })
 } as Meta<typeof RenderGraph>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RenderGraph },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RenderGraph v-bind="args" :height="500" />`,
-});
-
-export const TestData = Template.bind({});
-
-TestData.args = {
+export const TestData = {
+  args: {
     elements: {
       nodes: [
         { data: { id: 'e10', name: 'Spiral\\Core\\AbstractCore::callAction', color: '#6FB1FC' } },
@@ -42,24 +41,25 @@ TestData.args = {
         { data: { source: 'e14', target: 'e14', label: '100%' } },
       ]
     },
+  }
 };
 
 
 
-export const ProfilerData = Template.bind({});
-
-ProfilerData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1, 10)
+export const ProfilerData: StoryObj<typeof RenderGraph> = {
+  args: {
+    elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1, 10)
+  }
 };
 
-export const ProfilerMemoryData = Template.bind({});
-
-ProfilerMemoryData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1, 10)
+export const ProfilerMemoryData: StoryObj<typeof RenderGraph> = {
+  args: {
+    elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1, 10)
+  }
 };
 
-export const ProfilerMemoryChangeData = Template.bind({});
-
-ProfilerMemoryChangeData.args = {
-  elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1, 10)
+export const ProfilerMemoryChangeData: StoryObj<typeof RenderGraph> = {
+  args: {
+    elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1, 10)
+  }
 };
