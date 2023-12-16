@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require('path');
-const postcss = require('postcss');
 
 //storybook-tailwind-dark-mode
 const config = {
@@ -18,57 +17,11 @@ const config = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "storybook-addon-themes",
-    // {
-    //   name: "@storybook/addon-postcss",
-    //   options: {
-    //     cssLoaderOptions: {
-    //       importLoaders: 1,
-    //     },
-    //     postcssLoaderOptions: {
-    //       implementation: postcss,
-    //     },
-    //   },
-    // },
   ],
 
   framework: {
-    name: "@storybook/vue3-vite",
+    name: "@storybook-vue/nuxt",
     options: {}
-  },
-
-  async viteFinal(config) {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': path.resolve(__dirname, "../"),
-      '~': path.resolve(__dirname, "../"),
-      '#app': path.resolve(
-        __dirname,
-        '../node_modules/nuxt/dist/app'
-      ),
-      '#head': path.resolve(
-        __dirname,
-        '../node_modules/nuxt/dist/head/runtime'
-      ),
-      '#build': path.resolve(
-        __dirname,
-        '../.nuxt'
-      ),
-      "#imports": [
-        ".nuxt/imports"
-      ],
-      "#components": path.resolve(
-        __dirname,
-        '../.nuxt/components'
-      ),
-    };
-
-    return {
-      ...config,
-      define: {
-        ...config.define,
-        global: "window",
-      },
-    };
   },
 
   env: (config) => {

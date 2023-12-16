@@ -48,7 +48,8 @@ export default defineNuxtConfig({
   ],
   modules: [
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxtjs/storybook',
   ],
   typescript: {
     strict: true,
