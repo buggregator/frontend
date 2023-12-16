@@ -10,24 +10,14 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
-
-export const OrderShipped = Template.bind({});
-
-OrderShipped.args = {
-  event: normalizeSmtpEvent(smtpOrderMock),
+export const OrderShipped: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeSmtpEvent(smtpOrderMock),
+  }
 };
 
-export const Welcome = Template.bind({});
-
-Welcome.args = {
-  event: normalizeSmtpEvent(smtpWelcomeMock),
+export const Welcome: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeSmtpEvent(smtpWelcomeMock),
+  }
 };

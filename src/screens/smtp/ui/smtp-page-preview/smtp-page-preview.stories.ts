@@ -1,39 +1,40 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
 import { HTMLCode } from '~/src/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 
 export default {
   title: "Screens/smtp/SmtpPagePreview",
-  component: SmtpPagePreview
+  component: SmtpPagePreview,
+  render: (args: ComponentProps<typeof SmtpPagePreview>) => ({
+    components: { SmtpPagePreview },
+    setup() {
+      return {
+        args,
+      };
+    },
+    template: `<SmtpPagePreview v-bind="args">${HTMLCode}</SmtpPagePreview>`,
+  })
 } as Meta<typeof SmtpPagePreview>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SmtpPagePreview },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SmtpPagePreview v-bind="args">${HTMLCode}</SmtpPagePreview>`,
-});
 
-export const Default = Template.bind({});
-
-Default.args = {};
-export const Tablet = Template.bind({});
-
-Tablet.args = {
-  device: 'tablet',
+export const Default: StoryObj<typeof SmtpPagePreview> = {
+  args: {}
+};
+export const Tablet = {
+  args: {
+    device: 'tablet',
+  }
 };
 
-export const Mobile = Template.bind({});
-
-Mobile.args = {
-  device: 'mobile',
+export const Mobile: StoryObj<typeof SmtpPagePreview> = {
+  args: {
+    device: 'mobile',
+  }
 };
 
-export const Desktop = Template.bind({});
-
-Desktop.args = {
-  device: 'desktop',
+export const Desktop: StoryObj<typeof SmtpPagePreview> = {
+  args: {
+    device: 'desktop',
+  }
 };
