@@ -1,3 +1,18 @@
-.sb-show-main.sb-main-padded {
-  /*padding: 0;*/
+html {
+  position: relative;
+}
+
+html:before {
+  display: block;
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAAK0lEQVQ4y2P8//8/A25w7949PLJMDBSAUc0jQzML/jSkpKQ0GmCjminRDADJNQjBr5nbigAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-position: 0 0;
+  opacity: 0.2;
+  z-index: -1;
 }

@@ -30,7 +30,7 @@ export const parameters = {
         color: '#333333'
       }
     ]
-  }
+  },
 };
 
 
