@@ -10,24 +10,14 @@ export default {
   component: SentryPageRequest
 } as Meta<typeof SentryPageRequest>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryPageRequest },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryPageRequest v-bind="args" />`,
-});
-
-export const Laravel = Template.bind({});
-
-Laravel.args = {
-  request: normalizeSentryEvent(sentryLaravelMock).payload.request,
+export const Laravel: StoryObj<typeof SentryPageRequest> = {
+  args: {
+    request: normalizeSentryEvent(sentryLaravelMock).payload.request,
+  }
 };
 
-export const Spiral = Template.bind({});
-
-Spiral.args = {
-  request: normalizeSentryEvent(sentrySpiralMock).payload.request,
+export const Spiral: StoryObj<typeof SentryPageRequest> = {
+  args: {
+    request: normalizeSentryEvent(sentrySpiralMock).payload.request,
+  }
 };

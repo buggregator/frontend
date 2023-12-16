@@ -10,18 +10,9 @@ export default {
   component: SentryPageApp
 } as Meta<typeof SentryPageApp>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryPageApp },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryPageApp v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-
-Default.args = {
-  app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app,
+export const Default: StoryObj<typeof SentryPageApp> = {
+  args: {
+    app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app,
+  }
 };

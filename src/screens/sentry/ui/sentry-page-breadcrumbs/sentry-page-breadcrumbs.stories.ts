@@ -10,24 +10,14 @@ export default {
   component: SentryPageBreadcrumbs
 } as Meta<typeof SentryPageBreadcrumbs>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryPageBreadcrumbs },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryPageBreadcrumbs v-bind="args" />`,
-});
-
-export const Laravel = Template.bind({});
-
-Laravel.args = {
-  breadcrumbs: normalizeSentryEvent(sentryLaravelMock).payload.breadcrumbs?.values,
+export const Laravel: StoryObj<typeof SentryPageBreadcrumbs> = {
+  args: {
+    breadcrumbs: normalizeSentryEvent(sentryLaravelMock).payload.breadcrumbs?.values,
+  }
 };
 
-export const Spiral = Template.bind({});
-
-Spiral.args = {
-  breadcrumbs: normalizeSentryEvent(sentrySpiralMock).payload.breadcrumbs?.values,
+export const Spiral: StoryObj<typeof SentryPageBreadcrumbs> = {
+  args: {
+    breadcrumbs: normalizeSentryEvent(sentrySpiralMock).payload.breadcrumbs?.values,
+  }
 };

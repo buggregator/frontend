@@ -10,19 +10,10 @@ export default {
   component: SentryExceptionFrame
 } as Meta<typeof SentryExceptionFrame>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryExceptionFrame },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryExceptionFrame v-bind="args" />`,
-});
 
-export const Frame = Template.bind({});
-
-Frame.args = {
-  isOpen: true,
-  frame: normalizeSentryEvent(sentrySpiralMock).payload?.exception?.values?.[0]?.stacktrace?.frames?.[1],
+export const Frame: StoryObj<typeof SentryExceptionFrame> = {
+  args: {
+    isOpen: true,
+    frame: normalizeSentryEvent(sentrySpiralMock).payload?.exception?.values?.[0]?.stacktrace?.frames?.[1],
+  }
 };

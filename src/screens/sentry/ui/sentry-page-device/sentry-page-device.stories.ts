@@ -9,25 +9,14 @@ export default {
   title: "Screens/sentry/SentryPageDevice",
   component: SentryPageDevice
 } as Meta<typeof SentryPageDevice>;
-
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryPageDevice },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryPageDevice v-bind="args" />`,
-});
-
-export const Device = Template.bind({});
-
-Device.args = {
-  device: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.device,
+export const Device: StoryObj<typeof SentryPageDevice> = {
+  args: {
+    device: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.device,
+  }
 };
 
-export const Spiral = Template.bind({});
-
-Spiral.args = {
-  device: normalizeSentryEvent(sentrySpiralMock).payload?.contexts?.device,
+export const Spiral: StoryObj<typeof SentryPageDevice> = {
+  args: {
+    device: normalizeSentryEvent(sentrySpiralMock).payload?.contexts?.device,
+  }
 };

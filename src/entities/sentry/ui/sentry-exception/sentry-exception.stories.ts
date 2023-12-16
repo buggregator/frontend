@@ -10,18 +10,9 @@ export default {
   component: SentryException
 } as Meta<typeof SentryException>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { SentryException },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryException v-bind="args" />`,
-});
 
-export const Exception = Template.bind({});
-
-Exception.args = {
-  exception: normalizeSentryEvent(sentryCommonMock).payload?.exception?.values?.[0],
+export const Exception: StoryObj<typeof SentryException> = {
+  args: {
+    exception: normalizeSentryEvent(sentryCommonMock).payload?.exception?.values?.[0],
+  }
 };
