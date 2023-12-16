@@ -11,17 +11,9 @@ export default {
   component: RayApplicationLog
 } as Meta<typeof RayApplicationLog>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayApplicationLog },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayApplicationLog v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  content: (normalizeRayEvent(rayLaravelApplicationLogMock).payload.payloads[0].content as RayContentApplicationLog)
-};
+export const Default: StoryObj<typeof RayApplicationLog> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelApplicationLogMock).payload.payloads[0].content as RayContentApplicationLog)
+  }
+}

@@ -11,17 +11,9 @@ export default {
   component: RayCarbon
 } as Meta<typeof RayCarbon>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayCarbon },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayCarbon v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  carbone: normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbone,
-};
+export const Default: StoryObj<typeof RayCarbon> = {
+  args: {
+    content: (normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbone)
+  }
+}

@@ -11,17 +11,10 @@ export default {
   component: RayLock
 } as Meta<typeof RayLock>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayLock },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayLock v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock).name
-};
+export const Default: StoryObj<typeof RayLock> = {
+  args: {
+    content: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)
+  }
+}
+

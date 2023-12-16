@@ -11,17 +11,9 @@ export default {
   component: RayLog
 } as Meta<typeof RayLog>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayLog },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayLog v-bind="args" />`,
-});
+export const Default: StoryObj<typeof RayLog> = {
+  args: {
+    log: (normalizeRayEvent(rayColorMock).payload.payloads[0].content as RayContentLog).values[0]
+  }
+}
 
-export const Default = Template.bind({});
-Default.args = {
-  log: (normalizeRayEvent(rayColorMock).payload.payloads[0].content as RayContentLog).values[0]
-};

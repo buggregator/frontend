@@ -11,17 +11,10 @@ export default {
   component: RayCustom
 } as Meta<typeof RayCustom>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayCustom },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayCustom v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  content: (normalizeRayEvent(rayTextMock).payload.payloads[0].content as RayContentCustom)
-};
+export const Default: StoryObj<typeof RayCustom> = {
+  args: {
+    content: (normalizeRayEvent(rayTextMock).payload.payloads[0].content as RayContentCustom)
+  }
+}
+

@@ -11,17 +11,9 @@ export default {
   component: RayOrigin
 } as Meta<typeof RayOrigin>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayOrigin },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayOrigin v-bind="args" />`,
-});
+export const Default: StoryObj<typeof RayOrigin> = {
+  args: {
+    origin: (normalizeRayEvent(rayCallerMock).payload.payloads[0].origin as RayPayloadOrigin)
+  }
+}
 
-export const Default = Template.bind({});
-Default.args = {
-  origin: (normalizeRayEvent(rayCallerMock).payload.payloads[0].origin as RayPayloadOrigin)
-};

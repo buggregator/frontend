@@ -11,17 +11,10 @@ export default {
   component: RayTrace
 } as Meta<typeof RayTrace>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayTrace },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayTrace v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  frames: (normalizeRayEvent(rayTraceMock).payload.payloads[0].content as RayContentFrames).frames
-};
+export const Default: StoryObj<typeof RayTrace> = {
+  args: {
+    frames: (normalizeRayEvent(rayTraceMock).payload.payloads[0].content as RayContentFrames).frames
+  }
+}
+

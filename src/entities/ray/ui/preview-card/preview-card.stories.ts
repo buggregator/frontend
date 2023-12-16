@@ -35,91 +35,107 @@ export default {
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { PreviewCard },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<PreviewCard v-bind="args" />`,
-});
+export const Text: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayTextMock), }
+};
 
-export const Text = Template.bind({});
-Text.args = {event: normalizeRayEvent(rayTextMock),};
+export const EmptyText: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayEmptyStringMock), }
+}
 
-export const EmptyText = Template.bind({});
-EmptyText.args = {event: normalizeRayEvent(rayEmptyStringMock),};
+export const Trace: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayTraceMock), }
+}
 
-export const Trace = Template.bind({});
-Trace.args = {event: normalizeRayEvent(rayTraceMock),};
+export const Table: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayTableMock), }
+}
 
-export const Table = Template.bind({});
-Table.args = {event: normalizeRayEvent(rayTableMock),};
+export const Size: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(raySizeMock), }
+}
 
-export const Size = Template.bind({});
-Size.args = {event: normalizeRayEvent(raySizeMock),};
+export const Notify: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayNotifyMock), }
+}
 
-export const Notify = Template.bind({});
-Notify.args = {event: normalizeRayEvent(rayNotifyMock),};
+export const Measure: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayMeasureStartMock), }
+}
 
-export const Measure = Template.bind({});
-Measure.args = {event: normalizeRayEvent(rayMeasureStartMock),};
+export const Label: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLabelMock), }
+}
 
-export const Label = Template.bind({});
-Label.args = {event: normalizeRayEvent(rayLabelMock),};
+export const Json: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayJsonMock), }
+}
 
-export const Json = Template.bind({});
-Json.args = {event: normalizeRayEvent(rayJsonMock),};
+export const Image: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayImageMock), }
+}
 
-export const Image = Template.bind({});
-Image.args = {event: normalizeRayEvent(rayImageMock),};
+export const Hide: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayHideMock), }
+}
 
-export const Hide = Template.bind({});
-Hide.args = {event: normalizeRayEvent(rayHideMock),};
+export const Exception: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayExceptionMock), }
+}
 
-export const Exception = Template.bind({});
-Exception.args = {event: normalizeRayEvent(rayExceptionMock),};
+export const Dump: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayDumpMock), }
+}
 
-export const Dump = Template.bind({});
-Dump.args = {event: normalizeRayEvent(rayDumpMock),};
+export const Counter: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayCounterMock), }
+}
 
-export const Counter = Template.bind({});
-Counter.args = {event: normalizeRayEvent(rayCounterMock),};
+export const Color: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayColorMock), }
+}
 
-export const Color = Template.bind({});
-Color.args = {event: normalizeRayEvent(rayColorMock),};
+export const Carbon: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayCarbonMock), }
+}
 
-export const Carbon = Template.bind({});
-Carbon.args = {event: normalizeRayEvent(rayCarbonMock),};
+export const Int: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayIntegerMock), }
+}
 
-export const Int = Template.bind({});
-Int.args = {event: normalizeRayEvent(rayIntegerMock),};
+export const Caller: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayCallerMock), }
+}
 
-export const Caller = Template.bind({});
-Caller.args = {event: normalizeRayEvent(rayCallerMock),};
+export const Lock: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLockMock), }
+}
 
-export const Lock = Template.bind({});
-Lock.args = {event: normalizeRayEvent(rayLockMock),};
+export const LaravelQuery: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelQueryMock), }
+}
 
-export const LaravelQuery = Template.bind({});
-LaravelQuery.args = {event: normalizeRayEvent(rayLaravelQueryMock),};
+export const LaravelQuery2: StoryObj<typeof PreviewCard> = {
 
-export const LaravelQuery2 = Template.bind({});
-LaravelQuery2.args = {event: normalizeRayEvent(rayLaravelQueryNoBindingsMock),};
+  args: { event: normalizeRayEvent(rayLaravelQueryNoBindingsMock), }
+}
 
-export const LaravelEloquent = Template.bind({});
-LaravelEloquent.args = {event: normalizeRayEvent(rayLaravelEloquentMock),};
+export const LaravelEloquent: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelEloquentMock), }
+}
 
-export const LaravelViews = Template.bind({});
-LaravelViews.args = {event: normalizeRayEvent(rayLaravelViewsMock),};
+export const LaravelViews: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelViewsMock), }
+}
 
-export const LaravelEvents = Template.bind({});
-LaravelEvents.args = {event: normalizeRayEvent(rayLaravelEventsMock),};
+export const LaravelEvents: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelEventsMock), }
+}
 
-export const LaravelJobs = Template.bind({});
-LaravelJobs.args = {event: normalizeRayEvent(rayLaravelJobsMock),};
+export const LaravelJobs: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelJobsMock), }
+}
 
-export const LaravelApplicationLog = Template.bind({});
-LaravelApplicationLog.args = {event: normalizeRayEvent(rayLaravelApplicationLogMock),};
-
+export const LaravelApplicationLog: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayLaravelApplicationLogMock), }
+}

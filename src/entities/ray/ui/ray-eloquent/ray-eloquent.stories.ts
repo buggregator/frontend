@@ -11,17 +11,8 @@ export default {
   component: RayEloquent
 } as Meta<typeof RayEloquent>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayEloquent },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayEloquent v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-Default.args = {
-  content: (normalizeRayEvent(rayLaravelEloquentMock).payload.payloads[0].content as RayContentEloquent)
-};
+export const Default: StoryObj<typeof RayEloquent> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelEloquentMock).payload.payloads[0].content as RayContentEloquent)
+  }
+}

@@ -11,17 +11,9 @@ export default {
   component: RayViews
 } as Meta<typeof RayViews>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayViews },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayViews v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  view: normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView
-};
+export const Default: StoryObj<typeof RayViews> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView)
+  }
+}

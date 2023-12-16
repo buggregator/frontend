@@ -11,18 +11,8 @@ export default {
   component: RayTable
 } as Meta<typeof RayTable>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayTable },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayTable v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-Default.args = {
-  table: normalizeRayEvent(rayTableMock).payload.payloads[0].content as RayContentMeasure
-};
-
+export const Default: StoryObj<typeof RayTable> = {
+  args: {
+    table: normalizeRayEvent(rayTableMock).payload.payloads[0].content as RayContentMeasure
+  }
+}

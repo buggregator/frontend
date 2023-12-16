@@ -11,17 +11,9 @@ export default {
   component: RayFrame
 } as Meta<typeof RayFrame>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayFrame },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayFrame v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  frame: (normalizeRayEvent(rayCallerMock).payload.payloads[0].content as RayContentFrame).frame
-};
+export const Default: StoryObj<typeof RayFrame> = {
+  args: {
+    frame: (normalizeRayEvent(rayCallerMock).payload.payloads[0].content as RayContentFrame).frame
+  }
+}

@@ -11,18 +11,10 @@ export default {
   component: RayMail
 } as Meta<typeof RayMail>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayMail},
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayMail v-bind="args" />`,
-});
 
-export const Mailable = Template.bind({});
-Mailable.args = {
-  content: normalizeRayEvent(rayLaravelMailableMock).payload.payloads[0].content as RayContentMail
-};
+export const Default: StoryObj<typeof RayMail> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelMailableMock).payload.payloads[0].content as RayContentMail)
+  }
+}
 

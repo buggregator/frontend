@@ -11,17 +11,9 @@ export default {
   component: RayException
 } as Meta<typeof RayException>;
 
-const Template: StoryObj = (args: unknown) => ({
-  components: { RayException },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayException v-bind="args" />`,
-});
+export const Default: StoryObj<typeof RayException> = {
+  args: {
+    content: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException)
+  }
+}
 
-export const Exception = Template.bind({});
-Exception.args = {
-  exception: normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException,
-};
