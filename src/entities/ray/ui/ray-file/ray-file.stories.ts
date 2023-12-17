@@ -1,4 +1,5 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
 import { useRay } from "../../lib";
 import { rayExceptionMock } from "../../mocks";
 import type { RayContentException } from "../../types";
@@ -8,20 +9,21 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayFile",
-  component: RayFile
+  component: RayFile,
+  render: (args: ComponentProps<typeof RayFile>) => ({
+    components: { RayFile },
+    setup() {
+      return {
+        args,
+      };
+    },
+    template: `<RayFile :file="args.file">This is a row 1</RayFile>`,
+  })
 } as Meta<typeof RayFile>;
 
-const Template: Story = (args) => ({
-  components: { RayFile },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayFile :file="args.file">This is a row 1</RayFile>`,
-});
 
-export const FileDefault = Template.bind({});
-FileDefault.args = {
-  file: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException).frames[0]
+export const Default: StoryObj<typeof RayFile> = {
+  args: {
+    file: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException).frames[0]
+  }
 };

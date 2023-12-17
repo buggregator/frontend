@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayCarbonMock } from '../../mocks'
 import type { RayContentCarbone } from "../../types";
@@ -11,17 +11,9 @@ export default {
   component: RayCarbon
 } as Meta<typeof RayCarbon>;
 
-const Template: Story = (args) => ({
-  components: { RayCarbon },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayCarbon v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  carbone: normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbone,
-};
+export const Default: StoryObj<typeof RayCarbon> = {
+  args: {
+    content: (normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbone)
+  }
+}

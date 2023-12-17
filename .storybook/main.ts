@@ -1,9 +1,8 @@
 const fs = require("fs");
 const path = require('path');
-const postcss = require('postcss');
 
 //storybook-tailwind-dark-mode
-module.exports = {
+const config = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
@@ -12,61 +11,19 @@ module.exports = {
     "../pages/**/*.stories.@(js|jsx|ts|tsx)",
     "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
+
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "storybook-addon-themes",
-    {
-      name: "@storybook/addon-postcss",
-      options: {
-        cssLoaderOptions: {
-          importLoaders: 1,
-        },
-        postcssLoaderOptions: {
-          implementation: postcss,
-        },
-      },
-    },
   ],
-  core: {
-    builder: "@storybook/builder-vite",
-  },
-  framework: "@storybook/vue3",
-  async viteFinal(config) {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': path.resolve(__dirname, "../"),
-      '~': path.resolve(__dirname, "../"),
-      '#app': path.resolve(
-        __dirname,
-        '../node_modules/nuxt/dist/app'
-      ),
-      '#head': path.resolve(
-        __dirname,
-        '../node_modules/nuxt/dist/head/runtime'
-      ),
-      '#build': path.resolve(
-        __dirname,
-        '../.nuxt'
-      ),
-      "#imports": [
-        ".nuxt/imports"
-      ],
-      "#components": path.resolve(
-        __dirname,
-        '../.nuxt/components'
-      ),
-    };
 
-    return {
-      ...config,
-      define: {
-        ...config.define,
-        global: "window",
-      },
-    };
+  framework: {
+    name: "@storybook-vue/nuxt",
+    options: {}
   },
+
   env: (config) => {
     const iconComponentFolder = path.resolve(__dirname, '../src/shared/ui/icon-svg/icon-svg-originals');
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
@@ -83,4 +40,7 @@ module.exports = {
       ...config,
       STORYBOOK_ICON_SVG_NAMES: allIconNamesList,
     }},
+
 };
+
+export default config;

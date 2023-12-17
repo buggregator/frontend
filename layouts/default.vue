@@ -45,9 +45,9 @@ export default defineComponent({
           ? `v${apiVersion}`
           : `@${apiVersion}`,
         clientVersion:
-          !$config?.version || $config.version === "0.0.1"
+          !$config?.public?.version || $config.public.version === "0.0.1"
             ? "@dev"
-            : `v${$config.version}`,
+            : `v${$config.public.version}`,
       };
     }
 

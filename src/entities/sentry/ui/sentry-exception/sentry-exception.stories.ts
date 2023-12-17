@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "../../lib";
 import { sentryCommonMock } from '../../mocks';
 import SentryException from './sentry-exception.vue';
@@ -10,18 +10,9 @@ export default {
   component: SentryException
 } as Meta<typeof SentryException>;
 
-const Template: Story = (args) => ({
-  components: { SentryException },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryException v-bind="args" />`,
-});
 
-export const Exception = Template.bind({});
-
-Exception.args = {
-  exception: normalizeSentryEvent(sentryCommonMock).payload?.exception?.values?.[0],
+export const Exception: StoryObj<typeof SentryException> = {
+  args: {
+    exception: normalizeSentryEvent(sentryCommonMock).payload?.exception?.values?.[0],
+  }
 };

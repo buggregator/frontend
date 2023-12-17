@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "~/src/entities/sentry";
 import { sentryLaravelMock, sentrySpiralMock } from '~/src/entities/sentry/mocks'
 import SentryPageBreadcrumbs from './sentry-page-breadcrumbs.vue';
@@ -10,24 +10,14 @@ export default {
   component: SentryPageBreadcrumbs
 } as Meta<typeof SentryPageBreadcrumbs>;
 
-const Template: Story = (args) => ({
-  components: { SentryPageBreadcrumbs },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<SentryPageBreadcrumbs v-bind="args" />`,
-});
-
-export const Laravel = Template.bind({});
-
-Laravel.args = {
-  breadcrumbs: normalizeSentryEvent(sentryLaravelMock).payload.breadcrumbs?.values,
+export const Laravel: StoryObj<typeof SentryPageBreadcrumbs> = {
+  args: {
+    breadcrumbs: normalizeSentryEvent(sentryLaravelMock).payload.breadcrumbs?.values,
+  }
 };
 
-export const Spiral = Template.bind({});
-
-Spiral.args = {
-  breadcrumbs: normalizeSentryEvent(sentrySpiralMock).payload.breadcrumbs?.values,
+export const Spiral: StoryObj<typeof SentryPageBreadcrumbs> = {
+  args: {
+    breadcrumbs: normalizeSentryEvent(sentrySpiralMock).payload.breadcrumbs?.values,
+  }
 };

@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelQueryMock, rayLaravelQueryNoBindingsMock } from '../../mocks-laravel';
 import type { RayContentSQL } from '../../types';
@@ -11,23 +11,15 @@ export default {
   component: RayQuery
 } as Meta<typeof RayQuery>;
 
-const Template: Story = (args) => ({
-  components: { RayQuery },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayQuery v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  content: (normalizeRayEvent(rayLaravelQueryMock).payload.payloads[0].content as RayContentSQL)
-};
+export const Default: StoryObj<typeof RayQuery> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelQueryMock).payload.payloads[0].content as RayContentSQL)
+  }
+}
 
-
-export const NoBindings = Template.bind({});
-NoBindings.args = {
-  content: (normalizeRayEvent(rayLaravelQueryNoBindingsMock).payload.payloads[0].content as RayContentSQL)
-};
+export const NoBindings: StoryObj<typeof RayQuery> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelQueryNoBindingsMock).payload.payloads[0].content as RayContentSQL)
+  }
+}

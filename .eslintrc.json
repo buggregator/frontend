@@ -9,7 +9,8 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "prettier",
     "plugin:nuxt/recommended",
-    "plugin:@conarti/feature-sliced/recommended"
+    "plugin:@conarti/feature-sliced/recommended",
+    "plugin:storybook/recommended"
   ],
   "parser": "vue-eslint-parser",
   "plugins": ["@typescript-eslint"],
@@ -31,7 +32,12 @@
   },
   "rules": {
     "import/prefer-default-export": "off",
-    "no-console": ["error", { "allow": ["info", "warn", "error"] }],
+    "no-console": [
+      "error",
+      {
+        "allow": ["info", "warn", "error"]
+      }
+    ],
     "vue/component-name-in-template-casing": [
       "error",
       "PascalCase",

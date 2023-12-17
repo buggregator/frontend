@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useHttpDump } from '~/src/entities/http-dump';
 import { httpDumpMock, httpDumpPdfMock } from '~/src/entities/http-dump/mocks';
 import HttpDumpPage from "./http-dump-page.vue";
@@ -10,24 +10,14 @@ export default {
   component: HttpDumpPage
 } as Meta<typeof HttpDumpPage>;
 
-const Template: Story = (args) => ({
-  components: { HttpDumpPage },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<HttpDumpPage v-bind="args" />`,
-});
+export const Default: StoryObj<typeof HttpDumpPage> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpMock),
+  }
+}
 
-export const Default = Template.bind({});
-
-
-Default.args = {
-  event: normalizeHttpDumpEvent(httpDumpMock),
-};
-
-export const WithPdf = Template.bind({});
-WithPdf.args = {
-  event: normalizeHttpDumpEvent(httpDumpPdfMock),
-};
+export const WithPdf: StoryObj<typeof HttpDumpPage> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpPdfMock),
+  }
+}

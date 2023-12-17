@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useProfiler } from "~/src/entities/profiler";
 import { profilerMock } from  "~/src/entities/profiler/mocks";
 import ProfilerPage from './profiler-page.vue';
@@ -10,18 +10,8 @@ export default {
   component: ProfilerPage
 } as Meta<typeof ProfilerPage>;
 
-const Template: Story = (args) => ({
-  components: { ProfilerPage },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<ProfilerPage v-bind="args" />`,
-});
-
-export const Default = Template.bind({});
-
-Default.args = {
-  event: normalizeProfilerEvent(profilerMock),
+export const Default: StoryObj<typeof ProfilerPage> = {
+  args: {
+    event: normalizeProfilerEvent(profilerMock),
+  }
 };

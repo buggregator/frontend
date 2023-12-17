@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLaravelViewsMock } from '../../mocks-laravel';
 import type { RayContentView } from '../../types';
@@ -11,17 +11,9 @@ export default {
   component: RayViews
 } as Meta<typeof RayViews>;
 
-const Template: Story = (args) => ({
-  components: { RayViews },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayViews v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  view: normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView
-};
+export const Default: StoryObj<typeof RayViews> = {
+  args: {
+    content: (normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView)
+  }
+}

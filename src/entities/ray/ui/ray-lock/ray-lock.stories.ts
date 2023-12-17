@@ -1,4 +1,4 @@
-import type { Meta, Story } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3";
 import { useRay } from "../../lib";
 import { rayLockMock } from '../../mocks'
 import type { RayContentLock } from '../../types'
@@ -11,17 +11,10 @@ export default {
   component: RayLock
 } as Meta<typeof RayLock>;
 
-const Template: Story = (args) => ({
-  components: { RayLock },
-  setup() {
-    return {
-      args,
-    };
-  },
-  template: `<RayLock v-bind="args" />`,
-});
 
-export const Default = Template.bind({});
-Default.args = {
-  name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock).name
-};
+export const Default: StoryObj<typeof RayLock> = {
+  args: {
+    content: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)
+  }
+}
+

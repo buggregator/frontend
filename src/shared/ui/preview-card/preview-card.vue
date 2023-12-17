@@ -1,11 +1,12 @@
 <script lang="ts" setup generic="T">
 // TODO: move useNuxtApp to composition api
+// TODO: move component out of shared/ui
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
 import debounce from "lodash.debounce";
 import moment from "moment";
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
-import { useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from "vue";
+import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "../../lib/io";
 import type { NormalizedEvent } from "../../types";
 import PreviewCardFooter from "./preview-card-footer.vue";
@@ -18,12 +19,8 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const {
-  $lockedIds: { items },
-} = useNuxtApp();
-
 const isCollapsed = ref(false);
-const isLocked = ref((items || []).value.includes(props.event.id));
+const isLocked = ref(false);
 const isOptimized = ref(false);
 const isVisibleControls = ref(true);
 
@@ -94,11 +91,11 @@ const downloadFile = async () => {
 
   if ($events) {
     try {
-      const { data } = await useFetch($events.getUrl(props.event.id));
+      const event = await $events.getItem(props.event.id);
 
-      if (data.value) {
+      if (event) {
         download(
-          JSON.stringify(data.value, null, 2),
+          JSON.stringify(event, null, 2),
           `${props.event.type}-${props.event.id}.json`,
           "application/json"
         );
@@ -154,6 +151,14 @@ const optimiseRenderHidden = debounce(() => {
     }
   }
 }, 30);
+
+onBeforeMount(() => {
+  const {
+    $lockedIds: { items },
+  } = useNuxtApp();
+
+  isLocked.value = items.value.includes(props.event.id);
+});
 
 onMounted(() => {
   window.addEventListener("scroll", optimiseRenderHidden);

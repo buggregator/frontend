@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import pluralize from "pluralize"; // eslint-disable-line @conarti/feature-sliced/public-api
+import pluralize from "pluralize";
 import { computed } from "vue";
-import { IconSvg } from "~/src/shared/ui";
+import { IconSvg } from "../icon-svg";
 
 type Props = {
-  disabled: boolean,
-  isPaused: boolean,
-  totalNewEventsCount: number,
+  disabled: boolean;
+  isPaused: boolean;
+  totalNewEventsCount: number;
 };
 
 type Emits = {
@@ -16,7 +16,9 @@ type Emits = {
 const emit = defineEmits<Emits>();
 const props = defineProps<Props>();
 
-const titleEventsCount = computed(() => pluralize("new event", props.totalNewEventsCount, true));
+const titleEventsCount = computed(() =>
+  pluralize("new event", props.totalNewEventsCount, true)
+);
 
 const toggleUpdate = () => {
   emit("toggleUpdate", true);
@@ -30,8 +32,16 @@ const toggleUpdate = () => {
     :disabled="disabled"
     @click="toggleUpdate"
   >
-    <IconSvg v-if="!isPaused" name="bolt" class="events-page__btn-stop-events-icon"/>
-    <IconSvg v-else name="bolt-slash" class="events-page__btn-stop-events-icon" />
+    <IconSvg
+      v-if="!isPaused"
+      name="bolt"
+      class="events-page__btn-stop-events-icon"
+    />
+    <IconSvg
+      v-if="isPaused"
+      name="bolt-slash"
+      class="events-page__btn-stop-events-icon"
+    />
     <span>{{ isPaused ? "Paused" : "Listening" }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"
