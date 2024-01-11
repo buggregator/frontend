@@ -14,6 +14,11 @@ export default {
     "./nuxt.config.{js,ts}",
     "./app.vue",
   ],
+  safelist: [
+    {
+      pattern: /^text-/,
+    },
+  ],
   variants: {
     extend: {
       opacity: ["disabled"],
