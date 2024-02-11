@@ -24,10 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
 import type { HttpDump } from "~/src/entities/http-dump/types";
+import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 import { HttpDumpPage } from "~/src/screens/http-dump";
 
@@ -41,33 +42,25 @@ export default defineComponent({
     const router = useRouter();
     const eventId = route.params.id as EventId;
 
-    if (process.client) {
-      const { $events } = useNuxtApp();
-      const { data: event, pending } = await useFetch($events.getUrl(eventId), {
-        onResponse({ response }) {
-          return response.data;
-        },
-        onResponseError() {
-          router.push("/404");
-        },
-        onRequestError() {
-          router.push("/404");
-        },
-      });
+    const { events } = useEvents();
 
-      return {
-        serverEvent: event,
-        pending,
-        eventId,
-        clearEvent: () => $events.removeById(eventId),
-      };
-    }
+    const { data: event, pending } = await useFetch(events.getUrl(eventId), {
+      onResponse({ response }) {
+        return response.data;
+      },
+      onResponseError() {
+        router.push("/404");
+      },
+      onRequestError() {
+        router.push("/404");
+      },
+    });
 
     return {
-      serverEvent: null,
-      pending: false,
+      serverEvent: event,
+      pending,
       eventId,
-      clearEvent: () => {},
+      clearEvent: () => events.removeById(eventId),
     };
   },
   head() {
@@ -78,7 +71,9 @@ export default defineComponent({
   computed: {
     event() {
       return this.serverEvent
-        ? normalizeHttpDumpEvent(this.serverEvent as ServerEvent<HttpDump>)
+        ? normalizeHttpDumpEvent(
+            this.serverEvent as unknown as ServerEvent<HttpDump>
+          )
         : null;
     },
   },

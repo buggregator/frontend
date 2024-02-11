@@ -17,6 +17,7 @@ import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#app";
 import { LayoutSidebar } from "~/src/widgets/ui";
+import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettingsStore } from "~/stores/settings";
 
 export default defineComponent({
@@ -31,31 +32,22 @@ export default defineComponent({
 
     const apiVersion = await $api.getVersion();
 
-    if (process.client) {
-      const { $events } = useNuxtApp();
+    const { events } = useEvents();
 
-      if (!$events?.items?.length) {
-        $events.getAll();
-      }
-
-      return {
-        themeType,
-        isFixedHeader,
-        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-          ? `v${apiVersion}`
-          : `@${apiVersion}`,
-        clientVersion:
-          !$config?.public?.version || $config.public.version === "0.0.1"
-            ? "@dev"
-            : `v${$config.public.version}`,
-      };
+    if (!events?.items?.value?.length) {
+      events.getAll();
     }
 
     return {
       themeType,
-      isFixedHeader: false,
-      clientVersion: "@dev",
-      apiVersion: "@dev",
+      isFixedHeader,
+      apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+        ? `v${apiVersion}`
+        : `@${apiVersion}`,
+      clientVersion:
+        !$config?.public?.version || $config.public.version === "0.0.1"
+          ? "@dev"
+          : `v${$config.public.version}`,
     };
   },
 });

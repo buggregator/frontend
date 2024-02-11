@@ -8,6 +8,7 @@ import moment from "moment";
 import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from "vue";
 import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "../../lib/io";
+import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
 import PreviewCardFooter from "./preview-card-footer.vue";
 import PreviewCardHeader from "./preview-card-header.vue";
@@ -25,6 +26,7 @@ const isOptimized = ref(false);
 const isVisibleControls = ref(true);
 
 const eventRef = ref(null);
+const { events } = useEvents();
 
 const normalizedTags = computed(() => [
   moment(props.event.date).format("HH:mm:ss"),
@@ -51,11 +53,7 @@ const changeVisibleControls = (value = true) => {
   isVisibleControls.value = value;
 };
 
-const deleteEvent = () => {
-  const { $events } = useNuxtApp();
-
-  return $events?.removeById(props.event.id);
-};
+const deleteEvent = () => events?.removeById(props.event.id);
 
 const toggleEventLock = () => {
   const { $lockedIds } = useNuxtApp();
@@ -87,22 +85,18 @@ const downloadImage = () => {
 };
 
 const downloadFile = async () => {
-  const { $events } = useNuxtApp();
+  try {
+    const event = await events?.getItem(props.event.id);
 
-  if ($events) {
-    try {
-      const event = await $events.getItem(props.event.id);
-
-      if (event) {
-        download(
-          JSON.stringify(event, null, 2),
-          `${props.event.type}-${props.event.id}.json`,
-          "application/json"
-        );
-      }
-    } catch (e) {
-      console.error(e);
+    if (event) {
+      download(
+        JSON.stringify(event, null, 2),
+        `${props.event.type}-${props.event.id}.json`,
+        "application/json"
+      );
     }
+  } catch (e) {
+    console.error(e);
   }
 };
 

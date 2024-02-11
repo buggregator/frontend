@@ -43,6 +43,7 @@ import { defineComponent } from "vue";
 import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader, EventCard, PagePlaceholder } from "~/src/widgets/ui";
 import { PAGE_TYPES } from "~/src/shared/constants";
+import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventType } from "~/src/shared/types";
 import { PauseButton } from "~/src/shared/ui/pause-button";
 
@@ -54,33 +55,26 @@ export default defineComponent({
     PauseButton,
   },
   setup() {
-    if (process.client) {
-      const { $events } = useNuxtApp();
+    const { events } = useEvents();
 
-      if (!$events?.items?.value?.length) {
-        $events.getAll();
-      }
-
-      return {
-        events: $events.items,
-        title: "",
-        type: PAGE_TYPES.ALL_EVENTS,
-      };
+    if (!events?.items?.value?.length) {
+      events.getAll();
     }
+
     return {
-      events: [],
+      events: events.items,
       title: "",
       type: PAGE_TYPES.ALL_EVENTS,
     };
   },
   computed: {
     allEvents() {
-      const { $events } = useNuxtApp();
+      const { events } = useEvents();
 
       if (this.type === PAGE_TYPES.ALL_EVENTS) {
-        return $events.items.value;
+        return events.items.value;
       }
-      return $events.items.value.filter(({ type }) => type === this.type);
+      return events.items.value.filter(({ type }) => type === this.type);
     },
     isEventsPaused() {
       const { $cachedEvents } = useNuxtApp();
@@ -107,13 +101,13 @@ export default defineComponent({
   },
   methods: {
     clearEvents() {
-      const { $events } = useNuxtApp();
+      const { events } = useEvents();
 
       if (this.type === PAGE_TYPES.ALL_EVENTS) {
-        return $events.removeAll();
+        return events.removeAll();
       }
 
-      return $events.removeByType(this.type as EventType);
+      return events.removeByType(this.type as EventType);
     },
     toggleUpdate() {
       const { $cachedEvents } = useNuxtApp();

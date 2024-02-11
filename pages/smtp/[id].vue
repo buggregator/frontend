@@ -27,8 +27,10 @@ import { defineComponent } from "vue";
 import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
+import type { SMTP } from "~/src/entities/smtp/types";
 import { REST_API_URL } from "~/src/shared/lib/io";
-import type { EventId } from "~/src/shared/types";
+import { useEvents } from "~/src/shared/lib/use-events";
+import type { EventId, ServerEvent } from "~/src/shared/types";
 import { SmtpPage } from "~/src/screens/smtp";
 
 const { normalizeSmtpEvent } = useSmtp();
@@ -40,35 +42,26 @@ export default defineComponent({
     const router = useRouter();
     const eventId = route.params.id as EventId;
 
-    if (process.client) {
-      const { $events } = useNuxtApp();
-      const { data: event, pending } = await useFetch($events.getUrl(eventId), {
-        onResponse({ response }) {
-          return response.data;
-        },
-        onResponseError() {
-          router.push("/404");
-        },
-        onRequestError() {
-          router.push("/404");
-        },
-      });
+    const { events } = useEvents();
 
-      return {
-        serverEvent: event,
-        pending,
-        eventId,
-        html: `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`,
-        clearEvent: () => $events.removeById(eventId),
-      };
-    }
+    const { data: event, pending } = await useFetch(events.getUrl(eventId), {
+      onResponse({ response }) {
+        return response.data;
+      },
+      onResponseError() {
+        router.push("/404");
+      },
+      onRequestError() {
+        router.push("/404");
+      },
+    });
 
     return {
-      serverEvent: null,
-      pending: false,
+      serverEvent: event,
+      pending,
       eventId,
-      html: "",
-      clearEvent: () => {},
+      html: `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`,
+      clearEvent: () => events.removeById(eventId),
     };
   },
   head() {
@@ -78,7 +71,9 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent ? normalizeSmtpEvent(this.serverEvent) : null;
+      return this.serverEvent
+        ? normalizeSmtpEvent(this.serverEvent as unknown as ServerEvent<SMTP>)
+        : null;
     },
   },
   methods: {
