@@ -15,11 +15,11 @@
 <script lang="ts">
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
-import { useNuxtApp } from "#app";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { version } from "../package.json";
 import { useSettingsStore } from "~/stores/settings";
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
 
     const settingsStore = useSettingsStore();
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-    const { $config } = useNuxtApp();
+
     const {
       api: { getVersion },
     } = useSettings();
@@ -45,16 +45,16 @@ export default defineComponent({
       events.getAll();
     }
 
+    const clientVersion =
+      !version || version === "0.0.1" ? "@dev" : `v${version}`;
+
     return {
       themeType,
       isFixedHeader,
       apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
         ? `v${apiVersion}`
         : `@${apiVersion}`,
-      clientVersion:
-        !$config?.public?.version || $config.public.version === "0.0.1"
-          ? "@dev"
-          : `v${$config.public.version}`,
+      clientVersion,
     };
   },
 });
