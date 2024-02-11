@@ -18,6 +18,7 @@ import { defineComponent } from "vue";
 import { useNuxtApp } from "#app";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
 import { useSettingsStore } from "~/stores/settings";
 
@@ -31,9 +32,12 @@ export default defineComponent({
 
     const settingsStore = useSettingsStore();
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-    const { $config, $api } = useNuxtApp();
+    const { $config } = useNuxtApp();
+    const {
+      api: { getVersion },
+    } = useSettings();
 
-    const apiVersion = await $api.getVersion();
+    const apiVersion = await getVersion();
 
     const { events } = useEvents();
 

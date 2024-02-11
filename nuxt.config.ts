@@ -41,9 +41,6 @@ export default defineNuxtConfig({
     },
   },
   css: ["~/assets/index.css"],
-  plugins: [
-    {src: '~/plugins/api.client.ts'},
-  ],
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
