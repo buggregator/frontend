@@ -1,3 +1,4 @@
+import type { RayContentLock } from "~/src/entities/ray/types";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
 import { useConnectionStore } from "~/stores/connections";
@@ -99,14 +100,14 @@ export const useApiTransport = () => {
   }
 
   // NOTE: works only with ws
-  const rayStopExecution = (hash: string) => {
+  const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
       stop_execution: true
     })
   }
 
   // NOTE: works only with ws
-  const rayContinueExecution = (hash: string) => {
+  const rayContinueExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, undefined)
   }
 

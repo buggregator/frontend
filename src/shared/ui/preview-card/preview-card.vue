@@ -6,7 +6,6 @@ import { toBlob, toPng } from "html-to-image";
 import debounce from "lodash.debounce";
 import moment from "moment";
 import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from "vue";
-import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -26,7 +25,7 @@ const isOptimized = ref(false);
 const isVisibleControls = ref(true);
 
 const eventRef = ref(null);
-const { events } = useEvents();
+const { events, lockedIds } = useEvents();
 
 const normalizedTags = computed(() => [
   moment(props.event.date).format("HH:mm:ss"),
@@ -56,14 +55,12 @@ const changeVisibleControls = (value = true) => {
 const deleteEvent = () => events?.removeById(props.event.id);
 
 const toggleEventLock = () => {
-  const { $lockedIds } = useNuxtApp();
-
-  if (($lockedIds?.items.value || []).includes(props.event.id)) {
-    $lockedIds?.remove(props.event.id);
+  if ((lockedIds?.items.value || []).includes(props.event.id)) {
+    lockedIds?.remove(props.event.id);
 
     isLocked.value = false;
   } else {
-    $lockedIds?.add(props.event.id);
+    lockedIds?.add(props.event.id);
 
     isLocked.value = true;
   }
@@ -147,11 +144,7 @@ const optimiseRenderHidden = debounce(() => {
 }, 30);
 
 onBeforeMount(() => {
-  const {
-    $lockedIds: { items },
-  } = useNuxtApp();
-
-  isLocked.value = items.value.includes(props.event.id);
+  isLocked.value = lockedIds.items.value.includes(props.event.id);
 });
 
 onMounted(() => {
