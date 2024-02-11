@@ -4,9 +4,9 @@ import { LOCAL_STORAGE_KEYS } from '~/src/shared/types';
 import type { EventId, OneOfValues } from '~/src/shared/types';
 import { useEventStore } from "~/stores/events";
 
-type TEventsGroup = OneOfValues<typeof PAGE_TYPES>
+export type TEventsGroup = OneOfValues<typeof PAGE_TYPES>
 
-type TCachedEventsEmptyMap = Record<TEventsGroup, EventId[]>;
+export type TCachedEventsEmptyMap = Record<TEventsGroup, EventId[]>;
 
 const initialCachedIds: TCachedEventsEmptyMap = {
   [PAGE_TYPES.SENTRY]: [] as EventId[],

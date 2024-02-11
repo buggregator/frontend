@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
