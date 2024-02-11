@@ -1,5 +1,4 @@
 <script lang="ts" setup generic="T">
-// TODO: move useNuxtApp to composition api
 // TODO: move component out of shared/ui
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
