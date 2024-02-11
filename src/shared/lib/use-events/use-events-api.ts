@@ -7,7 +7,7 @@ import { useEventStore } from "~/stores/events";
 import { useLockedIdsStore } from "~/stores/locked-ids";
 
 
-export type TUseEventsPluginData = {
+export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>;
   getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
   getUrl: (id: EventId) => string
@@ -17,7 +17,7 @@ export type TUseEventsPluginData = {
   removeById: (id: EventId) => void
 }
 
-export const useEventsPlugin = (): TUseEventsPluginData => {
+export const useEventsApi = (): TUseEventsApi => {
   const eventsStore = useEventStore();
   const cachedIdsStore = useCachedIdsStore();
   const lockedIdsStore = useLockedIdsStore();

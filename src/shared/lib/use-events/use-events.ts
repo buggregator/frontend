@@ -4,7 +4,7 @@ import type { RayContentLock } from "~/src/entities/ray/types";
 import type { ServerEvent, NormalizedEvent, EventId } from '../../types';
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
-import { useEventsPlugin, type TUseEventsPluginData } from "./use-events-plugin";
+import { type TUseEventsApi, useEventsApi } from "./use-events-api";
 import type { TCachedEventsEmptyMap, TEventsGroup } from "~/stores/cached-ids";
 import { useCachedIdsStore } from "~/stores/cached-ids";
 import { useLockedIdsStore } from "~/stores/locked-ids";
@@ -12,7 +12,7 @@ import { useLockedIdsStore } from "~/stores/locked-ids";
 
 type TUseEvents = () => {
   normalizeUnknownEvent: (event: ServerEvent<unknown>) => NormalizedEvent<unknown>
-  events: TUseEventsPluginData
+  events: TUseEventsApi
   cachedEvents: {
     idsByType: Ref<TCachedEventsEmptyMap>;
     stopUpdatesByType: (type: TEventsGroup) => void
@@ -48,7 +48,7 @@ export const useEvents: TUseEvents = () => {
 
   return {
     normalizeUnknownEvent,
-    events: useEventsPlugin(),
+    events: useEventsApi(),
     cachedEvents: {
       idsByType: cachedIds as unknown as Ref<TCachedEventsEmptyMap>,
       stopUpdatesByType: cachedIdsStore.setByType,
