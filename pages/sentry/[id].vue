@@ -22,10 +22,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useNuxtApp, useRoute, useRouter, useFetch } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter, useFetch } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
-import type { EventId } from "~/src/shared/types";
+import type { Sentry } from "~/src/entities/sentry/types";
+import { useEvents } from "~/src/shared/lib/use-events";
+import type { EventId, ServerEvent } from "~/src/shared/types";
 import { SentryPage } from "~/src/screens/sentry";
 
 const { normalizeSentryEvent } = useSentry();
@@ -40,33 +42,25 @@ export default defineComponent({
     const router = useRouter();
     const eventId = route.params.id as EventId;
 
-    if (process.client) {
-      const { $events } = useNuxtApp();
-      const { data: event, pending } = await useFetch($events.getUrl(eventId), {
-        onResponse({ response }) {
-          return response.data;
-        },
-        onResponseError() {
-          router.push("/404");
-        },
-        onRequestError() {
-          router.push("/404");
-        },
-      });
+    const { events } = useEvents();
 
-      return {
-        serverEvent: event,
-        pending,
-        eventId,
-        clearEvent: () => $events.removeById(eventId),
-      };
-    }
+    const { data: event, pending } = await useFetch(events.getUrl(eventId), {
+      onResponse({ response }) {
+        return response.data;
+      },
+      onResponseError() {
+        router.push("/404");
+      },
+      onRequestError() {
+        router.push("/404");
+      },
+    });
 
     return {
-      serverEvent: null,
-      pending: false,
+      serverEvent: event,
+      pending,
       eventId,
-      clearEvent: () => {},
+      clearEvent: () => events.removeById(eventId),
     };
   },
   head() {
@@ -76,7 +70,11 @@ export default defineComponent({
   },
   computed: {
     event() {
-      return this.serverEvent ? normalizeSentryEvent(this.serverEvent) : null;
+      return this.serverEvent
+        ? normalizeSentryEvent(
+            this.serverEvent as unknown as ServerEvent<Sentry>
+          )
+        : null;
     },
   },
   methods: {

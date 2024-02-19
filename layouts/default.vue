@@ -15,8 +15,11 @@
 <script lang="ts">
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
-import { useNuxtApp } from "#app";
 import { LayoutSidebar } from "~/src/widgets/ui";
+import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettings } from "~/src/shared/lib/use-settings";
+import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { version } from "../package.json";
 import { useSettingsStore } from "~/stores/settings";
 
 export default defineComponent({
@@ -25,37 +28,33 @@ export default defineComponent({
   },
 
   async setup() {
+    SfdumpWrap(window.document);
+
     const settingsStore = useSettingsStore();
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-    const { $config, $api } = useNuxtApp();
 
-    const apiVersion = await $api.getVersion();
+    const {
+      api: { getVersion },
+    } = useSettings();
 
-    if (process.client) {
-      const { $events } = useNuxtApp();
+    const apiVersion = await getVersion();
 
-      if (!$events?.items?.length) {
-        $events.getAll();
-      }
+    const { events } = useEvents();
 
-      return {
-        themeType,
-        isFixedHeader,
-        apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-          ? `v${apiVersion}`
-          : `@${apiVersion}`,
-        clientVersion:
-          !$config?.public?.version || $config.public.version === "0.0.1"
-            ? "@dev"
-            : `v${$config.public.version}`,
-      };
+    if (!events?.items?.value?.length) {
+      events.getAll();
     }
+
+    const clientVersion =
+      !version || version === "0.0.1" ? "@dev" : `v${version}`;
 
     return {
       themeType,
-      isFixedHeader: false,
-      clientVersion: "@dev",
-      apiVersion: "@dev",
+      isFixedHeader,
+      apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
+        ? `v${apiVersion}`
+        : `@${apiVersion}`,
+      clientVersion,
     };
   },
 });

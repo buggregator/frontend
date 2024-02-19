@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useEvents } from "~/src/shared/lib/use-events";
 import type { RayContentLock } from "../../types";
 
 type Props = {
@@ -11,18 +11,17 @@ const props = defineProps<Props>();
 
 const disabled = ref(false);
 
+const { rayExecution } = useEvents();
+
 const continueExecution = () => {
-  if (process.client) {
-    disabled.value = true;
-    useNuxtApp().$rayExecution.continue(props.name);
-  }
+  disabled.value = true;
+
+  rayExecution.continue(props.name);
 };
 
 const stopExecution = () => {
-  if (process.client) {
-    disabled.value = true;
-    useNuxtApp().$rayExecution.stop(props.name);
-  }
+  disabled.value = true;
+  rayExecution.stop(props.name);
 };
 </script>
 

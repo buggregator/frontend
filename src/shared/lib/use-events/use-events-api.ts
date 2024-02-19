@@ -1,11 +1,23 @@
 import { storeToRefs } from "pinia";
-import { useApiTransport } from '~/src/shared/lib/use-api-transport'
-import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
+import type { Ref } from 'vue';
+import type { EventId, EventType, ServerEvent } from '../../types';
+import { useApiTransport } from '../use-api-transport'
 import { useCachedIdsStore } from "~/stores/cached-ids";
 import { useEventStore } from "~/stores/events";
 import { useLockedIdsStore } from "~/stores/locked-ids";
 
-export default defineNuxtPlugin(() => {
+
+export type TUseEventsApi = {
+  items: Ref<ServerEvent<unknown>[]>;
+  getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
+  getUrl: (id: EventId) => string
+  getAll: () => void
+  removeAll: () => void
+  removeByType: (type: EventType) => void
+  removeById: (id: EventId) => void
+}
+
+export const useEventsApi = (): TUseEventsApi => {
   const eventsStore = useEventStore();
   const cachedIdsStore = useCachedIdsStore();
   const lockedIdsStore = useLockedIdsStore();
@@ -25,8 +37,6 @@ export default defineNuxtPlugin(() => {
     getEventsAll,
     getEvent,
     getUrl,
-    rayContinueExecution,
-    rayStopExecution,
   } = useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
@@ -95,35 +105,13 @@ export default defineNuxtPlugin(() => {
     })
   }
 
-  const {
-    cachedIds,
-  } = storeToRefs(cachedIdsStore)
-
   return {
-    provide: {
-      events: {
-        items: events,
-        getItem: getEvent,
-        getUrl,
-        getAll,
-        removeAll,
-        removeByType,
-        removeById,
-      },
-      cachedEvents: {
-        eventsIdsByType: cachedIds,
-        stopUpdatesByType: cachedIdsStore.setByType,
-        runUpdatesByType: cachedIdsStore.removeByType,
-      },
-      rayExecution: {
-        continue: rayContinueExecution,
-        stop: rayStopExecution,
-      },
-      lockedIds: {
-        items: lockedIds,
-        add: lockedIdsStore.add,
-        remove: lockedIdsStore.remove,
-      }
-    }
+    items: events as unknown as Ref<ServerEvent<unknown>[]>,
+    getItem: getEvent,
+    getUrl,
+    getAll,
+    removeAll,
+    removeByType,
+    removeById,
   }
-})
+}
