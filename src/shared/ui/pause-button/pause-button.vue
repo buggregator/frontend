@@ -27,25 +27,19 @@ const toggleUpdate = () => {
 
 <template>
   <button
-    class="events-page__btn-stop-events"
-    :class="{ 'events-page__btn-stop-events--active': isPaused }"
+    class="pause-button"
+    :class="{ 'pause-button--action': isPaused }"
     :disabled="disabled"
     @click="toggleUpdate"
   >
     <IconSvg
-      v-if="!isPaused"
-      name="bolt"
-      class="events-page__btn-stop-events-icon"
-    />
-    <IconSvg
-      v-if="isPaused"
-      name="bolt-slash"
-      class="events-page__btn-stop-events-icon"
+      :name="!isPaused ? 'bolt' : 'bolt-slash'"
+      class="pause-button__icon"
     />
     <span>{{ isPaused ? "Paused" : "Listening" }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"
-      class="events-page__btn-stop-events-count"
+      class="pause-button__count"
       :title="titleEventsCount"
     >
       {{ totalNewEventsCount }}
@@ -54,7 +48,7 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
-.events-page__btn-stop-events {
+.pause-button {
   @apply flex items-center space-x-1 px-2 py-1 opacity-80 text-xs bg-blue-400 dark:bg-gray-700 text-white rounded-sm hover:bg-blue-500 dark:hover:bg-blue-800 transition transition-all duration-300 relative;
 
   &[disabled] {
@@ -62,19 +56,19 @@ const toggleUpdate = () => {
   }
 }
 
-.events-page__btn-stop-events--active {
+.pause-button--action {
   @apply opacity-100 bg-blue-500 dark:bg-blue-800;
 }
 
-.events-page__btn-stop-events-icon {
+.pause-button__icon {
   @apply w-4 h-4 stroke-white animate-pulse;
 }
 
-.events-page__btn-stop-events--active .events-page__btn-stop-events-icon {
+.pause-button--action .pause-button__icon {
   @apply animate-none;
 }
 
-.events-page__btn-stop-events-count {
+.pause-button__count {
   @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
 
   transform: translate(60%, -60%);

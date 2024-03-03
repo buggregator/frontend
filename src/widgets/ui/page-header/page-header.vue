@@ -53,6 +53,8 @@ const clearEvents = () => {
 
 .page-header__controls {
   @apply flex items-center flex-row;
+
+  gap: 12px;
 }
 
 .page-header__btn-clear {

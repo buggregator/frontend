@@ -1,28 +1,8 @@
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import { PageLayout } from "~/src/widgets/ui/page-layout";
 import { PAGE_TYPES } from "~/src/shared/constants";
-import { useEvents } from "~/src/shared/lib/use-events";
-import PageIndex from "../index.vue"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-
-export default defineComponent({
-  extends: PageIndex,
-  setup() {
-    const { events } = useEvents();
-
-    if (!events?.items?.value?.length) {
-      events.getAll();
-    }
-
-    return {
-      events: events.items,
-      title: "Inspector",
-      type: PAGE_TYPES.INSPECTOR,
-    };
-  },
-  head() {
-    return {
-      title: `Inspector [${this.events.length}] | Buggregator`,
-    };
-  },
-});
 </script>
+
+<template>
+  <PageLayout :type="PAGE_TYPES.INSPECTOR" title="Inspector" />
+</template>
