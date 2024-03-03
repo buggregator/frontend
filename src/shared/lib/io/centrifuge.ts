@@ -5,26 +5,47 @@ import { logger } from "./logger";
 type TUseCentrifuge = () => {
   centrifuge: Centrifuge
 }
-export const useCentrifuge: TUseCentrifuge = () => {
-  const centrifuge = new Centrifuge(WS_URL)
 
-  centrifuge.on('connected', (ctx) => {
-    logger(['connected', ctx]);
-  });
+class WSConnection {
+  private readonly centrifuge: Centrifuge;
 
-  centrifuge.on('publication', (ctx) => {
-    logger(['publication', ctx]);
-  });
+  // eslint-disable-next-line no-use-before-define
+  private static instance: WSConnection;
 
-  centrifuge.on('disconnected', (ctx) => {
-    logger(['disconnected', ctx]);
-  });
+  private constructor() {
+    this.centrifuge = new Centrifuge(WS_URL);
 
-  centrifuge.on('error', (ctx) => {
-    logger(['error', ctx]);
-  })
+    this.centrifuge.on('connected', (ctx) => {
+      logger(['connected', ctx]);
+    });
 
-  centrifuge.connect();
+    this.centrifuge.on('publication', (ctx) => {
+      logger(['publication', ctx]);
+    });
 
-  return { centrifuge }
+    this.centrifuge.on('disconnected', (ctx) => {
+      logger(['disconnected', ctx]);
+    });
+
+    this.centrifuge.on('error', (ctx) => {
+      logger(['error', ctx]);
+    })
+
+    this.centrifuge.connect();
+  }
+
+  public static getInstance(): WSConnection {
+    if (!WSConnection.instance) {
+      WSConnection.instance = new WSConnection();
+    }
+
+    return WSConnection.instance;
+  }
+
+  public getCentrifuge () {
+    return this.centrifuge;
+  }
 }
+
+
+export const useCentrifuge: TUseCentrifuge = () => ({ centrifuge: WSConnection.getInstance().getCentrifuge() })
