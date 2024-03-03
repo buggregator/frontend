@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     },
   },
   dir: {
-    static: 'static',
+    static: 'src/static',
   },
   imports: {
     dirs: [
