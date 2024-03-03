@@ -1,3 +1,62 @@
+<script lang="ts" setup>
+import { computed, onMounted, ref } from "vue";
+import { useFetch, useHead, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { PageHeader } from "~/src/widgets/ui";
+import { useProfiler } from "~/src/entities/profiler";
+import type { Profiler } from "~/src/entities/profiler/types";
+import { useEvents } from "~/src/shared/lib/use-events";
+import type { EventId, ServerEvent } from "~/src/shared/types";
+import { ProfilerPage } from "~/src/screens/profiler";
+
+const { normalizeProfilerEvent } = useProfiler();
+
+const { params } = useRoute();
+const router = useRouter();
+const eventId = params.id as EventId;
+
+useHead({
+  title: `Profiler > ${eventId} | Buggregator`,
+});
+
+const { events } = useEvents();
+
+const isLoading = ref(false);
+const serverEvent = ref<Event | null>(null);
+
+const event = computed(() =>
+  serverEvent.value
+    ? normalizeProfilerEvent(
+        serverEvent.value as unknown as ServerEvent<Profiler>
+      )
+    : null
+);
+
+const onDelete = () => {
+  events.removeById(eventId);
+
+  router.push("/");
+};
+
+const getEvent = async () => {
+  isLoading.value = true;
+
+  await useFetch(events.getUrl(eventId), {
+    onResponse({ response: { _data } }) {
+      serverEvent.value = _data;
+      isLoading.value = false;
+    },
+    onResponseError() {
+      router.push("/404");
+    },
+    onRequestError() {
+      router.push("/404");
+    },
+  });
+};
+
+onMounted(getEvent);
+</script>
+
 <template>
   <main class="profiler-event">
     <PageHeader
@@ -10,7 +69,7 @@
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
-    <div v-if="pending && !event" class="profiler-event__loading">
+    <div v-if="isLoading && !event" class="profiler-event__loading">
       <div></div>
       <div></div>
       <div></div>
@@ -21,70 +80,6 @@
     </div>
   </main>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useFetch, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
-import { useProfiler } from "~/src/entities/profiler";
-import type { Profiler } from "~/src/entities/profiler/types";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { EventId, ServerEvent } from "~/src/shared/types";
-import { ProfilerPage } from "~/src/screens/profiler";
-
-const { normalizeProfilerEvent } = useProfiler();
-
-export default defineComponent({
-  components: { ProfilerPage, PageHeader },
-  async setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const eventId = route.params.id as EventId;
-
-    const { events } = useEvents();
-
-    const { data: event, pending } = await useFetch(events.getUrl(eventId), {
-      onResponse({ response }) {
-        return response.data;
-      },
-      onResponseError() {
-        router.push("/404");
-      },
-      onRequestError() {
-        router.push("/404");
-      },
-    });
-
-    return {
-      serverEvent: event,
-      pending,
-      eventId,
-      clearEvent: () => events.removeById(eventId),
-    };
-  },
-  head() {
-    return {
-      title: `Profiler > ${this.eventId} | Buggregator`,
-    };
-  },
-  computed: {
-    event() {
-      return this.serverEvent
-        ? normalizeProfilerEvent(
-            this.serverEvent as unknown as ServerEvent<Profiler>
-          )
-        : null;
-    },
-  },
-  methods: {
-    onDelete() {
-      this.clearEvent();
-
-      this.$router.push("/");
-    },
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";
