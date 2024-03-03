@@ -34,7 +34,7 @@ const allEvents = computed(() => {
 });
 
 useHead({
-  title: `${props.title} > ${allEvents.value.length} | Buggregator`,
+  title: `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`,
 });
 
 const visibleEvents = computed(() => {

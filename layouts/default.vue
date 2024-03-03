@@ -1,3 +1,43 @@
+<script lang="ts" setup>
+import { computed, ref, onMounted } from "vue";
+import { LayoutSidebar } from "~/src/widgets/ui";
+import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettings } from "~/src/shared/lib/use-settings";
+import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { version } from "../package.json";
+import { useSettingsStore } from "~/stores/settings";
+
+SfdumpWrap(window.document);
+useSettingsStore();
+
+const {
+  api: { getVersion },
+} = useSettings();
+
+const apiVersion = ref("");
+const clientVersion = ref(
+  !version || version === "0.0.1" ? "@dev" : `v${version}`
+);
+
+const getApiVersion = async () => {
+  const data = await getVersion();
+
+  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
+    ? `v${data}`
+    : `@${data}`;
+};
+
+onMounted(() => {
+  getApiVersion();
+
+  const { events } = useEvents();
+
+  if (!events?.items?.value?.length) {
+    events.getAll();
+  }
+});
+</script>
+
 <template>
   <div class="main-layout">
     <LayoutSidebar
@@ -11,54 +51,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
-import { LayoutSidebar } from "~/src/widgets/ui";
-import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
-import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { version } from "../package.json";
-import { useSettingsStore } from "~/stores/settings";
-
-export default defineComponent({
-  components: {
-    LayoutSidebar,
-  },
-
-  async setup() {
-    SfdumpWrap(window.document);
-
-    const settingsStore = useSettingsStore();
-    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-
-    const {
-      api: { getVersion },
-    } = useSettings();
-
-    const apiVersion = await getVersion();
-
-    const { events } = useEvents();
-
-    if (!events?.items?.value?.length) {
-      events.getAll();
-    }
-
-    const clientVersion =
-      !version || version === "0.0.1" ? "@dev" : `v${version}`;
-
-    return {
-      themeType,
-      isFixedHeader,
-      apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-        ? `v${apiVersion}`
-        : `@${apiVersion}`,
-      clientVersion,
-    };
-  },
-});
-</script>
 
 <style lang="scss" scoped>
 @import "assets/mixins";
