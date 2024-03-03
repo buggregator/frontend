@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
+import { useConnectionStore } from "~/src/shared/stores/connections";
 import { IconSvg } from "~/src/shared/ui";
-import { useConnectionStore } from "~/stores/connections";
 
 type Props = {
   apiVersion: string;

@@ -1,10 +1,8 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from 'vue';
+import { useEventStore, useCachedIdsStore, useLockedIdsStore } from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { useApiTransport } from '../use-api-transport'
-import { useCachedIdsStore } from "~/stores/cached-ids";
-import { useEventStore } from "~/stores/events";
-import { useLockedIdsStore } from "~/stores/locked-ids";
 
 
 export type TUseEventsApi = {

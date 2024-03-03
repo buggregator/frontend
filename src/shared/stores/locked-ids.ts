@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
-import { LOCAL_STORAGE_KEYS } from '~/src/shared/types';
-import type { EventId } from '~/src/shared/types';
+import { type EventId, LOCAL_STORAGE_KEYS } from '../types';
 
 const { localStorage } = window;
 const getLockedIds = (): EventId[] => {

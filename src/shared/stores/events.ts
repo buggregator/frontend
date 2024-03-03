@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
-import { useLockedIdsStore } from "~/stores/locked-ids";
+import type { EventId, EventType, ServerEvent } from '../types';
+import { useLockedIdsStore } from "./locked-ids";
 
 
 export const useEventStore = defineStore("useEventStore", {

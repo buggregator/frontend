@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { useSettingsStore } from "~/src/shared/stores/settings";
 import { version } from "../package.json";
-import { useSettingsStore } from "~/stores/settings";
 
 SfdumpWrap(window.document);
 useSettingsStore();

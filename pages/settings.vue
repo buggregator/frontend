@@ -4,8 +4,8 @@ import { computed } from "vue";
 // eslint-disable-next-line @conarti/feature-sliced/layers-slices
 import { useHead } from "#app";
 import { PageHeader } from "~/src/widgets/ui";
+import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
 import { IconSvg } from "~/src/shared/ui";
-import { useSettingsStore, THEME_MODES } from "~/stores/settings";
 
 const settingsStore = useSettingsStore();
 const { changeTheme, changeNavbar } = settingsStore;

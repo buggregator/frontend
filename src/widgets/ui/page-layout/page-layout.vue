@@ -4,12 +4,12 @@ import { computed } from "vue";
 import { useHead } from "#app";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEvents } from "~/src/shared/lib/use-events";
+import type { TEventsGroup } from "~/src/shared/stores/cached-ids";
 import type { EventType } from "~/src/shared/types";
 import { PauseButton } from "~/src/shared/ui/pause-button";
 import { EventCard } from "../event-card";
 import { PageHeader } from "../page-header";
 import { PagePlaceholder } from "../page-placeholder";
-import type { TEventsGroup } from "~/stores/cached-ids";
 
 type Props = {
   title?: string;
