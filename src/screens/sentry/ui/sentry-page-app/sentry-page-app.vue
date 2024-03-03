@@ -46,7 +46,7 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-page-app {
   @apply py-5 px-4;

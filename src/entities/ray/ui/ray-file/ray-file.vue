@@ -53,7 +53,7 @@ const hasSnippets = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 .ray-file {
   @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
 }

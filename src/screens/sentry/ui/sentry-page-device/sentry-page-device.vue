@@ -142,7 +142,7 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-page-device {
 }

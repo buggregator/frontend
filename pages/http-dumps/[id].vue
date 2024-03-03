@@ -82,7 +82,7 @@ onMounted(getEvent);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 .http-dumps-event {
   @include layout;
 }

@@ -63,7 +63,7 @@ const exception: Ref<Exception> = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 .preview-card {
   @apply flex flex-col;
 }

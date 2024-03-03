@@ -108,7 +108,7 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss">
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .page-layout {
   @include layout;

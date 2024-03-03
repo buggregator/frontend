@@ -100,7 +100,7 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-exception-frame {
   @apply text-xs border-b border-purple-200 dark:border-gray-600;

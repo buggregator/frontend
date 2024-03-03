@@ -53,7 +53,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .main-layout {
   @apply flex min-h-screen items-stretch relative;

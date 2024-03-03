@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, onBeforeMount } from "vue";
+import { ref } from "vue";
 import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
@@ -60,7 +60,8 @@ const currentDevice = ref(props.device);
 </template>
 
 <style lang="scss">
-@import "assets/mixins";
+// TODO: need to add scoped property
+@import "src/assets/mixins";
 
 .smtp-page-preview {
   @apply flex-1 flex flex-col items-center h-full;

@@ -42,7 +42,7 @@ const downloadUrl = computed(
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .file-attachment {
   @apply border border-gray-300 px-3 py-2 flex items-center;

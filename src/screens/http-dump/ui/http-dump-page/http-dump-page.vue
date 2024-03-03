@@ -128,7 +128,7 @@ const hasAttachments = computed(
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .http-dump-page {
   @apply relative flex-1 flex flex-col;

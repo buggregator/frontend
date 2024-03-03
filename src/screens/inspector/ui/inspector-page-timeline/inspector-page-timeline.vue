@@ -178,7 +178,7 @@ const series = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .inspector-page-timeline {
   @apply py-5;

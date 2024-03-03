@@ -55,7 +55,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .value-dump {
   display: block;

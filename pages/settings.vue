@@ -83,7 +83,7 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .settings-page {
   @include layout;

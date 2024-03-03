@@ -33,7 +33,7 @@ const eventLink = computed(() => `/smtp/${props.event.id}`);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .smtp-preview {
 }

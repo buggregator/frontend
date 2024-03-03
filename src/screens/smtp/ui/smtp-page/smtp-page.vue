@@ -183,7 +183,7 @@ const attachments = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .smtp-page {
   @apply relative flex-1 flex flex-col h-full;

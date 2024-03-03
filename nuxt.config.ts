@@ -40,7 +40,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  css: ["~/assets/index.css"],
+  css: ["~/src/assets/index.css"],
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
