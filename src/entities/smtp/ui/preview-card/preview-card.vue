@@ -39,7 +39,11 @@ const eventLink = computed(() => `/smtp/${props.event.id}`);
 }
 
 .smtp-preview__link {
-  @apply block border dark:bg-gray-800 text-sm hover:bg-white dark:hover:bg-gray-900 flex items-stretch dark:border-gray-600 flex flex-col p-5;
+  @apply block flex items-stretch ;
+  @apply p-2 md:p-4;
+  @apply flex flex-col;
+  @apply border dark:border-gray-600;
+  @apply dark:bg-gray-800 dark:hover:bg-gray-900 hover:bg-white;
 }
 
 .smtp-preview__nav-item {
@@ -47,12 +51,15 @@ const eventLink = computed(() => `/smtp/${props.event.id}`);
 }
 
 .smtp-preview__link-title {
-  @apply font-semibold mb-2 dark:text-white;
+  @apply font-semibold dark:text-white;
+  @apply text-xs md:text-sm;
+  @apply mb-1 md:mb-2;
 }
 
 .smtp-preview__link-text {
   @include text-muted;
-  @apply flex justify-between text-xs;
+  @apply flex justify-between;
+  @apply text-2xs md:text-xs;
 }
 
 .smtp-preview__link-text strong {

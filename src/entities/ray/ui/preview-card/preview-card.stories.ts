@@ -20,6 +20,8 @@ import {
   rayTextMock,
   rayTraceMock,
   rayLockMock,
+  rayBooleanTrueMock,
+  rayBooleanFalseMock
 } from '../../mocks';
 import {
   rayLaravelEloquentMock, rayLaravelEventsMock, rayLaravelJobsMock,
@@ -34,6 +36,14 @@ export default {
   title: "Entities/ray/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
+
+export const BooleanTrue: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayBooleanTrueMock), }
+};
+
+export const BooleanFalse: StoryObj<typeof PreviewCard> = {
+  args: { event: normalizeRayEvent(rayBooleanFalseMock), }
+};
 
 export const Text: StoryObj<typeof PreviewCard> = {
   args: { event: normalizeRayEvent(rayTextMock), }

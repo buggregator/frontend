@@ -7,8 +7,11 @@
 }
 
 @mixin layout-head {
-  @apply left-10 h-12 right-0 justify-between border-b border-gray-200 dark:border-gray-700 px-4 bg-white dark:bg-gray-800 z-50;
-  @apply absolute left-0 right-0;
+  @apply justify-between bg-white dark:bg-gray-800;
+  @apply absolute left-0 right-0 z-50;
+  @apply h-9 sm:h-10 md:h-14;
+  @apply border-b border-gray-200 dark:border-gray-700;
+  @apply px-2 md:px-4;
 
   html.navbar-fixed & {
     @apply fixed left-10 md:left-14 lg:left-16 right-0;
@@ -29,6 +32,17 @@
 
 @mixin text-responsive {
   @apply text-2xs sm:text-xs md:text-sm lg:text-base;
+}
+
+@mixin button {
+  @apply px-1 sm:px-3 py-0.5 sm:py-1;
+  @apply text-white text-2xs sm:text-xs;
+  @apply transition-all duration-300;
+  @apply rounded-sm;
+
+  &[disabled] {
+    @apply bg-gray-400 dark:bg-gray-700 opacity-40 text-gray-400 cursor-not-allowed;
+  }
 }
 
 @mixin loading {

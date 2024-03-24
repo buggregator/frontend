@@ -54,8 +54,24 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
+.events-page__btn-stop-events--active .events-page__btn-stop-events-icon {
+  @apply animate-none;
+}
+
+.events-page__btn-stop-events-count {
+  @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
+
+  transform: translate(60%, -60%);
+}
+
 .events-page__btn-stop-events {
-  @apply flex items-center space-x-1 px-2 py-1 opacity-80 text-xs bg-blue-400 dark:bg-gray-700 text-white rounded-sm hover:bg-blue-500 dark:hover:bg-blue-800 transition transition-all duration-300 relative;
+  @include button;
+  @apply bg-blue-400 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-800;
+  @apply flex items-center space-x-1;
+  @apply text-gray-800 dark:text-white hover:opacity-100 opacity-40 relative;
+  @apply relative;
 
   &[disabled] {
     @apply bg-gray-400 dark:bg-gray-700 opacity-40 text-gray-400 cursor-not-allowed;
@@ -67,15 +83,11 @@ const toggleUpdate = () => {
 }
 
 .events-page__btn-stop-events-icon {
-  @apply w-4 h-4 stroke-white animate-pulse;
-}
-
-.events-page__btn-stop-events--active .events-page__btn-stop-events-icon {
-  @apply animate-none;
+  @apply w-3 h-3 sm:w-4 sm:h-4 stroke-white animate-pulse;
 }
 
 .events-page__btn-stop-events-count {
-  @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
+  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
 
   transform: translate(60%, -60%);
 }

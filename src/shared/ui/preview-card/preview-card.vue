@@ -199,10 +199,10 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .preview-card {
-  @apply flex-grow flex flex-col p-3 lg:p-5 transition-colors dark:bg-gray-700;
+  @apply flex-grow flex flex-col p-2 lg:p-3 transition-colors dark:bg-gray-700;
 
   &:hover {
-    @apply md:bg-gray-50 dark:bg-gray-900;
+    @apply bg-gray-50 dark:bg-gray-900;
   }
 }
 
@@ -211,14 +211,14 @@ onBeforeUnmount(() => {
 }
 
 .preview-card__header {
-  @apply w-full flex justify-between;
+  @apply w-full flex flex-row justify-between gap-y-3;
 }
 
 .preview-card__body {
-  @apply flex flex-col mt-3;
+  @apply flex flex-col mt-2 lg:mt-3;
 }
 
 .preview-card__footer {
-  @apply w-full flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 text-xs text-gray-400;
+  @apply w-full flex flex-row justify-between mt-1 lg:mt-2 text-gray-400;
 }
 </style>
