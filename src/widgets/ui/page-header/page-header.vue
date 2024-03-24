@@ -31,7 +31,7 @@ const clearEvents = () => {
 
       <button
         v-if="buttonTitle"
-        class="page-header__btn-clear"
+        class="page-header__btn page-header__btn-clear"
         @click="clearEvents"
       >
         {{ buttonTitle }}
@@ -43,20 +43,26 @@ const clearEvents = () => {
 </template>
 
 <style lang="scss" scoped>
+@import "assets/mixins";
+
 .page-header {
   @apply flex justify-between;
 }
 
 .page-header__title {
-  @apply flex items-center flex-row;
+  @apply hidden sm:flex items-center flex-row;
+  @apply text-2xs sm:text-sm md:text-base lg:text-lg;
 }
 
 .page-header__controls {
   @apply flex items-center flex-row;
+  @apply text-right;
+  @apply gap-2 sm:gap-3;
 }
 
 .page-header__btn-clear {
-  @apply px-3 py-1 text-xs bg-red-800 text-white rounded-sm hover:bg-red-700 transition transition-all duration-300;
+  @include button;
+  @apply bg-red-800 hover:bg-red-700;
 }
 
 .page-header__lock-icon {

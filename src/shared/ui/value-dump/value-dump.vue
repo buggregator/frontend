@@ -63,6 +63,8 @@ onMounted(() => {
 
 .value-dump__html {
   @include code-example();
-  @apply divide-gray-300 dark:divide-gray-600 font-mono md:px-3 lg:px-4 break-all text-2xs sm:text-xs md:text-sm lg:text-base;
+  @apply divide-gray-300 dark:divide-gray-600 ;
+  @apply font-mono break-all text-2xs sm:text-xs md:text-sm lg:text-base;
+  @apply p-1 md:p-3 lg:p-4;
 }
 </style>

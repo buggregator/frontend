@@ -28,11 +28,11 @@ const uri = decodeURI(props.event.payload.request.uri);
 @import "assets/mixins";
 
 .preview-card {
-  @apply flex flex-col;
+  @apply flex flex-col text-2xs md:text-xs;
 }
 
 .preview-card__link {
-  @apply cursor-pointer flex-grow p-3 bg-gray-200 dark:bg-gray-800;
+  @apply cursor-pointer flex-grow p-2 md:p-3 bg-gray-200 dark:bg-gray-800;
 }
 
 .preview-card__method {

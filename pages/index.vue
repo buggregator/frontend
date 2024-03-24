@@ -147,24 +147,8 @@ export default defineComponent({
 
 .events-page__welcome {
   @include layout-body;
-  @apply flex-1 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-800 min-h-screen;
-}
-
-.events-page__btn-stop-events {
-  @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
-
-  &[disabled] {
-    @apply hover:opacity-40;
-  }
-}
-
-.events-page__btn-stop-events--active {
-  @apply opacity-100 text-blue-500 dark:text-blue-500;
-}
-
-.events-page__btn-stop-events-count {
-  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
-
-  transform: translate(60%, -60%);
+  @apply min-h-screen;
+  @apply flex-1 flex flex-col justify-center items-center;
+  @apply bg-gray-50 dark:bg-gray-800;
 }
 </style>

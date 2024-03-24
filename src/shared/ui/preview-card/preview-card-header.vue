@@ -170,16 +170,19 @@ $eventTypeColorsMap: (
   "unknown" "gray"
 );
 
-.preview-card-header {
-  @apply w-full flex sm:flex-row flex-col-reverse justify-between gap-y-3;
-}
-
 .preview-card-header__tags {
-  @apply flex flex-wrap gap-3;
+  @apply flex flex-wrap;
+  @apply gap-1 md:gap-3;
 }
 
 .preview-card-header__tag {
-  @apply font-bold px-2 rounded-full text-xs inline-flex items-center transition-colors border dark:border-gray-600 cursor-help;
+  @apply rounded-md md:rounded-full;
+  @apply inline-flex items-center;
+  @apply border dark:border-gray-600;
+  @apply transition-colors;
+  @apply cursor-help;
+  @apply px-1 md:px-2;
+  @apply font-bold text-2xs lg:text-xs leading-none;
 
   /* Applied tailwind classes depends on event type
    Need to keep declaration for tailwind correct work:
@@ -214,19 +217,23 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__buttons {
-  @apply flex justify-end space-x-2;
+  @apply flex justify-end;
+  @apply gap-2 md:gap-3;
 }
 
 .preview-card-header__buttons-expand {
   @apply relative left-[2px] flex border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
 
   &:hover {
-    @apply bg-gray-200 dark:bg-gray-700 ring-1 ring-gray-200 dark:ring-gray-700 border-gray-200 dark:border-gray-700;
+    @apply bg-gray-200 dark:bg-gray-700;
+    @apply ring-1 ring-gray-200 dark:ring-gray-700;
+    @apply border-gray-200 dark:border-gray-700;
   }
 }
 
 .preview-card-header__buttons-expand-list {
-  @apply flex flex-row justify-end space-x-2 pr-2 transition-all;
+  @apply flex flex-row justify-end transition-all;
+  @apply space-x-2 pr-2;
   @apply hidden overflow-hidden opacity-0;
   order: -1;
 
@@ -236,7 +243,7 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button {
-  @apply w-5 h-5 md:w-4 md:h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
+  @apply w-4 h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
   @apply text-white bg-gray-300 dark:bg-gray-600 ring-blue-200 dark:ring-blue-800;
 }
 

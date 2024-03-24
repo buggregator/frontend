@@ -63,27 +63,31 @@ const connectionText = computed(
       </NuxtLink>
     </nav>
 
-    <div class="layout-sidebar__versions">
-      <IconSvg
-        class="layout-sidebar__connection-icon"
-        :name="connectionStatus"
-        :title="connectionText"
-      />
-
-      <div
-        v-if="apiVersion"
-        class="layout-sidebar__nav-version"
-        :title="`Api version: ${apiVersion}`"
-      >
-        {{ apiVersion }}
+    <div>
+      <div class="layout-sidebar__connection">
+        <IconSvg
+          class="layout-sidebar__connection-icon"
+          :name="connectionStatus"
+          :title="connectionText"
+        />
       </div>
 
-      <div
-        v-if="clientVersion"
-        class="layout-sidebar__nav-version"
-        :title="`Client version: ${clientVersion}`"
-      >
-        {{ clientVersion }}
+      <div class="layout-sidebar__versions">
+        <div
+          v-if="apiVersion"
+          class="layout-sidebar__nav-version"
+          :title="`Api version: ${apiVersion}`"
+        >
+          {{ apiVersion }}
+        </div>
+
+        <div
+          v-if="clientVersion"
+          class="layout-sidebar__nav-version"
+          :title="`Client version: ${clientVersion}`"
+        >
+          {{ clientVersion }}
+        </div>
       </div>
     </div>
   </aside>
@@ -91,15 +95,21 @@ const connectionText = computed(
 
 <style lang="scss" scoped>
 .layout-sidebar {
-  @apply bg-gray-200 dark:bg-gray-800 flex flex-col justify-between;
+  @apply bg-gray-200 dark:bg-gray-800;
+  @apply w-9 sm:w-10 md:w-14;
+  @apply flex flex-col justify-between;
 }
 
 .layout-sidebar__nav {
-  @apply flex-col flex overflow-auto divide-y divide-gray-300 dark:divide-gray-600 border-b border-gray-300 dark:border-gray-600;
+  @apply flex-col flex overflow-auto;
+  @apply divide-y divide-gray-300 dark:divide-gray-600;
+  @apply border-b border-gray-300 dark:border-gray-600;
 }
 
 .layout-sidebar__link {
-  @apply text-blue-500 p-3 md:p-4 lg:p-5 block hover:bg-blue-500 hover:text-white relative;
+  @apply text-blue-500 block hover:bg-blue-500 hover:text-white relative;
+  @apply h-9 sm:h-10 md:h-14;
+  @apply flex items-center justify-center;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
@@ -108,15 +118,27 @@ const connectionText = computed(
 
 .layout-sidebar__link-icon {
   @apply fill-current;
+  @apply mx-auto;
+  @apply w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6;
+}
+
+.layout-sidebar__connection {
+  @apply h-9 sm:h-10 md:h-14;
+  @apply border-t border-gray-300 dark:border-gray-700;
+  @apply flex items-center justify-center;
 }
 
 .layout-sidebar__connection-icon {
-  @apply fill-current w-10 h-10 m-auto;
+  @apply fill-current;
+  @apply m-auto;
+  @apply h-4 md:h-5 lg:h-6;
 }
 
 .layout-sidebar__versions {
-  @apply flex justify-center text-xs dark:text-gray-600 text-gray-400 py-2 px-1 left-0 right-0 flex-col mt-auto whitespace-nowrap text-center border-t border-gray-300 dark:border-gray-600;
-
-  font-size: 0.8em;
+  @apply whitespace-nowrap text-center leading-none;
+  @apply hidden lg:block;
+  @apply text-2xs dark:text-gray-600 text-gray-400;
+  @apply border-t border-gray-300 dark:border-gray-700;
+  @apply p-2;
 }
 </style>
