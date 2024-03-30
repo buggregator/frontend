@@ -83,13 +83,13 @@ const isVisibleTags = computed(() => props.tags.length > 0);
     </div>
 
     <div v-if="isVisibleControls" class="preview-card-header__buttons">
-      <div class="preview-card-header__buttons-expand">
+      <div v-if="isOpen" class="preview-card-header__buttons-expand">
         <button
           class="preview-card-header__button preview-card-header__button--copy"
           title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
-          <IconSvg name="copy" class="preview-card-header__button-icon" />
+          <IconSvg name="copy" class="preview-card-header__button-icon"/>
         </button>
 
         <div class="preview-card-header__buttons-expand-list">
@@ -143,7 +143,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         }"
         @click="lockEvent"
       >
-        <IconSvg name="lock" class="preview-card-header__button-icon" />
+        <IconSvg name="lock" class="preview-card-header__button-icon"/>
       </button>
 
       <button
@@ -152,7 +152,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         :disabled="isLocked"
         @click="deleteEvent"
       >
-        <IconSvg name="times" class="preview-card-header__button-icon" />
+        <IconSvg name="times" class="preview-card-header__button-icon"/>
       </button>
     </div>
   </div>

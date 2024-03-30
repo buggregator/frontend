@@ -96,20 +96,23 @@ const connectionText = computed(
 <style lang="scss" scoped>
 .layout-sidebar {
   @apply bg-gray-200 dark:bg-gray-800;
-  @apply w-9 sm:w-10 md:w-14;
+  @apply w-9 sm:w-12 md:w-16;
   @apply flex flex-col justify-between;
 }
 
 .layout-sidebar__nav {
   @apply flex-col flex overflow-auto;
-  @apply divide-y divide-gray-300 dark:divide-gray-600;
-  @apply border-b border-gray-300 dark:border-gray-600;
+  @apply divide-y divide-gray-300 dark:divide-gray-600 md:divide-none;
+  @apply border-b border-gray-300 dark:border-gray-600 md:border-none;
+  @apply overflow-hidden;
 }
 
 .layout-sidebar__link {
-  @apply text-blue-500 block hover:bg-blue-500 hover:text-white relative;
-  @apply h-9 sm:h-10 md:h-14;
+  @apply block relative;
+  @apply text-blue-500 hover:text-white;
+  @apply hover:bg-gray-700;
   @apply flex items-center justify-center;
+  @apply md:my-2 md:mx-1 lg:m-2 md:rounded-lg;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
@@ -117,9 +120,15 @@ const connectionText = computed(
 }
 
 .layout-sidebar__link-icon {
+  @apply flex items-center justify-center;
   @apply fill-current;
   @apply mx-auto;
-  @apply w-3 h-3 md:w-5 md:h-5 lg:w-6 lg:h-6;
+  @apply h-5 md:h-6;
+  @apply m-2.5 md:m-3;
+
+  & > svg {
+    @apply h-auto;
+  }
 }
 
 .layout-sidebar__connection {
