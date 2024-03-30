@@ -38,7 +38,7 @@ const clearEvents = () => {
       </button>
     </div>
 
-    <IconSvg class="page-header__lock-icon" name="lock" />
+<!--    <IconSvg class="page-header__lock-icon" name="lock" />-->
   </header>
 </template>
 

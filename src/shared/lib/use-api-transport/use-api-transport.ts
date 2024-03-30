@@ -4,9 +4,11 @@ import { useCentrifuge, useEventsRequests } from "../io";
 import { useConnectionStore } from "~/stores/connections";
 import { useEventStore } from "~/stores/events";
 
-const CHECK_CONNECTION_INTERVAL = 10000
+const CHECK_CONNECTION_INTERVAL: number = 10000
+let isEventsEmitted: boolean = false
+
 export const useApiTransport = () => {
-  const { centrifuge } = useCentrifuge()
+  const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()
   const {
@@ -21,7 +23,7 @@ export const useApiTransport = () => {
 
   const getWSConnection = () => connectionStore.isConnectedWS
   const checkWSConnectionFail = (onConnectionLost: () => void) => {
-    if(!getWSConnection()) {
+    if (!getWSConnection()) {
       onConnectionLost()
     }
     setTimeout(() => {
@@ -29,29 +31,36 @@ export const useApiTransport = () => {
     }, CHECK_CONNECTION_INTERVAL)
   }
 
-  centrifuge.on('connected', () => {
-    connectionStore.addWSConnection()
-  });
+  const subscribeToEvents = (): void => {
+    centrifuge.on('connected', () => {
+      connectionStore.addWSConnection()
+    });
 
-  centrifuge.on('disconnected', () => {
-    connectionStore.removeWSConnection()
-  });
+    centrifuge.on('disconnected', () => {
+      connectionStore.removeWSConnection()
+    });
 
-  centrifuge.on('error', () => {
-    connectionStore.removeWSConnection()
-  })
+    centrifuge.on('error', () => {
+      connectionStore.removeWSConnection()
+    })
 
-  centrifuge.on('message', () => {
-    connectionStore.addWSConnection()
-  })
+    centrifuge.on('message', () => {
+      connectionStore.addWSConnection()
+    })
 
-  centrifuge.on('publication', (ctx) => {
-    // We need to handle only events from the channel 'events' with event name 'event.received'
-    if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
-      const event = ctx?.data?.data || null
-      eventsStore.addList([ event ]);
-    }
-  });
+    centrifuge.on('publication', (ctx) => {
+      // We need to handle only events from the channel 'events' with event name 'event.received'
+      if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
+        const event = ctx?.data?.data || null
+        eventsStore.addList([event]);
+      }
+    });
+  }
+
+  if (!isEventsEmitted) {
+    subscribeToEvents()
+    isEventsEmitted = true
+  }
 
   checkWSConnectionFail(async () => {
     const events = await getAll();
@@ -85,7 +94,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, { uuids })
+      return centrifuge.rpc(`delete:api/events`, {uuids})
     }
 
     return deleteList(uuids);

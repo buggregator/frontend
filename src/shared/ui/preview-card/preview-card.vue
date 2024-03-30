@@ -43,8 +43,9 @@ const normalizedOrigin = computed(() => {
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);
 
-const toggleView = () => {
+const toggleView = (e: MouseEvent) => {
   isCollapsed.value = !isCollapsed.value;
+  e.preventDefault();
 };
 
 const changeVisibleControls = (value = true) => {
@@ -176,6 +177,7 @@ onBeforeUnmount(() => {
       @copy="copyCode"
       @download="downloadEvent"
       @lock="toggleEventLock"
+      @dblclick="toggleView"
     />
 
     <div
@@ -207,7 +209,7 @@ onBeforeUnmount(() => {
 }
 
 .preview-card--collapsed {
-  @apply shadow-bottom;
+  // @apply shadow-bottom;
 }
 
 .preview-card__header {
