@@ -1,4 +1,4 @@
-import type { EventId, EventType , ServerEvent } from '../../types';
+import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
@@ -11,14 +11,23 @@ type TUseEventsRequests = () => {
   getEventRestUrl: (param: EventId | undefined) => string
 }
 
-export const useEventsRequests: TUseEventsRequests = () => {
+// TODO: add 403 response handling
+
+export const useEventsRequests: TUseEventsRequests = (token: string | null) => {
   const getEventRestUrl = (param?: string) => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 
-  const getAll = () => fetch(getEventRestUrl())
+  const getAll = () => fetch(getEventRestUrl(), {
+    headers: {"X-Auth-Token": token}
+  })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
         return response.data as ServerEvent<unknown>[]
+      }
+
+      if (response?.code === 403) {
+        console.error('Forbidden')
+        return [];
       }
 
       console.error('Fetch Error')
@@ -27,7 +36,9 @@ export const useEventsRequests: TUseEventsRequests = () => {
     })
     .then((events: ServerEvent<unknown>[]) => events)
 
-  const getSingle = (id: EventId) => fetch(getEventRestUrl(id))
+  const getSingle = (id: EventId) => fetch(getEventRestUrl(id), {
+    headers: {"X-Auth-Token": token}
+  })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -36,22 +47,30 @@ export const useEventsRequests: TUseEventsRequests = () => {
       return null;
     })
 
-  const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), { method: 'DELETE' })
+  const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {method: 'DELETE', headers: {"X-Auth-Token": token}})
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getEventRestUrl(), { method: 'DELETE' })
+  const deleteAll = () => fetch(getEventRestUrl(), {method: 'DELETE', headers: {"X-Auth-Token": token}})
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), { method: 'DELETE',  body: JSON.stringify({ uuids }) })
+  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), {
+    method: 'DELETE',
+    headers: {"X-Auth-Token": token},
+    body: JSON.stringify({uuids})
+  })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
+  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), {
+    method: 'DELETE',
+    headers: {"X-Auth-Token": token},
+    body: JSON.stringify({type})
+  })
     .catch((err) => {
       console.error('Fetch Error', err)
     })

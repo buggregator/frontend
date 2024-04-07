@@ -147,13 +147,13 @@ onBeforeMount(() => {
   isLocked.value = lockedIds.items.value.includes(props.event.id);
 });
 
-onMounted(() => {
-  window.addEventListener("scroll", optimiseRenderHidden);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", optimiseRenderHidden);
-});
+// onMounted(() => {
+//   window.addEventListener("scroll", optimiseRenderHidden);
+// });
+//
+// onBeforeUnmount(() => {
+//   window.removeEventListener("scroll", optimiseRenderHidden);
+// });
 </script>
 
 <template>
