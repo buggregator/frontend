@@ -16,7 +16,7 @@ export default defineNuxtPlugin(async () => {
   }
 
   try {
-    let settings = await getSettings()
+    settings = await getSettings()
   } catch (e) {
     console.error('Server is not available!')
   }

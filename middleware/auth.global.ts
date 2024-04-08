@@ -1,3 +1,5 @@
+import { useNuxtApp, navigateTo } from "#app"
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const app = useNuxtApp()
   const {localStorage} = window;
@@ -7,12 +9,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   if (to.name !== 'login' && !app.$authToken.token) {
-    return await navigateTo('/login')
+    return navigateTo('/login');
   }
 
   if (to.name === 'login' && to?.query?.token) {
     localStorage?.setItem('token', to.query.token);
     app.$authToken.token = to.query.token;
-    return await navigateTo('/')
+    return navigateTo('/');
   }
 })

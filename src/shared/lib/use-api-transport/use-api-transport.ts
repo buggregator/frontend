@@ -10,7 +10,7 @@ let isEventsEmitted: boolean = false
 export const useApiTransport = () => {
   const nuxtApp = useNuxtApp()
   const token = nuxtApp.$authToken.token
-  const {centrifuge} = useCentrifuge(token)
+  const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()
   const {
@@ -21,7 +21,7 @@ export const useApiTransport = () => {
     deleteSingle,
     deleteByType,
     getEventRestUrl
-  } = useEventsRequests(token)
+  } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
   const checkWSConnectionFail = (onConnectionLost: () => void) => {
@@ -64,10 +64,10 @@ export const useApiTransport = () => {
     isEventsEmitted = true
   }
 
-  // checkWSConnectionFail(async () => {
-  //   const events = await getAll();
-  //   eventsStore.addList(events);
-  // })
+  checkWSConnectionFail(async () => {
+    const events = await getAll();
+    eventsStore.addList(events);
+  })
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
@@ -113,7 +113,7 @@ export const useApiTransport = () => {
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
       stop_execution: true,
-      token: nuxtApp.$authToken
+      token
     })
   }
 

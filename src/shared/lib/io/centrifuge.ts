@@ -12,7 +12,7 @@ class WSConnection {
   // eslint-disable-next-line no-use-before-define
   private static instance: WSConnection;
 
-  private constructor(token: string | null) {
+  private constructor() {
     this.centrifuge = new Centrifuge(WS_URL);
 
     this.centrifuge.on('connected', (ctx) => {
@@ -34,9 +34,9 @@ class WSConnection {
     this.centrifuge.connect();
   }
 
-  public static getInstance(token: string | null): WSConnection {
+  public static getInstance(): WSConnection {
     if (!WSConnection.instance) {
-      WSConnection.instance = new WSConnection(token);
+      WSConnection.instance = new WSConnection();
     }
 
     return WSConnection.instance;
@@ -48,4 +48,4 @@ class WSConnection {
 }
 
 
-export const useCentrifuge: TUseCentrifuge = (token: string | null) => ({centrifuge: WSConnection.getInstance(token).getCentrifuge()})
+export const useCentrifuge: TUseCentrifuge = () => ({centrifuge: WSConnection.getInstance().getCentrifuge()})
