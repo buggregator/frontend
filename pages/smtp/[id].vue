@@ -17,14 +17,14 @@
     </div>
 
     <div class="smtp-event__body">
-      <SmtpPage v-if="event" :event="event" :html-source="html" />
+      <SmtpPage v-if="event" :event="event" :html-source="html"/>
     </div>
   </main>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFetch, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
@@ -33,19 +33,22 @@ import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 import { SmtpPage } from "~/src/screens/smtp";
 
-const { normalizeSmtpEvent } = useSmtp();
+const {normalizeSmtpEvent} = useSmtp();
 
 export default defineComponent({
-  components: { SmtpPage, PageHeader },
+  components: {SmtpPage, PageHeader},
   async setup() {
     const route = useRoute();
     const router = useRouter();
+    const nuxtApp = useNuxtApp();
     const eventId = route.params.id as EventId;
 
-    const { events } = useEvents();
+    const {events} = useEvents();
 
-    const { data: event, pending } = await useFetch(events.getUrl(eventId), {
-      onResponse({ response }) {
+    // TODO: move to main API module
+    const {data: event, pending} = await useFetch(events.getUrl(eventId), {
+      headers: {"X-Auth-Token": nuxtApp.$authToken.token},
+      onResponse({response}) {
         return response.data;
       },
       onResponseError() {

@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFetch, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useProfiler } from "~/src/entities/profiler";
 import type { Profiler } from "~/src/entities/profiler/types";
@@ -39,11 +39,13 @@ export default defineComponent({
   async setup() {
     const route = useRoute();
     const router = useRouter();
+    const nuxtApp = useNuxtApp();
     const eventId = route.params.id as EventId;
 
     const { events } = useEvents();
 
     const { data: event, pending } = await useFetch(events.getUrl(eventId), {
+      headers: {"X-Auth-Token": nuxtApp.$authToken.token},
       onResponse({ response }) {
         return response.data;
       },

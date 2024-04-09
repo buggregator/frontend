@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useRoute, useRouter, useFetch } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter, useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
@@ -40,11 +40,13 @@ export default defineComponent({
   async setup() {
     const route = useRoute();
     const router = useRouter();
+    const nuxtApp = useNuxtApp();
     const eventId = route.params.id as EventId;
 
     const { events } = useEvents();
 
     const { data: event, pending } = await useFetch(events.getUrl(eventId), {
+      headers: {"X-Auth-Token": nuxtApp.$authToken.token},
       onResponse({ response }) {
         return response.data;
       },
