@@ -7,6 +7,7 @@ import { useConnectionStore } from "~/stores/connections";
 type Props = {
   apiVersion: string;
   clientVersion: string;
+  profile: object;
 };
 
 defineProps<Props>();
@@ -64,6 +65,14 @@ const connectionText = computed(
     </nav>
 
     <div>
+      <div class="layout-sidebar__profile">
+        <div v-if="profile?.avatar" class="layout-sidebar__profile-avatar">
+          <img
+            :src="profile.avatar"
+            class="rounded-full"
+          />
+        </div>
+      </div>
       <div class="layout-sidebar__connection">
         <IconSvg
           class="layout-sidebar__connection-icon"
@@ -129,6 +138,12 @@ const connectionText = computed(
   & > svg {
     @apply h-auto;
   }
+}
+
+.layout-sidebar__profile {
+  @apply h-9 sm:h-10 md:h-14;
+  @apply p-3 mb-2;
+  @apply flex items-center justify-center;
 }
 
 .layout-sidebar__connection {

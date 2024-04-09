@@ -4,6 +4,7 @@
       class="main-layout__sidebar"
       :api-version="apiVersion"
       :client-version="clientVersion"
+      :profile="profile"
     />
 
     <div class="main-layout__content">
@@ -34,10 +35,11 @@ export default defineComponent({
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
 
     const {
-      api: { getVersion },
+      api: { getVersion, getProfile },
     } = useSettings();
 
     const apiVersion = await getVersion();
+    const profile = await getProfile();
 
     const { events } = useEvents();
 
@@ -55,6 +57,7 @@ export default defineComponent({
         ? `v${apiVersion}`
         : `@${apiVersion}`,
       clientVersion,
+      profile,
     };
   },
 });
@@ -69,10 +72,7 @@ export default defineComponent({
 
 .main-layout__sidebar {
   @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
-}
-
-.main-layout__header {
-  @apply flex-none w-full h-10;
+  @include layout-sidebar;
 }
 
 .main-layout__content {
@@ -81,9 +81,5 @@ export default defineComponent({
   & > div {
     @apply flex flex-col h-full flex-1;
   }
-}
-
-.main-layout__sidebar {
-  @include layout-sidebar;
 }
 </style>

@@ -8,6 +8,8 @@ const CHECK_CONNECTION_INTERVAL: number = 10000
 let isEventsEmitted: boolean = false
 
 export const useApiTransport = () => {
+  const nuxtApp = useNuxtApp()
+  const token = nuxtApp.$authToken.token
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()
@@ -64,13 +66,12 @@ export const useApiTransport = () => {
 
   checkWSConnectionFail(async () => {
     const events = await getAll();
-
     eventsStore.addList(events);
   })
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
+      return centrifuge.rpc(`delete:api/event/${eventId}`, {token})
     }
 
     return deleteSingle(eventId);
@@ -78,7 +79,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, undefined)
+      return centrifuge.rpc(`delete:api/events`, {token})
     }
 
     return deleteAll();
@@ -94,7 +95,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {uuids})
+      return centrifuge.rpc(`delete:api/events`, {uuids, token})
     }
 
     return deleteList(uuids);
@@ -102,7 +103,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type})
+      return centrifuge.rpc(`delete:api/events`, {type, token})
     }
 
     return deleteByType(type);
@@ -111,13 +112,14 @@ export const useApiTransport = () => {
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
-      stop_execution: true
+      stop_execution: true,
+      token
     })
   }
 
   // NOTE: works only with ws
   const rayContinueExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, undefined)
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token})
   }
 
   return {

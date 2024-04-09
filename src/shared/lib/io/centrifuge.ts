@@ -42,10 +42,10 @@ class WSConnection {
     return WSConnection.instance;
   }
 
-  public getCentrifuge () {
+  public getCentrifuge() {
     return this.centrifuge;
   }
 }
 
 
-export const useCentrifuge: TUseCentrifuge = () => ({ centrifuge: WSConnection.getInstance().getCentrifuge() })
+export const useCentrifuge: TUseCentrifuge = () => ({centrifuge: WSConnection.getInstance().getCentrifuge()})

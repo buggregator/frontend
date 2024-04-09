@@ -1,5 +1,6 @@
-import type { EventId, EventType , ServerEvent } from '../../types';
+import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
+import { useNuxtApp } from "#app"
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
@@ -11,14 +12,24 @@ type TUseEventsRequests = () => {
   getEventRestUrl: (param: EventId | undefined) => string
 }
 
-export const useEventsRequests: TUseEventsRequests = () => {
-  const getEventRestUrl = (param?: string) => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
+// TODO: add 403 response handling
 
-  const getAll = () => fetch(getEventRestUrl())
+export const useEventsRequests: TUseEventsRequests = () => {
+  const app = useNuxtApp()
+  const token: string | null = app.$authToken.token
+  const headers = {"X-Auth-Token": token}
+  const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
+
+  const getAll = () => fetch(getEventRestUrl(), {headers})
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
         return response.data as ServerEvent<unknown>[]
+      }
+
+      if (response?.code === 403) {
+        console.error('Forbidden')
+        return [];
       }
 
       console.error('Fetch Error')
@@ -27,7 +38,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     })
     .then((events: ServerEvent<unknown>[]) => events)
 
-  const getSingle = (id: EventId) => fetch(getEventRestUrl(id))
+  const getSingle = (id: EventId) => fetch(getEventRestUrl(id), {headers})
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -36,22 +47,30 @@ export const useEventsRequests: TUseEventsRequests = () => {
       return null;
     })
 
-  const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), { method: 'DELETE' })
+  const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {method: 'DELETE', headers})
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getEventRestUrl(), { method: 'DELETE' })
+  const deleteAll = () => fetch(getEventRestUrl(), {method: 'DELETE', headers})
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), { method: 'DELETE',  body: JSON.stringify({ uuids }) })
+  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), {
+    method: 'DELETE',
+    headers,
+    body: JSON.stringify({uuids})
+  })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), { method: 'DELETE', body: JSON.stringify({type}) })
+  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), {
+    method: 'DELETE',
+    headers,
+    body: JSON.stringify({type})
+  })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
