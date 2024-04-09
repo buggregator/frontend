@@ -124,7 +124,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__head-title-dd {
-  @apply w-5 h-4 flex justify-center border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded transform rotate-180;
+  @apply w-5 h-4 flex justify-center shadow py-1 rounded transform rotate-180;
 }
 
 .sentry-exception-frame__head-title-dd--visible {
