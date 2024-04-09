@@ -2,6 +2,7 @@ import { useSettings } from "~/src/shared/lib/use-settings";
 
 const {localStorage} = window;
 
+// todo: use store for token
 export default defineNuxtPlugin(async () => {
   const {
     api: {getSettings},

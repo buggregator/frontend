@@ -10,6 +10,7 @@ type TUseSettings = {
 export const useSettings = (): TUseSettings => {
   const nuxtApp = useNuxtApp()
 
+  // todo: we can get version from settings
   const getAppVersion = () => fetch(`${REST_API_URL}/api/version`)
     .then((response) => response.json())
     .then((response) => response?.version || 'unknown')
