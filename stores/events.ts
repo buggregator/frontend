@@ -2,20 +2,25 @@ import { defineStore } from "pinia";
 import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { useLockedIdsStore } from "~/stores/locked-ids";
 
+const MAX_EVENTS_COUNT: number = 500;
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
   }),
   actions: {
-    initialize(events: ServerEvent<unknown>[]) {
-      this.events = events;
+    initialize(events: ServerEvent<unknown>[]): void {
+      this.events = events.slice(0, MAX_EVENTS_COUNT);
     },
-    addList(events: ServerEvent<unknown>[]) {
+    addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
-        const isExistedEvent = this.events.some((el) => el.uuid === event.uuid);
+        const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
         if (!isExistedEvent) {
-          this.events.unshift(event);
+          this.events.unshift(event)
+
+          if (this.events.length > MAX_EVENTS_COUNT) {
+            this.events.pop()
+          }
         } else {
           this.events = this.events.map((el) => {
             if (el.uuid !== event.uuid) {

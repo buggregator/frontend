@@ -24,14 +24,15 @@ export const useApiTransport = () => {
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
-  const checkWSConnectionFail = (onConnectionLost: () => void) => {
-    if (!getWSConnection()) {
-      onConnectionLost()
-    }
-    setTimeout(() => {
-      checkWSConnectionFail(onConnectionLost)
-    }, CHECK_CONNECTION_INTERVAL)
-  }
+  // todo: move to useCentrifuge
+  // const checkWSConnectionFail = (onConnectionLost: () => void) => {
+  //   if (!getWSConnection()) {
+  //     onConnectionLost()
+  //   }
+  //   setTimeout(() => {
+  //     checkWSConnectionFail(onConnectionLost)
+  //   }, CHECK_CONNECTION_INTERVAL)
+  // }
 
   const subscribeToEvents = (): void => {
     centrifuge.on('connected', () => {
@@ -64,10 +65,12 @@ export const useApiTransport = () => {
     isEventsEmitted = true
   }
 
-  checkWSConnectionFail(async () => {
-    const events = await getAll();
-    eventsStore.addList(events);
-  })
+  // todo: move to useCentrifuge
+  // checkWSConnectionFail(async () => {
+  //   const events = await getAll();
+  //
+  //   eventsStore.addList(events);
+  // })
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {

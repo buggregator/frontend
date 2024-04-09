@@ -2,9 +2,8 @@
 // TODO: move component out of shared/ui
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
-import debounce from "lodash.debounce";
 import moment from "moment";
-import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -123,36 +122,8 @@ const copyCode = () => {
   }
 };
 
-const optimiseRenderHidden = debounce(() => {
-  if (eventRef.value) {
-    const eventNode = eventRef.value as HTMLElement;
-    const { top, height } = eventNode.getBoundingClientRect();
-
-    const extraDelta = height;
-    const isVisible =
-      top - extraDelta <= window.innerHeight &&
-      top + height + extraDelta * 2 >= 0;
-
-    if (!isVisible && !isOptimized.value) {
-      isOptimized.value = true;
-      eventNode.style.height = `${eventNode.clientHeight}px`;
-    } else if (isVisible && isOptimized.value) {
-      isOptimized.value = false;
-      eventNode.style.height = "auto";
-    }
-  }
-}, 30);
-
 onBeforeMount(() => {
   isLocked.value = lockedIds.items.value.includes(props.event.id);
-});
-
-onMounted(() => {
-  window.addEventListener("scroll", optimiseRenderHidden);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", optimiseRenderHidden);
 });
 </script>
 

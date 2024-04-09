@@ -16,10 +16,10 @@ const exceptionFrames = computed(() => {
   const frames = props.exception.stacktrace.frames || [];
 
   if (props.maxFrames > 0) {
-    return frames.slice(0, props.maxFrames);
+    return frames.slice(0 - props.maxFrames).reverse();
   }
 
-  return [...frames].reverse();
+  return frames.slice().reverse();
 });
 </script>
 
