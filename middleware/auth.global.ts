@@ -1,22 +1,30 @@
 import { useNuxtApp, navigateTo } from "#app"
+import { useSettings } from "~/src/shared/lib/use-settings";
+import { useProfileStore } from "~/stores/profile"
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const app = useNuxtApp()
-  const {localStorage} = window;
 
   if (!app.$appSettings.auth.enabled) {
-    return;
+    return
   }
 
-  // todo: move token to a store
-  if (to.name !== 'login' && !app.$authToken.token) {
-    return navigateTo('/login');
+  const store = useProfileStore()
+  store.fetchToken()
+
+  if (store.isAuthenticated) {
+    const {api: {getProfile}} = useSettings();
+    const profile = await getProfile();
+    store.setProfile(profile)
+    return
+  }
+
+  if (to.name !== 'login' && !store.isAuthenticated) {
+    return navigateTo('/login')
   }
 
   if (to.name === 'login' && to?.query?.token) {
-    localStorage?.setItem('token', to.query.token);
-    // todo: use store
-    app.$authToken.token = to.query.token;
-    return navigateTo('/');
+    store.setToken(to.query.token)
+    return navigateTo('/')
   }
 })

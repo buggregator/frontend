@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type { EventId, EventType, ServerEvent } from '~/src/shared/types';
 import { useLockedIdsStore } from "~/stores/locked-ids";
 
-const MAX_EVENTS_COUNT: number = 500;
+const MAX_EVENTS_COUNT = 500;
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({

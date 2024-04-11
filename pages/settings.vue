@@ -79,6 +79,8 @@ export default defineComponent({
     const { changeTheme, changeNavbar } = settingsStore;
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
 
+    console.log(settingsStore)
+
     return {
       themeType,
       isFixedHeader,

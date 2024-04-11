@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
+import {htmlEncode} from "~/src/shared/lib/helpers";
 import { HTMLCode } from '~/src/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 
@@ -13,7 +14,11 @@ export default {
         args,
       };
     },
-    template: `<SmtpPagePreview v-bind="args">${HTMLCode}</SmtpPagePreview>`,
+    template: `<div style="height: 100vh">
+      <SmtpPagePreview v-bind="args">
+        <iframe srcdoc="<html>${htmlEncode(HTMLCode)}</html>"></iframe>
+      </SmtpPagePreview>
+    </div>`,
   })
 } as Meta<typeof SmtpPagePreview>;
 

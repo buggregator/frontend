@@ -21,6 +21,7 @@ import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
 import { version } from "../package.json";
+import {useProfileStore} from "~/stores/profile";
 import { useSettingsStore } from "~/stores/settings";
 
 export default defineComponent({
@@ -32,14 +33,14 @@ export default defineComponent({
     SfdumpWrap(window.document);
 
     const settingsStore = useSettingsStore();
+    const profileStore = useProfileStore();
     const { themeType, isFixedHeader } = storeToRefs(settingsStore);
 
     const {
-      api: { getVersion, getProfile },
+      api: { getVersion },
     } = useSettings();
 
     const apiVersion = await getVersion();
-    const profile = await getProfile();
 
     const { events } = useEvents();
 
@@ -57,7 +58,7 @@ export default defineComponent({
         ? `v${apiVersion}`
         : `@${apiVersion}`,
       clientVersion,
-      profile,
+      profile: profileStore.profile,
     };
   },
 });

@@ -4,12 +4,11 @@ import { useCentrifuge, useEventsRequests } from "../io";
 import { useConnectionStore } from "~/stores/connections";
 import { useEventStore } from "~/stores/events";
 
-const CHECK_CONNECTION_INTERVAL: number = 10000
-let isEventsEmitted: boolean = false
+let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const nuxtApp = useNuxtApp()
-  const token = nuxtApp.$authToken.token
+  const {token} = nuxtApp.$authToken
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()
