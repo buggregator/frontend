@@ -2,12 +2,18 @@
 import { useNuxtApp, navigateTo } from "#app"
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { IconSvg } from "~/src/shared/ui";
+import {useProfileStore} from "~/stores/profile";
 
 definePageMeta({
   layout: 'blank'
 })
 
 const app = useNuxtApp()
+const store = useProfileStore()
+
+if (store.isAuthenticated) {
+  await navigateTo('/')
+}
 
 const redirect = async () => {
   await navigateTo(`${REST_API_URL}/${app.$appSettings.auth.login_url}`, {
@@ -29,7 +35,8 @@ const redirect = async () => {
             Continue to SSO
           </button>
         </div>
-        <div class="login-form-right-block"
+        <div
+class="login-form-right-block"
              style="background: url('/bg.jpg'); background-size: cover; background-position: center center;">
         </div>
       </div>

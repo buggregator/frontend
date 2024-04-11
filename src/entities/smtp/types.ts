@@ -4,6 +4,7 @@ export interface SMTPUser {
   name: string,
   email: string,
 }
+
 export interface SMTP {
   id: string,
   from: SMTPUser[],

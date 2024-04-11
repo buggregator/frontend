@@ -1,7 +1,5 @@
 import { useSettings } from "~/src/shared/lib/use-settings";
 
-const {localStorage} = window;
-
 // todo: use store for token
 export default defineNuxtPlugin(async () => {
   const {
@@ -25,18 +23,16 @@ export default defineNuxtPlugin(async () => {
   if (!settings.auth.enabled) {
     return {
       provide: {
-        authToken: {token: null},
-        appSettings: settings
+        appSettings: settings,
+        authToken: {token: null}
       }
     }
   }
 
-  const token: string | null = localStorage?.getItem('token')
-
   return {
     provide: {
-      authToken: {token},
-      appSettings: settings
+      appSettings: settings,
+      authToken: {token: null}
     }
   }
 })

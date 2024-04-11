@@ -1,6 +1,6 @@
+import { useNuxtApp } from "#app"
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
-import { useNuxtApp } from "#app"
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
@@ -16,7 +16,7 @@ type TUseEventsRequests = () => {
 
 export const useEventsRequests: TUseEventsRequests = () => {
   const app = useNuxtApp()
-  const token: string | null = app.$authToken.token
+  const {token} = app.$authToken
   const headers = {"X-Auth-Token": token}
   const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 

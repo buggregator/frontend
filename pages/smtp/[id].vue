@@ -28,7 +28,7 @@ import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disa
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
+import { htmlEncode } from "~/src/shared/lib/helpers";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 import { SmtpPage } from "~/src/screens/smtp";
@@ -63,7 +63,7 @@ export default defineComponent({
       serverEvent: event,
       pending,
       eventId,
-      html: `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`,
+      html: `<iframe srcdoc="${htmlEncode(event.value.payload.html)}"/>`,
       clearEvent: () => events.removeById(eventId),
     };
   },
