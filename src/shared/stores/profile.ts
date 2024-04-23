@@ -5,8 +5,8 @@ const STORAGE_KEY = "token";
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
-    token: null as string | null,
-    profile: null as Profile | null,
+    token: '' as string,
+    profile: undefined as Profile | undefined,
   }),
   getters: {
     isAuthenticated(): boolean {
@@ -28,7 +28,7 @@ export const useProfileStore = defineStore("profileStore", {
       this.setToken(localStorage?.getItem(STORAGE_KEY));
     },
     removeToken(): void {
-      this.token = null;
+      this.token = '';
       localStorage?.removeItem(STORAGE_KEY);
     },
   },

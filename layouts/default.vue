@@ -5,9 +5,10 @@ import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { useProfileStore } from "~~/src/shared/stores/profile";
+import { useProfileStore, useSettingsStore } from "~~/src/shared/stores";
 import { version } from "../package.json";
 
+useSettingsStore();
 SfdumpWrap(window.document);
 const { profile } = storeToRefs(useProfileStore());
 

@@ -48,6 +48,8 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
+@import "src/assets/mixins";
+
 .pause-button {
   @include button;
   @apply bg-blue-400 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-800;
