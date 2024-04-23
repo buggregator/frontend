@@ -10,8 +10,8 @@ export const Default: StoryObj<typeof PreviewCardFooter> = {
   args: {
     serverName: "My server",
     originConfig: {
-      one: 1,
-      two: 2,
+      one: '1',
+      two: '2',
     },
   }
 }
