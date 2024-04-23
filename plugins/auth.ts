@@ -3,7 +3,7 @@ import { useSettings } from "~/src/shared/lib/use-settings";
 // todo: use store for token
 export default defineNuxtPlugin(async () => {
   const {
-    api: {getSettings},
+    api,
   } = useSettings();
 
   let settings = {
@@ -15,7 +15,7 @@ export default defineNuxtPlugin(async () => {
   }
 
   try {
-    settings = await getSettings()
+    settings = await api.getSettings()
   } catch (e) {
     console.error('Server is not available!')
   }

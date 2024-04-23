@@ -28,7 +28,6 @@ const items = [
         :key="item.title"
         :icon-name="item.iconName"
         :title="item.title"
-        :link-name="item.linkName"
         :link-url="item.linkUrl"
       />
     </ul>

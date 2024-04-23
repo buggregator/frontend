@@ -17,10 +17,10 @@ type TUseEventsRequests = () => {
 export const useEventsRequests: TUseEventsRequests = () => {
   const app = useNuxtApp()
   const {token} = app.$authToken
-  const headers = {"X-Auth-Token": token}
+  const headers = {"X-Auth-Token": token || ''}
   const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 
-  const getAll = () => fetch(getEventRestUrl(), {headers})
+  const getAll = () => fetch(getEventRestUrl(), { headers })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
