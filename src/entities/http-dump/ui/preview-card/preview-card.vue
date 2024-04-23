@@ -32,7 +32,7 @@ const uri = decodeURI(props.event.payload.request.uri);
 }
 
 .preview-card__link {
-  @apply cursor-pointer flex-grow p-2 md:p-3 bg-gray-200 dark:bg-gray-800;
+  @apply cursor-pointer p-2 md:p-3 bg-gray-200 dark:bg-gray-800;
 }
 
 .preview-card__method {

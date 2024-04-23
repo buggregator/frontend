@@ -69,7 +69,7 @@ const exception: Ref<Exception> = computed(() =>
 }
 
 .preview-card__link {
-  @apply cursor-pointer dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
+  @apply cursor-pointer block dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
 }
 
 .preview-card__title {
