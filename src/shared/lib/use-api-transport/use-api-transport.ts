@@ -3,9 +3,12 @@ import { useEventStore, useConnectionStore } from "../../stores";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
 
-const CHECK_CONNECTION_INTERVAL = 10000
+let isEventsEmitted = false
+
 export const useApiTransport = () => {
-  const { centrifuge } = useCentrifuge()
+  const nuxtApp = useNuxtApp()
+  const {token} = nuxtApp.$authToken
+  const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()
   const {
@@ -19,48 +22,57 @@ export const useApiTransport = () => {
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
-  const checkWSConnectionFail = (onConnectionLost: () => void) => {
-    if(!getWSConnection()) {
-      onConnectionLost()
-    }
-    setTimeout(() => {
-      checkWSConnectionFail(onConnectionLost)
-    }, CHECK_CONNECTION_INTERVAL)
+  // todo: move to useCentrifuge
+  // const checkWSConnectionFail = (onConnectionLost: () => void) => {
+  //   if (!getWSConnection()) {
+  //     onConnectionLost()
+  //   }
+  //   setTimeout(() => {
+  //     checkWSConnectionFail(onConnectionLost)
+  //   }, CHECK_CONNECTION_INTERVAL)
+  // }
+
+  const subscribeToEvents = (): void => {
+    centrifuge.on('connected', () => {
+      connectionStore.addWSConnection()
+    });
+
+    centrifuge.on('disconnected', () => {
+      connectionStore.removeWSConnection()
+    });
+
+    centrifuge.on('error', () => {
+      connectionStore.removeWSConnection()
+    })
+
+    centrifuge.on('message', () => {
+      connectionStore.addWSConnection()
+    })
+
+    centrifuge.on('publication', (ctx) => {
+      // We need to handle only events from the channel 'events' with event name 'event.received'
+      if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
+        const event = ctx?.data?.data || null
+        eventsStore.addList([event]);
+      }
+    });
   }
 
-  centrifuge.on('connected', () => {
-    connectionStore.addWSConnection()
-  });
+  if (!isEventsEmitted) {
+    subscribeToEvents()
+    isEventsEmitted = true
+  }
 
-  centrifuge.on('disconnected', () => {
-    connectionStore.removeWSConnection()
-  });
-
-  centrifuge.on('error', () => {
-    connectionStore.removeWSConnection()
-  })
-
-  centrifuge.on('message', () => {
-    connectionStore.addWSConnection()
-  })
-
-  centrifuge.on('publication', (ctx) => {
-    // We need to handle only events from the channel 'events' with event name 'event.received'
-    if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
-      const event = ctx?.data?.data || null
-      eventsStore.addList([ event ]);
-    }
-  });
-
-  checkWSConnectionFail(async () => {
-    const events = await getAll();
-
-    eventsStore.addList(events);
-  })
+  // todo: move to useCentrifuge
+  // checkWSConnectionFail(async () => {
+  //   const events = await getAll();
+  //
+  //   eventsStore.addList(events);
+  // })
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/event/${eventId}`, undefined)
+      return centrifuge.rpc(`delete:api/event/${eventId}`, {token})
     }
 
     return deleteSingle(eventId);
@@ -68,7 +80,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, undefined)
+      return centrifuge.rpc(`delete:api/events`, {token})
     }
 
     return deleteAll();
@@ -84,7 +96,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, { uuids })
+      return centrifuge.rpc(`delete:api/events`, {uuids, token})
     }
 
     return deleteList(uuids);
@@ -92,7 +104,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type})
+      return centrifuge.rpc(`delete:api/events`, {type, token})
     }
 
     return deleteByType(type);
@@ -101,13 +113,14 @@ export const useApiTransport = () => {
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
-      stop_execution: true
+      stop_execution: true,
+      token
     })
   }
 
   // NOTE: works only with ws
   const rayContinueExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, undefined)
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token})
   }
 
   return {

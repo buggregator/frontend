@@ -1,3 +1,5 @@
+import rayBooleanFalseMock from './ray-boolean-false.json';
+import rayBooleanTrueMock from './ray-boolean-true.json';
 import rayCallerMock from './ray-caller.json';
 import rayCarbonMock from './ray-carbon.json';
 import rayColorMock from './ray-color.json';
@@ -40,4 +42,6 @@ export {
   rayTableMock,
   rayTextMock,
   rayTraceMock,
+  rayBooleanTrueMock,
+  rayBooleanFalseMock
 }

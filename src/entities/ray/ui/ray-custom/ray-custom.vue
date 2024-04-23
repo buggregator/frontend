@@ -11,12 +11,6 @@ defineProps<Props>();
 
 <template>
   <div class="ray-custom">
-    <ValueDump v-if="content.content" :value="content.content" />
+    <ValueDump :value="content.content" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.ray-custom {
-  @apply py-3;
-}
-</style>

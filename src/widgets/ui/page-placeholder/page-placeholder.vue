@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import PagePlaceholderItem from "./page-placeholder-item.vue";
 
-const getHost = () => window?.location?.host || "localhost:3000";
-const getHostName = () => window?.location?.hostname || "localhost";
-
 const items = [
   {
     iconName: "github",
@@ -19,7 +16,7 @@ const items = [
     iconName: "discord",
     title: "Join our discord",
     linkUrl: "https://discord.gg/vDsCD3EKUB",
-  }
+  },
 ];
 </script>
 
@@ -40,15 +37,13 @@ const items = [
 
 <style lang="scss" scoped>
 .page-placeholder {
-  @apply p-6 bg-white dark:bg-gray-900 rounded-l text-gray-600 dark:text-gray-300 border;
-}
-
-.page-placeholder__title {
-  @apply text-xl font-bold mb-3;
+  @apply p-4 md:p-6 lg:p-10;
+  @apply bg-white dark:bg-gray-900;
+  @apply border dark:border-gray-600 rounded-lg;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .page-placeholder__list {
-  @apply flex flex-col space-y-4;
   @apply flex flex-col space-y-4;
 }
 </style>

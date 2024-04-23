@@ -84,7 +84,7 @@ const currentDevice = ref(props.device);
 }
 
 .smtp-page-preview__device {
-  @apply flex-1 flex flex-col items-center bg-gray-50 dark:bg-gray-900;
+  @apply flex flex-col items-center bg-gray-50 dark:bg-gray-900;
 
   html.dark & {
     @apply text-gray-800;

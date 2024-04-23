@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter, useFetch, useHead } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { SentryPage } from "~/src/screens/sentry";
+import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
-import { SentryPage } from "~/src/screens/sentry";
 
 const { normalizeSentryEvent } = useSentry();
 
@@ -19,7 +19,7 @@ useHead({
 });
 
 const { events } = useEvents();
-
+const { $authToken } = useNuxtApp();
 const isLoading = ref(false);
 const serverEvent = ref<Event | null>(null);
 
@@ -39,6 +39,7 @@ const getEvent = async () => {
   isLoading.value = true;
 
   await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
     onResponse({ response: { _data } }) {
       serverEvent.value = _data;
       isLoading.value = false;

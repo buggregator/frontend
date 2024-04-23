@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter, useFetch, useHead } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { SmtpPage } from "~/src/screens/smtp";
+import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
-import { SmtpPage } from "~/src/screens/smtp";
 
 const { normalizeSmtpEvent } = useSmtp();
 
 const { params } = useRoute();
+const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
@@ -44,6 +45,7 @@ const getEvent = async () => {
   isLoading.value = true;
 
   await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
     onResponse({ response: { _data } }) {
       serverEvent.value = _data;
       isLoading.value = false;

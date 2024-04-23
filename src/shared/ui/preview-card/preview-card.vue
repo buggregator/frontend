@@ -1,9 +1,8 @@
 <script lang="ts" setup generic="T">
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
-import debounce from "lodash.debounce";
 import moment from "moment";
-import { ref, computed, onMounted, onBeforeUnmount, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -42,8 +41,9 @@ const normalizedOrigin = computed(() => {
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);
 
-const toggleView = () => {
+const toggleView = (e: MouseEvent) => {
   isCollapsed.value = !isCollapsed.value;
+  e.preventDefault();
 };
 
 const changeVisibleControls = (value = true) => {
@@ -121,36 +121,8 @@ const copyCode = () => {
   }
 };
 
-const optimiseRenderHidden = debounce(() => {
-  if (eventRef.value) {
-    const eventNode = eventRef.value as HTMLElement;
-    const { top, height } = eventNode.getBoundingClientRect();
-
-    const extraDelta = height;
-    const isVisible =
-      top - extraDelta <= window.innerHeight &&
-      top + height + extraDelta * 2 >= 0;
-
-    if (!isVisible && !isOptimized.value) {
-      isOptimized.value = true;
-      eventNode.style.height = `${eventNode.clientHeight}px`;
-    } else if (isVisible && isOptimized.value) {
-      isOptimized.value = false;
-      eventNode.style.height = "auto";
-    }
-  }
-}, 30);
-
 onBeforeMount(() => {
   isLocked.value = lockedIds.items.value.includes(props.event.id);
-});
-
-onMounted(() => {
-  window.addEventListener("scroll", optimiseRenderHidden);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", optimiseRenderHidden);
 });
 </script>
 
@@ -175,6 +147,7 @@ onBeforeUnmount(() => {
       @copy="copyCode"
       @download="downloadEvent"
       @lock="toggleEventLock"
+      @dblclick="toggleView"
     />
 
     <div
@@ -198,26 +171,26 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .preview-card {
-  @apply flex-grow flex flex-col p-3 lg:p-5 transition-colors dark:bg-gray-700;
+  @apply flex-grow flex flex-col p-2 lg:p-3 transition-colors dark:bg-gray-700;
 
   &:hover {
-    @apply md:bg-gray-50 dark:bg-gray-900;
+    @apply bg-gray-50 dark:bg-gray-900;
   }
 }
 
 .preview-card--collapsed {
-  @apply shadow-bottom;
+  // @apply shadow-bottom;
 }
 
 .preview-card__header {
-  @apply w-full flex justify-between;
+  @apply w-full flex flex-row justify-between gap-y-3;
 }
 
 .preview-card__body {
-  @apply flex flex-col mt-3;
+  @apply flex flex-col mt-2 lg:mt-3;
 }
 
 .preview-card__footer {
-  @apply w-full flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 text-xs text-gray-400;
+  @apply w-full flex flex-row justify-between mt-1 lg:mt-2 text-gray-400;
 }
 </style>

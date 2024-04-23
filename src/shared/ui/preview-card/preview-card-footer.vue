@@ -4,13 +4,13 @@ import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
 const KEY_MAP = {
-  'php_version': 'php',
-  'laravel_version': 'laravel',
-  'symfony_version': 'symfony',
-  'line_number': 'line',
-  'hostname': 'host',
-  'environment': 'env',
-}
+  php_version: "php",
+  laravel_version: "laravel",
+  symfony_version: "symfony",
+  line_number: "line",
+  hostname: "host",
+  environment: "env",
+};
 
 type Props = {
   serverName: string;
@@ -24,14 +24,18 @@ const props = withDefaults(defineProps<Props>(), {
   originConfig: null,
 });
 
-let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
-  // Filter out empty values
-  if (!value || value === 'undefined') return acc;
+const mappedOrigins = computed(() =>
+  props.originConfig
+    ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
+        // Filter out empty values
+        if (!value || value === "undefined") return acc;
 
-  const mappedKey = KEY_MAP[key] || key;
-  acc[mappedKey] = value;
-  return acc;
-}, {} as { [key: string]: string }) : {});
+        const mappedKey = KEY_MAP[key] || key;
+        acc[mappedKey] = value;
+        return acc;
+      }, {} as { [key: string]: string })
+    : {}
+);
 </script>
 
 <template>
@@ -50,7 +54,7 @@ let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.ori
     </div>
 
     <div v-if="serverName" class="preview-card-footer__host">
-      <IconSvg name="host" class="preview-card-footer__host-icon"/>
+      <IconSvg name="host" class="preview-card-footer__host-icon" />
       <span class="preview-card-footer__host-name">
         {{ serverName }}
       </span>
@@ -59,16 +63,12 @@ let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.ori
 </template>
 
 <style lang="scss" scoped>
-.preview-card-footer {
-  @apply w-full flex justify-between;
-}
-
 .preview-card-footer__tags {
-  @apply flex flex-wrap items-center space-x-2;
+  @apply flex flex-wrap items-center gap-1;
 }
 
 .preview-card-footer__tag {
-  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap space-x-1 leading-none cursor-pointer;
+  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap gap-1 leading-none cursor-pointer;
 }
 
 .preview-card-footer__tag-key {
@@ -80,14 +80,14 @@ let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.ori
 }
 
 .preview-card-footer__host {
-  @apply inline-flex items-center justify-start space-x-2 py-1 text-gray-600 dark:text-gray-300;
+  @apply inline-flex items-center justify-start gap-1 py-1 text-gray-600 dark:text-gray-300;
 }
 
 .preview-card-footer__host-icon {
-  @apply w-4 h-4;
+  @apply w-3 h-3 lg:w-4 lg:h-4;
 }
 
 .preview-card-footer__host-name {
-  @apply flex-initial font-bold text-xs;
+  @apply flex-initial font-bold text-2xs lg:text-xs;
 }
 </style>

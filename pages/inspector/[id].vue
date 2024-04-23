@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { onMounted, computed, ref } from "vue";
-import { useFetch, useHead, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { InspectorPage } from "~/src/screens/inspector";
+import { useFetch, useHead, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useInspector } from "~/src/entities/inspector";
 import type { Inspector } from "~/src/entities/inspector/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
-import { InspectorPage } from "~/src/screens/inspector";
 
 const { normalizeInspectorEvent } = useInspector();
 
 const { params } = useRoute();
+const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
@@ -41,6 +42,7 @@ const getEvent = async () => {
   isLoading.value = true;
 
   await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
     onResponse({ response: { _data } }) {
       serverEvent.value = _data;
       isLoading.value = false;

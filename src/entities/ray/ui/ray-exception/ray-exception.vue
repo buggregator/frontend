@@ -32,22 +32,23 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
+@import "src/assets/mixins";
 .ray-exception {
-  display: block;
+  @apply block;
 }
 
 .ray-exception__texts {
-  display: block;
+  @apply block;
 }
 
-.ray-exception__texts-in {
-  @apply mb-1;
-}
 .ray-exception__texts-code {
-  @apply font-semibold;
+  @apply block mb-2;
+  @apply text-xs sm:text-sm md:text-base font-semibold;
 }
 
 .ray-exception__text {
-  display: block;
+  @include code-example();
+  @apply mb-2;
+  @apply text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
 }
 </style>

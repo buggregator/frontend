@@ -7,8 +7,12 @@
 }
 
 @mixin layout-head {
-  @apply left-10 h-12 right-0 justify-between border-b border-gray-200 dark:border-gray-700 px-4 bg-white dark:bg-gray-800 z-50;
-  @apply absolute left-0 right-0;
+  @apply justify-between;
+  @apply backdrop-blur-sm bg-gradient-to-b from-white/80 to-white/20 dark:from-gray-800/80 dark:to-gray-800/20;
+  //@apply backdrop-blur dark:backdrop-brightness-150 dark:bg-black/30 bg-white/30;
+  @apply absolute left-0 right-0 z-50;
+  @apply h-9 sm:h-10 md:h-14;
+  @apply px-2 md:px-4;
 
   html.navbar-fixed & {
     @apply fixed left-10 md:left-14 lg:left-16 right-0;
@@ -16,7 +20,7 @@
 }
 
 @mixin layout-body {
-  @apply flex flex-col flex-1 pt-12;
+  @apply flex flex-col flex-1 pt-10 md:pt-14;
 }
 
 @mixin text-muted {
@@ -29,6 +33,17 @@
 
 @mixin text-responsive {
   @apply text-2xs sm:text-xs md:text-sm lg:text-base;
+}
+
+@mixin button {
+  @apply px-1 sm:px-3 py-0.5 sm:py-1;
+  @apply text-white text-2xs sm:text-xs;
+  @apply transition-all duration-300;
+  @apply rounded-sm;
+
+  &[disabled] {
+    @apply bg-gray-400 dark:bg-gray-700 opacity-40 text-gray-400 cursor-not-allowed;
+  }
 }
 
 @mixin loading {

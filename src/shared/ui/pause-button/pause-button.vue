@@ -28,7 +28,7 @@ const toggleUpdate = () => {
 <template>
   <button
     class="pause-button"
-    :class="{ 'pause-button--action': isPaused }"
+    :class="{ 'pause-button--active': isPaused }"
     :disabled="disabled"
     @click="toggleUpdate"
   >
@@ -49,14 +49,18 @@ const toggleUpdate = () => {
 
 <style lang="scss" scoped>
 .pause-button {
-  @apply flex items-center space-x-1 px-2 py-1 opacity-80 text-xs bg-blue-400 dark:bg-gray-700 text-white rounded-sm hover:bg-blue-500 dark:hover:bg-blue-800 transition transition-all duration-300 relative;
+  @include button;
+  @apply bg-blue-400 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-800;
+  @apply flex items-center space-x-1;
+  @apply text-gray-800 dark:text-white hover:opacity-100 opacity-40 relative;
+  @apply relative;
 
   &[disabled] {
     @apply bg-gray-400 dark:bg-gray-700 opacity-40 text-gray-400 cursor-not-allowed;
   }
 }
 
-.pause-button--action {
+.pause-button--active {
   @apply opacity-100 bg-blue-500 dark:bg-blue-800;
 }
 
@@ -64,13 +68,12 @@ const toggleUpdate = () => {
   @apply w-4 h-4 stroke-white animate-pulse;
 }
 
-.pause-button--action .pause-button__icon {
+.pause-button--active .pause-button__icon {
   @apply animate-none;
 }
 
 .pause-button__count {
   @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
-
   transform: translate(60%, -60%);
 }
 </style>

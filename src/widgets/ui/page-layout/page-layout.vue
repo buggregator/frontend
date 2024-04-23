@@ -132,7 +132,9 @@ const toggleUpdate = () => {
 
 .page-layout__welcome {
   @include layout-body;
-  @apply flex-1 flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-800 min-h-screen;
+  @apply min-h-screen;
+  @apply flex-1 flex flex-col justify-center items-center;
+  @apply bg-gray-50 dark:bg-gray-800;
 }
 
 .page-layout__btn-stop-events {

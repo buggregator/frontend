@@ -42,19 +42,21 @@ const processResult = computed(() =>
 
 <style lang="scss" scoped>
 .inspector-stat-board {
-  @apply bg-gray-200 dark:bg-gray-800 pt-5 pb-4 px-4 md:px-5 flex flex-col sm:flex-row justify-between items-start divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
+  @apply flex flex-col sm:flex-row justify-between items-start;
+  @apply bg-gray-200 dark:bg-gray-800;
+  @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
+  @apply p-0 sm:p-4 lg:p-6;
 }
 
 .inspector-stat-board__item {
-  @apply flex-auto pb-5 sm:pb-0 sm:px-10 pt-5 sm:pt-0;
-
-  &:first-child {
-    @apply sm:px-0;
-  }
+  @apply flex-auto flex flex-row justify-between sm:flex-col sm:justify-start;
+  @apply w-full sm:w-auto;
+  @apply py-2 px-2 sm:py-5 sm:px-5;
 }
 
 .inspector-stat-board__item-name {
-  @apply text-gray-600 dark:text-gray-300 font-bold text-2xs mb-1 uppercase truncate;
+  @apply text-gray-600 dark:text-gray-300 font-bold text-2xs uppercase truncate;
+  @apply mb-0 sm:mb-1;
 }
 
 .inspector-stat-board__item-value {

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
-import { useFetch, useRoute, useRouter, useHead } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { HttpDumpPage } from "~/src/screens/http-dump";
+import { useFetch, useRoute, useRouter, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
 import type { HttpDump } from "~/src/entities/http-dump/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
-import { HttpDumpPage } from "~/src/screens/http-dump";
 
 const { normalizeHttpDumpEvent } = useHttpDump();
 
@@ -19,6 +19,7 @@ useHead({
 });
 
 const { events } = useEvents();
+const { $authToken } = useNuxtApp();
 
 const isLoading = ref(false);
 const serverEvent = ref<Event | null>(null);
@@ -38,9 +39,11 @@ const onDelete = () => {
 };
 
 const getEvent = async () => {
-  isLoading.value = true;
-
   await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
+    onRequest() {
+      isLoading.value = true;
+    },
     onResponse({ response: { _data } }) {
       serverEvent.value = _data;
       isLoading.value = false;

@@ -27,7 +27,10 @@ const checkThemeActive = () => {
 
 const checkHeaderFixed = () => {
   if (process.client) {
-    const isFixed = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) === "true"
+    const storedValue: string = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) || "true";
+
+
+    const isFixed: boolean = storedValue === "true"
 
     if (isFixed) {
       document?.documentElement?.classList?.add("navbar-fixed");

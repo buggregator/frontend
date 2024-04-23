@@ -62,26 +62,21 @@ const statItems = computed(() => [
 @import "src/assets/mixins";
 
 .stat-board {
-  @apply flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-start;
-  @apply sm:pt-5 sm:pb-4 sm:px-4 md:px-5;
-  @apply bg-gray-200 dark:bg-gray-800;
+  @apply flex flex-col sm:flex-row justify-between items-start;
   @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
+  @apply bg-gray-200 dark:bg-gray-800;
+  @apply p-0 sm:p-4 lg:p-6;
 }
 
 .stat-board__item {
-  @apply pl-3 sm:px-6 py-3;
-
-  &:first-child {
-    @apply sm:pl-0;
-  }
-
-  &:last-child {
-    @apply sm:pr-0;
-  }
+  @apply flex flex-row justify-between sm:flex-col sm:justify-start flex-auto;
+  @apply w-full sm:w-auto;
+  @apply py-2 px-2 sm:py-5 sm:px-5;
 }
 
 .stat-board__item-name {
-  @apply text-gray-600 dark:text-gray-300 font-bold text-2xs mb-1 uppercase truncate;
+  @apply text-gray-600 dark:text-gray-300 font-bold text-2xs uppercase truncate;
+  @apply mb-0 sm:mb-1;
 }
 
 .stat-board__item-name-detail {

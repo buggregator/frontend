@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
-import { useFetch, useHead, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { ProfilerPage } from "~/src/screens/profiler";
+import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useProfiler } from "~/src/entities/profiler";
 import type { Profiler } from "~/src/entities/profiler/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
-import { ProfilerPage } from "~/src/screens/profiler";
 
 const { normalizeProfilerEvent } = useProfiler();
 
 const { params } = useRoute();
+const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
@@ -41,6 +42,7 @@ const getEvent = async () => {
   isLoading.value = true;
 
   await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
     onResponse({ response: { _data } }) {
       serverEvent.value = _data;
       isLoading.value = false;
