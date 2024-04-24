@@ -1,3 +1,45 @@
+<script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { ref, onMounted } from "vue";
+import { LayoutSidebar } from "~/src/widgets/ui";
+import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettings } from "~/src/shared/lib/use-settings";
+import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { useProfileStore, useSettingsStore } from "~~/src/shared/stores";
+import { version } from "../package.json";
+
+useSettingsStore();
+SfdumpWrap(window.document);
+const { profile } = storeToRefs(useProfileStore());
+
+const {
+  api: { getVersion },
+} = useSettings();
+
+const apiVersion = ref("");
+const clientVersion = ref(
+  !version || version === "0.0.1" ? "@dev" : `v${version}`
+);
+
+const getApiVersion = async () => {
+  const data = await getVersion();
+
+  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
+    ? `v${data}`
+    : `@${data}`;
+};
+
+onMounted(() => {
+  getApiVersion();
+
+  const { events } = useEvents();
+
+  if (!events?.items?.value?.length) {
+    events.getAll();
+  }
+});
+</script>
+
 <template>
   <div class="main-layout">
     <LayoutSidebar
@@ -13,59 +55,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
-import { LayoutSidebar } from "~/src/widgets/ui";
-import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
-import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { version } from "../package.json";
-import {useProfileStore} from "~/stores/profile";
-import { useSettingsStore } from "~/stores/settings";
-
-export default defineComponent({
-  components: {
-    LayoutSidebar,
-  },
-
-  async setup() {
-    SfdumpWrap(window.document);
-
-    const settingsStore = useSettingsStore();
-    const profileStore = useProfileStore();
-    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-
-    const {
-      api: { getVersion },
-    } = useSettings();
-
-    const apiVersion = await getVersion();
-
-    const { events } = useEvents();
-
-    if (!events?.items?.value?.length) {
-      events.getAll();
-    }
-
-    const clientVersion =
-      !version || version === "0.0.1" ? "@dev" : `v${version}`;
-
-    return {
-      themeType,
-      isFixedHeader,
-      apiVersion: String(apiVersion).match(/^[0-9.]+.*$/)
-        ? `v${apiVersion}`
-        : `@${apiVersion}`,
-      clientVersion,
-      profile: profileStore.profile,
-    };
-  },
-});
-</script>
-
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .main-layout {
   @apply flex min-h-screen items-stretch relative;

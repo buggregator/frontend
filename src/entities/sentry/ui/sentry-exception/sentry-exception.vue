@@ -31,7 +31,7 @@ const exceptionFrames = computed(() => {
           {{ exception.type }}
         </h3>
 
-        <pre class="sentry-exception__text" v-html="exception.value"/>
+        <pre class="sentry-exception__text" v-html="exception.value" />
       </header>
     </slot>
 
@@ -40,17 +40,17 @@ const exceptionFrames = computed(() => {
         v-for="(frame, index) in exceptionFrames"
         :key="frame.context_line"
       >
-        <SentryExceptionFrame :frame="frame" :is-open="index === 0"/>
+        <SentryExceptionFrame :frame="frame" :is-open="index === 0" />
       </template>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-exception {
-  @apply flex flex-col ;
+  @apply flex flex-col;
 }
 
 .sentry-exception__link {

@@ -23,7 +23,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .preview-card {
   @apply flex flex-col;

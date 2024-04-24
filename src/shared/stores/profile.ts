@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { Profile } from "~/src/shared/types";
+import type { Profile } from "../types";
 
 const STORAGE_KEY = "token";
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
-    token: null,
-    profile: null,
+    token: '' as string,
+    profile: undefined as Profile | undefined,
   }),
   getters: {
     isAuthenticated(): boolean {
@@ -28,7 +28,7 @@ export const useProfileStore = defineStore("profileStore", {
       this.setToken(localStorage?.getItem(STORAGE_KEY));
     },
     removeToken(): void {
-      this.token = null;
+      this.token = '';
       localStorage?.removeItem(STORAGE_KEY);
     },
   },

@@ -89,7 +89,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
           title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
-          <IconSvg name="copy" class="preview-card-header__button-icon"/>
+          <IconSvg name="copy" class="preview-card-header__button-icon" />
         </button>
 
         <div class="preview-card-header__buttons-expand-list">
@@ -106,8 +106,8 @@ const isVisibleTags = computed(() => props.tags.length > 0);
 
           <button
             class="preview-card-header__button preview-card-header__button--copy"
-            @click="downloadImageEvent"
             title="Download event as PNG image"
+            @click="downloadImageEvent"
           >
             <IconSvg
               name="image-download"
@@ -143,7 +143,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         }"
         @click="lockEvent"
       >
-        <IconSvg name="lock" class="preview-card-header__button-icon"/>
+        <IconSvg name="lock" class="preview-card-header__button-icon" />
       </button>
 
       <button
@@ -152,7 +152,7 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         :disabled="isLocked"
         @click="deleteEvent"
       >
-        <IconSvg name="times" class="preview-card-header__button-icon"/>
+        <IconSvg name="times" class="preview-card-header__button-icon" />
       </button>
     </div>
   </div>

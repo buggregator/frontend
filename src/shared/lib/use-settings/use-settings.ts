@@ -1,9 +1,13 @@
+import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import type { Profile } from "../../types";
 import { REST_API_URL } from "../io";
 
 
 type TUseSettings = {
   api: {
     getVersion: () => Promise<string>
+    getProfile: () => Promise<Profile>
+    getSettings: () => Promise<unknown>
   }
 }
 
@@ -21,7 +25,7 @@ export const useSettings = (): TUseSettings => {
     .catch(() => 'unknown');
 
   const getProfile = () => fetch(`${REST_API_URL}/api/me`, {
-    headers: {"X-Auth-Token": nuxtApp.$authToken.token}
+    headers: {"X-Auth-Token": nuxtApp.$authToken.token || ""}
   })
     .then((response) => response.json())
     .catch(() => 'unknown');

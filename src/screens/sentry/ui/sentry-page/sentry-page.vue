@@ -23,6 +23,10 @@ const formattedTimestamp = computed(() =>
 const mainException = computed(
   () => props.event.payload?.exception?.values?.[0]
 );
+
+const exceptionsLength = computed(
+  () => props.event?.payload?.exception?.values?.length || 0
+);
 </script>
 
 <template>
@@ -45,8 +49,11 @@ const mainException = computed(
         <h3 class="sentry-page__section-title">
           exceptions
 
-          <span v-if="event?.payload?.exception?.values?.length > 0" class="sentry-page__section-title__counter">
-            {{ event.payload.exception.values.length }}
+          <span
+            v-if="exceptionsLength > 0"
+            class="sentry-page__section-title__counter"
+          >
+            {{ exceptionsLength }}
           </span>
         </h3>
 
@@ -101,7 +108,7 @@ const mainException = computed(
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-page {
   @apply relative;

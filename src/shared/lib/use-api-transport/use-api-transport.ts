@@ -1,8 +1,7 @@
 import type { RayContentLock } from "~/src/entities/ray/types";
+import { useEventStore, useConnectionStore } from "../../stores";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
-import { useConnectionStore } from "~/stores/connections";
-import { useEventStore } from "~/stores/events";
 
 let isEventsEmitted = false
 

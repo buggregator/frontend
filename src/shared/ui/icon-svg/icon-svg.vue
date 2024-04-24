@@ -114,19 +114,19 @@ defineProps<Props>();
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 489.8 489.8"
     >
-      <circle cx="245" cy="453.9" r="26.8"/>
-      <circle cx="422.8" cy="453.9" r="26.8"/>
-      <circle cx="67" cy="453.9" r="26.8"/>
+      <circle cx="245" cy="453.9" r="26.8" />
+      <circle cx="422.8" cy="453.9" r="26.8" />
+      <circle cx="67" cy="453.9" r="26.8" />
       <path
         d="M443 31c0-17-14-31-31-31H78C61 0 47 14 47 31v69c0 8 4 15 9 21-5 6-9 13-9 21v70c0 8 4 15 9 21-5 5-9 13-9 21v69c0 17 14 31 31 31h334c17 0 31-14 31-31v-69c0-8-3-16-9-21 6-6 9-13 9-22v-69c0-8-3-16-9-21 6-6 9-13 9-21V31zM65 31c0-7 6-13 12-13h335c7 0 13 6 13 13v69c0 6-6 12-13 12H78c-7 0-13-5-13-12V31zm360 111v70c0 6-6 12-13 12H78c-7 0-13-6-13-12v-70c0-6 6-12 13-12h334c7 0 13 6 13 12zm0 181c0 7-6 13-13 13H78c-7 0-13-6-13-13v-69c0-7 6-12 13-12h334c7 0 13 5 13 12v69z"
       />
-      <path d="M241 74h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9z"/>
-      <circle cx="148.8" cy="65.1" r="10.8"/>
+      <path d="M241 74h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9z" />
+      <circle cx="148.8" cy="65.1" r="10.8" />
       <path
         d="M241 186h113c5 0 9-4 9-9s-4-9-9-9H241c-5 0-9 4-9 9s4 9 9 9zM354 280H241c-5 0-9 4-9 9s4 9 9 9h113c5 0 9-4 9-9s-4-9-9-9z"
       />
-      <circle cx="148.8" cy="177" r="10.8"/>
-      <circle cx="148.8" cy="288.9" r="10.8"/>
+      <circle cx="148.8" cy="177" r="10.8" />
+      <circle cx="148.8" cy="288.9" r="10.8" />
       <path
         d="M423 418c-17 0-31 11-35 27H280c-4-13-13-22-26-26v-28c0-5-4-9-9-9s-9 4-9 9v28c-13 3-22 13-26 26H102a36 36 0 100 18h108a36 36 0 0070 0h108a36 36 0 1035-45zM67 472a18 18 0 010-36 18 18 0 010 36zm178 0a18 18 0 010-36 18 18 0 010 36zm178 0a18 18 0 010-36 18 18 0 010 36z"
       />
@@ -177,16 +177,26 @@ defineProps<Props>();
       />
     </svg>
 
-    <svg v-else-if="name === 'logout'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 198.7 198.7"
-         xml:space="preserve"><path d="M161.5 48.8a7.5 7.5 0 0 0-10.6 10.6 72.4 72.4 0 0 1 21.3 51.5 72.4 72.4 0 0 1-72.9 72.8A72.7 72.7 0 0 1 47.8 59.4a7.5 7.5 0 1 0-10.6-10.6 88 88 0 1 0 124.3 0z"/>
-      <path d="M99.3 97.2c4.2 0 7.5-3.4 7.5-7.5V7.5a7.5 7.5 0 1 0-15 0v82.2c0 4.1 3.4 7.5 7.5 7.5z"/></svg>
+    <svg
+      v-else-if="name === 'logout'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 198.7 198.7"
+      xml:space="preserve"
+    >
+      <path
+        d="M161.5 48.8a7.5 7.5 0 0 0-10.6 10.6 72.4 72.4 0 0 1 21.3 51.5 72.4 72.4 0 0 1-72.9 72.8A72.7 72.7 0 0 1 47.8 59.4a7.5 7.5 0 1 0-10.6-10.6 88 88 0 1 0 124.3 0z"
+      />
+      <path
+        d="M99.3 97.2c4.2 0 7.5-3.4 7.5-7.5V7.5a7.5 7.5 0 1 0-15 0v82.2c0 4.1 3.4 7.5 7.5 7.5z"
+      />
+    </svg>
 
     <svg
       v-else-if="name === 'minus'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
-      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z"/>
+      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z" />
     </svg>
 
     <svg
@@ -206,8 +216,8 @@ defineProps<Props>();
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 12 12"
     >
-      <path d="M6 0c.6 0 1 .4 1 1v10a1 1 0 1 1-2 0V1c0-.6.4-1 1-1Z"/>
-      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z"/>
+      <path d="M6 0c.6 0 1 .4 1 1v10a1 1 0 1 1-2 0V1c0-.6.4-1 1-1Z" />
+      <path d="M12 6c0 .6-.4 1-1 1H1a1 1 0 0 1 0-2h10c.6 0 1 .4 1 1Z" />
     </svg>
 
     <svg
@@ -389,7 +399,7 @@ defineProps<Props>();
           y2="30"
           gradientUnits="userSpaceOnUse"
         >
-          <stop class="transition-all duration-200" stop-color="#FACC15"/>
+          <stop class="transition-all duration-200" stop-color="#FACC15" />
           <stop
             class="transition-all duration-200"
             offset="1"
@@ -420,7 +430,7 @@ defineProps<Props>();
       <path
         d="M128 406c4 0 8-4 8-8V124a8 8 0 0 0-15 0v274c0 4 3 8 7 8zM384 264c-4 0-7 3-7 7v204c0 12-11 22-23 22H158c-12 0-22-10-22-22v-47a8 8 0 0 0-15 0v47c0 20 16 37 37 37h196c21 0 38-17 38-37V271c0-4-4-7-8-7zM354 0H158c-21 0-37 17-37 38v56a8 8 0 0 0 15 0V38c0-13 10-23 22-23h31c8 15 24 25 41 25h52c17 0 33-10 41-25h31c12 0 23 10 23 23v203a8 8 0 0 0 15 0V38c0-21-17-38-38-38zm-72 25h-52c-9 0-17-4-23-10h98c-6 6-14 10-23 10z"
       />
-      <path d="M287 478a8 8 0 0 0 0-15h-62a8 8 0 0 0 0 15h62z"/>
+      <path d="M287 478a8 8 0 0 0 0-15h-62a8 8 0 0 0 0 15h62z" />
     </svg>
 
     <svg
@@ -434,7 +444,7 @@ defineProps<Props>();
       <path
         d="M90 61v284a8 8 0 0 0 15 0V69h302v103a8 8 0 0 0 15 0V61c0-4-3-7-7-7H97c-4 0-7 3-7 7zM90 432c0 4 3 8 7 8h318c4 0 7-4 7-8V202a8 8 0 0 0-15 0v223H105v-50a8 8 0 0 0-15 0v57zM233 467a23 23 0 1 0 46-1 23 23 0 0 0-46 1zm31 0a8 8 0 1 1-16 0 8 8 0 0 1 16 0zM288 42a8 8 0 0 0 0-15h-34a8 8 0 0 0 0 15h34z"
       />
-      <circle cx="225.6" cy="34.3" r="7.5"/>
+      <circle cx="225.6" cy="34.3" r="7.5" />
     </svg>
 
     <svg
@@ -497,12 +507,12 @@ defineProps<Props>();
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path
         d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"
       />
-      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/>
-      <path d="M8 11v-4a4 4 0 1 1 8 0v4"/>
+      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+      <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
     </svg>
 
     <svg
@@ -516,13 +526,13 @@ defineProps<Props>();
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path
         d="M15 11h2a2 2 0 0 1 2 2v2m0 4a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2h4"
       />
-      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/>
-      <path d="M8 11v-3m.719 -3.289a4 4 0 0 1 7.281 2.289v4"/>
-      <path d="M3 3l18 18"/>
+      <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
+      <path d="M8 11v-3m.719 -3.289a4 4 0 0 1 7.281 2.289v4" />
+      <path d="M3 3l18 18" />
     </svg>
 
     <svg
@@ -536,15 +546,15 @@ defineProps<Props>();
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M15 8h.01"/>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M15 8h.01" />
       <path
         d="M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v6.5"
       />
-      <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4"/>
-      <path d="M14 14l1 -1c.653 -.629 1.413 -.815 2.13 -.559"/>
-      <path d="M19 16v6"/>
-      <path d="M22 19l-3 3l-3 -3"/>
+      <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4" />
+      <path d="M14 14l1 -1c.653 -.629 1.413 -.815 2.13 -.559" />
+      <path d="M19 16v6" />
+      <path d="M22 19l-3 3l-3 -3" />
     </svg>
 
     <svg
@@ -558,13 +568,13 @@ defineProps<Props>();
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M14 3v4a1 1 0 0 0 1 1h4"/>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
       <path
         d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
       />
-      <path d="M12 17v-6"/>
-      <path d="M9.5 14.5l2.5 2.5l2.5 -2.5"/>
+      <path d="M12 17v-6" />
+      <path d="M9.5 14.5l2.5 2.5l2.5 -2.5" />
     </svg>
   </div>
 </template>

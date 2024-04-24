@@ -4,13 +4,13 @@ import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
 const KEY_MAP = {
-  'php_version': 'php',
-  'laravel_version': 'laravel',
-  'symfony_version': 'symfony',
-  'line_number': 'line',
-  'hostname': 'host',
-  'environment': 'env',
-}
+  php_version: "php",
+  laravel_version: "laravel",
+  symfony_version: "symfony",
+  line_number: "line",
+  hostname: "host",
+  environment: "env",
+};
 
 type Props = {
   serverName: string;
@@ -24,14 +24,18 @@ const props = withDefaults(defineProps<Props>(), {
   originConfig: null,
 });
 
-let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
-  // Filter out empty values
-  if (!value || value === 'undefined') return acc;
+const mappedOrigins = computed(() =>
+  props.originConfig
+    ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
+        // Filter out empty values
+        if (!value || value === "undefined") return acc;
 
-  const mappedKey = KEY_MAP[key] || key;
-  acc[mappedKey] = value;
-  return acc;
-}, {} as { [key: string]: string }) : {});
+        const mappedKey = KEY_MAP[key] || key;
+        acc[mappedKey] = value;
+        return acc;
+      }, {} as { [key: string]: string })
+    : {}
+);
 </script>
 
 <template>
@@ -50,7 +54,7 @@ let mappedOrigins = computed(() => props.originConfig ? Object.entries(props.ori
     </div>
 
     <div v-if="serverName" class="preview-card-footer__host">
-      <IconSvg name="host" class="preview-card-footer__host-icon"/>
+      <IconSvg name="host" class="preview-card-footer__host-icon" />
       <span class="preview-card-footer__host-name">
         {{ serverName }}
       </span>

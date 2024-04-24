@@ -1,3 +1,14 @@
 {
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "include": [
+    "src/**/*.vue",
+    ".nuxt/nuxt.d.ts",
+    ".nuxt/.config/nuxt.*",
+    ".nuxt/**/*",
+    ".nuxt/node_modules/@nuxtjs/tailwindcss/runtime",
+    ".nuxt/node_modules/@pinia/nuxt/runtime",
+    ".nuxt/node_modules/@nuxt/devtools/runtime",
+    ".nuxt/node_modules/@nuxt/telemetry/runtime",
+    ".nuxt"
+  ]
 }

@@ -33,13 +33,13 @@ const eventLink = computed(() => `/smtp/${props.event.id}`);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .smtp-preview {
 }
 
 .smtp-preview__link {
-  @apply block flex items-stretch ;
+  @apply block flex items-stretch;
   @apply p-2 md:p-4;
   @apply flex flex-col;
   @apply border dark:border-gray-600;

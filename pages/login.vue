@@ -1,52 +1,56 @@
 <script setup lang="ts">
-import { useNuxtApp, navigateTo } from "#app"
+import { useNuxtApp, navigateTo, setPageLayout } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "~/src/shared/lib/io";
+import { useProfileStore, useSettingsStore } from "~/src/shared/stores";
 import { IconSvg } from "~/src/shared/ui";
-import {useProfileStore} from "~/stores/profile";
 
-definePageMeta({
-  layout: 'blank'
-})
+useSettingsStore();
+setPageLayout("blank");
 
-const app = useNuxtApp()
-const store = useProfileStore()
+const app = useNuxtApp();
+const store = useProfileStore();
 
 if (store.isAuthenticated) {
-  await navigateTo('/')
+  await navigateTo("/");
 }
 
 const redirect = async () => {
   await navigateTo(`${REST_API_URL}/${app.$appSettings.auth.login_url}`, {
-    external: true
-  })
-}
+    external: true,
+  });
+};
 </script>
 
 <template>
   <div class="login-page">
     <div class="login-form-container">
-      <IconSvg class="login-form--logo" name="logo"/>
+      <IconSvg class="login-form--logo" name="logo" />
       <div class="login-form">
         <div class="login-form-left-block">
           <h1 class="login-form--title">Welcome Back</h1>
-          <p class="pb-2 text-center text-sm text-gray-800">Let's get you signed in.</p>
+          <p class="pb-2 text-center text-sm text-gray-800">
+            Let's get you signed in.
+          </p>
           <button class="login-form--button" @click="redirect">
-            <IconSvg class="w-6" name="lock" fill="currentcolor"/>
+            <IconSvg class="w-6" name="lock" fill="currentcolor" />
             Continue to SSO
           </button>
         </div>
         <div
-class="login-form-right-block"
-             style="background: url('/bg.jpg'); background-size: cover; background-position: center center;">
-        </div>
+          class="login-form-right-block"
+          style="
+            background: url('/bg.jpg');
+            background-size: cover;
+            background-position: center center;
+          "
+        ></div>
       </div>
     </div>
   </div>
 </template>
 
-
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .login-page {
   @apply bg-gray-800;

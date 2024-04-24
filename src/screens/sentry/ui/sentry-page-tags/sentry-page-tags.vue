@@ -5,7 +5,6 @@ import type {
   SentryContextRuntime,
   SentryContextOS,
 } from "~/src/entities/sentry/types";
-import { CodeSnippet } from "~/src/shared/ui";
 
 type Props = {
   payload: Sentry;
@@ -59,7 +58,6 @@ const contextsOS = computed(() => {
     <div class="sentry-page-tags__labels-wrapper">
       <h3 class="sentry-page-tags__title">tags</h3>
       <div class="sentry-page-tags__labels">
-
         <div class="sentry-page-tags__label">
           <div class="sentry-page-tags__label-name">env</div>
           <div class="sentry-page-tags__label-value">
@@ -98,19 +96,25 @@ const contextsOS = computed(() => {
           </div>
         </div>
 
-        <div v-if="payload.tags" v-for="(name,value) in payload.tags" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">{{ value }}</div>
-          <div class="sentry-page-tags__label-value">
-            {{ name || ' - ' }}
+        <template v-if="payload.tags">
+          <div
+            v-for="(name, value) in payload.tags"
+            :key="value"
+            class="sentry-page-tags__label"
+          >
+            <div class="sentry-page-tags__label-name">{{ value }}</div>
+            <div class="sentry-page-tags__label-value">
+              {{ name || " - " }}
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-page-tags {
 }

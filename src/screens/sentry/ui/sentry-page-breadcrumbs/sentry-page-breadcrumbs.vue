@@ -11,8 +11,11 @@ withDefaults(defineProps<Props>(), {
   breadcrumbs: () => [] as SentryBreadcrumb[],
 });
 
-const formatDate = (timestamp: number): string =>
-  moment.unix(timestamp).fromNow();
+const formatDate = (timestamp?: number): string =>
+  timestamp ? moment.unix(timestamp).fromNow() : "";
+
+const getClassByLevel = (breadcrumb: SentryBreadcrumb) =>
+  breadcrumb.level?.toLowerCase();
 </script>
 
 <template>
@@ -20,7 +23,11 @@ const formatDate = (timestamp: number): string =>
     <h3 class="sentry-page-breadcrumbs__title">
       breadcrumbs
 
-      <span v-if="breadcrumbs.length > 0" class="sentry-page-breadcrumbs__counter">{{ breadcrumbs.length }}</span>
+      <span
+        v-if="breadcrumbs.length > 0"
+        class="sentry-page-breadcrumbs__counter"
+        >{{ breadcrumbs.length }}</span
+      >
     </h3>
     <div class="sentry-page-breadcrumbs__in">
       <nav
@@ -35,7 +42,7 @@ const formatDate = (timestamp: number): string =>
       <div v-if="breadcrumbs" class="sentry-page-breadcrumbs__cols-wr">
         <div
           v-for="b in breadcrumbs"
-          :key="b"
+          :key="b.toString()"
           class="sentry-page-breadcrumbs__cols"
         >
           <div class="sentry-page-breadcrumbs__col">
@@ -68,7 +75,11 @@ const formatDate = (timestamp: number): string =>
             </div>
           </div>
           <div class="sentry-page-breadcrumbs__col">
-            <span class="sentry-page-breadcrumbs__col-level-badge" :class="b.level?.toLowerCase()">{{ b.level }}</span>
+            <span
+              class="sentry-page-breadcrumbs__col-level-badge"
+              :class="getClassByLevel(b)"
+              >{{ b.level }}</span
+            >
           </div>
           <div class="sentry-page-breadcrumbs__col">
             {{ formatDate(b.timestamp) }}
@@ -80,7 +91,7 @@ const formatDate = (timestamp: number): string =>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .sentry-page-breadcrumbs {
   @apply py-5 px-4;

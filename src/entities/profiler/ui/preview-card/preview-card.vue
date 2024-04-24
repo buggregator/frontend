@@ -22,7 +22,7 @@ const eventLink = computed(() => `/profiler/${props.event.id}`);
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .profiler-preview {
   @apply flex flex-col;

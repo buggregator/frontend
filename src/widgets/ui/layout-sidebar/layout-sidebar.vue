@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import {storeToRefs} from "pinia";
-import {computed} from "vue";
-import {IconSvg} from "~/src/shared/ui";
-import {useConnectionStore} from "~/stores/connections";
-import type {Profile} from "~/src/shared/types";
-import {useProfileStore} from "~/stores/profile";
-import {useNuxtApp} from "#app";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+import { useNuxtApp, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useConnectionStore } from "~/src/shared/stores/connections";
+import { useProfileStore } from "~/src/shared/stores/profile";
+import type { Profile } from "~/src/shared/types";
+import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
   apiVersion: string;
   clientVersion: string;
-  profile: Profile;
+  profile?: Profile;
 };
 
 const props = defineProps<Props>();
-const app = useNuxtApp()
+const app = useNuxtApp();
 
 const connectionStore = useConnectionStore();
-const {isConnectedWS} = storeToRefs(connectionStore);
+const { isConnectedWS } = storeToRefs(connectionStore);
 
 const profileStore = useProfileStore();
 
@@ -32,8 +32,10 @@ const avatar = computed(() => {
     return null;
   }
 
-  if (props.profile.avatar.startsWith('<svg')) {
-    return `data:image/svg+xml;base64,${btoa(props.profile.avatar.replace(/&quot;/g, '"'))}`
+  if (props.profile.avatar.startsWith("<svg")) {
+    return `data:image/svg+xml;base64,${btoa(
+      props.profile.avatar.replace(/&quot;/g, '"')
+    )}`;
   }
 
   return props.profile.avatar;
@@ -48,31 +50,30 @@ const toggleProfileDropdown = () => {
   isHidden.value = !isHidden.value;
 };
 
-const logout = async (event) => {
+const logout = () => {
   profileStore.removeToken();
-  const router = useRouter()
-  router.push('/login')
+  const router = useRouter();
+  router.push("/login");
 };
-
 </script>
 
 <template>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
       <NuxtLink to="/" title="Events" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="events"/>
+        <IconSvg class="layout-sidebar__link-icon" name="events" />
       </NuxtLink>
 
       <NuxtLink to="/sentry" title="Sentry logs" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="sentry"/>
+        <IconSvg class="layout-sidebar__link-icon" name="sentry" />
       </NuxtLink>
 
       <NuxtLink to="/profiler" title="Profiler" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="profiler"/>
+        <IconSvg class="layout-sidebar__link-icon" name="profiler" />
       </NuxtLink>
 
       <NuxtLink to="/smtp" title="SMTP mails" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="smtp"/>
+        <IconSvg class="layout-sidebar__link-icon" name="smtp" />
       </NuxtLink>
 
       <NuxtLink
@@ -80,7 +81,7 @@ const logout = async (event) => {
         title="Http dumps"
         class="layout-sidebar__link"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="http-dumps"/>
+        <IconSvg class="layout-sidebar__link-icon" name="http-dumps" />
       </NuxtLink>
 
       <NuxtLink
@@ -88,11 +89,11 @@ const logout = async (event) => {
         title="Inspector logs"
         class="layout-sidebar__link"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="inspector"/>
+        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
       </NuxtLink>
 
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="settings"/>
+        <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
     </nav>
 
@@ -100,14 +101,22 @@ const logout = async (event) => {
       <div v-if="app.$appSettings.auth.enabled" class="layout-sidebar__profile">
         <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
           <div class="profile-dropdown-item profile-dropdown-item--email">
-            {{ profile?.email }}
+            {{ profile.email }}
           </div>
-          <div class="profile-dropdown-item profile-dropdown-item--logout" @click="logout">
-            <IconSvg class="profile-dropdown-item--logout-icon" name="logout"/> Logout
+          <div
+            class="profile-dropdown-item profile-dropdown-item--logout"
+            @click="logout"
+          >
+            <IconSvg class="profile-dropdown-item--logout-icon" name="logout" />
+            Logout
           </div>
         </div>
-        <div v-if="avatar" class="layout-sidebar__profile-avatar" @click="toggleProfileDropdown">
-          <img :src="avatar"/>
+        <div
+          v-if="avatar"
+          class="layout-sidebar__profile-avatar"
+          @click="toggleProfileDropdown"
+        >
+          <img :src="avatar" />
         </div>
       </div>
       <div class="layout-sidebar__connection">
@@ -186,7 +195,7 @@ const logout = async (event) => {
 
 .layout-sidebar__profile-dropdown {
   @apply absolute z-10 start-full bottom-0;
-  @apply divide-y divide-gray-200 dark:divide-gray-600 ;
+  @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
   @apply w-60;
   @apply bg-white dark:bg-gray-700;

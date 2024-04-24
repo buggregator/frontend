@@ -13,9 +13,9 @@ defineProps<Props>();
 <template>
   <li class="page-placeholder-item">
     <IconSvg :name="iconName" class="page-placeholder-item__icon" />
-      <a :href="linkUrl" class="page-placeholder-item__link" target="_blank">
-        {{ title }}
-      </a>
+    <a :href="linkUrl" class="page-placeholder-item__link" target="_blank">
+      {{ title }}
+    </a>
   </li>
 </template>
 

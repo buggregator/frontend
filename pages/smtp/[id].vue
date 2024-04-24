@@ -1,3 +1,67 @@
+<script lang="ts" setup>
+import { computed, onMounted, ref } from "vue";
+import { SmtpPage } from "~/src/screens/smtp";
+import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { PageHeader } from "~/src/widgets/ui";
+import { useSmtp } from "~/src/entities/smtp";
+import type { SMTP } from "~/src/entities/smtp/types";
+import { REST_API_URL } from "~/src/shared/lib/io";
+import { useEvents } from "~/src/shared/lib/use-events";
+import type { EventId, ServerEvent } from "~/src/shared/types";
+
+const { normalizeSmtpEvent } = useSmtp();
+
+const { params } = useRoute();
+const { $authToken } = useNuxtApp();
+const router = useRouter();
+const eventId = params.id as EventId;
+
+useHead({
+  title: `SMTP > ${eventId} | Buggregator`,
+});
+
+const { events } = useEvents();
+
+const isLoading = ref(false);
+const serverEvent = ref<Event | null>(null);
+
+const event = computed(() =>
+  serverEvent.value
+    ? normalizeSmtpEvent(serverEvent.value as unknown as ServerEvent<SMTP>)
+    : null
+);
+
+const html = computed(
+  () => `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`
+);
+
+const onDelete = () => {
+  events.removeById(eventId);
+
+  router.push("/");
+};
+
+const getEvent = async () => {
+  isLoading.value = true;
+
+  await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
+    onResponse({ response: { _data } }) {
+      serverEvent.value = _data;
+      isLoading.value = false;
+    },
+    onResponseError() {
+      router.push("/404");
+    },
+    onRequestError() {
+      router.push("/404");
+    },
+  });
+};
+
+onMounted(getEvent);
+</script>
+
 <template>
   <main class="smtp-event">
     <PageHeader
@@ -10,87 +74,20 @@
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
-    <div v-if="pending && !event" class="smtp-event__loading">
+    <div v-if="isLoading && !event" class="smtp-event__loading">
       <div></div>
       <div></div>
       <div></div>
     </div>
 
     <div class="smtp-event__body">
-      <SmtpPage v-if="event" :event="event" :html-source="html"/>
+      <SmtpPage v-if="event" :event="event" :html-source="html" />
     </div>
   </main>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
-import { useSmtp } from "~/src/entities/smtp";
-import type { SMTP } from "~/src/entities/smtp/types";
-import { htmlEncode } from "~/src/shared/lib/helpers";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { EventId, ServerEvent } from "~/src/shared/types";
-import { SmtpPage } from "~/src/screens/smtp";
-
-const {normalizeSmtpEvent} = useSmtp();
-
-export default defineComponent({
-  components: {SmtpPage, PageHeader},
-  async setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const nuxtApp = useNuxtApp();
-    const eventId = route.params.id as EventId;
-
-    const {events} = useEvents();
-
-    // TODO: move to main API module
-    const {data: event, pending} = await useFetch(events.getUrl(eventId), {
-      headers: {"X-Auth-Token": nuxtApp.$authToken.token},
-      onResponse({response}) {
-        return response.data;
-      },
-      onResponseError() {
-        router.push("/404");
-      },
-      onRequestError() {
-        router.push("/404");
-      },
-    });
-
-    return {
-      serverEvent: event,
-      pending,
-      eventId,
-      html: `<iframe srcdoc="${htmlEncode(event.value.payload.html)}"/>`,
-      clearEvent: () => events.removeById(eventId),
-    };
-  },
-  head() {
-    return {
-      title: `SMTP > ${this.eventId} | Buggregator`,
-    };
-  },
-  computed: {
-    event() {
-      return this.serverEvent
-        ? normalizeSmtpEvent(this.serverEvent as unknown as ServerEvent<SMTP>)
-        : null;
-    },
-  },
-  methods: {
-    onDelete() {
-      this.clearEvent();
-
-      this.$router.push("/");
-    },
-  },
-});
-</script>
-
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .smtp-event {
   @include layout;

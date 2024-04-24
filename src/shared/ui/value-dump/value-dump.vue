@@ -55,7 +55,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .value-dump {
   display: block;
@@ -63,7 +63,7 @@ onMounted(() => {
 
 .value-dump__html {
   @include code-example();
-  @apply divide-gray-300 dark:divide-gray-600 ;
+  @apply divide-gray-300 dark:divide-gray-600;
   @apply font-mono break-all text-2xs sm:text-xs md:text-sm lg:text-base;
   @apply p-1 md:p-3 lg:p-4;
 }

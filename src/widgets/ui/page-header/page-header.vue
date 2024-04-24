@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { IconSvg } from "~/src/shared/ui";
-
 type Props = {
   title?: string;
   buttonTitle?: string;
@@ -37,13 +35,11 @@ const clearEvents = () => {
         {{ buttonTitle }}
       </button>
     </div>
-
-<!--    <IconSvg class="page-header__lock-icon" name="lock" />-->
   </header>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .page-header {
   @apply flex justify-between;

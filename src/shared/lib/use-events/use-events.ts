@@ -1,13 +1,11 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
 import type { RayContentLock } from "~/src/entities/ray/types";
+import { type TCachedEventsEmptyMap, type TEventsGroup , useCachedIdsStore, useLockedIdsStore } from "../../stores";
 import type { ServerEvent, NormalizedEvent, EventId } from '../../types';
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 import { type TUseEventsApi, useEventsApi } from "./use-events-api";
-import type { TCachedEventsEmptyMap, TEventsGroup } from "~/stores/cached-ids";
-import { useCachedIdsStore } from "~/stores/cached-ids";
-import { useLockedIdsStore } from "~/stores/locked-ids";
 
 
 type TUseEvents = () => {

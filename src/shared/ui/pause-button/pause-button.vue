@@ -27,25 +27,19 @@ const toggleUpdate = () => {
 
 <template>
   <button
-    class="events-page__btn-stop-events"
-    :class="{ 'events-page__btn-stop-events--active': isPaused }"
+    class="pause-button"
+    :class="{ 'pause-button--active': isPaused }"
     :disabled="disabled"
     @click="toggleUpdate"
   >
     <IconSvg
-      v-if="!isPaused"
-      name="bolt"
-      class="events-page__btn-stop-events-icon"
-    />
-    <IconSvg
-      v-if="isPaused"
-      name="bolt-slash"
-      class="events-page__btn-stop-events-icon"
+      :name="!isPaused ? 'bolt' : 'bolt-slash'"
+      class="pause-button__icon"
     />
     <span>{{ isPaused ? "Paused" : "Listening" }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"
-      class="events-page__btn-stop-events-count"
+      class="pause-button__count"
       :title="titleEventsCount"
     >
       {{ totalNewEventsCount }}
@@ -54,19 +48,9 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
-.events-page__btn-stop-events--active .events-page__btn-stop-events-icon {
-  @apply animate-none;
-}
-
-.events-page__btn-stop-events-count {
-  @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
-
-  transform: translate(60%, -60%);
-}
-
-.events-page__btn-stop-events {
+.pause-button {
   @include button;
   @apply bg-blue-400 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-800;
   @apply flex items-center space-x-1;
@@ -78,17 +62,20 @@ const toggleUpdate = () => {
   }
 }
 
-.events-page__btn-stop-events--active {
+.pause-button--active {
   @apply opacity-100 bg-blue-500 dark:bg-blue-800;
 }
 
-.events-page__btn-stop-events-icon {
-  @apply w-3 h-3 sm:w-4 sm:h-4 stroke-white animate-pulse;
+.pause-button__icon {
+  @apply w-4 h-4 stroke-white animate-pulse;
 }
 
-.events-page__btn-stop-events-count {
-  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
+.pause-button--active .pause-button__icon {
+  @apply animate-none;
+}
 
+.pause-button__count {
+  @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
   transform: translate(60%, -60%);
 }
 </style>

@@ -1,3 +1,23 @@
+<script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { useHead } from "#app";
+import { PageHeader } from "~/src/widgets/ui";
+import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
+import { IconSvg } from "~/src/shared/ui";
+
+const settingsStore = useSettingsStore();
+const { changeTheme, changeNavbar } = settingsStore;
+const { themeType, isFixedHeader } = storeToRefs(settingsStore);
+
+useHead({
+  title: "Settings | Buggregator",
+});
+
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
+</script>
+
 <template>
   <main class="settings-page">
     <PageHeader class="settings-page__header">
@@ -62,45 +82,8 @@
   </main>
 </template>
 
-<script lang="ts">
-import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
-import { PageHeader } from "~/src/widgets/ui";
-import { IconSvg } from "~/src/shared/ui";
-import { useSettingsStore, THEME_MODES } from "~/stores/settings";
-
-export default defineComponent({
-  components: {
-    IconSvg,
-    PageHeader,
-  },
-  setup() {
-    const settingsStore = useSettingsStore();
-    const { changeTheme, changeNavbar } = settingsStore;
-    const { themeType, isFixedHeader } = storeToRefs(settingsStore);
-
-    console.log(settingsStore)
-
-    return {
-      themeType,
-      isFixedHeader,
-      changeTheme,
-      changeNavbar,
-    };
-  },
-  head: {
-    title: "Settings | Buggregator",
-  },
-  computed: {
-    isDarkMode() {
-      return this.themeType === THEME_MODES.DARK;
-    },
-  },
-});
-</script>
-
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .settings-page {
   @include layout;

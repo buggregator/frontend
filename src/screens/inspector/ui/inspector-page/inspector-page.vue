@@ -75,7 +75,7 @@ const date = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .inspector-page {
   @apply relative;

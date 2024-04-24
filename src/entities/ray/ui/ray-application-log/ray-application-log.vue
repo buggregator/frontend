@@ -13,7 +13,7 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .ray-application-log {
   @include code-example();

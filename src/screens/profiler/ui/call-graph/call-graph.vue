@@ -155,7 +155,7 @@ const setMinPercent = (value: number) => {
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .call-graph {
   @apply relative flex rounded border border-gray-900 min-h-min min-w-min h-full;

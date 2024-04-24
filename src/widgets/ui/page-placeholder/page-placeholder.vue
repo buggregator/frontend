@@ -16,7 +16,7 @@ const items = [
     iconName: "discord",
     title: "Join our discord",
     linkUrl: "https://discord.gg/vDsCD3EKUB",
-  }
+  },
 ];
 </script>
 
@@ -28,7 +28,6 @@ const items = [
         :key="item.title"
         :icon-name="item.iconName"
         :title="item.title"
-        :link-name="item.linkName"
         :link-url="item.linkUrl"
       />
     </ul>

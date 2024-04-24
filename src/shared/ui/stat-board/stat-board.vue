@@ -59,7 +59,7 @@ const statItems = computed(() => [
 </template>
 
 <style lang="scss" scoped>
-@import "assets/mixins";
+@import "src/assets/mixins";
 
 .stat-board {
   @apply flex flex-col sm:flex-row justify-between items-start;

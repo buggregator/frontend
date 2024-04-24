@@ -1,7 +1,7 @@
 import {createPinia} from 'pinia';
 import { setup } from '@storybook/vue3';
-import "../assets/index.css";
-import "../assets/vendor";
+import "../src/assets/index.css";
+import "../src/assets/vendor";
 import "./stories.css"
 import SfdumpWrap from "../src/shared/lib/vendor/dumper";
 import 'tailwindcss/tailwind.css'
