@@ -4,7 +4,7 @@ import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
 import type {
   EnhancedRayEvent,
-  RayContentCarbone,
+  RayContentCarbon,
   RayContentCustom,
   RayContentEloquent,
   RayContentApplicationLog,
@@ -25,7 +25,7 @@ import type {
 } from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
 import { RayApplicationLog } from "../ray-application-log";
-import { RayCarbone } from "../ray-carbone";
+import { RayCarbon } from "../ray-carbon";
 import { RayCustom } from "../ray-custom";
 import { RayEloquent } from "../ray-eloquent";
 import { RayEvent } from "../ray-event";
@@ -79,9 +79,9 @@ const COMPONENT_TYPE_MAP = {
     }),
   },
   [RAY_EVENT_TYPES.CARBON]: {
-    view: RayCarbone,
+    view: RayCarbon,
     getProps: (payload: RayPayload) => ({
-      carbone: payload.content as RayContentCarbone,
+      carbon: payload.content as RayContentCarbon,
     }),
   },
   [RAY_EVENT_TYPES.TRACE]: {
@@ -180,3 +180,5 @@ const COMPONENT_TYPE_MAP = {
     </template>
   </PreviewCard>
 </template>
+
+

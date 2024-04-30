@@ -13,7 +13,7 @@ export default {
 
 export const Default: StoryObj<typeof RayException> = {
   args: {
-    content: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException)
+    exception: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException)
   }
 }
 

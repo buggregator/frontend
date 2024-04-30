@@ -1,5 +1,5 @@
 export * from './ray-frame';
-export * from './ray-carbone';
+export * from './ray-carbon';
 export * from './ray-exception';
 export * from './ray-file';
 export * from './ray-trace';
