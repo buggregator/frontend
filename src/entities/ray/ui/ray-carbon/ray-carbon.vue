@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
-import type { RayContentCarbone } from "../../types";
+import type { RayContentCarbon } from "../../types";
 
 type Props = {
-  carbone: RayContentCarbone;
+  carbon: RayContentCarbon;
 };
 
 defineProps<Props>();
@@ -13,13 +13,13 @@ defineProps<Props>();
   <div class="ray-carbon">
     <TableBase>
       <TableBaseRow title="Formatted">
-        {{ carbone.formatted }}
+        {{ carbon.formatted }}
       </TableBaseRow>
       <TableBaseRow title="Timezone">
-        {{ carbone.timezone }}
+        {{ carbon.timezone }}
       </TableBaseRow>
       <TableBaseRow title="Timestamp">
-        {{ carbone.timestamp }}
+        {{ carbon.timestamp }}
       </TableBaseRow>
     </TableBase>
   </div>

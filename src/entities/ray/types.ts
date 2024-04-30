@@ -20,7 +20,7 @@ export interface RayContent {
   label: string,
 }
 
-export interface RayContentCarbone {
+export interface RayContentCarbon {
   formatted: string,
   timestamp: number,
   timezone: string
@@ -144,7 +144,7 @@ export interface RayPayload {
     | RayContent
     | RayContentArray
     | RayContentObject
-    | RayContentCarbone
+    | RayContentCarbon
     | RayContentSQL
     | RayContentApplicationLog
     | RayContentEloquent

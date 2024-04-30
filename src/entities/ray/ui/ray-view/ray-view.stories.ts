@@ -14,6 +14,6 @@ export default {
 
 export const Default: StoryObj<typeof RayViews> = {
   args: {
-    content: (normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView)
+    view: (normalizeRayEvent(rayLaravelViewsMock).payload.payloads[0].content as RayContentView)
   }
 }

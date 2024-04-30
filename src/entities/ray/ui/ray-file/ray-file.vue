@@ -71,7 +71,7 @@ const hasSnippets = computed(() =>
 }
 
 .ray-file__icon {
-  @apply w-5 h-4 border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded;
+  @apply w-5 h-4 py-1 rounded;
 }
 
 .ray-file__icon--collapsed {
