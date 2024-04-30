@@ -7,13 +7,16 @@ import { CodeSnippet } from "../code-snippet";
 type Props = {
   value: string;
   type: string;
+  language: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   type: "",
+  language: "plaintext",
 });
 
 const isValueString = isString(props.value) && props.type === "string";
+const isValueCode = isString(props.value) && (props.type === "code");
 
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null;
 const makeDumpBody = () => {
@@ -21,14 +24,7 @@ const makeDumpBody = () => {
     return props.value === "1" ? "true" : "false";
   }
 
-  if (dumpId) {
-    return (props.value as string).replace(
-      /<(style|script)\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/(style|script)>/gi,
-      ""
-    );
-  }
-
-  if (isValueString) {
+  if (isValueString && !props.value.replace(/\s/g, '').length) {
     return `"${props.value}"`;
   }
 
@@ -48,9 +44,8 @@ onMounted(() => {
 
 <template>
   <div class="value-dump">
-    <CodeSnippet v-if="isValueString" language="php" :code="dumpBody" />
-
-    <div v-if="!isValueString" class="value-dump__html" v-html="dumpBody" />
+    <CodeSnippet v-if="isValueString || isValueCode" :language="language" :code="dumpBody"/>
+    <div v-else class="value-dump__html" v-html="dumpBody"/>
   </div>
 </template>
 

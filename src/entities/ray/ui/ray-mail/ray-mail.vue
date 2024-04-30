@@ -2,6 +2,7 @@
 import { ref, defineProps } from "vue";
 import { IconSvg, TableBase, TableBaseRow } from "~/src/shared/ui";
 import type { RayContentMail, RayUser } from "../../types";
+import { SmtpPagePreview } from "~/src/screens/smtp";
 
 type Props = {
   content: RayContentMail;
@@ -56,9 +57,9 @@ const getValuesField = (values: RayUser[]) => {
         />
       </h3>
 
-      <div v-if="!collapsed" class="ray-mail__body">
+      <SmtpPagePreview v-if="!collapsed" device="tablet">
         <div v-html="content.html" />
-      </div>
+      </SmtpPagePreview>
     </div>
   </div>
 </template>

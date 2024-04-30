@@ -8,10 +8,11 @@ import {
   varDumpObjectMock,
   varDumpStringMock,
   varDumpEmptyStringMock,
+  varCodeMock
 } from '../../mocks';
 import PreviewCard from './preview-card.vue';
 
-const { normalizeVarDumpEvent } = useVarDump();
+const {normalizeVarDumpEvent} = useVarDump();
 
 export default {
   title: "Entities/var-dump/PreviewCard",
@@ -57,5 +58,11 @@ export const BooleanFalse: StoryObj<typeof PreviewCard> = {
 export const Array: StoryObj<typeof PreviewCard> = {
   args: {
     event: normalizeVarDumpEvent(varDumpArrayMock),
+  }
+}
+
+export const Code: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeVarDumpEvent(varCodeMock),
   }
 }

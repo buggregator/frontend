@@ -16,7 +16,7 @@ type TUseEventsRequests = () => {
 
 export const useEventsRequests: TUseEventsRequests = () => {
   const app = useNuxtApp()
-  const {token} = app.$authToken
+  const {token} = app.$authToken ?? {token: null}
   const headers = {"X-Auth-Token": token || ''}
   const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 

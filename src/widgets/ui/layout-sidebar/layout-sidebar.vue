@@ -167,7 +167,7 @@ const logout = () => {
   @apply text-blue-500 hover:text-white;
   @apply hover:bg-gray-700;
   @apply flex items-center justify-center;
-  @apply md:my-2 md:mx-1 lg:m-2 md:rounded-lg;
+  @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
@@ -179,7 +179,7 @@ const logout = () => {
   @apply fill-current;
   @apply mx-auto;
   @apply h-5 md:h-6;
-  @apply m-2.5 md:m-3;
+  @apply mx-1.5 my-2 md:mx-2 md:my-3;
 
   & > svg {
     @apply h-auto;

@@ -15,7 +15,10 @@ const eventValue = computed(() => String(props.event.payload.payload.value));
 
 <template>
   <PreviewCard class="preview-card" :event="event">
-    <ValueDump :value="eventValue" :type="event.payload.payload.type" />
+    <ValueDump :value="eventValue"
+               :type="event.payload.payload.type"
+               :language="event.payload.payload.language || `plaintext`"
+    />
   </PreviewCard>
 </template>
 
