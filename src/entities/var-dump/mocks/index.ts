@@ -5,6 +5,7 @@ import varDumpObjectMock from './var-dump-object.json'
 import varDumpEmptyStringMock from './var-dump-string-empty.json'
 import varDumpStringMock from './var-dump-string.json'
 import varDumpTrueMock from './var-dump-true.json'
+import varCodeMock from './var-dump-code-hightlight.json'
 
 export {
   varDumpArrayMock,
@@ -14,4 +15,5 @@ export {
   varDumpObjectMock,
   varDumpStringMock,
   varDumpEmptyStringMock,
+  varCodeMock
 }

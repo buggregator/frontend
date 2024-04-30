@@ -11,7 +11,7 @@ defineProps<Props>();
 
 <template>
   <PreviewCard class="event-card-fallback" :event="event">
-    <CodeSnippet class="event-card-fallback__snippet" :code="event" />
+    <CodeSnippet class="event-card-fallback__snippet" :code="event" language="json" />
   </PreviewCard>
 </template>
 

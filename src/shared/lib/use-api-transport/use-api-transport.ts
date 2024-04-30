@@ -7,7 +7,7 @@ let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const nuxtApp = useNuxtApp()
-  const {token} = nuxtApp.$authToken
+  const {token} = nuxtApp.$authToken ?? {token: null}
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventStore()
   const connectionStore = useConnectionStore()

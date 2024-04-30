@@ -4,7 +4,7 @@ import isString from "lodash/isString";
 import { ref, computed } from "vue";
 import { IconSvg } from "../icon-svg";
 
-const CondeHighlight = highlightPlugin.component;
+const CodeHighlight = highlightPlugin.component;
 
 type Props = {
   code: string | unknown;
@@ -39,7 +39,11 @@ const copyCode = (): void => {
 
 <template>
   <div class="code-snippet">
-    <CondeHighlight :language="language" :code="normalizedCode" />
+    <CodeHighlight
+      :language="language"
+      :autodetect="false"
+      :code="normalizedCode"
+    />
 
     <button
       type="button"
@@ -47,7 +51,7 @@ const copyCode = (): void => {
       :class="{ 'code-snippet__copy--active': isCopied }"
       @click="copyCode"
     >
-      <IconSvg name="copy" class="code-snippet__copy-icon" />
+      <IconSvg name="copy" class="code-snippet__copy-icon"/>
       Copy
     </button>
   </div>

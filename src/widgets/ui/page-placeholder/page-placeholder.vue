@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import PagePlaceholderItem from "./page-placeholder-item.vue";
+import { IconSvg } from "~/src/shared/ui";
 
 const items = [
   {
@@ -22,6 +23,9 @@ const items = [
 
 <template>
   <div class="page-placeholder">
+    <div class="logo">
+      <IconSvg name="logo"/>
+    </div>
     <ul class="page-placeholder__list">
       <PagePlaceholderItem
         v-for="item in items"
@@ -36,10 +40,18 @@ const items = [
 
 <style lang="scss" scoped>
 .page-placeholder {
-  @apply p-4 md:p-6 lg:p-10;
+  @apply p-4 md:p-6 lg:p-10 w-1/2;
   @apply bg-white dark:bg-gray-900;
   @apply border dark:border-gray-600 rounded-lg;
   @apply text-gray-600 dark:text-gray-300;
+}
+
+.logo {
+  @apply mb-10 flex h-10;
+
+  svg {
+    @apply h-10;
+  }
 }
 
 .page-placeholder__list {
