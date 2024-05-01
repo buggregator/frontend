@@ -63,15 +63,16 @@ const hasSnippets = computed(() =>
 }
 
 .ray-file__title {
-  @apply break-all font-semibold;
+  @apply break-all text-gray-800 dark:text-white font-semibold;
 }
 
 .ray-file__title-in {
   @include text-muted;
+  @apply  font-light;
 }
 
 .ray-file__icon {
-  @apply w-5 h-4 py-1 rounded;
+  @apply w-5 h-4 py-1 rounded text-gray-800 dark:text-white;
 }
 
 .ray-file__icon--collapsed {
