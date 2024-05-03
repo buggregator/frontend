@@ -3,6 +3,7 @@ import { PAGE_TYPES } from "../constants";
 import { type EventId, type OneOfValues, LOCAL_STORAGE_KEYS } from '../types';
 import { useEventStore } from "./events";
 
+// TODO: add support for multiple projects
 export type TEventsGroup = OneOfValues<typeof PAGE_TYPES>
 
 export type TCachedEventsEmptyMap = Record<TEventsGroup, EventId[]>;
@@ -18,7 +19,7 @@ const initialCachedIds: TCachedEventsEmptyMap = {
   [PAGE_TYPES.ALL_EVENTS]: [] as EventId[],
 };
 
-const { localStorage } = window;
+const {localStorage} = window;
 const getCachedIds = (): TCachedEventsEmptyMap => {
   const storageValue = localStorage?.getItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS);
 
@@ -44,10 +45,10 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
   },
   actions: {
     setByType(cachedType: TEventsGroup) {
-      const { events } =  useEventStore();
+      const {events} = useEventStore();
 
       events
-        .filter(({ type }) =>
+        .filter(({type}) =>
           type === cachedType || cachedType === PAGE_TYPES.ALL_EVENTS
         )
         .forEach((event) => {
@@ -77,7 +78,7 @@ export const useCachedIdsStore = defineStore("useCachedIdsStore", {
       syncLocalStorage(this.cachedIds);
     },
     syncWithActive(activeIds: EventId[]) {
-      if (!activeIds.length) {
+      if (!activeIds?.length) {
         this.removeAll();
 
         return;

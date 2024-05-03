@@ -9,10 +9,10 @@ export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>;
   getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
   getUrl: (id: EventId) => string
-  getAll: () => void
-  removeAll: () => void
-  removeByType: (type: EventType) => void
-  removeById: (id: EventId) => void
+  getAll: (project: string | null) => void
+  removeAll: (project: string | null) => void
+  removeByType: (type: EventType, project: string | null) => void
+  removeById: (id: EventId, project: string | null) => void
 }
 
 export const useEventsApi = (): TUseEventsApi => {
@@ -46,18 +46,18 @@ export const useEventsApi = (): TUseEventsApi => {
     }
   }
 
-  const removeAll = async () => {
+  const removeAll = async (project: string | null = null) => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ uuid }) => !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid)
+        .filter(({uuid}) => !lockedIds.value.includes(uuid))
+        .map(({uuid}) => uuid)
 
       await removeList(removedIds)
 
       return
     }
 
-    const res = await deleteEventsAll()
+    const res = await deleteEventsAll(project)
 
     if (res) {
       eventsStore.removeAll()
@@ -72,8 +72,8 @@ export const useEventsApi = (): TUseEventsApi => {
   const removeByType = async (eventType: EventType) => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ type, uuid }) => type === eventType && !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid)
+        .filter(({type, uuid}) => type === eventType && !lockedIds.value.includes(uuid))
+        .map(({uuid}) => uuid)
 
       await removeList(removedIds)
 
@@ -88,15 +88,15 @@ export const useEventsApi = (): TUseEventsApi => {
     }
   }
 
-  const getAll = () => {
-    getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
+  const getAll = (project: string | null = null): void => {
+    getEventsAll(project).then((eventsList: ServerEvent<unknown>[]) => {
       if (eventsList.length) {
-        eventsStore.initialize(eventsList);
-        cachedIdsStore.syncWithActive(eventsList.map(({ uuid }) => uuid));
+        eventsStore.initialize(project, eventsList);
+        cachedIdsStore.syncWithActive(project, eventsList.map(({uuid}) => uuid));
       } else {
         // NOTE: clear cached events hardly
-        eventsStore.removeAll();
-        cachedIdsStore.removeAll();
+        eventsStore.removeAll(project);
+        cachedIdsStore.removeAll(project);
       }
     }).catch((err) => {
       console.error('getAll err', err);

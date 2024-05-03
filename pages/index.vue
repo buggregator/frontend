@@ -5,5 +5,5 @@ import { PAGE_TYPES } from "~/src/shared/constants";
 </script>
 
 <template>
-  <PageLayout :type="PAGE_TYPES.ALL_EVENTS" title="" />
+  <PageLayout :type="PAGE_TYPES.ALL_EVENTS" title=""/>
 </template>

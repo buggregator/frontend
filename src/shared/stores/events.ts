@@ -6,12 +6,16 @@ const MAX_EVENTS_COUNT = 500;
 
 export const useEventStore = defineStore("useEventStore", {
   state: () => ({
+    project: null as string | null,
     events: [] as ServerEvent<unknown>[],
   }),
+
   actions: {
-    initialize(events: ServerEvent<unknown>[]): void {
-      this.events = events.slice(0, MAX_EVENTS_COUNT);
+    initialize(project: string | null, events: ServerEvent<unknown>[]): void {
+      this.project = project;
+      this.events = events?.slice(0, MAX_EVENTS_COUNT) ?? [];
     },
+
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
         const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
@@ -32,41 +36,46 @@ export const useEventStore = defineStore("useEventStore", {
         }
       });
     },
+
     removeAll() {
-      const { lockedIds } = useLockedIdsStore();
+      const {lockedIds} = useLockedIdsStore();
 
       if (lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => lockedIds.includes(uuid));
+        this.events = this.events.filter(({uuid}) => lockedIds.includes(uuid));
 
         return
       }
 
       this.events.length = 0;
     },
+
     removeByIds(eventUuids: EventId[]) {
-      const { lockedIds } = useLockedIdsStore();
+      const {lockedIds} = useLockedIdsStore();
 
       if (lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid) || lockedIds.includes(uuid));
+        this.events = this.events.filter(({uuid}) => !eventUuids.includes(uuid) || lockedIds.includes(uuid));
 
         return
       }
 
-      this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid));
+      this.events = this.events.filter(({uuid}) => !eventUuids.includes(uuid));
     },
+
+
     removeById(eventUuid: EventId) {
       this.removeByIds([eventUuid]);
     },
+
     removeByType(eventType: EventType) {
-      const { lockedIds } = useLockedIdsStore();
+      const {lockedIds} = useLockedIdsStore();
 
       if (lockedIds.length) {
-        this.events = this.events.filter(({ type, uuid }) => type !== eventType || lockedIds.includes(uuid));
+        this.events = this.events.filter(({type, uuid}) => type !== eventType || lockedIds.includes(uuid));
 
         return
       }
 
-      this.events = this.events.filter(({ type }) => type !== eventType);
+      this.events = this.events.filter(({type}) => type !== eventType);
     },
   },
 });
