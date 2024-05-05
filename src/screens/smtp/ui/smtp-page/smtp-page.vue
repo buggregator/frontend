@@ -15,10 +15,13 @@ import { SmtpPagePreview } from "../smtp-page-preview";
 
 type Props = {
   event: NormalizedEvent<SMTP>;
+  attachments: Attachment[];
   htmlSource: string;
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  attachments: [],
+});
 
 const htmlSource = ref(props.htmlSource || props.event.payload.html);
 
@@ -59,12 +62,6 @@ const mail = computed(() => props.event.payload);
 
 const date = computed(() =>
   moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
-);
-
-const attachments = computed(() =>
-  Array.isArray(props.event.payload.attachments)
-    ? props.event.payload.attachments
-    : (Object.values(props.event.payload.attachments || {}) as Attachment[])
 );
 </script>
 
@@ -108,7 +105,7 @@ const attachments = computed(() =>
             suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
           >
             <SmtpPagePreview device="tablet">
-              <div v-html="htmlSource" />
+              <div v-html="htmlSource"/>
             </SmtpPagePreview>
           </Tab>
           <Tab v-if="isHtml" name="HTML">
@@ -127,14 +124,13 @@ const attachments = computed(() =>
           </Tab>
           <Tab
             v-if="attachments.length"
-            name="Attachments"
-            :suffix="`<span class='smtp-page__body-tab-badge'>${attachments.length}</span>`"
+            :name="`Attachments (${attachments.length})`"
           >
             <section class="mb-5">
               <div class="flex gap-x-3">
                 <FileAttachment
                   v-for="a in attachments"
-                  :key="a.id"
+                  :key="a.uuid"
                   :event-id="event.id"
                   :event="event"
                   :attachment="a"
@@ -143,7 +139,7 @@ const attachments = computed(() =>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet language="html" :code="event.payload.raw" />
+            <CodeSnippet language="html" :code="event.payload.raw"/>
           </Tab>
           <Tab name="Tech Info">
             <section>
@@ -156,22 +152,22 @@ const attachments = computed(() =>
                   {{ event.payload.subject }}
                 </TableBaseRow>
                 <TableBaseRow title="From">
-                  <SmtpPageAddresses :addresses="event.payload.from" />
+                  <SmtpPageAddresses :addresses="event.payload.from"/>
                 </TableBaseRow>
                 <TableBaseRow title="To">
-                  <SmtpPageAddresses :addresses="event.payload.to" />
+                  <SmtpPageAddresses :addresses="event.payload.to"/>
                 </TableBaseRow>
                 <TableBaseRow v-if="event.payload.cc.length" title="Cc">
-                  <SmtpPageAddresses :addresses="event.payload.cc" />
+                  <SmtpPageAddresses :addresses="event.payload.cc"/>
                 </TableBaseRow>
                 <TableBaseRow v-if="event.payload.bcc.length" title="Bcc">
-                  <SmtpPageAddresses :addresses="event.payload.bcc" />
+                  <SmtpPageAddresses :addresses="event.payload.bcc"/>
                 </TableBaseRow>
                 <TableBaseRow
                   v-if="event.payload.reply_to.length"
                   title="Reply to"
                 >
-                  <SmtpPageAddresses :addresses="event.payload.reply_to" />
+                  <SmtpPageAddresses :addresses="event.payload.reply_to"/>
                 </TableBaseRow>
               </TableBase>
             </section>

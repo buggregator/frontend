@@ -14,6 +14,7 @@ export enum EVENT_TYPES {
 }
 
 export type EventId = string;
+export type Uuid = string;
 
 export type EventType = OneOfValues<typeof EVENT_TYPES>;
 
@@ -34,4 +35,12 @@ export interface NormalizedEvent<T> {
   serverName: string,
   date: Date | null,
   payload: T
+}
+
+export interface Attachment {
+  uuid: Uuid,
+  name: string,
+  path: string,
+  size: number,
+  mime: string,
 }

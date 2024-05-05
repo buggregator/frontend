@@ -7,7 +7,7 @@ import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { useEvents } from "~/src/shared/lib/use-events";
-import type { EventId, ServerEvent } from "~/src/shared/types";
+import type { Attachment, EventId, ServerEvent } from "~/src/shared/types";
 
 const { normalizeSmtpEvent } = useSmtp();
 
@@ -21,15 +21,18 @@ useHead({
 });
 
 const { events } = useEvents();
-
+const { smtp } = useSmtp();
 const isLoading = ref(false);
 const serverEvent = ref<Event | null>(null);
+const serverAttachments = ref<Attachment[]>([]);
 
 const event = computed(() =>
   serverEvent.value
     ? normalizeSmtpEvent(serverEvent.value as unknown as ServerEvent<SMTP>)
     : null
 );
+
+const attachments = computed(() => serverAttachments.value);
 
 const html = computed(
   () => `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`
@@ -57,6 +60,11 @@ const getEvent = async () => {
       router.push("/404");
     },
   });
+
+  await smtp.getAttachments(eventId)
+    .then((attachments: Attachment[]) => {
+      serverAttachments.value = attachments;
+    });
 };
 
 onMounted(getEvent);
@@ -81,7 +89,11 @@ onMounted(getEvent);
     </div>
 
     <div class="smtp-event__body">
-      <SmtpPage v-if="event" :event="event" :html-source="html" />
+      <SmtpPage v-if="event"
+                :event="event"
+                :attachments="attachments"
+                :html-source="html"
+      />
     </div>
   </main>
 </template>
