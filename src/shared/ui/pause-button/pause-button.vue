@@ -52,26 +52,32 @@ const toggleUpdate = () => {
 
 .pause-button {
   @include button;
-  @apply bg-blue-400 dark:bg-gray-700 hover:bg-blue-500 dark:hover:bg-blue-800;
-  @apply flex items-center space-x-1;
-  @apply text-gray-800 dark:text-white hover:opacity-100 opacity-40 relative;
-  @apply relative;
+  @apply flex items-center space-x-1 relative;
+  @apply bg-blue-300 hover:bg-blue-500 text-gray-200;
+  @apply dark:bg-gray-700 dark:hover:bg-blue-800 dark:text-white;
 
   &[disabled] {
-    @apply bg-gray-400 dark:bg-gray-700 opacity-40 text-gray-400 cursor-not-allowed;
+    @apply bg-gray-400 opacity-50 cursor-not-allowed text-white;
+    @apply dark:bg-gray-700 dark:text-white;
   }
 }
 
 .pause-button--active {
-  @apply opacity-100 bg-blue-500 dark:bg-blue-800;
+  @apply opacity-100 bg-blue-500 dark:bg-blue-800 text-white;
 }
 
 .pause-button__icon {
   @apply w-4 h-4 stroke-white animate-pulse;
+
+  [disabled] > & {
+    @apply animate-none;
+  }
 }
 
-.pause-button--active .pause-button__icon {
-  @apply animate-none;
+.pause-button__icon {
+  .pause-button--active & {
+    @apply animate-none;
+  }
 }
 
 .pause-button__count {

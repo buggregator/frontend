@@ -8,8 +8,7 @@
 
 @mixin layout-head {
   @apply justify-between;
-  @apply backdrop-blur-sm bg-gradient-to-b from-white/80 to-white/20 dark:from-gray-800/80 dark:to-gray-800/20;
-  //@apply backdrop-blur dark:backdrop-brightness-150 dark:bg-black/30 bg-white/30;
+  @apply backdrop-blur-sm bg-gradient-to-b from-white/100 to-white/20 dark:from-gray-800/100 dark:to-gray-800/20;
   @apply absolute left-0 right-0 z-50;
   @apply h-9 sm:h-10 md:h-14;
   @apply px-2 md:px-4;

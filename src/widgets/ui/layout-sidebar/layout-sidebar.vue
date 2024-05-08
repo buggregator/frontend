@@ -60,6 +60,14 @@ const logout = () => {
 <template>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
+      <NuxtLink
+        to="/"
+        title="Events"
+        class="layout-sidebar__link layout-sidebar__link--logo"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
+      </NuxtLink>
+
       <NuxtLink to="/" title="Events" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="events" />
       </NuxtLink>
@@ -164,14 +172,19 @@ const logout = () => {
 
 .layout-sidebar__link {
   @apply block relative;
-  @apply text-blue-500 hover:text-white;
-  @apply hover:bg-gray-700;
   @apply flex items-center justify-center;
   @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
+  @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
   }
+}
+
+.layout-sidebar__link--logo,
+.layout-sidebar__link--logo.router-link-active {
+  @apply text-blue-600 bg-transparent hover:text-blue-600  hover:bg-transparent;
+  @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200  hover:dark:bg-transparent;
 }
 
 .layout-sidebar__link-icon {
