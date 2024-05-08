@@ -24,7 +24,7 @@ const items = [
 <template>
   <div class="page-placeholder">
     <div class="page-placeholder__logo">
-      <IconSvg name="logo" />
+      <IconSvg class="page-placeholder__logo-in" name="logo" />
     </div>
     <ul class="page-placeholder__list">
       <PagePlaceholderItem
@@ -47,11 +47,11 @@ const items = [
 }
 
 .page-placeholder__logo {
-  @apply mb-4 md:mb-6 lg:mb-10 flex h-10;
+  @apply mb-4 md:mb-6 lg:mb-10 flex text-black dark:text-white w-full;
+}
 
-  svg {
-    @apply h-10;
-  }
+.page-placeholder__logo-in {
+  @apply h-8 md:h-12 lg:h-14;
 }
 
 .page-placeholder__list {
