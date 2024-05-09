@@ -2,8 +2,8 @@
 import moment from "moment";
 import { computed, ref } from "vue";
 import { Tab, Tabs } from "vue3-tabs-component";
-import type { SMTP } from "~/src/entities/smtp/types";
-import type { NormalizedEvent, Attachment } from "~/src/shared/types";
+import type { SMTP, Attachment } from "~/src/entities/smtp/types";
+import type { NormalizedEvent } from "~/src/shared/types";
 import {
   TableBase,
   TableBaseRow,
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  attachments: [],
+  attachments: () => [],
 });
 
 const htmlSource = ref(props.htmlSource || props.event.payload.html);
@@ -105,7 +105,7 @@ const date = computed(() =>
             suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
           >
             <SmtpPagePreview device="tablet">
-              <div v-html="htmlSource"/>
+              <div v-html="htmlSource" />
             </SmtpPagePreview>
           </Tab>
           <Tab v-if="isHtml" name="HTML">
@@ -128,18 +128,18 @@ const date = computed(() =>
           >
             <section class="mb-5">
               <div class="flex gap-x-3">
-                <FileAttachment
-                  v-for="a in attachments"
-                  :key="a.uuid"
-                  :event-id="event.id"
-                  :event="event"
-                  :attachment="a"
-                />
+                <template v-for="a in attachments" :key="a.uuid">
+                  <FileAttachment
+                    :event-id="event.id"
+                    :event="event"
+                    :attachment="a"
+                  />
+                </template>
               </div>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet language="html" :code="event.payload.raw"/>
+            <CodeSnippet language="html" :code="event.payload.raw" />
           </Tab>
           <Tab name="Tech Info">
             <section>
@@ -152,22 +152,22 @@ const date = computed(() =>
                   {{ event.payload.subject }}
                 </TableBaseRow>
                 <TableBaseRow title="From">
-                  <SmtpPageAddresses :addresses="event.payload.from"/>
+                  <SmtpPageAddresses :addresses="event.payload.from" />
                 </TableBaseRow>
                 <TableBaseRow title="To">
-                  <SmtpPageAddresses :addresses="event.payload.to"/>
+                  <SmtpPageAddresses :addresses="event.payload.to" />
                 </TableBaseRow>
                 <TableBaseRow v-if="event.payload.cc.length" title="Cc">
-                  <SmtpPageAddresses :addresses="event.payload.cc"/>
+                  <SmtpPageAddresses :addresses="event.payload.cc" />
                 </TableBaseRow>
                 <TableBaseRow v-if="event.payload.bcc.length" title="Bcc">
-                  <SmtpPageAddresses :addresses="event.payload.bcc"/>
+                  <SmtpPageAddresses :addresses="event.payload.bcc" />
                 </TableBaseRow>
                 <TableBaseRow
                   v-if="event.payload.reply_to.length"
                   title="Reply to"
                 >
-                  <SmtpPageAddresses :addresses="event.payload.reply_to"/>
+                  <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>
             </section>

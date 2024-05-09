@@ -1,4 +1,4 @@
-import type { Attachment } from '~/src/shared/types';
+import type { Attachment, Uuid } from '~/src/shared/types';
 
 export interface SMTPUser {
   name: string,
@@ -17,4 +17,12 @@ export interface SMTP {
   html: string,
   raw: string,
   attachments?: Record<string, Attachment> | Attachment[]
+}
+
+export interface SMTPAttachment {
+  uuid: Uuid,
+  name: string,
+  path: string,
+  size: number,
+  mime: string,
 }

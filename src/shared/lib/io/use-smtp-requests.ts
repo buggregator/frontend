@@ -1,5 +1,6 @@
-import { Attachment, EventId } from "../../types";
 import { type NuxtApp, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import type { SMTPAttachment } from "~/src/entities/smtp/types";
+import type { EventId, Attachment } from "../../types";
 import { REST_API_URL } from "./constants";
 
 type TUseSmtpRequests = () => {
@@ -9,7 +10,6 @@ type TUseSmtpRequests = () => {
 // TODO: add 403 response handling
 
 export const useSmtpRequests: TUseSmtpRequests = () => {
-
   const app: NuxtApp = useNuxtApp()
   const { token } = app.$authToken ?? { token: null }
   const headers = { "X-Auth-Token": token || '' }
@@ -20,7 +20,13 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
-        return response.data as Attachment[]
+        return (response.data as SMTPAttachment[]).map((attachment) => ({
+          id: attachment.uuid,
+          name: attachment.name,
+          size: attachment.size,
+          mime: attachment.mime,
+          uri: attachment.path
+        }))
       }
 
       if (response?.code === 403) {
@@ -32,7 +38,6 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
 
       return [];
     })
-    .then((attachments: Attachment[]) => attachments)
 
   return {
     getAttachmentsRestUrl,
