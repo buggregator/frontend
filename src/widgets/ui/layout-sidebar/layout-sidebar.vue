@@ -183,8 +183,8 @@ const logout = () => {
 
 .layout-sidebar__link--logo,
 .layout-sidebar__link--logo.router-link-active {
-  @apply text-blue-600 bg-transparent hover:text-blue-600  hover:bg-transparent;
-  @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200  hover:dark:bg-transparent;
+  @apply text-blue-600 bg-transparent hover:text-blue-800  hover:bg-transparent;
+  @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200 hover:dark:bg-transparent;
 }
 
 .layout-sidebar__link-icon {
