@@ -26,7 +26,8 @@ defineProps<Props>();
 }
 
 .ray-event__text {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800 flex w-full overflow-auto;
+  @apply p-3 border flex w-full overflow-auto;
+  @apply border-gray-300 text-gray-200 bg-gray-800;
 }
 
 .ray-event__text-in {
