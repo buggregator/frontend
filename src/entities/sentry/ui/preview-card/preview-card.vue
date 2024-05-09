@@ -45,7 +45,7 @@ const exception: Ref<Exception> = computed(() =>
       :exception="exception"
       :max-frames="maxFrames"
     >
-      <NuxtLink tag="div" :to="eventLink" class="preview-card__link">
+      <NuxtLink :to="eventLink" class="preview-card__link">
         <h3 class="preview-card__title">
           {{ exception.type }}
         </h3>
@@ -55,7 +55,7 @@ const exception: Ref<Exception> = computed(() =>
     </SentryException>
 
     <div v-if="message">
-      <NuxtLink tag="div" :to="eventLink" class="preview-card__link">
+      <NuxtLink :to="eventLink" class="preview-card__link">
         <pre class="preview-card__text" v-html="message" />
       </NuxtLink>
     </div>

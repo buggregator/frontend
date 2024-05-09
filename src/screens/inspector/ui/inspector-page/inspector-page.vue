@@ -2,7 +2,7 @@
 import moment from "moment/moment";
 import { computed } from "vue";
 import { InspectorStatBoard } from "~/src/entities/inspector";
-import { Inspector } from "~/src/entities/inspector/types";
+import type { Inspector } from "~/src/entities/inspector/types";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
 import { InspectorPageTimeline } from "../inspector-page-timeline";
