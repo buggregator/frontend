@@ -32,11 +32,6 @@ export default defineNuxtConfig({
   dir: {
     static: 'src/static',
   },
-  imports: {
-    dirs: [
-      'composables/**'
-    ]
-  },
   postcss: {
     plugins: {
       tailwindcss: {},

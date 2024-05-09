@@ -36,11 +36,3 @@ export interface NormalizedEvent<T> {
   date: Date | null,
   payload: T
 }
-
-export interface Attachment {
-  uuid: Uuid,
-  name: string,
-  path: string,
-  size: number,
-  mime: string,
-}

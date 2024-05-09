@@ -21,7 +21,7 @@ useHead({
 });
 
 const { events } = useEvents();
-const { smtp } = useSmtp();
+const { getAttachments } = useSmtp();
 const isLoading = ref(false);
 const serverEvent = ref<Event | null>(null);
 const serverAttachments = ref<Attachment[]>([]);
@@ -61,10 +61,9 @@ const getEvent = async () => {
     },
   });
 
-  await smtp.getAttachments(eventId)
-    .then((attachments: Attachment[]) => {
-      serverAttachments.value = attachments;
-    });
+  await getAttachments(eventId).then((_attachments: Attachment[]) => {
+    serverAttachments.value = _attachments;
+  });
 };
 
 onMounted(getEvent);
@@ -89,10 +88,11 @@ onMounted(getEvent);
     </div>
 
     <div class="smtp-event__body">
-      <SmtpPage v-if="event"
-                :event="event"
-                :attachments="attachments"
-                :html-source="html"
+      <SmtpPage
+        v-if="event"
+        :event="event"
+        :attachments="attachments"
+        :html-source="html"
       />
     </div>
   </main>
