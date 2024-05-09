@@ -15,7 +15,7 @@ const uri = decodeURI(props.event.payload.request.uri);
 
 <template>
   <PreviewCard class="preview-card" :event="event">
-    <NuxtLink tag="div" :to="eventLink" class="preview-card__link">
+    <NuxtLink :to="eventLink" class="preview-card__link">
       <span class="preview-card__method">
         {{ event.payload.request.method }} </span
       >:

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { Ref } from "vue";
-import {
+import type {
   InspectorSegment,
   InspectorTransaction,
   Inspector,

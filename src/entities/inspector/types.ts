@@ -59,3 +59,4 @@ export interface InspectorSegment {
 }
 
 export type Inspector = InspectorTransaction[] | InspectorSegment[];
+
