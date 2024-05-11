@@ -170,6 +170,19 @@ onBeforeMount(() => {
 </template>
 
 <style lang="scss" scoped>
+@keyframes new-event {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    pointer-events: none;
+  }
+  100% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    pointer-events: auto;
+  }
+}
+
 .preview-card {
   @apply flex-grow flex flex-col p-2 lg:p-3 transition-colors dark:bg-gray-700;
 
@@ -184,13 +197,19 @@ onBeforeMount(() => {
 
 .preview-card__header {
   @apply w-full flex flex-row justify-between gap-y-3;
+
+  animation: new-event 0.4s;
 }
 
 .preview-card__body {
   @apply flex flex-col mt-2 lg:mt-3;
+
+  animation: new-event 0.2s;
 }
 
 .preview-card__footer {
   @apply w-full flex flex-row justify-between mt-1 lg:mt-2 text-gray-400;
+
+  animation: new-event 0.4s;
 }
 </style>
