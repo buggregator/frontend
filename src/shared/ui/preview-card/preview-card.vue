@@ -127,12 +127,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div
-    :id="event.id"
-    ref="eventRef"
-    class="preview-card"
-    :class="{ 'preview-card--collapsed': isCollapsed }"
-  >
+  <div :id="event.id" ref="eventRef" class="preview-card">
     <PreviewCardHeader
       class="preview-card__header"
       :event-url="eventUrl"
@@ -189,10 +184,6 @@ onBeforeMount(() => {
   &:hover {
     @apply bg-gray-50 dark:bg-gray-900;
   }
-}
-
-.preview-card--collapsed {
-  // @apply shadow-bottom;
 }
 
 .preview-card__header {
