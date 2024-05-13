@@ -22,6 +22,7 @@ const isOptimized = ref(false);
 const isVisibleControls = ref(true);
 
 const eventRef = ref(null);
+const isDeleting = ref(false);
 const { events, lockedIds } = useEvents();
 
 const normalizedTags = computed(() => [
@@ -50,7 +51,15 @@ const changeVisibleControls = (value = true) => {
   isVisibleControls.value = value;
 };
 
-const deleteEvent = () => events?.removeById(props.event.id);
+const deleteEvent = () => {
+  isDeleting.value = true;
+
+  setTimeout(() => {
+    events?.removeById(props.event.id);
+
+    isDeleting.value = false;
+  }, 200);
+};
 
 const toggleEventLock = () => {
   if ((lockedIds?.items.value || []).includes(props.event.id)) {
@@ -131,7 +140,7 @@ onBeforeMount(() => {
     :id="event.id"
     ref="eventRef"
     class="preview-card"
-    :class="{ 'preview-card--collapsed': isCollapsed }"
+    :class="{ 'preview-card--deleting': isDeleting }"
   >
     <PreviewCardHeader
       class="preview-card__header"
@@ -170,16 +179,32 @@ onBeforeMount(() => {
 </template>
 
 <style lang="scss" scoped>
+@keyframes add-event {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    pointer-events: none; // NOTE: need to block event deleting to new events
+  }
+  100% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    pointer-events: auto;
+  }
+}
+
 .preview-card {
   @apply flex-grow flex flex-col p-2 lg:p-3 transition-colors dark:bg-gray-700;
 
+  animation: add-event 0.2s;
   &:hover {
     @apply bg-gray-50 dark:bg-gray-900;
   }
 }
 
-.preview-card--collapsed {
-  // @apply shadow-bottom;
+.preview-card--deleting {
+  @apply opacity-0 pointer-events-none;
+
+  transition: all 0.2s cubic-bezier(0.8, 0, 1, 1);
 }
 
 .preview-card__header {
@@ -188,6 +213,8 @@ onBeforeMount(() => {
 
 .preview-card__body {
   @apply flex flex-col mt-2 lg:mt-3;
+
+  animation: add-event 0.2s;
 }
 
 .preview-card__footer {
