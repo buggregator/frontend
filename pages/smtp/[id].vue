@@ -5,7 +5,7 @@ import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // es
 import { PageHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
+import { htmlEncode } from "~/src/shared/lib/helpers";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { Attachment, EventId, ServerEvent } from "~/src/shared/types";
 
@@ -35,7 +35,7 @@ const event = computed(() =>
 const attachments = computed(() => serverAttachments.value);
 
 const html = computed(
-  () => `<iframe src="${REST_API_URL}/api/smtp/${eventId}/html"/>`
+  () => `<iframe srcdoc="${htmlEncode(serverEvent.value.payload.html)}"/>`
 );
 
 const onDelete = () => {
