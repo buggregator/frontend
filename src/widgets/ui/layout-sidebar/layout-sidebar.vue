@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import { useNuxtApp, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
 import type { Profile } from "~/src/shared/types";
@@ -55,6 +55,8 @@ const logout = () => {
   const router = useRouter();
   router.push("/login");
 };
+
+const { path } = useRoute();
 </script>
 
 <template>
@@ -72,15 +74,30 @@ const logout = () => {
         <IconSvg class="layout-sidebar__link-icon" name="events" />
       </NuxtLink>
 
-      <NuxtLink to="/sentry" title="Sentry logs" class="layout-sidebar__link">
+      <NuxtLink
+        to="/sentry"
+        title="Sentry logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/sentry') }"
+      >
         <IconSvg class="layout-sidebar__link-icon" name="sentry" />
       </NuxtLink>
 
-      <NuxtLink to="/profiler" title="Profiler" class="layout-sidebar__link">
+      <NuxtLink
+        to="/profiler"
+        title="Profiler"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/profiler') }"
+      >
         <IconSvg class="layout-sidebar__link-icon" name="profiler" />
       </NuxtLink>
 
-      <NuxtLink to="/smtp" title="SMTP mails" class="layout-sidebar__link">
+      <NuxtLink
+        to="/smtp"
+        title="SMTP mails"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/smtp') }"
+      >
         <IconSvg class="layout-sidebar__link-icon" name="smtp" />
       </NuxtLink>
 
@@ -88,6 +105,7 @@ const logout = () => {
         to="/http-dumps"
         title="Http dumps"
         class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/http-dumps') }"
       >
         <IconSvg class="layout-sidebar__link-icon" name="http-dumps" />
       </NuxtLink>
@@ -96,6 +114,7 @@ const logout = () => {
         to="/inspector"
         title="Inspector logs"
         class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/inspector') }"
       >
         <IconSvg class="layout-sidebar__link-icon" name="inspector" />
       </NuxtLink>
