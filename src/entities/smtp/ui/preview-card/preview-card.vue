@@ -14,6 +14,10 @@ const props = defineProps<Props>();
 const dateFormat = computed(() => moment(props.event.date).fromNow());
 
 const eventLink = computed(() => `/smtp/${props.event.id}`);
+
+const emailRecipient = computed(
+  () => props?.event?.payload?.to?.[0]?.email || null
+);
 </script>
 
 <template>
@@ -24,7 +28,9 @@ const eventLink = computed(() => `/smtp/${props.event.id}`);
       </h3>
 
       <div class="smtp-preview__link-text">
-        <span><strong>To:</strong> {{ event.payload.to[0].email }} </span>
+        <span v-if="emailRecipient"
+          ><strong>To:</strong> {{ event.payload.to[0].email }}
+        </span>
 
         <span>{{ dateFormat }}</span>
       </div>
