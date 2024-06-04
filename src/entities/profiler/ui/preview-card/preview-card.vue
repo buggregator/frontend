@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from "vue";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, StatBoard } from "~/src/shared/ui";
 import type { Profiler } from "../../types";
@@ -8,16 +7,14 @@ type Props = {
   event: NormalizedEvent<Profiler>;
 };
 
-const props = defineProps<Props>();
-
-const eventLink = computed(() => `/profiler/${props.event.id}`);
+defineProps<Props>();
 </script>
 
 <template>
   <PreviewCard class="profiler-preview" :event="event">
-    <NuxtLink tag="div" :to="eventLink" class="profiler-preview__link">
+    <div class="profiler-preview__link">
       <StatBoard :cost="event.payload.peaks" />
-    </NuxtLink>
+    </div>
   </PreviewCard>
 </template>
 
