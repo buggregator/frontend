@@ -119,6 +119,24 @@ const { path } = useRoute();
         <IconSvg class="layout-sidebar__link-icon" name="inspector" />
       </NuxtLink>
 
+      <NuxtLink
+        to="/var-dump"
+        title="Var Dump logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/var-dump') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
+      </NuxtLink>
+
+      <NuxtLink
+        to="/ray-dump"
+        title="Ray Dump logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/ray-dump') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
+      </NuxtLink>
+
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </NuxtLink>
