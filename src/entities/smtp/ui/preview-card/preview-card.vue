@@ -29,7 +29,7 @@ const emailRecipient = computed(
 
       <div class="smtp-preview__link-text">
         <span v-if="emailRecipient"
-          ><strong>To:</strong> {{ event.payload.to[0].email }}
+          ><strong>To:</strong> {{ emailRecipient }}
         </span>
 
         <span>{{ dateFormat }}</span>
