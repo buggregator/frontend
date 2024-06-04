@@ -7,12 +7,12 @@ export interface SMTPUser {
 
 export interface SMTP {
   id: string,
-  from: SMTPUser[],
-  reply_to: SMTPUser[],
+  from?: SMTPUser[],
+  reply_to?: SMTPUser[],
   subject: string,
-  to: SMTPUser[],
-  cc: SMTPUser[],
-  bcc: SMTPUser[],
+  to?: SMTPUser[],
+  cc?: SMTPUser[],
+  bcc?: SMTPUser[],
   text: string,
   html: string,
   raw: string,
