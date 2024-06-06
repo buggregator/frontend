@@ -2,12 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
-import { useProfiler } from "~/src/entities/profiler";
-import type { Profiler } from "~/src/entities/profiler/types";
+import { useRay } from "~/src/entities/ray";
+import type { RayDump } from "~/src/entities/ray/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 
-const { normalizeProfilerEvent } = useProfiler();
+const { normalizeRayEvent } = useRay();
 
 const { params } = useRoute();
 const { $authToken } = useNuxtApp();
@@ -21,14 +21,10 @@ useHead({
 const { events } = useEvents();
 
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
+const serverEvent = ref<ServerEvent<RayDump> | null>(null);
 
 const event = computed(() =>
-  serverEvent.value
-    ? normalizeProfilerEvent(
-        serverEvent.value as unknown as ServerEvent<Profiler>
-      )
-    : null
+  serverEvent.value ? normalizeRayEvent(serverEvent.value) : null
 );
 
 const onDelete = () => {

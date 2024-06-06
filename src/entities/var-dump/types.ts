@@ -5,9 +5,15 @@ export interface VarDump {
   },
   context: {
     timestamp: number,
-    cli: {
+    cli?: {
       command_line: string,
       identifier: string
+    },
+    request?: {
+      identifier?: string,
+      method?: string,
+      uri?: string,
+      controller?: string,
     },
     source: {
       name: string,

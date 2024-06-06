@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
+import { VarDumpPage } from "~/src/screens/var-dump";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
-import { useProfiler } from "~/src/entities/profiler";
-import type { Profiler } from "~/src/entities/profiler/types";
+import { useVarDump } from "~/src/entities/var-dump";
+import type { VarDump } from "~/src/entities/var-dump/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 
-const { normalizeProfilerEvent } = useProfiler();
+const { normalizeVarDumpEvent } = useVarDump();
 
 const { params } = useRoute();
 const { $authToken } = useNuxtApp();
@@ -21,14 +22,10 @@ useHead({
 const { events } = useEvents();
 
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
+const serverEvent = ref<ServerEvent<VarDump> | null>(null);
 
 const event = computed(() =>
-  serverEvent.value
-    ? normalizeProfilerEvent(
-        serverEvent.value as unknown as ServerEvent<Profiler>
-      )
-    : null
+  serverEvent.value ? normalizeVarDumpEvent(serverEvent.value) : null
 );
 
 const onDelete = () => {
@@ -76,8 +73,8 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="var-dump__body">
-      {{ JSON.stringify(event) }}
+    <div v-if="event" class="var-dump__body">
+      <VarDumpPage :event="event" />
     </div>
   </main>
 </template>

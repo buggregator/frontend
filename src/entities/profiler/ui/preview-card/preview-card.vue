@@ -26,6 +26,6 @@ defineProps<Props>();
 }
 
 .profiler-preview__link {
-  @apply cursor-pointer pb-2 flex-grow;
+  @apply pb-2 flex-grow;
 }
 </style>
