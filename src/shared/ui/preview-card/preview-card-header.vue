@@ -91,7 +91,7 @@ const newPageLink = computed(() => {
         <NuxtLink
           :to="newPageLink"
           class="preview-card-header__open"
-          title="Open event in the new window"
+          title="Open full event"
         >
           <IconSvg name="window-maximize" />
         </NuxtLink>
