@@ -125,7 +125,7 @@ const path = computed(() => useRoute().path);
         class="layout-sidebar__link"
         :class="{ 'router-link-active': path.includes('/var-dump') }"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
+        <IconSvg class="layout-sidebar__link-icon" name="var-dump" />
       </NuxtLink>
 
       <NuxtLink
@@ -134,7 +134,7 @@ const path = computed(() => useRoute().path);
         class="layout-sidebar__link"
         :class="{ 'router-link-active': path.includes('/ray') }"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
+        <IconSvg class="layout-sidebar__link-icon" name="ray" />
       </NuxtLink>
 
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
