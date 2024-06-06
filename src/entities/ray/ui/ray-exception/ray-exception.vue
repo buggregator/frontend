@@ -11,14 +11,15 @@ defineProps<Props>();
 
 <template>
   <div class="ray-exception">
-    <div class="ray-exception__texts">
-      <h3 class="ray-exception__texts-in">
-        <code class="ray-exception__texts-code">{{ exception.class }}</code>
+    <header class="ray-exception__header">
+      <h3 class="ray-exception__title">
+        {{ exception.class }}
       </h3>
-      <div class="ray-exception__text">
+
+      <div class="ray-exception__title-code">
         {{ exception.message }}
       </div>
-    </div>
+    </header>
 
     <div class="ray-exception__files">
       <RayFile
@@ -34,21 +35,37 @@ defineProps<Props>();
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 .ray-exception {
-  @apply block;
+  @apply flex flex-col;
 }
 
-.ray-exception__texts {
-  @apply block;
+.ray-exception__header {
+  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
 }
 
-.ray-exception__texts-code {
-  @apply block mb-2;
-  @apply text-xs sm:text-sm md:text-base font-semibold;
+.ray-exception__title {
+  @apply mb-3 font-semibold text-lg;
+}
+
+.ray-exception__title-code {
+  @include code-example();
+  @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 
 .ray-exception__text {
   @include code-example();
-  @apply mb-2;
-  @apply text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
+  @apply mb-2 text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
+}
+
+.ray-exception__files {
+  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
+}
+
+.ray__body-text {
+  @include text-muted;
+  @apply font-bold uppercase text-sm mb-5;
+}
+
+.ray__body-table {
+  @apply mt-3;
 }
 </style>

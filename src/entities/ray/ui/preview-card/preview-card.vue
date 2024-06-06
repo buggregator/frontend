@@ -1,46 +1,10 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { NormalizedEvent } from "~/src/shared/types";
+import type { NormalizedEvent, OneOfValues } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
-import type {
-  EnhancedRayEvent,
-  RayContentCarbon,
-  RayContentCustom,
-  RayContentEloquent,
-  RayContentApplicationLog,
-  RayContentEvent,
-  RayContentException,
-  RayContentFrame,
-  RayContentFrames,
-  RayContentJob,
-  RayContentLock,
-  RayContentLog,
-  RayContentMail,
-  RayContentMeasure,
-  RayContentObject,
-  RayContentSQL,
-  RayContentView,
-  RayDump,
-  RayPayload,
-} from "../../types";
+import { COMPONENT_TYPE_MAP } from "../../lib/use-ray/config";
+import type { EnhancedRayEvent, RayDump } from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
-import { RayApplicationLog } from "../ray-application-log";
-import { RayCarbon } from "../ray-carbon";
-import { RayCustom } from "../ray-custom";
-import { RayEloquent } from "../ray-eloquent";
-import { RayEvent } from "../ray-event";
-import { RayException } from "../ray-exception";
-import { RayFrame } from "../ray-frame";
-import { RayJob } from "../ray-job";
-import { RayLock } from "../ray-lock";
-import { RayLog } from "../ray-log";
-import { RayMail } from "../ray-mail";
-import { RayMeasure } from "../ray-measure";
-import { RayOrigin } from "../ray-origin";
-import { RayQuery } from "../ray-query";
-import { RayTable } from "../ray-table";
-import { RayTrace } from "../ray-trace";
-import { RayView } from "../ray-view";
 
 type Props = {
   event: EnhancedRayEvent;
@@ -56,111 +20,13 @@ const normalizedEvent = computed(() => {
 
 const classes = computed(() => [
   `text-${props.event.meta.size}`,
-  `text-${props.event.meta.color}-900 dark:text-${props.event.meta.color}-200`,
+  `text-${props.event.meta.color}-500`,
 ]);
 
-const COMPONENT_TYPE_MAP = {
-  [RAY_EVENT_TYPES.LOG]: {
-    view: RayLog,
-    getProps: (payload: RayPayload) => ({
-      log: (payload.content as RayContentLog).values[0],
-    }),
-  },
-  [RAY_EVENT_TYPES.CUSTOM]: {
-    view: RayCustom,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentCustom,
-    }),
-  },
-  [RAY_EVENT_TYPES.CALLER]: {
-    view: RayFrame,
-    getProps: (payload: RayPayload) => ({
-      frame: (payload.content as RayContentFrame).frame,
-    }),
-  },
-  [RAY_EVENT_TYPES.CARBON]: {
-    view: RayCarbon,
-    getProps: (payload: RayPayload) => ({
-      carbon: payload.content as RayContentCarbon,
-    }),
-  },
-  [RAY_EVENT_TYPES.TRACE]: {
-    view: RayTrace,
-    getProps: (payload: RayPayload) => ({
-      frames: (payload.content as RayContentFrames).frames,
-    }),
-  },
-  [RAY_EVENT_TYPES.EXCEPTION]: {
-    view: RayException,
-    getProps: (payload: RayPayload) => ({
-      exception: payload.content as RayContentException,
-    }),
-  },
-  [RAY_EVENT_TYPES.TABLE]: {
-    view: RayTable,
-    getProps: (payload: RayPayload) => ({
-      table: payload.content as RayContentObject,
-    }),
-  },
-  [RAY_EVENT_TYPES.MEASURE]: {
-    view: RayMeasure,
-    getProps: (payload: RayPayload) => ({
-      measure: payload.content as RayContentMeasure,
-    }),
-  },
-  [RAY_EVENT_TYPES.QUERY]: {
-    view: RayQuery,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentSQL,
-    }),
-  },
-  [RAY_EVENT_TYPES.ELOQUENT]: {
-    view: RayEloquent,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentEloquent,
-    }),
-  },
-  [RAY_EVENT_TYPES.APPLICATION_LOG]: {
-    view: RayApplicationLog,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentApplicationLog,
-    }),
-  },
-  [RAY_EVENT_TYPES.VIEW]: {
-    view: RayView,
-    getProps: (payload: RayPayload) => ({
-      view: payload.content as RayContentView,
-    }),
-  },
-  [RAY_EVENT_TYPES.EVENT]: {
-    view: RayEvent,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentEvent,
-    }),
-  },
-  [RAY_EVENT_TYPES.JOB]: {
-    view: RayJob,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentJob,
-    }),
-  },
-  [RAY_EVENT_TYPES.LOCK]: {
-    view: RayLock,
-    getProps: (payload: RayPayload) => ({
-      name: (payload.content as RayContentLock).name,
-    }),
-  },
-  [RAY_EVENT_TYPES.MAILABLE]: {
-    view: RayMail,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentMail,
-    }),
-  },
-  [RAY_EVENT_TYPES.NOTIFY]: {
-    view: RayOrigin,
-    getProps: (payload: RayPayload) => ({ origin: payload.origin }),
-  },
-};
+const getComponent: (
+  type: RAY_EVENT_TYPES | string
+) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (type) =>
+  COMPONENT_TYPE_MAP[type as RAY_EVENT_TYPES];
 </script>
 
 <template>
@@ -171,14 +37,13 @@ const COMPONENT_TYPE_MAP = {
         payload.origin ? payload.origin.line_number : ''
       }`"
     >
-      <Component
-        :is="COMPONENT_TYPE_MAP[payload.type].view"
-        v-if="payload.type && COMPONENT_TYPE_MAP[payload.type]"
-        v-bind="{ ...COMPONENT_TYPE_MAP[payload.type].getProps(payload) }"
-        :class="classes"
-      />
+      <div v-if="payload.type && getComponent(payload.type)">
+        <Component
+          :is="getComponent(payload.type).view"
+          v-bind="{ ...getComponent(payload.type).getProps(payload) }"
+          :class="classes"
+        />
+      </div>
     </template>
   </PreviewCard>
 </template>
-
-

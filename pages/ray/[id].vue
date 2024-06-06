@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
+import { RayPage } from "~/src/screens/ray";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageHeader } from "~/src/widgets/ui";
 import { useRay } from "~/src/entities/ray";
@@ -62,7 +63,7 @@ onMounted(getEvent);
       @delete="onDelete"
     >
       <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/ray-dump">Ray Dump</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/ray">Ray Dump</NuxtLink>&nbsp;/&nbsp;
       <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
     </PageHeader>
 
@@ -72,8 +73,8 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="ray-dump__body">
-      {{ JSON.stringify(event) }}
+    <div v-if="event" class="ray-dump__body">
+      <RayPage :event="event" />
     </div>
   </main>
 </template>
