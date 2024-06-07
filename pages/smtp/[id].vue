@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { SmtpPage } from "~/src/screens/smtp";
 import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
 import { htmlEncode } from "~/src/shared/lib/helpers";
@@ -38,12 +38,6 @@ const html = computed(
   () => `<iframe srcdoc="${htmlEncode(serverEvent.value.payload.html)}"/>`
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -71,15 +65,7 @@ onMounted(getEvent);
 
 <template>
   <main class="smtp-event">
-    <PageHeader
-      class="smtp-event__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/smtp">Smtp</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Smtp" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="smtp-event__loading">
       <div></div>

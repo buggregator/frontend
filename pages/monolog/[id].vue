@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { MonologPage } from "~/src/screens/monolog";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useMonolog } from "~/src/entities/monolog";
 import type { Monolog } from "~/src/entities/monolog/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -28,12 +28,6 @@ const event = computed(() =>
   serverEvent.value ? normalizeMonologEvent(serverEvent.value) : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -57,15 +51,7 @@ onMounted(getEvent);
 
 <template>
   <main class="monolog">
-    <PageHeader
-      class="monolog__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/monolog">Monolog</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Monolog" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="monolog__loading">
       <div></div>
@@ -84,10 +70,6 @@ onMounted(getEvent);
 
 .monolog {
   @include layout;
-}
-
-.monolog__head {
-  @include layout-head;
 }
 
 .monolog__loading {

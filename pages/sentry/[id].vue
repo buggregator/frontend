@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { SentryPage } from "~/src/screens/sentry";
 import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -29,12 +29,6 @@ const event = computed(() =>
     : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -58,15 +52,7 @@ onMounted(getEvent);
 
 <template>
   <main class="sentry-event">
-    <PageHeader
-      class="sentry-event__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/sentry">Sentry</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Sentry" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="sentry-event__loading">
       <div></div>

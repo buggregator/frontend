@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { HttpDumpPage } from "~/src/screens/http-dump";
 import { useFetch, useRoute, useRouter, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
 import type { HttpDump } from "~/src/entities/http-dump/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -32,12 +32,6 @@ const event = computed(() =>
     : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   await useFetch(events.getUrl(eventId), {
     headers: { "X-Auth-Token": $authToken.token || "" },
@@ -62,15 +56,7 @@ onMounted(getEvent);
 
 <template>
   <main class="http-dumps-event">
-    <PageHeader
-      class="http-dumps-event__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/
-      <NuxtLink to="/http-dumps">Http dumps</NuxtLink>&nbsp;/
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Http dumps" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="http-dumps-event__loading">
       <div></div>

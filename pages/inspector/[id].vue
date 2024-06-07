@@ -2,7 +2,7 @@
 import { onMounted, computed, ref } from "vue";
 import { InspectorPage } from "~/src/screens/inspector";
 import { useFetch, useHead, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useInspector } from "~/src/entities/inspector";
 import type { Inspector } from "~/src/entities/inspector/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -32,12 +32,6 @@ const event = computed(() =>
     : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -61,15 +55,7 @@ onMounted(getEvent);
 
 <template>
   <main class="inspector-event">
-    <PageHeader
-      class="inspector-event__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/inspector">Inspector</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Inspector" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="inspector-event__loading">
       <div></div>

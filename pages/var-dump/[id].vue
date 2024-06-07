@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { VarDumpPage } from "~/src/screens/var-dump";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useVarDump } from "~/src/entities/var-dump";
 import type { VarDump } from "~/src/entities/var-dump/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -28,12 +28,6 @@ const event = computed(() =>
   serverEvent.value ? normalizeVarDumpEvent(serverEvent.value) : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -57,15 +51,7 @@ onMounted(getEvent);
 
 <template>
   <main class="var-dump">
-    <PageHeader
-      class="var-dump__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/var-dump">Var Dump</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Var Dump" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="var-dump__loading">
       <div></div>
