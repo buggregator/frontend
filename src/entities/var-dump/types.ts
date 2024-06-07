@@ -1,5 +1,6 @@
 export interface VarDump {
   payload: {
+    label: string | null,
     type: string,
     value: string | number | boolean
   },
