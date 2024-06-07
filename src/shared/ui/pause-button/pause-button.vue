@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { IconSvg } from "../icon-svg";
 
 type Props = {
-  disabled: boolean;
+  disabledPause: boolean;
   isPaused: boolean;
   totalNewEventsCount: number;
 };
@@ -29,7 +29,7 @@ const toggleUpdate = () => {
   <button
     class="pause-button"
     :class="{ 'pause-button--active': isPaused }"
-    :disabled="disabled"
+    :disabled="!isPaused && disabledPause"
     @click="toggleUpdate"
   >
     <IconSvg

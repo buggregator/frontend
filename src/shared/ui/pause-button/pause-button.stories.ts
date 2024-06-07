@@ -14,7 +14,7 @@ export default {
 
 export const Default: StoryObj<typeof PauseButton> = {
   args: {
-    disabled: false,
+    disabledPause: false,
     isPaused: false,
     totalNewEventsCount: 10,
   }
@@ -22,7 +22,7 @@ export const Default: StoryObj<typeof PauseButton> = {
 
 export const Disabled: StoryObj<typeof PauseButton> = {
   args: {
-    disabled: true,
+    disabledPause: true,
     isPaused: false,
     totalNewEventsCount: 10,
   }
@@ -30,7 +30,7 @@ export const Disabled: StoryObj<typeof PauseButton> = {
 
 export const Paused: StoryObj<typeof PauseButton> = {
   args: {
-    disabled: false,
+    disabledPause: false,
     isPaused: true,
     totalNewEventsCount: 10,
   }
