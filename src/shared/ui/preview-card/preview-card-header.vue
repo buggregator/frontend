@@ -180,9 +180,10 @@ $eventTypeColorsMap: (
   "smtp" "orange",
   "sentry" "pink",
   "profiler" "purple",
-  "monolog" "gray",
-  "inspector" "gray",
-  "ray" "gray",
+  "ray" "cyan",
+  "inspector" "yellow",
+  "http-dump" "lime",
+  "monolog" "zinc",
   "unknown" "gray"
 );
 
@@ -206,9 +207,10 @@ $eventTypeColorsMap: (
    'Smtp' 'bg-orange-50 dark:bg-orange-700 text-orange-800 dark:text-orange-50 dark:border-orange-600' 'bg-orange-100 dark:bg-orange-500',
    'Sentry' 'bg-pink-50 dark:bg-pink-700 text-pink-800 dark:text-pink-50 dark:border-pink-600' 'bg-pink-100 dark:bg-pink-500',
    'profiler' 'bg-purple-50 dark:bg-purple-700 text-purple-800 dark:text-purple-50 dark:border-purple-600' 'bg-purple-100 dark:bg-purple-500',
-   'monolog' 'bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-50 dark:border-gray-600' 'bg-gray-100 dark:bg-gray-500',
-   'inspector' 'bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-50 dark:border-gray-600' 'bg-gray-100 dark:bg-gray-500',
-   'ray' 'bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-50 dark:border-gray-600' 'bg-gray-100 dark:bg-gray-500' */
+   'ray' 'bg-cyan-50 dark:bg-cyan-700 text-cyan-800 dark:text-cyan-50 dark:border-cyan-600' 'bg-cyan-100 dark:bg-cyan-500',
+   'inspector' 'bg-yellow-50 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-50 dark:border-yellow-600' 'bg-yellow-100 dark:bg-yellow-500',
+   'monolog' 'bg-zinc-50 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-50 dark:border-zinc-600' 'bg-zinc-100 dark:bg-zinc-500'
+   'http-dump' 'bg-lime-50 dark:bg-lime-700 text-lime-800 dark:text-lime-50 dark:border-lime-600' 'bg-lime-100 dark:bg-lime-500' */
 
   @each $map in $eventTypeColorsMap {
     $name: nth($map, 1);

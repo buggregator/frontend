@@ -7,7 +7,7 @@ import { IconSvg } from "../icon-svg";
 const CodeHighlight = highlightPlugin.component;
 
 type Props = {
-  code?: string;
+  code?: string | Record<string, unknown> | Array<unknown> | null;
   language?: string;
 };
 

@@ -64,7 +64,7 @@ const path = computed(() => useRoute().path);
     <nav class="layout-sidebar__nav">
       <NuxtLink
         to="/"
-        title="Events"
+        title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
       >
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
@@ -126,6 +126,15 @@ const path = computed(() => useRoute().path);
         :class="{ 'router-link-active': path.includes('/var-dump') }"
       >
         <IconSvg class="layout-sidebar__link-icon" name="var-dump" />
+      </NuxtLink>
+
+      <NuxtLink
+        to="/monolog"
+        title="Monolog logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/monolog') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="monolog" />
       </NuxtLink>
 
       <NuxtLink

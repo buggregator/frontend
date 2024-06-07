@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { RayPage } from "~/src/screens/ray";
 import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageHeader } from "~/src/widgets/ui";
+import { PageEventHeader } from "~/src/widgets/ui";
 import { useRay } from "~/src/entities/ray";
 import type { RayDump } from "~/src/entities/ray/types";
 import { useEvents } from "~/src/shared/lib/use-events";
@@ -28,12 +28,6 @@ const event = computed(() =>
   serverEvent.value ? normalizeRayEvent(serverEvent.value) : null
 );
 
-const onDelete = () => {
-  events.removeById(eventId);
-
-  router.push("/");
-};
-
 const getEvent = async () => {
   isLoading.value = true;
 
@@ -57,15 +51,7 @@ onMounted(getEvent);
 
 <template>
   <main class="ray-dump">
-    <PageHeader
-      class="ray-dump__head"
-      button-title="Delete event"
-      @delete="onDelete"
-    >
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink to="/ray">Ray Dump</NuxtLink>&nbsp;/&nbsp;
-      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
-    </PageHeader>
+    <PageEventHeader title="Ray Dump" :event-id="eventId" />
 
     <div v-if="isLoading && !event" class="ray-dump__loading">
       <div></div>
