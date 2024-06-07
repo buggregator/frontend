@@ -129,6 +129,15 @@ const path = computed(() => useRoute().path);
       </NuxtLink>
 
       <NuxtLink
+        to="/monolog"
+        title="Monolog logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/monolog') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="monolog" />
+      </NuxtLink>
+
+      <NuxtLink
         to="/ray"
         title="Ray Dump logs"
         class="layout-sidebar__link"
