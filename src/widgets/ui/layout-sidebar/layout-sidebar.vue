@@ -64,7 +64,7 @@ const path = computed(() => useRoute().path);
     <nav class="layout-sidebar__nav">
       <NuxtLink
         to="/"
-        title="Events"
+        title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
       >
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
