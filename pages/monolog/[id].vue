@@ -1,0 +1,101 @@
+<script lang="ts" setup>
+import { computed, onMounted, ref } from "vue";
+import { MonologPage } from "~/src/screens/monolog";
+import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { PageHeader } from "~/src/widgets/ui";
+import { useMonolog } from "~/src/entities/monolog";
+import type { Monolog } from "~/src/entities/monolog/types";
+import { useEvents } from "~/src/shared/lib/use-events";
+import type { EventId, ServerEvent } from "~/src/shared/types";
+
+const { normalizeMonologEvent } = useMonolog();
+
+const { params } = useRoute();
+const { $authToken } = useNuxtApp();
+const router = useRouter();
+const eventId = params.id as EventId;
+
+useHead({
+  title: `Monolog > ${eventId} | Buggregator`,
+});
+
+const { events } = useEvents();
+
+const isLoading = ref(false);
+const serverEvent = ref<ServerEvent<Monolog> | null>(null);
+
+const event = computed(() =>
+  serverEvent.value ? normalizeMonologEvent(serverEvent.value) : null
+);
+
+const onDelete = () => {
+  events.removeById(eventId);
+
+  router.push("/");
+};
+
+const getEvent = async () => {
+  isLoading.value = true;
+
+  await useFetch(events.getUrl(eventId), {
+    headers: { "X-Auth-Token": $authToken.token || "" },
+    onResponse({ response: { _data } }) {
+      serverEvent.value = _data;
+      isLoading.value = false;
+    },
+    onResponseError() {
+      router.push("/404");
+    },
+    onRequestError() {
+      router.push("/404");
+    },
+  });
+};
+
+onMounted(getEvent);
+</script>
+
+<template>
+  <main class="monolog">
+    <PageHeader
+      class="monolog__head"
+      button-title="Delete event"
+      @delete="onDelete"
+    >
+      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink to="/monolog">Monolog</NuxtLink>&nbsp;/&nbsp;
+      <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
+    </PageHeader>
+
+    <div v-if="isLoading && !event" class="monolog__loading">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <div v-if="event" class="monolog__body">
+      <MonologPage :event="event" />
+    </div>
+  </main>
+</template>
+
+<style lang="scss" scoped>
+@import "src/assets/mixins";
+
+.monolog {
+  @include layout;
+}
+
+.monolog__head {
+  @include layout-head;
+}
+
+.monolog__loading {
+  @include loading;
+  @include layout-body;
+}
+
+.monolog__body {
+  @include layout-body;
+}
+</style>
