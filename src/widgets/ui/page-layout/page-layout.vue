@@ -84,7 +84,7 @@ const toggleUpdate = () => {
 
       <template #controls>
         <PauseButton
-          :disabled="visibleEvents.length === 0"
+          :disabled-pause="visibleEvents.length === 0"
           :is-paused="isEventsPaused"
           :total-new-events-count="hiddenEventsCount"
           @toggle-update="toggleUpdate"
