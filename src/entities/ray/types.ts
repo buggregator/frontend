@@ -1,5 +1,29 @@
 import type { NormalizedEvent } from "~/src/shared/types";
 
+export enum RAY_EVENT_TYPES {
+  LOG = "log",
+  // SIZE = "size",
+  CUSTOM = "custom",
+  // LABEL = "label",
+  CALLER = "caller",
+  CARBON = "carbon",
+  // COLOR = "color",
+  EXCEPTION = "exception",
+  // HIDE = "hide",
+  MEASURE = "measure",
+  NOTIFY = "notify",
+  MAILABLE = "mailable",
+  TABLE = "table",
+  TRACE = "trace",
+  QUERY = "executed_query",
+  APPLICATION_LOG = "application_log",
+  ELOQUENT = "eloquent_model",
+  VIEW = "view",
+  EVENT = "event",
+  JOB = "job_event",
+  LOCK = "create_lock",
+}
+
 export interface RayFrame {
   file_name: string,
   line_number: number,
@@ -138,7 +162,7 @@ export interface RayContentCustom {
 }
 
 export interface RayPayload {
-  type: string,
+  type: RAY_EVENT_TYPES | string,
   origin?: RayPayloadOrigin,
   content: RayContentException
     | RayContent
@@ -183,28 +207,4 @@ export interface EnhancedRayEvent extends NormalizedEvent<RayDump> {
     color: string,
     size: 'sm' | 'md' | 'lg' | 'xl',
   }
-}
-
-export enum RAY_EVENT_TYPES {
-  LOG = "log",
-  // SIZE = "size",
-  CUSTOM = "custom",
-  // LABEL = "label",
-  CALLER = "caller",
-  CARBON = "carbon",
-  // COLOR = "color",
-  EXCEPTION = "exception",
-  // HIDE = "hide",
-  MEASURE = "measure",
-  NOTIFY = "notify",
-  MAILABLE = "mailable",
-  TABLE = "table",
-  TRACE = "trace",
-  QUERY = "executed_query",
-  APPLICATION_LOG = "application_log",
-  ELOQUENT = "eloquent_model",
-  VIEW = "view",
-  EVENT = "event",
-  JOB = "job_event",
-  LOCK = "create_lock",
 }

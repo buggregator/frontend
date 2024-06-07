@@ -9,18 +9,17 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const eventLink = `/http-dumps/${props.event.id}`;
 const uri = decodeURI(props.event.payload.request.uri);
 </script>
 
 <template>
   <PreviewCard class="preview-card" :event="event">
-    <NuxtLink :to="eventLink" class="preview-card__link">
+    <div class="preview-card__content">
       <span class="preview-card__method">
         {{ event.payload.request.method }} </span
       >:
       <span class="preview-card__uri">/{{ uri }}</span>
-    </NuxtLink>
+    </div>
   </PreviewCard>
 </template>
 
@@ -31,8 +30,8 @@ const uri = decodeURI(props.event.payload.request.uri);
   @apply flex flex-col text-2xs md:text-xs;
 }
 
-.preview-card__link {
-  @apply cursor-pointer p-2 md:p-3 bg-gray-200 dark:bg-gray-800;
+.preview-card__content {
+  @apply p-2 md:p-3 bg-gray-200 dark:bg-gray-800;
 }
 
 .preview-card__method {

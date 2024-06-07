@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineProps } from "vue";
+import { defineProps } from "vue";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard } from "~/src/shared/ui";
 import type { Inspector } from "../../types";
@@ -9,16 +9,14 @@ type Props = {
   event: NormalizedEvent<Inspector>;
 };
 
-const props = defineProps<Props>();
-
-const eventLink = computed(() => `/inspector/${props.event.id}`);
+defineProps<Props>();
 </script>
 
 <template>
   <PreviewCard class="preview-card" :event="event">
-    <NuxtLink :to="eventLink" class="preview-card__link">
+    <div class="preview-card__content">
       <InspectorStatBoard :transaction="event.payload[0]" />
-    </NuxtLink>
+    </div>
   </PreviewCard>
 </template>
 
@@ -29,7 +27,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
   @apply flex flex-col;
 }
 
-.preview-card__link {
-  @apply cursor-pointer pb-2 flex-grow;
+.preview-card__content {
+  @apply pb-2 flex-grow;
 }
 </style>

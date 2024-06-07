@@ -7,12 +7,13 @@ import { IconSvg } from "../icon-svg";
 const CodeHighlight = highlightPlugin.component;
 
 type Props = {
-  code: string | unknown;
-  language: string;
+  code?: string;
+  language?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   language: "plaintext",
+  code: "",
 });
 
 const isCopied = ref(false);
@@ -51,7 +52,7 @@ const copyCode = (): void => {
       :class="{ 'code-snippet__copy--active': isCopied }"
       @click="copyCode"
     >
-      <IconSvg name="copy" class="code-snippet__copy-icon"/>
+      <IconSvg name="copy" class="code-snippet__copy-icon" />
       Copy
     </button>
   </div>

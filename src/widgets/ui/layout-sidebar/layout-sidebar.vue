@@ -56,7 +56,7 @@ const logout = () => {
   router.push("/login");
 };
 
-const { path } = useRoute();
+const path = computed(() => useRoute().path);
 </script>
 
 <template>
@@ -117,6 +117,24 @@ const { path } = useRoute();
         :class="{ 'router-link-active': path.includes('/inspector') }"
       >
         <IconSvg class="layout-sidebar__link-icon" name="inspector" />
+      </NuxtLink>
+
+      <NuxtLink
+        to="/var-dump"
+        title="Var Dump logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/var-dump') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="var-dump" />
+      </NuxtLink>
+
+      <NuxtLink
+        to="/ray"
+        title="Ray Dump logs"
+        class="layout-sidebar__link"
+        :class="{ 'router-link-active': path.includes('/ray') }"
+      >
+        <IconSvg class="layout-sidebar__link-icon" name="ray" />
       </NuxtLink>
 
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { EventType } from "../../types";
+import { EVENT_TYPES, type EventType } from "../../types";
 import { IconSvg } from "../icon-svg";
 import { DownloadType } from "./types";
 
@@ -54,6 +54,12 @@ const lockEvent = () => {
 };
 
 const isVisibleTags = computed(() => props.tags.length > 0);
+
+const newPageLink = computed(() => {
+  if (!Object.values(EVENT_TYPES).includes(props.eventType)) return "";
+
+  return `/${props.eventType}/${props.eventId}`;
+});
 </script>
 
 <template>
@@ -79,6 +85,16 @@ const isVisibleTags = computed(() => props.tags.length > 0);
         >
           {{ tag }}
         </div>
+      </template>
+
+      <template v-if="newPageLink">
+        <NuxtLink
+          :to="newPageLink"
+          class="preview-card-header__open"
+          title="Open full event"
+        >
+          <IconSvg name="window-maximize" />
+        </NuxtLink>
       </template>
     </div>
 
@@ -214,6 +230,11 @@ $eventTypeColorsMap: (
   &:hover {
     @apply bg-blue-500 dark:bg-blue-500;
   }
+}
+
+.preview-card-header__open {
+  @apply flex justify-end;
+  @apply h-4 md:h-5;
 }
 
 .preview-card-header__buttons {

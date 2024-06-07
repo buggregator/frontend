@@ -15,8 +15,6 @@ const props = withDefaults(defineProps<Props>(), {
   maxFrames: 3,
 });
 
-const eventLink = computed(() => `/sentry/${props.event.id}`);
-
 const exceptionValues = computed(
   () => props.event?.payload?.exception?.values || []
 );
@@ -45,19 +43,19 @@ const exception: Ref<Exception> = computed(() =>
       :exception="exception"
       :max-frames="maxFrames"
     >
-      <NuxtLink :to="eventLink" class="preview-card__link">
+      <div class="preview-card__content">
         <h3 class="preview-card__title">
           {{ exception.type }}
         </h3>
 
         <pre class="preview-card__text" v-html="exception.value" />
-      </NuxtLink>
+      </div>
     </SentryException>
 
     <div v-if="message">
-      <NuxtLink :to="eventLink" class="preview-card__link">
+      <div class="preview-card__content">
         <pre class="preview-card__text" v-html="message" />
-      </NuxtLink>
+      </div>
     </div>
   </PreviewCard>
 </template>
@@ -68,8 +66,8 @@ const exception: Ref<Exception> = computed(() =>
   @apply flex flex-col;
 }
 
-.preview-card__link {
-  @apply cursor-pointer block dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
+.preview-card__content {
+  @apply block dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
 }
 
 .preview-card__title {

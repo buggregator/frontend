@@ -71,6 +71,6 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__frames {
-  @apply border border-purple-200 dark:border-gray-600 flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
+  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
 }
 </style>

@@ -11,16 +11,22 @@ defineProps<Props>();
 
 <template>
   <div class="ray-trace">
-    <RayFile
-      v-for="frame in frames"
-      :key="`${frame.file_name}-${frame.line_number}`"
-      :file="frame"
-    />
+    <div class="ray-trace__files">
+      <RayFile
+        v-for="frame in frames"
+        :key="`${frame.file_name}-${frame.line_number}`"
+        :file="frame"
+      />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .ray-trace {
-  display: block;
+  @apply flex flex-col;
+}
+
+.ray-trace__files {
+  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
 }
 </style>
