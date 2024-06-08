@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue";
-import { RenderGraph, useRenderGraph } from "~/src/widgets/ui";
+import { RenderGraph } from "~/src/widgets/ui";
 import type { Profiler } from "~/src/entities/profiler/types";
 import { GraphTypes } from "~/src/shared/types";
 import { IconSvg } from "~/src/shared/ui";
 import { CallStatBoard } from "../call-stat-board";
-
-const { prepare } = useRenderGraph();
+import { REST_API_URL } from "~/src/shared/lib/io";
 
 type Props = {
   payload: Profiler;
@@ -22,8 +21,9 @@ const isReadyGraph = ref(false);
 
 const container = ref<HTMLElement>();
 
-const graphElements = computed(() =>
-  prepare(props.payload.edges, metric.value, threshold.value, percent.value)
+const graphElements = computed(async () =>
+  // TODO: move to api service
+  await fetch(`${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/call-graph?threshold=${threshold.value}&percentage=${percent.value}&metric=${metric.value}`).then((response) => response.json())
 );
 
 const percentLabel = computed(() =>
@@ -72,13 +72,13 @@ const setMinPercent = (value: number) => {
       :height="graphHeight"
     >
       <template #default="{ data: { name, cost } }">
-        <CallStatBoard :edge="{ callee: name, caller: '', cost }" />
+        <CallStatBoard :edge="{ callee: name, caller: '', cost }"/>
       </template>
     </RenderGraph>
 
     <div class="call-graph__toolbar">
       <button title="Full screen" @click="isFullscreen = !isFullscreen">
-        <IconSvg name="fullscreen" class="call-graph__toolbar-icon" />
+        <IconSvg name="fullscreen" class="call-graph__toolbar-icon"/>
       </button>
       <button
         class="call-graph__toolbar-action"
@@ -88,6 +88,15 @@ const setMinPercent = (value: number) => {
         @click="setMetric(GraphTypes.CPU)"
       >
         CPU
+      </button>
+      <button
+        class="call-graph__toolbar-action"
+        :class="{
+          'call-graph__toolbar-action--active': metric === GraphTypes.WALL_TIME,
+        }"
+        @click="setMetric(GraphTypes.WALL_TIME)"
+      >
+        Wall time
       </button>
       <button
         class="call-graph__toolbar-action"
@@ -108,15 +117,19 @@ const setMinPercent = (value: number) => {
       >
         Memory usage
       </button>
+
+      <!--
+      // TODO: Add support on backend
       <button
-        class="call-graph__toolbar-action"
-        :class="{
-          'call-graph__toolbar-action--active': metric === GraphTypes.CALLS,
-        }"
-        @click="setMetric(GraphTypes.CALLS)"
-      >
-        Calls
+              class="call-graph__toolbar-action"
+              :class="{
+                'call-graph__toolbar-action--active': metric === GraphTypes.CALLS,
+              }"
+              @click="setMetric(GraphTypes.CALLS)"
+            >
+              Calls
       </button>
+      -->
     </div>
 
     <div class="call-graph__toolbar call-graph__toolbar--right">
@@ -158,7 +171,7 @@ const setMinPercent = (value: number) => {
 @import "src/assets/mixins";
 
 .call-graph {
-  @apply relative flex rounded border border-gray-900 min-h-min min-w-min h-full;
+  @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;
 }
 
 .call-graph__graph {

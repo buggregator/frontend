@@ -2,13 +2,12 @@
 import { FlameChart } from "flame-chart-js";
 import debounce from "lodash.debounce";
 import { ref, onMounted, nextTick } from "vue";
-import { useFlameChart } from "~/src/features/lib/flame-chart";
-import type { ProfilerEdges } from "~/src/entities/profiler/types";
-import { GraphTypes } from "~/src/shared/types";
+import type { Profiler } from "~/src/entities/profiler/types";
 import type { CallStackHoverData } from "~/src/screens/profiler/types";
+import { REST_API_URL } from "~/src/shared/lib/io";
 
 type Props = {
-  edges: ProfilerEdges;
+  payload: Profiler;
 };
 
 type Emits = {
@@ -22,9 +21,7 @@ const emit = defineEmits<Emits>();
 const canvas = ref<HTMLCanvasElement>();
 const graph = ref<HTMLCanvasElement>();
 
-const { build } = useFlameChart();
-
-const renderChart = () => {
+const renderChart = async () => {
   if (!graph.value || !canvas.value) {
     return;
   }
@@ -36,7 +33,8 @@ const renderChart = () => {
 
   const flameChart = new FlameChart({
     canvas: canvas.value,
-    data: [build(props.edges, GraphTypes.CPU)],
+    // TODO: move to api service
+    data: await fetch(`${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/flame-chart`).then((response) => response.json()),
     settings: {
       styles: {
         main: {
@@ -52,6 +50,7 @@ const renderChart = () => {
               callee: data.data.source.name,
               caller: "",
               cost: data.data.source.cost,
+
               position: {
                 x: mouse?.x || 0,
                 y: mouse?.y || 0,
@@ -94,7 +93,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .flame-graph {
-  @apply w-full h-full relative min-h-[500px];
+  @apply -mt-3 pt-3 bg-white w-full h-full relative min-h-[500px];
 }
 
 .flame-graph__canvas {

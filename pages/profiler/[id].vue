@@ -86,5 +86,6 @@ onMounted(getEvent);
 
 .profiler-event__body {
   @include layout-body;
+  @apply h-full;
 }
 </style>

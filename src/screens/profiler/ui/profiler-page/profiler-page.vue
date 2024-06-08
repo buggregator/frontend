@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import { Tabs, Tab } from "vue3-tabs-component";
 import type { Profiler, ProfilerEdge } from "~/src/entities/profiler/types";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { StatBoard } from "~/src/shared/ui";
 import type { CallStackHoverData } from "../../types";
 import { CallGraph } from "../call-graph";
-import { CallStack } from "../call-stack";
 import { CallStatBoard } from "../call-stat-board";
 import { FlameGraph } from "../flame-graph";
+import { TopFunctions } from "../top-functions";
 
 type Props = {
   event: NormalizedEvent<Profiler>;
@@ -67,19 +66,9 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
   <div class="profiler-page">
     <div class="profiler-page__head"></div>
     <main class="profiler-page__main">
-      <section ref="calls" class="profiler-page__callstack">
-        <PerfectScrollbar :style="{ height: 'calc(100vh - 48px)' }">
-          <CallStack
-            :payload="event.payload"
-            @hover="setActiveEdge"
-            @hide="setActiveEdge"
-          />
-        </PerfectScrollbar>
-      </section>
-
       <div ref="info" class="profiler-page__stat">
         <section class="profiler-page__stat-board">
-          <StatBoard :cost="event.payload.peaks" />
+          <StatBoard :cost="event.payload.peaks"/>
         </section>
 
         <section class="profiler-page__stat-tabs">
@@ -96,9 +85,16 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
                 v-if="activeTab === 'Flamechart'"
                 :key="activeTab"
                 :data-key="activeTab"
-                :edges="event.payload.edges"
+                :payload="event.payload"
                 @hover="setActiveEdge"
                 @hide="setActiveEdge"
+              />
+            </Tab>
+
+            <Tab name="Top functions">
+              <TopFunctions
+                v-if="activeTab === 'Top functions'"
+                :payload="event.payload"
               />
             </Tab>
           </Tabs>
@@ -117,11 +113,11 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 <style lang="scss" scoped>
 .profiler-page {
-  @apply relative;
+  @apply relative h-full;
 }
 
 .profiler-page__main {
-  @apply flex flex-col md:flex-row;
+  @apply flex flex-col md:flex-row h-full;
 }
 
 .profiler-page__callstack {
@@ -129,7 +125,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 }
 
 .profiler-page__stat {
-  @apply w-full flex flex-col divide-y divide-gray-300 dark:divide-gray-500;
+  @apply w-full flex flex-col;
 }
 
 .profiler-page__stat-board {
@@ -137,7 +133,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 }
 
 .profiler-page__stat-tabs {
-  @apply p-5 bg-gray-200 flex-1 flex flex-col dark:bg-gray-800 dark:text-gray-300;
+  @apply bg-gray-200 flex-1 flex flex-col dark:bg-gray-800 dark:text-gray-300;
 }
 
 .profiler-page__stat-tabs .tabs-component-panel {

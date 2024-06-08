@@ -3,6 +3,7 @@ import type { ProfilerCost } from "~/src/entities/profiler/types";
 export type TNode = {
   data: {
     id: string,
+    parent: string | null,
     name: string,
     cost?: ProfilerCost,
     color?: string,
