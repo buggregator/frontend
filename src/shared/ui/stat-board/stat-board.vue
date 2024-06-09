@@ -29,12 +29,12 @@ const statItems = computed(() => [
   },
   {
     title: "Memory usage",
-    value: formatFileSize(props.cost.mu || 0) || "—",
+    value: formatFileSize(props.cost.mu || 0, 3) || "—",
     percent: props.cost?.p_mu,
   },
   {
-    title: "Change memory",
-    value: formatFileSize(props.cost.pmu || 0) || "—",
+    title: "Peak memory usage",
+    value: formatFileSize(props.cost.pmu || 0, 3) || "—",
     percent: props.cost?.p_pmu,
   },
 ]);

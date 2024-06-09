@@ -14,8 +14,23 @@ export interface Attachment {
 }
 
 export enum GraphTypes {
-  CPU = 'cpu' ,
+  CPU = 'cpu',
+  WALL_TIME = 'wt',
   MEMORY_CHANGE = 'pmu',
   MEMORY = 'mu',
-  CALLS = 'calls',
+  CALLS = 'ct',
+}
+
+export enum TopFunctionsMetric {
+  CPU = 'cpu',
+  WALL_TIME = 'wt',
+  MEMORY_CHANGE = 'pmu',
+  MEMORY = 'mu',
+  CALLS = 'ct',
+
+  EXCLUSIVE_CPU = 'excl_cpu',
+  EXCLUSIVE_WALL_TIME = 'excl_wt',
+  EXCLUSIVE_MEMORY_CHANGE = 'excl_pmu',
+  EXCLUSIVE_MEMORY = 'excl_mu',
+  EXCLUSIVE_CALLS = 'excl_ct',
 }

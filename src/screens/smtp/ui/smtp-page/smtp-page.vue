@@ -111,14 +111,14 @@ const date = computed(() =>
           <Tab v-if="isHtml" name="HTML">
             <CodeSnippet
               language="html"
-              class="max-w-full"
+              class="tab-preview-code"
               :code="event.payload.html"
             />
           </Tab>
           <Tab v-if="isText" name="Text">
             <CodeSnippet
               language="html"
-              class="max-w-full"
+              class="max-w-full tab-preview-code"
               :code="event.payload.text"
             />
           </Tab>
@@ -139,7 +139,7 @@ const date = computed(() =>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet language="html" :code="event.payload.raw" />
+            <CodeSnippet class="tab-preview-code" language="html" :code="event.payload.raw" />
           </Tab>
           <Tab name="Tech Info">
             <section>
@@ -181,12 +181,16 @@ const date = computed(() =>
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
+.tab-preview-code {
+  @apply max-w-full border dark:border-gray-500 rounded-md overflow-hidden;
+}
+
 .smtp-page {
   @apply relative flex-1 flex flex-col h-full;
 }
 
 .smtp-page__main {
-  @apply flex-1 flex flex-col h-full flex-grow py-5 px-4 md:px-6 lg:px-8;
+  @apply flex-1 flex flex-col h-full flex-grow py-5 px-5;
 }
 
 .smtp-page__header {

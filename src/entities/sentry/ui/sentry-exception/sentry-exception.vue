@@ -58,7 +58,7 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
+  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-500 border-b-0;
 }
 
 .sentry-exception__title {
@@ -71,6 +71,6 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__frames {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
+  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-500 border-t-0 rounded-b-md overflow-hidden;
 }
 </style>

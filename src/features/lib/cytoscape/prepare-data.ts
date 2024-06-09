@@ -5,7 +5,6 @@ import type { TEdge, TNode } from "./types";
 
 const { formatDuration, formatFileSize } = useFormats();
 
-
 const getColorForCallCount = (callCount: number) => {
   if (callCount <= 1) {
     return '#fff'; // Sky Blue for 1 call
@@ -91,7 +90,7 @@ const invertHexColor = (hexInput: string) => {
   return (yiq >= 128) ? '#000' : '#fff';
 }
 const formatValue = (value: number, metric: string): string | number => {
-  const metricFormatMap: Record<string, (v: number) => string|number> = {
+  const metricFormatMap: Record<string, (v: number) => string | number> = {
     p_mu: (a: number) => `${a}%`,
     p_pmu: (a: number) => `${a}%`,
     p_cpu: (a: number) => `${a}%`,
@@ -118,28 +117,22 @@ export const prepareData: (
   nodes: TNode[],
   edges: TEdge[]
 }) =
-  (edges: ProfilerEdges, metric , threshold = 1, percent = 10) => Object.values(edges)
+  (edges: ProfilerEdges, metric, threshold = 1, percent = 10) => Object.values(edges)
     .reduce((arr, edge: ProfilerEdge, index) => {
-      let nodeColor = '#fff';
-      let nodeTextColor = '#000';
-      let edgeColor = '#fff';
+      let nodeColor: string = '#fff';
+      let nodeTextColor: string = '#000';
+      let edgeColor: string = '#fff';
       let edgeLabel: string = edge.cost.ct > 1 ? `${edge.cost.ct}x` : '';
 
-      if (metric === GraphTypes.CALLS) {
-        const metricKey = `ct`;
-        const isImportantNode: boolean = edge.cost[metricKey] >= percent;
-        if (!isImportantNode) {
-          return arr
-        }
+      const metricKey: string = metric === GraphTypes.CALLS ? `ct` : `p_${metric}`;
+      const isImportantNode: boolean = edge.cost[metricKey] >= percent;
+      if (!isImportantNode && edge.cost[metricKey] <= threshold) {
+        return arr
+      }
 
+      if (metric === GraphTypes.CALLS) {
         nodeColor = getColorForCallCount(edge.cost[metricKey]);
       } else {
-        const metricKey = `p_${metric}`;
-        const isImportantNode: boolean = edge.cost[metricKey] >= percent;
-        if (!isImportantNode && edge.cost[metricKey] <= threshold) {
-          return arr
-        }
-
         nodeColor = isImportantNode ? getColorForPercentCount(edge.cost[metricKey]) : '#fff';
         nodeTextColor = isImportantNode ? invertHexColor(nodeColor) : '#000';
 
@@ -149,17 +142,9 @@ export const prepareData: (
         edgeLabel = `${formatValue(edge.cost[metricKey], metricKey)}${postfix}`;
       }
 
-      const metricKey = `p_${metric}`;
-
-      const isImportantNode = edge.cost.p_pmu > 10;
-
-      if (!isImportantNode && edge.cost[metricKey] <= threshold) {
-        return arr
-      }
-
       arr.nodes.push({
         data: {
-          id: edge.callee,
+          id: edge.id,
           name: edge.callee as string,
           cost: edge.cost,
           color: nodeColor,
@@ -167,13 +152,13 @@ export const prepareData: (
         }
       })
 
-      const hasNodeSource = arr.nodes.find(node => node.data.id === edge.caller);
+      const hasNodeSource = arr.nodes.find(node => node.data.id === edge.parent);
 
       if (index > 0 && hasNodeSource) {
         arr.edges.push({
           data: {
-            source: edge.caller || '',
-            target: edge.callee,
+            source: edge.parent || '',
+            target: edge.id,
             color: edgeColor,
             label: edgeLabel,
             weight: edge.cost.ct,

@@ -15,6 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
   maxFrames: 3,
 });
 
+const eventLink = computed(() => `/sentry/${props.event.id}`);
+
 const exceptionValues = computed(
   () => props.event?.payload?.exception?.values || []
 );
@@ -27,12 +29,12 @@ const exception: Ref<Exception> = computed(() =>
   exceptionValues.value.length > 0
     ? exceptionValues.value[0]
     : {
-        type: "Unknown",
-        value: "Something went wrong",
-        stacktrace: {
-          frames: [],
-        },
-      }
+      type: "Unknown",
+      value: "Something went wrong",
+      stacktrace: {
+        frames: [],
+      },
+    }
 );
 </script>
 
@@ -43,18 +45,18 @@ const exception: Ref<Exception> = computed(() =>
       :exception="exception"
       :max-frames="maxFrames"
     >
-      <div class="preview-card__content">
+      <NuxtLink :to="eventLink" class="preview-card__link">
         <h3 class="preview-card__title">
           {{ exception.type }}
         </h3>
 
-        <pre class="preview-card__text" v-html="exception.value" />
-      </div>
+        <pre class="preview-card__text" v-html="exception.value"/>
+      </NuxtLink>
     </SentryException>
 
     <div v-if="message">
       <div class="preview-card__content">
-        <pre class="preview-card__text" v-html="message" />
+        <pre class="preview-card__text" v-html="message"/>
       </div>
     </div>
   </PreviewCard>
@@ -62,12 +64,13 @@ const exception: Ref<Exception> = computed(() =>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
+
 .preview-card {
   @apply flex flex-col;
 }
 
-.preview-card__content {
-  @apply block dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400;
+.preview-card__link {
+  @apply cursor-pointer block dark:bg-gray-800 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-500;
 }
 
 .preview-card__title {
@@ -76,10 +79,10 @@ const exception: Ref<Exception> = computed(() =>
 
 .preview-card__text {
   @include code-example();
-  @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60;
+  @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60 dark:bg-gray-900 p-3;
 }
 
 .preview-card__frames {
-  @apply border border-purple-200 dark:border-gray-600 flex-col justify-center w-full;
+  @apply border border-purple-200 dark:border-gray-500 flex-col justify-center w-full;
 }
 </style>
