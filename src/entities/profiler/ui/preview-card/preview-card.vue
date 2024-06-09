@@ -7,14 +7,15 @@ type Props = {
   event: NormalizedEvent<Profiler>;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const eventLink = computed(() => `/profiler/${props.event.id}`);
 </script>
 
 <template>
   <PreviewCard class="profiler-preview" :event="event">
-    <div class="profiler-preview__link">
-      <StatBoard :cost="event.payload.peaks" />
-    </div>
+    <NuxtLink tag="div" :to="eventLink" class="profiler-preview__link">
+      <StatBoard :cost="event.payload.peaks"/>
+    </NuxtLink>
   </PreviewCard>
 </template>
 
@@ -26,6 +27,6 @@ defineProps<Props>();
 }
 
 .profiler-preview__link {
-  @apply pb-2 flex-grow;
+  @apply flex-grow rounded-md overflow-hidden mb-2 border dark:border-gray-500;
 }
 </style>

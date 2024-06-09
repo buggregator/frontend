@@ -86,17 +86,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="graph" class="flame-graph">
-    <canvas ref="canvas" class="flame-graph__canvas"></canvas>
+  <div class="graph-wrapper">
+    <div ref="graph" class="flame-graph">
+      <canvas ref="canvas" class="flame-graph__canvas"></canvas>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.graph-wrapper {
+  @apply mb-5;
+}
+
 .flame-graph {
-  @apply -mt-3 pt-3 bg-white w-full h-full relative min-h-[500px];
+  @apply w-full h-full relative min-h-[500px];
+  @apply bg-white;
+  @apply rounded-md mt-2 overflow-hidden;
 }
 
 .flame-graph__canvas {
-  @apply bg-gray-300 w-full h-full px-5;
+  @apply w-full h-full bg-white pt-3;
 }
 </style>

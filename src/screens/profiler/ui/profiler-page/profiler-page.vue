@@ -64,13 +64,8 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 <template>
   <div class="profiler-page">
-    <div class="profiler-page__head"></div>
     <main class="profiler-page__main">
       <div ref="info" class="profiler-page__stat">
-        <section class="profiler-page__stat-board">
-          <StatBoard :cost="event.payload.peaks"/>
-        </section>
-
         <section class="profiler-page__stat-tabs">
           <Tabs :options="{ useUrlFragment: false }" @changed="tabChange">
             <Tab name="Call graph">

@@ -4,6 +4,9 @@ import { ref } from "vue";
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { TopFunctionsMetric } from "~/src/shared/types";
 import { computedAsync } from "@vueuse/core";
+import { formatFileSize } from "~/src/shared/lib/formats/format-file-size";
+import { formatDuration } from "~/src/shared/lib/formats/format-duration";
+import { StatBoard } from "~/src/shared/ui";
 
 type Props = {
   payload: Profiler;
@@ -21,70 +24,97 @@ const data = computedAsync(async () =>
 const setMetric = (value: TopFunctionsMetric) => {
   metric.value = value;
 };
+
+const formatValue = (value: number, format: string) => {
+  if (format === "ms") {
+    return formatDuration(value);
+  }
+
+  if (format === "percent") {
+    return value + '%';
+  }
+
+  if (format === "number") {
+    return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value);
+  }
+
+  if (format === "bytes") {
+    return formatFileSize(value, 3);
+  }
+
+  return value;
+};
 </script>
 
 <template>
-  <table class="w-full text-sm">
-    <thead>
-    <tr>
-      <th class="text-left">Function</th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.CALLS}"
-          @click="setMetric(TopFunctionsMetric.CALLS)">Calls
-      </th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.CPU}"
-          @click="setMetric(TopFunctionsMetric.CPU)">CPU
-      </th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.EXCLUSIVE_CPU}"
-          @click="setMetric(TopFunctionsMetric.EXCLUSIVE_CPU)">Excl CPU
-      </th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.WALL_TIME}"
-          @click="setMetric(TopFunctionsMetric.WALL_TIME)">Wall Time
-      </th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.EXCLUSIVE_WALL_TIME}"
-          @click="setMetric(TopFunctionsMetric.EXCLUSIVE_WALL_TIME)">Excl Wall Time
-      </th>
-      <th class="text-left" :class="{selected: metric === TopFunctionsMetric.MEMORY_CHANGE}"
-          @click="setMetric(TopFunctionsMetric.MEMORY_CHANGE)">Mem usage
-      </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="fn in data.functions">
-      <th class="text-left">{{ fn.function }}</th>
-      <td class="text-left">{{ fn.ct }} <span class="label">{{ fn.p_ct }}%</span></td>
-      <td class="text-left">{{ fn.cpu }} <span class="label">{{ fn.p_cpu }}%</span></td>
-      <td class="text-left">{{ fn.excl_cpu }} <span class="label">{{ fn.p_excl_cpu }}%</span></td>
-      <td class="text-left">{{ fn.wt }} <span class="label">{{ fn.p_wt }}%</span></td>
-      <td class="text-left">{{ fn.excl_wt }} <span class="label">{{ fn.p_excl_wt }}%</span></td>
-      <td class="text-left">{{ fn.mu }} <span class="label">{{ fn.p_mu }}%</span></td>
-    </tr>
-    </tbody>
-  </table>
+  <section class="profiler-page__stat-board">
+    <StatBoard v-if="data.overall_totals" :cost="data.overall_totals"/>
+  </section>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+      <tr>
+        <th class="text-left"
+            v-for="col in data.schema"
+            :title="col.description"
+            :class="{selected: metric === col.key,  [`col-${col.key}`]: true}"
+            @click="(col.sortable || false) ? setMetric(col.key) : null"
+        >
+          {{ col.label }}
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="fn in data.functions">
+        <td class="text-left" :class="{
+        selected: metric === col.key,
+      [`col-${col.key}`]: true
+      }" v-for="col in data.schema">
+          <div class="table-value" v-for="value in col.values" :class="{
+          [`value-${value.format}`]: true,
+        }">
+            {{ formatValue(fn[value.key], value.format) }}
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style scoped lang="scss">
-.label {
+.table-wrapper {
+  @apply overflow-hidden mb-5 mt-2;
+  @apply border rounded-md dark:border-gray-500
+}
+
+table td .table-value.value-percent {
   @apply text-xs text-gray-500;
 }
 
 table {
-  @apply w-full mb-10 -mt-3;
+  @apply w-full text-xs;
 }
 
 table thead {
-  @apply dark:bg-gray-900 bg-gray-300;
+  @apply dark:bg-gray-900 bg-gray-300 text-base;
+}
+
+table th, td {
+  @apply px-4;
 }
 
 table thead th {
   @apply font-black py-3 dark:text-gray-400 cursor-pointer;
 }
 
-table thead th.selected {
-  @apply dark:text-gray-100;
+table thead th.selected, table tbody td.selected {
+  @apply dark:text-gray-100 border-l border-r dark:border-gray-500 font-semibold;
 }
 
-table tr th:first-child {
-  @apply pl-3;
+table tr .col-function {
+  @apply pl-3 font-bold;
 }
 
 table tbody th, table tbody td {
@@ -93,5 +123,9 @@ table tbody th, table tbody td {
 
 table tbody tr:nth-child(odd) {
   @apply dark:bg-gray-700 bg-gray-100;
+}
+
+table tbody tr {
+  @apply dark:hover:bg-gray-900;
 }
 </style>

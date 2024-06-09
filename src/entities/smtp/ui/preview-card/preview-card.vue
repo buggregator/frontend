@@ -10,6 +10,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const eventLink = computed(() => `/smtp/${props.event.id}`);
 
 const dateFormat = computed(() => moment(props.event.date).fromNow());
 
@@ -20,19 +21,19 @@ const emailRecipient = computed(
 
 <template>
   <PreviewCard class="smtp-preview" :event="event">
-    <div class="smtp-preview__link">
+    <NuxtLink :to="eventLink" class="smtp-preview__link">
       <h3 class="smtp-preview__link-title">
         {{ event.payload.subject }}
       </h3>
 
       <div class="smtp-preview__link-text">
-        <span v-if="emailRecipient"
-          ><strong>To:</strong> {{ emailRecipient }}
+        <span v-if="emailRecipient">
+          <strong>To:</strong> {{ emailRecipient }}
         </span>
 
         <span>{{ dateFormat }}</span>
       </div>
-    </div>
+    </NuxtLink>
   </PreviewCard>
 </template>
 
@@ -46,7 +47,7 @@ const emailRecipient = computed(
   @apply block flex items-stretch;
   @apply p-2 md:p-4;
   @apply flex flex-col;
-  @apply border dark:border-gray-600;
+  @apply border dark:border-gray-500 rounded-md overflow-hidden;
   @apply dark:bg-gray-800 dark:hover:bg-gray-900 hover:bg-white;
 }
 

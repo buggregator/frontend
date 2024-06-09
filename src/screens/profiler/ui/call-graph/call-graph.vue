@@ -3,22 +3,21 @@ import { ref, computed, onMounted } from "vue";
 import { RenderGraph } from "~/src/widgets/ui";
 import type { Profiler } from "~/src/entities/profiler/types";
 import { GraphTypes } from "~/src/shared/types";
-import { IconSvg } from "~/src/shared/ui";
 import { CallStatBoard } from "../call-stat-board";
 import { REST_API_URL } from "~/src/shared/lib/io";
+import { CallGraphToolbar } from "~/src/screens/profiler/ui/call-graph-toolbar";
 
 type Props = {
   payload: Profiler;
 };
 
 const props = defineProps<Props>();
-
 const isFullscreen = ref(false);
 const metric = ref(GraphTypes.CPU as GraphTypes);
 const threshold = ref(1);
 const percent = ref(10);
-const isReadyGraph = ref(false);
 
+const isReadyGraph = ref(false);
 const container = ref<HTMLElement>();
 
 const graphElements = computed(async () =>
@@ -26,24 +25,9 @@ const graphElements = computed(async () =>
   await fetch(`${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/call-graph?threshold=${threshold.value}&percentage=${percent.value}&metric=${metric.value}`).then((response) => response.json())
 );
 
-const percentLabel = computed(() =>
-  metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"
-);
-
 const graphKey = computed(
   () => `${metric.value}-${threshold.value}-${percent.value}`
 );
-
-const graphHeight = computed(() =>
-  isFullscreen.value
-    ? window.innerHeight
-    : (container.value as HTMLElement).offsetHeight
-);
-
-onMounted(() => {
-  // NOTE: need to show graph after parent render
-  isReadyGraph.value = true;
-});
 
 const setMetric = (value: GraphTypes) => {
   metric.value = value;
@@ -56,6 +40,17 @@ const setThreshold = (value: number) => {
 const setMinPercent = (value: number) => {
   percent.value = value;
 };
+
+const graphHeight = computed(() =>
+  isFullscreen.value
+    ? window.innerHeight
+    : (container.value as HTMLElement).offsetHeight
+);
+
+onMounted(() => {
+  // NOTE: need to show graph after parent render
+  isReadyGraph.value = true;
+});
 </script>
 
 <template>
@@ -76,94 +71,18 @@ const setMinPercent = (value: number) => {
       </template>
     </RenderGraph>
 
-    <div class="call-graph__toolbar">
-      <button title="Full screen" @click="isFullscreen = !isFullscreen">
-        <IconSvg name="fullscreen" class="call-graph__toolbar-icon"/>
-      </button>
-      <button
-        class="call-graph__toolbar-action"
-        :class="{
-          'call-graph__toolbar-action--active': metric === GraphTypes.CPU,
-        }"
-        @click="setMetric(GraphTypes.CPU)"
-      >
-        CPU
-      </button>
-      <button
-        class="call-graph__toolbar-action"
-        :class="{
-          'call-graph__toolbar-action--active': metric === GraphTypes.WALL_TIME,
-        }"
-        @click="setMetric(GraphTypes.WALL_TIME)"
-      >
-        Wall time
-      </button>
-      <button
-        class="call-graph__toolbar-action"
-        :class="{
-          'call-graph__toolbar-action--active':
-            metric === GraphTypes.MEMORY_CHANGE,
-        }"
-        @click="setMetric(GraphTypes.MEMORY_CHANGE)"
-      >
-        Memory change
-      </button>
-      <button
-        class="call-graph__toolbar-action"
-        :class="{
-          'call-graph__toolbar-action--active': metric === GraphTypes.MEMORY,
-        }"
-        @click="setMetric(GraphTypes.MEMORY)"
-      >
-        Memory usage
-      </button>
+    <CallGraphToolbar
+      :data="graphElements"
+      :metric="metric"
+      :threshold="threshold"
+      :percent="percent"
+      :isFullscreen="isFullscreen"
 
-      <!--
-      // TODO: Add support on backend
-      <button
-              class="call-graph__toolbar-action"
-              :class="{
-                'call-graph__toolbar-action--active': metric === GraphTypes.CALLS,
-              }"
-              @click="setMetric(GraphTypes.CALLS)"
-            >
-              Calls
-      </button>
-      -->
-    </div>
-
-    <div class="call-graph__toolbar call-graph__toolbar--right">
-      <label
-        v-if="metric !== GraphTypes.CALLS"
-        class="call-graph__toolbar-input-wr"
-      >
-        Threshold
-
-        <input
-          class="call-graph__toolbar-input"
-          type="number"
-          :value="threshold"
-          :min="0"
-          :max="10"
-          :step="0.1"
-          @input="setThreshold($event.target.value)"
-        />
-      </label>
-
-      <label class="call-graph__toolbar-input-wr">
-        {{ percentLabel }}
-
-        <input
-          class="call-graph__toolbar-input"
-          type="number"
-          :value="percent"
-          :min="metric === GraphTypes.CALLS ? 1 : 0"
-          :max="metric === GraphTypes.CALLS ? 1000 : 100"
-          :step="metric === GraphTypes.CALLS ? 10 : 5"
-          @input="setMinPercent($event.target.value)"
-        />
-      </label>
-    </div>
+      @onMetricChange="setMetric"
+      @onThresholdChange="setThreshold"
+      @onPercentChange="setMinPercent"
+      @onFullscreen="isFullscreen = !isFullscreen"
+    />
   </div>
 </template>
 

@@ -63,7 +63,7 @@ onMounted(getEvent);
     </div>
 
     <div class="profiler-event__body">
-      <ProfilerPage v-if="event" :event="event" />
+      <ProfilerPage v-if="event" :event="event" class="p-5"/>
     </div>
   </main>
 </template>

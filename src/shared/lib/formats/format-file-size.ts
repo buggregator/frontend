@@ -1,15 +1,14 @@
-
-export const formatFileSize = (inputBytes: number) => {
-  let bytes = inputBytes;
-  const thresh = 1024;
+export const formatFileSize = (inputBytes: number, fraction: number = 1) => {
+  let bytes: number = inputBytes;
+  const thresh: number = 1024;
 
   if (Math.abs(bytes) < thresh) {
     return `${bytes} B`;
   }
 
-  const units = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-  let u = -1;
-  const r = 10 ** 1;
+  const units = ["Kb", "Mb", "Gb", "Tb", "b", "Eb", "Zb", "Yb"];
+  let u: number = -1;
+  const r: number = 10 ** 1;
 
   do {
     bytes /= thresh;
@@ -17,7 +16,7 @@ export const formatFileSize = (inputBytes: number) => {
   } while (
     Math.round(Math.abs(bytes) * r) / r >= thresh &&
     u < units.length - 1
-  );
+    );
 
-  return `${bytes.toFixed(1)} ${units[u]}`;
+  return `${bytes.toFixed(fraction)} ${units[u]}`;
 };
