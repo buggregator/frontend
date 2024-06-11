@@ -13,7 +13,7 @@ type Props = {
 
 const props = defineProps<Props>();
 const isFullscreen = ref(false);
-const metric = ref(GraphTypes.CPU as GraphTypes);
+const metric = ref(GraphTypes.WALL_TIME as GraphTypes);
 const threshold = ref(1);
 const percent = ref(10);
 
