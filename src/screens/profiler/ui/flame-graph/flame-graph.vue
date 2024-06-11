@@ -52,8 +52,8 @@ const renderChart = async () => {
               cost: data.data.source.cost,
 
               position: {
-                x: mouse?.x || 0,
-                y: mouse?.y || 0,
+                x: mouse?.x + 20 || 0,
+                y: mouse?.y - 20 || 0,
               },
             });
           }
@@ -82,6 +82,10 @@ onMounted(() => {
   nextTick(() => {
     renderChart();
   });
+});
+
+onBeforeUnmount(() => {
+  emit("hide");
 });
 </script>
 

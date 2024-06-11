@@ -7,9 +7,12 @@ const { formatDuration, formatFileSize } = useFormats();
 
 type Props = {
   cost: ProfilerCost;
+  size: 'sm' | 'md' | 'lg';
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  size: 'md',
+})
 
 const statItems = computed(() => [
   {
@@ -41,7 +44,7 @@ const statItems = computed(() => [
 </script>
 
 <template>
-  <section class="stat-board">
+  <section class="stat-board" :class="[`size-${size}`]">
     <div v-for="item in statItems" :key="item.title" class="stat-board__item">
       <h4 class="stat-board__item-name">
         {{ item.title }}
@@ -65,25 +68,59 @@ const statItems = computed(() => [
   @apply flex flex-col sm:flex-row justify-between items-start;
   @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
   @apply bg-gray-200 dark:bg-gray-800;
-  @apply p-0 sm:p-4 lg:p-6;
 }
 
 .stat-board__item {
   @apply flex flex-row justify-between sm:flex-col sm:justify-start flex-auto;
   @apply w-full sm:w-auto;
-  @apply py-2 px-2 sm:py-5 sm:px-5;
 }
 
 .stat-board__item-name {
-  @apply text-gray-600 dark:text-gray-300 font-bold text-2xs uppercase truncate;
-  @apply mb-0 sm:mb-1;
+  @apply text-gray-600 dark:text-gray-300 font-bold uppercase truncate;
 }
 
-.stat-board__item-name-detail {
-  @apply text-2xs truncate ml-1;
-}
-
+.stat-board__item-name-detail,
 .stat-board__item-value {
-  @apply text-2xs sm:text-xs md:text-base truncate;
+  @apply truncate;
+}
+
+.stat-board.size-md {
+  @apply p-0 sm:p-4 lg:p-6;
+
+  .stat-board__item-name-detail {
+    @apply text-2xs ml-1;
+  }
+
+  .stat-board__item {
+    @apply py-2 px-2 sm:py-5 sm:px-5;
+  }
+
+  .stat-board__item-name {
+    @apply mb-0 sm:mb-1 text-2xs;
+  }
+
+  .stat-board__item-value {
+    @apply text-2xs sm:text-xs md:text-base;
+  }
+}
+
+.stat-board.size-sm {
+  @apply p-0 border-t border-t-gray-300 dark:border-t-gray-500;
+
+  .stat-board__item-name-detail {
+    @apply text-2xs;
+  }
+
+  .stat-board__item {
+    @apply px-4 py-2;
+  }
+
+  .stat-board__item-name {
+    @apply text-2xs;
+  }
+
+  .stat-board__item-value {
+    @apply text-xs;
+  }
 }
 </style>
