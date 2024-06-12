@@ -16,7 +16,7 @@ defineProps<Props>();
       {{ edge.callee }}
     </h4>
 
-    <StatBoard class="call-stat-board__body" :cost="edge.cost" />
+    <StatBoard class="call-stat-board__body" :cost="edge.cost" size="sm" />
   </div>
 </template>
 
@@ -26,7 +26,7 @@ defineProps<Props>();
 }
 
 .call-stat-board__title {
-  @apply px-4 py-2 font-bold truncate text-gray-300;
+  @apply p-2 text-xs font-bold truncate text-gray-300;
 }
 
 .call-stat-board__body {
