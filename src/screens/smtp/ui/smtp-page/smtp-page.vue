@@ -139,7 +139,11 @@ const date = computed(() =>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet class="tab-preview-code" language="html" :code="event.payload.raw" />
+            <CodeSnippet
+              class="tab-preview-code"
+              language="html"
+              :code="event.payload.raw"
+            />
           </Tab>
           <Tab name="Tech Info">
             <section>

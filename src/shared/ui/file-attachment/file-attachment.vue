@@ -15,7 +15,7 @@ const props = defineProps<Props>();
 const size = computed(() => formatFileSize(props.attachment.size || 0));
 const downloadUrl = computed(
   () =>
-    `${REST_API_URL}/api/smtp/${props.eventId}/attachments/${props.attachment.uuid}`
+    `${REST_API_URL}/api/smtp/${props.eventId}/attachments/${props.attachment.id}`
 );
 </script>
 
