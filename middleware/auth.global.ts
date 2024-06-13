@@ -5,7 +5,7 @@ import { useProfileStore } from "~/src/shared/stores/profile"
 export default defineNuxtRouteMiddleware(async (to) => {
   const app = useNuxtApp()
 
-  if (!app.$appSettings.auth.enabled) {
+  if (!app.$appSettings?.auth?.enabled) {
     return undefined
   }
 

@@ -20,7 +20,7 @@ export default defineNuxtPlugin(async () => {
     console.error('Server is not available!')
   }
 
-  if (!settings.auth.enabled) {
+  if (!settings?.auth?.enabled) {
     return {
       provide: {
         appSettings: settings,
