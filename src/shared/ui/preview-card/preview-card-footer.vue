@@ -3,7 +3,7 @@ import { withDefaults, defineProps, computed } from "vue";
 import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
-const KEY_MAP = {
+const KEY_MAP: { [key: string]: string } = {
   php_version: "php",
   laravel_version: "laravel",
   symfony_version: "symfony",
@@ -25,16 +25,25 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const mappedOrigins = computed(() =>
-  props.originConfig
-    ? Object.entries(props.originConfig).reduce((acc, [key, value]) => {
-        // Filter out empty values
-        if (!value || value === "undefined") return acc;
+  Object.entries(props.originConfig || {}).reduce((acc, [key, value]) => {
+    const fileName = props.originConfig?.file || "";
 
-        const mappedKey = KEY_MAP[key] || key;
-        acc[mappedKey] = value;
-        return acc;
-      }, {} as { [key: string]: string })
-    : {}
+    if (
+      key === "name" &&
+      fileName.includes(value, fileName.length - value.length)
+    ) {
+      return acc;
+    }
+
+    if (!value || value === "undefined") {
+      return acc;
+    }
+
+    const mappedKey = KEY_MAP[key] || key;
+    acc[mappedKey] = value;
+
+    return acc;
+  }, {} as { [key: string]: string })
 );
 </script>
 
