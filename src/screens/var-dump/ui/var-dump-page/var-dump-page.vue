@@ -41,7 +41,7 @@ const date = computed(() =>
         />
       </section>
 
-      <section class="var-dump__body">
+      <section v-if="event.payload.context.source" class="var-dump__body">
         <h3 class="var-dump__body-text">Source</h3>
         <TableBase class="var-dump__body-table">
           <TableBaseRow
@@ -54,7 +54,7 @@ const date = computed(() =>
         </TableBase>
       </section>
 
-      <section class="var-dump__body">
+      <section v-if="event.payload.context.request" class="var-dump__body">
         <h3 class="var-dump__body-text">Request</h3>
         <TableBase class="var-dump__body-table">
           <template
