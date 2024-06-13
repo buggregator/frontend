@@ -55,16 +55,16 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="http-dumps-event">
+  <main class="http-dump-event">
     <PageEventHeader title="Http dumps" :event-id="eventId" />
 
-    <div v-if="isLoading && !event" class="http-dumps-event__loading">
+    <div v-if="isLoading && !event" class="http-dump-event__loading">
       <div></div>
       <div></div>
       <div></div>
     </div>
 
-    <div class="http-dumps-event__body">
+    <div class="http-dump-event__body">
       <HttpDumpPage v-if="event" :event="event" />
     </div>
   </main>
@@ -72,20 +72,20 @@ onMounted(getEvent);
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
-.http-dumps-event {
+.http-dump-event {
   @include layout;
 }
 
-.http-dumps-event__head {
+.http-dump-event__head {
   @include layout-head;
 }
 
-.http-dumps-event__loading {
+.http-dump-event__loading {
   @include loading;
   @include layout-body;
 }
 
-.http-dumps-event__body {
+.http-dump-event__body {
   @include layout-body;
 }
 </style>

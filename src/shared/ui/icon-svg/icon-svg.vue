@@ -615,7 +615,7 @@ defineProps<Props>();
     </svg>
 
     <svg
-      v-else-if="name === 'http-dumps'"
+      v-else-if="name === 'http-dump'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 26 22"
     >

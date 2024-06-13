@@ -57,6 +57,8 @@ const logout = () => {
 };
 
 const path = computed(() => useRoute().path);
+
+const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
 </script>
 
 <template>
@@ -102,12 +104,12 @@ const path = computed(() => useRoute().path);
       </NuxtLink>
 
       <NuxtLink
-        to="/http-dumps"
+        to="/http-dump"
         title="Http dumps"
         class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/http-dumps') }"
+        :class="{ 'router-link-active': path.includes('/http-dump') }"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="http-dumps" />
+        <IconSvg class="layout-sidebar__link-icon" name="http-dump" />
       </NuxtLink>
 
       <NuxtLink
@@ -152,7 +154,7 @@ const path = computed(() => useRoute().path);
     </nav>
 
     <div>
-      <div v-if="app.$appSettings.auth.enabled" class="layout-sidebar__profile">
+      <div v-if="isAuthEnabled" class="layout-sidebar__profile">
         <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
           <div class="profile-dropdown-item profile-dropdown-item--email">
             {{ profile.email }}
