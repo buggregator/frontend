@@ -110,7 +110,7 @@ const hasAttachments = computed(
         <div class="http-dump-page__attachments">
           <FileAttachment
             v-for="file in event.payload.request.files"
-            :key="file.id"
+            :key="file.uuid"
             :event-id="event.id"
             :attachment="file"
           />

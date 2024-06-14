@@ -1,3 +1,5 @@
+import type {Uuid} from "./events";
+
 export interface Source {
   file: string,
   name: string,
@@ -6,7 +8,7 @@ export interface Source {
 }
 
 export interface Attachment {
-  id: string,
+  uuid: Uuid,
   name: string,
   size: number,
   mime: string,

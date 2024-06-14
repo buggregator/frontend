@@ -21,12 +21,12 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
     .then((response) => {
       if (response?.data) {
         return (response.data as SMTPAttachment[]).map((attachment) => ({
-          id: attachment.uuid,
+          uuid: attachment.uuid,
           name: attachment.name,
           size: attachment.size,
           mime: attachment.mime,
           uri: attachment.path
-        }))
+        } as Attachment))
       }
 
       if (response?.code === 403) {

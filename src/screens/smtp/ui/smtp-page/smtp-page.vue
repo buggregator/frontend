@@ -129,11 +129,7 @@ const date = computed(() =>
             <section class="mb-5">
               <div class="flex gap-x-3">
                 <template v-for="a in attachments" :key="a.uuid">
-                  <FileAttachment
-                    :event-id="event.id"
-                    :event="event"
-                    :attachment="a"
-                  />
+                  <FileAttachment :event-id="event.id" :attachment="a" />
                 </template>
               </div>
             </section>
