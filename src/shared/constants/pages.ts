@@ -1,4 +1,4 @@
-import { EVENT_TYPES } from "../types";
+import {EVENT_TYPES, type EventType} from "../types";
 
 export const PAGE_TYPES = {
   VAR_DUMP: EVENT_TYPES.VAR_DUMP,
@@ -11,3 +11,8 @@ export const PAGE_TYPES = {
   RAY_DUMP: EVENT_TYPES.RAY_DUMP,
   ALL_EVENTS: "all-events",
 }
+
+export const AVAILABLE_EVENTS_TYPES_LIST: EventType[] =
+  (import.meta.env.FE_ACTIVE_EVENT_TYPES || Object.values(EVENT_TYPES).join(','))
+    .split(',')
+    .filter(Boolean)
