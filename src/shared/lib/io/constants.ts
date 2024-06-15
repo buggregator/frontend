@@ -15,5 +15,5 @@ const guessRestApiConnection = (): string => {
   return `${API_PROTOCOL}://${API_HOST}`;
 }
 
-export const REST_API_URL = (import.meta.env.VITE_EVENTS_REST_API as string) || guessRestApiConnection()
-export const WS_URL = (import.meta.env.VITE_EVENTS_WS_API as string) || guessWsConnection()
+export const REST_API_URL = (import.meta.env.FE_EVENTS_REST_API as string) || guessRestApiConnection()
+export const WS_URL = (import.meta.env.FE_EVENTS_WS_API as string) || guessWsConnection()
