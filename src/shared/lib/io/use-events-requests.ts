@@ -9,7 +9,7 @@ type TUseEventsRequests = () => {
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: EventType) => Promise<void | Response>,
-  getEventRestUrl: (param: EventId | undefined) => string
+  getEventRestUrl: (param: EventId) => string
 }
 
 // TODO: add 403 response handling
@@ -18,9 +18,10 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const app = useNuxtApp()
   const {token} = app.$authToken ?? {token: null}
   const headers = {"X-Auth-Token": token || ''}
-  const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
+  const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}`
+  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events/preview`
 
-  const getAll = () => fetch(getEventRestUrl(), { headers })
+  const getAll = () => fetch(getEventsRestUrl(), { headers })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -52,12 +53,12 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getEventRestUrl(), {method: 'DELETE', headers})
+  const deleteAll = () => fetch(getEventsRestUrl(), {method: 'DELETE', headers})
     .catch((err) => {
       console.error('Fetch Error', err)
     })
 
-  const deleteList = (uuids: EventId[]) => fetch(getEventRestUrl(), {
+  const deleteList = (uuids: EventId[]) => fetch(getEventsRestUrl(), {
     method: 'DELETE',
     headers,
     body: JSON.stringify({uuids})
@@ -66,7 +67,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: EventType) => fetch(getEventRestUrl(), {
+  const deleteByType = (type: EventType) => fetch(getEventsRestUrl(), {
     method: 'DELETE',
     headers,
     body: JSON.stringify({type})
