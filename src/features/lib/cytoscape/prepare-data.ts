@@ -119,9 +119,9 @@ export const prepareData: (
 }) =
   (edges: ProfilerEdges, metric, threshold = 1, percent = 10) => Object.values(edges)
     .reduce((arr, edge: ProfilerEdge, index) => {
-      let nodeColor: string = '#fff';
-      let nodeTextColor: string = '#000';
-      let edgeColor: string = '#fff';
+      let nodeColor = '#fff';
+      let nodeTextColor = '#000';
+      let edgeColor = '#fff';
       let edgeLabel: string = edge.cost.ct > 1 ? `${edge.cost.ct}x` : '';
 
       const metricKey: string = metric === GraphTypes.CALLS ? `ct` : `p_${metric}`;

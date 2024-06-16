@@ -1,5 +1,3 @@
-import { computed } from "vue";
-import type { OneOfValues } from "~/src/shared/types";
 import {
   RAY_EVENT_TYPES,
   type RayContentApplicationLog,
