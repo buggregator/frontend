@@ -1,6 +1,6 @@
 import { useSmtpRequests } from "~/src/shared/lib/io";
-import type { ServerEvent, NormalizedEvent, EventId  } from '~/src/shared/types';
-import type { SMTP, Attachment } from "../types";
+import type { ServerEvent, NormalizedEvent, EventId, Attachment } from '~/src/shared/types';
+import type { SMTP } from "../types";
 import { normalizeSmtpEvent } from "./normalize-smtp-event";
 
 type TUseSmtp = () => {
