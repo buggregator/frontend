@@ -4,7 +4,8 @@
   "payload": {
     "payload": {
       "type": "boolean",
-      "value": "1"
+      "value": "1",
+      "label": null
     },
     "context": {
       "timestamp": 1678271981.325951,
