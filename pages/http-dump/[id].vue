@@ -4,7 +4,7 @@ import { HttpDumpPage } from "~/src/screens/http-dump";
 import { useFetch, useRoute, useRouter, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
-import type { HttpDump } from "~/src/entities/http-dump/types";
+import type { HttpDumpServer } from "~/src/entities/http-dump/types";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { EventId, ServerEvent } from "~/src/shared/types";
 
@@ -27,7 +27,7 @@ const serverEvent = ref<Event | null>(null);
 const event = computed(() =>
   serverEvent.value
     ? normalizeHttpDumpEvent(
-        serverEvent.value as unknown as ServerEvent<HttpDump>
+        serverEvent.value as unknown as ServerEvent<HttpDumpServer>
       )
     : null
 );

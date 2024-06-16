@@ -25,7 +25,7 @@ export const useProfileStore = defineStore("profileStore", {
       this.profile = profile;
     },
     fetchToken(): void {
-      this.setToken(localStorage?.getItem(STORAGE_KEY));
+      this.setToken(localStorage?.getItem(STORAGE_KEY) || '');
     },
     removeToken(): void {
       this.token = '';

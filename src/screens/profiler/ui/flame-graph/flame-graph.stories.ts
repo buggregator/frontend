@@ -24,6 +24,6 @@ export default {
 
 export const Default: StoryObj<typeof FlameGraph> = {
   args: {
-    edges: (normalizeProfilerEvent(profilerMock).payload as Profiler).edges,
+    payload: (normalizeProfilerEvent(profilerMock).payload as Profiler),
   }
 };

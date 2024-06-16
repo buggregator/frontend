@@ -1,11 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { GraphTypes } from "~/src/shared/types";
 import RenderGraph from './render-graph.vue';
-import { useRenderGraph } from './use-render-graph';
 
-const { prepare } = useRenderGraph();
 export default {
   title: "Widgets/RenderGraph",
   component: RenderGraph,
@@ -16,11 +12,11 @@ export default {
         args,
       };
     },
-    template: `<RenderGraph v-bind="args" :height="500" />`,
+    template: `<RenderGraph :elements="args.elements" :height="500" />`,
   })
 } as Meta<typeof RenderGraph>;
 
-export const TestData = {
+export const TestData: Meta<typeof RenderGraph> = {
   args: {
     elements: {
       nodes: [
@@ -41,25 +37,5 @@ export const TestData = {
         { data: { source: 'e14', target: 'e14', label: '100%' } },
       ]
     },
-  }
-};
-
-
-
-export const ProfilerData: StoryObj<typeof RenderGraph> = {
-  args: {
-    elements: prepare(profilerMock.payload.edges, GraphTypes.CPU, 1, 10)
-  }
-};
-
-export const ProfilerMemoryData: StoryObj<typeof RenderGraph> = {
-  args: {
-    elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY, 1, 10)
-  }
-};
-
-export const ProfilerMemoryChangeData: StoryObj<typeof RenderGraph> = {
-  args: {
-    elements: prepare(profilerMock.payload.edges, GraphTypes.MEMORY_CHANGE, 1, 10)
   }
 };

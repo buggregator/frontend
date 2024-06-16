@@ -4,8 +4,8 @@
   "payload": {
     "payload": {
       "type": "code",
-      "language": "php",
-      "value": "<?php\n\ndeclare(strict_types=1);\n\necho 'Hello, World!';\n"
+      "value": "<?php\n\ndeclare(strict_types=1);\n\necho 'Hello, World!';\n",
+      "label": null
     },
     "context": {
       "timestamp": 1678271981.325951,

@@ -9,18 +9,20 @@ const { formatFileSize } = useFormats();
 type Props = {
   eventId: string;
   attachment: Attachment;
+  downloadUrl?: string;
 };
 
 const props = defineProps<Props>();
 const size = computed(() => formatFileSize(props.attachment.size || 0));
-const downloadUrl = computed(
-  () =>
-    `${REST_API_URL}/api/smtp/${props.eventId}/attachments/${props.attachment.uuid}`
-);
 </script>
 
 <template>
-  <a :href="downloadUrl" target="_blank" class="file-attachment">
+  <component
+    :is="downloadUrl ? 'a' : 'div'"
+    :href="downloadUrl || 'javascript:void(0)'"
+    target="_blank"
+    class="file-attachment"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -38,7 +40,7 @@ const downloadUrl = computed(
       </div>
       <div class="file-attachment__size">({{ size }})</div>
     </div>
-  </a>
+  </component>
 </template>
 
 <style lang="scss" scoped>

@@ -1,5 +1,4 @@
 import { type NuxtApp, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import type { SMTPAttachment } from "~/src/entities/smtp/types";
 import type { EventId, Attachment } from "../../types";
 import { REST_API_URL } from "./constants";
 
@@ -20,13 +19,7 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
-        return (response.data as SMTPAttachment[]).map((attachment) => ({
-          uuid: attachment.uuid,
-          name: attachment.name,
-          size: attachment.size,
-          mime: attachment.mime,
-          uri: attachment.path
-        } as Attachment))
+        return response.data
       }
 
       if (response?.code === 403) {

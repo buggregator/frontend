@@ -4,7 +4,8 @@
   "payload": {
     "payload": {
       "type": "integer",
-      "value": "<pre class=sf-dump id=sf-dump-123988832 data-indent-pad=\"  \"><span class=sf-dump-num>14175368</span>\n</pre><script>Sfdump(\"sf-dump-123988832\")</script>\n"
+      "value": "<pre class=sf-dump id=sf-dump-123988832 data-indent-pad=\"  \"><span class=sf-dump-num>14175368</span>\n</pre><script>Sfdump(\"sf-dump-123988832\")</script>\n",
+      "label": null
     },
     "context": {
       "timestamp": 1678271435.478959,

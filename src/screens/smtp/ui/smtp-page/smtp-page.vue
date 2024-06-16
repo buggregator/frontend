@@ -3,6 +3,7 @@ import moment from "moment";
 import { computed, ref } from "vue";
 import { Tab, Tabs } from "vue3-tabs-component";
 import type { SMTP, Attachment } from "~/src/entities/smtp/types";
+import { REST_API_URL } from "~/src/shared/lib/io";
 import type { NormalizedEvent } from "~/src/shared/types";
 import {
   TableBase,
@@ -129,7 +130,11 @@ const date = computed(() =>
             <section class="mb-5">
               <div class="flex gap-x-3">
                 <template v-for="a in attachments" :key="a.uuid">
-                  <FileAttachment :event-id="event.id" :attachment="a" />
+                  <FileAttachment
+                    :event-id="event.id"
+                    :attachment="a"
+                    :download-url="`${REST_API_URL}/api/smtp/${event.id}/attachments/${a.uuid}`"
+                  />
                 </template>
               </div>
             </section>

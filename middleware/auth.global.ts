@@ -24,7 +24,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   if (to.name === 'login' && to?.query?.token) {
-    store.setToken(to.query.token)
+    store.setToken(String(to.query.token))
     return navigateTo('/')
   }
 

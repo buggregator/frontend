@@ -15,7 +15,7 @@ export default defineNuxtPlugin(async () => {
   }
 
   try {
-    settings = await api.getSettings()
+    settings = await api.getSettings() as { auth: { enabled: boolean; login_url: string }; version: string };
   } catch (e) {
     console.error('Server is not available!')
   }
@@ -24,7 +24,7 @@ export default defineNuxtPlugin(async () => {
     return {
       provide: {
         appSettings: settings,
-        authToken: {token: null}
+        authToken: {token: ''}
       }
     }
   }
@@ -32,7 +32,7 @@ export default defineNuxtPlugin(async () => {
   return {
     provide: {
       appSettings: settings,
-      authToken: {token: null}
+      authToken: {token: ''}
     }
   }
 })
