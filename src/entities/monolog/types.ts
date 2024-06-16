@@ -12,6 +12,6 @@ export interface Monolog {
   level_name: string,
   channel: string,
   datetime: string,
-  extra: Record<string, unknown> | [],
+  extra: Record<string, unknown> | never[],
 }
 
