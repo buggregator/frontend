@@ -17,7 +17,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
     origin.symfony_version = event.payload.meta?.symfony_version
   }
 
-  event.payload.payloads
+  (event?.payload?.payloads || [])
     .forEach(payload => {
       if (payload.origin) {
         origin = {
@@ -27,23 +27,23 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
       }
     })
 
-  const labels = event.payload.payloads
+  const labels = (event?.payload?.payloads || [])
     .filter(payload => payload.type === 'label')
     .map(payload => (payload?.content as RayContentLabel)?.label)
     .filter(Boolean)
 
-  const typeLabels = event.payload.payloads
+  const typeLabels = (event?.payload?.payloads || [])
     .filter(payload => Object.values(RAY_EVENT_TYPES).includes(payload.type as RAY_EVENT_TYPES))
     .map(payload => payload.type)
     .filter(Boolean)
 
-  const color = event.payload.payloads
+  const color = (event?.payload?.payloads || [])
     .filter(payload => payload.type === 'color')
     .map(payload => (payload.content as RayContentColor)?.color)
     .filter(Boolean)
     .shift() || 'black'
 
-  const size = (event.payload.payloads
+  const size = ((event?.payload?.payloads || [])
     .filter(payload => payload.type === 'size')
     .map(payload => (payload.content as RayContentSize)?.size)
     .filter(Boolean)
