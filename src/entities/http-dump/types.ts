@@ -1,20 +1,30 @@
-import type { Attachment } from "~/src/shared/types";
+import type {Attachment, Uuid} from "~/src/shared/types";
 
-export interface HttpDump {
+export interface HttpDumpServer {
   received_at: string,
   host: string,
   request: {
     method: string,
     uri: string,
-    headers: {
-      [key: string]: string[]
-    },
+    headers: Record<string, string[]>,
     body: string,
-    query: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    post: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    query: Record<string, unknown>,
+    post: Record<string, unknown>,
     cookies: {
       [key: string]: string
     },
-    files: Attachment[]
+    files?: {
+      mime: string
+      name: string
+      size: number
+      uuid: Uuid
+      uri?: string
+    }[]
+  }
+}
+
+export interface HttpDump extends HttpDumpServer {
+  request: Omit<HttpDumpServer['request'], 'files'> & {
+    files?: Attachment[]
   }
 }

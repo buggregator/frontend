@@ -12,7 +12,7 @@ export interface Attachment {
   name: string,
   size: number,
   mime: string,
-  uri: string
+  path: string
 }
 
 export enum GraphTypes {
