@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useProfiler } from "~/src/entities/profiler";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
+import { profilerEdgesMock } from  "~/src/entities/profiler/mocks";
 import CallStatBoard from './call-stat-board.vue';
-
-const { normalizeProfilerEvent } = useProfiler();
 
 export default {
   title: "Screens/profiler/CallStatBoard",
@@ -12,6 +9,6 @@ export default {
 
 export const Default: StoryObj<typeof CallStatBoard> = {
   args: {
-    edge: normalizeProfilerEvent(profilerMock).payload.edges.e5
+    edge: profilerEdgesMock.e5
   }
 };
