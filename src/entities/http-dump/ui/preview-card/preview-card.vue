@@ -27,7 +27,7 @@ const uri = decodeURI(props.event.payload.request.uri);
 @import "src/assets/mixins";
 
 .preview-card {
-  @apply flex flex-col text-2xs md:text-xs;
+  @apply text-2xs md:text-xs;
 }
 
 .preview-card__content {

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from "vue";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, StatBoard } from "~/src/shared/ui";
 import type { Profiler } from "../../types";
@@ -12,9 +13,9 @@ const eventLink = computed(() => `/profiler/${props.event.id}`);
 </script>
 
 <template>
-  <PreviewCard class="profiler-preview" :event="event">
-    <NuxtLink tag="div" :to="eventLink" class="profiler-preview__link">
-      <StatBoard :cost="event.payload.peaks"/>
+  <PreviewCard class="preview-card" :event="event">
+    <NuxtLink tag="div" :to="eventLink" class="preview-card__link">
+      <StatBoard :cost="event.payload.peaks" />
     </NuxtLink>
   </PreviewCard>
 </template>
@@ -22,11 +23,11 @@ const eventLink = computed(() => `/profiler/${props.event.id}`);
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
-.profiler-preview {
+.preview-card {
   @apply flex flex-col;
 }
 
-.profiler-preview__link {
+.preview-card__link {
   @apply flex-grow rounded-md overflow-hidden mb-2 border dark:border-gray-500;
 }
 </style>
