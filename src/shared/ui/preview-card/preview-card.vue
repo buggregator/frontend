@@ -2,7 +2,7 @@
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
 import moment from "moment";
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount, onMounted, nextTick } from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -23,6 +23,7 @@ const isVisibleControls = ref(true);
 
 const eventRef = ref(null);
 const isDeleting = ref(false);
+const isInit = ref(true);
 const { events, lockedIds } = useEvents();
 
 const normalizedTags = computed(() => [
@@ -56,8 +57,6 @@ const deleteEvent = () => {
 
   setTimeout(() => {
     events?.removeById(props.event.id);
-
-    isDeleting.value = false;
   }, 200);
 };
 
@@ -132,6 +131,14 @@ const copyCode = () => {
 
 onBeforeMount(() => {
   isLocked.value = lockedIds.items.value.includes(props.event.id);
+
+  isInit.value = false;
+});
+
+onMounted(() => {
+  setTimeout(() => {
+    isInit.value = true;
+  }, 200);
 });
 </script>
 
@@ -140,71 +147,69 @@ onBeforeMount(() => {
     :id="event.id"
     ref="eventRef"
     class="preview-card"
-    :class="{ 'preview-card--deleting': isDeleting }"
+    :class="{
+      'preview-card--initialized': isInit && !isDeleting,
+    }"
   >
-    <PreviewCardHeader
-      class="preview-card__header"
-      :event-url="eventUrl"
-      :event-type="event.type"
-      :event-id="event.id"
-      :tags="normalizedTags"
-      :is-open="!isCollapsed && !isOptimized"
-      :is-locked="isLocked"
-      :is-visible-controls="isVisibleControls && !isOptimized"
-      @toggle-view="toggleView"
-      @delete="deleteEvent"
-      @copy="copyCode"
-      @download="downloadEvent"
-      @lock="toggleEventLock"
-      @dblclick="toggleView"
-    />
+    <div class="preview-card__in">
+      <PreviewCardHeader
+        class="preview-card__header"
+        :event-url="eventUrl"
+        :event-type="event.type"
+        :event-id="event.id"
+        :tags="normalizedTags"
+        :is-open="!isCollapsed && !isOptimized"
+        :is-locked="isLocked"
+        :is-visible-controls="isVisibleControls && !isOptimized"
+        @toggle-view="toggleView"
+        @delete="deleteEvent"
+        @copy="copyCode"
+        @download="downloadEvent"
+        @lock="toggleEventLock"
+        @dblclick="toggleView"
+      />
 
-    <div
-      v-if="!isCollapsed && !isOptimized"
-      ref="event_body"
-      class="preview-card__body"
-    >
-      <slot />
+      <div
+        v-if="!isCollapsed && !isOptimized"
+        ref="event_body"
+        class="preview-card__body"
+      >
+        <slot />
+      </div>
+
+      <PreviewCardFooter
+        v-if="
+          !isCollapsed && !isOptimized && (normalizedOrigin || event.serverName)
+        "
+        class="preview-card__footer"
+        :server-name="event.serverName"
+        :origin-config="normalizedOrigin"
+      />
     </div>
-
-    <PreviewCardFooter
-      v-if="
-        !isCollapsed && !isOptimized && (normalizedOrigin || event.serverName)
-      "
-      class="preview-card__footer"
-      :server-name="event.serverName"
-      :origin-config="normalizedOrigin"
-    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-@keyframes add-event {
-  0% {
-    opacity: 0;
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-    pointer-events: none; // NOTE: need to block event deleting to new events
-  }
-  100% {
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-    pointer-events: auto;
-  }
+.preview-card {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease-in-out;
 }
 
-.preview-card {
-  @apply flex-grow flex flex-col p-2 lg:p-3 transition-colors dark:bg-gray-700;
+.preview-card--initialized {
+  grid-template-rows: 1fr;
+}
 
-  animation: add-event 0.2s;
+.preview-card__in {
+  @apply flex flex-grow flex-col p-2 lg:p-3 dark:bg-gray-700 opacity-100 overflow-hidden;
+
   &:hover {
     @apply bg-gray-50 dark:bg-gray-900;
   }
-}
 
-.preview-card--deleting {
-  @apply opacity-0 pointer-events-none;
-
-  transition: all 0.2s cubic-bezier(0.8, 0, 1, 1);
+  .preview-card:not(.preview-card--initialized) & {
+    @apply p-0 opacity-0;
+  }
 }
 
 .preview-card__header {

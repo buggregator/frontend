@@ -29,12 +29,12 @@ const exception: Ref<Exception> = computed(() =>
   exceptionValues.value.length > 0
     ? exceptionValues.value[0]
     : {
-      type: "Unknown",
-      value: "Something went wrong",
-      stacktrace: {
-        frames: [],
-      },
-    }
+        type: "Unknown",
+        value: "Something went wrong",
+        stacktrace: {
+          frames: [],
+        },
+      }
 );
 </script>
 
@@ -50,13 +50,13 @@ const exception: Ref<Exception> = computed(() =>
           {{ exception.type }}
         </h3>
 
-        <pre class="preview-card__text" v-html="exception.value"/>
+        <pre class="preview-card__text" v-html="exception.value" />
       </NuxtLink>
     </SentryException>
 
     <div v-if="message">
       <div class="preview-card__content">
-        <pre class="preview-card__text" v-html="message"/>
+        <pre class="preview-card__text" v-html="message" />
       </div>
     </div>
   </PreviewCard>
@@ -66,7 +66,6 @@ const exception: Ref<Exception> = computed(() =>
 @import "src/assets/mixins";
 
 .preview-card {
-  @apply flex flex-col;
 }
 
 .preview-card__link {

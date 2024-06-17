@@ -44,9 +44,8 @@ const emailRecipient = computed(
 }
 
 .smtp-preview__link {
-  @apply block flex items-stretch;
+  @apply items-stretch;
   @apply p-2 md:p-4;
-  @apply flex flex-col;
   @apply border dark:border-gray-500 rounded-md overflow-hidden;
   @apply dark:bg-gray-800 dark:hover:bg-gray-900 hover:bg-white;
 }

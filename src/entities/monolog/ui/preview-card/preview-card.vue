@@ -7,7 +7,7 @@ type Props = {
   event: NormalizedEvent<Monolog>;
 };
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

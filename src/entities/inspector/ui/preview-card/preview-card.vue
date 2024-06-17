@@ -17,7 +17,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
 <template>
   <PreviewCard class="preview-card" :event="event">
     <NuxtLink :to="eventLink" class="preview-card__link">
-      <InspectorStatBoard :transaction="event.payload[0]"/>
+      <InspectorStatBoard :transaction="event.payload[0]" />
     </NuxtLink>
   </PreviewCard>
 </template>
@@ -26,7 +26,6 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
 @import "src/assets/mixins";
 
 .preview-card {
-  @apply flex flex-col;
 }
 
 .preview-card__link {
