@@ -2,10 +2,12 @@
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { AVAILABLE_EVENTS_TYPES_LIST } from "~/src/shared/constants";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
 import type { Profile } from "~/src/shared/types";
 import { IconSvg } from "~/src/shared/ui";
+import { SIDEBAR_EVENTS_CONFIG_MAP, SIDEBAR_EVENTS_ORDER } from "./constants";
 
 type Props = {
   apiVersion: string;
@@ -59,6 +61,12 @@ const logout = () => {
 const path = computed(() => useRoute().path);
 
 const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
+
+const sidebarEventsPages = computed(() =>
+  SIDEBAR_EVENTS_ORDER.filter((type) =>
+    AVAILABLE_EVENTS_TYPES_LIST.includes(type)
+  ).map((type) => SIDEBAR_EVENTS_CONFIG_MAP[type])
+);
 </script>
 
 <template>
@@ -77,75 +85,14 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
       </NuxtLink>
 
       <NuxtLink
-        to="/sentry"
-        title="Sentry logs"
+        v-for="type in sidebarEventsPages"
+        :key="type.url"
+        :to="type.url"
+        :title="type.title"
         class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/sentry') }"
+        :class="{ 'router-link-active': path.includes(type.url) }"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="sentry" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/profiler"
-        title="Profiler"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/profiler') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="profiler" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/smtp"
-        title="SMTP mails"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/smtp') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="smtp" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/http-dump"
-        title="Http dumps"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/http-dump') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="http-dump" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/inspector"
-        title="Inspector logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/inspector') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/var-dump"
-        title="Var Dump logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/var-dump') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="var-dump" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/monolog"
-        title="Monolog logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/monolog') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="monolog" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/ray"
-        title="Ray Dump logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/ray') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="ray" />
+        <IconSvg class="layout-sidebar__link-icon" :name="type.icon" />
       </NuxtLink>
 
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">

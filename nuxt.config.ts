@@ -54,5 +54,8 @@ export default defineNuxtConfig({
     public: {
       version: pkg.version,
     }
-  }
+  },
+  vite: {
+    envPrefix: 'FE_',
+  },
 });
