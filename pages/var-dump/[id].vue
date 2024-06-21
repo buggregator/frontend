@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { VarDumpPage } from "~/src/screens/var-dump";
-import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useVarDump } from "~/src/entities/var-dump";
 import type { VarDump } from "~/src/entities/var-dump/types";
@@ -15,9 +16,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Var Dump > ${eventId} | Buggregator`,
-});
+useTitle(`Var Dump > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 

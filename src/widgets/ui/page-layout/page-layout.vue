@@ -1,8 +1,7 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { useHead } from "#app";
+import { computed, watchEffect } from "vue";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettingsStore } from "~/src/shared/stores";
@@ -36,10 +35,6 @@ const allEvents = computed(() => {
   return events.items.value.filter(({ type }) => type === props.type);
 });
 
-useHead({
-  title: `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`,
-});
-
 const visibleEvents = computed(() => {
   if (!isEventsPaused.value) {
     return allEvents.value;
@@ -71,7 +66,14 @@ const toggleUpdate = () => {
   }
 };
 
+
 const badgeNumber = computed(() => getItemsCount.value(props.type));
+
+watchEffect(() => {
+  useTitle(
+    `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`
+  );
+});
 </script>
 
 <template>

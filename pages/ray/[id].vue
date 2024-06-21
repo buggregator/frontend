@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { RayPage } from "~/src/screens/ray";
-import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useRay } from "~/src/entities/ray";
 import type { RayDump } from "~/src/entities/ray/types";
@@ -15,9 +16,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Ray Dump > ${eventId} | Buggregator`,
-});
+useTitle(`Ray Dumo > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 

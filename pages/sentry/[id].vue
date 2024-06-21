@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { SentryPage } from "~/src/screens/sentry";
-import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter, useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
@@ -14,9 +15,7 @@ const { params } = useRoute();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Sentry > ${eventId} | Buggregator`,
-});
+useTitle(`Sentry > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 const { $authToken } = useNuxtApp();

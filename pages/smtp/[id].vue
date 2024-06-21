@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { SmtpPage } from "~/src/screens/smtp";
-import { useRoute, useRouter, useFetch, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter, useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
@@ -16,9 +17,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `SMTP > ${eventId} | Buggregator`,
-});
+useTitle(`SMTP > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 const { getAttachments } = useSmtp();

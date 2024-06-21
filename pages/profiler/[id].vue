@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { ProfilerPage } from "~/src/screens/profiler";
-import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useProfiler } from "~/src/entities/profiler";
 import type { Profiler } from "~/src/entities/profiler/types";
@@ -15,9 +16,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Profiler > ${eventId} | Buggregator`,
-});
+useTitle(`Profiler > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 

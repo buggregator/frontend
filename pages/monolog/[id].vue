@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { MonologPage } from "~/src/screens/monolog";
-import { useFetch, useHead, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useMonolog } from "~/src/entities/monolog";
 import type { Monolog } from "~/src/entities/monolog/types";
@@ -15,9 +16,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Monolog > ${eventId} | Buggregator`,
-});
+useTitle(`Monolog > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 

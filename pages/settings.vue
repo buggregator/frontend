@@ -1,8 +1,7 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { useHead } from "#app";
 import { PageHeader } from "~/src/widgets/ui";
 import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
@@ -13,9 +12,7 @@ const { changeTheme, changeNavbar, changeEventCountsVisibility } =
 const { themeType, isFixedHeader, isVisibleEventCounts } =
   storeToRefs(settingsStore);
 
-useHead({
-  title: "Settings | Buggregator",
-});
+useTitle("Settings | Buggregator");
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 </script>
