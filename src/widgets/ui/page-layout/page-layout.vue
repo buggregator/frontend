@@ -1,12 +1,14 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 // eslint-disable-next-line @conarti/feature-sliced/layers-slices
 import { useHead } from "#app";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettingsStore } from "~/src/shared/stores";
 import type { TEventsGroup } from "~/src/shared/stores/cached-ids";
-import type { EventType } from "~/src/shared/types";
-import { PauseButton } from "~/src/shared/ui/pause-button";
+import { type EventType } from "~/src/shared/types";
+import { BadgeNumber, PauseButton } from "~/src/shared/ui";
 import { EventCard } from "../event-card";
 import { PageHeader } from "../page-header";
 import { PagePlaceholder } from "../page-placeholder";
@@ -20,7 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
   title: "",
 });
 
-const { events, cachedEvents } = useEvents();
+const { events, cachedEvents, getItemsCount } = useEvents();
+const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 const isEventsPaused = computed(
   () => cachedEvents.idsByType.value[props.type]?.length > 0
@@ -56,7 +59,8 @@ const clearEvents = () => {
     return events.removeAll();
   }
 
-  return events.removeByType(props.type as EventType);
+  // TODO: fix types to sing EVENT_TYPES with PAGE_TYPES
+  return events.removeByType(props.type as unknown as EventType);
 };
 
 const toggleUpdate = () => {
@@ -66,15 +70,13 @@ const toggleUpdate = () => {
     cachedEvents.stopUpdatesByType(props.type);
   }
 };
+
+const badgeNumber = computed(() => getItemsCount.value(props.type));
 </script>
 
 <template>
   <div class="page-layout">
-    <PageHeader
-      class="page-layout__head"
-      button-title="Clear events"
-      @delete="clearEvents"
-    >
+    <PageHeader class="page-layout__head">
       <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
       <template v-if="title">
@@ -89,6 +91,12 @@ const toggleUpdate = () => {
           :total-new-events-count="hiddenEventsCount"
           @toggle-update="toggleUpdate"
         />
+
+        <BadgeNumber :number="badgeNumber" :is-visible="isVisibleEventCounts">
+          <button class="page-layout__clear-button" @click="clearEvents">
+            Clear events
+          </button>
+        </BadgeNumber>
       </template>
     </PageHeader>
 
@@ -153,5 +161,10 @@ const toggleUpdate = () => {
   @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
 
   transform: translate(60%, -60%);
+}
+
+.page-layout__clear-button {
+  @include button;
+  @apply bg-red-800 hover:bg-red-700;
 }
 </style>

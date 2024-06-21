@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { EventId, EventType, ServerEvent } from '../types';
+import {EVENT_TYPES} from "../types";
 import { useLockedIdsStore } from "./locked-ids";
 
 const MAX_EVENTS_COUNT = 500;
@@ -8,6 +9,23 @@ export const useEventStore = defineStore("useEventStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
   }),
+  getters: {
+    getCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
+      const counts = {
+        [EVENT_TYPES.VAR_DUMP]: events.filter(({type}) => type === EVENT_TYPES.VAR_DUMP).length,
+        [EVENT_TYPES.SMTP]: events.filter(({type}) => type === EVENT_TYPES.SMTP).length,
+        [EVENT_TYPES.SENTRY]: events.filter(({type}) => type === EVENT_TYPES.SENTRY).length,
+        [EVENT_TYPES.PROFILER]: events.filter(({type}) => type === EVENT_TYPES.PROFILER).length,
+        [EVENT_TYPES.MONOLOG]: events.filter(({type}) => type === EVENT_TYPES.MONOLOG).length,
+        [EVENT_TYPES.INSPECTOR]: events.filter(({type}) => type === EVENT_TYPES.INSPECTOR).length,
+        [EVENT_TYPES.HTTP_DUMP]: events.filter(({type}) => type === EVENT_TYPES.HTTP_DUMP).length,
+        [EVENT_TYPES.RAY_DUMP]: events.filter(({type}) => type === EVENT_TYPES.RAY_DUMP).length
+      }
+
+      return eventType && counts[eventType] != null ? counts[eventType] : events.length;
+    }
+
+  },
   actions: {
     initialize(events: ServerEvent<unknown>[]): void {
       this.events = events.slice(0, MAX_EVENTS_COUNT);

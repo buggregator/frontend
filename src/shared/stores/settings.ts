@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { LOCAL_STORAGE_KEYS } from "../types";
+import {type EventId, LOCAL_STORAGE_KEYS} from "../types";
 
 export const THEME_MODES = {
   LIGHT: "light",
@@ -26,30 +26,33 @@ const checkThemeActive = () => {
 };
 
 const checkHeaderFixed = () => {
-  if (process.client) {
-    const storedValue: string = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) || "true";
-
-
-    const isFixed: boolean = storedValue === "true"
-
-    if (isFixed) {
-      document?.documentElement?.classList?.add("navbar-fixed");
-    } else {
-      document?.documentElement?.classList?.remove("navbar-fixed");
-    }
-
-    return isFixed;
+  if (!process.client) {
+    return  false;
   }
 
-  return {
-    themeType: false,
-  };
+  const storedValue: string = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) || "true";
+
+  const isFixed: boolean = storedValue === "true"
+
+  if (isFixed) {
+    document?.documentElement?.classList?.add("navbar-fixed");
+  } else {
+    document?.documentElement?.classList?.remove("navbar-fixed");
+  }
+
+  return isFixed;
 }
+const checkIfEventsCountVisible = (): boolean => {
+  const storageValue = localStorage?.getItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS) || "true";
+
+  return storageValue === "true";
+};
 
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     themeType: checkThemeActive(),
     isFixedHeader: checkHeaderFixed(),
+    isVisibleEventCounts: checkIfEventsCountVisible(),
   }),
   actions: {
     changeTheme() {
@@ -75,6 +78,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       } else {
         document?.documentElement?.classList?.remove("navbar-fixed");
       }
+    },
+    changeEventCountsVisibility() {
+      this.isVisibleEventCounts = !this.isVisibleEventCounts;
+
+      localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(this.isVisibleEventCounts));
     }
   },
 });

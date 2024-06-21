@@ -1,8 +1,14 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
 import type { RayContentLock } from "~/src/entities/ray/types";
-import { type TCachedEventsEmptyMap, type TEventsGroup , useCachedIdsStore, useLockedIdsStore } from "../../stores";
-import type { ServerEvent, NormalizedEvent, EventId } from '../../types';
+import {
+  type TCachedEventsEmptyMap,
+  type TEventsGroup,
+  useCachedIdsStore,
+  useEventStore,
+  useLockedIdsStore
+} from "../../stores";
+import type {ServerEvent, NormalizedEvent, EventId, EventType} from '../../types';
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 import { type TUseEventsApi, useEventsApi } from "./use-events-api";
@@ -11,6 +17,7 @@ import { type TUseEventsApi, useEventsApi } from "./use-events-api";
 type TUseEvents = () => {
   normalizeUnknownEvent: (event: ServerEvent<unknown>) => NormalizedEvent<unknown>
   events: TUseEventsApi
+  getItemsCount: Ref<(type?: EventType) => number>
   cachedEvents: {
     idsByType: Ref<TCachedEventsEmptyMap>;
     stopUpdatesByType: (type: TEventsGroup) => void
@@ -30,6 +37,11 @@ type TUseEvents = () => {
 export const useEvents: TUseEvents = () => {
   const cachedIdsStore = useCachedIdsStore();
   const lockedIdsStore = useLockedIdsStore();
+  const eventsStore = useEventStore();
+
+  const {
+    getCounts
+  } = storeToRefs(eventsStore)
 
   const {
     rayContinueExecution,
@@ -47,6 +59,7 @@ export const useEvents: TUseEvents = () => {
   return {
     normalizeUnknownEvent,
     events: useEventsApi(),
+    getItemsCount: getCounts,
     cachedEvents: {
       idsByType: cachedIds as unknown as Ref<TCachedEventsEmptyMap>,
       stopUpdatesByType: cachedIdsStore.setByType,

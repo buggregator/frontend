@@ -15,6 +15,7 @@ const initialCachedIds: TCachedEventsEmptyMap = {
   [PAGE_TYPES.RAY_DUMP]: [] as EventId[],
   [PAGE_TYPES.VAR_DUMP]: [] as EventId[],
   [PAGE_TYPES.HTTP_DUMP]: [] as EventId[],
+  [PAGE_TYPES.MONOLOG]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENTS]: [] as EventId[],
 };
 

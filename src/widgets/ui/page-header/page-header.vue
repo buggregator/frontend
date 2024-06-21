@@ -1,23 +1,11 @@
 <script lang="ts" setup>
 type Props = {
   title?: string;
-  buttonTitle?: string;
-};
-
-type Emits = {
-  delete: [value: boolean];
 };
 
 withDefaults(defineProps<Props>(), {
   title: "",
-  buttonTitle: "",
 });
-
-const emit = defineEmits<Emits>();
-
-const clearEvents = () => {
-  emit("delete", true);
-};
 </script>
 
 <template>
@@ -26,14 +14,6 @@ const clearEvents = () => {
 
     <div class="page-header__controls">
       <slot name="controls" />
-
-      <button
-        v-if="buttonTitle"
-        class="page-header__btn page-header__btn-clear"
-        @click="clearEvents"
-      >
-        {{ buttonTitle }}
-      </button>
     </div>
   </header>
 </template>
@@ -59,18 +39,5 @@ const clearEvents = () => {
 .page-header__btn-clear {
   @include button;
   @apply bg-red-800 hover:bg-red-700;
-}
-
-.page-header__lock-icon {
-  @apply absolute right-0 w-4 h-4;
-
-  top: 50%;
-  margin-top: -0.5rem;
-  display: none;
-  opacity: 0.3;
-
-  html.navbar-fixed & {
-    display: block;
-  }
 }
 </style>

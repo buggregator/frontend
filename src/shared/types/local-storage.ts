@@ -4,4 +4,5 @@ export enum LOCAL_STORAGE_KEYS {
   LOCKED_EVENTS = "locked_events",
   THEME = "theme",
   NAVBAR = "navbar",
+  EVENT_COUNTS = "event_counts",
 }
