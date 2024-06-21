@@ -5,11 +5,13 @@ import { computed } from "vue";
 import { useHead } from "#app";
 import { PageHeader } from "~/src/widgets/ui";
 import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
-import { IconSvg } from "~/src/shared/ui";
+import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 
 const settingsStore = useSettingsStore();
-const { changeTheme, changeNavbar } = settingsStore;
-const { themeType, isFixedHeader } = storeToRefs(settingsStore);
+const { changeTheme, changeNavbar, changeEventCountsVisibility } =
+  settingsStore;
+const { themeType, isFixedHeader, isVisibleEventCounts } =
+  storeToRefs(settingsStore);
 
 useHead({
   title: "Settings | Buggregator",
@@ -77,6 +79,42 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
             :class="{ 'settings-page__control-icon--active': isFixedHeader }"
           />
         </div>
+
+        <div class="settings-page__title">
+          Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
+        </div>
+
+        <div class="settings-page__control">
+          <div
+            class="settings-page__control-icon"
+            :class="{
+              'settings-page__control-icon--active': !isVisibleEventCounts,
+            }"
+          >
+            <IconSvg name="inspector" />
+          </div>
+
+          <button
+            class="settings-page__control-button"
+            :class="{
+              'settings-page__control-button--active': isVisibleEventCounts,
+            }"
+            @click="changeEventCountsVisibility"
+          >
+            <span class="settings-page__control-button-in" />
+          </button>
+
+          <div
+            class="settings-page__control-icon"
+            :class="{
+              'settings-page__control-icon--active': isVisibleEventCounts,
+            }"
+          >
+            <BadgeNumber class="settings-page__control-icon-badge" :number="15">
+              <IconSvg name="inspector" />
+            </BadgeNumber>
+          </div>
+        </div>
       </section>
     </div>
   </main>
@@ -98,11 +136,11 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 }
 
 .settings-page__content {
-  @apply p-4 grid grid-cols-2 gap-4 mr-auto;
+  @apply p-4 grid grid-cols-2 gap-4 mr-auto min-w-[50%];
 }
 
 .settings-page__title {
-  @apply text-xl font-bold flex items-center;
+  @apply text-xl font-bold flex items-center flex-shrink-0;
 }
 
 .settings-page__control {
@@ -111,6 +149,12 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 
 .settings-page__control-icon {
   @apply opacity-10 w-8;
+}
+
+.settings-page__control-icon-badge {
+  :deep(.badge-number__badge) {
+    @apply scale-150;
+  }
 }
 
 .settings-page__control-icon--active {

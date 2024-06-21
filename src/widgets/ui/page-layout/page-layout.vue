@@ -1,9 +1,11 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 // eslint-disable-next-line @conarti/feature-sliced/layers-slices
 import { useHead } from "#app";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettingsStore } from "~/src/shared/stores";
 import type { TEventsGroup } from "~/src/shared/stores/cached-ids";
 import { type EventType } from "~/src/shared/types";
 import { BadgeNumber, PauseButton } from "~/src/shared/ui";
@@ -21,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { events, cachedEvents, getItemsCount } = useEvents();
+const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 const isEventsPaused = computed(
   () => cachedEvents.idsByType.value[props.type]?.length > 0
@@ -89,7 +92,7 @@ const badgeNumber = computed(() => getItemsCount.value(props.type));
           @toggle-update="toggleUpdate"
         />
 
-        <BadgeNumber :number="badgeNumber">
+        <BadgeNumber :number="badgeNumber" :is-visible="isVisibleEventCounts">
           <button class="page-layout__clear-button" @click="clearEvents">
             Clear events
           </button>

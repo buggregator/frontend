@@ -3,6 +3,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettingsStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
 import { type Profile } from "~/src/shared/types";
@@ -19,6 +20,7 @@ const props = defineProps<Props>();
 const app = useNuxtApp();
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
+const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 const profileStore = useProfileStore();
 
@@ -91,6 +93,7 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
           <BadgeNumber
             :number="getItemsCount(EVENTS_LINKS_MAP[type].eventType)"
             class="layout-sidebar__link-badge"
+            :is-visible="isVisibleEventCounts"
           >
             <IconSvg
               class="layout-sidebar__link-icon"
