@@ -2,10 +2,12 @@
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useEvents } from "~/src/shared/lib/use-events";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
-import type { Profile } from "~/src/shared/types";
-import { IconSvg } from "~/src/shared/ui";
+import { type Profile } from "~/src/shared/types";
+import { BadgeNumber, IconSvg } from "~/src/shared/ui";
+import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
 type Props = {
   apiVersion: string;
@@ -16,10 +18,11 @@ type Props = {
 const props = defineProps<Props>();
 const app = useNuxtApp();
 
-const connectionStore = useConnectionStore();
-const { isConnectedWS } = storeToRefs(connectionStore);
+const { isConnectedWS } = storeToRefs(useConnectionStore());
 
 const profileStore = useProfileStore();
+
+const { getItemsCount } = useEvents();
 
 const connectionStatus = computed(() =>
   isConnectedWS.value ? "connected" : "disconnected"
@@ -76,77 +79,26 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
         <IconSvg class="layout-sidebar__link-icon" name="events" />
       </NuxtLink>
 
-      <NuxtLink
-        to="/sentry"
-        title="Sentry logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/sentry') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="sentry" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/profiler"
-        title="Profiler"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/profiler') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="profiler" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/smtp"
-        title="SMTP mails"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/smtp') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="smtp" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/http-dump"
-        title="Http dumps"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/http-dump') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="http-dump" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/inspector"
-        title="Inspector logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/inspector') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="inspector" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/var-dump"
-        title="Var Dump logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/var-dump') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="var-dump" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/monolog"
-        title="Monolog logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/monolog') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="monolog" />
-      </NuxtLink>
-
-      <NuxtLink
-        to="/ray"
-        title="Ray Dump logs"
-        class="layout-sidebar__link"
-        :class="{ 'router-link-active': path.includes('/ray') }"
-      >
-        <IconSvg class="layout-sidebar__link-icon" name="ray" />
-      </NuxtLink>
+      <template v-for="type in EVENTS_NAV_ORDER" :key="type">
+        <NuxtLink
+          :to="EVENTS_LINKS_MAP[type].path"
+          :title="EVENTS_LINKS_MAP[type].title"
+          class="layout-sidebar__link"
+          :class="{
+            'router-link-active': path.includes(EVENTS_LINKS_MAP[type].path),
+          }"
+        >
+          <BadgeNumber
+            :number="getItemsCount(EVENTS_LINKS_MAP[type].eventType)"
+            class="layout-sidebar__link-badge"
+          >
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              :name="EVENTS_LINKS_MAP[type].iconName"
+            />
+          </BadgeNumber>
+        </NuxtLink>
+      </template>
 
       <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
@@ -222,6 +174,7 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
   @apply block relative;
   @apply flex items-center justify-center;
   @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
+  @apply px-1.5 py-2 md:px-2 md:py-3;
   @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
   &.router-link-active {
@@ -240,7 +193,6 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
   @apply fill-current;
   @apply mx-auto;
   @apply h-5 md:h-6;
-  @apply mx-1.5 my-2 md:mx-2 md:my-3;
 
   & > svg {
     @apply h-auto;

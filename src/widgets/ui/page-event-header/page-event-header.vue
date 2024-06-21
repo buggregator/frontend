@@ -29,14 +29,11 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
 </script>
 
 <template>
-  <PageHeader
-    class="page-event-header"
-    button-title="Delete event"
-    @delete="onDelete"
-  >
-    <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;
-    <NuxtLink :to="eventsListLink">{{ title }}</NuxtLink
-    >&nbsp;/&nbsp;
+  <PageHeader class="page-event-header">
+    <NuxtLink to="/">Home</NuxtLink>
+    &nbsp;/&nbsp;
+    <NuxtLink :to="eventsListLink">{{ title }}</NuxtLink>
+    &nbsp;/&nbsp;
     <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
 
     <template #controls>
@@ -49,6 +46,10 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
       >
         Open JSON
       </a>
+
+      <button class="page-event-header__clear-button" @click="onDelete">
+        Delete event
+      </button>
     </template>
   </PageHeader>
 </template>
@@ -63,5 +64,10 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
 .page-event-header__button {
   @include button;
   @apply bg-gray-800 hover:bg-gray-700;
+}
+
+.page-event-header__clear-button {
+  @include button;
+  @apply bg-red-800 hover:bg-red-700;
 }
 </style>
