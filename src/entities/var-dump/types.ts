@@ -3,6 +3,7 @@ export interface VarDump {
     label: string | null,
     type: string,
     value: string | number | boolean
+    language?: string | null
   },
   context: {
     timestamp: number,
