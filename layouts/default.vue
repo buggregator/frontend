@@ -31,12 +31,6 @@ const getApiVersion = async () => {
 
 onMounted(() => {
   getApiVersion();
-
-  const { events } = useEvents();
-
-  if (!events?.items?.value?.length) {
-    events.getAll();
-  }
 });
 </script>
 

@@ -51,7 +51,7 @@ export const useApiTransport = () => {
 
     centrifuge.on('publication', (ctx) => {
       // We need to handle only events from the channel 'events' with event name 'event.received'
-      if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
+      if (ctx.channel === 'events' && ctx.data?.event === 'event.received' && eventsStore.project === ctx.data?.data?.project) {
         const event = ctx?.data?.data || null
         eventsStore.addList([event]);
       }
@@ -78,12 +78,12 @@ export const useApiTransport = () => {
     return deleteSingle(eventId);
   }
 
-  const deleteEventsAll = () => {
+  const deleteEventsAll = (project: string | null = null) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {token})
+      return centrifuge.rpc(`delete:api/events`, {token, project})
     }
 
-    return deleteAll();
+    return deleteAll(project);
   }
 
   const deleteEventsList = (uuids: EventId[]) => {
@@ -102,12 +102,12 @@ export const useApiTransport = () => {
     return deleteList(uuids);
   }
 
-  const deleteEventsByType = (type: EventType) => {
+  const deleteEventsByType = (type: EventType, project: string | null = null) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type, token})
+      return centrifuge.rpc(`delete:api/events`, {type, token, project})
     }
 
-    return deleteByType(type);
+    return deleteByType(type, project);
   }
 
   // NOTE: works only with ws
