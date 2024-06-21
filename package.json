@@ -78,6 +78,7 @@
     "@storybook/vue3": "^7.6.5",
     "@types/lodash": "^4.14.200",
     "@vue/shared": "^3.2.45",
+    "@vueuse/core": "^10.11.0",
     "centrifuge": "^3.1.0",
     "cytoscape": "^3.26.0",
     "cytoscape-dagre": "^2.5.0",

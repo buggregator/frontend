@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { onMounted, computed, ref } from "vue";
 import { InspectorPage } from "~/src/screens/inspector";
-import { useFetch, useHead, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useInspector } from "~/src/entities/inspector";
 import type { Inspector } from "~/src/entities/inspector/types";
@@ -15,9 +16,7 @@ const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Inspector > ${eventId} | Buggregator`,
-});
+useTitle(`Inspector > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
+import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { HttpDumpPage } from "~/src/screens/http-dump";
-import { useFetch, useRoute, useRouter, useHead, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useFetch, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
 import type { HttpDumpServer } from "~/src/entities/http-dump/types";
@@ -14,9 +15,7 @@ const { params } = useRoute();
 const router = useRouter();
 const eventId = params.id as EventId;
 
-useHead({
-  title: `Http dumps > ${eventId} | Buggregator`,
-});
+useTitle(`Http dumps > ${eventId} | Buggregator`);
 
 const { events } = useEvents();
 const { $authToken } = useNuxtApp();
