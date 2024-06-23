@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {type EventId, LOCAL_STORAGE_KEYS} from "../types";
+import { LOCAL_STORAGE_KEYS} from "../types";
 
 export const THEME_MODES = {
   LIGHT: "light",
