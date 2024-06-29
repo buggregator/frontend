@@ -52,8 +52,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="profiler-event">
-    <PageEventHeader title="Profiler" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Profiler" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="profiler-event__loading">
       <div></div>
@@ -61,10 +63,8 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="profiler-event__body">
-      <ProfilerPage v-if="event" :event="event" class="p-5" />
-    </div>
-  </main>
+    <ProfilerPage v-if="event" :event="event" class="p-5" />
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
@@ -81,10 +81,5 @@ onMounted(getEvent);
 .profiler-event__loading {
   @include loading;
   @include layout-body;
-}
-
-.profiler-event__body {
-  @include layout-body;
-  @apply h-full;
 }
 </style>

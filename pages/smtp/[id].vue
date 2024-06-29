@@ -34,7 +34,7 @@ const event = computed(() =>
 const attachments = computed(() => serverAttachments.value);
 
 const html = computed(
-  () => `<iframe srcdoc="${htmlEncode(serverEvent.value.payload.html)}"/>`
+  () => `<iframe srcdoc="${htmlEncode(serverEvent.value?.payload?.html)}"/>`
 );
 
 const getEvent = async () => {
@@ -63,8 +63,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="smtp-event">
-    <PageEventHeader title="Smtp" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Smtp" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="smtp-event__loading">
       <div></div>
@@ -72,7 +74,7 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="smtp-event__body">
+    <div>
       <SmtpPage
         v-if="event"
         :event="event"
@@ -80,27 +82,16 @@ onMounted(getEvent);
         :html-source="html"
       />
     </div>
-  </main>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .smtp-event {
-  @include layout;
-}
-
-.smtp-event__head {
-  @include layout-head;
 }
 
 .smtp-event__loading {
   @include loading;
-  @include layout-body;
-}
-
-.smtp-event__body {
-  @include layout-body;
-  @apply h-full;
 }
 </style>

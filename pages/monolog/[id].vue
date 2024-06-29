@@ -49,8 +49,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="monolog">
-    <PageEventHeader title="Monolog" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Monolog" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="monolog__loading">
       <div></div>
@@ -58,25 +60,20 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div v-if="event" class="monolog__body">
+    <div v-if="event">
       <MonologPage :event="event" />
     </div>
-  </main>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .monolog {
-  @include layout;
 }
 
 .monolog__loading {
   @include loading;
-  @include layout-body;
-}
-
-.monolog__body {
   @include layout-body;
 }
 </style>

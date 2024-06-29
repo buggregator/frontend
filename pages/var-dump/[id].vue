@@ -49,8 +49,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="var-dump">
-    <PageEventHeader title="Var Dump" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Var Dump" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="var-dump__loading">
       <div></div>
@@ -58,29 +60,20 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div v-if="event" class="var-dump__body">
+    <div v-if="event">
       <VarDumpPage :event="event" />
     </div>
-  </main>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .var-dump {
-  @include layout;
-}
-
-.var-dump__head {
-  @include layout-head;
+  display: block;
 }
 
 .var-dump__loading {
   @include loading;
-  @include layout-body;
-}
-
-.var-dump__body {
-  @include layout-body;
 }
 </style>

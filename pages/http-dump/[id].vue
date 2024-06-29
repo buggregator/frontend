@@ -54,8 +54,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="http-dump-event">
-    <PageEventHeader title="Http dumps" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Http dumps" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="http-dump-event__loading">
       <div></div>
@@ -63,28 +65,16 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="http-dump-event__body">
-      <HttpDumpPage v-if="event" :event="event" />
-    </div>
-  </main>
+    <HttpDumpPage v-if="event" :event="event" />
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 .http-dump-event {
-  @include layout;
-}
-
-.http-dump-event__head {
-  @include layout-head;
 }
 
 .http-dump-event__loading {
   @include loading;
-  @include layout-body;
-}
-
-.http-dump-event__body {
-  @include layout-body;
 }
 </style>
