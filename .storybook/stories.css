@@ -16,3 +16,8 @@ html:before {
   opacity: 0.2;
   z-index: 1;
 }
+
+body {
+  position: relative;
+  z-index: 1;
+}
