@@ -54,7 +54,7 @@ export const useEventStore = defineStore("useEventStore", {
 
       return eventType && counts[eventType] != null ? counts[eventType] : events.length;
     },
-    cachedTypesList(state) {
+    cachedIdsTypesList(state) {
       return Object.entries(state.cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     }
   },
@@ -144,9 +144,9 @@ export const useEventStore = defineStore("useEventStore", {
       syncLocalStorage(this.cachedIds);
     },
     removeCachedByIds(uuids: EventId[]) {
-      this.cachedTypesList.forEach((type) => {
+      this.cachedIdsTypesList.forEach((type) => {
         this.cachedIds[type] = this.cachedIds[type].filter(
-          (uuid: EventId) => uuids.includes(uuid)
+          (uuid: EventId) => !uuids.includes(uuid)
         );
       });
 
@@ -166,7 +166,7 @@ export const useEventStore = defineStore("useEventStore", {
         return;
       }
 
-      this.cachedTypesList.forEach((type) => {
+      this.cachedIdsTypesList.forEach((type) => {
         this.cachedIds[type] = this.cachedIds[type].filter(
           (uuid: EventId) => activeIds.includes(uuid)
         );
