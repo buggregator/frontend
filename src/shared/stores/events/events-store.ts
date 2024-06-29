@@ -27,6 +27,7 @@ export const useEventsStore = defineStore("eventsStore", {
   }),
   getters: {
     eventsCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
+      // TODO: need to use common mapping with changed ids
       const counts = {
         [EVENT_TYPES.VAR_DUMP]: events.filter(({type}) => type === EVENT_TYPES.VAR_DUMP).length,
         [EVENT_TYPES.SMTP]: events.filter(({type}) => type === EVENT_TYPES.SMTP).length,
@@ -40,8 +41,8 @@ export const useEventsStore = defineStore("eventsStore", {
 
       return eventType && counts[eventType] != null ? counts[eventType] : events.length;
     },
-    cachedIdsTypesList(state) {
-      return Object.entries(state.cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
+    cachedIdsTypesList({ cachedIds }) {
+      return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     }
   },
   actions: {
