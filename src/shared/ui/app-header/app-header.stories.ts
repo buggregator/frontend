@@ -45,10 +45,7 @@ export const WithActions: StoryObj<typeof AppHeader> = {
     slots: {
       default: `Page title`,
       controls:
-        `<button
-          class="flex mr-3 rounded-sm bg-blue-500 text-xs p-1"
-          @click="(a) => action('Custom action event')(a)"
-        >
+        `<button class="flex mr-3 rounded-sm bg-blue-500 text-xs p-1">
           Additional button
         </button>`,
     }
