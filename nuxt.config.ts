@@ -3,6 +3,7 @@ import pkg from './package.json';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  devtools: { enabled: true },
   ssr: false,
   router: {
     options: {
@@ -42,6 +43,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxtjs/storybook'
   ],
   typescript: {
     strict: true,

@@ -5,31 +5,52 @@ import "../src/assets/vendor";
 import "./stories.css"
 import SfdumpWrap from "../src/shared/lib/vendor/dumper";
 import 'tailwindcss/tailwind.css'
+import type { Preview } from '@storybook/vue3'
 
-export const parameters = {
-  actions: {argTypesRegex: "^on[A-Z].*"},
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
-    },
-  },
-  themes: {
-    clearable: false,
-    target: 'html',
-    default: 'dark',
-    list: [
-      {
-        name: 'light',
-        class: [],
-        color: '#ffffff',
-      },
-      {
-        name: 'dark',
-        class: ['dark'],
-        color: '#333333'
+const preview: Preview = {
+  decorators: [
+    (_, { parameters, globals }) => {
+      const html = window?.document?.querySelector('html');
+
+      if (html) {
+        const oldClass = html.classList.value
+        const newClass = parameters?.backgrounds.values.find(({ value }) => globals.backgrounds.value === value)?.class
+
+        if (newClass) {
+          if (oldClass) {
+            html.classList.remove(oldClass)
+          }
+
+          html.classList.add(newClass)
+        }
       }
-    ]
+
+      return { template: '<story/>' };
+    }
+  ],
+  parameters: {
+    actions: {argTypesRegex: "^on[A-Z].*"},
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/,
+      },
+    },
+    backgrounds: {
+      default: 'dark',
+      values: [
+        {
+          name: 'light',
+          value: '#ffffff',
+          class: 'light'
+        },
+        {
+          name: 'dark',
+          value: '#333333',
+          class: 'dark'
+        },
+      ],
+    },
   },
 };
 
@@ -46,3 +67,5 @@ declare global {
   }
 }
 window.Sfdump = SfdumpWrap(window.document)
+
+export default preview;
