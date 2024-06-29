@@ -1,5 +1,5 @@
 import type { RayContentLock } from "~/src/entities/ray/types";
-import { useEventStore, useConnectionStore } from "../../stores";
+import { useEventsStore, useConnectionStore } from "../../stores";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
 
@@ -9,7 +9,7 @@ export const useApiTransport = () => {
   const nuxtApp = useNuxtApp()
   const {token} = nuxtApp.$authToken ?? {token: null}
   const {centrifuge} = useCentrifuge()
-  const eventsStore = useEventStore()
+  const eventsStore = useEventsStore()
   const connectionStore = useConnectionStore()
   const {
     getAll,

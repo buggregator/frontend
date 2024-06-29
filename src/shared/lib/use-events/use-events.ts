@@ -4,7 +4,7 @@ import type { RayContentLock } from "~/src/entities/ray/types";
 import {
   type TEventsCachedIdsMap,
   type TEventsGroup,
-  useEventStore,
+  useEventsStore,
   useLockedIdsStore
 } from "../../stores";
 import type {ServerEvent, NormalizedEvent, EventId, EventType} from '../../types';
@@ -35,7 +35,7 @@ type TUseEvents = () => {
 
 export const useEvents: TUseEvents = () => {
   const lockedIdsStore = useLockedIdsStore();
-  const eventsStore = useEventStore();
+  const eventsStore = useEventsStore();
 
   const {
     eventsCounts,

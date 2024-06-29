@@ -34,7 +34,7 @@ const syncLocalStorage = (cachedEventMap: TEventsCachedIdsMap) => {
   localStorage?.setItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS, JSON.stringify(cachedEventMap));
 }
 
-export const useEventStore = defineStore("useEventStore", {
+export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     cachedIds: getCachedIds(),
