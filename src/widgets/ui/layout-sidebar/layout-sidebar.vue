@@ -178,8 +178,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .layout-sidebar {
   @apply bg-gray-200 dark:bg-gray-800;
-  @apply w-9 sm:w-12 md:w-16 h-full;
-  @apply flex flex-col justify-between;
+  @apply flex flex-col justify-between h-full;
 }
 
 .layout-sidebar__nav {

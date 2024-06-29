@@ -4,7 +4,7 @@ import { useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { useEvents } from "~/src/shared/lib/use-events";
 import type { Uuid } from "~/src/shared/types";
-import { PageHeader } from "../page-header";
+import { AppHeader } from "~/src/shared/ui";
 
 type Props = {
   title: string;
@@ -29,7 +29,7 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
 </script>
 
 <template>
-  <PageHeader class="page-event-header">
+  <AppHeader class="page-event-header">
     <NuxtLink to="/">Home</NuxtLink>
     &nbsp;/&nbsp;
     <NuxtLink :to="eventsListLink">{{ title }}</NuxtLink>
@@ -51,14 +51,14 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
         Delete event
       </button>
     </template>
-  </PageHeader>
+  </AppHeader>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .page-event-header {
-  @include layout-head;
+  @apply flex justify-between h-full flex-wrap py-1 gap-1;
 }
 
 .page-event-header__button {

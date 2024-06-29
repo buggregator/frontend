@@ -67,7 +67,7 @@ watchEffect(() => {
 @import "src/assets/mixins";
 
 .page-layout {
-  display: block;
+  @apply flex flex-col h-full
 }
 
 .page-layout__events {
@@ -82,9 +82,8 @@ watchEffect(() => {
 }
 
 .page-layout__welcome {
-  @apply min-h-screen;
   @apply flex-1 flex flex-col justify-center items-center;
-  @apply bg-gray-50 dark:bg-gray-800;
+  @apply bg-gray-50 dark:bg-gray-800 mb-[10vh];
 }
 
 .page-layout__btn-stop-events {
