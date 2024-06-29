@@ -4,7 +4,6 @@
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "sb": "storybook dev -p 6006",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
