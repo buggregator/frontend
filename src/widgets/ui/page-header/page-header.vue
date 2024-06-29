@@ -22,7 +22,7 @@ withDefaults(defineProps<Props>(), {
 @import "src/assets/mixins";
 
 .page-header {
-  @apply flex justify-between;
+  @apply flex justify-between h-full;
 }
 
 .page-header__title {
