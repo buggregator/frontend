@@ -53,8 +53,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="inspector-event">
-    <PageEventHeader title="Inspector" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Inspector" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="inspector-event__loading">
       <div></div>
@@ -62,28 +64,16 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div class="inspector-event__body">
-      <InspectorPage v-if="event" :event="event" />
-    </div>
-  </main>
+    <InspectorPage v-if="event" :event="event" />
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 .inspector-event {
-  @include layout;
-}
-
-.inspector-event__head {
-  @include layout-head;
 }
 
 .inspector-event__loading {
   @include loading;
-  @include layout-body;
-}
-
-.inspector-event__body {
-  @include layout-body;
 }
 </style>

@@ -50,8 +50,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="sentry-event">
-    <PageEventHeader title="Sentry" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Sentry" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="sentry-event__loading">
       <div></div>
@@ -59,27 +61,18 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <SentryPage v-if="event" :event="event" class="sentry-event__body" />
-  </main>
+    <SentryPage v-if="event" :event="event" />
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .sentry-event {
-  @include layout;
-}
-
-.sentry-event__head {
-  @include layout-head;
+  display: block;
 }
 
 .sentry-event__loading {
   @include loading;
-  @include layout-body;
-}
-
-.sentry-event__body {
-  @include layout-body;
 }
 </style>

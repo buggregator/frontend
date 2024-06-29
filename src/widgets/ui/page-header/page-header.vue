@@ -1,42 +1,107 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { PAGE_TYPES } from "~/src/shared/constants";
+import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettingsStore } from "~/src/shared/stores";
+import type { EventType } from "~/src/shared/types";
+import { AppHeader, BadgeNumber, PauseButton } from "~/src/shared/ui";
+
+const { events, cachedEvents, getItemsCount } = useEvents();
+const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
+
 type Props = {
-  title?: string;
+  title: string;
+  type: EventType | typeof PAGE_TYPES.ALL_EVENTS; // TODO: update types to sync page types and event types
 };
 
-withDefaults(defineProps<Props>(), {
-  title: "",
+const props = defineProps<Props>();
+
+const clearEvents = () => {
+  if (props.type === PAGE_TYPES.ALL_EVENTS) {
+    return events.removeAll();
+  }
+
+  // TODO: fix types to sing EVENT_TYPES with PAGE_TYPES
+  return events.removeByType(props.type as unknown as EventType);
+};
+
+const isEventsPaused = computed(
+  () => cachedEvents.idsByType.value[props.type]?.length > 0
+);
+
+const allEvents = computed(() => {
+  if (props.type === PAGE_TYPES.ALL_EVENTS) {
+    return events.items.value;
+  }
+  return events.items.value.filter(({ type }) => type === props.type);
 });
+
+const visibleEvents = computed(() => {
+  if (!isEventsPaused.value) {
+    return allEvents.value;
+  }
+
+  return allEvents.value.filter(({ uuid }) =>
+    cachedEvents.idsByType.value[props.type]?.includes(uuid)
+  );
+});
+
+const hiddenEventsCount = computed(
+  () => events.items.value.length - visibleEvents.value.length
+);
+
+const toggleUpdate = () => {
+  if (isEventsPaused.value) {
+    cachedEvents.runUpdatesByType(props.type);
+  } else {
+    cachedEvents.stopUpdatesByType(props.type);
+  }
+};
+
+const badgeNumber = computed(() =>
+  getItemsCount.value(
+    props.type !== PAGE_TYPES.ALL_EVENTS
+      ? (props.type as unknown as EventType)
+      : undefined
+  )
+);
 </script>
 
 <template>
-  <header class="page-header">
-    <div class="page-header__title"><slot />&nbsp;</div>
+  <AppHeader class="page-header">
+    <NuxtLink to="/" :disabled="!title">Home</NuxtLink>
 
-    <div class="page-header__controls">
-      <slot name="controls" />
-    </div>
-  </header>
+    <template v-if="title">
+      <span>&nbsp;/&nbsp;</span>
+      <NuxtLink :disabled="true">{{ title }}</NuxtLink>
+    </template>
+
+    <template #controls>
+      <PauseButton
+        :disabled-pause="visibleEvents.length === 0"
+        :is-paused="isEventsPaused"
+        :total-new-events-count="hiddenEventsCount"
+        @toggle-update="toggleUpdate"
+      />
+
+      <BadgeNumber :number="badgeNumber" :is-visible="isVisibleEventCounts">
+        <button class="page-header__clear-button" @click="clearEvents">
+          Clear events
+        </button>
+      </BadgeNumber>
+    </template>
+  </AppHeader>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .page-header {
-  @apply flex justify-between;
+  @apply flex justify-between h-full;
 }
 
-.page-header__title {
-  @apply hidden sm:flex items-center flex-row;
-  @apply text-2xs sm:text-sm md:text-base lg:text-lg;
-}
-
-.page-header__controls {
-  @apply flex items-center flex-row;
-  @apply text-right;
-  @apply gap-2 sm:gap-3;
-}
-
-.page-header__btn-clear {
+.page-header__clear-button {
   @include button;
   @apply bg-red-800 hover:bg-red-700;
 }

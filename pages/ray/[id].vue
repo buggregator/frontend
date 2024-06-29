@@ -49,8 +49,10 @@ onMounted(getEvent);
 </script>
 
 <template>
-  <main class="ray-dump">
-    <PageEventHeader title="Ray Dump" :event-id="eventId" />
+  <NuxtLayout>
+    <template #header>
+      <PageEventHeader title="Ray Dump" :event-id="eventId" />
+    </template>
 
     <div v-if="isLoading && !event" class="ray-dump__loading">
       <div></div>
@@ -58,29 +60,19 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div v-if="event" class="ray-dump__body">
+    <div v-if="event">
       <RayPage :event="event" />
     </div>
-  </main>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .ray-dump {
-  @include layout;
-}
-
-.ray-dump__head {
-  @include layout-head;
 }
 
 .ray-dump__loading {
   @include loading;
-  @include layout-body;
-}
-
-.ray-dump__body {
-  @include layout-body;
 }
 </style>

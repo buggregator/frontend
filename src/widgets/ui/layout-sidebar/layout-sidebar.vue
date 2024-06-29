@@ -1,28 +1,23 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
+import { useSettings } from "~/src/shared/lib/use-settings";
 import { useSettingsStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
-import { type Profile } from "~/src/shared/types";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
+import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
-type Props = {
-  apiVersion: string;
-  clientVersion: string;
-  profile?: Profile;
-};
-
-const props = defineProps<Props>();
 const app = useNuxtApp();
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 const profileStore = useProfileStore();
+const { profile } = storeToRefs(useProfileStore());
 
 const { getItemsCount } = useEvents();
 
@@ -31,19 +26,19 @@ const connectionStatus = computed(() =>
 );
 
 const avatar = computed(() => {
-  if (!props.profile) return null;
+  if (!profile.value) return null;
 
-  if (!props.profile?.avatar) {
+  if (!profile.value?.avatar) {
     return null;
   }
 
-  if (props.profile.avatar.startsWith("<svg")) {
+  if (profile.value.avatar.startsWith("<svg")) {
     return `data:image/svg+xml;base64,${btoa(
-      props.profile.avatar.replace(/&quot;/g, '"')
+      profile.value.avatar.replace(/&quot;/g, '"')
     )}`;
   }
 
-  return props.profile.avatar;
+  return profile.value.avatar;
 });
 
 const connectionText = computed(
@@ -64,6 +59,27 @@ const logout = () => {
 const path = computed(() => useRoute().path);
 
 const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
+
+const {
+  api: { getVersion },
+} = useSettings();
+
+const apiVersion = ref("");
+const clientVersion = ref(
+  !version || version === "0.0.1" ? "@dev" : `v${version}`
+);
+
+const getApiVersion = async () => {
+  const data = await getVersion();
+
+  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
+    ? `v${data}`
+    : `@${data}`;
+};
+
+onMounted(() => {
+  getApiVersion();
+});
 </script>
 
 <template>
@@ -162,8 +178,7 @@ const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
 <style lang="scss" scoped>
 .layout-sidebar {
   @apply bg-gray-200 dark:bg-gray-800;
-  @apply w-9 sm:w-12 md:w-16 h-full;
-  @apply flex flex-col justify-between;
+  @apply flex flex-col justify-between h-full;
 }
 
 .layout-sidebar__nav {

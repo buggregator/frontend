@@ -1,37 +1,12 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { useProfileStore, useSettingsStore } from "~~/src/shared/stores";
-import { version } from "../package.json";
 
-useSettingsStore();
 SfdumpWrap(window.document);
-const { profile } = storeToRefs(useProfileStore());
-
-const {
-  api: { getVersion },
-} = useSettings();
-
-const apiVersion = ref("");
-const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`
-);
-
-const getApiVersion = async () => {
-  const data = await getVersion();
-
-  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
-    ? `v${data}`
-    : `@${data}`;
-};
 
 onMounted(() => {
-  getApiVersion();
-
   const { events } = useEvents();
 
   if (!events?.items?.value?.length) {
@@ -42,12 +17,15 @@ onMounted(() => {
 
 <template>
   <div class="main-layout">
-    <LayoutSidebar
-      class="main-layout__sidebar"
-      :api-version="apiVersion"
-      :client-version="clientVersion"
-      :profile="profile"
-    />
+    <div class="main-layout__sidebar">
+      <slot name="sidebar">
+        <LayoutSidebar />
+      </slot>
+    </div>
+
+    <div class="main-layout__header">
+      <slot name="header" />
+    </div>
 
     <div class="main-layout__content">
       <slot />
@@ -67,8 +45,13 @@ onMounted(() => {
   @include layout-sidebar;
 }
 
+.main-layout__header {
+  @include layout-head;
+}
+
 .main-layout__content {
-  @apply flex flex-col h-full flex-1 w-full min-h-screen absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16;
+  @include layout-body;
+  @apply flex flex-col h-full flex-1 w-full min-h-screen absolute top-0 left-0;
 
   & > div {
     @apply flex flex-col h-full flex-1;

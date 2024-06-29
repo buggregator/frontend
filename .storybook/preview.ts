@@ -14,7 +14,7 @@ const preview: Preview = {
 
       if (html) {
         const oldClass = html.classList.value
-        const newClass = parameters?.backgrounds.values.find(({ value }) => globals.backgrounds.value === value)?.class
+        const newClass = parameters?.backgrounds.values.find(({ value }) => globals?.backgrounds?.value === value)?.class
 
         if (newClass) {
           if (oldClass) {

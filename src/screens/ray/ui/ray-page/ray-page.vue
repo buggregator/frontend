@@ -105,7 +105,7 @@ const getComponent: (
 }
 
 .ray__in {
-  @apply flex flex-col h-full flex-grow py-5 px-4 md:px-6 lg:px-8;
+  @apply flex flex-col h-full flex-grow py-5 px-3 md:px-4 lg:px-6;
 }
 
 .ray__header {

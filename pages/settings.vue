@@ -2,9 +2,8 @@
 import { useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { PageHeader } from "~/src/widgets/ui";
 import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
-import { BadgeNumber, IconSvg } from "~/src/shared/ui";
+import { AppHeader, BadgeNumber, IconSvg } from "~/src/shared/ui";
 
 const settingsStore = useSettingsStore();
 const { changeTheme, changeNavbar, changeEventCountsVisibility } =
@@ -18,118 +17,110 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 </script>
 
 <template>
-  <main class="settings-page">
-    <PageHeader class="settings-page__header">
-      <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
-    </PageHeader>
+  <NuxtLayout class="settings-page">
+    <template #header>
+      <AppHeader>
+        <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
+      </AppHeader>
+    </template>
 
-    <div class="settings-page__content-wr">
-      <section class="settings-page__content">
-        <div class="settings-page__title">
-          Theme: {{ isDarkMode ? "Dark" : "Light" }}
+    <main class="settings-page__content">
+      <div class="settings-page__title">
+        Theme: {{ isDarkMode ? "Dark" : "Light" }}
+      </div>
+
+      <div class="settings-page__control">
+        <IconSvg
+          name="sun"
+          class="settings-page__control-icon"
+          :class="{ 'settings-page__control-icon--active': !isDarkMode }"
+        />
+
+        <button
+          class="settings-page__control-button"
+          :class="{ 'settings-page__control-button--active': isDarkMode }"
+          @click="changeTheme"
+        >
+          <span class="settings-page__control-button-in" />
+        </button>
+
+        <IconSvg
+          class="settings-page__control-icon"
+          name="moon"
+          :class="{ 'settings-page__control-icon--active': isDarkMode }"
+        />
+      </div>
+
+      <div class="settings-page__title">
+        Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
+      </div>
+
+      <div class="settings-page__control">
+        <IconSvg
+          name="lock-off"
+          class="settings-page__control-icon"
+          :class="{ 'settings-page__control-icon--active': !isFixedHeader }"
+        />
+
+        <button
+          class="settings-page__control-button"
+          :class="{ 'settings-page__control-button--active': isFixedHeader }"
+          @click="changeNavbar"
+        >
+          <span class="settings-page__control-button-in" />
+        </button>
+
+        <IconSvg
+          class="settings-page__control-icon"
+          name="lock"
+          :class="{ 'settings-page__control-icon--active': isFixedHeader }"
+        />
+      </div>
+
+      <div class="settings-page__title">
+        Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
+      </div>
+
+      <div class="settings-page__control">
+        <div
+          class="settings-page__control-icon"
+          :class="{
+            'settings-page__control-icon--active': !isVisibleEventCounts,
+          }"
+        >
+          <IconSvg name="inspector" />
         </div>
 
-        <div class="settings-page__control">
-          <IconSvg
-            name="sun"
-            class="settings-page__control-icon"
-            :class="{ 'settings-page__control-icon--active': !isDarkMode }"
-          />
+        <button
+          class="settings-page__control-button"
+          :class="{
+            'settings-page__control-button--active': isVisibleEventCounts,
+          }"
+          @click="changeEventCountsVisibility"
+        >
+          <span class="settings-page__control-button-in" />
+        </button>
 
-          <button
-            class="settings-page__control-button"
-            :class="{ 'settings-page__control-button--active': isDarkMode }"
-            @click="changeTheme"
-          >
-            <span class="settings-page__control-button-in" />
-          </button>
-
-          <IconSvg
-            class="settings-page__control-icon"
-            name="moon"
-            :class="{ 'settings-page__control-icon--active': isDarkMode }"
-          />
-        </div>
-
-        <div class="settings-page__title">
-          Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
-        </div>
-
-        <div class="settings-page__control">
-          <IconSvg
-            name="lock-off"
-            class="settings-page__control-icon"
-            :class="{ 'settings-page__control-icon--active': !isFixedHeader }"
-          />
-
-          <button
-            class="settings-page__control-button"
-            :class="{ 'settings-page__control-button--active': isFixedHeader }"
-            @click="changeNavbar"
-          >
-            <span class="settings-page__control-button-in" />
-          </button>
-
-          <IconSvg
-            class="settings-page__control-icon"
-            name="lock"
-            :class="{ 'settings-page__control-icon--active': isFixedHeader }"
-          />
-        </div>
-
-        <div class="settings-page__title">
-          Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
-        </div>
-
-        <div class="settings-page__control">
-          <div
-            class="settings-page__control-icon"
-            :class="{
-              'settings-page__control-icon--active': !isVisibleEventCounts,
-            }"
-          >
+        <div
+          class="settings-page__control-icon"
+          :class="{
+            'settings-page__control-icon--active': isVisibleEventCounts,
+          }"
+        >
+          <BadgeNumber class="settings-page__control-icon-badge" :number="15">
             <IconSvg name="inspector" />
-          </div>
-
-          <button
-            class="settings-page__control-button"
-            :class="{
-              'settings-page__control-button--active': isVisibleEventCounts,
-            }"
-            @click="changeEventCountsVisibility"
-          >
-            <span class="settings-page__control-button-in" />
-          </button>
-
-          <div
-            class="settings-page__control-icon"
-            :class="{
-              'settings-page__control-icon--active': isVisibleEventCounts,
-            }"
-          >
-            <BadgeNumber class="settings-page__control-icon-badge" :number="15">
-              <IconSvg name="inspector" />
-            </BadgeNumber>
-          </div>
+          </BadgeNumber>
         </div>
-      </section>
-    </div>
-  </main>
+      </div>
+    </main>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 @import "src/assets/mixins";
 
 .settings-page {
-  @include layout;
-}
-
-.settings-page__header {
-  @include layout-head;
-}
-
-.settings-page__content-wr {
-  @include layout-body;
+  display: block;
 }
 
 .settings-page__content {

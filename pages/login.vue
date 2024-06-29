@@ -22,31 +22,33 @@ const redirect = async () => {
 </script>
 
 <template>
-  <div class="login-page">
-    <div class="login-form-container">
-      <IconSvg class="login-form--logo" name="logo" />
-      <div class="login-form">
-        <div class="login-form-left-block">
-          <h1 class="login-form--title">Welcome Back</h1>
-          <p class="pb-2 text-center text-sm text-gray-800">
-            Let's get you signed in.
-          </p>
-          <button class="login-form--button" @click="redirect">
-            <IconSvg class="w-6" name="lock" fill="currentcolor" />
-            Continue to SSO
-          </button>
+  <NuxtLayout>
+    <div class="login-page">
+      <div class="login-form-container">
+        <IconSvg class="login-form--logo" name="logo" />
+        <div class="login-form">
+          <div class="login-form-left-block">
+            <h1 class="login-form--title">Welcome Back</h1>
+            <p class="pb-2 text-center text-sm text-gray-800">
+              Let's get you signed in.
+            </p>
+            <button class="login-form--button" @click="redirect">
+              <IconSvg class="w-6" name="lock" fill="currentcolor" />
+              Continue to SSO
+            </button>
+          </div>
+          <div
+            class="login-form-right-block"
+            style="
+              background: url('/bg.jpg');
+              background-size: cover;
+              background-position: center center;
+            "
+          ></div>
         </div>
-        <div
-          class="login-form-right-block"
-          style="
-            background: url('/bg.jpg');
-            background-size: cover;
-            background-position: center center;
-          "
-        ></div>
       </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
