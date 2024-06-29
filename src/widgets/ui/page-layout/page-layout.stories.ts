@@ -3,7 +3,7 @@ import { PAGE_TYPES } from "~/src/shared/constants";
 import PageLayout from "./page-layout.vue";
 
 export default {
-  title: "Widget/PageLayout",
+  title: "Widgets/PageLayout",
   component: PageLayout,
 } as Meta<typeof PageLayout>;
 
