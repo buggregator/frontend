@@ -3,11 +3,10 @@ import type { Ref } from "vue";
 import type { RayContentLock } from "~/src/entities/ray/types";
 import {
   type TEventsCachedIdsMap,
-  type TEventsGroup,
   useEventsStore,
   useLockedIdsStore
 } from "../../stores";
-import type {ServerEvent, NormalizedEvent, EventId, EventType} from '../../types';
+import type {ServerEvent, NormalizedEvent, EventId, EventType, TEventsGroup} from '../../types';
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 import { type TUseEventsApi, useEventsApi } from "./use-events-api";
