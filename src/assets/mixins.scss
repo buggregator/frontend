@@ -12,9 +12,10 @@
   @apply absolute left-0 right-0 z-50;
   @apply h-9 sm:h-10 md:h-14;
   @apply px-2 md:px-4;
+  @apply left-10 md:left-14 lg:left-16 right-0;
 
   html.navbar-fixed & {
-    @apply fixed left-10 md:left-14 lg:left-16 right-0;
+    @apply fixed;
   }
 }
 
