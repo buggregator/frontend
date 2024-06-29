@@ -1,37 +1,14 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { useProfileStore, useSettingsStore } from "~~/src/shared/stores";
-import { version } from "../package.json";
+import { useSettingsStore } from "~~/src/shared/stores";
 
 useSettingsStore();
 SfdumpWrap(window.document);
-const { profile } = storeToRefs(useProfileStore());
-
-const {
-  api: { getVersion },
-} = useSettings();
-
-const apiVersion = ref("");
-const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`
-);
-
-const getApiVersion = async () => {
-  const data = await getVersion();
-
-  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
-    ? `v${data}`
-    : `@${data}`;
-};
 
 onMounted(() => {
-  getApiVersion();
-
   const { events } = useEvents();
 
   if (!events?.items?.value?.length) {
@@ -42,12 +19,7 @@ onMounted(() => {
 
 <template>
   <div class="main-layout">
-    <LayoutSidebar
-      class="main-layout__sidebar"
-      :api-version="apiVersion"
-      :client-version="clientVersion"
-      :profile="profile"
-    />
+    <LayoutSidebar class="main-layout__sidebar" />
 
     <div class="main-layout__content">
       <slot />
