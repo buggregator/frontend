@@ -2,9 +2,8 @@ import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
 import type { RayContentLock } from "~/src/entities/ray/types";
 import {
-  type TCachedEventsEmptyMap,
+  type TEventsCachedIdsMap,
   type TEventsGroup,
-  useCachedIdsStore,
   useEventStore,
   useLockedIdsStore
 } from "../../stores";
@@ -19,7 +18,7 @@ type TUseEvents = () => {
   events: TUseEventsApi
   getItemsCount: Ref<(type?: EventType) => number>
   cachedEvents: {
-    idsByType: Ref<TCachedEventsEmptyMap>;
+    idsByType: Ref<TEventsCachedIdsMap>;
     stopUpdatesByType: (type: TEventsGroup) => void
     runUpdatesByType: (type: TEventsGroup) => void
   },
@@ -35,12 +34,12 @@ type TUseEvents = () => {
 }
 
 export const useEvents: TUseEvents = () => {
-  const cachedIdsStore = useCachedIdsStore();
   const lockedIdsStore = useLockedIdsStore();
   const eventsStore = useEventStore();
 
   const {
-    getCounts
+    eventsCounts,
+    cachedIds
   } = storeToRefs(eventsStore)
 
   const {
@@ -49,21 +48,17 @@ export const useEvents: TUseEvents = () => {
   } = useApiTransport();
 
   const {
-    cachedIds,
-  } = storeToRefs(cachedIdsStore)
-
-  const {
     lockedIds,
   } = storeToRefs(lockedIdsStore)
 
   return {
     normalizeUnknownEvent,
     events: useEventsApi(),
-    getItemsCount: getCounts,
+    getItemsCount: eventsCounts,
     cachedEvents: {
-      idsByType: cachedIds as unknown as Ref<TCachedEventsEmptyMap>,
-      stopUpdatesByType: cachedIdsStore.setByType,
-      runUpdatesByType: cachedIdsStore.removeByType,
+      idsByType: cachedIds as Ref<TEventsCachedIdsMap>,
+      stopUpdatesByType: eventsStore.addCachedByType,
+      runUpdatesByType: eventsStore.removeCachedByType,
     },
     lockedIds: {
       items: lockedIds as unknown as Ref<EventId[]>,
