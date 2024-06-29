@@ -1,6 +1,6 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from 'vue';
-import { useEventStore, useCachedIdsStore, useLockedIdsStore } from "../../stores";
+import { useEventsStore } from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { useApiTransport } from '../use-api-transport'
 
@@ -16,15 +16,10 @@ export type TUseEventsApi = {
 }
 
 export const useEventsApi = (): TUseEventsApi => {
-  const eventsStore = useEventStore();
-  const cachedIdsStore = useCachedIdsStore();
-  const lockedIdsStore = useLockedIdsStore();
+  const eventsStore = useEventsStore();
 
   const {
     lockedIds,
-  } = storeToRefs(lockedIdsStore)
-
-  const {
     events,
   } = storeToRefs(eventsStore)
 
@@ -42,7 +37,6 @@ export const useEventsApi = (): TUseEventsApi => {
 
     if (res) {
       eventsStore.removeByIds(uuids);
-      cachedIdsStore.removeByIds(uuids);
     }
   }
 
@@ -61,7 +55,6 @@ export const useEventsApi = (): TUseEventsApi => {
 
     if (res) {
       eventsStore.removeAll()
-      cachedIdsStore.removeAll()
     }
   }
 
@@ -84,7 +77,6 @@ export const useEventsApi = (): TUseEventsApi => {
 
     if (res) {
       eventsStore.removeByType(eventType);
-      cachedIdsStore.removeByType(eventType);
     }
   }
 
@@ -92,11 +84,9 @@ export const useEventsApi = (): TUseEventsApi => {
     getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
       if (eventsList.length) {
         eventsStore.initialize(eventsList);
-        cachedIdsStore.syncWithActive(eventsList.map(({ uuid }) => uuid));
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();
-        cachedIdsStore.removeAll();
       }
     }).catch((err) => {
       console.error('getAll err', err);

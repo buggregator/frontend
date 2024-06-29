@@ -5,8 +5,7 @@ import { computed, watchEffect } from "vue";
 import { PAGE_TYPES } from "~/src/shared/constants";
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettingsStore } from "~/src/shared/stores";
-import type { TEventsGroup } from "~/src/shared/stores/cached-ids";
-import { type EventType } from "~/src/shared/types";
+import type { TEventsGroup, EventType } from "~/src/shared/types";
 import { BadgeNumber, PauseButton } from "~/src/shared/ui";
 import { EventCard } from "../event-card";
 import { PageHeader } from "../page-header";
@@ -65,7 +64,6 @@ const toggleUpdate = () => {
     cachedEvents.stopUpdatesByType(props.type);
   }
 };
-
 
 const badgeNumber = computed(() => getItemsCount.value(props.type));
 

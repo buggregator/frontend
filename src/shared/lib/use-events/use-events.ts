@@ -2,13 +2,10 @@ import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
 import type { RayContentLock } from "~/src/entities/ray/types";
 import {
-  type TCachedEventsEmptyMap,
-  type TEventsGroup,
-  useCachedIdsStore,
-  useEventStore,
-  useLockedIdsStore
+  type TEventsCachedIdsMap,
+  useEventsStore,
 } from "../../stores";
-import type {ServerEvent, NormalizedEvent, EventId, EventType} from '../../types';
+import type {ServerEvent, NormalizedEvent, EventId, EventType, TEventsGroup} from '../../types';
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 import { type TUseEventsApi, useEventsApi } from "./use-events-api";
@@ -19,7 +16,7 @@ type TUseEvents = () => {
   events: TUseEventsApi
   getItemsCount: Ref<(type?: EventType) => number>
   cachedEvents: {
-    idsByType: Ref<TCachedEventsEmptyMap>;
+    idsByType: Ref<TEventsCachedIdsMap>;
     stopUpdatesByType: (type: TEventsGroup) => void
     runUpdatesByType: (type: TEventsGroup) => void
   },
@@ -35,12 +32,12 @@ type TUseEvents = () => {
 }
 
 export const useEvents: TUseEvents = () => {
-  const cachedIdsStore = useCachedIdsStore();
-  const lockedIdsStore = useLockedIdsStore();
-  const eventsStore = useEventStore();
+  const eventsStore = useEventsStore();
 
   const {
-    getCounts
+    eventsCounts,
+    cachedIds,
+    lockedIds,
   } = storeToRefs(eventsStore)
 
   const {
@@ -48,27 +45,19 @@ export const useEvents: TUseEvents = () => {
     rayStopExecution,
   } = useApiTransport();
 
-  const {
-    cachedIds,
-  } = storeToRefs(cachedIdsStore)
-
-  const {
-    lockedIds,
-  } = storeToRefs(lockedIdsStore)
-
   return {
     normalizeUnknownEvent,
     events: useEventsApi(),
-    getItemsCount: getCounts,
+    getItemsCount: eventsCounts,
     cachedEvents: {
-      idsByType: cachedIds as unknown as Ref<TCachedEventsEmptyMap>,
-      stopUpdatesByType: cachedIdsStore.setByType,
-      runUpdatesByType: cachedIdsStore.removeByType,
+      idsByType: cachedIds as Ref<TEventsCachedIdsMap>,
+      stopUpdatesByType: eventsStore.addCachedByType,
+      runUpdatesByType: eventsStore.removeCachedByType,
     },
     lockedIds: {
       items: lockedIds as unknown as Ref<EventId[]>,
-      add: lockedIdsStore.add,
-      remove: lockedIdsStore.remove,
+      add: eventsStore.addLockedIds,
+      remove: eventsStore.removeLockedIds,
     },
     rayExecution: {
       continue: rayContinueExecution,
