@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { LOCAL_STORAGE_KEYS} from "../types";
+import {useSettings} from "../lib/use-settings";
+import {LOCAL_STORAGE_KEYS, type TSettings} from "../types";
 
 export const THEME_MODES = {
   LIGHT: "light",
@@ -50,6 +51,11 @@ const checkIfEventsCountVisible = (): boolean => {
 
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
+    apiVersion: '',
+    auth: {
+      enabled: false,
+      login_url: '/login',
+    },
     themeType: checkThemeActive(),
     isFixedHeader: checkHeaderFixed(),
     isVisibleEventCounts: checkIfEventsCountVisible(),
@@ -83,6 +89,19 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;
 
       localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(this.isVisibleEventCounts));
+    },
+    initialize() {
+      const {api: { getSettings }} = useSettings();
+
+      getSettings().then(({ version, auth } = {} as TSettings) => {
+        if (version) {
+          this.apiVersion = version
+        }
+
+        if (auth) {
+          this.auth = auth;
+        }
+      })
     }
   },
 });

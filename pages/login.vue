@@ -4,7 +4,7 @@ import { REST_API_URL } from "~/src/shared/lib/io";
 import { useProfileStore, useSettingsStore } from "~/src/shared/stores";
 import { IconSvg } from "~/src/shared/ui";
 
-useSettingsStore();
+useSettingsStore().initialize();
 setPageLayout("blank");
 
 const app = useNuxtApp();

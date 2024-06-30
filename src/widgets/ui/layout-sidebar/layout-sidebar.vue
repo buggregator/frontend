@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
 import { useSettingsStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
@@ -60,26 +59,17 @@ const path = computed(() => useRoute().path);
 
 const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
 
-const {
-  api: { getVersion },
-} = useSettings();
+const { apiVersion } = storeToRefs(useSettingsStore());
 
-const apiVersion = ref("");
 const clientVersion = ref(
   !version || version === "0.0.1" ? "@dev" : `v${version}`
 );
 
-const getApiVersion = async () => {
-  const data = await getVersion();
-
-  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
-    ? `v${data}`
-    : `@${data}`;
-};
-
-onMounted(() => {
-  getApiVersion();
-});
+const serverVersion = computed(() =>
+  String(apiVersion.value).match(/^[0-9.]+.*$/)
+    ? `v${apiVersion.value}`
+    : `@${apiVersion.value}`
+);
 </script>
 
 <template>
@@ -156,11 +146,11 @@ onMounted(() => {
 
       <div class="layout-sidebar__versions">
         <div
-          v-if="apiVersion"
+          v-if="serverVersion"
           class="layout-sidebar__nav-version"
-          :title="`Api version: ${apiVersion}`"
+          :title="`Api version: ${serverVersion}`"
         >
-          {{ apiVersion }}
+          {{ serverVersion }}
         </div>
 
         <div

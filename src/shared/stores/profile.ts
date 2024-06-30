@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import type { Profile } from "../types";
+import type {TProfile} from "../types";
 
 const STORAGE_KEY = "token";
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
     token: '' as string,
-    profile: undefined as Profile | undefined,
+    profile: undefined as TProfile | undefined,
   }),
   getters: {
     isAuthenticated(): boolean {
@@ -19,9 +19,10 @@ export const useProfileStore = defineStore("profileStore", {
 
       this.token = token;
       localStorage?.setItem(STORAGE_KEY, token);
+
       app.$authToken.token = token;
     },
-    setProfile(profile: Profile): void {
+    setProfile(profile: TProfile): void {
       this.profile = profile;
     },
     fetchToken(): void {
