@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
 import { useSettingsStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
@@ -10,10 +10,8 @@ import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
-const app = useNuxtApp();
-
 const { isConnectedWS } = storeToRefs(useConnectionStore());
-const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
+const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(useProfileStore());
@@ -40,6 +38,12 @@ const avatar = computed(() => {
   return profile.value.avatar;
 });
 
+const profileEmail = computed(() => {
+  if (!profile.value) return null;
+
+  return profile.value.email;
+});
+
 const connectionText = computed(
   () => `WS connection is ${connectionStatus.value}`
 );
@@ -57,7 +61,7 @@ const logout = () => {
 
 const path = computed(() => useRoute().path);
 
-const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
+const isAuthEnabled = computed(() => auth.value.isEnabled);
 
 const { apiVersion } = storeToRefs(useSettingsStore());
 
@@ -117,8 +121,11 @@ const serverVersion = computed(() =>
     <div>
       <div v-if="isAuthEnabled" class="layout-sidebar__profile">
         <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
-          <div class="profile-dropdown-item profile-dropdown-item--email">
-            {{ profile.email }}
+          <div
+            v-if="profileEmail"
+            class="profile-dropdown-item profile-dropdown-item--email"
+          >
+            {{ profileEmail }}
           </div>
           <div
             class="profile-dropdown-item profile-dropdown-item--logout"

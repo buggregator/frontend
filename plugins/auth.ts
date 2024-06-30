@@ -15,6 +15,7 @@ export default defineNuxtPlugin(async () => {
   }
 
   try {
+    // TODO: remove duplicated request with settings-store
     settings = await api.getSettings() as { auth: { enabled: boolean; login_url: string }; version: string };
   } catch (e) {
     console.error('Server is not available!')

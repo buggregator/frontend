@@ -53,8 +53,8 @@ export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     apiVersion: '',
     auth: {
-      enabled: false,
-      login_url: '/login',
+      isEnabled: false,
+      loginUrl: '/login',
     },
     themeType: checkThemeActive(),
     isFixedHeader: checkHeaderFixed(),
@@ -99,7 +99,8 @@ export const useSettingsStore = defineStore("settingsStore", {
         }
 
         if (auth) {
-          this.auth = auth;
+          this.auth.isEnabled = auth.enabled;
+          this.auth.loginUrl = auth.login_url;
         }
       })
     }
