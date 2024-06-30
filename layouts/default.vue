@@ -3,9 +3,7 @@ import { onMounted } from "vue";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { useSettingsStore } from "~/src/shared/stores";
 
-useSettingsStore().initialize();
 SfdumpWrap(window.document);
 
 onMounted(() => {

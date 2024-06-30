@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useNuxtApp, navigateTo, setPageLayout } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "~/src/shared/lib/io";
-import { useProfileStore, useSettingsStore } from "~/src/shared/stores";
+import { useProfileStore } from "~/src/shared/stores";
 import { IconSvg } from "~/src/shared/ui";
 
-useSettingsStore().initialize();
 setPageLayout("blank");
 
 const app = useNuxtApp();
