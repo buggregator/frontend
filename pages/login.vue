@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { useNuxtApp, navigateTo, setPageLayout } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { navigateTo, setPageLayout } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from "~/src/shared/lib/io";
 import { useProfileStore, useSettingsStore } from "~/src/shared/stores";
 import { IconSvg } from "~/src/shared/ui";
 
-useSettingsStore();
 setPageLayout("blank");
 
-const app = useNuxtApp();
 const store = useProfileStore();
+const { auth } = storeToRefs(useSettingsStore());
 
 if (store.isAuthenticated) {
   await navigateTo("/");
 }
 
+const loginUrl = computed(() => `${REST_API_URL}/${auth.value.loginUrl}`);
+
 const redirect = async () => {
-  await navigateTo(`${REST_API_URL}/${app.$appSettings.auth.login_url}`, {
+  await navigateTo(loginUrl.value, {
     external: true,
   });
 };

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
-import { computed, onMounted, ref } from "vue";
-import { useNuxtApp, useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettings } from "~/src/shared/lib/use-settings";
 import { useSettingsStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { useProfileStore } from "~/src/shared/stores/profile";
@@ -11,10 +10,8 @@ import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
-const app = useNuxtApp();
-
 const { isConnectedWS } = storeToRefs(useConnectionStore());
-const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
+const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(useProfileStore());
@@ -41,6 +38,12 @@ const avatar = computed(() => {
   return profile.value.avatar;
 });
 
+const profileEmail = computed(() => {
+  if (!profile.value) return null;
+
+  return profile.value.email;
+});
+
 const connectionText = computed(
   () => `WS connection is ${connectionStatus.value}`
 );
@@ -58,28 +61,19 @@ const logout = () => {
 
 const path = computed(() => useRoute().path);
 
-const isAuthEnabled = computed(() => app?.$appSettings?.auth?.enabled);
+const isAuthEnabled = computed(() => auth.value.isEnabled);
 
-const {
-  api: { getVersion },
-} = useSettings();
+const { apiVersion } = storeToRefs(useSettingsStore());
 
-const apiVersion = ref("");
 const clientVersion = ref(
   !version || version === "0.0.1" ? "@dev" : `v${version}`
 );
 
-const getApiVersion = async () => {
-  const data = await getVersion();
-
-  apiVersion.value = String(data).match(/^[0-9.]+.*$/)
-    ? `v${data}`
-    : `@${data}`;
-};
-
-onMounted(() => {
-  getApiVersion();
-});
+const serverVersion = computed(() =>
+  String(apiVersion.value).match(/^[0-9.]+.*$/)
+    ? `v${apiVersion.value}`
+    : `@${apiVersion.value}`
+);
 </script>
 
 <template>
@@ -127,8 +121,11 @@ onMounted(() => {
     <div>
       <div v-if="isAuthEnabled" class="layout-sidebar__profile">
         <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
-          <div class="profile-dropdown-item profile-dropdown-item--email">
-            {{ profile.email }}
+          <div
+            v-if="profileEmail"
+            class="profile-dropdown-item profile-dropdown-item--email"
+          >
+            {{ profileEmail }}
           </div>
           <div
             class="profile-dropdown-item profile-dropdown-item--logout"
@@ -156,11 +153,11 @@ onMounted(() => {
 
       <div class="layout-sidebar__versions">
         <div
-          v-if="apiVersion"
+          v-if="serverVersion"
           class="layout-sidebar__nav-version"
-          :title="`Api version: ${apiVersion}`"
+          :title="`Api version: ${serverVersion}`"
         >
-          {{ apiVersion }}
+          {{ serverVersion }}
         </div>
 
         <div
