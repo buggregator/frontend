@@ -5,7 +5,10 @@ import {THEME_MODES} from "./constants";
 import {
   getEventsCountVisibleState,
   getFixedHeaderState,
-  checkIfThemeActive, syncEventsCountVisibleLocalStorage, syncFixedHeaderLocalStorage, syncThemeLocalStorage
+  checkIfThemeActive,
+  syncEventsCountVisibleLocalStorage,
+  syncFixedHeaderLocalStorage,
+  syncThemeLocalStorage,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -15,6 +18,7 @@ export const useSettingsStore = defineStore("settingsStore", {
       isEnabled: false,
       loginUrl: '/login',
     },
+    codeEditor: 'phpstorm',
     themeType: checkIfThemeActive(),
     isFixedHeader: getFixedHeaderState(),
     isVisibleEventCounts: getEventsCountVisibleState(),

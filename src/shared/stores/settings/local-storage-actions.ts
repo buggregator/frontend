@@ -67,3 +67,4 @@ export const getEventsCountVisibleState = (): boolean => {
 export const syncEventsCountVisibleLocalStorage = (state: boolean) => {
   window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(state));
 }
+
