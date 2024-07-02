@@ -3,12 +3,12 @@ import {useSettings} from "../../lib/use-settings";
 import type { TSettings } from "../../types";
 import {THEME_MODES} from "./constants";
 import {
-  getEventsCountVisibleState,
-  getFixedHeaderState,
-  checkIfThemeActive,
-  syncEventsCountVisibleLocalStorage,
-  syncFixedHeaderLocalStorage,
-  syncThemeLocalStorage, getActiveCodeEditorState, setActiveCodeEditorState,
+  getStoredEventsCountVisibility,
+  getStoredFixedHeader,
+  getStoredActiveTheme,
+  setStoredEventsCountVisibility,
+  setStoredFixedHeader,
+  setStoredActiveTheme, getStoredPrimaryCodeEditor, setStoredPrimaryCodeEditor,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -18,10 +18,10 @@ export const useSettingsStore = defineStore("settingsStore", {
       isEnabled: false,
       loginUrl: '/login',
     },
-    codeEditor: getActiveCodeEditorState() || 'phpstorm',
-    themeType: checkIfThemeActive(),
-    isFixedHeader: getFixedHeaderState(),
-    isVisibleEventCounts: getEventsCountVisibleState(),
+    codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
+    themeType: getStoredActiveTheme(),
+    isFixedHeader: getStoredFixedHeader(),
+    isVisibleEventCounts: getStoredEventsCountVisibility(),
   }),
   actions: {
     initialize() {
@@ -43,22 +43,22 @@ export const useSettingsStore = defineStore("settingsStore", {
         ? THEME_MODES.LIGHT
         : THEME_MODES.DARK;
 
-      syncThemeLocalStorage(this.themeType)
+      setStoredActiveTheme(this.themeType)
     },
     changeNavbar() {
       this.isFixedHeader = !this.isFixedHeader;
 
-      syncFixedHeaderLocalStorage(this.isFixedHeader)
+      setStoredFixedHeader(this.isFixedHeader)
     },
     changeEventCountsVisibility() {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;
 
-      syncEventsCountVisibleLocalStorage(this.isVisibleEventCounts)
+      setStoredEventsCountVisibility(this.isVisibleEventCounts)
     },
     changeActiveCodeEditor(editor: string) {
       this.codeEditor = editor;
 
-      setActiveCodeEditorState(editor);
+      setStoredPrimaryCodeEditor(editor);
     }
   },
 });

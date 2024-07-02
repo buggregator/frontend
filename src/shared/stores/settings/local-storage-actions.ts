@@ -1,7 +1,7 @@
 import {LOCAL_STORAGE_KEYS} from "../../types";
 import {THEME_MODES} from "./constants";
 
-export const checkIfThemeActive = () => {
+export const getStoredActiveTheme = () => {
   if (!process.client) {
     return THEME_MODES.LIGHT;
   }
@@ -20,7 +20,7 @@ export const checkIfThemeActive = () => {
   return THEME_MODES.LIGHT
 };
 
-export const syncThemeLocalStorage = (themeName: string) => {
+export const setStoredActiveTheme = (themeName: string) => {
   window?.localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, themeName);
 
   if (themeName === THEME_MODES.LIGHT) {
@@ -30,7 +30,7 @@ export const syncThemeLocalStorage = (themeName: string) => {
   }
 }
 
-export const getFixedHeaderState = () => {
+export const getStoredFixedHeader = () => {
   if (!process.client) {
     return  false;
   }
@@ -48,7 +48,7 @@ export const getFixedHeaderState = () => {
   return isFixed;
 }
 
-export const syncFixedHeaderLocalStorage = (state: boolean) => {
+export const setStoredFixedHeader = (state: boolean) => {
   window?.localStorage.setItem(LOCAL_STORAGE_KEYS.NAVBAR, String(state));
 
   if (state) {
@@ -58,23 +58,23 @@ export const syncFixedHeaderLocalStorage = (state: boolean) => {
   }
 }
 
-export const getEventsCountVisibleState = (): boolean => {
+export const getStoredEventsCountVisibility = (): boolean => {
   const storageValue = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS) || "true";
 
   return storageValue === "true";
 };
 
-export const syncEventsCountVisibleLocalStorage = (state: boolean) => {
+export const setStoredEventsCountVisibility = (state: boolean) => {
   window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(state));
 }
 
 
-export const getActiveCodeEditorState = (): string => {
+export const getStoredPrimaryCodeEditor = (): string => {
   const storedCodeEditor = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.CODE_EDITOR);
 
   return storedCodeEditor || '';
 };
 
-export const setActiveCodeEditorState = (editor: string) => {
+export const setStoredPrimaryCodeEditor = (editor: string) => {
   window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.CODE_EDITOR, editor);
 }
