@@ -68,3 +68,13 @@ export const syncEventsCountVisibleLocalStorage = (state: boolean) => {
   window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(state));
 }
 
+
+export const getActiveCodeEditorState = (): string => {
+  const storedCodeEditor = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.CODE_EDITOR);
+
+  return storedCodeEditor || '';
+};
+
+export const setActiveCodeEditorState = (editor: string) => {
+  window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.CODE_EDITOR, editor);
+}

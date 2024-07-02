@@ -5,4 +5,5 @@ export enum LOCAL_STORAGE_KEYS {
   THEME = "theme",
   NAVBAR = "navbar",
   EVENT_COUNTS = "event_counts",
+  CODE_EDITOR = "code_editor",
 }

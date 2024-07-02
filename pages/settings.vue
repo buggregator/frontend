@@ -6,14 +6,24 @@ import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
 import { AppHeader, BadgeNumber, IconSvg } from "~/src/shared/ui";
 
 const settingsStore = useSettingsStore();
-const { changeTheme, changeNavbar, changeEventCountsVisibility } =
-  settingsStore;
-const { themeType, isFixedHeader, isVisibleEventCounts } =
+const {
+  changeTheme,
+  changeNavbar,
+  changeEventCountsVisibility,
+  changeActiveCodeEditor,
+} = settingsStore;
+const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } =
   storeToRefs(settingsStore);
 
 useTitle("Settings | Buggregator");
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
+
+// TODO: add throttle
+const changeCodeEditor = (event: Event) => {
+  const editor = (event.target as HTMLInputElement).value;
+  changeActiveCodeEditor(editor);
+};
 </script>
 
 <template>
@@ -112,6 +122,27 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
           </BadgeNumber>
         </div>
       </div>
+
+      <div class="settings-page__title">Code Editor Open Link:</div>
+
+      <div class="settings-page__control">
+        <div>
+          <label class="settings-page__control-label">
+            <input
+              class="settings-page__control-input"
+              type="text"
+              :value="codeEditor"
+              @change="changeCodeEditor"
+            />
+            &nbsp;://open?file=/App/Modules/Logger.php&line=12
+          </label>
+
+          <div class="settings-page__control-description">
+            Example of link to open files in code editor. You can replace the
+            name editor with a more preferable one
+          </div>
+        </div>
+      </div>
     </main>
   </NuxtLayout>
 </template>
@@ -124,7 +155,8 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 }
 
 .settings-page__content {
-  @apply p-4 grid grid-cols-2 gap-4 mr-auto min-w-[50%];
+  @apply p-4 grid gap-4 gap-x-10 mr-auto min-w-[50%];
+  grid-template-columns: 1fr auto;
 }
 
 .settings-page__title {
@@ -132,7 +164,7 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 }
 
 .settings-page__control {
-  @apply flex space-x-5 items-center my-5;
+  @apply flex gap-5 items-center my-5;
 }
 
 .settings-page__control-icon {
@@ -159,5 +191,17 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
   .settings-page__control-button--active & {
     @apply translate-x-8;
   }
+}
+
+.settings-page__control-label {
+  @apply text-xl font-bold items-center flex;
+}
+
+.settings-page__control-input {
+  @apply border-gray-600 p-1 rounded w-[140px] bg-gray-200 dark:bg-gray-600;
+}
+
+.settings-page__control-description {
+  @apply text-xs mt-2;
 }
 </style>
