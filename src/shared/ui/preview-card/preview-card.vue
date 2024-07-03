@@ -2,7 +2,7 @@
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
 import moment from "moment";
-import { ref, computed, onBeforeMount, onMounted, nextTick } from "vue";
+import { ref, computed, onBeforeMount, onMounted } from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -43,9 +43,8 @@ const normalizedOrigin = computed(() => {
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);
 
-const toggleView = (e: MouseEvent) => {
+const toggleView = () => {
   isCollapsed.value = !isCollapsed.value;
-  e.preventDefault();
 };
 
 const changeVisibleControls = (value = true) => {
