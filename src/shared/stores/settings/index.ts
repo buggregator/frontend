@@ -1,2 +1,2 @@
-export {useSettingsStore} from './settings-store'
+export { useSettingsStore } from './settings-store'
 export * from './constants'

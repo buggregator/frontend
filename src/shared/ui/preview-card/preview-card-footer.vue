@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
 import { withDefaults, defineProps, computed } from "vue";
+import { useSettingsStore } from "../../stores/settings";
 import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
@@ -24,6 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   originConfig: null,
 });
 
+const { codeEditor } = storeToRefs(useSettingsStore());
+
 const mappedOrigins = computed(() =>
   Object.entries(props.originConfig || {}).reduce((acc, [key, value]) => {
     const fileName = props.originConfig?.file || "";
@@ -45,20 +49,52 @@ const mappedOrigins = computed(() =>
     return acc;
   }, {} as { [key: string]: string })
 );
+
+const editorLink = computed(() => {
+  if (!props.originConfig) {
+    return "";
+  }
+
+  const fileName = mappedOrigins.value.file || "";
+  const line = mappedOrigins.value.line || "";
+
+  if (!fileName || fileName === "unknown") {
+    return "";
+  }
+
+  return `${codeEditor.value}://open?file=${fileName}${
+    line ? `&line=${line}` : ""
+  }`;
+});
+
+const isEditorLink = (key: string) =>
+  !!editorLink.value && (key === "file" || key === "line");
 </script>
 
 <template>
   <div class="preview-card-footer">
     <div class="preview-card-footer__tags">
       <template v-if="mappedOrigins">
-        <div
-          v-for="(value, key) in mappedOrigins"
-          :key="key"
-          class="preview-card-footer__tag"
-        >
-          <span class="preview-card-footer__tag-key">{{ key }}:</span>
-          <span class="preview-card-footer__tag-value">{{ value }}</span>
-        </div>
+        <template v-for="(value, key) in mappedOrigins" :key="key">
+          <div
+            v-if="!isEditorLink(String(key))"
+            class="preview-card-footer__tag"
+          >
+            <span class="preview-card-footer__tag-key">{{ key }}:</span>
+            <span class="preview-card-footer__tag-value">{{ value }}</span>
+          </div>
+
+          <a
+            v-if="isEditorLink(String(key))"
+            :href="editorLink"
+            target="_blank"
+            class="preview-card-footer__tag"
+          >
+            12314
+            <span class="preview-card-footer__tag-key">{{ key }}:</span>
+            <span class="preview-card-footer__tag-value">{{ value }}</span>
+          </a>
+        </template>
       </template>
     </div>
 

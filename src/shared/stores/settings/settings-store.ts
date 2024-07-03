@@ -5,7 +5,10 @@ import {THEME_MODES} from "./constants";
 import {
   getEventsCountVisibleState,
   getFixedHeaderState,
-  checkIfThemeActive, syncEventsCountVisibleLocalStorage, syncFixedHeaderLocalStorage, syncThemeLocalStorage
+  checkIfThemeActive,
+  syncEventsCountVisibleLocalStorage,
+  syncFixedHeaderLocalStorage,
+  syncThemeLocalStorage, getActiveCodeEditorState, setActiveCodeEditorState,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -15,11 +18,26 @@ export const useSettingsStore = defineStore("settingsStore", {
       isEnabled: false,
       loginUrl: '/login',
     },
+    codeEditor: getActiveCodeEditorState() || 'phpstorm',
     themeType: checkIfThemeActive(),
     isFixedHeader: getFixedHeaderState(),
     isVisibleEventCounts: getEventsCountVisibleState(),
   }),
   actions: {
+    initialize() {
+      const {api: { getSettings }} = useSettings();
+
+      getSettings().then(({ version, auth } = {} as TSettings) => {
+        if (version) {
+          this.apiVersion = version
+        }
+
+        if (auth) {
+          this.auth.isEnabled = auth.enabled;
+          this.auth.loginUrl = auth.login_url;
+        }
+      })
+    },
     changeTheme() {
       this.themeType = this.themeType === THEME_MODES.DARK
         ? THEME_MODES.LIGHT
@@ -37,19 +55,10 @@ export const useSettingsStore = defineStore("settingsStore", {
 
       syncEventsCountVisibleLocalStorage(this.isVisibleEventCounts)
     },
-    initialize() {
-      const {api: { getSettings }} = useSettings();
+    changeActiveCodeEditor(editor: string) {
+      this.codeEditor = editor;
 
-      getSettings().then(({ version, auth } = {} as TSettings) => {
-        if (version) {
-          this.apiVersion = version
-        }
-
-        if (auth) {
-          this.auth.isEnabled = auth.enabled;
-          this.auth.loginUrl = auth.login_url;
-        }
-      })
+      setActiveCodeEditorState(editor);
     }
   },
 });

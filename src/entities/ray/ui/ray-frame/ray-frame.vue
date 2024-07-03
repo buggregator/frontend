@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
+import { useSettingsStore } from "~/src/shared/stores";
 import type { RayFrame } from "../../types";
 
 type Props = {
@@ -8,11 +10,13 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const { codeEditor } = storeToRefs(useSettingsStore());
+
 const callLink = computed(
   () =>
-    `phpstorm://open?file=${encodeURIComponent(props.frame.file_name)}&line=${
-      props.frame.line_number
-    }`
+    `${codeEditor}://open?file=${encodeURIComponent(
+      props.frame.file_name
+    )}&line=${props.frame.line_number}`
 );
 </script>
 
