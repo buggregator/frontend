@@ -55,8 +55,8 @@ const editorLink = computed(() => {
     return "";
   }
 
-  const fileName = props.originConfig.file || "";
-  const line = props.originConfig.line || "";
+  const fileName = mappedOrigins.value.file || "";
+  const line = mappedOrigins.value.line || "";
 
   if (!fileName || fileName === "unknown") {
     return "";
@@ -66,6 +66,9 @@ const editorLink = computed(() => {
     line ? `&line=${line}` : ""
   }`;
 });
+
+const isEditorLink = (key: string) =>
+  !!editorLink.value && (key === "file" || key === "line");
 </script>
 
 <template>
@@ -74,7 +77,7 @@ const editorLink = computed(() => {
       <template v-if="mappedOrigins">
         <template v-for="(value, key) in mappedOrigins" :key="key">
           <div
-            v-if="key !== 'file' || !editorLink"
+            v-if="!isEditorLink(String(key))"
             class="preview-card-footer__tag"
           >
             <span class="preview-card-footer__tag-key">{{ key }}:</span>
@@ -82,11 +85,12 @@ const editorLink = computed(() => {
           </div>
 
           <a
-            v-if="key === 'file' && editorLink"
+            v-if="isEditorLink(String(key))"
             :href="editorLink"
             target="_blank"
             class="preview-card-footer__tag"
           >
+            12314
             <span class="preview-card-footer__tag-key">{{ key }}:</span>
             <span class="preview-card-footer__tag-value">{{ value }}</span>
           </a>
