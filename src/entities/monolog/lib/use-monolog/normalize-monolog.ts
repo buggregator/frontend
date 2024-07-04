@@ -8,7 +8,7 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
   return {
     id: event.uuid,
     type: EVENT_TYPES.MONOLOG,
-    labels: [EVENT_TYPES.MONOLOG],
+    labels: [EVENT_TYPES.MONOLOG, event.payload.channel],
     origin,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
