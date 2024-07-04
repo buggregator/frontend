@@ -3,7 +3,7 @@ import type {TEventsCachedIdsMap} from "./types";
 
 const { localStorage } = window;
 
-export const getCachedIds = (): TEventsCachedIdsMap | null => {
+export const getStoredCachedIds = (): TEventsCachedIdsMap | null => {
   const storageValue = localStorage?.getItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS);
 
   if (storageValue) {
@@ -13,12 +13,12 @@ export const getCachedIds = (): TEventsCachedIdsMap | null => {
   return null;
 };
 
-export const syncCachedIdsLocalStorage = (cachedEventMap: TEventsCachedIdsMap) => {
+export const setStoredCachedIds = (cachedEventMap: TEventsCachedIdsMap) => {
   localStorage?.setItem(LOCAL_STORAGE_KEYS.CACHED_EVENTS, JSON.stringify(cachedEventMap));
 }
 
 
-export const getLockedIds = (): EventId[] | null => {
+export const getStoredLockedIds = (): EventId[] | null => {
   const storageValue = localStorage?.getItem(LOCAL_STORAGE_KEYS.LOCKED_EVENTS);
 
   if (storageValue) {
@@ -28,6 +28,6 @@ export const getLockedIds = (): EventId[] | null => {
   return null;
 };
 
-export const syncLockedIdsLocalStorage = (lockedIds: EventId[]) => {
+export const setStoredLockedIds = (lockedIds: EventId[]) => {
   localStorage?.setItem(LOCAL_STORAGE_KEYS.LOCKED_EVENTS, JSON.stringify(lockedIds));
 }

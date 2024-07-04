@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import {PAGE_TYPES} from "../../constants";
 import type { EventId, EventType , ServerEvent, TEventsGroup} from '../../types';
 import {EVENT_TYPES} from "../../types";
-import { getLockedIds, syncCachedIdsLocalStorage, syncLockedIdsLocalStorage, getCachedIds } from "./local-storage-actions";
+import { getStoredLockedIds, setStoredCachedIds, setStoredLockedIds, getStoredCachedIds } from "./local-storage-actions";
 import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
@@ -22,8 +22,8 @@ const initialCachedIds: TEventsCachedIdsMap = {
 export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
-    cachedIds: getCachedIds() || initialCachedIds,
-    lockedIds: getLockedIds() || [],
+    cachedIds: getStoredCachedIds() || initialCachedIds,
+    lockedIds: getStoredLockedIds() || [],
   }),
   getters: {
     eventsCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
@@ -118,11 +118,11 @@ export const useEventsStore = defineStore("eventsStore", {
           this.cachedIds[cachedType].push(event.uuid);
         });
 
-      syncCachedIdsLocalStorage(this.cachedIds);
+      setStoredCachedIds(this.cachedIds);
     },
     removeCachedByType(type: TEventsGroup) {
       this.cachedIds[type].length = 0;
-      syncCachedIdsLocalStorage(this.cachedIds);
+      setStoredCachedIds(this.cachedIds);
     },
     removeCachedByIds(uuids: EventId[]) {
       this.cachedIdsTypesList.forEach((type) => {
@@ -131,14 +131,14 @@ export const useEventsStore = defineStore("eventsStore", {
         );
       });
 
-      syncCachedIdsLocalStorage(this.cachedIds);
+      setStoredCachedIds(this.cachedIds);
     },
     removeCachedById(eventUuid: EventId) {
       this.removeCachedByIds([eventUuid]);
     },
     removeCachedAll() {
       this.cachedIds = initialCachedIds;
-      syncCachedIdsLocalStorage(this.cachedIds);
+      setStoredCachedIds(this.cachedIds);
     },
     syncCachedWithActive(activeIds: EventId[]) {
       if (!activeIds.length) {
@@ -153,18 +153,18 @@ export const useEventsStore = defineStore("eventsStore", {
         );
       });
 
-      syncCachedIdsLocalStorage(this.cachedIds);
+      setStoredCachedIds(this.cachedIds);
     },
     // locked ids
     removeLockedIds(eventUuid: EventId) {
       this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
 
-      syncLockedIdsLocalStorage(this.lockedIds);
+      setStoredLockedIds(this.lockedIds);
     },
     addLockedIds(eventUuid: EventId) {
       this.lockedIds.push(eventUuid);
 
-      syncLockedIdsLocalStorage(this.lockedIds);
+      setStoredLockedIds(this.lockedIds);
     }
   },
 });
