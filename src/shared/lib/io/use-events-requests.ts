@@ -41,8 +41,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const getSingle = (id: EventId) => fetch(getEventRestUrl(id), {headers})
     .then((response) => response.json())
     .then((response) => {
-      if (response?.data) {
-        return response.data as ServerEvent<unknown>
+      if (response) {
+        return response as ServerEvent<unknown>
       }
       return null;
     })
