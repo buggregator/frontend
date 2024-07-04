@@ -6,7 +6,7 @@ ARG BRANCH=master
 RUN git clone -b $BRANCH $REPOSITORY /app
 
 # Build JS files
-FROM node:21-alpine as frontend
+FROM node:22-alpine as frontend
 COPY --from=git /app /app
 WORKDIR /app
 
@@ -16,8 +16,8 @@ ENV VITE_APP_MODE=production
 
 RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" package.json
 
-RUN npm install --ignore-scripts
-RUN npm run generate
+RUN yarn install --ignore-scripts
+RUN yarn generate
 RUN rm -rf node_modules
 
 LABEL org.opencontainers.image.source=$REPOSITORY
