@@ -18,5 +18,4 @@ dist
 /.vscode
 secrets.json
 .ruby-version
-yarn.lock
 *.orig
