@@ -8,9 +8,9 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
     type: EVENT_TYPES.VAR_DUMP,
     labels: [EVENT_TYPES.VAR_DUMP],
     origin: {
-      file: event.payload.context?.source.file,
-      name: event.payload.context?.source.name,
-      line_number: event.payload.context?.source.line,
+      file: event.payload.context?.source?.file || "",
+      name: event.payload.context?.source?.name || "",
+      line_number: event.payload.context?.source?.line || "",
     },
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
@@ -19,6 +19,10 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
 
   if (event.payload?.payload?.label) {
     normalizedEvent.labels.push(`label: ${event.payload.payload.label}`);
+  }
+
+  if (event.payload?.context?.cli) {
+    normalizedEvent.labels.push(`CLI: ${event.payload?.context?.cli}`);
   }
 
   return normalizedEvent;
