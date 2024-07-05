@@ -22,7 +22,7 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
   }
 
   if (event.payload?.context?.cli) {
-    normalizedEvent.labels.push(`CLI: ${event.payload?.context?.cli}`);
+    normalizedEvent.labels.push(`CLI: ${event.payload.context.cli}`);
   }
 
   return normalizedEvent;
