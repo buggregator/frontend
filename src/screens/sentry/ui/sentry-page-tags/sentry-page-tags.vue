@@ -1,16 +1,19 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type {
   Sentry,
   SentryContextRuntime,
   SentryContextOS,
 } from "~/src/entities/sentry/types";
+import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
   payload: Sentry;
 };
 
 const props = defineProps<Props>();
+
+const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
   const { name = "", version = "" } =
@@ -66,6 +69,15 @@ const tags = computed(() => [
     value: props.payload.server_name,
   },
 ]);
+
+const modules = computed(() => {
+  const mods = props.payload.modules || {};
+
+  return Object.keys(mods).map((name) => ({
+    name,
+    version: mods[name],
+  }));
+});
 </script>
 
 <template>
@@ -79,7 +91,7 @@ const tags = computed(() => [
     </div>
 
     <div class="sentry-page-tags__labels-wrapper">
-      <h3 class="sentry-page-tags__title">tags</h3>
+      <h3 class="sentry-page-tags__title">Tags</h3>
       <div class="sentry-page-tags__labels">
         <div
           v-for="tag in tags"
@@ -106,6 +118,40 @@ const tags = computed(() => [
         </template>
       </div>
     </div>
+
+    <div
+      class="sentry-page-tags__labels-wrapper"
+      :class="{
+        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen,
+      }"
+    >
+      <h3
+        class="sentry-page-tags__title"
+        @click="isModulesOpen = !isModulesOpen"
+      >
+        Modules
+
+        <IconSvg
+          class="sentry-page-tags__title-dd"
+          :class="{
+            'sentry-page-tags__title-dd--open': isModulesOpen,
+          }"
+          name="dd"
+        />
+      </h3>
+      <div class="sentry-page-tags__labels">
+        <div
+          v-for="module in modules"
+          :key="module.name"
+          class="sentry-page-tags__label"
+        >
+          <div class="sentry-page-tags__label-name">{{ module.name }}</div>
+          <div class="sentry-page-tags__label-value">
+            {{ module.version }}
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -117,9 +163,44 @@ const tags = computed(() => [
 
 .sentry-page-tags__title {
   @include text-muted;
-  @apply font-bold uppercase text-sm mb-5;
+  @apply font-bold uppercase text-sm flex justify-between;
 }
 
+.sentry-page-tags__title-dd {
+  @apply ml-2 w-5 ml-auto transform rotate-180;
+}
+
+.sentry-page-tags__title-dd--open {
+  @apply rotate-0;
+}
+
+.sentry-page-tags__labels-wrapper {
+  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
+
+  & + & {
+    @apply mt-5;
+  }
+}
+
+.sentry-page-tags__labels-wrapper--partial {
+  @apply max-h-[200px] overflow-y-auto;
+}
+
+.sentry-page-tags__labels {
+  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
+}
+
+.sentry-page-tags__label {
+  @apply flex border border-purple-300 rounded text-xs items-center;
+}
+
+.sentry-page-tags__label-name {
+  @apply px-3 py-1 border-r;
+}
+
+.sentry-page-tags__label-value {
+  @apply px-3 py-1 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
+}
 .sentry-page-tags__boxes {
   @apply flex items-stretch flex-col md:flex-row mb-5 gap-x-4;
 }
@@ -139,25 +220,5 @@ const tags = computed(() => [
 
 .sentry-page-tags__box-value {
   @apply text-sm;
-}
-
-.sentry-page-tags__labels {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3;
-}
-
-.sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
-}
-
-.sentry-page-tags__label {
-  @apply flex border border-purple-300 rounded text-xs items-center;
-}
-
-.sentry-page-tags__label-name {
-  @apply px-3 py-1 border-r;
-}
-
-.sentry-page-tags__label-value {
-  @apply px-3 py-1 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
 }
 </style>
