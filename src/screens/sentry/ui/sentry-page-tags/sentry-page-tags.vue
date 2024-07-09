@@ -25,74 +25,70 @@ const contextsOS = computed(() => {
 
   return { name, version };
 });
+
+const boxes = computed(() => [
+  {
+    title: "runtime",
+    name: contextsRuntime.value.name,
+    version: contextsRuntime.value.version,
+  },
+  {
+    title: "os",
+    name: contextsOS.value.name,
+    version: contextsOS.value.version,
+  },
+  {
+    title: "sdk",
+    name: props.payload.sdk?.name,
+    version: props.payload.sdk?.version,
+  },
+]);
+
+const tags = computed(() => [
+  {
+    name: "env",
+    value: props.payload.environment,
+  },
+  {
+    name: "logger",
+    value: props.payload.logger,
+  },
+  {
+    name: "os",
+    value: `${contextsOS.value.name} ${contextsOS.value.version}`,
+  },
+  {
+    name: "runtime",
+    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
+  },
+  {
+    name: "server name",
+    value: props.payload.server_name,
+  },
+]);
 </script>
 
 <template>
   <section class="sentry-page-tags">
     <div class="sentry-page-tags__boxes">
-      <div v-if="contextsRuntime.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">runtime</span>
-        <h4 class="sentry-page-tags__box-name">{{ contextsRuntime.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ contextsRuntime.version }}
-        </p>
-      </div>
-
-      <div v-if="contextsOS.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">os</span>
-        <h4 class="sentry-page-tags__box-name">{{ contextsOS.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ contextsOS.version }}
-        </p>
-      </div>
-
-      <div v-if="payload.sdk && payload.sdk.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">sdk</span>
-        <h4 class="sentry-page-tags__box-name">{{ payload.sdk.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ payload.sdk.version }}
-        </p>
+      <div v-for="box in boxes" :key="box.name" class="sentry-page-tags__box">
+        <span class="sentry-page-tags__box-title">{{ box.title }}</span>
+        <h4 class="sentry-page-tags__box-name">{{ box.name }}</h4>
+        <p class="sentry-page-tags__box-value">Version: {{ box.version }}</p>
       </div>
     </div>
 
     <div class="sentry-page-tags__labels-wrapper">
       <h3 class="sentry-page-tags__title">tags</h3>
       <div class="sentry-page-tags__labels">
-        <div class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">env</div>
+        <div
+          v-for="tag in tags"
+          :key="tag.name"
+          class="sentry-page-tags__label"
+        >
+          <div class="sentry-page-tags__label-name">{{ tag.name }}</div>
           <div class="sentry-page-tags__label-value">
-            {{ payload.environment }}
-          </div>
-        </div>
-
-        <div v-if="payload.release" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">release</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.release }}
-          </div>
-        </div>
-        <div v-if="payload.logger" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">logger</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.logger }}
-          </div>
-        </div>
-        <div v-if="contextsOS.name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">os</div>
-          <div class="sentry-page-tags__label-value">
-            {{ contextsOS.name }} {{ contextsOS.version }}
-          </div>
-        </div>
-        <div v-if="contextsRuntime.name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">runtime</div>
-          <div class="sentry-page-tags__label-value">
-            {{ contextsRuntime.name }} {{ contextsRuntime.version }}
-          </div>
-        </div>
-        <div v-if="payload.server_name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">server name</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.server_name }}
+            {{ tag.value }}
           </div>
         </div>
 
