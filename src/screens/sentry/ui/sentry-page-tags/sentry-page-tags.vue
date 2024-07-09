@@ -182,12 +182,12 @@ const modules = computed(() => {
   }
 }
 
-.sentry-page-tags__labels-wrapper--partial {
-  @apply max-h-[200px] overflow-y-auto;
-}
-
 .sentry-page-tags__labels {
   @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
+
+  .sentry-page-tags__labels-wrapper--partial & {
+    @apply max-h-[200px] overflow-y-auto;
+  }
 }
 
 .sentry-page-tags__label {
