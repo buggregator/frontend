@@ -12,12 +12,12 @@ export default {
 
 export const Laravel: StoryObj<typeof SentryPageExtra> = {
   args: {
-    request: normalizeSentryEvent(sentryLaravelMock).payload.extra,
+    extra: normalizeSentryEvent(sentryLaravelMock).payload.extra,
   }
 };
 
 export const Spiral: StoryObj<typeof SentryPageExtra> = {
   args: {
-    request: normalizeSentryEvent(sentrySpiralMock).payload.extra,
+    extra: normalizeSentryEvent(sentrySpiralMock).payload.extra,
   }
 };
