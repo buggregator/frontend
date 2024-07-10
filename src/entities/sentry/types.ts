@@ -54,8 +54,5 @@ export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' 
   level?: SentryLevel,
   modules?: {
     [key: string]: string
-  },
-  extra?: {
-    environment?: Record<string, string>,
   }
 }
