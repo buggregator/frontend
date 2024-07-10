@@ -30,7 +30,7 @@ const normalizeHeaderValue = (value: unknown) =>
         <TableBaseRow
           v-for="(value, title) in request.headers"
           :key="title"
-          :title="title"
+          :title="String(title)"
         >
           {{ normalizeHeaderValue(value) }}
         </TableBaseRow>
