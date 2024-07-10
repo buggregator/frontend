@@ -29,7 +29,7 @@ withDefaults(defineProps<Props>(), {
 }
 
 .table-base-row__name {
-  @apply font-bold mr-5 md:w-1/4 sm:pr-4;
+  @apply font-bold md:w-1/4 sm:pr-4 overflow-hidden text-ellipsis;
 }
 
 .table-base-row__value {
