@@ -7,6 +7,7 @@ import type { NormalizedEvent } from "~/src/shared/types";
 import { SentryPageApp } from "../sentry-page-app";
 import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs";
 import { SentryPageDevice } from "../sentry-page-device";
+import { SentryPageExtra } from "../sentry-page-extra";
 import { SentryPageRequest } from "../sentry-page-request";
 import { SentryPageTags } from "../sentry-page-tags";
 
@@ -103,6 +104,12 @@ const exceptionsLength = computed(
         :device="event.payload.contexts.device"
         class="sentry-page__section"
       />
+
+      <SentryPageExtra
+        v-if="extra"
+        :extra="extra"
+        class="sentry-page__section"
+      />
     </main>
   </div>
 </template>
@@ -115,7 +122,7 @@ const exceptionsLength = computed(
 }
 
 .sentry-page__main {
-  @apply flex flex-col w-full;
+  @apply flex flex-col w-full pb-5;
 }
 
 .sentry-page__main-header {
