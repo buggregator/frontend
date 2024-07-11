@@ -7,6 +7,7 @@ import type { NormalizedEvent } from "~/src/shared/types";
 import { SentryPageApp } from "../sentry-page-app";
 import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs";
 import { SentryPageDevice } from "../sentry-page-device";
+import { SentryPageExtra } from "../sentry-page-extra";
 import { SentryPageRequest } from "../sentry-page-request";
 import { SentryPageTags } from "../sentry-page-tags";
 
@@ -17,15 +18,15 @@ type Props = {
 const props = defineProps<Props>();
 
 const formattedTimestamp = computed(() =>
-  moment(props.event.payload.timestamp).toLocaleString()
+  moment(props.event.payload.timestamp).toLocaleString(),
 );
 
 const mainException = computed(
-  () => props.event.payload?.exception?.values?.[0]
+  () => props.event.payload?.exception?.values?.[0],
 );
 
 const exceptionsLength = computed(
-  () => props.event?.payload?.exception?.values?.length || 0
+  () => props.event?.payload?.exception?.values?.length || 0,
 );
 </script>
 
@@ -43,7 +44,7 @@ const exceptionsLength = computed(
         <p class="sentry-page__main-date">{{ formattedTimestamp }}</p>
       </header>
 
-      <SentryPageTags :payload="event.payload" class="sentry-page__section" />
+      <SentryPageTags class="sentry-page__section" :payload="event.payload" />
 
       <section v-if="mainException" class="sentry-page__section">
         <h3 class="sentry-page__section-title">
@@ -103,6 +104,12 @@ const exceptionsLength = computed(
         :device="event.payload.contexts.device"
         class="sentry-page__section"
       />
+
+      <SentryPageExtra
+        v-if="extra"
+        :extra="extra"
+        class="sentry-page__section"
+      />
     </main>
   </div>
 </template>
@@ -115,7 +122,7 @@ const exceptionsLength = computed(
 }
 
 .sentry-page__main {
-  @apply flex flex-col w-full;
+  @apply flex flex-col w-full pb-5;
 }
 
 .sentry-page__main-header {

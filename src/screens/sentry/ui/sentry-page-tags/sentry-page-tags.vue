@@ -1,16 +1,19 @@
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type {
   Sentry,
   SentryContextRuntime,
   SentryContextOS,
 } from "~/src/entities/sentry/types";
+import { IconSvg } from "~/src/shared/ui";
 
 type Props = {
   payload: Sentry;
 };
 
 const props = defineProps<Props>();
+
+const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
   const { name = "", version = "" } =
@@ -25,74 +28,79 @@ const contextsOS = computed(() => {
 
   return { name, version };
 });
+
+const boxes = computed(() => [
+  {
+    title: "runtime",
+    name: contextsRuntime.value.name,
+    version: contextsRuntime.value.version,
+  },
+  {
+    title: "os",
+    name: contextsOS.value.name,
+    version: contextsOS.value.version,
+  },
+  {
+    title: "sdk",
+    name: props.payload.sdk?.name,
+    version: props.payload.sdk?.version,
+  },
+]);
+
+const tags = computed(() => [
+  {
+    name: "env",
+    value: props.payload.environment,
+  },
+  {
+    name: "logger",
+    value: props.payload.logger,
+  },
+  {
+    name: "os",
+    value: `${contextsOS.value.name} ${contextsOS.value.version}`,
+  },
+  {
+    name: "runtime",
+    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
+  },
+  {
+    name: "server name",
+    value: props.payload.server_name,
+  },
+]);
+
+const modules = computed(() => {
+  const mods = props.payload.modules || {};
+
+  return Object.keys(mods).map((name) => ({
+    name,
+    version: mods[name],
+  }));
+});
 </script>
 
 <template>
   <section class="sentry-page-tags">
     <div class="sentry-page-tags__boxes">
-      <div v-if="contextsRuntime.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">runtime</span>
-        <h4 class="sentry-page-tags__box-name">{{ contextsRuntime.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ contextsRuntime.version }}
-        </p>
-      </div>
-
-      <div v-if="contextsOS.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">os</span>
-        <h4 class="sentry-page-tags__box-name">{{ contextsOS.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ contextsOS.version }}
-        </p>
-      </div>
-
-      <div v-if="payload.sdk && payload.sdk.name" class="sentry-page-tags__box">
-        <span class="sentry-page-tags__box-title">sdk</span>
-        <h4 class="sentry-page-tags__box-name">{{ payload.sdk.name }}</h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ payload.sdk.version }}
-        </p>
+      <div v-for="box in boxes" :key="box.name" class="sentry-page-tags__box">
+        <span class="sentry-page-tags__box-title">{{ box.title }}</span>
+        <h4 class="sentry-page-tags__box-name">{{ box.name }}</h4>
+        <p class="sentry-page-tags__box-value">Version: {{ box.version }}</p>
       </div>
     </div>
 
     <div class="sentry-page-tags__labels-wrapper">
-      <h3 class="sentry-page-tags__title">tags</h3>
+      <h3 class="sentry-page-tags__title">Tags</h3>
       <div class="sentry-page-tags__labels">
-        <div class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">env</div>
+        <div
+          v-for="tag in tags"
+          :key="tag.name"
+          class="sentry-page-tags__label"
+        >
+          <div class="sentry-page-tags__label-name">{{ tag.name }}</div>
           <div class="sentry-page-tags__label-value">
-            {{ payload.environment }}
-          </div>
-        </div>
-
-        <div v-if="payload.release" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">release</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.release }}
-          </div>
-        </div>
-        <div v-if="payload.logger" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">logger</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.logger }}
-          </div>
-        </div>
-        <div v-if="contextsOS.name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">os</div>
-          <div class="sentry-page-tags__label-value">
-            {{ contextsOS.name }} {{ contextsOS.version }}
-          </div>
-        </div>
-        <div v-if="contextsRuntime.name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">runtime</div>
-          <div class="sentry-page-tags__label-value">
-            {{ contextsRuntime.name }} {{ contextsRuntime.version }}
-          </div>
-        </div>
-        <div v-if="payload.server_name" class="sentry-page-tags__label">
-          <div class="sentry-page-tags__label-name">server name</div>
-          <div class="sentry-page-tags__label-value">
-            {{ payload.server_name }}
+            {{ tag.value }}
           </div>
         </div>
 
@@ -110,6 +118,40 @@ const contextsOS = computed(() => {
         </template>
       </div>
     </div>
+
+    <div
+      class="sentry-page-tags__labels-wrapper"
+      :class="{
+        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen,
+      }"
+    >
+      <h3
+        class="sentry-page-tags__title"
+        @click="isModulesOpen = !isModulesOpen"
+      >
+        Modules
+
+        <IconSvg
+          class="sentry-page-tags__title-dd"
+          :class="{
+            'sentry-page-tags__title-dd--open': isModulesOpen,
+          }"
+          name="dd"
+        />
+      </h3>
+      <div class="sentry-page-tags__labels">
+        <div
+          v-for="module in modules"
+          :key="module.name"
+          class="sentry-page-tags__label"
+        >
+          <div class="sentry-page-tags__label-name">{{ module.name }}</div>
+          <div class="sentry-page-tags__label-value">
+            {{ module.version }}
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -121,9 +163,44 @@ const contextsOS = computed(() => {
 
 .sentry-page-tags__title {
   @include text-muted;
-  @apply font-bold uppercase text-sm mb-5;
+  @apply font-bold uppercase text-sm flex justify-between;
 }
 
+.sentry-page-tags__title-dd {
+  @apply ml-2 w-5 ml-auto transform rotate-180;
+}
+
+.sentry-page-tags__title-dd--open {
+  @apply rotate-0;
+}
+
+.sentry-page-tags__labels-wrapper {
+  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
+
+  & + & {
+    @apply mt-5;
+  }
+}
+
+.sentry-page-tags__labels {
+  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
+
+  .sentry-page-tags__labels-wrapper--partial & {
+    @apply max-h-[200px] overflow-y-auto;
+  }
+}
+
+.sentry-page-tags__label {
+  @apply flex border border-purple-300 rounded text-xs items-center;
+}
+
+.sentry-page-tags__label-name {
+  @apply px-3 py-1 border-r;
+}
+
+.sentry-page-tags__label-value {
+  @apply px-3 py-1 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
+}
 .sentry-page-tags__boxes {
   @apply flex items-stretch flex-col md:flex-row mb-5 gap-x-4;
 }
@@ -143,25 +220,5 @@ const contextsOS = computed(() => {
 
 .sentry-page-tags__box-value {
   @apply text-sm;
-}
-
-.sentry-page-tags__labels {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3;
-}
-
-.sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
-}
-
-.sentry-page-tags__label {
-  @apply flex border border-purple-300 rounded text-xs items-center;
-}
-
-.sentry-page-tags__label-name {
-  @apply px-3 py-1 border-r;
-}
-
-.sentry-page-tags__label-value {
-  @apply px-3 py-1 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
 }
 </style>
