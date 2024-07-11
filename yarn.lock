@@ -1772,7 +1772,7 @@
     which "^3.0.1"
     ws "^8.17.1"
 
-"@nuxt/kit@3.12.3", "@nuxt/kit@^3.11.1", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.2", "@nuxt/kit@^3.5.0":
+"@nuxt/kit@3.12.3", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.0", "@nuxt/kit@^3.12.2", "@nuxt/kit@^3.5.0":
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.12.3.tgz#71a8ea30feb54e0c6fb3b7df33b71aa08ba05f8f"
   integrity sha512-5R8FZLDxBKlkDWYsqwU1tctGJ5vwMA96WBrNkpQ0LznB2/p+3MWWTO6vz+0P0F9xvZZfkk/KKyZ3uUhnG9VJOA==
@@ -1798,7 +1798,7 @@
     unimport "^3.7.2"
     untyped "^1.4.2"
 
-"@nuxt/schema@3.12.3", "@nuxt/schema@^3.11.1", "@nuxt/schema@^3.12.3":
+"@nuxt/schema@3.12.3", "@nuxt/schema@^3.12.2", "@nuxt/schema@^3.12.3":
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.12.3.tgz#da72479aea11a5136d1d08fe2889a4cac4ad3533"
   integrity sha512-Zw/2stN5CWVOHQ6pKyewk3tvYW5ROBloTGyIbie7/TprJT5mL+E9tTgAxOZtkoKSFaYEQXZgE1K2OzMelhLRzw==
@@ -1839,7 +1839,7 @@
     rc9 "^2.1.2"
     std-env "^3.7.0"
 
-"@nuxt/vite-builder@3.12.3", "@nuxt/vite-builder@^3.11.1":
+"@nuxt/vite-builder@3.12.3", "@nuxt/vite-builder@^3.12.2":
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/@nuxt/vite-builder/-/vite-builder-3.12.3.tgz#759fe6e6273b53a632872267bdae8458b43c8fa6"
   integrity sha512-8xfeOgSUaXTYgLx1DA5qEFwU3/vL5DVAIv8sgPn2rnmB50nPJVXrVa+tXhO0I1Q8L4ycXRqq2dxOPGq8CSYo+A==
@@ -1904,19 +1904,21 @@
     eslint-plugin-vue "^9.7.0"
     local-pkg "^0.4.2"
 
-"@nuxtjs/storybook@^8.1.1":
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/storybook/-/storybook-8.1.1.tgz#8f71e2e22ff10d4487570237e72ba6121935b58f"
-  integrity sha512-g8Gqgfp+JmhWuXRwnENCrtmqpYpJyZzPleu8oqHLTlP3Q4ToxUJ51J6JELoo7gcGmWVcaXX4tsHzKHSi9DWQsA==
+"@nuxtjs/storybook@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/storybook/-/storybook-8.1.2.tgz#7370d432897c49439ea8c7a6f538ed0442d42711"
+  integrity sha512-6iBy39N4IyNIdmvuT140alXfHtS8RicNBLdwMfpyTBsYNaBWy9ykm50mEuxUCm43PpcQRyPix8Ucl0qnod361Q==
   dependencies:
     "@nuxt/devtools-kit" "^1.0.8"
-    "@nuxt/kit" "^3.11.2"
-    "@storybook-vue/nuxt" "^0.2.6"
+    "@nuxt/kit" "^3.12.0"
+    "@storybook-vue/nuxt" "8.1.2"
+    "@storybook/core-common" "^8.1.11"
+    "@storybook/core-server" "^8.1.11"
     chalk "^5.0.0"
     consola "^3.2.3"
     defu "^6.1.4"
     get-port-please "^3.1.2"
-    storybook "^8.0.6"
+    storybook "^8.1.11"
     ufo "^1.5.3"
 
 "@nuxtjs/tailwindcss@^6.2.0":
@@ -2397,20 +2399,44 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/merge-streams/-/merge-streams-2.3.0.tgz#719df7fb41766bc143369eaa0dd56d8dc87c9958"
   integrity sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==
 
-"@storybook-vue/nuxt@^0.2.6", "@storybook-vue/nuxt@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@storybook-vue/nuxt/-/nuxt-0.2.8.tgz#4abff6c6e3b5a433bd3c8a4912eb405de8530073"
-  integrity sha512-rBH00K1ZtpeiQi7Jw2zLp2h1K6kf7AFDSBGxYw475AkA1NDn3BU3ORAeWwuS+6G5axVZl+jO5NJiGmh7apnfoQ==
+"@storybook-vue/nuxt@0.2.10":
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/@storybook-vue/nuxt/-/nuxt-0.2.10.tgz#e879865e2b4eee1dd127941e88f4d516ae0902c4"
+  integrity sha512-6bPV3CDWqPBBT4KtC7Nx3TziNA02i1BKPSzlWpLuLyQpOLogwLupn5DyryBpA4VQ0Su/7EYHt/g8t+c8rE7JXg==
   dependencies:
-    "@nuxt/kit" "^3.11.1"
-    "@nuxt/schema" "^3.11.1"
-    "@nuxt/vite-builder" "^3.11.1"
-    "@storybook/builder-vite" "^8.0.0"
-    "@storybook/vue3" "^8.0.0"
-    "@storybook/vue3-vite" "^8.0.0"
+    "@nuxt/kit" "^3.12.2"
+    "@nuxt/schema" "^3.12.2"
+    "@nuxt/vite-builder" "^3.12.2"
+    "@rollup/plugin-replace" "^5.0.7"
+    "@storybook/builder-vite" "^8.1.11"
+    "@storybook/vue3" "^8.1.11"
+    "@storybook/vue3-vite" "^8.1.11"
     json-stable-stringify "^1.1.1"
-    nuxt "^3.11.1"
-    vue "^3.4.21"
+    nuxt "^3.12.2"
+    ofetch "^1.3.4"
+    pathe "^1.1.2"
+    unctx "^2.3.1"
+    vue "^3.4.31"
+    vue-router "^4.3.0"
+
+"@storybook-vue/nuxt@8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@storybook-vue/nuxt/-/nuxt-8.1.2.tgz#a80fbfd7fce5c9f59004f9467fcbaeb53803eddf"
+  integrity sha512-NSPL+7jgj9FVg0OyARtwGecROnTAKa3O/YI1JvXJ/QBjTNi7k4fTIwe3h4Vpcl4pjE64Rd5zUvjHIst1spPAPQ==
+  dependencies:
+    "@nuxt/kit" "^3.12.2"
+    "@nuxt/schema" "^3.12.2"
+    "@nuxt/vite-builder" "^3.12.2"
+    "@rollup/plugin-replace" "^5.0.7"
+    "@storybook/builder-vite" "^8.1.11"
+    "@storybook/vue3" "^8.1.11"
+    "@storybook/vue3-vite" "^8.1.11"
+    json-stable-stringify "^1.1.1"
+    nuxt "^3.12.2"
+    ofetch "^1.3.4"
+    pathe "^1.1.2"
+    unctx "^2.3.1"
+    vue "^3.4.31"
     vue-router "^4.3.0"
 
 "@storybook/addon-actions@8.1.11", "@storybook/addon-actions@^8.1.11":
@@ -2596,24 +2622,16 @@
     process "^0.11.10"
     util "^0.12.4"
 
-"@storybook/builder-vite@8.1.11", "@storybook/builder-vite@^8.0.0":
-  version "8.1.11"
-  resolved "https://registry.yarnpkg.com/@storybook/builder-vite/-/builder-vite-8.1.11.tgz#1bc729731f1dbc2bec617fe73addb430e1ec384e"
-  integrity sha512-hG4eoNMCPgjZ2Ai+zSmk69zjsyEihe75XbJXtYfGRqjMWtz2+SAUFO54fLc2BD5svcUiTeN+ukWcTrwApyPsKg==
+"@storybook/builder-vite@8.2.1", "@storybook/builder-vite@^8.1.11":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/builder-vite/-/builder-vite-8.2.1.tgz#d7584037b79e88f7023278345183a03255088a1d"
+  integrity sha512-2L8TTWodvvFrPEXywKd4+Ut1wAyC0XbPCjdwXthMbtCOYsqBltirWRxZ4cfO7Bj6uR54qgfx3uHf53ez/kwDQw==
   dependencies:
-    "@storybook/channels" "8.1.11"
-    "@storybook/client-logger" "8.1.11"
-    "@storybook/core-common" "8.1.11"
-    "@storybook/core-events" "8.1.11"
-    "@storybook/csf-plugin" "8.1.11"
-    "@storybook/node-logger" "8.1.11"
-    "@storybook/preview" "8.1.11"
-    "@storybook/preview-api" "8.1.11"
-    "@storybook/types" "8.1.11"
+    "@storybook/csf-plugin" "8.2.1"
     "@types/find-cache-dir" "^3.2.1"
     browser-assert "^1.2.1"
     es-module-lexer "^1.5.0"
-    express "^4.17.3"
+    express "^4.19.2"
     find-cache-dir "^3.0.0"
     fs-extra "^11.1.0"
     magic-string "^0.30.0"
@@ -2751,6 +2769,11 @@
     ts-dedent "^2.0.0"
     util "^0.12.4"
 
+"@storybook/core-common@^8.1.11":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/core-common/-/core-common-8.2.1.tgz#21195a5f236b4ee4127fd41c671f1b627b60ccd7"
+  integrity sha512-YL2IcGZpfrYCA5RhwbGt7QzRlGahzunOHY6RYCspSVTdJMNc4rgyXQbk10Nz5NaLp/i8qxEP3XX4qPuF7akzww==
+
 "@storybook/core-events@8.1.11":
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-8.1.11.tgz#e72f9563aef3286c106021d9926723bc24614f4a"
@@ -2810,12 +2833,24 @@
     watchpack "^2.2.0"
     ws "^8.2.3"
 
+"@storybook/core-server@^8.1.11":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/core-server/-/core-server-8.2.1.tgz#e8e034118271a8c6405e1d6eab84eae63b6f64f4"
+  integrity sha512-YVXljjN9pQfCcfaJrUzmNyIiB/uUMv4N4l9xDzCzZCWA2KCv4U+OlESbY9JWteq3NW2IbO8GFsMhh+ZY2i5FZA==
+
 "@storybook/csf-plugin@8.1.11":
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/@storybook/csf-plugin/-/csf-plugin-8.1.11.tgz#d09e5b3297c93da513d6760fe81d63649c0be8b2"
   integrity sha512-hkA8gjFtSN/tabG0cuvmEqanMXtxPr3qTkp4UNSt1R6jBEgFHRG2y/KYLl367kDwOSFTT987ZgRfJJruU66Fvw==
   dependencies:
     "@storybook/csf-tools" "8.1.11"
+    unplugin "^1.3.1"
+
+"@storybook/csf-plugin@8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/csf-plugin/-/csf-plugin-8.2.1.tgz#65bc2fd9328b8760213a6e35f7ebb3addfe90a72"
+  integrity sha512-/3nT7kvOsGSS8ym4qDFuz28h43BjiodLbRwUNa+p50fpO59s3F8MbK4lSBHPFXfTViWfrOZ5gL7CHe1f8PFJRA==
+  dependencies:
     unplugin "^1.3.1"
 
 "@storybook/csf-tools@8.1.11":
@@ -2940,11 +2975,6 @@
     ts-dedent "^2.0.0"
     util-deprecate "^1.0.2"
 
-"@storybook/preview@8.1.11":
-  version "8.1.11"
-  resolved "https://registry.yarnpkg.com/@storybook/preview/-/preview-8.1.11.tgz#da251aa4789332154b1837abae0a3186a5442421"
-  integrity sha512-K/9NZmjnL0D1BROkTNWNoPqgL2UaocALRSqCARmkBLgU2Rn/FuZgEclHkWlYo6pUrmLNK+bZ+XzpNMu12iTbpg==
-
 "@storybook/react-dom-shim@8.1.11":
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/@storybook/react-dom-shim/-/react-dom-shim-8.1.11.tgz#d4cc6222eb1f169d10c5403dbb580e4c3e29c142"
@@ -3008,22 +3038,32 @@
     "@types/express" "^4.7.0"
     file-system-cache "2.3.0"
 
-"@storybook/vue3-vite@^8.0.0":
-  version "8.1.11"
-  resolved "https://registry.yarnpkg.com/@storybook/vue3-vite/-/vue3-vite-8.1.11.tgz#8388460647cc2466f6feeac8430ba4c5457cf6fc"
-  integrity sha512-q0bqh8XEEunaTmp4YiDqM2+YZLwEIevTb5PnNe7G7f2qOiSCE1ncBDnBK717UlCd+iYr34NTztgV2/jIhz1i5w==
+"@storybook/vue3-vite@^8.1.11":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/vue3-vite/-/vue3-vite-8.2.1.tgz#b127c97519c5ac9fefe5592b0d8d00311d2ec5c1"
+  integrity sha512-ovEh+FNJXfm00l/tCzuOIL0nZ5ECvHmcOCnDvMkp6pEW9v7JLPJ3A64giaTA6WJ9KMgP4KUVk9Uv3jS4Lv6Yug==
   dependencies:
-    "@storybook/builder-vite" "8.1.11"
-    "@storybook/core-server" "8.1.11"
-    "@storybook/types" "8.1.11"
-    "@storybook/vue3" "8.1.11"
+    "@storybook/builder-vite" "8.2.1"
+    "@storybook/vue3" "8.2.1"
     find-package-json "^1.2.0"
     magic-string "^0.30.0"
     typescript "^5.0.0"
     vue-component-meta "^2.0.0"
     vue-docgen-api "^4.75.1"
 
-"@storybook/vue3@8.1.11", "@storybook/vue3@^8.0.0", "@storybook/vue3@^8.1.11":
+"@storybook/vue3@8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/vue3/-/vue3-8.2.1.tgz#584f9ce1e1fdacb636f39d27d3ba1d0aea9718ef"
+  integrity sha512-YNtAj7YcYck/MPv4h5DqjsINKeHnL4Q2Owz7V8+T+mcMRCKgomesNsHs+G17SRd9lJ2qgCYM5/qKdj7ZeMMa9w==
+  dependencies:
+    "@storybook/global" "^5.0.0"
+    "@vue/compiler-core" "^3.0.0"
+    lodash "^4.17.21"
+    ts-dedent "^2.0.0"
+    type-fest "~2.19"
+    vue-component-type-helpers latest
+
+"@storybook/vue3@^8.1.11":
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/@storybook/vue3/-/vue3-8.1.11.tgz#53094ccbe8fa23d809ccbb490111e924d34106bd"
   integrity sha512-xJtvfLiCOY3UqwDMd0hZdsadPm1q8dwjfM1UN2Q2ssRWNfXzww1oi+Msj902wz9zFZMYVZypfTfgrdRgWmfEjA==
@@ -6311,7 +6351,7 @@ execa@^8.0.1, execa@~8.0.1:
     signal-exit "^4.1.0"
     strip-final-newline "^3.0.0"
 
-express@^4.17.3:
+express@^4.17.3, express@^4.19.2:
   version "4.19.2"
   resolved "https://registry.yarnpkg.com/express/-/express-4.19.2.tgz#e25437827a3aa7f2a827bc8171bbbb664a356465"
   integrity sha512-5T6nhjsT+EOMzuck8JjBHARTHfMht0POzlA60WV2pMD3gyXw2LZnZ+ueGdNxG+0calOJcWKbpFcuzLZ91YWq9Q==
@@ -8535,7 +8575,7 @@ nuxi@^3.12.0, nuxi@^3.3.1:
   optionalDependencies:
     fsevents "~2.3.3"
 
-nuxt@^3.11.1, nuxt@^3.8.2:
+nuxt@^3.12.2, nuxt@^3.8.2:
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.12.3.tgz#7cb5dc07b3e45203637e276cccaa327557254a61"
   integrity sha512-Qdkc+ucWwFcKsiL/OTF87jbgyFSymwPRKiiu0mvzsd/RXTn4hGiBduAlF3f7Yy0F9pDjSj8XHKDSnHYsDzm6rA==
@@ -10373,7 +10413,7 @@ store2@^2.14.2:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.14.3.tgz#24077d7ba110711864e4f691d2af941ec533deb5"
   integrity sha512-4QcZ+yx7nzEFiV4BMLnr/pRa5HYzNITX2ri0Zh6sT9EyQHbBHacC6YigllUPU9X3D0f/22QCgfokpKs52YRrUg==
 
-storybook@^8.0.6, storybook@^8.1.11:
+storybook@^8.1.11:
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/storybook/-/storybook-8.1.11.tgz#c41b25fee0146a55afccba8978b6349c454313a6"
   integrity sha512-3KjIhF8lczXhKKHyHbOqV30dvuRYJSxc0d1as/C8kybuwE7cLaydhWGma7VBv5bTSPv0rDzucx7KcO+achArPg==
@@ -11513,7 +11553,7 @@ vue3-tabs-component@^1.2.0:
   resolved "https://registry.yarnpkg.com/vue3-tabs-component/-/vue3-tabs-component-1.3.7.tgz#b6cc2d3909eeec0bd82b571029050731f6e4ce64"
   integrity sha512-nitYlPlTrKCW8msQS1HdtajYNRAfZsSP+2wQQymJDGDCK3um62mXP4oKUgAF5pRe6md86LMRQud7Ic3zmu7Zpg==
 
-vue@^3.2.45, vue@^3.4.21, vue@^3.4.31:
+vue@^3.2.45, vue@^3.4.31:
   version "3.4.31"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.4.31.tgz#83a3c4dab8302b0e974b0d4b92a2f6a6378ae797"
   integrity sha512-njqRrOy7W3YLAlVqSKpBebtZpDVg21FPoaq1I7f/+qqBThK9ChAIjkRWgeP6Eat+8C+iia4P3OYqpATP21BCoQ==
