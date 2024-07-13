@@ -1,7 +1,8 @@
 {
-  "project_id": null,
+  "project": null,
   "uuid": "b3ee69b0-60e1-4fc0-add5-2c5677dd2b8c",
   "type": "ray",
+  "timestamp": 1678271981,
   "payload": {
     "uuid": "b3ee69b0-60e1-4fc0-add5-2c5677dd2b8c",
     "payloads": [

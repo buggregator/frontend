@@ -1,10 +1,7 @@
 {
   "uuid": "79e27c1d-e610-4c82-9180-aa07b51d2295",
   "type": "sentry",
-  "labels": ["sentry.1"],
-  "origin": null,
-  "server_name": "",
-  "date": "2023-09-17T21:49:59.000Z",
+  "timestamp": 1720882615,
   "payload": {
     "message": "Something went wrong",
     "level": "info",
@@ -52,5 +49,5 @@
       }
     }
   },
-  "project_id": null
+  "project": null
 }
