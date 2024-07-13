@@ -27,9 +27,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-  plugins: [
-    '~/plugins/auth',
-  ],
   dir: {
     static: 'src/static',
   },

@@ -9,7 +9,6 @@ type TUseEventsRequests = () => {
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: EventType) => Promise<void | Response>,
-  getEventRestUrl: (param: EventId | undefined) => string
 }
 
 // TODO: add 403 response handling
@@ -82,6 +81,5 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteList,
     deleteSingle,
     deleteByType,
-    getEventRestUrl
   }
 }

@@ -18,7 +18,6 @@ export const useApiTransport = () => {
     deleteList,
     deleteSingle,
     deleteByType,
-    getEventRestUrl
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
@@ -131,7 +130,6 @@ export const useApiTransport = () => {
     deleteEventsList,
     deleteEventsByType,
     rayStopExecution,
-    rayContinueExecution,
-    getUrl: getEventRestUrl,
+    rayContinueExecution
   }
 }
