@@ -1,23 +1,22 @@
-import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import {useProfileStore} from "../../stores/profile";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
-  getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
+  getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>,
   deleteAll: () => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: EventType) => Promise<void | Response>,
-  getEventRestUrl: (param: EventId | undefined) => string
 }
 
 // TODO: add 403 response handling
 
 export const useEventsRequests: TUseEventsRequests = () => {
-  const app = useNuxtApp()
-  const {token} = app.$authToken ?? {token: null}
-  const headers = {"X-Auth-Token": token || ''}
+  const { token } = storeToRefs(useProfileStore())
+
+  const headers = {"X-Auth-Token": token.value }
   const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 
   const getAll = () => fetch(getEventRestUrl(), { headers })
@@ -42,7 +41,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     .then((response) => response.json())
     .then((response) => {
       if (response) {
-        return response as ServerEvent<unknown>
+        return response as ServerEvent<EventType>
       }
       return null;
     })
@@ -82,6 +81,5 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteList,
     deleteSingle,
     deleteByType,
-    getEventRestUrl
   }
 }

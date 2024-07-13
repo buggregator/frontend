@@ -2,7 +2,7 @@
 import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { SentryPage } from "~/src/screens/sentry";
-import { useRoute, useRouter, useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useSentry } from "~/src/entities/sentry";
 import type { Sentry } from "~/src/entities/sentry/types";
@@ -17,33 +17,31 @@ const eventId = params.id as EventId;
 
 useTitle(`Sentry > ${eventId} | Buggregator`);
 
-const { events } = useEvents();
-const { $authToken } = useNuxtApp();
+const {
+  events: { getItem },
+} = useEvents();
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
+const serverEvent = ref<ServerEvent<Sentry> | null>(null);
 
 const event = computed(() =>
-  serverEvent.value
-    ? normalizeSentryEvent(serverEvent.value as unknown as ServerEvent<Sentry>)
-    : null
+  serverEvent.value ? normalizeSentryEvent(serverEvent.value) : null,
 );
 
 const getEvent = async () => {
   isLoading.value = true;
 
-  await useFetch(events.getUrl(eventId), {
-    headers: { "X-Auth-Token": $authToken.token || "" },
-    onResponse({ response: { _data } }) {
-      serverEvent.value = _data;
-      isLoading.value = false;
-    },
-    onResponseError() {
-      router.push("/404");
-    },
-    onRequestError() {
-      router.push("/404");
-    },
-  });
+  try {
+    serverEvent.value = (await getItem(
+      eventId,
+    )) as unknown as ServerEvent<Sentry>;
+    isLoading.value = false;
+
+    if (!serverEvent.value) {
+      throw new Error("Event not found");
+    }
+  } catch (error) {
+    router.push("/404");
+  }
 };
 
 onMounted(getEvent);

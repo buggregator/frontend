@@ -2,7 +2,7 @@
 import { useTitle } from "@vueuse/core";
 import { onMounted, computed, ref } from "vue";
 import { InspectorPage } from "~/src/screens/inspector";
-import { useFetch, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useInspector } from "~/src/entities/inspector";
 import type { Inspector } from "~/src/entities/inspector/types";
@@ -12,41 +12,37 @@ import type { EventId, ServerEvent } from "~/src/shared/types";
 const { normalizeInspectorEvent } = useInspector();
 
 const { params } = useRoute();
-const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
 useTitle(`Inspector > ${eventId} | Buggregator`);
 
-const { events } = useEvents();
+const {
+  events: { getItem },
+} = useEvents();
 
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
+const serverEvent = ref<ServerEvent<Inspector> | null>(null);
 
 const event = computed(() =>
-  serverEvent.value
-    ? normalizeInspectorEvent(
-        serverEvent.value as unknown as ServerEvent<Inspector>
-      )
-    : null
+  serverEvent.value ? normalizeInspectorEvent(serverEvent.value) : null,
 );
 
 const getEvent = async () => {
   isLoading.value = true;
 
-  await useFetch(events.getUrl(eventId), {
-    headers: { "X-Auth-Token": $authToken.token || "" },
-    onResponse({ response: { _data } }) {
-      serverEvent.value = _data;
-      isLoading.value = false;
-    },
-    onResponseError() {
+  try {
+    serverEvent.value = (await getItem(
+      eventId,
+    )) as unknown as ServerEvent<Inspector>;
+    isLoading.value = false;
+
+    if (!serverEvent.value) {
       router.push("/404");
-    },
-    onRequestError() {
-      router.push("/404");
-    },
-  });
+    }
+  } catch (error) {
+    router.push("/404");
+  }
 };
 
 onMounted(getEvent);

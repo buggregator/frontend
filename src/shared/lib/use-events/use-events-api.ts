@@ -7,8 +7,7 @@ import { useApiTransport } from '../use-api-transport'
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
-  getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
-  getUrl: (id: EventId) => string
+  getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>
   getAll: () => void
   removeAll: () => void
   removeByType: (type: EventType) => void
@@ -29,7 +28,6 @@ export const useEventsApi = (): TUseEventsApi => {
     deleteEventsByType,
     getEventsAll,
     getEvent,
-    getUrl,
   } = useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
@@ -96,7 +94,6 @@ export const useEventsApi = (): TUseEventsApi => {
   return {
     items: events as unknown as Ref<ServerEvent<unknown>[]>,
     getItem: getEvent,
-    getUrl,
     getAll,
     removeAll,
     removeByType,

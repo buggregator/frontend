@@ -1,12 +1,12 @@
-import { useNuxtApp, navigateTo, defineNuxtRouteMiddleware } from "#app";
+import { navigateTo, defineNuxtRouteMiddleware } from "#app";
 import { useSettings } from "~/src/shared/lib/use-settings";
+import {useSettingsStore} from "~/src/shared/stores";
 import { useProfileStore } from "~/src/shared/stores/profile"
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const app = useNuxtApp()
+  const { auth}  = storeToRefs(useSettingsStore())
 
-  // TODO: need to use settingsStore instead of nuxt plugin
-  if (!app.$appSettings?.auth?.enabled) {
+  if (!auth.value.isEnabled) {
     return undefined
   }
 

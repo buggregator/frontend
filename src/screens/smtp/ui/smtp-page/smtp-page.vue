@@ -17,7 +17,7 @@ import { SmtpPagePreview } from "../smtp-page-preview";
 type Props = {
   event: NormalizedEvent<SMTP>;
   attachments: Attachment[];
-  htmlSource: string;
+  htmlSource?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -51,18 +51,18 @@ const senders = computed(() => [
 
 const isHtml = computed(
   () =>
-    props.event.payload?.html !== undefined && props.event.payload?.html !== ""
+    props.event.payload?.html !== undefined && props.event.payload?.html !== "",
 );
 
 const isText = computed(
   () =>
-    props.event.payload?.text !== undefined && props.event.payload?.text !== ""
+    props.event.payload?.text !== undefined && props.event.payload?.text !== "",
 );
 
 const mail = computed(() => props.event.payload);
 
 const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"),
 );
 </script>
 
