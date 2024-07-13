@@ -1801,7 +1801,7 @@
     which "^3.0.1"
     ws "^8.17.1"
 
-"@nuxt/kit@3.12.3", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.0", "@nuxt/kit@^3.12.2", "@nuxt/kit@^3.5.0":
+"@nuxt/kit@3.12.3", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.2", "@nuxt/kit@^3.5.0":
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.12.3.tgz#71a8ea30feb54e0c6fb3b7df33b71aa08ba05f8f"
   integrity sha512-5R8FZLDxBKlkDWYsqwU1tctGJ5vwMA96WBrNkpQ0LznB2/p+3MWWTO6vz+0P0F9xvZZfkk/KKyZ3uUhnG9VJOA==
@@ -1933,21 +1933,19 @@
     eslint-plugin-vue "^9.7.0"
     local-pkg "^0.4.2"
 
-"@nuxtjs/storybook@^8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/storybook/-/storybook-8.1.2.tgz#7370d432897c49439ea8c7a6f538ed0442d42711"
-  integrity sha512-6iBy39N4IyNIdmvuT140alXfHtS8RicNBLdwMfpyTBsYNaBWy9ykm50mEuxUCm43PpcQRyPix8Ucl0qnod361Q==
+"@nuxtjs/storybook@8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/storybook/-/storybook-8.1.1.tgz#8f71e2e22ff10d4487570237e72ba6121935b58f"
+  integrity sha512-g8Gqgfp+JmhWuXRwnENCrtmqpYpJyZzPleu8oqHLTlP3Q4ToxUJ51J6JELoo7gcGmWVcaXX4tsHzKHSi9DWQsA==
   dependencies:
     "@nuxt/devtools-kit" "^1.0.8"
-    "@nuxt/kit" "^3.12.0"
-    "@storybook-vue/nuxt" "8.1.2"
-    "@storybook/core-common" "^8.1.11"
-    "@storybook/core-server" "^8.1.11"
+    "@nuxt/kit" "^3.11.2"
+    "@storybook-vue/nuxt" "^0.2.6"
     chalk "^5.0.0"
     consola "^3.2.3"
     defu "^6.1.4"
     get-port-please "^3.1.2"
-    storybook "^8.1.11"
+    storybook "^8.0.6"
     ufo "^1.5.3"
 
 "@nuxtjs/tailwindcss@^6.2.0":
@@ -2428,30 +2426,10 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/merge-streams/-/merge-streams-2.3.0.tgz#719df7fb41766bc143369eaa0dd56d8dc87c9958"
   integrity sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==
 
-"@storybook-vue/nuxt@0.2.10":
+"@storybook-vue/nuxt@0.2.10", "@storybook-vue/nuxt@^0.2.6":
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/@storybook-vue/nuxt/-/nuxt-0.2.10.tgz#e879865e2b4eee1dd127941e88f4d516ae0902c4"
   integrity sha512-6bPV3CDWqPBBT4KtC7Nx3TziNA02i1BKPSzlWpLuLyQpOLogwLupn5DyryBpA4VQ0Su/7EYHt/g8t+c8rE7JXg==
-  dependencies:
-    "@nuxt/kit" "^3.12.2"
-    "@nuxt/schema" "^3.12.2"
-    "@nuxt/vite-builder" "^3.12.2"
-    "@rollup/plugin-replace" "^5.0.7"
-    "@storybook/builder-vite" "^8.1.11"
-    "@storybook/vue3" "^8.1.11"
-    "@storybook/vue3-vite" "^8.1.11"
-    json-stable-stringify "^1.1.1"
-    nuxt "^3.12.2"
-    ofetch "^1.3.4"
-    pathe "^1.1.2"
-    unctx "^2.3.1"
-    vue "^3.4.31"
-    vue-router "^4.3.0"
-
-"@storybook-vue/nuxt@8.1.2":
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/@storybook-vue/nuxt/-/nuxt-8.1.2.tgz#a80fbfd7fce5c9f59004f9467fcbaeb53803eddf"
-  integrity sha512-NSPL+7jgj9FVg0OyARtwGecROnTAKa3O/YI1JvXJ/QBjTNi7k4fTIwe3h4Vpcl4pjE64Rd5zUvjHIst1spPAPQ==
   dependencies:
     "@nuxt/kit" "^3.12.2"
     "@nuxt/schema" "^3.12.2"
@@ -2747,6 +2725,25 @@
     recast "^0.23.5"
     tiny-invariant "^1.3.1"
 
+"@storybook/codemod@8.2.1":
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/codemod/-/codemod-8.2.1.tgz#536a24a2eac9b8156a0075dc8c525a88c7914279"
+  integrity sha512-LYvVLOKj5mDbbAPLrxd3BWQaemTqp2y5RV5glNqsPq3FoFX4rn4VnWb5X/YBWsMqqCK+skimH/f7HQ5fDvWubg==
+  dependencies:
+    "@babel/core" "^7.24.4"
+    "@babel/preset-env" "^7.24.4"
+    "@babel/types" "^7.24.0"
+    "@storybook/core" "8.2.1"
+    "@storybook/csf" "0.1.11"
+    "@types/cross-spawn" "^6.0.2"
+    cross-spawn "^7.0.3"
+    globby "^14.0.1"
+    jscodeshift "^0.15.1"
+    lodash "^4.17.21"
+    prettier "^3.1.1"
+    recast "^0.23.5"
+    tiny-invariant "^1.3.1"
+
 "@storybook/components@8.1.11":
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/@storybook/components/-/components-8.1.11.tgz#2b51a55118371cb639dd0f6a1c2520a235c928b6"
@@ -2797,11 +2794,6 @@
     tiny-invariant "^1.3.1"
     ts-dedent "^2.0.0"
     util "^0.12.4"
-
-"@storybook/core-common@^8.1.11":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@storybook/core-common/-/core-common-8.2.1.tgz#21195a5f236b4ee4127fd41c671f1b627b60ccd7"
-  integrity sha512-YL2IcGZpfrYCA5RhwbGt7QzRlGahzunOHY6RYCspSVTdJMNc4rgyXQbk10Nz5NaLp/i8qxEP3XX4qPuF7akzww==
 
 "@storybook/core-events@8.1.11":
   version "8.1.11"
@@ -2862,10 +2854,22 @@
     watchpack "^2.2.0"
     ws "^8.2.3"
 
-"@storybook/core-server@^8.1.11":
+"@storybook/core@8.2.1":
   version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@storybook/core-server/-/core-server-8.2.1.tgz#e8e034118271a8c6405e1d6eab84eae63b6f64f4"
-  integrity sha512-YVXljjN9pQfCcfaJrUzmNyIiB/uUMv4N4l9xDzCzZCWA2KCv4U+OlESbY9JWteq3NW2IbO8GFsMhh+ZY2i5FZA==
+  resolved "https://registry.yarnpkg.com/@storybook/core/-/core-8.2.1.tgz#d18a90355a2a6719eadc8e9ab30b3303d714313b"
+  integrity sha512-hmuBRtT0JwmvEpsi4f/hh/QOqiEUmvV1xCbLQy+FEqMBxk5VsksVLKXJiWFG5lYodmjdxCLCb37JDVuOOZIIpw==
+  dependencies:
+    "@storybook/csf" "0.1.11"
+    "@types/express" "^4.17.21"
+    "@types/node" "^18.0.0"
+    browser-assert "^1.2.1"
+    esbuild "^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0"
+    esbuild-register "^3.5.0"
+    express "^4.19.2"
+    process "^0.11.10"
+    recast "^0.23.5"
+    util "^0.12.4"
+    ws "^8.2.3"
 
 "@storybook/csf-plugin@8.1.11":
   version "8.1.11"
@@ -2897,19 +2901,19 @@
     recast "^0.23.5"
     ts-dedent "^2.0.0"
 
+"@storybook/csf@0.1.11", "@storybook/csf@^0.1.7":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@storybook/csf/-/csf-0.1.11.tgz#ad685a4fe564a47a6b73571c2e7c07b526f4f71b"
+  integrity sha512-dHYFQH3mA+EtnCkHXzicbLgsvzYjcDJ1JWsogbItZogkPHgSJM/Wr71uMkcvw8v9mmCyP4NpXJuu6bPoVsOnzg==
+  dependencies:
+    type-fest "^2.19.0"
+
 "@storybook/csf@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@storybook/csf/-/csf-0.0.1.tgz#95901507dc02f0bc6f9ac8ee1983e2fc5bb98ce6"
   integrity sha512-USTLkZze5gkel8MYCujSRBVIrUQ3YPBrLOx7GNk/0wttvVtlzWXAq9eLbQ4p/NicGxP+3T7KPEMVV//g+yubpw==
   dependencies:
     lodash "^4.17.15"
-
-"@storybook/csf@^0.1.7":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@storybook/csf/-/csf-0.1.11.tgz#ad685a4fe564a47a6b73571c2e7c07b526f4f71b"
-  integrity sha512-dHYFQH3mA+EtnCkHXzicbLgsvzYjcDJ1JWsogbItZogkPHgSJM/Wr71uMkcvw8v9mmCyP4NpXJuu6bPoVsOnzg==
-  dependencies:
-    type-fest "^2.19.0"
 
 "@storybook/docs-mdx@3.1.0-next.0":
   version "3.1.0-next.0"
@@ -3229,7 +3233,7 @@
     "@types/range-parser" "*"
     "@types/send" "*"
 
-"@types/express@^4.7.0":
+"@types/express@^4.17.21", "@types/express@^4.7.0":
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.21.tgz#c26d4a151e60efe0084b23dc3369ebc631ed192d"
   integrity sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==
@@ -5894,7 +5898,7 @@ esbuild-register@^3.5.0:
     "@esbuild/win32-ia32" "0.20.2"
     "@esbuild/win32-x64" "0.20.2"
 
-esbuild@^0.21.3:
+"esbuild@^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0", esbuild@^0.21.3:
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.21.5.tgz#9ca301b120922959b766360d8ac830da0d02997d"
   integrity sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==
@@ -6469,6 +6473,13 @@ fastq@^1.6.0:
   integrity sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==
   dependencies:
     reusify "^1.0.4"
+
+fd-package-json@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fd-package-json/-/fd-package-json-1.2.0.tgz#4f218bb8ff65c21011d1f4f17cb3d0c9e72f8da7"
+  integrity sha512-45LSPmWf+gC5tdCQMNH4s9Sr00bIkiD9aN7dc5hqkrEw1geRYyDQS1v1oMHAW3ysfxfndqGsrDREHHjNNbKUfA==
+  dependencies:
+    walk-up-path "^3.0.1"
 
 fetch-retry@^5.0.2:
   version "5.0.6"
@@ -10442,6 +10453,40 @@ store2@^2.14.2:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.14.3.tgz#24077d7ba110711864e4f691d2af941ec533deb5"
   integrity sha512-4QcZ+yx7nzEFiV4BMLnr/pRa5HYzNITX2ri0Zh6sT9EyQHbBHacC6YigllUPU9X3D0f/22QCgfokpKs52YRrUg==
 
+storybook@^8.0.6:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/storybook/-/storybook-8.2.1.tgz#d6dab17369be758968e083d9859092e31f832778"
+  integrity sha512-YT6//jQk5vfBCRVgcq1oBDUz8kE9PELTJAZr9VeeaLay/Fl5cUeNxjP7bm06hCOyYQ2gSUe4jF6TAwzwGePMLQ==
+  dependencies:
+    "@babel/core" "^7.24.4"
+    "@babel/types" "^7.24.0"
+    "@storybook/codemod" "8.2.1"
+    "@storybook/core" "8.2.1"
+    "@types/semver" "^7.3.4"
+    "@yarnpkg/fslib" "2.10.3"
+    "@yarnpkg/libzip" "2.3.0"
+    chalk "^4.1.0"
+    commander "^6.2.1"
+    cross-spawn "^7.0.3"
+    detect-indent "^6.1.0"
+    envinfo "^7.7.3"
+    execa "^5.0.0"
+    fd-package-json "^1.2.0"
+    find-up "^5.0.0"
+    fs-extra "^11.1.0"
+    giget "^1.0.0"
+    globby "^14.0.1"
+    jscodeshift "^0.15.1"
+    leven "^3.1.0"
+    ora "^5.4.1"
+    prettier "^3.1.1"
+    prompts "^2.4.0"
+    semver "^7.3.7"
+    strip-json-comments "^3.0.1"
+    tempy "^3.1.0"
+    tiny-invariant "^1.3.1"
+    ts-dedent "^2.0.0"
+
 storybook@^8.1.11:
   version "8.1.11"
   resolved "https://registry.yarnpkg.com/storybook/-/storybook-8.1.11.tgz#c41b25fee0146a55afccba8978b6349c454313a6"
@@ -11597,6 +11642,11 @@ vue@^3.2.45, vue@^3.4.31:
     "@vue/runtime-dom" "3.4.31"
     "@vue/server-renderer" "3.4.31"
     "@vue/shared" "3.4.31"
+
+walk-up-path@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/walk-up-path/-/walk-up-path-3.0.1.tgz#c8d78d5375b4966c717eb17ada73dbd41490e886"
+  integrity sha512-9YlCL/ynK3CTlrSRrDxZvUauLzAswPCrsaCgilqFevUYpeEW0/3ScEjaa3kbW/T0ghhkEr7mv+fpjqn1Y1YuTA==
 
 watchpack@^2.2.0:
   version "2.4.1"

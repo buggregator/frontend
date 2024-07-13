@@ -31,7 +31,7 @@
   "devDependencies": {
     "@conarti/eslint-plugin-feature-sliced": "^1.0.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@nuxtjs/storybook": "^8.1.2",
+    "@nuxtjs/storybook": "8.1.1",
     "@nuxtjs/tailwindcss": "^6.2.0",
     "@storybook-vue/nuxt": "0.2.10",
     "@storybook/addon-essentials": "^8.1.11",
