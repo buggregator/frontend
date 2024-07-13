@@ -1,3 +1,4 @@
+import type {RayDump} from "~/src/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
 // TODO: add T prefix to all types
@@ -35,4 +36,8 @@ export interface NormalizedEvent<T> {
   serverName: string,
   date: Date | null,
   payload: T
+  meta?: T extends RayDump ? {
+    color: string,
+    size: 'sm' | 'md' | 'lg' | 'xl',
+  }: never
 }

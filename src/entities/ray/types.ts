@@ -1,5 +1,3 @@
-import type { NormalizedEvent } from "~/src/shared/types";
-
 export enum RAY_EVENT_TYPES {
   LOG = "log",
   // SIZE = "size",
@@ -199,13 +197,5 @@ export interface RayDump {
     ray_package_version: string,
     symfony_version?: string,
     laravel_version?: string,
-  }
-}
-
-// TODO: need to move it out of event top lvl data
-export interface EnhancedRayEvent extends NormalizedEvent<RayDump> {
-  meta: {
-    color: string,
-    size: 'sm' | 'md' | 'lg' | 'xl',
   }
 }
