@@ -3,9 +3,8 @@ import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettingsStore } from "~/src/shared/stores";
+import { useSettingsStore, useProfileStore } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
-import { useProfileStore } from "~/src/shared/stores/profile";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
@@ -19,7 +18,7 @@ const { profile } = storeToRefs(useProfileStore());
 const { getItemsCount } = useEvents();
 
 const connectionStatus = computed(() =>
-  isConnectedWS.value ? "connected" : "disconnected"
+  isConnectedWS.value ? "connected" : "disconnected",
 );
 
 const avatar = computed(() => {
@@ -31,7 +30,7 @@ const avatar = computed(() => {
 
   if (profile.value.avatar.startsWith("<svg")) {
     return `data:image/svg+xml;base64,${btoa(
-      profile.value.avatar.replace(/&quot;/g, '"')
+      profile.value.avatar.replace(/&quot;/g, '"'),
     )}`;
   }
 
@@ -45,7 +44,7 @@ const profileEmail = computed(() => {
 });
 
 const connectionText = computed(
-  () => `WS connection is ${connectionStatus.value}`
+  () => `WS connection is ${connectionStatus.value}`,
 );
 
 const isHidden = ref(true);
@@ -66,13 +65,13 @@ const isAuthEnabled = computed(() => auth.value.isEnabled);
 const { apiVersion } = storeToRefs(useSettingsStore());
 
 const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`
+  !version || version === "0.0.1" ? "@dev" : `v${version}`,
 );
 
 const serverVersion = computed(() =>
   String(apiVersion.value).match(/^[0-9.]+.*$/)
     ? `v${apiVersion.value}`
-    : `@${apiVersion.value}`
+    : `@${apiVersion.value}`,
 );
 </script>
 

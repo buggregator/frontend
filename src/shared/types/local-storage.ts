@@ -6,4 +6,5 @@ export enum LOCAL_STORAGE_KEYS {
   NAVBAR = "navbar",
   EVENT_COUNTS = "event_counts",
   CODE_EDITOR = "code_editor",
+  TOKEN = "token",
 }
