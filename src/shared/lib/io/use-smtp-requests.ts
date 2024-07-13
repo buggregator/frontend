@@ -1,4 +1,4 @@
-import { type NuxtApp, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import {useProfileStore} from "../../stores/profile";
 import type { EventId, Attachment } from "../../types";
 import { REST_API_URL } from "./constants";
 
@@ -9,9 +9,9 @@ type TUseSmtpRequests = () => {
 // TODO: add 403 response handling
 
 export const useSmtpRequests: TUseSmtpRequests = () => {
-  const app: NuxtApp = useNuxtApp()
-  const { token } = app.$authToken ?? { token: null }
-  const headers = { "X-Auth-Token": token || '' }
+  const { token } = storeToRefs(useProfileStore())
+
+  const headers = {"X-Auth-Token": token.value }
 
   const getAttachmentsRestUrl = (id: EventId): string => `${REST_API_URL}/api/smtp/${id}/attachments`
 

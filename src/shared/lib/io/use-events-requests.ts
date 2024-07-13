@@ -1,4 +1,4 @@
-import { useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import {useProfileStore} from "../../stores/profile";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
@@ -15,9 +15,9 @@ type TUseEventsRequests = () => {
 // TODO: add 403 response handling
 
 export const useEventsRequests: TUseEventsRequests = () => {
-  const app = useNuxtApp()
-  const {token} = app.$authToken ?? {token: null}
-  const headers = {"X-Auth-Token": token || ''}
+  const { token } = storeToRefs(useProfileStore())
+
+  const headers = {"X-Auth-Token": token.value }
   const getEventRestUrl = (param?: string): string => `${REST_API_URL}/api/event${param ? `/${param}` : 's'}`
 
   const getAll = () => fetch(getEventRestUrl(), { headers })
