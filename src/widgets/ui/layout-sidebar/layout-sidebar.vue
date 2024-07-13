@@ -3,7 +3,11 @@ import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettingsStore, useProfileStore } from "~/src/shared/stores";
+import {
+  useSettingsStore,
+  useProfileStore,
+  useEventsStore,
+} from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
@@ -11,9 +15,11 @@ import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
+const eventsStore = useEventsStore();
+const { availableProjects } = storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
-const { profile } = storeToRefs(useProfileStore());
+const { profile } = storeToRefs(profileStore);
 
 const { getItemsCount } = useEvents();
 
@@ -86,9 +92,35 @@ const serverVersion = computed(() =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <NuxtLink to="/" title="Events" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="events" />
-      </NuxtLink>
+      <template v-if="availableProjects.length > 0">
+        <NuxtLink
+          title="Events"
+          class="layout-sidebar__link"
+          @click="eventsStore.resetActiveProject()"
+        >
+          <IconSvg class="layout-sidebar__link-icon" name="events" />
+        </NuxtLink>
+
+        <div class="layout-sidebar__projects">
+          <NuxtLink
+            v-for="project in availableProjects"
+            :key="project"
+            :title="project"
+            class="layout-sidebar__link"
+            @click="eventsStore.setActiveProject(project)"
+          >
+            <h1 class="layout-sidebar__project">
+              {{ project.substring(0, 2) }}
+            </h1>
+          </NuxtLink>
+        </div>
+      </template>
+
+      <template v-else>
+        <NuxtLink to="/" title="Events" class="layout-sidebar__link">
+          <IconSvg class="layout-sidebar__link-icon" name="events" />
+        </NuxtLink>
+      </template>
 
       <template v-for="type in EVENTS_NAV_ORDER" :key="type">
         <NuxtLink
@@ -185,7 +217,7 @@ const serverVersion = computed(() =>
 }
 
 .layout-sidebar__link {
-  @apply block relative;
+  @apply block relative cursor-pointer;
   @apply flex items-center justify-center;
   @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
   @apply px-1.5 py-2 md:px-2 md:py-3;
@@ -211,6 +243,23 @@ const serverVersion = computed(() =>
   & > svg {
     @apply h-auto;
   }
+}
+
+.layout-sidebar__projects {
+  @apply flex items-center justify-center flex-col;
+
+  .layout-sidebar__link {
+    @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
+    @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400;
+    @apply text-white;
+    flex-grow: 1;
+  }
+}
+
+.layout-sidebar__project {
+  @apply text-2xl font-semibold uppercase;
+  @apply h-5 md:h-6;
+  @apply flex items-center justify-center;
 }
 
 .layout-sidebar__profile {

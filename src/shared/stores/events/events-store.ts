@@ -179,7 +179,10 @@ export const useEventsStore = defineStore("eventsStore", {
       }
     },
     setActiveProject(project: string) {
-      this.projects.selected = project;
+      this.projects.active = project;
+    },
+    resetActiveProject() {
+      this.projects.active = undefined;
     }
   },
 });
