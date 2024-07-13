@@ -1,5 +1,6 @@
 import pick from "lodash/pick";
-import type { ServerEvent } from "~/src/shared/types";
+import moment from "moment";
+import type {ServerEvent} from "~/src/shared/types";
 import { EVENT_TYPES } from "~/src/shared/types";
 import type { EnhancedRayEvent, RayContentColor, RayContentLabel, RayContentSize, RayDump } from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
@@ -49,7 +50,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
     .filter(Boolean)
     .shift() || 'md') as EnhancedRayEvent['meta']['size']
 
-  return {
+  const normalizedEvent: EnhancedRayEvent = {
     id: event.uuid,
     type: EVENT_TYPES.RAY_DUMP,
     labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
@@ -62,4 +63,10 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
       size
     }
   }
+
+  if (normalizedEvent.date) {
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+  }
+
+  return normalizedEvent;
 }

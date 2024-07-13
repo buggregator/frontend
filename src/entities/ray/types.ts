@@ -202,6 +202,7 @@ export interface RayDump {
   }
 }
 
+// TODO: need to move it out of event top lvl data
 export interface EnhancedRayEvent extends NormalizedEvent<RayDump> {
   meta: {
     color: string,

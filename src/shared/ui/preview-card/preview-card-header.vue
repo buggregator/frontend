@@ -9,7 +9,7 @@ type Props = {
   eventType: EventType | "unknown";
   eventId: NormalizedEvent<unknown>["id"];
   eventUrl: string;
-  tags: NormalizedEvent<unknown>["labels"];
+  labels: NormalizedEvent<unknown>["labels"];
   isOpen: boolean;
   isLocked: boolean;
   isVisibleControls: boolean;
@@ -54,7 +54,7 @@ const lockEvent = () => {
   emit("lock", true);
 };
 
-const isVisibleTags = computed(() => props.tags.length > 0);
+const isVisibleTags = computed(() => props.labels.length > 0);
 
 const newPageLink = computed(() => {
   if (!Object.values(EVENT_TYPES).includes(props.eventType)) return "";
@@ -77,24 +77,24 @@ const newPageLink = computed(() => {
       </a>
 
       <template v-if="isVisibleTags">
-        <template v-for="tag in tags" :key="tag">
+        <template v-for="label in labels" :key="label.title || label">
           <div
-            v-if="isString(tag)"
+            v-if="isString(label)"
             ref="tags"
             class="preview-card-header__tag"
             :class="`preview-card-header__tag--${eventType}`"
           >
-            {{ tag }}
+            {{ label }}
           </div>
 
           <div
-            v-if="!isString(tag)"
+            v-if="!isString(label)"
             ref="tags"
             class="preview-card-header__tag preview-card-header__tag--large"
             :class="`preview-card-header__tag--${eventType}`"
-            :title="tag.context"
+            :title="label.context"
           >
-            {{ tag.title }}: {{ tag.value }}
+            {{ label.title }}: {{ label.value }}
           </div>
         </template>
       </template>

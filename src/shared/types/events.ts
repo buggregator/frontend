@@ -18,8 +18,6 @@ export type Uuid = string;
 
 export type EventType = OneOfValues<typeof EVENT_TYPES>;
 
-export type TEventLabel = (string | { title: string, value: string, context: string })[]
-
 export interface ServerEvent<T> {
   uuid: EventId,
   type: EventType | string,
