@@ -20,8 +20,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const { activeProject: project } = storeToRefs(useEventsStore())
 
   const headers = {"X-Auth-Token": token.value }
-  const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project ? `?project=${project.value}` : ''}`
-  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events${project ? `?project=${project.value}` : ''}`
+  const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`
+  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events${project.value ? `?project=${project.value}` : ''}`
 
   const getAll = () => fetch(getEventsRestUrl(), { headers })
     .then((response) => response.json())
