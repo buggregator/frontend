@@ -1,14 +1,15 @@
 <script lang="ts" setup>
+import isString from "lodash/isString";
 import { computed } from "vue";
-import { EVENT_TYPES, type EventType } from "../../types";
+import { EVENT_TYPES, type EventType, type NormalizedEvent } from "../../types";
 import { IconSvg } from "../icon-svg";
 import { DownloadType } from "./types";
 
 type Props = {
   eventType: EventType | "unknown";
-  eventId: string;
+  eventId: NormalizedEvent<unknown>["id"];
   eventUrl: string;
-  tags: string[];
+  tags: NormalizedEvent<unknown>["labels"];
   isOpen: boolean;
   isLocked: boolean;
   isVisibleControls: boolean;
@@ -76,15 +77,26 @@ const newPageLink = computed(() => {
       </a>
 
       <template v-if="isVisibleTags">
-        <div
-          v-for="tag in tags"
-          :key="tag"
-          ref="tags"
-          class="preview-card-header__tag"
-          :class="`preview-card-header__tag--${eventType}`"
-        >
-          {{ tag }}
-        </div>
+        <template v-for="tag in tags" :key="tag">
+          <div
+            v-if="isString(tag)"
+            ref="tags"
+            class="preview-card-header__tag"
+            :class="`preview-card-header__tag--${eventType}`"
+          >
+            {{ tag }}
+          </div>
+
+          <div
+            v-if="!isString(tag)"
+            ref="tags"
+            class="preview-card-header__tag preview-card-header__tag--large"
+            :class="`preview-card-header__tag--${eventType}`"
+            :title="tag.context"
+          >
+            {{ tag.title }}: {{ tag.value }}
+          </div>
+        </template>
       </template>
 
       <template v-if="newPageLink">
@@ -224,6 +236,10 @@ $eventTypeColorsMap: (
       }
     }
   }
+}
+
+.preview-card-header__tag--large {
+  @apply cursor-help;
 }
 
 .preview-card-header__tag--json {

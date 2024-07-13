@@ -18,6 +18,8 @@ export type Uuid = string;
 
 export type EventType = OneOfValues<typeof EVENT_TYPES>;
 
+export type TEventLabel = (string | { title: string, value: string, context: string })[]
+
 export interface ServerEvent<T> {
   uuid: EventId,
   type: EventType | string,
@@ -30,7 +32,7 @@ export interface ServerEvent<T> {
 export interface NormalizedEvent<T> {
   id: EventId,
   type: EventType | 'unknown',
-  labels: string[],
+  labels: (string | { title: string, value: string, context: string })[],
   origin: object | null,
   serverName: string,
   date: Date | null,
