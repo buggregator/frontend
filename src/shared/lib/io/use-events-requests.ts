@@ -17,12 +17,11 @@ type TUseEventsRequests = () => {
 export const useEventsRequests: TUseEventsRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const { projects } = storeToRefs(useEventsStore())
-  const { selected: project } = projects.value
+  const { activeProject: project } = storeToRefs(useEventsStore())
 
   const headers = {"X-Auth-Token": token.value }
-  const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project ? `?project=${project}` : ''}`
-  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events${project ? `?project=${project}` : ''}`
+  const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project ? `?project=${project.value}` : ''}`
+  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events${project ? `?project=${project.value}` : ''}`
 
   const getAll = () => fetch(getEventsRestUrl(), { headers })
     .then((response) => response.json())
@@ -54,7 +53,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {
     method: 'DELETE',
     headers,
-    ...(project ? { body: JSON.stringify({project}) } : null)
+    ...(project.value ? { body: JSON.stringify({project: project.value }) } : null)
   })
     .catch((err) => {
       console.error('Fetch Error', err)
@@ -63,7 +62,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const deleteAll = () => fetch(getEventsRestUrl(), {
     method: 'DELETE',
     headers,
-    ...(project ? { body: JSON.stringify({project}) } : null)
+    ...(project.value ? { body: JSON.stringify({project: project.value}) } : null)
   })
     .catch((err) => {
       console.error('Fetch Error', err)
@@ -83,7 +82,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     headers,
     body: JSON.stringify({
       type,
-      ...(project ? { project } : null),
+      ...(project.value ? { project: project.value } : null),
     })
   })
     .catch((err) => {

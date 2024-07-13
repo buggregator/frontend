@@ -7,8 +7,18 @@ let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
-  const { projects } = storeToRefs(useEventsStore())
-  const project = projects.value.selected
+  const { activeProject: project } = storeToRefs(useEventsStore())
+
+  const createPayload = (additional?: Record<string, unknown>) => {
+    const payload = {
+      token: token.value,
+      project: project.value
+    }
+    if (additional) {
+      Object.assign(payload, additional)
+    }
+    return payload
+  }
 
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventsStore()
@@ -73,7 +83,7 @@ export const useApiTransport = () => {
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/event/${eventId}`, {token: token.value, project})
+      return centrifuge.rpc(`delete:api/event/${eventId}`, createPayload())
     }
 
     return deleteSingle(eventId);
@@ -81,7 +91,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {token: token.value, project})
+      return centrifuge.rpc(`delete:api/events`, createPayload())
     }
 
     return deleteAll();
@@ -97,7 +107,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {uuids, token: token.value, project})
+      return centrifuge.rpc(`delete:api/events`, createPayload({ uuids }))
     }
 
     return deleteList(uuids);
@@ -105,7 +115,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type, token: token.value, project})
+      return centrifuge.rpc(`delete:api/events`, createPayload())
     }
 
     return deleteByType(type);
@@ -113,16 +123,12 @@ export const useApiTransport = () => {
 
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, {
-      stop_execution: true,
-      token: token.value,
-      project,
-    })
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
   }
 
   // NOTE: works only with ws
   const rayContinueExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token: token.value, project})
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload())
   }
 
   return {

@@ -26,7 +26,7 @@ export const useEventsStore = defineStore("eventsStore", {
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as string[],
-      selected: undefined as string | undefined,
+      active: undefined as string | undefined,
     }
   }),
   getters: {
@@ -47,7 +47,9 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     cachedIdsTypesList({ cachedIds }) {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
-    }
+    },
+    activeProject: ({ projects }) => projects.active,
+    availableProjects: ({ projects }) => projects.available,
   },
   actions: {
     // events
