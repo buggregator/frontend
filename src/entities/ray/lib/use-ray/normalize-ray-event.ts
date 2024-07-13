@@ -2,7 +2,7 @@ import pick from "lodash/pick";
 import moment from "moment";
 import type {NormalizedEvent, ServerEvent} from "~/src/shared/types";
 import { EVENT_TYPES } from "~/src/shared/types";
-import type { RayContentColor, RayContentLabel, RayContentSize, RayDump } from "../../types";
+import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
 
 export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
@@ -42,13 +42,13 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     .filter(payload => payload.type === 'color')
     .map(payload => (payload.content as RayContentColor)?.color)
     .filter(Boolean)
-    .shift() || 'black'
+    .shift() || 'black' as RayDumpMeta['color']
 
   const size = ((event?.payload?.payloads || [])
     .filter(payload => payload.type === 'size')
     .map(payload => (payload.content as RayContentSize)?.size)
     .filter(Boolean)
-    .shift() || 'md') as NormalizedEvent<RayDump>['meta']['size']
+    .shift() || 'md') as RayDumpMeta['size']
 
   const normalizedEvent: NormalizedEvent<RayDump> = {
     id: event.uuid,

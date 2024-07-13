@@ -199,3 +199,8 @@ export interface RayDump {
     laravel_version?: string,
   }
 }
+
+export interface RayDumpMeta {
+  color: string,
+  size: 'sm' | 'md' | 'lg' | 'xl',
+}
