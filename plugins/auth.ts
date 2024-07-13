@@ -1,30 +1,12 @@
-import { useSettings } from "~/src/shared/lib/use-settings";
+import {useSettingsStore} from "~/src/shared/stores";
 
 // todo: use store for token
-export default defineNuxtPlugin(async () => {
-  const {
-    api,
-  } = useSettings();
+export default defineNuxtPlugin( () => {
+  const { auth}  = storeToRefs(useSettingsStore())
 
-  let settings = {
-    auth: {
-      enabled: false,
-      login_url: '/login',
-    },
-    version: '0.0.0',
-  }
-
-  try {
-    // TODO: remove duplicated request with settings-store
-    settings = await api.getSettings() as { auth: { enabled: boolean; login_url: string }; version: string };
-  } catch (e) {
-    console.error('Server is not available!')
-  }
-
-  if (!settings?.auth?.enabled) {
+  if (!auth?.value.isEnabled) {
     return {
       provide: {
-        appSettings: settings,
         authToken: {token: ''}
       }
     }
@@ -32,7 +14,6 @@ export default defineNuxtPlugin(async () => {
 
   return {
     provide: {
-      appSettings: settings,
       authToken: {token: ''}
     }
   }
