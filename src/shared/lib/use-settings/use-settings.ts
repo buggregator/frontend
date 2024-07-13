@@ -1,6 +1,6 @@
-import {useProfileStore} from "../../stores/profile";
+import {useProfileStore} from "../../stores/profile/profile-store";
 import type { TProfile, TSettings } from "../../types";
-import { REST_API_URL } from "../io";
+import { REST_API_URL } from "../io/constants";
 
 
 type TUseSettings = {

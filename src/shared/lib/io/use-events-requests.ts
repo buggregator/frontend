@@ -1,4 +1,4 @@
-import {useProfileStore} from "../../stores/profile";
+import {useProfileStore} from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 

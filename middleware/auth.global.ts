@@ -1,7 +1,6 @@
 import { navigateTo, defineNuxtRouteMiddleware } from "#app";
 import { useSettings } from "~/src/shared/lib/use-settings";
-import {useSettingsStore} from "~/src/shared/stores";
-import { useProfileStore } from "~/src/shared/stores/profile"
+import {useSettingsStore, useProfileStore} from "~/src/shared/stores";
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const { auth}  = storeToRefs(useSettingsStore())

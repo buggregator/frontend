@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {useSettings} from "../../lib/use-settings";
+import {useSettings} from "../../lib/use-settings/use-settings.js";
 import type { TSettings } from "../../types";
 import {THEME_MODES} from "./constants";
 import {
