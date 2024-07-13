@@ -15,12 +15,12 @@ export const useProfileStore = defineStore("profileStore", {
   },
   actions: {
     setToken(token: string): void {
-      const app = useNuxtApp()
+      // const app = useNuxtApp()
 
       this.token = token;
       localStorage?.setItem(STORAGE_KEY, token);
 
-      app.$authToken.token = token;
+      // app.$authToken.token = token;
     },
     setProfile(profile: TProfile): void {
       this.profile = profile;

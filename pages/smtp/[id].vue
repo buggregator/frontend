@@ -2,7 +2,7 @@
 import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { SmtpPage } from "~/src/screens/smtp";
-import { useRoute, useRouter, useFetch, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useSmtp } from "~/src/entities/smtp";
 import type { SMTP } from "~/src/entities/smtp/types";
@@ -13,50 +13,50 @@ import type { Attachment, EventId, ServerEvent } from "~/src/shared/types";
 const { normalizeSmtpEvent } = useSmtp();
 
 const { params } = useRoute();
-const { $authToken } = useNuxtApp();
 const router = useRouter();
 const eventId = params.id as EventId;
 
 useTitle(`SMTP > ${eventId} | Buggregator`);
 
-const { events } = useEvents();
+const {
+  events: { getItem },
+} = useEvents();
 const { getAttachments } = useSmtp();
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
-const serverAttachments = ref<Attachment[]>([]);
+const serverEvent = ref<ServerEvent<SMTP> | null>(null);
+const attachments = ref<Attachment[]>([]);
 
 const event = computed(() =>
   serverEvent.value
     ? normalizeSmtpEvent(serverEvent.value as unknown as ServerEvent<SMTP>)
-    : null
+    : null,
 );
 
-const attachments = computed(() => serverAttachments.value);
-
-const html = computed(
-  () => `<iframe srcdoc="${htmlEncode(serverEvent.value?.payload?.html)}"/>`
+const html = computed(() =>
+  serverEvent.value?.payload?.html
+    ? `<iframe srcdoc="${htmlEncode(serverEvent.value?.payload?.html)}"/>`
+    : undefined,
 );
 
 const getEvent = async () => {
   isLoading.value = true;
 
-  await useFetch(events.getUrl(eventId), {
-    headers: { "X-Auth-Token": $authToken.token || "" },
-    onResponse({ response: { _data } }) {
-      serverEvent.value = _data;
-      isLoading.value = false;
-    },
-    onResponseError() {
-      router.push("/404");
-    },
-    onRequestError() {
-      router.push("/404");
-    },
-  });
+  try {
+    serverEvent.value = (await getItem(
+      eventId,
+    )) as unknown as ServerEvent<SMTP>;
+    isLoading.value = false;
 
-  await getAttachments(eventId).then((_attachments: Attachment[]) => {
-    serverAttachments.value = _attachments;
-  });
+    if (!serverEvent.value) {
+      throw new Error("Event not found");
+    }
+
+    await getAttachments(eventId).then((_attachments: Attachment[]) => {
+      attachments.value = _attachments;
+    });
+  } catch (error) {
+    router.push("/404");
+  }
 };
 
 onMounted(getEvent);

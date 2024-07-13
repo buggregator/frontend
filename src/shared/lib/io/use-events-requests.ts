@@ -4,7 +4,7 @@ import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
-  getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
+  getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>,
   deleteAll: () => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
@@ -42,7 +42,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     .then((response) => response.json())
     .then((response) => {
       if (response) {
-        return response as ServerEvent<unknown>
+        return response as ServerEvent<EventType>
       }
       return null;
     })

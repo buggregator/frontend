@@ -2,7 +2,7 @@
 import { useTitle } from "@vueuse/core";
 import { computed, onMounted, ref } from "vue";
 import { HttpDumpPage } from "~/src/screens/http-dump";
-import { useFetch, useRoute, useRouter, useNuxtApp } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { PageEventHeader } from "~/src/widgets/ui";
 import { useHttpDump } from "~/src/entities/http-dump";
 import type { HttpDumpServer } from "~/src/entities/http-dump/types";
@@ -17,37 +17,32 @@ const eventId = params.id as EventId;
 
 useTitle(`Http dumps > ${eventId} | Buggregator`);
 
-const { events } = useEvents();
-const { $authToken } = useNuxtApp();
+const {
+  events: { getItem },
+} = useEvents();
 
 const isLoading = ref(false);
-const serverEvent = ref<Event | null>(null);
+const serverEvent = ref<ServerEvent<HttpDumpServer> | null>(null);
 
 const event = computed(() =>
-  serverEvent.value
-    ? normalizeHttpDumpEvent(
-        serverEvent.value as unknown as ServerEvent<HttpDumpServer>
-      )
-    : null
+  serverEvent.value ? normalizeHttpDumpEvent(serverEvent.value) : null,
 );
 
 const getEvent = async () => {
-  await useFetch(events.getUrl(eventId), {
-    headers: { "X-Auth-Token": $authToken.token || "" },
-    onRequest() {
-      isLoading.value = true;
-    },
-    onResponse({ response: { _data } }) {
-      serverEvent.value = _data;
-      isLoading.value = false;
-    },
-    onResponseError() {
+  isLoading.value = true;
+
+  try {
+    serverEvent.value = (await getItem(
+      eventId,
+    )) as unknown as ServerEvent<HttpDumpServer>;
+    isLoading.value = false;
+
+    if (!serverEvent.value) {
       router.push("/404");
-    },
-    onRequestError() {
-      router.push("/404");
-    },
-  });
+    }
+  } catch (error) {
+    router.push("/404");
+  }
 };
 
 onMounted(getEvent);

@@ -7,7 +7,7 @@ import { useApiTransport } from '../use-api-transport'
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
-  getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
+  getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>
   getUrl: (id: EventId) => string
   getAll: () => void
   removeAll: () => void
