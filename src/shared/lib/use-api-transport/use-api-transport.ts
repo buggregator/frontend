@@ -7,6 +7,8 @@ let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
+  const { projects } = storeToRefs(useEventsStore())
+  const project = projects.value.selected
 
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventsStore()
@@ -71,7 +73,7 @@ export const useApiTransport = () => {
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/event/${eventId}`, {token: token.value})
+      return centrifuge.rpc(`delete:api/event/${eventId}`, {token: token.value, project})
     }
 
     return deleteSingle(eventId);
@@ -79,7 +81,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {token: token.value})
+      return centrifuge.rpc(`delete:api/events`, {token: token.value, project})
     }
 
     return deleteAll();
@@ -95,7 +97,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {uuids, token: token.value})
+      return centrifuge.rpc(`delete:api/events`, {uuids, token: token.value, project})
     }
 
     return deleteList(uuids);
@@ -103,7 +105,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type, token: token.value})
+      return centrifuge.rpc(`delete:api/events`, {type, token: token.value, project})
     }
 
     return deleteByType(type);
@@ -113,13 +115,14 @@ export const useApiTransport = () => {
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, {
       stop_execution: true,
-      token: token.value
+      token: token.value,
+      project,
     })
   }
 
   // NOTE: works only with ws
   const rayContinueExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token: token.value})
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token: token.value, project})
   }
 
   return {

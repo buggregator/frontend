@@ -9,5 +9,6 @@ export type TSettings = {
     enabled: boolean,
     login_url: string,
   },
-  version: string
+  version: string,
+  projects?: string[] // TODO: need to implement on BE side
 }

@@ -24,6 +24,10 @@ export const useEventsStore = defineStore("eventsStore", {
     events: [] as ServerEvent<unknown>[],
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
+    projects: {
+      available: [] as string[],
+      selected: undefined as string | undefined,
+    }
   }),
   getters: {
     eventsCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
@@ -165,6 +169,15 @@ export const useEventsStore = defineStore("eventsStore", {
       this.lockedIds.push(eventUuid);
 
       setStoredLockedIds(this.lockedIds);
+    },
+    // projects
+    setAvailableProjects(projects: string[]) {
+      if (projects.length > 0) {
+        this.projects.available.concat(projects);
+      }
+    },
+    setActiveProject(project: string) {
+      this.projects.selected = project;
     }
   },
 });
