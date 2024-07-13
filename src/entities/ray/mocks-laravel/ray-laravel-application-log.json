@@ -10,7 +10,7 @@
           "value": "{\"request\":\"a\",\"response\":\"a\"}"
         },
         "origin": {
-          "file": "\/var\/www\/html\/vendor\/psy\/psysh\/src\/ExecutionLoopClosure.php(53) : eval()'d code",
+          "file": "/var/www/html/vendor/psy/psysh/src/ExecutionLoopClosure.php(53) : eval()'d code",
           "line_number": 1,
           "hostname": "f5813cb9520f"
         }
@@ -26,5 +26,5 @@
     }
   },
   "timestamp": 1701161948,
-  "project_id": null
+  "project": null
 }

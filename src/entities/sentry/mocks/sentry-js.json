@@ -1,11 +1,8 @@
 {
   "uuid": "28482489-cbf9-4331-b4d8-90549009f777",
   "type": "sentry",
-  "labels": ["sentry.1"],
-  "origin": null,
-  "server_name": "",
-  "project_id": null,
-  "date": "2023-09-17T21:51:25.000Z",
+  "project": null,
+  "timestamp": 1720882615,
   "payload": {
     "exception": {
       "values": [
