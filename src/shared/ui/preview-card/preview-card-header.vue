@@ -209,7 +209,6 @@ $eventTypeColorsMap: (
   @apply inline-flex items-center;
   @apply border dark:border-gray-600;
   @apply transition-colors;
-  @apply cursor-help;
   @apply px-1 md:px-2;
   @apply font-bold text-2xs lg:text-xs leading-none;
 
@@ -245,6 +244,7 @@ $eventTypeColorsMap: (
 .preview-card-header__tag--json {
   @apply bg-blue-600 text-blue-50 border-blue-600;
 
+  @apply cursor-help;
   &:hover {
     @apply bg-blue-500 dark:bg-blue-500;
   }
