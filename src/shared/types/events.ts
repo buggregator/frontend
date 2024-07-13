@@ -22,9 +22,8 @@ export interface ServerEvent<T> {
   uuid: EventId,
   type: EventType | string,
   payload: T,
-  server_name?: string,
-  project_id: string | null,
-  timestamp?: number // unavailable for some ray dump events
+  project: string | null,
+  timestamp: number // unavailable for some ray dump events
 }
 
 export interface NormalizedEvent<T> {
