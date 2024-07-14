@@ -2,15 +2,12 @@
 import moment from "moment/moment";
 import { computed } from "vue";
 import { useRay } from "~/src/entities/ray";
-import {
-  type EnhancedRayEvent,
-  RAY_EVENT_TYPES,
-} from "~/src/entities/ray/types";
-import type { OneOfValues } from "~/src/shared/types";
+import { RAY_EVENT_TYPES, type RayDump } from "~/src/entities/ray/types";
+import type { NormalizedEvent, OneOfValues } from "~/src/shared/types";
 import { TableBase, TableBaseRow } from "~/src/shared/ui";
 
 type Props = {
-  event: EnhancedRayEvent;
+  event: NormalizedEvent<RayDump>;
 };
 
 const { COMPONENT_TYPE_MAP } = useRay();
@@ -24,17 +21,17 @@ const title = computed(() => {
 });
 
 const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"),
 );
 
 const classes = computed(() =>
   props.event?.meta
     ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
-    : []
+    : [],
 );
 
 const getComponent: (
-  type: RAY_EVENT_TYPES | string
+  type: RAY_EVENT_TYPES | string,
 ) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (type) =>
   COMPONENT_TYPE_MAP[type as RAY_EVENT_TYPES];
 </script>

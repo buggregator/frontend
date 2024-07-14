@@ -1,14 +1,15 @@
 <script lang="ts" setup>
+import isString from "lodash/isString";
 import { computed } from "vue";
-import { EVENT_TYPES, type EventType } from "../../types";
+import { EVENT_TYPES, type EventType, type NormalizedEvent } from "../../types";
 import { IconSvg } from "../icon-svg";
 import { DownloadType } from "./types";
 
 type Props = {
   eventType: EventType | "unknown";
-  eventId: string;
+  eventId: NormalizedEvent<unknown>["id"];
   eventUrl: string;
-  tags: string[];
+  labels: NormalizedEvent<unknown>["labels"];
   isOpen: boolean;
   isLocked: boolean;
   isVisibleControls: boolean;
@@ -53,7 +54,7 @@ const lockEvent = () => {
   emit("lock", true);
 };
 
-const isVisibleTags = computed(() => props.tags.length > 0);
+const isVisibleTags = computed(() => props.labels.length > 0);
 
 const newPageLink = computed(() => {
   if (!Object.values(EVENT_TYPES).includes(props.eventType)) return "";
@@ -76,15 +77,26 @@ const newPageLink = computed(() => {
       </a>
 
       <template v-if="isVisibleTags">
-        <div
-          v-for="tag in tags"
-          :key="tag"
-          ref="tags"
-          class="preview-card-header__tag"
-          :class="`preview-card-header__tag--${eventType}`"
-        >
-          {{ tag }}
-        </div>
+        <template v-for="label in labels" :key="label.title || label">
+          <div
+            v-if="isString(label)"
+            ref="tags"
+            class="preview-card-header__tag"
+            :class="`preview-card-header__tag--${eventType}`"
+          >
+            {{ label }}
+          </div>
+
+          <div
+            v-if="!isString(label)"
+            ref="tags"
+            class="preview-card-header__tag preview-card-header__tag--large"
+            :class="`preview-card-header__tag--${eventType}`"
+            :title="label.context"
+          >
+            {{ label.title }}: {{ label.value }}
+          </div>
+        </template>
       </template>
 
       <template v-if="newPageLink">
@@ -197,7 +209,6 @@ $eventTypeColorsMap: (
   @apply inline-flex items-center;
   @apply border dark:border-gray-600;
   @apply transition-colors;
-  @apply cursor-help;
   @apply px-1 md:px-2;
   @apply font-bold text-2xs lg:text-xs leading-none;
 
@@ -226,9 +237,14 @@ $eventTypeColorsMap: (
   }
 }
 
+.preview-card-header__tag--large {
+  @apply cursor-help;
+}
+
 .preview-card-header__tag--json {
   @apply bg-blue-600 text-blue-50 border-blue-600;
 
+  @apply cursor-help;
   &:hover {
     @apply bg-blue-500 dark:bg-blue-500;
   }

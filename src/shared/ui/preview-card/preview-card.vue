@@ -1,7 +1,6 @@
 <script lang="ts" setup generic="T">
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
-import moment from "moment";
 import { ref, computed, onBeforeMount, onMounted } from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
@@ -25,11 +24,6 @@ const eventRef = ref(null);
 const isDeleting = ref(false);
 const isInit = ref(true);
 const { events, lockedIds } = useEvents();
-
-const normalizedTags = computed(() => [
-  moment(props.event.date).format("HH:mm:ss"),
-  ...props.event.labels,
-]);
 
 const normalizedOrigin = computed(() => {
   const originEntriesList = Object.entries(props.event.origin || {})
@@ -94,7 +88,7 @@ const downloadFile = async () => {
       download(
         JSON.stringify(event, null, 2),
         `${props.event.type}-${props.event.id}.json`,
-        "application/json"
+        "application/json",
       );
     }
   } catch (e) {
@@ -156,7 +150,7 @@ onMounted(() => {
         :event-url="eventUrl"
         :event-type="event.type"
         :event-id="event.id"
-        :tags="normalizedTags"
+        :labels="event.labels"
         :is-open="!isCollapsed && !isOptimized"
         :is-locked="isLocked"
         :is-visible-controls="isVisibleControls && !isOptimized"

@@ -1,3 +1,4 @@
+import type {RayDump, RayDumpMeta} from "~/src/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
 // TODO: add T prefix to all types
@@ -29,9 +30,10 @@ export interface ServerEvent<T> {
 export interface NormalizedEvent<T> {
   id: EventId,
   type: EventType | 'unknown',
-  labels: string[],
+  labels: (string | { title: string, value: string, context: string })[],
   origin: object | null,
   serverName: string,
   date: Date | null,
   payload: T
+  meta?: T extends RayDump ? RayDumpMeta: never
 }

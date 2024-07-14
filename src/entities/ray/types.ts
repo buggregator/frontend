@@ -1,5 +1,3 @@
-import type { NormalizedEvent } from "~/src/shared/types";
-
 export enum RAY_EVENT_TYPES {
   LOG = "log",
   // SIZE = "size",
@@ -202,9 +200,7 @@ export interface RayDump {
   }
 }
 
-export interface EnhancedRayEvent extends NormalizedEvent<RayDump> {
-  meta: {
-    color: string,
-    size: 'sm' | 'md' | 'lg' | 'xl',
-  }
+export interface RayDumpMeta {
+  color: string,
+  size: 'sm' | 'md' | 'lg' | 'xl',
 }

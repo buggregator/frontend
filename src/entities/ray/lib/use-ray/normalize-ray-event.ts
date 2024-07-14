@@ -1,10 +1,11 @@
 import pick from "lodash/pick";
-import type { ServerEvent } from "~/src/shared/types";
+import moment from "moment";
+import type {NormalizedEvent, ServerEvent} from "~/src/shared/types";
 import { EVENT_TYPES } from "~/src/shared/types";
-import type { EnhancedRayEvent, RayContentColor, RayContentLabel, RayContentSize, RayDump } from "../../types";
+import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
 
-export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent => {
+export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
   let origin = {
     php_version: event.payload.meta?.php_version,
     laravel_version: '',
@@ -41,15 +42,15 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
     .filter(payload => payload.type === 'color')
     .map(payload => (payload.content as RayContentColor)?.color)
     .filter(Boolean)
-    .shift() || 'black'
+    .shift() || 'black' as RayDumpMeta['color']
 
   const size = ((event?.payload?.payloads || [])
     .filter(payload => payload.type === 'size')
     .map(payload => (payload.content as RayContentSize)?.size)
     .filter(Boolean)
-    .shift() || 'md') as EnhancedRayEvent['meta']['size']
+    .shift() || 'md') as RayDumpMeta['size']
 
-  return {
+  const normalizedEvent: NormalizedEvent<RayDump> = {
     id: event.uuid,
     type: EVENT_TYPES.RAY_DUMP,
     labels: [EVENT_TYPES.RAY_DUMP, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
@@ -62,4 +63,10 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): EnhancedRayEvent
       size
     }
   }
+
+  if (normalizedEvent.date) {
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+  }
+
+  return normalizedEvent;
 }
