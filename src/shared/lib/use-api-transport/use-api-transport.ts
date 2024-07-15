@@ -62,7 +62,7 @@ export const useApiTransport = () => {
 
     centrifuge.on('publication', (ctx) => {
       // We need to handle only events from the channel 'events' with event name 'event.received'
-      if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
+      if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
         eventsStore.addList([event]);
       }
