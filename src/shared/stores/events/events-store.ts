@@ -7,7 +7,7 @@ import {
   setStoredCachedIds,
   setStoredLockedIds,
   getStoredCachedIds,
-  setStoredProject, removeStoredProject
+  setStoredProject, removeStoredProject, getStoredProject
 } from "./local-storage-actions";
 import type {TEventsCachedIdsMap} from "./types";
 
@@ -63,6 +63,7 @@ export const useEventsStore = defineStore("eventsStore", {
       this.events = events.slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
+      this.initActiveProject();
     },
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
@@ -179,12 +180,15 @@ export const useEventsStore = defineStore("eventsStore", {
       setStoredLockedIds(this.lockedIds);
     },
     // projects
+    initActiveProject() {
+      this.projects.active = getStoredProject();
+    },
     setAvailableProjects(projects: string[]) {
       if (projects.length > 0) {
         this.projects.available.concat(projects);
       }
     },
-    setActiveProject(project: string) {
+    setActiveProject(project: string | null) {
       this.projects.active = project;
 
       setStoredProject(project);

@@ -110,7 +110,7 @@ const serverVersion = computed(() =>
             @click="eventsStore.setActiveProject(project)"
           >
             <h1 class="layout-sidebar__project">
-              {{ project.substring(0, 2) }}
+              {{ String(project).substring(0, 2) }}
             </h1>
           </NuxtLink>
         </div>
