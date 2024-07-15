@@ -8,3 +8,7 @@ export enum LOCAL_STORAGE_KEYS {
   CODE_EDITOR = "code_editor",
   TOKEN = "token",
 }
+
+export enum SESSION_STORAGE_KEYS {
+  PROJECT = "project",
+}

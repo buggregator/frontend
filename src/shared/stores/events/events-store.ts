@@ -2,7 +2,13 @@ import { defineStore } from "pinia";
 import {PAGE_TYPES} from "../../constants";
 import type { EventId, EventType , ServerEvent, TEventsGroup} from '../../types';
 import {EVENT_TYPES} from "../../types";
-import { getStoredLockedIds, setStoredCachedIds, setStoredLockedIds, getStoredCachedIds } from "./local-storage-actions";
+import {
+  getStoredLockedIds,
+  setStoredCachedIds,
+  setStoredLockedIds,
+  getStoredCachedIds,
+  setStoredProject, removeStoredProject
+} from "./local-storage-actions";
 import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
@@ -180,9 +186,13 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     setActiveProject(project: string) {
       this.projects.active = project;
+
+      setStoredProject(project);
     },
     resetActiveProject() {
       this.projects.active = null;
+
+      removeStoredProject();
     }
   },
 });
