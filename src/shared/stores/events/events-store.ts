@@ -26,7 +26,7 @@ export const useEventsStore = defineStore("eventsStore", {
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as string[],
-      active: undefined as string | undefined,
+      active: null as string | null,
     }
   }),
   getters: {
@@ -182,7 +182,7 @@ export const useEventsStore = defineStore("eventsStore", {
       this.projects.active = project;
     },
     resetActiveProject() {
-      this.projects.active = undefined;
+      this.projects.active = null;
     }
   },
 });
