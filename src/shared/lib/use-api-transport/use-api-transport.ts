@@ -64,7 +64,10 @@ export const useApiTransport = () => {
       // We need to handle only events from the channel 'events' with event name 'event.received'
       if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
-        eventsStore.addList([event]);
+
+        if (event && event.project === project) {
+          eventsStore.addList([event]);
+        }
       }
     });
   }
