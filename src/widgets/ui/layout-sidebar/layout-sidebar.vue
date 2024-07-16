@@ -16,7 +16,7 @@ import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
-const { availableProjects } = storeToRefs(eventsStore);
+const { availableProjects, activeProject } = storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
@@ -79,6 +79,13 @@ const serverVersion = computed(() =>
     ? `v${apiVersion.value}`
     : `@${apiVersion.value}`,
 );
+
+const setProject = (project: string) => {
+  eventsStore.setActiveProject(project);
+
+  const router = useRouter();
+  router.push("/");
+};
 </script>
 
 <template>
@@ -92,22 +99,29 @@ const serverVersion = computed(() =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <hr class="layout-sidebar__sep" />
-
       <template v-if="availableProjects.length > 0">
+        <hr class="layout-sidebar__sep" />
+
         <div class="layout-sidebar__projects">
           <NuxtLink
             v-for="project in availableProjects"
             :key="project"
-            :title="project"
+            :title="String(project)"
             class="layout-sidebar__link"
-            @click="eventsStore.setActiveProject(project)"
+            @click="setProject(project)"
           >
-            <h1 class="layout-sidebar__project">
+            <h1
+              class="layout-sidebar__project"
+              :class="{
+                'layout-sidebar__project--active': activeProject === project,
+              }"
+            >
               {{ String(project).substring(0, 2) }}
             </h1>
           </NuxtLink>
         </div>
+
+        <hr class="layout-sidebar__sep" />
       </template>
 
       <template v-else>
@@ -115,8 +129,6 @@ const serverVersion = computed(() =>
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>
       </template>
-
-      <hr class="layout-sidebar__sep" />
 
       <template v-for="type in EVENTS_NAV_ORDER" :key="type">
         <NuxtLink
@@ -214,11 +226,11 @@ const serverVersion = computed(() =>
 }
 
 .layout-sidebar__sep {
-  @apply bg-gray-200 dark:bg-gray-700 h-0.5;
+  @apply bg-gray-300 dark:bg-gray-500 h-0.5;
 }
 
 .layout-sidebar__link {
-  @apply relative cursor-pointer;
+  @apply relative cursor-pointer flex;
   @apply flex items-center justify-center w-full;
   @apply md:rounded-lg;
   @apply px-1.5 py-2 md:px-2 md:py-3;
@@ -256,11 +268,17 @@ const serverVersion = computed(() =>
 
 .layout-sidebar__project {
   @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
-  @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400;
+  @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400  rounded-lg;
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
   @apply text-white dark:text-black;
-  @apply flex items-center justify-center;
+  @apply flex items-center justify-center relative;
+}
+
+.layout-sidebar__project--active {
+  &:after {
+    @apply absolute z-10 right-[-0.625rem] w-2 h-2 rounded-full bg-blue-500 content-[''];
+  }
 }
 
 .layout-sidebar__profile {
