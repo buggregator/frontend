@@ -2,14 +2,20 @@ import {LOCAL_STORAGE_KEYS} from "../../types";
 import {THEME_MODES} from "./constants";
 
 export const getStoredActiveTheme = () => {
-  if (!process.client) {
-    return THEME_MODES.LIGHT;
-  }
-
-  const isStoredDarkTheme = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.THEME) === THEME_MODES.DARK;
+  const isStoredTheme = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
   const isSystemDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-  if (isStoredDarkTheme || isSystemDarkTheme) {
+  if (isStoredTheme) {
+    if (isStoredTheme === THEME_MODES.DARK) {
+      document?.documentElement?.classList?.add(THEME_MODES.DARK);
+    } else {
+      document?.documentElement?.classList?.remove(THEME_MODES.DARK);
+    }
+
+    return isStoredTheme
+  }
+
+  if (isSystemDarkTheme) {
     document?.documentElement?.classList?.add(THEME_MODES.DARK);
 
     return THEME_MODES.DARK
