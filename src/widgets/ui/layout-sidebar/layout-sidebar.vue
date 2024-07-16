@@ -92,15 +92,9 @@ const serverVersion = computed(() =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <template v-if="availableProjects.length > 0">
-        <NuxtLink
-          title="Events"
-          class="layout-sidebar__link"
-          @click="eventsStore.resetActiveProject()"
-        >
-          <IconSvg class="layout-sidebar__link-icon" name="events" />
-        </NuxtLink>
+      <hr class="layout-sidebar__sep" />
 
+      <template v-if="availableProjects.length > 0">
         <div class="layout-sidebar__projects">
           <NuxtLink
             v-for="project in availableProjects"
@@ -121,6 +115,8 @@ const serverVersion = computed(() =>
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>
       </template>
+
+      <hr class="layout-sidebar__sep" />
 
       <template v-for="type in EVENTS_NAV_ORDER" :key="type">
         <NuxtLink
@@ -210,21 +206,30 @@ const serverVersion = computed(() =>
 }
 
 .layout-sidebar__nav {
-  @apply flex-col flex overflow-auto;
+  @apply flex-col flex overflow-auto md:gap-1 lg:gap-1.5;
+  @apply md:p-1 lg:p-1.5;
   @apply divide-y divide-gray-300 dark:divide-gray-600 md:divide-none;
   @apply border-b border-gray-300 dark:border-gray-600 md:border-none;
   @apply overflow-hidden;
 }
 
+.layout-sidebar__sep {
+  @apply bg-gray-200 dark:bg-gray-700 h-0.5;
+}
+
 .layout-sidebar__link {
-  @apply block relative cursor-pointer;
-  @apply flex items-center justify-center;
-  @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
+  @apply relative cursor-pointer;
+  @apply flex items-center justify-center w-full;
+  @apply md:rounded-lg;
   @apply px-1.5 py-2 md:px-2 md:py-3;
   @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
+  }
+
+  .layout-sidebar__projects & {
+    @apply p-1.5 md:p-2;
   }
 }
 
@@ -247,18 +252,14 @@ const serverVersion = computed(() =>
 
 .layout-sidebar__projects {
   @apply flex items-center justify-center flex-col;
-
-  .layout-sidebar__link {
-    @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
-    @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400;
-    @apply text-white;
-    flex-grow: 1;
-  }
 }
 
 .layout-sidebar__project {
-  @apply text-2xl font-semibold uppercase;
-  @apply h-5 md:h-6;
+  @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
+  @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400;
+  @apply text-2xs font-semibold uppercase;
+  @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
+  @apply text-white dark:text-black;
   @apply flex items-center justify-center;
 }
 
