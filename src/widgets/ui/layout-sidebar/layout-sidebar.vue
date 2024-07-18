@@ -105,18 +105,19 @@ const setProject = (project: string) => {
         <div class="layout-sidebar__projects">
           <NuxtLink
             v-for="project in availableProjects"
-            :key="project"
-            :title="String(project)"
+            :key="project.key"
+            :title="String(project.title)"
             class="layout-sidebar__link"
-            @click="setProject(project)"
+            @click="setProject(project.key)"
           >
             <h1
               class="layout-sidebar__project"
               :class="{
-                'layout-sidebar__project--active': activeProject === project,
+                'layout-sidebar__project--active':
+                  activeProject === project.key,
               }"
             >
-              {{ String(project).substring(0, 2) }}
+              {{ String(project.title).substring(0, 2) }}
             </h1>
           </NuxtLink>
         </div>

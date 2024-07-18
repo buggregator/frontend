@@ -10,5 +10,12 @@ export type TSettings = {
     login_url: string,
   },
   version: string,
-  projects?: string[] // TODO: need to implement on BE side
+}
+
+
+export type TProjects = {
+  data: {
+    title: string,
+    key: string
+  }[]
 }

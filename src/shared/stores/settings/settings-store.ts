@@ -1,7 +1,6 @@
 import {defineStore} from "pinia";
 import {useSettings} from "../../lib/use-settings";
 import type { TSettings } from "../../types";
-import {useEventsStore} from "../events";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -27,9 +26,8 @@ export const useSettingsStore = defineStore("settingsStore", {
   actions: {
     initialize() {
       const {api: { getSettings }} = useSettings();
-      const { setAvailableProjects } = useEventsStore();
 
-      getSettings().then(({ version, auth, projects } = {} as TSettings) => {
+      getSettings().then(({ version, auth } = {} as TSettings) => {
         if (version) {
           this.apiVersion = version
         }
@@ -37,10 +35,6 @@ export const useSettingsStore = defineStore("settingsStore", {
         if (auth) {
           this.auth.isEnabled = auth.enabled;
           this.auth.loginUrl = auth.login_url;
-        }
-
-        if (projects && projects.length > 0) {
-          setAvailableProjects(projects)
         }
       })
     },

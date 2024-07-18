@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import {PAGE_TYPES} from "../../constants";
-import type { EventId, EventType , ServerEvent, TEventsGroup} from '../../types';
+import {useSettings} from "../../lib/use-settings";
+import type {EventId, EventType, ServerEvent, TEventsGroup, TProjects} from '../../types';
 import {EVENT_TYPES} from "../../types";
 import {
   getStoredLockedIds,
@@ -31,7 +32,7 @@ export const useEventsStore = defineStore("eventsStore", {
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
     projects: {
-      available: [] as string[],
+      available: [] as TProjects['data'],
       active: null as string | null,
     }
   }),
@@ -59,11 +60,22 @@ export const useEventsStore = defineStore("eventsStore", {
   },
   actions: {
     // events
-    initialize(events: ServerEvent<unknown>[]): void {
+    async initialize (events: ServerEvent<unknown>[]): Promise<void> {
+      const {api: { getProjects }} = useSettings();
       this.events = events.slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
       this.initActiveProject();
+
+      try {
+        const { data } = await getProjects();
+
+        if (data) {
+          this.setAvailableProjects(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     },
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
@@ -183,7 +195,7 @@ export const useEventsStore = defineStore("eventsStore", {
     initActiveProject() {
       this.projects.active = getStoredProject();
     },
-    setAvailableProjects(projects: string[]) {
+    setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
         this.projects.available.concat(projects);
       }
