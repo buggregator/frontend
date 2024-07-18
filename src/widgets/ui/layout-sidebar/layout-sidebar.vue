@@ -53,9 +53,9 @@ const connectionText = computed(
   () => `WS connection is ${connectionStatus.value}`,
 );
 
-const isHidden = ref(true);
+const isVisibleProfile = ref(false);
 const toggleProfileDropdown = () => {
-  isHidden.value = !isHidden.value;
+  isVisibleProfile.value = !isVisibleProfile.value;
 };
 
 const logout = () => {
@@ -160,7 +160,7 @@ const setProject = (project: string) => {
 
     <div>
       <div v-if="isAuthEnabled" class="layout-sidebar__profile">
-        <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
+        <div v-if="isVisibleProfile" class="layout-sidebar__profile-dropdown">
           <div
             v-if="profileEmail"
             class="profile-dropdown-item profile-dropdown-item--email"
