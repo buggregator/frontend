@@ -8,11 +8,11 @@ import { useEventsStore } from "~/src/shared/stores";
 
 SfdumpWrap(window.document);
 
-const { activeProject } = storeToRefs(useEventsStore());
+const { activeProjectKey } = storeToRefs(useEventsStore());
 const { events } = useEvents();
 
 watch(
-  () => activeProject.value,
+  () => activeProjectKey.value,
   () => {
     events.getAll();
   },

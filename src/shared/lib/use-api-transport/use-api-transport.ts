@@ -7,7 +7,7 @@ let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
-  const { activeProject: project } = storeToRefs(useEventsStore())
+  const { activeProjectKey: project } = storeToRefs(useEventsStore())
 
   const createPayload = (additional?: Record<string, unknown>) => {
     const payload = {

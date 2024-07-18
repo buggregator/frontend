@@ -17,7 +17,7 @@ type TUseEventsRequests = () => {
 export const useEventsRequests: TUseEventsRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const { activeProject: project } = storeToRefs(useEventsStore())
+  const { activeProjectKey: project } = storeToRefs(useEventsStore())
 
   const headers = {"X-Auth-Token": token.value }
   const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`

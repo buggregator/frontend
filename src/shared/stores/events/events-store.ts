@@ -55,7 +55,7 @@ export const useEventsStore = defineStore("eventsStore", {
     cachedIdsTypesList({ cachedIds }) {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     },
-    activeProject: ({ projects }) => projects.active,
+    activeProjectKey: ({ projects }) => projects.activeKey,
     availableProjects: ({ projects }) => projects.available,
   },
   actions: {
@@ -193,7 +193,7 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // projects
     initActiveProject() {
-      this.projects.active = getStoredProject();
+      this.projects.activeKey = getStoredProject();
     },
     setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
@@ -201,12 +201,12 @@ export const useEventsStore = defineStore("eventsStore", {
       }
     },
     setActiveProject(project: string | null) {
-      this.projects.active = project;
+      this.projects.activeKey = project;
 
       setStoredProject(project);
     },
     resetActiveProject() {
-      this.projects.active = null;
+      this.projects.activeKey = null;
 
       removeStoredProject();
     }

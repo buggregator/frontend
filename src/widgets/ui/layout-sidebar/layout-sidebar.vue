@@ -9,6 +9,7 @@ import {
   useEventsStore,
 } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
+import type { TProjects } from "~/src/shared/types";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
@@ -16,7 +17,7 @@ import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
-const { availableProjects, activeProject } = storeToRefs(eventsStore);
+const { availableProjects, activeProjectKey } = storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
@@ -54,9 +55,23 @@ const connectionText = computed(
 );
 
 const isVisibleProfile = ref(false);
+const isVisibleProjects = ref(false);
+
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value;
 };
+
+const toggleProjects = () => {
+  isVisibleProjects.value = !isVisibleProjects.value;
+};
+
+const activeProject = computed(() => {
+  const project = availableProjects.value.find(
+    (p) => p.key === activeProjectKey.value,
+  );
+
+  return project as unknown as TProjects["data"][number];
+});
 
 const logout = () => {
   profileStore.removeToken();
@@ -85,6 +100,8 @@ const setProject = (project: string) => {
 
   const router = useRouter();
   router.push("/");
+
+  isVisibleProjects.value = false;
 };
 </script>
 
@@ -103,23 +120,33 @@ const setProject = (project: string) => {
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
-          <NuxtLink
-            v-for="project in availableProjects"
-            :key="project.key"
-            :title="String(project.title)"
-            class="layout-sidebar__link"
-            @click="setProject(project.key)"
-          >
-            <h1
-              class="layout-sidebar__project"
-              :class="{
-                'layout-sidebar__project--active':
-                  activeProject === project.key,
-              }"
+          <div class="layout-sidebar__dropdown" @click="toggleProjects">
+            <div
+              v-if="isVisibleProjects"
+              class="layout-sidebar__dropdown-items"
             >
-              {{ String(project.title).substring(0, 2) }}
-            </h1>
-          </NuxtLink>
+              <h1
+                v-for="project in availableProjects"
+                :key="project.key"
+                :title="String(project.title)"
+                class="layout-sidebar__project"
+                :class="{
+                  'layout-sidebar__project--active':
+                    activeProject.key === project.key,
+                }"
+                @click="setProject(project.key)"
+              >
+                {{ String(project.title).substring(0, 2) }}
+              </h1>
+            </div>
+
+            <div
+              :title="String(activeProject.title)"
+              class="layout-sidebar__project"
+            >
+              <h1>{{ String(activeProject.title).substring(0, 2) }}</h1>
+            </div>
+          </div>
         </div>
 
         <hr class="layout-sidebar__sep" />
@@ -159,30 +186,35 @@ const setProject = (project: string) => {
     </nav>
 
     <div>
-      <div v-if="isAuthEnabled" class="layout-sidebar__profile">
-        <div v-if="isVisibleProfile" class="layout-sidebar__profile-dropdown">
+      <div v-if="isAuthEnabled" class="layout-sidebar__dropdown">
+        <div v-if="isVisibleProfile" class="layout-sidebar__dropdown-items">
           <div
             v-if="profileEmail"
-            class="profile-dropdown-item profile-dropdown-item--email"
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--email"
           >
             {{ profileEmail }}
           </div>
           <div
-            class="profile-dropdown-item profile-dropdown-item--logout"
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--logout"
             @click="logout"
           >
-            <IconSvg class="profile-dropdown-item--logout-icon" name="logout" />
+            <IconSvg
+              class="layout-sidebar__dropdown-item--logout-icon"
+              name="logout"
+            />
             Logout
           </div>
         </div>
+
         <div
           v-if="avatar"
-          class="layout-sidebar__profile-avatar"
+          class="layout-sidebar__dropdown-avatar"
           @click="toggleProfileDropdown"
         >
-          <img :src="avatar" />
+          <img :src="avatar" alt="profile" />
         </div>
       </div>
+
       <div class="layout-sidebar__connection">
         <IconSvg
           class="layout-sidebar__connection-icon"
@@ -282,14 +314,14 @@ const setProject = (project: string) => {
   }
 }
 
-.layout-sidebar__profile {
+.layout-sidebar__dropdown {
   @apply h-9 sm:h-10 md:h-14;
-  @apply p-3 mb-2;
+  @apply p-3;
   @apply flex items-center justify-center;
-  @apply relative;
+  @apply relative cursor-pointer;
 }
 
-.layout-sidebar__profile-dropdown {
+.layout-sidebar__dropdown-items {
   @apply absolute z-10 start-full bottom-0;
   @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
@@ -298,27 +330,27 @@ const setProject = (project: string) => {
   @apply border border-gray-300 dark:border-gray-600;
 }
 
-.profile-dropdown-item {
+.layout-sidebar__dropdown-item {
   @apply px-4 py-3;
   @apply text-sm;
 }
 
-.profile-dropdown-item--email {
+.layout-sidebar__dropdown-item--email {
   @apply font-semibold;
 }
 
-.profile-dropdown-item--logout {
+.layout-sidebar__dropdown-item--logout {
   @apply cursor-pointer;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply flex gap-2 items-center;
   @apply font-semibold;
 }
 
-.profile-dropdown-item--logout-icon {
+.layout-sidebar__dropdown-item--logout-icon {
   @apply h-4 w-4;
 }
 
-.layout-sidebar__profile-avatar img {
+.layout-sidebar__dropdown-avatar img {
   @apply w-full h-full;
   @apply rounded-full;
   @apply overflow-hidden;
