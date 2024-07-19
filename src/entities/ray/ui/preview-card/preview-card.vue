@@ -13,8 +13,8 @@ type Props = {
 const props = defineProps<Props>();
 
 const classes = computed(() => [
-  `text-${props.event.meta.size}`,
-  `text-${props.event.meta.color}-500`,
+  `text-${props.event?.meta?.size || "sm"}`,
+  `text-${props.event?.meta?.color || "gray"}-500`,
 ]);
 
 const getComponent: (

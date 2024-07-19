@@ -7,12 +7,12 @@ const { formatDuration, formatFileSize } = useFormats();
 
 type Props = {
   cost: ProfilerCost;
-  size: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'md',
-})
+  size: "md",
+});
 
 const statItems = computed(() => [
   {
