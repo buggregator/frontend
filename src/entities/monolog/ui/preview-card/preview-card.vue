@@ -9,17 +9,16 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-
 const message = ref(props.event.payload.message);
 
 const shortMessage = computed(() => {
-  const lines = props.event.payload.message.split("\n");
+  const lines = message.value.split("\n");
 
   if (lines.length > 10) {
     return `${lines.slice(0, 8).join("\n")}\n...`;
   }
 
-  return props.event.payload.message;
+  return message.value;
 });
 
 const isFullMessage = ref(message.value.length === shortMessage.value.length);
