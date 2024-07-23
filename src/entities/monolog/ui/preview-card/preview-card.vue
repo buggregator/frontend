@@ -55,7 +55,7 @@ const toggleView = () => {
 
 <style lang="scss" scoped>
 .preview-card {
-  @apply text-xs break-all relative;
+  @apply text-xs break-all;
 }
 
 .preview-card__snippet {
@@ -68,9 +68,5 @@ const toggleView = () => {
 
 .preview-card__snippet--interactive {
   @apply cursor-pointer;
-}
-
-.preview-card__frame {
-  @apply text-xs relative;
 }
 </style>
