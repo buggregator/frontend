@@ -16,7 +16,7 @@ const shortMessage = computed(() => {
   const lines = props.event.payload.message.split("\n");
 
   if (lines.length > 10) {
-    return `${lines.slice(0, 5).join("\n")}\n...`;
+    return `${lines.slice(0, 8).join("\n")}\n...`;
   }
 
   return props.event.payload.message;
@@ -35,7 +35,7 @@ const toggleView = () => {
       class="preview-card__snippet preview-card__snippet--interactive"
       :code="isFullMessage ? message : shortMessage"
       title="Click to show full message"
-      @click.self="toggleView"
+      @click="toggleView"
     />
 
     <CodeSnippet
