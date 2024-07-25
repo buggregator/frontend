@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed, ref } from "vue";
 import type { NormalizedEvent } from "~/src/shared/types";
 import { PreviewCard, CodeSnippet } from "~/src/shared/ui";
 import type { Monolog } from "../../types";
@@ -7,12 +8,34 @@ type Props = {
   event: NormalizedEvent<Monolog>;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const message = ref(props.event.payload.message);
+
+const shortMessage = computed(() => {
+  const lines = message.value.split("\n");
+
+  if (lines.length > 10) {
+    return `${lines.slice(0, 8).join("\n")}\n...`;
+  }
+
+  return message.value;
+});
+
+const isFullMessage = ref(message.value.length === shortMessage.value.length);
+
+const toggleView = () => {
+  isFullMessage.value = !isFullMessage.value;
+};
 </script>
 
 <template>
   <PreviewCard class="preview-card" :event="event">
-    <CodeSnippet class="preview-card__snippet" :code="event.payload.message" />
+    <CodeSnippet
+      class="preview-card__snippet preview-card__snippet--interactive"
+      :code="isFullMessage ? message : shortMessage"
+      title="Click to show full message"
+      @click="toggleView"
+    />
 
     <CodeSnippet
       v-if="event.payload.context"
@@ -41,5 +64,9 @@ defineProps<Props>();
   & + & {
     @apply border-t-2;
   }
+}
+
+.preview-card__snippet--interactive {
+  @apply cursor-pointer;
 }
 </style>

@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 const isCopied = ref(false);
 
 const normalizedCode = computed(() =>
-  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code
+  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code,
 );
 
 const copyCode = (): void => {
@@ -40,21 +40,21 @@ const copyCode = (): void => {
 
 <template>
   <div class="code-snippet">
+    <button
+      type="button"
+      class="code-snippet__copy"
+      :class="{ 'code-snippet__copy--active': isCopied }"
+      @click.stop="copyCode"
+    >
+      <IconSvg name="copy" class="code-snippet__copy-icon" />
+      Copy
+    </button>
+
     <CodeHighlight
       :language="language"
       :autodetect="false"
       :code="normalizedCode"
     />
-
-    <button
-      type="button"
-      class="code-snippet__copy"
-      :class="{ 'code-snippet__copy--active': isCopied }"
-      @click="copyCode"
-    >
-      <IconSvg name="copy" class="code-snippet__copy-icon" />
-      Copy
-    </button>
   </div>
 </template>
 
@@ -69,10 +69,10 @@ const copyCode = (): void => {
   &:hover {
     @apply border-gray-200 text-white bg-gray-900;
   }
-}
 
-.code-snippet:hover .code-snippet__copy {
-  @apply visible;
+  .code-snippet:hover & {
+    @apply visible;
+  }
 }
 
 .code-snippet__copy--active {
