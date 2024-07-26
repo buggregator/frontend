@@ -33,7 +33,7 @@ export const useEventsStore = defineStore("eventsStore", {
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],
-      active: null as string | null,
+      activeKey: null as string | null,
     }
   }),
   getters: {
