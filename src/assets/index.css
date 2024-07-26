@@ -1,7 +1,7 @@
 @import "vendor.css";
 
 body {
-  @apply bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-50 p-0;
+  @apply bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-50 p-0;
 }
 
 body a:hover {
