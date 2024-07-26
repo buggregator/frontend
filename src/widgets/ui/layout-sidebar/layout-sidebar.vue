@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useFloating } from "@floating-ui/vue";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
@@ -23,6 +24,23 @@ const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
 
 const { getItemsCount } = useEvents();
+
+const projectDd = ref(null);
+const projectMenu = ref(null);
+const userDd = ref(null);
+const userMenu = ref(null);
+
+const { floatingStyles: projectDdStyles } = useFloating(
+  projectDd,
+  projectMenu,
+  {
+    placement: "right-start",
+  },
+);
+
+const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
+  placement: "right",
+});
 
 const connectionStatus = computed(() =>
   isConnectedWS.value ? "connected" : "disconnected",
@@ -109,6 +127,31 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
 
 <template>
   <aside class="layout-sidebar">
+    <div
+      v-if="isVisibleProjects"
+      ref="projectMenu"
+      class="layout-sidebar__dropdown-items"
+      :style="projectDdStyles"
+    >
+      <div
+        v-for="project in availableProjects"
+        :key="project.key"
+        class="layout-sidebar__dropdown-item"
+        :title="project.title"
+        :class="{
+          'layout-sidebar__dropdown-item--active':
+            activeProject.key === project.key,
+        }"
+        @click="setProject(project.key)"
+      >
+        <h1 class="layout-sidebar__project">
+          {{ makeShortTitle(project.title) }}
+        </h1>
+
+        {{ project.title }}
+      </div>
+    </div>
+
     <nav class="layout-sidebar__nav">
       <NuxtLink
         to="/"
@@ -122,30 +165,12 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
-          <div class="layout-sidebar__dropdown" @click="toggleProjects">
-            <div
-              v-if="isVisibleProjects"
-              class="layout-sidebar__dropdown-items"
-            >
-              <h1
-                v-for="project in availableProjects"
-                :key="project.key"
-                :title="String(project.title)"
-                class="layout-sidebar__project"
-                :class="{
-                  'layout-sidebar__project--active':
-                    activeProject.key === project.key,
-                }"
-                @click="setProject(project.key)"
-              >
-                {{ makeShortTitle(project.title) }}
-              </h1>
-            </div>
-
-            <div
-              :title="String(activeProject.title)"
-              class="layout-sidebar__project"
-            >
+          <div
+            ref="projectDd"
+            class="layout-sidebar__dropdown"
+            @click="toggleProjects"
+          >
+            <div :title="activeProject.title" class="layout-sidebar__project">
               <h1>{{ makeShortTitle(activeProject.title) }}</h1>
             </div>
           </div>
@@ -188,20 +213,25 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
     </nav>
 
     <div>
-      <div v-if="isAuthEnabled" class="layout-sidebar__dropdown">
-        <div v-if="isVisibleProfile" class="layout-sidebar__dropdown-items">
+      <div v-if="isAuthEnabled" ref="userDd" class="layout-sidebar__dropdown">
+        <div
+          v-if="isVisibleProfile"
+          ref="userMenu"
+          class="layout-sidebar__dropdown-items"
+          :style="userDdStyles"
+        >
           <div
             v-if="profileEmail"
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--email"
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
           >
             {{ profileEmail }}
           </div>
           <div
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--logout"
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
             <IconSvg
-              class="layout-sidebar__dropdown-item--logout-icon"
+              class="layout-sidebar__dropdown-item--icon"
               name="logout"
             />
             Logout
@@ -308,11 +338,9 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
   @apply text-white dark:text-black;
   @apply flex items-center justify-center relative;
-}
 
-.layout-sidebar__project--active {
-  &:after {
-    @apply absolute z-10 right-[-0.625rem] w-2 h-2 rounded-full bg-blue-500 content-[''];
+  .layout-sidebar__dropdown-item--active &:after {
+    @apply absolute z-10 left-[-0.625rem] w-2 h-2 rounded-full bg-blue-500 content-[''];
   }
 }
 
@@ -324,7 +352,6 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
 }
 
 .layout-sidebar__dropdown-items {
-  @apply absolute z-10 start-full bottom-0;
   @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
   @apply w-60;
@@ -335,21 +362,17 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
 .layout-sidebar__dropdown-item {
   @apply px-4 py-3;
   @apply text-sm;
-}
-
-.layout-sidebar__dropdown-item--email {
-  @apply font-semibold;
-}
-
-.layout-sidebar__dropdown-item--logout {
   @apply cursor-pointer;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply flex gap-2 items-center;
-  @apply font-semibold;
 }
 
-.layout-sidebar__dropdown-item--logout-icon {
+.layout-sidebar__dropdown-item--icon {
   @apply h-4 w-4;
+}
+
+.layout-sidebar__dropdown-item--active {
+  @apply font-semibold;
 }
 
 .layout-sidebar__dropdown-avatar img {
