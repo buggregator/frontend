@@ -103,6 +103,8 @@ const setProject = (project: string) => {
 
   isVisibleProjects.value = false;
 };
+
+const makeShortTitle = (title: string) => title.substring(0, 2);
 </script>
 
 <template>
@@ -136,7 +138,7 @@ const setProject = (project: string) => {
                 }"
                 @click="setProject(project.key)"
               >
-                {{ String(project.title).substring(0, 2) }}
+                {{ makeShortTitle(project.title) }}
               </h1>
             </div>
 
@@ -144,7 +146,7 @@ const setProject = (project: string) => {
               :title="String(activeProject.title)"
               class="layout-sidebar__project"
             >
-              <h1>{{ String(activeProject.title).substring(0, 2) }}</h1>
+              <h1>{{ makeShortTitle(activeProject.title) }}</h1>
             </div>
           </div>
         </div>
