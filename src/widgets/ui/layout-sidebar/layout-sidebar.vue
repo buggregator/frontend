@@ -242,10 +242,7 @@ const generateRadialGradient = (input: string) =>
             class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
-            <IconSvg
-              class="layout-sidebar__dropdown-item--icon"
-              name="logout"
-            />
+            <IconSvg class="layout-sidebar__dropdown-item-icon" name="logout" />
             Logout
           </div>
         </div>
@@ -346,12 +343,8 @@ const generateRadialGradient = (input: string) =>
 .layout-sidebar__project {
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
-  @apply text-white dark:text-black;
   @apply flex items-center justify-center relative;
-
-  .layout-sidebar__dropdown-item--active &:after {
-    @apply absolute z-10 left-[-0.625rem] w-2 h-2 rounded-full bg-blue-500 content-[''];
-  }
+  @apply text-white dark:text-black;
 }
 
 .layout-sidebar__dropdown {
@@ -375,14 +368,23 @@ const generateRadialGradient = (input: string) =>
   @apply cursor-pointer;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply flex gap-2 items-center;
-}
 
-.layout-sidebar__dropdown-item--icon {
-  @apply h-4 w-4;
+  &:first-child {
+    @apply rounded-t-lg;
+  }
+
+  &:last-child {
+    @apply rounded-b-lg;
+  }
 }
 
 .layout-sidebar__dropdown-item--active {
   @apply font-semibold;
+  @apply bg-gray-100 dark:bg-gray-900;
+}
+
+.layout-sidebar__dropdown-item-icon {
+  @apply h-4 w-4;
 }
 
 .layout-sidebar__dropdown-avatar img {
