@@ -3,6 +3,7 @@ import { useFloating } from "@floating-ui/vue";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { textToColors } from "~/src/shared/lib/helpers";
 import { useEvents } from "~/src/shared/lib/use-events";
 import {
   useSettingsStore,
@@ -123,6 +124,8 @@ const setProject = (project: string) => {
 };
 
 const makeShortTitle = (title: string) => title.substring(0, 2);
+const generateRadialGradient = (input: string) =>
+  `linear-gradient(to right, ${textToColors(input).join(", ")})`;
 </script>
 
 <template>
@@ -144,7 +147,10 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
         }"
         @click="setProject(project.key)"
       >
-        <h1 class="layout-sidebar__project">
+        <h1
+          class="layout-sidebar__project"
+          :style="{ background: generateRadialGradient(project.title) }"
+        >
           {{ makeShortTitle(project.title) }}
         </h1>
 
@@ -170,7 +176,13 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
             class="layout-sidebar__dropdown"
             @click="toggleProjects"
           >
-            <div :title="activeProject.title" class="layout-sidebar__project">
+            <div
+              :title="activeProject.title"
+              class="layout-sidebar__project"
+              :style="{
+                background: generateRadialGradient(activeProject.title),
+              }"
+            >
               <h1>{{ makeShortTitle(activeProject.title) }}</h1>
             </div>
           </div>
@@ -332,8 +344,6 @@ const makeShortTitle = (title: string) => title.substring(0, 2);
 }
 
 .layout-sidebar__project {
-  @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
-  @apply dark:bg-gradient-to-r dark:from-indigo-400 dark:via-purple-500 dark:to-pink-400  rounded-lg;
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
   @apply text-white dark:text-black;
