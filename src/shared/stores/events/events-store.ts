@@ -200,10 +200,12 @@ export const useEventsStore = defineStore("eventsStore", {
     setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
         this.projects.available = projects;
-      }
 
-      if (this.projects.activeKey === null && this.projects.available.length > 0) {
-        this.setActiveProject(this.projects.available[0].key);
+        if (this.projects.activeKey === null) {
+          this.setActiveProject(projects[0].key);
+        }
+      } else {
+        this.resetActiveProject();
       }
     },
     setActiveProject(project: string | null) {
