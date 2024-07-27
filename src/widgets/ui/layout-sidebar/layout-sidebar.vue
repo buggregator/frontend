@@ -140,7 +140,7 @@ const generateRadialGradient = (input: string) =>
         v-for="project in availableProjects"
         :key="project.key"
         class="layout-sidebar__dropdown-item"
-        :title="project.title"
+        :title="project.name"
         :class="{
           'layout-sidebar__dropdown-item--active':
             activeProject.key === project.key,
@@ -149,12 +149,12 @@ const generateRadialGradient = (input: string) =>
       >
         <h1
           class="layout-sidebar__project"
-          :style="{ background: generateRadialGradient(project.title) }"
+          :style="{ background: generateRadialGradient(project.name) }"
         >
-          {{ makeShortTitle(project.title) }}
+          {{ makeShortTitle(project.name) }}
         </h1>
 
-        {{ project.title }}
+        {{ project.name }}
       </div>
     </div>
 
@@ -177,13 +177,13 @@ const generateRadialGradient = (input: string) =>
             @click="toggleProjects"
           >
             <div
-              :title="activeProject.title"
+              :title="activeProject.name"
               class="layout-sidebar__project"
               :style="{
-                background: generateRadialGradient(activeProject.title),
+                background: generateRadialGradient(activeProject.name),
               }"
             >
-              <h1>{{ makeShortTitle(activeProject.title) }}</h1>
+              <h1>{{ makeShortTitle(activeProject.name) }}</h1>
             </div>
           </div>
         </div>
