@@ -59,23 +59,25 @@ export const useEventsStore = defineStore("eventsStore", {
     availableProjects: ({ projects }) => projects.available,
   },
   actions: {
-    // events
-    async initialize (events: ServerEvent<unknown>[]): Promise<void> {
+    async initialize (): Promise<void> {
       const {api: { getProjects }} = useSettings();
-      this.events = events.slice(0, MAX_EVENTS_COUNT);
-
-      this.syncCachedWithActive(events.map(({ uuid }) => uuid));
       this.initActiveProject();
 
       try {
         const { data } = await getProjects();
-
         if (data) {
           this.setAvailableProjects(data);
         }
       } catch (e) {
         console.error(e);
       }
+    },
+    // events
+    initializeEvents (events: ServerEvent<unknown>[]): void {
+      this.events = events.slice(0, MAX_EVENTS_COUNT);
+
+      this.syncCachedWithActive(events.map(({ uuid }) => uuid));
+      this.initActiveProject();
     },
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
@@ -197,7 +199,11 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
-        this.projects.available.concat(projects);
+        this.projects.available = projects;
+      }
+
+      if (this.projects.activeKey === null && this.projects.available.length > 0) {
+        this.setActiveProject(this.projects.available[0].key);
       }
     },
     setActiveProject(project: string | null) {

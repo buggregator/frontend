@@ -364,7 +364,7 @@ const generateRadialGradient = (input: string) =>
 .layout-sidebar__dropdown-items {
   @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
-  @apply w-60;
+  @apply min-w-60;
   @apply bg-white dark:bg-gray-700;
   @apply border border-gray-300 dark:border-gray-600;
 }

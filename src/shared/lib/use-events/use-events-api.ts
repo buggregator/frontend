@@ -81,7 +81,7 @@ export const useEventsApi = (): TUseEventsApi => {
   const getAll = () => {
     getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
       if (eventsList.length) {
-        eventsStore.initialize(eventsList);
+        eventsStore.initializeEvents(eventsList);
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();
