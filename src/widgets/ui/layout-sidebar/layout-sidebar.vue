@@ -12,7 +12,6 @@ import {
   useEventsStore,
 } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
-import type { TProjects } from "~/src/shared/types";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
@@ -20,7 +19,8 @@ import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
-const { availableProjects, activeProjectKey } = storeToRefs(eventsStore);
+const { availableProjects, isMultipleProjects, activeProject } =
+  storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
@@ -93,14 +93,6 @@ const toggleProjects = () => {
   isVisibleProjects.value = !isVisibleProjects.value;
 };
 
-const activeProject = computed(() => {
-  const project = availableProjects.value.find(
-    (p) => p.key === activeProjectKey.value,
-  );
-
-  return project as unknown as TProjects["data"][number];
-});
-
 const logout = () => {
   profileStore.removeToken();
   const router = useRouter();
@@ -146,7 +138,7 @@ const generateRadialGradient = (input: string) =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <template v-if="availableProjects.length > 0">
+      <template v-if="isMultipleProjects">
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
@@ -171,7 +163,7 @@ const generateRadialGradient = (input: string) =>
         <hr class="layout-sidebar__sep" />
       </template>
 
-      <template v-if="!availableProjects.length">
+      <template v-if="!isMultipleProjects">
         <NuxtLink to="/" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>

@@ -34,7 +34,7 @@ export const useEventsStore = defineStore("eventsStore", {
     projects: {
       available: [] as TProjects['data'],
       activeKey: null as string | null,
-      default: null as string | null,
+      defaultKey: null as string | null,
     }
   }),
   getters: {
@@ -57,7 +57,9 @@ export const useEventsStore = defineStore("eventsStore", {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     },
     activeProjectKey: ({ projects }) => projects.activeKey,
+    activeProject: ({ projects }) => projects.available.find((proj) => proj.key === projects.activeKey) || projects.available[0],
     availableProjects: ({ projects }) => projects.available,
+    isMultipleProjects: ({ projects }) => (projects.available.length > 1),
   },
   actions: {
     async initialize (): Promise<void> {
@@ -220,7 +222,7 @@ export const useEventsStore = defineStore("eventsStore", {
       removeStoredProject();
     },
     setDefaultProject(key: string) {
-      this.projects.default = key;
+      this.projects.defaultKey = key;
     }
   },
 });
