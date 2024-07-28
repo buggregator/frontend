@@ -343,7 +343,7 @@ const generateRadialGradient = (input: string) =>
 .layout-sidebar__project {
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
-  @apply flex items-center justify-center relative;
+  @apply flex items-center justify-center relative flex-shrink-0;
   @apply text-white dark:text-black;
 }
 
