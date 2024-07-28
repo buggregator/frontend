@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useFloating } from "@floating-ui/vue";
+import { onClickOutside } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
@@ -26,10 +27,21 @@ const { profile } = storeToRefs(profileStore);
 
 const { getItemsCount } = useEvents();
 
-const projectDd = ref(null);
-const projectMenu = ref(null);
-const userDd = ref(null);
-const userMenu = ref(null);
+const projectDd = ref<HTMLElement | null>(null);
+const projectMenu = ref<HTMLElement | null>(null);
+const userDd = ref<HTMLElement | null>(null);
+const userMenu = ref<HTMLElement | null>(null);
+
+const isVisibleProfile = ref(false);
+const isVisibleProjects = ref(false);
+
+onClickOutside(projectMenu, () => {
+  isVisibleProjects.value = false;
+});
+
+onClickOutside(userMenu, () => {
+  isVisibleProfile.value = false;
+});
 
 const { floatingStyles: projectDdStyles } = useFloating(
   projectDd,
@@ -72,9 +84,6 @@ const profileEmail = computed(() => {
 const connectionText = computed(
   () => `WS connection is ${connectionStatus.value}`,
 );
-
-const isVisibleProfile = ref(false);
-const isVisibleProjects = ref(false);
 
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value;
@@ -127,39 +136,12 @@ const generateRadialGradient = (input: string) =>
 
 <template>
   <aside class="layout-sidebar">
-    <div
-      v-if="isVisibleProjects"
-      ref="projectMenu"
-      class="layout-sidebar__dropdown-items"
-      :style="projectDdStyles"
-    >
-      <div
-        v-for="project in availableProjects"
-        :key="project.key"
-        class="layout-sidebar__dropdown-item"
-        :title="project.name"
-        :class="{
-          'layout-sidebar__dropdown-item--active':
-            activeProject.key === project.key,
-        }"
-        @click="setProject(project.key)"
-      >
-        <h1
-          class="layout-sidebar__project"
-          :style="{ background: generateRadialGradient(project.name) }"
-        >
-          {{ makeShortTitle(project.name) }}
-        </h1>
-
-        {{ project.name }}
-      </div>
-    </div>
-
     <nav class="layout-sidebar__nav">
       <NuxtLink
         to="/"
         title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
+        tabindex="1"
       >
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
@@ -168,27 +150,28 @@ const generateRadialGradient = (input: string) =>
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
-          <div
+          <button
             ref="projectDd"
             class="layout-sidebar__dropdown"
+            tabindex="1"
             @click="toggleProjects"
           >
-            <div
+            <span
               :title="activeProject.name"
               class="layout-sidebar__project"
               :style="{
                 background: generateRadialGradient(activeProject.name),
               }"
             >
-              <h1>{{ makeShortTitle(activeProject.name) }}</h1>
-            </div>
-          </div>
+              {{ makeShortTitle(activeProject.name) }}
+            </span>
+          </button>
         </div>
 
         <hr class="layout-sidebar__sep" />
       </template>
 
-      <template v-else>
+      <template v-if="!availableProjects.length">
         <NuxtLink to="/" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>
@@ -221,6 +204,36 @@ const generateRadialGradient = (input: string) =>
       </NuxtLink>
     </nav>
 
+    <!--  Need to place projectMenu out of nav because of overflow -->
+    <div
+      v-if="isVisibleProjects"
+      ref="projectMenu"
+      class="layout-sidebar__dropdown-items"
+      :style="projectDdStyles"
+    >
+      <button
+        v-for="project in availableProjects"
+        :key="project.key"
+        class="layout-sidebar__dropdown-item"
+        :title="project.name"
+        :class="{
+          'layout-sidebar__dropdown-item--active':
+            activeProject.key === project.key,
+        }"
+        tabindex="1"
+        @click="setProject(project.key)"
+      >
+        <span
+          class="layout-sidebar__project"
+          :style="{ background: generateRadialGradient(project.name) }"
+        >
+          {{ makeShortTitle(project.name) }}
+        </span>
+
+        {{ project.name }}
+      </button>
+    </div>
+
     <div>
       <div v-if="isAuthEnabled" ref="userDd" class="layout-sidebar__dropdown">
         <div
@@ -229,19 +242,19 @@ const generateRadialGradient = (input: string) =>
           class="layout-sidebar__dropdown-items"
           :style="userDdStyles"
         >
-          <div
+          <button
             v-if="profileEmail"
             class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
           >
             {{ profileEmail }}
-          </div>
-          <div
+          </button>
+          <button
             class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
             <IconSvg class="layout-sidebar__dropdown-item-icon" name="logout" />
             Logout
-          </div>
+          </button>
         </div>
 
         <div
@@ -364,7 +377,7 @@ const generateRadialGradient = (input: string) =>
   @apply cursor-pointer;
   @apply bg-white dark:bg-gray-800;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply flex gap-4 items-center;
+  @apply flex gap-4 items-center text-left w-full;
 
   &:first-child {
     @apply rounded-t-lg;
