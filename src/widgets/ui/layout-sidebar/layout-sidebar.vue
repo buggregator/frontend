@@ -225,7 +225,12 @@ const generateRadialGradient = (input: string) =>
           {{ makeShortTitle(project.name) }}
         </span>
 
-        {{ project.name }}
+        <div class="layout-sidebar__dropdown-item-text">
+          <span class="layout-sidebar__dropdown-item-text-key">
+            {{ project.key }}
+          </span>
+          {{ project.name }}
+        </div>
       </button>
     </div>
 
@@ -349,7 +354,16 @@ const generateRadialGradient = (input: string) =>
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
   @apply flex items-center justify-center relative flex-shrink-0;
-  @apply text-white dark:text-black;
+  @apply text-white dark:text-black self-start;
+}
+
+.layout-sidebar__dropdown-item-text {
+  @apply flex flex-col;
+}
+
+.layout-sidebar__dropdown-item-text-key {
+  @apply text-2xs uppercase font-normal -mt-0.5;
+  @apply text-gray-600 dark:text-gray-400;
 }
 
 .layout-sidebar__dropdown {
