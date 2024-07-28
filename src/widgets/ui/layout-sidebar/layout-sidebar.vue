@@ -117,9 +117,6 @@ const serverVersion = computed(() =>
 const setProject = (project: string) => {
   eventsStore.setActiveProject(project);
 
-  const router = useRouter();
-  router.push("/");
-
   isVisibleProjects.value = false;
 };
 
