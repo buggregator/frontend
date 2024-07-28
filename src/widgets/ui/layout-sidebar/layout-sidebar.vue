@@ -367,7 +367,7 @@ const generateRadialGradient = (input: string) =>
   @apply text-sm;
   @apply cursor-pointer;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply flex gap-2 items-center;
+  @apply flex gap-4 items-center;
 
   &:first-child {
     @apply rounded-t-lg;
