@@ -8,7 +8,9 @@ import {
   getStoredActiveTheme,
   setStoredEventsCountVisibility,
   setStoredFixedHeader,
-  setStoredActiveTheme, getStoredPrimaryCodeEditor, setStoredPrimaryCodeEditor,
+  setStoredActiveTheme,
+  getStoredPrimaryCodeEditor,
+  setStoredPrimaryCodeEditor,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {

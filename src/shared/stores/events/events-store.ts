@@ -33,7 +33,7 @@ export const useEventsStore = defineStore("eventsStore", {
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],
-      activeKey: null as string | null,
+      activeKey: undefined as string | undefined,
     }
   }),
   getters: {
@@ -56,12 +56,22 @@ export const useEventsStore = defineStore("eventsStore", {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
     },
     activeProjectKey: ({ projects }) => projects.activeKey,
+    activeProject: ({ projects }) => {
+      const storedProject = projects.available.find((proj) => proj.key === projects.activeKey)
+      const defaultProject = projects.available.find((proj) => proj.is_default)
+
+      return storedProject || defaultProject || projects.available[0]
+    },
     availableProjects: ({ projects }) => projects.available,
+    isMultipleProjects: ({ projects }) => (
+      projects.available.length > 1 ||
+      !projects.available.some((proj) => proj.is_default)
+    ),
   },
   actions: {
     async initialize (): Promise<void> {
       const {api: { getProjects }} = useSettings();
-      this.initActiveProject();
+      this.initActiveProjectKey();
 
       try {
         const { data } = await getProjects();
@@ -77,7 +87,7 @@ export const useEventsStore = defineStore("eventsStore", {
       this.events = events.slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
-      this.initActiveProject();
+      this.initActiveProjectKey();
     },
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
@@ -194,27 +204,28 @@ export const useEventsStore = defineStore("eventsStore", {
       setStoredLockedIds(this.lockedIds);
     },
     // projects
-    initActiveProject() {
-      this.projects.activeKey = getStoredProject();
+    initActiveProjectKey() {
+      this.projects.activeKey = getStoredProject() || this.activeProjectKey;
     },
     setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
         this.projects.available = projects;
 
-        if (this.projects.activeKey === null) {
-          this.setActiveProject(projects[0].key);
+        if (!this.projects.activeKey) {
+          const defaultProject = projects.find((proj) => proj.is_default) || projects[0];
+          this.setActiveProjectKey(defaultProject.key);
         }
       } else {
-        this.resetActiveProject();
+        this.resetActiveProjectKey();
       }
     },
-    setActiveProject(project: string | null) {
+    setActiveProjectKey(project: string) {
       this.projects.activeKey = project;
 
       setStoredProject(project);
     },
-    resetActiveProject() {
-      this.projects.activeKey = null;
+    resetActiveProjectKey() {
+      this.projects.activeKey = undefined;
 
       removeStoredProject();
     }

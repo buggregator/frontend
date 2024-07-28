@@ -12,7 +12,6 @@ import {
   useEventsStore,
 } from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
-import type { TProjects } from "~/src/shared/types";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
@@ -20,7 +19,8 @@ import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
-const { availableProjects, activeProjectKey } = storeToRefs(eventsStore);
+const { availableProjects, isMultipleProjects, activeProject } =
+  storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
@@ -34,6 +34,9 @@ const userMenu = ref<HTMLElement | null>(null);
 
 const isVisibleProfile = ref(false);
 const isVisibleProjects = ref(false);
+
+// TODO: need to check why project is empty on first load
+const isProjectLoading = computed(() => !activeProject.value);
 
 onClickOutside(projectMenu, () => {
   isVisibleProjects.value = false;
@@ -93,14 +96,6 @@ const toggleProjects = () => {
   isVisibleProjects.value = !isVisibleProjects.value;
 };
 
-const activeProject = computed(() => {
-  const project = availableProjects.value.find(
-    (p) => p.key === activeProjectKey.value,
-  );
-
-  return project as unknown as TProjects["data"][number];
-});
-
 const logout = () => {
   profileStore.removeToken();
   const router = useRouter();
@@ -123,15 +118,15 @@ const serverVersion = computed(() =>
     : `@${apiVersion.value}`,
 );
 
-const setProject = (project: string) => {
-  eventsStore.setActiveProject(project);
+const setProject = (projectKey: string) => {
+  eventsStore.setActiveProjectKey(projectKey);
 
   isVisibleProjects.value = false;
 };
 
-const makeShortTitle = (title: string) => title.substring(0, 2);
+const makeShortTitle = (title: string) => (title || "").substring(0, 2);
 const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input).join(", ")})`;
+  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
 </script>
 
 <template>
@@ -146,7 +141,7 @@ const generateRadialGradient = (input: string) =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <template v-if="availableProjects.length > 0">
+      <template v-if="!isProjectLoading && isMultipleProjects">
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
@@ -171,7 +166,7 @@ const generateRadialGradient = (input: string) =>
         <hr class="layout-sidebar__sep" />
       </template>
 
-      <template v-if="!availableProjects.length">
+      <template v-if="!isMultipleProjects || isProjectLoading">
         <NuxtLink to="/" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>
@@ -230,7 +225,12 @@ const generateRadialGradient = (input: string) =>
           {{ makeShortTitle(project.name) }}
         </span>
 
-        {{ project.name }}
+        <div class="layout-sidebar__dropdown-item-text">
+          <span class="layout-sidebar__dropdown-item-text-key">
+            {{ project.key }}
+          </span>
+          {{ project.name }}
+        </div>
       </button>
     </div>
 
@@ -354,7 +354,16 @@ const generateRadialGradient = (input: string) =>
   @apply text-2xs font-semibold uppercase;
   @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
   @apply flex items-center justify-center relative flex-shrink-0;
-  @apply text-white dark:text-black;
+  @apply text-white dark:text-black self-start;
+}
+
+.layout-sidebar__dropdown-item-text {
+  @apply flex flex-col;
+}
+
+.layout-sidebar__dropdown-item-text-key {
+  @apply text-2xs uppercase font-normal -mt-0.5;
+  @apply text-gray-600 dark:text-gray-400;
 }
 
 .layout-sidebar__dropdown {

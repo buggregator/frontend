@@ -16,6 +16,7 @@ export type TSettings = {
 export type TProjects = {
   data: {
     name: string,
-    key: string
+    key: string,
+    is_default: boolean,
   }[]
 }
