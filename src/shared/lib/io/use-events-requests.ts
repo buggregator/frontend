@@ -21,9 +21,9 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   const headers = {"X-Auth-Token": token.value }
   const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`
-  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events${project.value ? `?project=${project.value}` : ''}`
+  const getEventsPreviewRestUrl = (): string => `${REST_API_URL}/api/events/preview${project.value ? `?project=${project.value}` : ''}`
 
-  const getAll = () => fetch(getEventsRestUrl(), { headers })
+  const getAll = () => fetch(getEventsPreviewRestUrl(), { headers })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -59,7 +59,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getEventsRestUrl(), {
+  const deleteAll = () => fetch(getEventsPreviewRestUrl(), {
     method: 'DELETE',
     headers,
     ...(project.value ? { body: JSON.stringify({project: project.value}) } : null)
@@ -68,7 +68,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteList = (uuids: EventId[]) => fetch(getEventsRestUrl(), {
+  const deleteList = (uuids: EventId[]) => fetch(getEventsPreviewRestUrl(), {
     method: 'DELETE',
     headers,
     body: JSON.stringify({uuids})
@@ -77,7 +77,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteByType = (type: EventType) => fetch(getEventsRestUrl(), {
+  const deleteByType = (type: EventType) => fetch(getEventsPreviewRestUrl(), {
     method: 'DELETE',
     headers,
     body: JSON.stringify({
