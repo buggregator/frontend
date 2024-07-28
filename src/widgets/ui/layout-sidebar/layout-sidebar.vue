@@ -358,7 +358,6 @@ const generateRadialGradient = (input: string) =>
   @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
   @apply min-w-60;
-  @apply bg-white dark:bg-gray-700;
   @apply border border-gray-300 dark:border-gray-600;
 }
 
@@ -366,6 +365,7 @@ const generateRadialGradient = (input: string) =>
   @apply px-4 py-3;
   @apply text-sm;
   @apply cursor-pointer;
+  @apply bg-white dark:bg-gray-800;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply flex gap-4 items-center;
 
@@ -380,7 +380,7 @@ const generateRadialGradient = (input: string) =>
 
 .layout-sidebar__dropdown-item--active {
   @apply font-semibold;
-  @apply bg-gray-100 dark:bg-gray-900;
+  @apply bg-gray-100 dark:bg-gray-700;
 }
 
 .layout-sidebar__dropdown-item-icon {
