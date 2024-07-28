@@ -7,6 +7,18 @@ let isEventsEmitted = false
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
+  const { activeProjectKey: project } = storeToRefs(useEventsStore())
+
+  const createPayload = (additional?: Record<string, unknown>) => {
+    const payload = {
+      token: token.value,
+      project: project.value
+    }
+    if (additional) {
+      Object.assign(payload, additional)
+    }
+    return payload
+  }
 
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventsStore()
@@ -50,9 +62,12 @@ export const useApiTransport = () => {
 
     centrifuge.on('publication', (ctx) => {
       // We need to handle only events from the channel 'events' with event name 'event.received'
-      if (ctx.channel === 'events' && ctx.data?.event === 'event.received') {
+      if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
-        eventsStore.addList([event]);
+
+        if (event && event.project === project) {
+          eventsStore.addList([event]);
+        }
       }
     });
   }
@@ -71,7 +86,7 @@ export const useApiTransport = () => {
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/event/${eventId}`, {token: token.value})
+      return centrifuge.rpc(`delete:api/event/${eventId}`, createPayload())
     }
 
     return deleteSingle(eventId);
@@ -79,7 +94,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {token: token.value})
+      return centrifuge.rpc(`delete:api/events`, createPayload())
     }
 
     return deleteAll();
@@ -95,7 +110,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {uuids, token: token.value})
+      return centrifuge.rpc(`delete:api/events`, createPayload({ uuids }))
     }
 
     return deleteList(uuids);
@@ -103,7 +118,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, {type, token: token.value})
+      return centrifuge.rpc(`delete:api/events`, createPayload())
     }
 
     return deleteByType(type);
@@ -111,15 +126,12 @@ export const useApiTransport = () => {
 
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, {
-      stop_execution: true,
-      token: token.value
-    })
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
   }
 
   // NOTE: works only with ws
   const rayContinueExecution = (hash: RayContentLock["name"]) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, {token: token.value})
+    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload())
   }
 
   return {

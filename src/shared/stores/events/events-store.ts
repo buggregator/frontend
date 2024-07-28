@@ -1,8 +1,15 @@
 import { defineStore } from "pinia";
 import {PAGE_TYPES} from "../../constants";
-import type { EventId, EventType , ServerEvent, TEventsGroup} from '../../types';
+import {useSettings} from "../../lib/use-settings";
+import type {EventId, EventType, ServerEvent, TEventsGroup, TProjects} from '../../types';
 import {EVENT_TYPES} from "../../types";
-import { getStoredLockedIds, setStoredCachedIds, setStoredLockedIds, getStoredCachedIds } from "./local-storage-actions";
+import {
+  getStoredLockedIds,
+  setStoredCachedIds,
+  setStoredLockedIds,
+  getStoredCachedIds,
+  setStoredProject, removeStoredProject, getStoredProject
+} from "./local-storage-actions";
 import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
@@ -24,6 +31,10 @@ export const useEventsStore = defineStore("eventsStore", {
     events: [] as ServerEvent<unknown>[],
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
+    projects: {
+      available: [] as TProjects['data'],
+      activeKey: null as string | null,
+    }
   }),
   getters: {
     eventsCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
@@ -43,14 +54,30 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     cachedIdsTypesList({ cachedIds }) {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as TEventsGroup)
-    }
+    },
+    activeProjectKey: ({ projects }) => projects.activeKey,
+    availableProjects: ({ projects }) => projects.available,
   },
   actions: {
+    async initialize (): Promise<void> {
+      const {api: { getProjects }} = useSettings();
+      this.initActiveProject();
+
+      try {
+        const { data } = await getProjects();
+        if (data) {
+          this.setAvailableProjects(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
     // events
-    initialize(events: ServerEvent<unknown>[]): void {
+    initializeEvents (events: ServerEvent<unknown>[]): void {
       this.events = events.slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
+      this.initActiveProject();
     },
     addList(events: ServerEvent<unknown>[]): void {
       events.forEach((event) => {
@@ -165,6 +192,31 @@ export const useEventsStore = defineStore("eventsStore", {
       this.lockedIds.push(eventUuid);
 
       setStoredLockedIds(this.lockedIds);
+    },
+    // projects
+    initActiveProject() {
+      this.projects.activeKey = getStoredProject();
+    },
+    setAvailableProjects(projects: TProjects['data']) {
+      if (projects.length > 0) {
+        this.projects.available = projects;
+
+        if (this.projects.activeKey === null) {
+          this.setActiveProject(projects[0].key);
+        }
+      } else {
+        this.resetActiveProject();
+      }
+    },
+    setActiveProject(project: string | null) {
+      this.projects.activeKey = project;
+
+      setStoredProject(project);
+    },
+    resetActiveProject() {
+      this.projects.activeKey = null;
+
+      removeStoredProject();
     }
   },
 });

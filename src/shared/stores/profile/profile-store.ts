@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import type {TProfile} from "../types";
+import type {TProfile} from "../../types";
+import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage-actions";
 
-const STORAGE_KEY = "token";
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
@@ -16,17 +16,17 @@ export const useProfileStore = defineStore("profileStore", {
   actions: {
     setToken(token: string): void {
       this.token = token;
-      localStorage?.setItem(STORAGE_KEY, token);
+      setStoredToken(token);
     },
     setProfile(profile: TProfile): void {
       this.profile = profile;
     },
     fetchToken(): void {
-      this.setToken(localStorage?.getItem(STORAGE_KEY) || '');
+      this.setToken(getStoredToken() || '');
     },
     removeToken(): void {
       this.token = '';
-      localStorage?.removeItem(STORAGE_KEY);
+      removeStoredToken();
     },
   },
 });

@@ -2,7 +2,7 @@
 import { useTitle } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { useSettingsStore, THEME_MODES } from "~/src/shared/stores/settings";
+import { useSettingsStore, THEME_MODES } from "~/src/shared/stores";
 import { AppHeader, BadgeNumber, IconSvg } from "~/src/shared/ui";
 
 const settingsStore = useSettingsStore();

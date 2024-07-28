@@ -1,18 +1,23 @@
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
 import { LayoutSidebar } from "~/src/widgets/ui";
 import { useEvents } from "~/src/shared/lib/use-events";
 import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
+import { useEventsStore } from "~/src/shared/stores";
 
 SfdumpWrap(window.document);
 
-onMounted(() => {
-  const { events } = useEvents();
+const { activeProjectKey } = storeToRefs(useEventsStore());
+const { events } = useEvents();
 
-  if (!events?.items?.value?.length) {
+watch(
+  () => activeProjectKey.value,
+  () => {
     events.getAll();
-  }
-});
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

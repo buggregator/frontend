@@ -1,25 +1,62 @@
 <script lang="ts" setup>
+import { useFloating } from "@floating-ui/vue";
+import { onClickOutside } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { textToColors } from "~/src/shared/lib/helpers";
 import { useEvents } from "~/src/shared/lib/use-events";
-import { useSettingsStore } from "~/src/shared/stores";
+import {
+  useSettingsStore,
+  useProfileStore,
+  useEventsStore,
+} from "~/src/shared/stores";
 import { useConnectionStore } from "~/src/shared/stores/connections";
-import { useProfileStore } from "~/src/shared/stores/profile";
+import type { TProjects } from "~/src/shared/types";
 import { BadgeNumber, IconSvg } from "~/src/shared/ui";
 import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
+const eventsStore = useEventsStore();
+const { availableProjects, activeProjectKey } = storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
-const { profile } = storeToRefs(useProfileStore());
+const { profile } = storeToRefs(profileStore);
 
 const { getItemsCount } = useEvents();
 
+const projectDd = ref<HTMLElement | null>(null);
+const projectMenu = ref<HTMLElement | null>(null);
+const userDd = ref<HTMLElement | null>(null);
+const userMenu = ref<HTMLElement | null>(null);
+
+const isVisibleProfile = ref(false);
+const isVisibleProjects = ref(false);
+
+onClickOutside(projectMenu, () => {
+  isVisibleProjects.value = false;
+});
+
+onClickOutside(userMenu, () => {
+  isVisibleProfile.value = false;
+});
+
+const { floatingStyles: projectDdStyles } = useFloating(
+  projectDd,
+  projectMenu,
+  {
+    placement: "right-start",
+  },
+);
+
+const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
+  placement: "right",
+});
+
 const connectionStatus = computed(() =>
-  isConnectedWS.value ? "connected" : "disconnected"
+  isConnectedWS.value ? "connected" : "disconnected",
 );
 
 const avatar = computed(() => {
@@ -31,7 +68,7 @@ const avatar = computed(() => {
 
   if (profile.value.avatar.startsWith("<svg")) {
     return `data:image/svg+xml;base64,${btoa(
-      profile.value.avatar.replace(/&quot;/g, '"')
+      profile.value.avatar.replace(/&quot;/g, '"'),
     )}`;
   }
 
@@ -45,13 +82,24 @@ const profileEmail = computed(() => {
 });
 
 const connectionText = computed(
-  () => `WS connection is ${connectionStatus.value}`
+  () => `WS connection is ${connectionStatus.value}`,
 );
 
-const isHidden = ref(true);
 const toggleProfileDropdown = () => {
-  isHidden.value = !isHidden.value;
+  isVisibleProfile.value = !isVisibleProfile.value;
 };
+
+const toggleProjects = () => {
+  isVisibleProjects.value = !isVisibleProjects.value;
+};
+
+const activeProject = computed(() => {
+  const project = availableProjects.value.find(
+    (p) => p.key === activeProjectKey.value,
+  );
+
+  return project as unknown as TProjects["data"][number];
+});
 
 const logout = () => {
   profileStore.removeToken();
@@ -66,14 +114,24 @@ const isAuthEnabled = computed(() => auth.value.isEnabled);
 const { apiVersion } = storeToRefs(useSettingsStore());
 
 const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`
+  !version || version === "0.0.1" ? "@dev" : `v${version}`,
 );
 
 const serverVersion = computed(() =>
   String(apiVersion.value).match(/^[0-9.]+.*$/)
     ? `v${apiVersion.value}`
-    : `@${apiVersion.value}`
+    : `@${apiVersion.value}`,
 );
+
+const setProject = (project: string) => {
+  eventsStore.setActiveProject(project);
+
+  isVisibleProjects.value = false;
+};
+
+const makeShortTitle = (title: string) => title.substring(0, 2);
+const generateRadialGradient = (input: string) =>
+  `linear-gradient(to right, ${textToColors(input).join(", ")})`;
 </script>
 
 <template>
@@ -83,13 +141,41 @@ const serverVersion = computed(() =>
         to="/"
         title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
+        tabindex="1"
       >
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <NuxtLink to="/" title="Events" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="events" />
-      </NuxtLink>
+      <template v-if="availableProjects.length > 0">
+        <hr class="layout-sidebar__sep" />
+
+        <div class="layout-sidebar__projects">
+          <button
+            ref="projectDd"
+            class="layout-sidebar__dropdown"
+            tabindex="1"
+            @click="toggleProjects"
+          >
+            <span
+              :title="activeProject.name"
+              class="layout-sidebar__project"
+              :style="{
+                background: generateRadialGradient(activeProject.name),
+              }"
+            >
+              {{ makeShortTitle(activeProject.name) }}
+            </span>
+          </button>
+        </div>
+
+        <hr class="layout-sidebar__sep" />
+      </template>
+
+      <template v-if="!availableProjects.length">
+        <NuxtLink to="/" title="Events" class="layout-sidebar__link">
+          <IconSvg class="layout-sidebar__link-icon" name="events" />
+        </NuxtLink>
+      </template>
 
       <template v-for="type in EVENTS_NAV_ORDER" :key="type">
         <NuxtLink
@@ -118,31 +204,68 @@ const serverVersion = computed(() =>
       </NuxtLink>
     </nav>
 
+    <!--  Need to place projectMenu out of nav because of overflow -->
+    <div
+      v-if="isVisibleProjects"
+      ref="projectMenu"
+      class="layout-sidebar__dropdown-items"
+      :style="projectDdStyles"
+    >
+      <button
+        v-for="project in availableProjects"
+        :key="project.key"
+        class="layout-sidebar__dropdown-item"
+        :title="project.name"
+        :class="{
+          'layout-sidebar__dropdown-item--active':
+            activeProject.key === project.key,
+        }"
+        tabindex="1"
+        @click="setProject(project.key)"
+      >
+        <span
+          class="layout-sidebar__project"
+          :style="{ background: generateRadialGradient(project.name) }"
+        >
+          {{ makeShortTitle(project.name) }}
+        </span>
+
+        {{ project.name }}
+      </button>
+    </div>
+
     <div>
-      <div v-if="isAuthEnabled" class="layout-sidebar__profile">
-        <div v-if="!isHidden" class="layout-sidebar__profile-dropdown">
-          <div
+      <div v-if="isAuthEnabled" ref="userDd" class="layout-sidebar__dropdown">
+        <div
+          v-if="isVisibleProfile"
+          ref="userMenu"
+          class="layout-sidebar__dropdown-items"
+          :style="userDdStyles"
+        >
+          <button
             v-if="profileEmail"
-            class="profile-dropdown-item profile-dropdown-item--email"
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
           >
             {{ profileEmail }}
-          </div>
-          <div
-            class="profile-dropdown-item profile-dropdown-item--logout"
+          </button>
+          <button
+            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
-            <IconSvg class="profile-dropdown-item--logout-icon" name="logout" />
+            <IconSvg class="layout-sidebar__dropdown-item-icon" name="logout" />
             Logout
-          </div>
+          </button>
         </div>
+
         <div
           v-if="avatar"
-          class="layout-sidebar__profile-avatar"
+          class="layout-sidebar__dropdown-avatar"
           @click="toggleProfileDropdown"
         >
-          <img :src="avatar" />
+          <img :src="avatar" alt="profile" />
         </div>
       </div>
+
       <div class="layout-sidebar__connection">
         <IconSvg
           class="layout-sidebar__connection-icon"
@@ -179,21 +302,30 @@ const serverVersion = computed(() =>
 }
 
 .layout-sidebar__nav {
-  @apply flex-col flex overflow-auto;
+  @apply flex-col flex overflow-auto md:gap-1 lg:gap-1.5;
+  @apply md:p-1 lg:p-1.5;
   @apply divide-y divide-gray-300 dark:divide-gray-600 md:divide-none;
   @apply border-b border-gray-300 dark:border-gray-600 md:border-none;
   @apply overflow-hidden;
 }
 
+.layout-sidebar__sep {
+  @apply bg-gray-300 dark:bg-gray-500 h-0.5;
+}
+
 .layout-sidebar__link {
-  @apply block relative;
-  @apply flex items-center justify-center;
-  @apply md:mx-1 lg:mx-1.5 md:mt-1 lg:mt-1.5 md:rounded-lg;
+  @apply relative cursor-pointer flex;
+  @apply flex items-center justify-center w-full;
+  @apply md:rounded-lg;
   @apply px-1.5 py-2 md:px-2 md:py-3;
   @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
   &.router-link-active {
     @apply bg-blue-700 text-blue-200;
+  }
+
+  .layout-sidebar__projects & {
+    @apply p-1.5 md:p-2;
   }
 }
 
@@ -214,43 +346,58 @@ const serverVersion = computed(() =>
   }
 }
 
-.layout-sidebar__profile {
-  @apply h-9 sm:h-10 md:h-14;
-  @apply p-3 mb-2;
-  @apply flex items-center justify-center;
-  @apply relative;
+.layout-sidebar__projects {
+  @apply flex items-center justify-center flex-col;
 }
 
-.layout-sidebar__profile-dropdown {
-  @apply absolute z-10 start-full bottom-0;
+.layout-sidebar__project {
+  @apply text-2xs font-semibold uppercase;
+  @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
+  @apply flex items-center justify-center relative flex-shrink-0;
+  @apply text-white dark:text-black;
+}
+
+.layout-sidebar__dropdown {
+  @apply h-9 sm:h-10 md:h-14;
+  @apply p-3;
+  @apply flex items-center justify-center;
+  @apply relative cursor-pointer;
+}
+
+.layout-sidebar__dropdown-items {
   @apply divide-y divide-gray-200 dark:divide-gray-600;
   @apply rounded-lg shadow-xl;
-  @apply w-60;
-  @apply bg-white dark:bg-gray-700;
+  @apply min-w-60;
   @apply border border-gray-300 dark:border-gray-600;
 }
 
-.profile-dropdown-item {
+.layout-sidebar__dropdown-item {
   @apply px-4 py-3;
   @apply text-sm;
-}
-
-.profile-dropdown-item--email {
-  @apply font-semibold;
-}
-
-.profile-dropdown-item--logout {
   @apply cursor-pointer;
+  @apply bg-white dark:bg-gray-800;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply flex gap-2 items-center;
-  @apply font-semibold;
+  @apply flex gap-4 items-center text-left w-full;
+
+  &:first-child {
+    @apply rounded-t-lg;
+  }
+
+  &:last-child {
+    @apply rounded-b-lg;
+  }
 }
 
-.profile-dropdown-item--logout-icon {
+.layout-sidebar__dropdown-item--active {
+  @apply font-semibold;
+  @apply bg-gray-100 dark:bg-gray-700;
+}
+
+.layout-sidebar__dropdown-item-icon {
   @apply h-4 w-4;
 }
 
-.layout-sidebar__profile-avatar img {
+.layout-sidebar__dropdown-avatar img {
   @apply w-full h-full;
   @apply rounded-full;
   @apply overflow-hidden;

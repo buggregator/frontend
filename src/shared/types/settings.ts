@@ -9,5 +9,13 @@ export type TSettings = {
     enabled: boolean,
     login_url: string,
   },
-  version: string
+  version: string,
+}
+
+
+export type TProjects = {
+  data: {
+    name: string,
+    key: string
+  }[]
 }
