@@ -34,6 +34,7 @@ export const useEventsStore = defineStore("eventsStore", {
     projects: {
       available: [] as TProjects['data'],
       activeKey: null as string | null,
+      default: null as string | null,
     }
   }),
   getters: {
@@ -217,6 +218,9 @@ export const useEventsStore = defineStore("eventsStore", {
       this.projects.activeKey = null;
 
       removeStoredProject();
+    },
+    setDefaultProject(key: string) {
+      this.projects.default = key;
     }
   },
 });

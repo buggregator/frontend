@@ -10,6 +10,9 @@ export type TSettings = {
     login_url: string,
   },
   version: string,
+  project: {
+    default: string,
+  }
 }
 
 
