@@ -65,7 +65,7 @@ export const useApiTransport = () => {
       if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
 
-        if (event && event.project === project) {
+        if (event && event.project === project.value) {
           eventsStore.addList([event]);
         }
       }
