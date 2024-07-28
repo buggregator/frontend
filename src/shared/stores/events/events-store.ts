@@ -65,7 +65,7 @@ export const useEventsStore = defineStore("eventsStore", {
     availableProjects: ({ projects }) => projects.available,
     isMultipleProjects: ({ projects }) => (
       projects.available.length > 1 ||
-      projects.available.find((proj) => !proj.is_default)
+      !projects.available.some((proj) => proj.is_default)
     ),
   },
   actions: {
@@ -213,18 +213,18 @@ export const useEventsStore = defineStore("eventsStore", {
 
         if (!this.projects.activeKey) {
           const defaultProject = projects.find((proj) => proj.is_default) || projects[0];
-          this.setActiveProject(defaultProject.key);
+          this.setActiveProjectKey(defaultProject.key);
         }
       } else {
-        this.resetActiveProject();
+        this.resetActiveProjectKey();
       }
     },
-    setActiveProject(project: string) {
+    setActiveProjectKey(project: string) {
       this.projects.activeKey = project;
 
       setStoredProject(project);
     },
-    resetActiveProject() {
+    resetActiveProjectKey() {
       this.projects.activeKey = undefined;
 
       removeStoredProject();

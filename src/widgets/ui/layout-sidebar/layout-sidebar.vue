@@ -35,6 +35,9 @@ const userMenu = ref<HTMLElement | null>(null);
 const isVisibleProfile = ref(false);
 const isVisibleProjects = ref(false);
 
+// TODO: need to check why project is empty on first load
+const isProjectLoading = computed(() => !activeProject.value);
+
 onClickOutside(projectMenu, () => {
   isVisibleProjects.value = false;
 });
@@ -115,15 +118,15 @@ const serverVersion = computed(() =>
     : `@${apiVersion.value}`,
 );
 
-const setProject = (project: string) => {
-  eventsStore.setActiveProject(project);
+const setProject = (projectKey: string) => {
+  eventsStore.setActiveProjectKey(projectKey);
 
   isVisibleProjects.value = false;
 };
 
-const makeShortTitle = (title: string) => title.substring(0, 2);
+const makeShortTitle = (title: string) => (title || "").substring(0, 2);
 const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input).join(", ")})`;
+  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
 </script>
 
 <template>
@@ -138,7 +141,7 @@ const generateRadialGradient = (input: string) =>
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
       </NuxtLink>
 
-      <template v-if="isMultipleProjects">
+      <template v-if="!isProjectLoading && isMultipleProjects">
         <hr class="layout-sidebar__sep" />
 
         <div class="layout-sidebar__projects">
@@ -163,7 +166,7 @@ const generateRadialGradient = (input: string) =>
         <hr class="layout-sidebar__sep" />
       </template>
 
-      <template v-if="!isMultipleProjects">
+      <template v-if="!isMultipleProjects || isProjectLoading">
         <NuxtLink to="/" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </NuxtLink>
