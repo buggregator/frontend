@@ -10,16 +10,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   const store = useProfileStore()
+  const { isAuthenticated}  = storeToRefs(store)
   store.fetchToken()
 
-  if (store.isAuthenticated) {
+  if (isAuthenticated.value) {
     const {api: {getProfile}} = useSettings();
     const profile = await getProfile();
     store.setProfile(profile)
     return undefined
   }
 
-  if (to.name !== 'login' && !store.isAuthenticated) {
+  if (to.name !== 'login' && !isAuthenticated.value) {
     return navigateTo('/login')
   }
 
