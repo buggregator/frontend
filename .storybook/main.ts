@@ -1,5 +1,7 @@
-const fs = require("fs");
-const path = require('path');
+import fs from "node:fs";
+import path from 'node:path';
+import vue from '@vitejs/plugin-vue'
+import {fileURLToPath} from "url";
 
 //storybook-tailwind-dark-mode
 const config = {
@@ -19,7 +21,7 @@ const config = {
   ],
 
   framework: {
-    name: "@storybook-vue/nuxt",
+    name: "@storybook/vue3-vite",
     options: {}
   },
 
@@ -40,6 +42,19 @@ const config = {
       STORYBOOK_ICON_SVG_NAMES: allIconNamesList,
     }},
 
+  viteFinal: async (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '#app': fileURLToPath(new URL('../node_modules/nuxt/dist/app', import.meta.url)),
+      '#app/*': fileURLToPath(new URL('../node_modules/nuxt/dist/app/*', import.meta.url)),
+    }
+
+    const { mergeConfig } = await import('vite');
+
+    return mergeConfig(config, {
+      plugins: [vue()],
+    });
+  }
 };
 
 export default config;

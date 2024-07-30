@@ -11,9 +11,11 @@
     "lint": "yarn codestyle && yarn typecheck",
     "codestyle": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"TODO: need to add tests\""
+    "test": "echo \"TODO: need to add tests\"",
+    "storybook": "storybook dev -p 6006",
+    "sb": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
-  "type": "module",
   "lint-staged": {
     "*.{js,ts}": [
       "eslint --fix"
@@ -29,15 +31,20 @@
     "*.{js,css,md}": "prettier --write"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-attributes": "^7.24.7",
+    "@chromatic-com/storybook": "^1.6.1",
     "@conarti/eslint-plugin-feature-sliced": "^1.0.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@nuxtjs/storybook": "8.1.5",
+    "@nuxtjs/storybook": "^8.1.5",
     "@nuxtjs/tailwindcss": "^6.2.0",
     "@storybook-vue/nuxt": "0.2.10",
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/addon-interactions": "^8.1.11",
     "@storybook/addon-links": "^8.1.11",
+    "@storybook/blocks": "8.1.11",
+    "@storybook/test": "8.1.11",
     "@storybook/vue3": "^8.1.11",
+    "@storybook/vue3-vite": "8.1.11",
     "@types/cytoscape-dagre": "^2.3.1",
     "@types/downloadjs": "^1.4.3",
     "@types/lodash.debounce": "^4.0.7",
@@ -74,6 +81,7 @@
     "@sentry/types": "^8.15.0",
     "@storybook/addon-actions": "^8.1.11",
     "@types/lodash": "^4.14.200",
+    "@vitejs/plugin-vue": "^5.1.1",
     "@vue/shared": "^3.2.45",
     "@vueuse/core": "^10.11.0",
     "centrifuge": "^5.2.2",
@@ -89,7 +97,7 @@
     "lodash.isstring": "^4.0.1",
     "lodash.pick": "^4.4.0",
     "moment": "^2.29.4",
-    "nuxt": "^3.8.2",
+    "nuxt": "^3.12.4",
     "pinia": "^2.0.30",
     "pluralize": "^8.0.0",
     "tailwindcss": "^3.2.4",

@@ -1,3 +1,4 @@
+import vue from '@vitejs/plugin-vue'
 import {defineNuxtConfig} from "nuxt/config";
 import pkg from './package.json';
 
@@ -47,11 +48,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    '@nuxtjs/storybook'
   ],
 
   typescript: {
     strict: true,
+  },
+
+  build: {
+    transpile: ['@babel/plugin-syntax-import-attributes'],
   },
 
   devServer: {
@@ -63,6 +67,10 @@ export default defineNuxtConfig({
     public: {
       version: pkg.version,
     }
+  },
+
+  vite: {
+    plugins: [vue()]
   },
 
   compatibilityDate: "2024-07-12"
