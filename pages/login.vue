@@ -15,7 +15,7 @@ if (store.isAuthenticated) {
   await navigateTo("/");
 }
 
-const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl}`);
+const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`);
 
 const redirect = async () => {
   await navigateTo(loginUrl.value, {
