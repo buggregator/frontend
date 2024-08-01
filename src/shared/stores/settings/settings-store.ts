@@ -16,6 +16,7 @@ import {
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     apiVersion: '',
+    isSettingsLoading: false,
     auth: {
       isEnabled: false,
       loginUrl: '/login',
@@ -26,19 +27,21 @@ export const useSettingsStore = defineStore("settingsStore", {
     isVisibleEventCounts: getStoredEventsCountVisibility(),
   }),
   actions: {
-    initialize() {
+    async initialize() {
+      this.isSettingsLoading = true
       const {api: { getSettings }} = useSettings();
 
-      getSettings().then(({ version, auth } = {} as TSettings) => {
-        if (version) {
-          this.apiVersion = version
-        }
+      const { version, auth }: TSettings = await getSettings()
+      if (version) {
+        this.apiVersion = version
+      }
 
-        if (auth) {
-          this.auth.isEnabled = auth.enabled;
-          this.auth.loginUrl = auth.login_url;
-        }
-      })
+      if (auth) {
+        this.auth.isEnabled = auth.enabled;
+        this.auth.loginUrl = auth.login_url;
+      }
+
+      this.isSettingsLoading = false
     },
     changeTheme() {
       this.themeType = this.themeType === THEME_MODES.DARK
