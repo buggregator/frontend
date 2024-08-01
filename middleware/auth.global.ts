@@ -1,23 +1,24 @@
 import { navigateTo, defineNuxtRouteMiddleware } from "#app";
-import { useSettings } from "~/src/shared/lib/use-settings";
 import {useSettingsStore, useProfileStore} from "~/src/shared/stores";
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { auth}  = storeToRefs(useSettingsStore())
+  const settingsStore  = useSettingsStore()
+  const {isFetched, isAuthEnabled }  = storeToRefs(settingsStore)
 
-  if (!auth.value.isEnabled) {
+  if (!isFetched.value) {
+    await settingsStore.fetchSettings()
+  }
+
+  if (!isAuthEnabled.value) {
     return undefined
   }
 
-  const store = useProfileStore()
-  const { isAuthenticated}  = storeToRefs(store)
-  store.fetchToken()
+  const profileStore = useProfileStore()
+  const { isAuthenticated}  = storeToRefs(profileStore)
+  await profileStore.getStoredToken()
 
   if (isAuthenticated.value) {
-    const {api: {getProfile}} = useSettings();
-    const profile = await getProfile();
-    store.setProfile(profile)
-    return undefined
+    await profileStore.getProfile();
   }
 
   if (to.name !== 'login' && !isAuthenticated.value) {
@@ -25,7 +26,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   if (to.name === 'login' && to?.query?.token) {
-    store.setToken(String(to.query.token))
+    profileStore.setToken(String(to.query.token))
     return navigateTo('/')
   }
 

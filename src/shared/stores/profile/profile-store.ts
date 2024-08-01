@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import {REST_API_URL} from "../../lib/io/constants";
 import type {TProfile} from "../../types";
 import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage-actions";
 
@@ -10,7 +11,7 @@ export const useProfileStore = defineStore("profileStore", {
   }),
   getters: {
     isAuthenticated(): boolean {
-      return this.token !== undefined && this.token !== null && this.token !== "null";
+      return !!this.token && this.token !== "null";
     },
   },
   actions: {
@@ -18,11 +19,30 @@ export const useProfileStore = defineStore("profileStore", {
       this.token = token;
       setStoredToken(token);
     },
+    async getProfile(): Promise<TProfile> {
+      // TODO: need to remove fetch out of the store
+      const profile = await fetch(`${REST_API_URL}/api/me`, {
+        headers: {"X-Auth-Token": this.token || ""}
+      })
+        .then((response) => response.json())
+        .catch((e) => {
+          console.error(e);
+
+          return null
+        });
+
+      this.setProfile(profile)
+
+      return profile
+    },
     setProfile(profile: TProfile): void {
       this.profile = profile;
     },
-    fetchToken(): void {
-      this.setToken(getStoredToken() || '');
+    getStoredToken(): string {
+      const token = getStoredToken()
+      this.setToken(token);
+
+      return token
     },
     removeToken(): void {
       this.token = '';

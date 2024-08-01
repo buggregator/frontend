@@ -5,8 +5,7 @@
 <script lang="ts" setup>
 import "./src/assets/index.css";
 import "./src/assets/vendor";
-import { useEventsStore, useSettingsStore } from "~/src/shared/stores";
+import { useEventsStore } from "~/src/shared/stores";
 
-await useSettingsStore().initialize();
 useEventsStore().initialize();
 </script>
