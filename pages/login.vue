@@ -42,11 +42,11 @@ const redirect = async () => {
           </div>
           <div
             class="login-form-right-block"
-            style="
-              background: url(&quot;/bg.jpg&quot;);
-              background-size: cover;
-              background-position: center center;
-            "
+            :style="{
+              background: `url('/bg.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+            }"
           ></div>
         </div>
       </div>
