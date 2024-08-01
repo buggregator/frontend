@@ -47,7 +47,7 @@ const config = {
       ...config.resolve.alias,
       '#app': fileURLToPath(new URL('../node_modules/nuxt/dist/app', import.meta.url)),
       '~/src': fileURLToPath(new URL('../src', import.meta.url)),
-      '#build': fileURLToPath(new URL('../.nuxt', import.meta.url)),
+      '#build': fileURLToPath(new URL('../.nuxt',import.meta.url )),
     }
 
     const { mergeConfig } = await import('vite');

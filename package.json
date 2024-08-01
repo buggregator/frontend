@@ -13,9 +13,9 @@
     "typecheck": "tsc --noEmit",
     "test": "echo \"TODO: need to add tests\"",
     "storybook": "storybook dev -p 6006",
-    "sb": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "sb": "storybook dev -p 6006"
   },
+  "type": "module",
   "lint-staged": {
     "*.{js,ts}": [
       "eslint --fix"
