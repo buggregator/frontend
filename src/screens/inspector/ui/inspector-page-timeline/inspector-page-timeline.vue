@@ -205,18 +205,18 @@ const series = computed(() => {
 
 .inspector-page-timeline__head-tip-box {
   @apply bg-gray-600;
-}
 
-.inspector-page-timeline__head-tip-box.orange {
-  @apply bg-orange-600;
-}
+  &.orange {
+    @apply bg-orange-600;
+  }
 
-.inspector-page-timeline__head-tip-box.blue {
-  @apply bg-blue-600;
-}
+  &.blue {
+    @apply bg-blue-600;
+  }
 
-.inspector-page-timeline__head-tip-box.purple {
-  @apply bg-purple-600;
+  &.purple {
+    @apply bg-purple-600;
+  }
 }
 
 .inspector-page-timeline__head-tip-label {
@@ -274,6 +274,25 @@ const series = computed(() => {
   }
 }
 
+.inspector-page-timeline__segment-time {
+  @apply flex-none;
+  @apply h-4 md:h-5 lg:h-6;
+  @apply bg-gray-600;
+  min-width: 0;
+
+  &.orange {
+    @apply bg-orange-600;
+  }
+
+  &.blue {
+    @apply bg-blue-600;
+  }
+
+  &.purple {
+    @apply bg-purple-600;
+  }
+}
+
 .inspector-page-timeline__segment-end {
   @apply flex-1;
   @apply h-4 md:h-5 lg:h-6;
@@ -287,13 +306,6 @@ const series = computed(() => {
 
 .inspector-page-timeline__segment-start-label {
   @apply text-2xs font-bold dark:text-gray-200 mr-3;
-}
-
-.inspector-page-timeline__segment-time {
-  @apply flex-none;
-  @apply h-4 md:h-5 lg:h-6;
-  @apply bg-gray-600;
-  min-width: 0;
 }
 
 .inspector-page-timeline__no-segments {
