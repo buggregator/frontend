@@ -86,8 +86,8 @@ export const useEventsApi = (): TUseEventsApi => {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();
       }
-    }).catch((err) => {
-      console.error('getAll err', err);
+    }).catch((e) => {
+      console.error(e);
     })
   }
 

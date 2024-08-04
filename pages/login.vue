@@ -12,6 +12,7 @@ const store = useProfileStore();
 const { authLogicUrl } = storeToRefs(useSettingsStore());
 
 if (store.isAuthenticated) {
+  setPageLayout("default");
   await navigateTo("/");
 }
 

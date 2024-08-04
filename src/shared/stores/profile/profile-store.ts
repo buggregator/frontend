@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import {navigateTo} from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import {REST_API_URL} from "../../lib/io/constants";
 import type {TProfile} from "../../types";
 import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage-actions";
@@ -6,7 +7,7 @@ import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
-    token: '' as string,
+    token: null as string | null,
     profile: undefined as TProfile | undefined,
   }),
   getters: {
@@ -24,6 +25,18 @@ export const useProfileStore = defineStore("profileStore", {
       const profile = await fetch(`${REST_API_URL}/api/me`, {
         headers: {"X-Auth-Token": this.token || ""}
       })
+        .then((response) => {
+          if (!response.ok && response.status === 403) {
+            this.removeToken();
+
+            // TODO: add toast to show error
+            console.error('Auth Error', response.status, response.statusText)
+
+            navigateTo('/login')
+          }
+
+          return response
+        })
         .then((response) => response.json())
         .catch((e) => {
           console.error(e);
@@ -40,7 +53,10 @@ export const useProfileStore = defineStore("profileStore", {
     },
     getStoredToken(): string {
       const token = getStoredToken()
-      this.setToken(token);
+
+      if (token) {
+        this.setToken(token);
+      }
 
       return token
     },
