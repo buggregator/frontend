@@ -7,7 +7,7 @@ import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
-    token: null as string | null,
+    token: '' as string,
     profile: undefined as TProfile | undefined,
   }),
   getters: {
