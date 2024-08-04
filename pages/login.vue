@@ -91,7 +91,7 @@ const redirect = async () => {
 }
 
 .login-form--title {
-  @apply text-4xl text-center font-thin;
+  @apply text-4xl text-center font-thin text-black;
   @apply my-10;
 }
 
