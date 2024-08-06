@@ -22,7 +22,7 @@ const segmentColor = (color: string): string => {
     case "artisan":
       return "purple";
     default:
-      return "gray";
+      return "slate";
   }
 };
 
@@ -164,7 +164,7 @@ const series = computed(() => {
 
             <div
               class="inspector-page-timeline__segment-time"
-              :class="[row.color]"
+              :class="row.color"
               :style="{ width: row.widthPercent + '%' }"
             ></div>
 
@@ -204,7 +204,11 @@ const series = computed(() => {
 }
 
 .inspector-page-timeline__head-tip-box {
-  @apply bg-gray-600;
+  @apply w-4 h-4 rounded mr-2;
+
+  &.slate {
+    @apply bg-slate-600;
+  }
 
   &.orange {
     @apply bg-orange-600;
@@ -221,10 +225,6 @@ const series = computed(() => {
 
 .inspector-page-timeline__head-tip-label {
   @apply text-xs font-bold;
-}
-
-.inspector-page-timeline__head-tip-box {
-  @apply w-4 h-4 rounded mr-2;
 }
 
 .inspector-page-timeline__body {
@@ -277,8 +277,11 @@ const series = computed(() => {
 .inspector-page-timeline__segment-time {
   @apply flex-none;
   @apply h-4 md:h-5 lg:h-6;
-  @apply bg-gray-600;
   min-width: 0;
+
+  &.slate {
+    @apply bg-slate-600;
+  }
 
   &.orange {
     @apply bg-orange-600;
