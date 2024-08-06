@@ -261,17 +261,29 @@ const series = computed(() => {
 
 .inspector-page-timeline__segment-view {
   @apply flex items-center w-full;
+
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(177 177 177 / 10%),
+    rgba(177 177 177 / 10%) 20px,
+    rgba(177 177 177 / 17%) 20px,
+    rgba(177 177 177 / 17%) 40px
+  );
+
+  .dark & {
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.05) 20px,
+      rgba(255, 255, 255, 0.04) 20px,
+      rgba(255, 255, 255, 0.04) 40px
+    );
+  }
 }
 
 .inspector-page-timeline__segment-start {
   @apply flex items-center justify-end;
   @apply h-4 md:h-5 lg:h-6;
-
-  background-color: rgba(177 177 177 / 17%);
-
-  .dark & {
-    background-color: rgba(255, 255, 255, 0.04);
-  }
 }
 
 .inspector-page-timeline__segment-time {
@@ -299,12 +311,6 @@ const series = computed(() => {
 .inspector-page-timeline__segment-end {
   @apply flex-1;
   @apply h-4 md:h-5 lg:h-6;
-
-  background-color: rgba(177 177 177 / 17%);
-
-  .dark & {
-    background-color: rgba(255, 255, 255, 0.04);
-  }
 }
 
 .inspector-page-timeline__segment-start-label {
