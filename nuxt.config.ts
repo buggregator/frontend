@@ -1,3 +1,4 @@
+import vue from '@vitejs/plugin-vue'
 import {defineNuxtConfig} from "nuxt/config";
 import pkg from './package.json';
 
@@ -5,11 +6,13 @@ import pkg from './package.json';
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
+
   router: {
     options: {
       hashMode: true
     }
   },
+
   app: {
     head: {
       title: "Buggregator",
@@ -27,31 +30,48 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+
   dir: {
     static: 'src/static',
   },
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+
   css: ["~/src/assets/index.css"],
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    '@nuxtjs/storybook'
   ],
+
   typescript: {
     strict: true,
   },
+
+  build: {
+    transpile: ['@babel/plugin-syntax-import-attributes'],
+  },
+
   devServer: {
     host: '127.0.0.1',
     url: 'http://127.0.0.1:3000',
   },
+
   runtimeConfig: {
     public: {
       version: pkg.version,
     }
-  }
+  },
+
+  vite: {
+    plugins: [vue()]
+  },
+
+  compatibilityDate: "2024-07-12"
 });
