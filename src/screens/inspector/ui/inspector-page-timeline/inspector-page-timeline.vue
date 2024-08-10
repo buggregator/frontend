@@ -16,13 +16,15 @@ const props = defineProps<Props>();
 const segmentColor = (color: string): string => {
   switch (color) {
     case "sqlite":
-      return "orange";
+      return "#f97316";
     case "view":
-      return "blue";
+      return "#3b82f6";
     case "artisan":
-      return "purple";
+      return "#a855f7";
+    case "pgsql":
+      return "#22c55e";
     default:
-      return "slate";
+      return "#64748b";
   }
 };
 
@@ -117,7 +119,7 @@ const series = computed(() => {
           class="inspector-page-timeline__head-tip"
         >
           <div
-            :class="type.color"
+            :style="{ background: type.color }"
             class="inspector-page-timeline__head-tip-box"
           ></div>
 
@@ -164,8 +166,7 @@ const series = computed(() => {
 
             <div
               class="inspector-page-timeline__segment-time"
-              :class="row.color"
-              :style="{ width: row.widthPercent + '%' }"
+              :style="{ width: row.widthPercent + '%', background: row.color }"
             ></div>
 
             <div class="inspector-page-timeline__segment-end"></div>
@@ -205,22 +206,6 @@ const series = computed(() => {
 
 .inspector-page-timeline__head-tip-box {
   @apply w-4 h-4 rounded mr-2;
-
-  &.slate {
-    @apply bg-slate-600;
-  }
-
-  &.orange {
-    @apply bg-orange-600;
-  }
-
-  &.blue {
-    @apply bg-blue-600;
-  }
-
-  &.purple {
-    @apply bg-purple-600;
-  }
 }
 
 .inspector-page-timeline__head-tip-label {
@@ -232,11 +217,13 @@ const series = computed(() => {
 }
 
 .inspector-page-timeline__body-cells {
-  @apply grid grid-cols-6 divide-x divide-gray-50 dark:divide-gray-600 border-b border-gray-50 dark:border-gray-600 font-bold text-center text-2xs sm:text-xs md:text-sm;
+  @apply grid grid-cols-6 divide-x border-b;
+  @apply font-bold text-center text-2xs sm:text-xs md:text-sm;
+  @apply divide-gray-50 dark:divide-gray-600 border-gray-50 dark:border-gray-600;
 }
 
 .inspector-page-timeline__body-cell {
-  @apply py-2 pl-3;
+  @apply py-2 px-3;
 }
 
 .inspector-page-timeline__segments {
@@ -288,24 +275,8 @@ const series = computed(() => {
 
 .inspector-page-timeline__segment-time {
   @apply flex-none;
-  @apply h-4 md:h-5 lg:h-6;
+  @apply h-4 md:h-5 lg:h-6 rounded-sm;
   min-width: 0;
-
-  &.slate {
-    @apply bg-slate-600;
-  }
-
-  &.orange {
-    @apply bg-orange-600;
-  }
-
-  &.blue {
-    @apply bg-blue-600;
-  }
-
-  &.purple {
-    @apply bg-purple-600;
-  }
 }
 
 .inspector-page-timeline__segment-end {
