@@ -67,27 +67,21 @@ const segmentTypes = computed(() => {
   return arr;
 });
 
-const series = computed(() => {
+const segmentRows = computed(() => {
   const { duration } = transaction.value;
 
-  return segments.value.map((segment: InspectorSegment) => {
-    const widthPercent = Math.max(
+  return segments.value.map((segment: InspectorSegment) => ({
+    label: segment.label,
+    duration: segment.duration,
+    start: segment.start,
+    type: segment.type,
+    widthPercent: Math.max(
       Number(((segment.duration * 100) / duration).toFixed(2)),
       0.5,
-    );
-
-    const marginPercent = (((segment.start || 0) * 100) / duration).toFixed();
-
-    return {
-      widthPercent,
-      marginPercent,
-      segment,
-      color: segmentColor(segment.type),
-    };
-  });
+    ),
+    marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
+  }));
 });
-
-// TODO: add hover on time line rows with details
 </script>
 
 <template>
@@ -116,7 +110,7 @@ const series = computed(() => {
       </div>
     </div>
 
-    <div v-if="series.length > 0" class="inspector-page-timeline__body">
+    <div v-if="segmentRows.length > 0" class="inspector-page-timeline__body">
       <div
         class="inspector-page-timeline__body-cells"
         :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
@@ -137,28 +131,39 @@ const series = computed(() => {
         }"
       >
         <div
-          v-for="row in series"
-          :key="`${row.segment.label} - ${row.segment.duration}`"
+          v-for="segmentRow in segmentRows"
+          :key="`${segmentRow.label} - ${segmentRow.duration}`"
           class="inspector-page-timeline__segment"
         >
           <div class="inspector-page-timeline__segment-label">
-            {{ row.segment.label }} - {{ row.segment.duration }} ms
+            {{ segmentRow.label }} - {{ segmentRow.duration }} ms
           </div>
 
           <div class="inspector-page-timeline__segment-view">
             <div
-              :style="{ width: row.marginPercent + '%' }"
+              :style="{ width: segmentRow.marginPercent + '%' }"
               class="inspector-page-timeline__segment-start"
             >
               <span class="inspector-page-timeline__segment-start-label">
-                {{ row.segment.start }} ms
+                {{ segmentRow.start }} ms
               </span>
             </div>
 
             <div
               class="inspector-page-timeline__segment-time"
-              :style="{ width: row.widthPercent + '%', background: row.color }"
-            ></div>
+              :style="{
+                width: segmentRow.widthPercent + '%',
+                background: segmentColor(segmentRow.type),
+              }"
+            >
+              <div class="inspector-page-timeline__segment-tooltip">
+                Duration: {{ segmentRow.duration }} ms<br />
+                Start: {{ segmentRow.start }} ms<br />
+                Type: {{ segmentRow.type }}<br />
+                Label:
+                <div>{{ segmentRow.label }}</div>
+              </div>
+            </div>
 
             <div class="inspector-page-timeline__segment-end"></div>
           </div>
@@ -167,7 +172,7 @@ const series = computed(() => {
     </div>
 
     <div
-      v-if="series.length === 0"
+      v-if="segmentRows.length === 0"
       class="inspector-page-timeline__no-segments"
     >
       <h3 class="inspector-page-timeline__no-segments-placeholder">No data</h3>
@@ -179,7 +184,7 @@ const series = computed(() => {
 @import "src/assets/mixins";
 
 .inspector-page-timeline {
-  @apply py-5;
+  @apply py-5 relative;
 }
 
 .inspector-page-timeline__head-title {
@@ -204,7 +209,7 @@ const series = computed(() => {
 }
 
 .inspector-page-timeline__body {
-  @apply overflow-x-scroll border border-gray-50 dark:border-gray-600;
+  @apply border border-gray-50 dark:border-gray-600;
 }
 
 .inspector-page-timeline__body-cells {
@@ -230,11 +235,15 @@ const series = computed(() => {
 }
 
 .inspector-page-timeline__segment {
-  @apply mt-4 text-right;
+  @apply mt-2 text-right cursor-pointer;
 }
 
 .inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1;
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1 opacity-10;
+
+  .inspector-page-timeline__segment:hover & {
+    @apply opacity-100;
+  }
 }
 
 .inspector-page-timeline__segment-view {
@@ -242,10 +251,10 @@ const series = computed(() => {
 
   background: repeating-linear-gradient(
     -45deg,
-    rgba(177 177 177 / 10%),
-    rgba(177 177 177 / 10%) 20px,
-    rgba(177 177 177 / 17%) 20px,
-    rgba(177 177 177 / 17%) 40px
+    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.08) 20px,
+    rgba(0, 0, 0, 0.06) 20px,
+    rgba(0, 0, 0, 0.06) 40px
   );
 
   .dark & {
@@ -265,9 +274,18 @@ const series = computed(() => {
 }
 
 .inspector-page-timeline__segment-time {
-  @apply flex-none;
+  @apply flex-none relative;
   @apply h-4 md:h-5 lg:h-6 rounded-sm;
   min-width: 0;
+}
+
+.inspector-page-timeline__segment-tooltip {
+  @apply absolute z-10 h-auto -translate-x-[50%] -translate-y-[110%];
+  @apply bg-gray-600 hidden left-1/2 p-2 rounded-sm text-xs text-white min-w-[200px] start-0 text-left;
+
+  .inspector-page-timeline__segment:hover & {
+    @apply block;
+  }
 }
 
 .inspector-page-timeline__segment-end {
