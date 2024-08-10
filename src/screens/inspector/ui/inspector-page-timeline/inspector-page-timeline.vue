@@ -17,15 +17,15 @@ const props = defineProps<Props>();
 const segmentColor = (color: string): string => {
   switch (color) {
     case "sqlite":
-      return "#f97316";
+      return "#f97316"; // orange-500
     case "view":
-      return "#3b82f6";
+      return "#3b82f6"; // blue-500
     case "artisan":
-      return "#a855f7";
+      return "#a855f7"; // purple-500
     case "pgsql":
-      return "#22c55e";
+      return "#22c55e"; // green-500
     default:
-      return "#64748b";
+      return "#64748b"; // slate-500
   }
 };
 
@@ -136,7 +136,7 @@ const segmentRows = computed(() => {
           class="inspector-page-timeline__segment"
         >
           <div class="inspector-page-timeline__segment-label">
-            {{ segmentRow.label }} - {{ segmentRow.duration }} ms
+            {{ segmentRow.label }}
           </div>
 
           <div class="inspector-page-timeline__segment-view">
@@ -156,16 +156,19 @@ const segmentRows = computed(() => {
                 background: segmentColor(segmentRow.type),
               }"
             >
-              <div class="inspector-page-timeline__segment-tooltip">
-                Duration: {{ segmentRow.duration }} ms<br />
-                Start: {{ segmentRow.start }} ms<br />
-                Type: {{ segmentRow.type }}<br />
-                Label:
-                <div>{{ segmentRow.label }}</div>
-              </div>
+              <span v-if="segmentRow.widthPercent > 20">
+                {{ segmentRow.duration }} ms
+              </span>
             </div>
 
-            <div class="inspector-page-timeline__segment-end"></div>
+            <div
+              class="inspector-page-timeline__segment-end"
+              :style="{ color: segmentColor(segmentRow.type) }"
+            >
+              <span v-if="segmentRow.widthPercent <= 20">
+                {{ segmentRow.duration }} ms
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -239,7 +242,7 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1 opacity-10;
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1 opacity-20;
 
   .inspector-page-timeline__segment:hover & {
     @apply opacity-100;
@@ -270,27 +273,27 @@ const segmentRows = computed(() => {
 
 .inspector-page-timeline__segment-start {
   @apply flex items-center justify-end;
-  @apply h-4 md:h-5 lg:h-6;
+  @apply h-4 md:h-5 lg:h-6 opacity-20;
+
+  .inspector-page-timeline__segment:hover & {
+    @apply opacity-100;
+  }
 }
 
 .inspector-page-timeline__segment-time {
-  @apply flex-none relative;
-  @apply h-4 md:h-5 lg:h-6 rounded-sm;
+  @apply flex flex-none relative items-center;
+  @apply h-4 md:h-5 lg:h-6 rounded-sm text-white;
   min-width: 0;
-}
 
-.inspector-page-timeline__segment-tooltip {
-  @apply absolute z-10 h-auto -translate-x-[50%] -translate-y-[110%];
-  @apply bg-gray-600 hidden left-1/2 p-2 rounded-sm text-xs text-white min-w-[200px] start-0 text-left;
-
-  .inspector-page-timeline__segment:hover & {
-    @apply block;
+  span {
+    @apply text-xs font-bold text-right px-1;
   }
 }
 
 .inspector-page-timeline__segment-end {
-  @apply flex-1;
+  @apply flex flex-1 items-center  px-2;
   @apply h-4 md:h-5 lg:h-6;
+  @apply text-xs font-bold text-left;
 }
 
 .inspector-page-timeline__segment-start-label {
