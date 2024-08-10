@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { Ref } from "vue";
+import { computed, type ComputedRef, type Ref } from "vue";
 import type {
   InspectorSegment,
   InspectorTransaction,
@@ -10,6 +9,8 @@ import type {
 type Props = {
   payload: Inspector;
 };
+
+const COLUMNS_NUMBER = 5;
 
 const props = defineProps<Props>();
 
@@ -32,54 +33,39 @@ const transaction: Ref<InspectorTransaction> = computed(
   () => props.payload[0] as InspectorTransaction,
 );
 
-const grid = computed(() => {
-  let { duration } = transaction.value;
+const layoutCells = computed(() => {
+  const maxWidth = transaction.value.duration;
+  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1);
 
-  const totalCells = 5;
-  const width = duration / totalCells + 1;
-  const widthPercent = (100 / (totalCells + 1)).toFixed(2);
+  return new Array(COLUMNS_NUMBER).fill(null).reduceRight((acc, _, i) => {
+    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
 
-  const segments = [duration];
-  for (let i = 0; i < totalCells; i += 1) {
-    const d = Math.abs((duration -= width));
-    segments.push(Math.floor(d));
-  }
+    if (!i) {
+      // NOTE: add last cell as full size without rounding
+      acc.push(maxWidth);
+    }
 
-  return {
-    segments: segments.reverse(),
-    width,
-    widthPercent,
-  };
+    return acc;
+  }, []);
 });
 
-interface InspectorItemType {
-  segment: InspectorSegment;
-  transaction: InspectorTransaction;
-}
-
-const segments: Ref<InspectorSegment[]> = computed(() =>
-  (props.payload as Array<InspectorSegment | InspectorTransaction>)
-    .filter(
-      (
-        <T extends keyof InspectorItemType>(type: T) =>
-        (
-          action: InspectorItemType[keyof InspectorItemType],
-        ): action is InspectorItemType[T] =>
-          action.model === type
-      )("segment"),
-    )
-    .filter(
-      (segment: InspectorSegment) =>
-        transaction.value.hash === segment?.transaction?.hash,
-    ),
+const segments: ComputedRef<InspectorSegment[]> = computed(() =>
+  props.payload
+    .filter((item): item is InspectorSegment => item.model === "segment")
+    .filter((el) => el?.transaction?.hash === transaction.value.hash),
 );
 
-const segmentTypes = computed(() =>
-  [...new Set(segments.value.map((data) => data.type))].map((type) => ({
-    color: segmentColor(type),
-    type,
-  })),
-);
+const segmentTypes = computed(() => {
+  const arr: string[] = [];
+
+  segments.value.forEach((data) => {
+    if (!arr.includes(data.type)) {
+      arr.push(data.type);
+    }
+  });
+
+  return arr;
+});
 
 const series = computed(() => {
   const { duration } = transaction.value;
@@ -114,36 +100,41 @@ const series = computed(() => {
         class="inspector-page-timeline__head-tips"
       >
         <div
-          v-for="type in segmentTypes"
-          :key="type.type"
+          v-for="segmentType in segmentTypes"
+          :key="segmentType"
           class="inspector-page-timeline__head-tip"
         >
           <div
-            :style="{ background: type.color }"
+            :style="{ background: segmentColor(segmentType) }"
             class="inspector-page-timeline__head-tip-box"
           ></div>
 
           <span class="inspector-page-timeline__head-tip-label">
-            {{ type.type }}
+            {{ segmentType }}
           </span>
         </div>
       </div>
     </div>
 
     <div v-if="series.length > 0" class="inspector-page-timeline__body">
-      <div class="inspector-page-timeline__body-cells">
+      <div
+        class="inspector-page-timeline__body-cells"
+        :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
+      >
         <div
-          v-for="segment in grid.segments"
-          :key="segment"
+          v-for="cell in layoutCells"
+          :key="cell"
           class="inspector-page-timeline__body-cell"
         >
-          {{ segment }} ms
+          {{ cell }} ms
         </div>
       </div>
 
       <div
         class="inspector-page-timeline__segments"
-        :style="{ 'background-size': `${grid.widthPercent}% 20%` }"
+        :style="{
+          'background-size': `${(100 / COLUMNS_NUMBER).toFixed(2)}% 20%`,
+        }"
       >
         <div
           v-for="row in series"
