@@ -38,7 +38,7 @@ export interface InspectorTransaction {
 }
 
 export interface InspectorSegment {
-  model: 'segment' | string,
+  model: 'segment',
   type: string,
   label?: string,
   host: {
