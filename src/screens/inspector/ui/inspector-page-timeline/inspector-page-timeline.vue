@@ -135,7 +135,10 @@ const segmentRows = computed(() => {
           :key="`${segmentRow.label} - ${segmentRow.duration}`"
           class="inspector-page-timeline__segment"
         >
-          <div class="inspector-page-timeline__segment-label">
+          <div
+            class="inspector-page-timeline__segment-label"
+            :title="segmentRow.label"
+          >
             {{ segmentRow.label }}
           </div>
 
@@ -242,7 +245,7 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1 opacity-20;
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 pb-1 opacity-20 overflow-auto;
 
   .inspector-page-timeline__segment:hover & {
     @apply opacity-100;
