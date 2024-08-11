@@ -115,7 +115,6 @@ const segmentRows = computed(() => {
       class="inspector-page-timeline__body"
       :style="{
         'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`,
-        'background-position': `-${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% auto`,
       }"
     >
       <div
