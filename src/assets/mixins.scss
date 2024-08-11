@@ -29,7 +29,7 @@
 }
 
 @mixin border-style {
-  @apply border-gray-300 dark:border-gray-500 divide-gray-300 dark:divide-gray-500;
+  @apply border border-gray-300 dark:border-gray-500 divide-gray-300 dark:divide-gray-500;
 }
 
 @mixin text-responsive {
