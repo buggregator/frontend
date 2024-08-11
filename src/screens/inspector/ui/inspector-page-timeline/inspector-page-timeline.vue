@@ -110,7 +110,14 @@ const segmentRows = computed(() => {
       </div>
     </div>
 
-    <div v-if="segmentRows.length > 0" class="inspector-page-timeline__body">
+    <div
+      v-if="segmentRows.length > 0"
+      class="inspector-page-timeline__body"
+      :style="{
+        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`,
+        'background-position': `-${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% auto`,
+      }"
+    >
       <div
         class="inspector-page-timeline__body-cells"
         :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
@@ -124,12 +131,7 @@ const segmentRows = computed(() => {
         </div>
       </div>
 
-      <div
-        class="inspector-page-timeline__segments"
-        :style="{
-          'background-size': `${(100 / COLUMNS_NUMBER).toFixed(2)}% 20%`,
-        }"
-      >
+      <div class="inspector-page-timeline__segments">
         <div
           v-for="segmentRow in segmentRows"
           :key="`${segmentRow.label} - ${segmentRow.duration}`"
@@ -215,13 +217,16 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__body {
-  @apply border border-gray-50 dark:border-gray-600;
+  @include border-style;
+  @apply bg-gradient-to-r from-gray-300 dark:from-gray-900 from-[1px] to-transparent to-[1px];
+  @apply border-l-transparent;
 }
 
 .inspector-page-timeline__body-cells {
-  @apply grid grid-cols-6 divide-x border-b;
+  @include border-style;
+  @apply grid grid-cols-6;
+  @apply border-x-0 border-t-0;
   @apply font-bold text-center text-2xs sm:text-xs md:text-sm;
-  @apply divide-gray-50 dark:divide-gray-600 border-gray-50 dark:border-gray-600;
 }
 
 .inspector-page-timeline__body-cell {
@@ -229,23 +234,15 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__segments {
-  background-image: linear-gradient(to right, #dedede 1px, transparent 1px);
-
-  .dark & {
-    background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.04) 1px,
-      transparent 1px
-    );
-  }
+  @apply block;
 }
 
 .inspector-page-timeline__segment {
-  @apply mt-2 text-right cursor-pointer;
+  @apply text-right cursor-pointer;
 }
 
 .inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 pb-1 opacity-20 overflow-auto;
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 py-1 opacity-20 overflow-auto;
 
   .inspector-page-timeline__segment:hover & {
     @apply opacity-100;

@@ -142,13 +142,13 @@ const currentDevice = ref(props.device);
 
   &::after {
     @include border-style;
-    @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-12 h-12 my-4;
+    @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-12 h-12 my-4;
     content: "";
   }
 
   &::before {
     @include border-style;
-    @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
+    @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
     content: "";
   }
 }
@@ -158,13 +158,13 @@ const currentDevice = ref(props.device);
 
   &::before {
     @include border-style;
-    @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
+    @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
     content: "";
   }
 
   &::after {
     @include border-style;
-    @apply border bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
+    @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
     content: "";
   }
 }
