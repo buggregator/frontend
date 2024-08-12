@@ -65,7 +65,7 @@ const formatValue = (value: number, format: string) => {
           <td
             v-for="col in data.schema"
             :key="col.key"
-            class="text-left `"
+            class="text-left"
             :class="`col-${col.key} ${metric === col.key ? 'selected' : ''}`"
             :title="col.description"
             @click="setMetric(col.sortable ? col.key : null)"
@@ -110,37 +110,36 @@ const formatValue = (value: number, format: string) => {
   @apply w-full overflow-auto;
 }
 
-table td .table-value.value-percent {
-  @apply text-xs text-gray-500;
-}
-
 table {
   @apply w-full text-xs;
 }
 
 table thead {
-  @apply dark:bg-gray-900 bg-gray-300 text-base;
+  @apply bg-gray-300 dark:bg-gray-900 text-base;
 }
 
 td {
   @apply px-4;
 }
 
-td.selected,
 td.selected {
-  @apply dark:text-gray-100 border-l border-r dark:border-gray-500 font-semibold;
+  @apply border-x text-gray-800 dark:text-gray-100 border-gray-400 dark:border-gray-500;
 }
 
 thead td {
-  @apply font-black py-3 dark:text-gray-400 cursor-pointer;
+  @apply font-black py-3 text-gray-500 dark:text-gray-400 cursor-pointer;
   @apply py-2;
 }
 
-table tbody tr {
+tbody tr {
   @apply dark:hover:bg-gray-900;
 
   &:nth-child(odd) {
     @apply dark:bg-gray-700 bg-gray-100;
   }
+}
+
+.table-value.value-percent {
+  @apply text-xs text-gray-500;
 }
 </style>
