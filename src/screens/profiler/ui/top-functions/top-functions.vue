@@ -54,12 +54,12 @@ const formatValue = (value: number, format: string) => {
 </script>
 
 <template>
-  <section class="profiler-page__stat-board">
+  <section class="top-functions__stat-board">
     <StatBoard v-if="data.overall_totals" :cost="data.overall_totals" />
   </section>
 
-  <div class="table-wrapper">
-    <table>
+  <div class="top-functions__body">
+    <table class="top-functions__table">
       <thead>
         <tr>
           <td
@@ -99,9 +99,15 @@ const formatValue = (value: number, format: string) => {
 </template>
 
 <style scoped lang="scss">
-.table-wrapper {
-  @apply overflow-hidden mb-5 mt-2;
-  @apply border rounded-md dark:border-gray-500;
+@import "src/assets/mixins";
+
+.top-functions__body {
+  @include border-style;
+  @apply overflow-auto mb-5 mt-2 rounded-md;
+}
+
+.top-functions__table {
+  @apply w-full overflow-auto;
 }
 
 table td .table-value.value-percent {
