@@ -1,3 +1,5 @@
+import type {ElementsDefinition} from "cytoscape";
+
 export interface ProfilerCost {
   d_cpu: number;
   d_wt: number;
@@ -48,4 +50,12 @@ export interface ProfilerTopFunctions {
     values: { key: string, format: string, type?: 'sub' }[]
   }[],
   overall_totals: Partial<ProfilerCost>
+}
+
+export interface ProfilerCallGraph extends ElementsDefinition {
+  toolbar: Array<{
+    description: string
+    label: string
+    metric: (keyof ProfilerCost)[number]
+  }>
 }

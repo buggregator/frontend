@@ -1,15 +1,16 @@
-import type {ProfilerTopFunctions} from "~/src/entities/profiler/types";
+import type {ProfilerCallGraph, ProfilerTopFunctions} from "~/src/entities/profiler/types";
 import {useProfileStore} from "../../stores";
 import type { EventId } from "../../types";
 import { REST_API_URL } from "./constants";
 
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
+  getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
 }
 
 enum ProfilerPartType {
-  FlameChart = 'flame_chart',
-  CallGraph = 'call_graph',
+  FlameChart = 'flame-chart',
+  CallGraph = 'call-graph',
   TopFunctions = 'top'
 }
 // TODO: add 403 response handling
@@ -52,7 +53,26 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
       return {};
     })
 
+  const getCallGraph = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.CallGraph }), { headers })
+    .then((response) => response.json())
+    .then((response) => {
+      if (response) {
+        return response
+      }
+
+      if (response?.code === 403) {
+        console.error('Forbidden')
+        return {};
+      }
+
+      console.error('Fetch Error')
+
+      return {};
+    })
+
+
   return {
     getTopFunctions,
+    getCallGraph,
   }
 }

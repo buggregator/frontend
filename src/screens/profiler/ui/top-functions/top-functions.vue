@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, watchEffect } from "vue";
 import { useProfiler } from "~/src/entities/profiler";
 import type {
   Profiler,
@@ -51,7 +51,7 @@ const formatValue = (value: number, format: string) => {
   return value;
 };
 
-onMounted(async () => {
+watchEffect(async () => {
   data.value = await getTopFunctions(props.id, { metric: metric.value });
 });
 </script>

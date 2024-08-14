@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import type { ElementsDefinition } from "cytoscape";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watchEffect } from "vue";
 import { CallGraphToolbar } from "~/src/screens/profiler/ui/call-graph-toolbar";
 import { RenderGraph } from "~/src/widgets/ui";
-import type { Profiler } from "~/src/entities/profiler/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
+import { useProfiler } from "~/src/entities/profiler";
+import type {
+  Profiler,
+  ProfilerCallGraph,
+} from "~/src/entities/profiler/types";
 import { type EventId, GraphTypes } from "~/src/shared/types";
 import { CallStatBoard } from "../call-stat-board";
 
@@ -12,6 +15,8 @@ type Props = {
   payload: Profiler;
   id: EventId;
 };
+
+const { getCallGraph } = useProfiler();
 
 const props = defineProps<Props>();
 const isFullscreen = ref(false);
@@ -23,18 +28,7 @@ const isReadyGraph = ref(false);
 const container = ref<HTMLElement>();
 
 const elements = ref<ElementsDefinition | undefined>();
-const toolbar = ref([]);
-
-const fetchGraph = async () => {
-  const { toolbar: tools, ...elems } = await fetch(
-    `${REST_API_URL}/api/profiler/${props.id}/call-graph?threshold=${threshold.value}&percentage=${percent.value}&metric=${metric.value}`,
-  ).then((response) => response.json());
-
-  elements.value = elems;
-  toolbar.value = tools;
-};
-
-fetchGraph();
+const toolbar = ref<ProfilerCallGraph["toolbar"]>([]);
 
 const graphKey = computed(
   () => `${metric.value}-${threshold.value}-${percent.value}`,
@@ -57,6 +51,17 @@ const graphHeight = computed(() =>
     ? window.innerHeight
     : (container.value as HTMLElement).offsetHeight,
 );
+
+watchEffect(async () => {
+  const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
+    threshold: String(threshold.value),
+    percentage: String(percent.value),
+    metric: String(metric.value),
+  });
+
+  elements.value = elems;
+  toolbar.value = tools;
+});
 
 onMounted(() => {
   // NOTE: need to show graph after parent render
@@ -83,7 +88,7 @@ onMounted(() => {
     </RenderGraph>
 
     <CallGraphToolbar
-      :data="toolbar"
+      :toolbar="toolbar"
       :metric="metric"
       :threshold="threshold"
       :percent="percent"
