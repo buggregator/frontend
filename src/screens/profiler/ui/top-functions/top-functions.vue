@@ -5,11 +5,12 @@ import type { Profiler } from "~/src/entities/profiler/types";
 import { formatDuration } from "~/src/shared/lib/formats/format-duration";
 import { formatFileSize } from "~/src/shared/lib/formats/format-file-size";
 import { REST_API_URL } from "~/src/shared/lib/io";
-import { TopFunctionsMetric } from "~/src/shared/types";
+import { type EventId, TopFunctionsMetric } from "~/src/shared/types";
 import { StatBoard } from "~/src/shared/ui";
 
 type Props = {
   payload: Profiler;
+  id: EventId;
 };
 
 const props = defineProps<Props>();
@@ -21,7 +22,7 @@ const data = computedAsync(
   () =>
     // TODO: move to api service
     fetch(
-      `${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/top?metric=${metric.value}`,
+      `${REST_API_URL}/api/profiler/${props.id}/top?metric=${metric.value}`,
     ).then((response) => response.json()),
   [],
 );

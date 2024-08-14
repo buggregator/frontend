@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import { Tabs, Tab } from "vue3-tabs-component";
 import type { Profiler, ProfilerEdge } from "~/src/entities/profiler/types";
 import type { NormalizedEvent } from "~/src/shared/types";
-import { StatBoard } from "~/src/shared/ui";
 import type { CallStackHoverData } from "../../types";
 import { CallGraph } from "../call-graph";
 import { CallStatBoard } from "../call-stat-board";
@@ -71,6 +70,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
             <Tab name="Call graph">
               <CallGraph
                 v-if="activeTab === 'Call graph'"
+                :id="event.id"
                 :payload="event.payload"
               />
             </Tab>
@@ -78,6 +78,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
             <Tab name="Flamechart">
               <FlameGraph
                 v-if="activeTab === 'Flamechart'"
+                :id="event.id"
                 :key="activeTab"
                 :data-key="activeTab"
                 :payload="event.payload"
@@ -89,6 +90,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
             <Tab name="Top functions">
               <TopFunctions
                 v-if="activeTab === 'Top functions'"
+                :id="event.id"
                 :payload="event.payload"
               />
             </Tab>
