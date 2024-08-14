@@ -59,3 +59,13 @@ export interface ProfilerCallGraph extends ElementsDefinition {
     metric: (keyof ProfilerCost)[number]
   }>
 }
+
+export interface ProfileFlameChart {
+  children: ProfileFlameChart[],
+  color: string
+  cost: Partial<ProfilerCost>
+  duration: number
+  name: string
+  start: number
+  type: "task" | string
+}

@@ -3,8 +3,8 @@ import { FlameChart } from "flame-chart-js";
 import debounce from "lodash.debounce";
 import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
 import type { CallStackHoverData } from "~/src/screens/profiler/types";
+import { useProfiler } from "~/src/entities/profiler";
 import type { Profiler } from "~/src/entities/profiler/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
 import type { EventId } from "~/src/shared/types";
 
 type Props = {
@@ -16,6 +16,8 @@ type Emits = {
   hover: [value: CallStackHoverData];
   hide: [];
 };
+
+const { getFlameChart } = useProfiler();
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
@@ -36,9 +38,7 @@ const renderChart = async () => {
   const flameChart = new FlameChart({
     canvas: canvas.value,
     // TODO: move to api service
-    data: await fetch(
-      `${REST_API_URL}/api/profiler/${props.id}/flame-chart`,
-    ).then((response) => response.json()),
+    data: await getFlameChart(props.id),
     settings: {
       styles: {
         main: {
