@@ -12,6 +12,11 @@ export interface ProfilerCost {
   p_mu: number;
   p_pmu: number;
   p_wt: number;
+  excl_cpu: number,
+  excl_wt: number,
+  excl_pmu: number,
+  excl_mu: number,
+  excl_ct: number,
 }
 
 export interface ProfilerEdge {
@@ -30,4 +35,17 @@ export interface Profiler {
   hostname: string,
   date: number,
   peaks: ProfilerCost,
+}
+
+
+export interface ProfilerTopFunctions {
+  functions: Array<ProfilerCost & { function: string }>,
+  schema: {
+    description: string
+    key: string
+    label: string
+    sortable: boolean
+    values: { key: string, format: string, type?: 'sub' }[]
+  }[],
+  overall_totals: Partial<ProfilerCost>
 }

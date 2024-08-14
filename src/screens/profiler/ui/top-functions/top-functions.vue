@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computedAsync } from "@vueuse/core";
-import { ref } from "vue";
-import type { Profiler } from "~/src/entities/profiler/types";
+import { ref, onMounted } from "vue";
+import { useProfiler } from "~/src/entities/profiler";
+import type {
+  Profiler,
+  ProfilerTopFunctions,
+} from "~/src/entities/profiler/types";
 import { formatDuration } from "~/src/shared/lib/formats/format-duration";
 import { formatFileSize } from "~/src/shared/lib/formats/format-file-size";
-import { REST_API_URL } from "~/src/shared/lib/io";
-import { type EventId, TopFunctionsMetric } from "~/src/shared/types";
+import { type EventId } from "~/src/shared/types";
 import { StatBoard } from "~/src/shared/ui";
 
 type Props = {
@@ -13,21 +15,17 @@ type Props = {
   id: EventId;
 };
 
+const { getTopFunctions } = useProfiler();
 const props = defineProps<Props>();
-const metric = ref(
-  TopFunctionsMetric.EXCLUSIVE_WALL_TIME as TopFunctionsMetric,
-);
+const metric = ref("excl_wt"); // TODO: use enum value
 
-const data = computedAsync(
-  () =>
-    // TODO: move to api service
-    fetch(
-      `${REST_API_URL}/api/profiler/${props.id}/top?metric=${metric.value}`,
-    ).then((response) => response.json()),
-  [],
-);
+const data = ref<ProfilerTopFunctions>({
+  functions: [],
+  overall_totals: {},
+  schema: [],
+});
 
-const setMetric = (value: TopFunctionsMetric | null) => {
+const setMetric = (value: string | undefined) => {
   if (value) {
     metric.value = value;
   }
@@ -52,6 +50,10 @@ const formatValue = (value: number, format: string) => {
 
   return value;
 };
+
+onMounted(async () => {
+  data.value = await getTopFunctions(props.id, { metric: metric.value });
+});
 </script>
 
 <template>
@@ -69,7 +71,7 @@ const formatValue = (value: number, format: string) => {
             class="text-left"
             :class="`col-${col.key} ${metric === col.key ? 'selected' : ''}`"
             :title="col.description"
-            @click="setMetric(col.sortable ? col.key : null)"
+            @click="setMetric(col.sortable ? col.key : undefined)"
           >
             {{ col.label }}
           </td>
