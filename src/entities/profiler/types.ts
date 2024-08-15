@@ -1,3 +1,5 @@
+import type {ElementsDefinition} from "cytoscape";
+
 export interface ProfilerCost {
   d_cpu: number;
   d_wt: number;
@@ -12,6 +14,11 @@ export interface ProfilerCost {
   p_mu: number;
   p_pmu: number;
   p_wt: number;
+  excl_cpu: number,
+  excl_wt: number,
+  excl_pmu: number,
+  excl_mu: number,
+  excl_ct: number,
 }
 
 export interface ProfilerEdge {
@@ -30,4 +37,35 @@ export interface Profiler {
   hostname: string,
   date: number,
   peaks: ProfilerCost,
+}
+
+
+export interface ProfilerTopFunctions {
+  functions: Array<ProfilerCost & { function: string }>,
+  schema: {
+    description: string
+    key: string
+    label: string
+    sortable: boolean
+    values: { key: string, format: string, type?: 'sub' }[]
+  }[],
+  overall_totals: Partial<ProfilerCost>
+}
+
+export interface ProfilerCallGraph extends ElementsDefinition {
+  toolbar: Array<{
+    description: string
+    label: string
+    metric: (keyof ProfilerCost)[number]
+  }>
+}
+
+export interface ProfileFlameChart {
+  children: ProfileFlameChart[],
+  color: string
+  cost: Partial<ProfilerCost>
+  duration: number
+  name: string
+  start: number
+  type: "task" | string
 }

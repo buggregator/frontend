@@ -1,19 +1,23 @@
 <script lang="ts" setup>
 import { FlameChart } from "flame-chart-js";
 import debounce from "lodash.debounce";
-import { ref, onMounted, nextTick } from "vue";
-import type { Profiler } from "~/src/entities/profiler/types";
+import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
 import type { CallStackHoverData } from "~/src/screens/profiler/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
+import { useProfiler } from "~/src/entities/profiler";
+import type { Profiler } from "~/src/entities/profiler/types";
+import type { EventId } from "~/src/shared/types";
 
 type Props = {
   payload: Profiler;
+  id: EventId;
 };
 
 type Emits = {
   hover: [value: CallStackHoverData];
   hide: [];
 };
+
+const { getFlameChart } = useProfiler();
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
@@ -34,7 +38,7 @@ const renderChart = async () => {
   const flameChart = new FlameChart({
     canvas: canvas.value,
     // TODO: move to api service
-    data: await fetch(`${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/flame-chart`).then((response) => response.json()),
+    data: await getFlameChart(props.id),
     settings: {
       styles: {
         main: {
@@ -50,10 +54,9 @@ const renderChart = async () => {
               callee: data.data.source.name,
               caller: "",
               cost: data.data.source.cost,
-
               position: {
-                x: mouse?.x + 20 || 0,
-                y: mouse?.y - 20 || 0,
+                x: mouse?.x ? mouse.x + 20 : 0,
+                y: mouse?.y ? mouse.y - 20 : 0,
               },
             });
           }
@@ -74,7 +77,7 @@ const renderChart = async () => {
         graph.value.getBoundingClientRect();
 
       flameChart.resize(windowWidth, windowHeight);
-    }, 30)
+    }, 30),
   );
 };
 

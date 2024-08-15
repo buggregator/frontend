@@ -1,15 +1,22 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
-import { RenderGraph } from "~/src/widgets/ui";
-import type { Profiler } from "~/src/entities/profiler/types";
-import { GraphTypes } from "~/src/shared/types";
-import { CallStatBoard } from "../call-stat-board";
-import { REST_API_URL } from "~/src/shared/lib/io";
+import type { ElementsDefinition } from "cytoscape";
+import { ref, computed, onMounted, watchEffect } from "vue";
 import { CallGraphToolbar } from "~/src/screens/profiler/ui/call-graph-toolbar";
+import { RenderGraph } from "~/src/widgets/ui";
+import { useProfiler } from "~/src/entities/profiler";
+import type {
+  Profiler,
+  ProfilerCallGraph,
+} from "~/src/entities/profiler/types";
+import { type EventId, GraphTypes } from "~/src/shared/types";
+import { CallStatBoard } from "../call-stat-board";
 
 type Props = {
   payload: Profiler;
+  id: EventId;
 };
+
+const { getCallGraph } = useProfiler();
 
 const props = defineProps<Props>();
 const isFullscreen = ref(false);
@@ -20,13 +27,11 @@ const percent = ref(10);
 const isReadyGraph = ref(false);
 const container = ref<HTMLElement>();
 
-const graphElements = computed(async () =>
-  // TODO: move to api service
-  await fetch(`${REST_API_URL}/api/profiler/${props.payload.profile_uuid}/call-graph?threshold=${threshold.value}&percentage=${percent.value}&metric=${metric.value}`).then((response) => response.json())
-);
+const elements = ref<ElementsDefinition | undefined>();
+const toolbar = ref<ProfilerCallGraph["toolbar"]>([]);
 
 const graphKey = computed(
-  () => `${metric.value}-${threshold.value}-${percent.value}`
+  () => `${metric.value}-${threshold.value}-${percent.value}`,
 );
 
 const setMetric = (value: GraphTypes) => {
@@ -44,8 +49,19 @@ const setMinPercent = (value: number) => {
 const graphHeight = computed(() =>
   isFullscreen.value
     ? window.innerHeight
-    : (container.value as HTMLElement).offsetHeight
+    : (container.value as HTMLElement).offsetHeight,
 );
+
+watchEffect(async () => {
+  const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
+    threshold: String(threshold.value),
+    percentage: String(percent.value),
+    metric: String(metric.value),
+  });
+
+  elements.value = elems;
+  toolbar.value = tools;
+});
 
 onMounted(() => {
   // NOTE: need to show graph after parent render
@@ -60,28 +76,27 @@ onMounted(() => {
     :class="{ 'call-graph--fullscreen': isFullscreen }"
   >
     <RenderGraph
-      v-if="isReadyGraph && graphKey"
+      v-if="isReadyGraph && graphKey && elements"
       :key="graphKey"
       class="call-graph__graph"
-      :elements="graphElements"
+      :elements="elements"
       :height="graphHeight"
     >
       <template #default="{ data: { name, cost } }">
-        <CallStatBoard :edge="{ callee: name, caller: '', cost }"/>
+        <CallStatBoard :edge="{ callee: name, caller: '', cost }" />
       </template>
     </RenderGraph>
 
     <CallGraphToolbar
-      :data="graphElements"
+      :toolbar="toolbar"
       :metric="metric"
       :threshold="threshold"
       :percent="percent"
-      :isFullscreen="isFullscreen"
-
-      @onMetricChange="setMetric"
-      @onThresholdChange="setThreshold"
-      @onPercentChange="setMinPercent"
-      @onFullscreen="isFullscreen = !isFullscreen"
+      :is-fullscreen="isFullscreen"
+      @on-metric-change="setMetric"
+      @on-threshold-change="setThreshold"
+      @on-percent-change="setMinPercent"
+      @on-fullscreen="isFullscreen = !isFullscreen"
     />
   </div>
 </template>

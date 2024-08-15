@@ -1,12 +1,18 @@
 <script lang="ts" setup>
 import { computed } from "vue";
+import type { ProfilerCallGraph } from "~/src/entities/profiler/types";
 import { GraphTypes } from "~/src/shared/types";
 import { IconSvg } from "~/src/shared/ui";
 
-const emit = defineEmits(['onMetricChange', 'onFullscreen', 'onThresholdChange', 'onPercentChange'])
+const emit = defineEmits([
+  "onMetricChange",
+  "onFullscreen",
+  "onThresholdChange",
+  "onPercentChange",
+]);
 
 type Props = {
-  data: Object;
+  toolbar: ProfilerCallGraph["toolbar"];
   isFullscreen: boolean;
   metric: GraphTypes;
   threshold: number;
@@ -15,14 +21,8 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const fetchToolbar = async function () {
-  return await props.data.then(response => response.toolbar);
-};
-
-const toolbar = await fetchToolbar();
-
 const percentLabel = computed(() =>
-  props.metric === GraphTypes.CALLS ? "Min calls" : "Percent"
+  props.metric === GraphTypes.CALLS ? "Min calls" : "Percent",
 );
 </script>
 
@@ -30,18 +30,20 @@ const percentLabel = computed(() =>
   <div class="call-graph__toolbar-wrapper">
     <div class="call-graph__toolbar">
       <button title="Full screen" @click="emit('onFullscreen')">
-        <IconSvg name="fullscreen" class="call-graph__toolbar-icon"/>
+        <IconSvg name="fullscreen" class="call-graph__toolbar-icon" />
       </button>
+
       <button
-        v-for="button in toolbar"
+        v-for="tool in toolbar"
+        :key="tool.metric"
         class="call-graph__toolbar-action"
         :class="{
-          'call-graph__toolbar-action--active': metric === button.metric,
+          'call-graph__toolbar-action--active': metric === tool.metric,
         }"
-        :title="button.description"
-        @click="emit('onMetricChange', button.metric)"
+        :title="tool.description"
+        @click="emit('onMetricChange', tool.metric)"
       >
-        {{ button.label }}
+        {{ tool.label }}
       </button>
     </div>
 
