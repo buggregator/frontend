@@ -17,7 +17,7 @@ import { version } from "../../../../package.json";
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
-const { isVisibleEventCounts, auth } = storeToRefs(useSettingsStore());
+const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
 const { availableProjects, isMultipleProjects, activeProject } =
   storeToRefs(eventsStore);
@@ -103,8 +103,6 @@ const logout = () => {
 };
 
 const path = computed(() => useRoute().path);
-
-const isAuthEnabled = computed(() => auth.value.isEnabled);
 
 const { apiVersion } = storeToRefs(useSettingsStore());
 

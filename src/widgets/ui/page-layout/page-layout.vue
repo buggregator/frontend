@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 const { events, cachedEvents } = useEvents();
 
 const isEventsPaused = computed(
-  () => cachedEvents.idsByType.value[props.type]?.length > 0
+  () => cachedEvents.idsByType.value[props.type]?.length > 0,
 );
 
 const allEvents = computed(() => {
@@ -35,13 +35,13 @@ const visibleEvents = computed(() => {
   }
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid)
+    cachedEvents.idsByType.value[props.type]?.includes(uuid),
   );
 });
 
 watchEffect(() => {
   useTitle(
-    `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`
+    `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`,
   );
 });
 </script>
@@ -67,7 +67,7 @@ watchEffect(() => {
 @import "src/assets/mixins";
 
 .page-layout {
-  @apply flex flex-col h-full
+  @apply flex flex-col h-full w-full;
 }
 
 .page-layout__events {

@@ -26,7 +26,12 @@
       "p_cpu": 99.91,
       "p_mu": 99.75,
       "p_pmu": 100,
-      "p_wt": 99.98
+      "p_wt": 99.98,
+      "excl_cpu": 90,
+      "excl_wt": 20,
+      "excl_pmu": 30,
+      "excl_mu": 40,
+      "excl_ct": 60
     }
   },
   "timestamp": 1678450656,

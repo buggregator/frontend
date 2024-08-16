@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { Ref } from "vue";
+import { computed, type ComputedRef, type Ref } from "vue";
 import type {
   InspectorSegment,
   InspectorTransaction,
@@ -11,165 +10,176 @@ type Props = {
   payload: Inspector;
 };
 
+const COLUMNS_NUMBER = 5;
+
 const props = defineProps<Props>();
 
 const segmentColor = (color: string): string => {
   switch (color) {
     case "sqlite":
-      return "orange";
+      return "#f97316"; // orange-500
     case "view":
-      return "blue";
+      return "#3b82f6"; // blue-500
     case "artisan":
-      return "purple";
+      return "#a855f7"; // purple-500
+    case "pgsql":
+      return "#22c55e"; // green-500
     default:
-      return "gray";
+      return "#64748b"; // slate-500
   }
 };
 
 const transaction: Ref<InspectorTransaction> = computed(
-  () => props.payload[0] as InspectorTransaction
+  () => props.payload[0] as InspectorTransaction,
 );
 
-const grid = computed(() => {
-  let { duration } = transaction.value;
+const layoutCells = computed(() => {
+  const maxWidth = transaction.value.duration;
+  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1);
 
-  const totalCells = 5;
-  const width = duration / totalCells + 1;
-  const widthPercent = (100 / (totalCells + 1)).toFixed(2);
+  return new Array(COLUMNS_NUMBER).fill(null).reduceRight((acc, _, i) => {
+    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
 
-  const segments = [duration];
-  for (let i = 0; i < totalCells; i += 1) {
-    const d = Math.abs((duration -= width));
-    segments.push(Math.floor(d));
-  }
+    if (!i) {
+      // NOTE: add last cell as full size without rounding
+      acc.push(maxWidth);
+    }
 
-  return {
-    segments: segments.reverse(),
-    width,
-    widthPercent,
-  };
+    return acc;
+  }, []);
 });
 
-interface InspectorItemType {
-  segment: InspectorSegment;
-  transaction: InspectorTransaction;
-}
-
-const segments: Ref<InspectorSegment[]> = computed(() =>
-  (props.payload as Array<InspectorSegment | InspectorTransaction>)
-    .filter(
-      (
-        <T extends keyof InspectorItemType>(type: T) =>
-        (
-          action: InspectorItemType[keyof InspectorItemType]
-        ): action is InspectorItemType[T] =>
-          action.model === type
-      )("segment")
-    )
-    .filter(
-      (segment: InspectorSegment) =>
-        transaction.value.hash === segment?.transaction?.hash
-    )
+const segments: ComputedRef<InspectorSegment[]> = computed(() =>
+  props.payload
+    .filter((item): item is InspectorSegment => item.model === "segment")
+    .filter((el) => el?.transaction?.hash === transaction.value.hash),
 );
 
-const segmentTypes = computed(() =>
-  [...new Set(segments.value.map((data) => data.type))].map((type) => ({
-    color: segmentColor(type),
-    type,
-  }))
-);
+const segmentTypes = computed(() => {
+  const arr: string[] = [];
 
-const series = computed(() => {
+  segments.value.forEach((data) => {
+    if (!arr.includes(data.type)) {
+      arr.push(data.type);
+    }
+  });
+
+  return arr;
+});
+
+const segmentRows = computed(() => {
   const { duration } = transaction.value;
 
-  return segments.value.map((segment: InspectorSegment) => {
-    const widthPercent = Math.max(
+  return segments.value.map((segment: InspectorSegment) => ({
+    label: segment.label,
+    duration: segment.duration,
+    start: segment.start,
+    type: segment.type,
+    widthPercent: Math.max(
       Number(((segment.duration * 100) / duration).toFixed(2)),
-      0.5
-    );
-
-    const marginPercent = (((segment.start || 0) * 100) / duration).toFixed();
-
-    return {
-      widthPercent,
-      marginPercent,
-      segment,
-      color: segmentColor(segment.type),
-    };
-  });
+      0.5,
+    ),
+    marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
+  }));
 });
-
-// TODO: add hover on time line rows with details
 </script>
 
 <template>
   <section class="inspector-page-timeline">
-    <h3 class="inspector-page-timeline__title">Timeline</h3>
+    <div class="inspector-page-timeline__head">
+      <h3 class="inspector-page-timeline__head-title">Timeline</h3>
+
+      <div
+        v-if="segmentTypes.length > 0"
+        class="inspector-page-timeline__head-tips"
+      >
+        <div
+          v-for="segmentType in segmentTypes"
+          :key="segmentType"
+          class="inspector-page-timeline__head-tip"
+        >
+          <div
+            :style="{ background: segmentColor(segmentType) }"
+            class="inspector-page-timeline__head-tip-box"
+          ></div>
+
+          <span class="inspector-page-timeline__head-tip-label">
+            {{ segmentType }}
+          </span>
+        </div>
+      </div>
+    </div>
 
     <div
-      v-if="segmentTypes.length > 0"
-      class="inspector-page-timeline__segment-types"
+      v-if="segmentRows.length > 0"
+      class="inspector-page-timeline__body"
+      :style="{
+        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`,
+      }"
     >
       <div
-        v-for="type in segmentTypes"
-        :key="type.type"
-        class="inspector-page-timeline__segment-type"
+        class="inspector-page-timeline__body-cells"
+        :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
       >
         <div
-          :class="type.color"
-          class="inspector-page-timeline__segment-type__color-box"
-        ></div>
-        <span class="inspector-page-timeline__segment-type__label">
-          {{ type.type }}
-        </span>
-      </div>
-    </div>
-
-    <div v-if="series.length > 0" class="inspector-page-timeline__segments">
-      <div class="inspector-page-timeline__segments-cells">
-        <div
-          v-for="segment in grid.segments"
-          :key="segment"
-          class="inspector-page-timeline__segments-cell"
+          v-for="cell in layoutCells"
+          :key="cell"
+          class="inspector-page-timeline__body-cell"
         >
-          {{ segment }} ms
+          {{ cell }} ms
         </div>
       </div>
 
-      <div
-        class="inspector-page-timeline__series"
-        :style="{ 'background-size': `${grid.widthPercent}% 20%` }"
-      >
+      <div class="inspector-page-timeline__segments">
         <div
-          v-for="row in series"
-          :key="`${row.segment.label} - ${row.segment.duration}`"
-          class="inspector-page-timeline__series-segment"
+          v-for="segmentRow in segmentRows"
+          :key="`${segmentRow.label} - ${segmentRow.duration}`"
+          class="inspector-page-timeline__segment"
         >
-          <div class="inspector-page-timeline__series-segment-label">
-            {{ row.segment.label }} - {{ row.segment.duration }} ms
+          <div
+            class="inspector-page-timeline__segment-label"
+            :title="segmentRow.label"
+          >
+            {{ segmentRow.label }}
           </div>
-          <div class="flex items-center w-full">
+
+          <div class="inspector-page-timeline__segment-view">
             <div
-              :style="{ width: row.marginPercent + '%' }"
-              class="inspector-page-timeline__series-segment-start"
+              :style="{ width: segmentRow.marginPercent + '%' }"
+              class="inspector-page-timeline__segment-start"
             >
-              <span class="inspector-page-timeline__series-segment-start-label"
-                >{{ row.segment.start }} ms</span
-              >
+              <span class="inspector-page-timeline__segment-start-label">
+                {{ segmentRow.start }} ms
+              </span>
             </div>
+
             <div
-              class="inspector-page-timeline__series-segment-time"
-              :class="[row.color]"
-              :style="{ width: row.widthPercent + '%' }"
-            ></div>
-            <div class="inspector-page-timeline__series-segment-end"></div>
+              class="inspector-page-timeline__segment-time"
+              :style="{
+                width: segmentRow.widthPercent + '%',
+                background: segmentColor(segmentRow.type),
+              }"
+            >
+              <span v-if="segmentRow.widthPercent > 20">
+                {{ segmentRow.duration }} ms
+              </span>
+            </div>
+
+            <div
+              class="inspector-page-timeline__segment-end"
+              :style="{ color: segmentColor(segmentRow.type) }"
+            >
+              <span v-if="segmentRow.widthPercent <= 20">
+                {{ segmentRow.duration }} ms
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div
-      v-if="series.length === 0"
+      v-if="segmentRows.length === 0"
       class="inspector-page-timeline__no-segments"
     >
       <h3 class="inspector-page-timeline__no-segments-placeholder">No data</h3>
@@ -181,89 +191,112 @@ const series = computed(() => {
 @import "src/assets/mixins";
 
 .inspector-page-timeline {
-  @apply py-5;
+  @apply py-5 relative;
 }
 
-.inspector-page-timeline__title {
+.inspector-page-timeline__head-title {
   @include text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 
-.inspector-page-timeline__segment-types {
+.inspector-page-timeline__head-tips {
   @apply flex space-x-7 mb-4;
 }
 
-.inspector-page-timeline__segment-type {
+.inspector-page-timeline__head-tip {
   @apply flex items-center;
 }
 
-.inspector-page-timeline__segment-type__color-box {
+.inspector-page-timeline__head-tip-box {
   @apply w-4 h-4 rounded mr-2;
 }
 
+.inspector-page-timeline__head-tip-label {
+  @apply text-xs font-bold;
+}
+
+.inspector-page-timeline__body {
+  @include border-style;
+  @apply bg-gradient-to-r from-gray-300 dark:from-gray-900 from-[1px] to-transparent to-[1px];
+  @apply border-l-transparent;
+}
+
+.inspector-page-timeline__body-cells {
+  @include border-style;
+  @apply grid grid-cols-6;
+  @apply border-x-0 border-t-0;
+  @apply font-bold text-center text-2xs sm:text-xs md:text-sm;
+}
+
+.inspector-page-timeline__body-cell {
+  @apply py-2 px-3;
+}
+
 .inspector-page-timeline__segments {
-  @apply overflow-x-scroll border border-gray-50 dark:border-gray-600;
+  @apply block;
 }
 
-.inspector-page-timeline__segments-cells {
-  @apply grid grid-cols-6 divide-x divide-gray-50 dark:divide-gray-600 border-b border-gray-50 dark:border-gray-600 font-bold text-center text-2xs sm:text-xs md:text-sm;
+.inspector-page-timeline__segment {
+  @apply text-right cursor-pointer;
 }
 
-.inspector-page-timeline__segments-cell {
-  @apply py-2 pl-3;
+.inspector-page-timeline__segment-label {
+  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 py-1 opacity-20 overflow-auto;
+
+  .inspector-page-timeline__segment:hover & {
+    @apply opacity-100;
+  }
 }
 
-.inspector-page-timeline__series {
-  background-image: linear-gradient(to right, #dedede 1px, transparent 1px);
-}
+.inspector-page-timeline__segment-view {
+  @apply flex items-center w-full;
 
-.dark .inspector-page-timeline__series {
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.04) 1px,
-    transparent 1px
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.08) 20px,
+    rgba(0, 0, 0, 0.06) 20px,
+    rgba(0, 0, 0, 0.06) 40px
   );
+
+  .dark & {
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.05) 20px,
+      rgba(255, 255, 255, 0.04) 20px,
+      rgba(255, 255, 255, 0.04) 40px
+    );
+  }
 }
 
-.inspector-page-timeline__series-segment {
-  @apply mt-4 text-right;
-}
-
-.inspector-page-timeline__series-segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap pr-2 pb-1;
-}
-
-.inspector-page-timeline__series-segment-start {
+.inspector-page-timeline__segment-start {
   @apply flex items-center justify-end;
+  @apply h-4 md:h-5 lg:h-6 opacity-20;
+
+  .inspector-page-timeline__segment:hover & {
+    @apply opacity-100;
+  }
 }
 
-.inspector-page-timeline__series-segment-end,
-.inspector-page-timeline__series-segment-start {
-  background-color: rgba(177 177 177 / 17%);
-}
-
-.dark .inspector-page-timeline__series-segment-end,
-.dark .inspector-page-timeline__series-segment-start {
-  background-color: rgba(255, 255, 255, 0.04);
-}
-
-.inspector-page-timeline__series-segment-end {
-  @apply flex-1;
-}
-
-.inspector-page-timeline__series-segment-start-label {
-  @apply text-2xs font-bold dark:text-gray-200 mr-3;
-}
-
-.inspector-page-timeline__series-segment-time {
-  @apply flex-none;
+.inspector-page-timeline__segment-time {
+  @apply flex flex-none relative items-center;
+  @apply h-4 md:h-5 lg:h-6 rounded-sm text-white;
   min-width: 0;
+
+  span {
+    @apply text-xs font-bold text-right px-1;
+  }
 }
 
-.inspector-page-timeline__series-segment-start,
-.inspector-page-timeline__series-segment-time,
-.inspector-page-timeline__series-segment-end {
+.inspector-page-timeline__segment-end {
+  @apply flex flex-1 items-center  px-2;
   @apply h-4 md:h-5 lg:h-6;
+  @apply text-xs font-bold text-left;
+}
+
+.inspector-page-timeline__segment-start-label {
+  @apply text-2xs font-bold dark:text-gray-200 mr-3;
 }
 
 .inspector-page-timeline__no-segments {
@@ -272,29 +305,5 @@ const series = computed(() => {
 
 .inspector-page-timeline__no-segments-placeholder {
   @apply text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300;
-}
-
-.inspector-page-timeline__series-segment-time,
-.inspector-page-timeline__segment-type__color-box {
-  @apply bg-gray-600;
-}
-
-.inspector-page-timeline__series-segment-time.orange,
-.inspector-page-timeline__segment-type__color-box.orange {
-  @apply bg-orange-600;
-}
-
-.inspector-page-timeline__series-segment-time.blue,
-.inspector-page-timeline__segment-type__color-box.blue {
-  @apply bg-blue-600;
-}
-
-.inspector-page-timeline__series-segment-time.purple,
-.inspector-page-timeline__segment-type__color-box.purple {
-  @apply bg-purple-600;
-}
-
-.inspector-page-timeline__segment-type__label {
-  @apply text-xs font-bold;
 }
 </style>

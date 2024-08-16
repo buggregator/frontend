@@ -9,13 +9,14 @@ import { IconSvg } from "~/src/shared/ui";
 setPageLayout("blank");
 
 const store = useProfileStore();
-const { auth } = storeToRefs(useSettingsStore());
+const { authLogicUrl } = storeToRefs(useSettingsStore());
 
 if (store.isAuthenticated) {
+  setPageLayout("default");
   await navigateTo("/");
 }
 
-const loginUrl = computed(() => `${REST_API_URL}/${auth.value.loginUrl}`);
+const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`);
 
 const redirect = async () => {
   await navigateTo(loginUrl.value, {
@@ -42,11 +43,11 @@ const redirect = async () => {
           </div>
           <div
             class="login-form-right-block"
-            style="
-              background: url('/bg.jpg');
-              background-size: cover;
-              background-position: center center;
-            "
+            :style="{
+              background: `url('/bg.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center center',
+            }"
           ></div>
         </div>
       </div>
@@ -91,7 +92,7 @@ const redirect = async () => {
 }
 
 .login-form--title {
-  @apply text-4xl text-center font-thin;
+  @apply text-4xl text-center font-thin text-black;
   @apply my-10;
 }
 

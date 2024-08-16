@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {useSettings} from "../../lib/use-settings";
+import {REST_API_URL} from "../../lib/io/constants";
 import type { TSettings } from "../../types";
 import {THEME_MODES} from "./constants";
 import {
@@ -16,29 +16,37 @@ import {
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     apiVersion: '',
-    auth: {
-      isEnabled: false,
-      loginUrl: '/login',
-    },
+    isFetched: false,
+    isAuthEnabled: false,
+    authLogicUrl: '/login',
     codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
   }),
   actions: {
-    initialize() {
-      const {api: { getSettings }} = useSettings();
+    async fetchSettings() {
+      // TODO: need to remove fetch out of the store
+      const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
+        .then((response) => response.json())
+        .catch((e) => {
+          console.error(e);
 
-      getSettings().then(({ version, auth } = {} as TSettings) => {
-        if (version) {
-          this.apiVersion = version
-        }
+          return null
+        });
 
-        if (auth) {
-          this.auth.isEnabled = auth.enabled;
-          this.auth.loginUrl = auth.login_url;
-        }
-      })
+      if (settings.version) {
+        this.apiVersion = settings.version
+      }
+
+      if (settings.auth) {
+        this.isAuthEnabled = settings.auth.enabled;
+        this.authLogicUrl = settings.auth.login_url;
+      }
+
+      this.isFetched = true
+
+      return settings
     },
     changeTheme() {
       this.themeType = this.themeType === THEME_MODES.DARK

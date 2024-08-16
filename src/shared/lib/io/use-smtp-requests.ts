@@ -7,8 +7,6 @@ type TUseSmtpRequests = () => {
   getAttachments: (id: EventId) => Promise<Attachment[]>
 }
 
-// TODO: add 403 response handling
-
 export const useSmtpRequests: TUseSmtpRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
@@ -34,7 +32,6 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
     })
 
   return {
-    getAttachmentsRestUrl,
     getAttachments
   }
 }
