@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const normalizedNumber = computed(() =>
-  props.number > 99 ? "*" : props.number
+  props.number > 99 ? "*" : props.number,
 );
 const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
 </script>
@@ -30,7 +30,7 @@ const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
 @import "src/assets/mixins";
 
 .badge-number {
-  @apply relative flex;
+  @apply relative inline-flex;
 }
 
 .badge-number__badge {

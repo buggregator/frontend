@@ -11,7 +11,9 @@
     "lint": "yarn codestyle && yarn typecheck",
     "codestyle": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"TODO: need to add tests\""
+    "test": "echo \"TODO: need to add tests\"",
+    "storybook": "storybook dev -p 6006",
+    "sb": "storybook dev -p 6006"
   },
   "type": "module",
   "lint-staged": {
@@ -29,15 +31,20 @@
     "*.{js,css,md}": "prettier --write"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-attributes": "^7.24.7",
+    "@chromatic-com/storybook": "^1.6.1",
     "@conarti/eslint-plugin-feature-sliced": "^1.0.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
-    "@nuxtjs/storybook": "^8.1.1",
+    "@nuxtjs/storybook": "^8.1.5",
     "@nuxtjs/tailwindcss": "^6.2.0",
-    "@storybook-vue/nuxt": "^0.2.8",
+    "@storybook-vue/nuxt": "0.2.10",
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/addon-interactions": "^8.1.11",
     "@storybook/addon-links": "^8.1.11",
+    "@storybook/blocks": "8.1.11",
+    "@storybook/test": "8.1.11",
     "@storybook/vue3": "^8.1.11",
+    "@storybook/vue3-vite": "8.1.11",
     "@types/cytoscape-dagre": "^2.3.1",
     "@types/downloadjs": "^1.4.3",
     "@types/lodash.debounce": "^4.0.7",
@@ -89,11 +96,12 @@
     "lodash.isstring": "^4.0.1",
     "lodash.pick": "^4.4.0",
     "moment": "^2.29.4",
-    "nuxt": "^3.8.2",
+    "nuxt": "^3.12.4",
     "pinia": "^2.0.30",
     "pluralize": "^8.0.0",
     "tailwindcss": "^3.2.4",
     "vue": "^3.2.45",
     "vue3-tabs-component": "^1.2.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

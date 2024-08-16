@@ -13,12 +13,18 @@ const preview: Preview = {
       const html = window?.document?.querySelector('html');
 
       if (html) {
-        const oldClass = html.classList.value
-        const newClass = parameters?.backgrounds.values.find(({ value }) => globals?.backgrounds?.value === value)?.class
+        const themeClassNames = (parameters?.backgrounds?.values || []).map(({ class: className }) => className)
+
+        const oldClasses = html.classList.value
+          .trim()
+          .split(' ')
+          .filter((className) => themeClassNames.includes(className))
+          .filter(Boolean)
+        const newClass = (parameters?.backgrounds?.values || []).find(({ value }) => globals?.backgrounds?.value === value)?.class
 
         if (newClass) {
-          if (oldClass) {
-            html.classList.remove(oldClass)
+          if (oldClasses.length) {
+            html.classList.remove(...oldClasses)
           }
 
           html.classList.add(newClass)

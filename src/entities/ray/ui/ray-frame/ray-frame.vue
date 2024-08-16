@@ -15,8 +15,8 @@ const { codeEditor } = storeToRefs(useSettingsStore());
 const callLink = computed(
   () =>
     `${codeEditor}://open?file=${encodeURIComponent(
-      props.frame.file_name
-    )}&line=${props.frame.line_number}`
+      props.frame.file_name,
+    )}&line=${props.frame.line_number}`,
 );
 </script>
 
@@ -33,18 +33,10 @@ const callLink = computed(
 
 <style lang="scss" scoped>
 .ray-frame__name {
-  --tw-text-opacity: 1;
-  color: rgba(96, 165, 250, var(--tw-text-opacity));
-  text-decoration: underline;
-
-  .dark & {
-    --tw-text-opacity: 1;
-    color: rgba(219, 234, 254, var(--tw-text-opacity));
-  }
+  @apply text-blue-400 dark:text-blue-100 underline;
 }
 
 .ray-frame__code {
-  word-break: break-all;
-  font-weight: 600;
+  @apply break-all font-semibold;
 }
 </style>

@@ -37,10 +37,6 @@ export const setStoredActiveTheme = (themeName: string) => {
 }
 
 export const getStoredFixedHeader = () => {
-  if (!process.client) {
-    return  false;
-  }
-
   const storedValue: string = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) || "true";
 
   const isFixed: boolean = storedValue === "true"
