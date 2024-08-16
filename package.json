@@ -81,7 +81,6 @@
     "@sentry/types": "^8.15.0",
     "@storybook/addon-actions": "^8.1.11",
     "@types/lodash": "^4.14.200",
-    "@vitejs/plugin-vue": "^5.1.1",
     "@vue/shared": "^3.2.45",
     "@vueuse/core": "^10.11.0",
     "centrifuge": "^5.2.2",

@@ -1,4 +1,3 @@
-import vue from '@vitejs/plugin-vue'
 import {defineNuxtConfig} from "nuxt/config";
 import pkg from './package.json';
 
@@ -67,10 +66,6 @@ export default defineNuxtConfig({
     public: {
       version: pkg.version,
     }
-  },
-
-  vite: {
-    plugins: [vue()]
   },
 
   compatibilityDate: "2024-07-12"
