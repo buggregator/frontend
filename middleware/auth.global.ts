@@ -1,3 +1,4 @@
+import { storeToRefs } from "pinia";
 import { navigateTo, defineNuxtRouteMiddleware } from "#app";
 import { useSettings } from "~/src/shared/lib/use-settings";
 import {useSettingsStore, useProfileStore} from "~/src/shared/stores";
