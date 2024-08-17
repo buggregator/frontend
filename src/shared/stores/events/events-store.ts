@@ -88,7 +88,7 @@ export const useEventsStore = defineStore("eventsStore", {
       const { availableEvents } = useSettingsStore();
 
       this.events = events
-        .filter((el) => availableEvents.includes(el.type as EventType))
+        .filter((el) => availableEvents.includes(el.type))
         .slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
@@ -97,7 +97,7 @@ export const useEventsStore = defineStore("eventsStore", {
     addList(events: ServerEvent<unknown>[]): void {
       const { availableEvents } = useSettingsStore();
       events
-        .filter((el) => availableEvents.includes(el.type as EventType))
+        .filter((el) => availableEvents.includes(el.type))
         .forEach((event) => {
         const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
         if (!isExistedEvent) {

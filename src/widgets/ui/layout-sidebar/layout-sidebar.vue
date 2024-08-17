@@ -104,7 +104,7 @@ const logout = () => {
 
 const path = computed(() => useRoute().path);
 
-const { apiVersion } = storeToRefs(useSettingsStore());
+const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
 
 const clientVersion = ref(
   !version || version === "0.0.1" ? "@dev" : `v${version}`,
@@ -121,6 +121,10 @@ const setProject = (projectKey: string) => {
 
   isVisibleProjects.value = false;
 };
+
+const filteredNavOrder = computed(() =>
+  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
+);
 
 const makeShortTitle = (title: string) => (title || "").substring(0, 2);
 const generateRadialGradient = (input: string) =>
@@ -170,7 +174,7 @@ const generateRadialGradient = (input: string) =>
         </NuxtLink>
       </template>
 
-      <template v-for="type in EVENTS_NAV_ORDER" :key="type">
+      <template v-for="type in filteredNavOrder" :key="type">
         <NuxtLink
           :to="EVENTS_LINKS_MAP[type].path"
           :title="EVENTS_LINKS_MAP[type].title"

@@ -1,4 +1,4 @@
-import { EVENT_TYPES } from "./events";
+import {type EventType} from "./events";
 
 export type TProfile =  {
   username: string,
@@ -13,7 +13,7 @@ export type TSettings = {
   },
   version: string,
   client: {
-    events: EVENT_TYPES[],
+    events: EventType[],
   }
 }
 
