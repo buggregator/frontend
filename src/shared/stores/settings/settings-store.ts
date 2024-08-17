@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {REST_API_URL} from "../../lib/io/constants";
-import type { TSettings } from "../../types";
+import type {EventType, TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -23,6 +23,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
+    availableEvents: [] as EventType[],
   }),
   actions: {
     async fetchSettings() {
@@ -42,6 +43,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       if (settings.auth) {
         this.isAuthEnabled = settings.auth.enabled;
         this.authLogicUrl = settings.auth.login_url;
+      }
+
+      if (settings?.client?.events) {
+        // TODO: meed to move to the events store
+        this.availableEvents = settings?.client?.events as EventType[]
       }
 
       this.isFetched = true

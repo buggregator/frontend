@@ -3,6 +3,7 @@ import {PAGE_TYPES} from "../../constants";
 import {useSettings} from "../../lib/use-settings";
 import type {EventId, EventType, ServerEvent, TEventsGroup, TProjects} from '../../types';
 import {EVENT_TYPES} from "../../types";
+import {useSettingsStore} from "../settings";
 import {
   getStoredLockedIds,
   setStoredCachedIds,
@@ -84,13 +85,20 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // events
     initializeEvents (events: ServerEvent<unknown>[]): void {
-      this.events = events.slice(0, MAX_EVENTS_COUNT);
+      const { availableEvents } = useSettingsStore();
+
+      this.events = events
+        .filter((el) => availableEvents.includes(el.type as EventType))
+        .slice(0, MAX_EVENTS_COUNT);
 
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
       this.initActiveProjectKey();
     },
     addList(events: ServerEvent<unknown>[]): void {
-      events.forEach((event) => {
+      const { availableEvents } = useSettingsStore();
+      events
+        .filter((el) => availableEvents.includes(el.type as EventType))
+        .forEach((event) => {
         const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
         if (!isExistedEvent) {
           this.events.unshift(event)
