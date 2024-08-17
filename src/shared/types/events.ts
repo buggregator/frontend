@@ -21,7 +21,7 @@ export type EventType = OneOfValues<typeof EVENT_TYPES>;
 
 export interface ServerEvent<T> {
   uuid: EventId,
-  type: EventType,
+  type: EventType | unknown,
   payload: T,
   project: string | null,
   timestamp: number // unavailable for some ray dump events
