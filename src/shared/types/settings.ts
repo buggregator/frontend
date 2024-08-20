@@ -1,3 +1,5 @@
+import {type EventType} from "./events";
+
 export type TProfile =  {
   username: string,
   email: string,
@@ -10,6 +12,9 @@ export type TSettings = {
     login_url: string,
   },
   version: string,
+  client: {
+    events: EventType[],
+  }
 }
 
 
