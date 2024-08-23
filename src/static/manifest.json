@@ -22,5 +22,5 @@
   "scope": "/",
   "theme_color": "#1F2937",
   "description": "Buggregator is a free, multi-purpose server tool designed primarily for debugging PHP applications, but it's also compatible with other programming languages. Think of it as a Swiss Army knife for developers. What makes it special is that it offers a range of features that you would usually find in various paid tools, but it's available for free.\n\n",
-  "version": "0.1"
+  "version": "1.22.1"
 }
