@@ -1,6 +1,6 @@
 {
   "short_name": "Buggregator",
-  "name": "Buggregator: The Ultimate Debugging Server",
+  "name": "Buggregator",
   "manifest_version": 2,
   "lang": "en",
   "icons": [
