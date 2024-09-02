@@ -34,9 +34,8 @@ export const useProfileStore = defineStore("profileStore", {
             return new Error('Auth Error')
           }
 
-          return response
+          return response.json()
         })
-        .then((response) => response.json())
         .catch((e) => {
           console.error(e);
 
