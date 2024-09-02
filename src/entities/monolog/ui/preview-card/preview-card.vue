@@ -45,10 +45,9 @@ const toggleView = () => {
     />
 
     <CodeSnippet
-      v-for="(field, key) in event.payload.extra"
-      :key="key"
       class="preview-card__snippet"
-      :code="{ [key]: field }"
+      language="json"
+      :code="event.payload.extra"
     />
   </PreviewCard>
 </template>
