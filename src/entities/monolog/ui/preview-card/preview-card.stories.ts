@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import { useMonolog } from "../../lib";
-import { monologMock } from '../../mocks'
+import { monologMock, monologExtendedMock } from '../../mocks'
 import PreviewCard from './preview-card.vue';
 
 const { normalizeMonologEvent } = useMonolog();
@@ -26,5 +26,11 @@ export const WithOrigin: StoryObj<typeof PreviewCard> = {
         name: "Symfony\\Component\\HttpKernel\\HttpKernel->handleRaw",
       }
     }
+  }
+}
+
+export const ComplexObject: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeMonologEvent(monologExtendedMock),
   }
 }

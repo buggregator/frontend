@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import {navigateTo} from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
 import {REST_API_URL} from "../../lib/io/constants";
 import type {TProfile} from "../../types";
 import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage-actions";
@@ -32,12 +31,11 @@ export const useProfileStore = defineStore("profileStore", {
             // TODO: add toast to show error
             console.error('Auth Error', response.status, response.statusText)
 
-            navigateTo('/login')
+            return new Error('Auth Error')
           }
 
-          return response
+          return response.json()
         })
-        .then((response) => response.json())
         .catch((e) => {
           console.error(e);
 

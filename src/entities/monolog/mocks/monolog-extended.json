@@ -1,0 +1,30 @@
+{
+  "uuid": "019059fe-9284-71fe-9e47-a392664a8c87",
+  "project": null,
+  "type": "monolog",
+  "payload": {
+    "channel": "application",
+    "context": {
+      "cool": "heck yeah",
+      "here": "where?"
+    },
+    "datetime": "2024-06-27T15:59:34.201624+02:00",
+    "extra": {
+      "callType": null,
+      "class": null,
+      "file": "[REDACTED]",
+      "function": "[REDACTED]",
+      "http_method": "GET",
+      "instance": "[REDACTED]",
+      "ip": "[REDACTED]",
+      "line": 514,
+      "referrer": null,
+      "server": "[REDACTED]",
+      "url": "[REDACTED]"
+    },
+    "level": 200,
+    "level_name": "INFO",
+    "message": "Hello world"
+  },
+  "timestamp": 1719496774.2804
+}

@@ -19,7 +19,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   await profileStore.getStoredToken()
 
   if (isAuthenticated.value) {
-    await profileStore.getProfile();
+    try {
+      await profileStore.getProfile();
+    } catch (e) {
+      console.error(e);
+      return navigateTo('/login')
+    }
   }
 
   if (to.name !== 'login' && !isAuthenticated.value) {
