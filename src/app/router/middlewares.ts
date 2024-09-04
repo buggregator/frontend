@@ -1,8 +1,9 @@
-import { storeToRefs } from "pinia";
-import { navigateTo, defineNuxtRouteMiddleware } from "#app";
-import {useSettingsStore, useProfileStore} from "~/src/shared/stores";
+import {storeToRefs} from "pinia";
+import {useProfileStore, useSettingsStore} from "@/shared/stores";
+import  {type TRouterMiddleware, RouteName} from "./types";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+
+export const auth: TRouterMiddleware = async ({ to, next }) => {
   const settingsStore  = useSettingsStore()
   const {isFetched, isAuthEnabled }  = storeToRefs(settingsStore)
 
@@ -23,18 +24,26 @@ export default defineNuxtRouteMiddleware(async (to) => {
       await profileStore.getProfile();
     } catch (e) {
       console.error(e);
-      return navigateTo('/login')
+
+      return next({
+        name: RouteName.Login,
+      })
     }
   }
 
   if (to.name !== 'login' && !isAuthenticated.value) {
-    return navigateTo('/login')
+    return next({
+      name: RouteName.Login,
+    })
   }
 
   if (to.name === 'login' && to?.query?.token) {
     profileStore.setToken(String(to.query.token))
-    return navigateTo('/')
+    return next({
+      name: RouteName.Home,
+    })
   }
 
   return undefined
-})
+}
+

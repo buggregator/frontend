@@ -1,22 +1,18 @@
 <script lang="ts" setup>
-import { TableBase, TableBaseRow, ValueDump } from "~/src/shared/ui";
-import type { RayContentObject } from "../../types";
+import { TableBase, TableBaseRow, ValueDump } from '@/shared/ui'
+import type { RayContentObject } from '../../types'
 
 type Props = {
-  table: RayContentObject;
-};
+  table: RayContentObject
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
   <div class="ray-table">
     <TableBase>
-      <TableBaseRow
-        v-for="(value, title) in table.values"
-        :key="title"
-        :title="title"
-      >
+      <TableBaseRow v-for="(value, title) in table.values" :key="title" :title="title">
         <ValueDump :value="value" />
       </TableBaseRow>
     </TableBase>

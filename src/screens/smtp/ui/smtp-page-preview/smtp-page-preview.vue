@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { IconSvg } from "~/src/shared/ui";
+import { ref } from 'vue'
+import { IconSvg } from '@/shared/ui'
 
 type Props = {
-  device: string;
-};
+  device: string
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  device: "desktop",
-});
+  device: 'desktop'
+})
 
-const currentDevice = ref(props.device);
+const currentDevice = ref(props.device)
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const currentDevice = ref(props.device);
       <button
         class="smtp-page-preview__btn"
         :class="{
-          'smtp-page-preview__btn--active': currentDevice === 'mobile',
+          'smtp-page-preview__btn--active': currentDevice === 'mobile'
         }"
         @click="currentDevice = 'mobile'"
       >
@@ -28,7 +28,7 @@ const currentDevice = ref(props.device);
       <button
         class="smtp-page-preview__btn"
         :class="{
-          'smtp-page-preview__btn--active': currentDevice === 'tablet',
+          'smtp-page-preview__btn--active': currentDevice === 'tablet'
         }"
         @click="currentDevice = 'tablet'"
       >
@@ -37,7 +37,7 @@ const currentDevice = ref(props.device);
       <button
         class="smtp-page-preview__btn"
         :class="{
-          'smtp-page-preview__btn--active': currentDevice === 'desktop',
+          'smtp-page-preview__btn--active': currentDevice === 'desktop'
         }"
         @click="currentDevice = 'desktop'"
       >
@@ -49,11 +49,11 @@ const currentDevice = ref(props.device);
       :class="{
         'smtp-page-preview__device--desktop': currentDevice === 'desktop',
         'smtp-page-preview__device--tablet': currentDevice === 'tablet',
-        'smtp-page-preview__device--mobile': currentDevice === 'mobile',
+        'smtp-page-preview__device--mobile': currentDevice === 'mobile'
       }"
     >
       <div class="smtp-page-preview__device-in">
-        <slot></slot>
+        <slot />
       </div>
     </div>
   </div>
@@ -61,7 +61,7 @@ const currentDevice = ref(props.device);
 
 <style lang="scss">
 // TODO: need to add scoped property
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .smtp-page-preview {
   @apply flex-1 flex flex-col items-center h-full;
@@ -143,13 +143,13 @@ const currentDevice = ref(props.device);
   &::after {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-12 h-12 my-4;
-    content: "";
+    content: '';
   }
 
   &::before {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
-    content: "";
+    content: '';
   }
 }
 
@@ -159,13 +159,13 @@ const currentDevice = ref(props.device);
   &::before {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
-    content: "";
+    content: '';
   }
 
   &::after {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
-    content: "";
+    content: '';
   }
 }
 </style>

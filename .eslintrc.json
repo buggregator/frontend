@@ -1,33 +1,24 @@
 {
   "extends": [
-    "airbnb/base",
-    "airbnb-typescript/base",
-    "plugin:vue/vue3-recommended",
-    "@nuxtjs/eslint-config-typescript",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "prettier",
-    "plugin:nuxt/recommended",
-    "plugin:@conarti/feature-sliced/recommended",
-    "plugin:storybook/recommended"
+    "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended",
+    "eslint:recommended",
+    "@vue/eslint-config-typescript",
+    "plugin:storybook/recommended",
+    "plugin:@conarti/feature-sliced/recommended"
   ],
-  "parser": "vue-eslint-parser",
-  "plugins": ["@typescript-eslint"],
-  "root": true,
   "ignorePatterns": [
     "package.json",
     "postcss.config.js",
     "tailwind.config.js",
-    "src/shared/lib/vendor/"
+    "src/shared/lib/vendor/",
+    "layouts/",
+    "pages/",
+    "index.html"
   ],
   "parserOptions": {
-    "project": "./tsconfig.json",
-    "extraFileExtensions": [".vue"],
-    "parser": {
-      "ts": "@typescript-eslint/parser",
-      "<template>": "espree"
-    }
+    "ecmaVersion": "latest"
   },
   "rules": {
     "import/prefer-default-export": "off",

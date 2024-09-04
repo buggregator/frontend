@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import type { Sentry } from "~/src/entities/sentry/types";
-import { IconSvg, TableBase, TableBaseRow } from "~/src/shared/ui";
+import { ref } from 'vue'
+import type { Sentry } from '@/entities/sentry/types'
+import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
 
 type Props = {
-  extra: Sentry["extra"];
-};
+  extra: Sentry['extra']
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const ddStates = ref(
   Object.keys(props.extra || {}).reduce(
     (acc, key) => {
-      acc[key] = false;
-      return acc;
+      acc[key] = false
+      return acc
     },
-    {} as Record<string, boolean>,
-  ),
-);
+    {} as Record<string, boolean>
+  )
+)
 </script>
 
 <template>
@@ -30,30 +30,23 @@ const ddStates = ref(
         :key="key"
         class="sentry-page-extra__wrapper"
         :class="{
-          'sentry-page-extra__wrapper--open': ddStates[key],
+          'sentry-page-extra__wrapper--open': ddStates[key]
         }"
       >
-        <h3
-          class="sentry-page-extra__title"
-          @click="ddStates[key] = !ddStates[key]"
-        >
+        <h3 class="sentry-page-extra__title" @click="ddStates[key] = !ddStates[key]">
           {{ key }}
 
           <IconSvg
             class="sentry-page-extra__title-dd"
             :class="{
-              'sentry-page-extra__title-dd--open': ddStates[key],
+              'sentry-page-extra__title-dd--open': ddStates[key]
             }"
             name="dd"
           />
         </h3>
 
         <TableBase v-if="value" class="sentry-page-extra__content">
-          <TableBaseRow
-            v-for="(v, t) in value"
-            :key="t"
-            :title="String(t || '')"
-          >
+          <TableBaseRow v-for="(v, t) in value" :key="t" :title="String(t || '')">
             {{ JSON.stringify(v) }}
           </TableBaseRow>
         </TableBase>
@@ -63,7 +56,7 @@ const ddStates = ref(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-extra {
 }

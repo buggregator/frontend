@@ -1,55 +1,53 @@
 <script lang="ts" setup>
-import { defineProps, computed } from "vue";
-import type { HttpDump } from "~/src/entities/http-dump/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { TableBase, TableBaseRow, FileAttachment } from "~/src/shared/ui";
+import { defineProps, computed } from 'vue'
+import type { HttpDump } from '@/entities/http-dump/types'
+import type { NormalizedEvent } from '@/shared/types'
+import { TableBase, TableBaseRow, FileAttachment } from '@/shared/ui'
 
 type Props = {
-  event: NormalizedEvent<HttpDump>;
-};
+  event: NormalizedEvent<HttpDump>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const uri = computed(() => decodeURI(props.event.payload?.request?.uri));
+const uri = computed(() => decodeURI(props.event.payload?.request?.uri))
 
 const hasPostData = computed(
   () =>
-    props.event.payload?.request?.post &&
-    Object.keys(props.event.payload?.request?.post).length > 0
-);
+    props.event.payload?.request?.post && Object.keys(props.event.payload?.request?.post).length > 0
+)
 
 const hasQuery = computed(
   () =>
     props.event.payload?.request?.query &&
     Object.keys(props.event.payload?.request?.query).length > 0
-);
+)
 
 const hasHeaders = computed(
   () => Object.keys(props.event.payload?.request?.headers || {}).length > 0
-);
+)
 
 const hasCookies = computed(
   () =>
     props.event.payload?.request?.cookies &&
     Object.keys(props.event.payload?.request?.cookies).length > 0
-);
+)
 
-const hasBody = computed(() => props.event.payload?.request?.body?.length > 0);
+const hasBody = computed(() => props.event.payload?.request?.body?.length > 0)
 
 const hasAttachments = computed(
   () =>
     props.event.payload?.request?.files &&
     Object.keys(props.event.payload?.request?.files).length > 0
-);
+)
 </script>
 
 <template>
   <div ref="main" class="http-dump-page">
     <main class="http-dump-page__main">
       <h2 class="http-dump-page__title">
-        <span class="http-dump-page__title-method">
-          {{ event.payload.request.method }} </span
-        >: <span class="http-dump-page__title-uri">/{{ uri }}</span>
+        <span class="http-dump-page__title-method"> {{ event.payload.request.method }} </span>:
+        <span class="http-dump-page__title-uri">/{{ uri }}</span>
       </h2>
 
       <section v-if="hasHeaders" class="http-dump-page__section">
@@ -128,7 +126,7 @@ const hasAttachments = computed(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .http-dump-page {
   @apply relative flex-1 flex flex-col;

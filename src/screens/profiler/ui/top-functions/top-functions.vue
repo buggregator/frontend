@@ -1,59 +1,56 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import { useProfiler } from "~/src/entities/profiler";
-import type {
-  Profiler,
-  ProfilerTopFunctions,
-} from "~/src/entities/profiler/types";
-import { formatDuration } from "~/src/shared/lib/formats/format-duration";
-import { formatFileSize } from "~/src/shared/lib/formats/format-file-size";
-import { type EventId } from "~/src/shared/types";
-import { StatBoard } from "~/src/shared/ui";
+import { ref, watchEffect } from 'vue'
+import { useProfiler } from '@/entities/profiler'
+import type { Profiler, ProfilerTopFunctions } from '@/entities/profiler/types'
+import { formatDuration } from '@/shared/lib/formats/format-duration'
+import { formatFileSize } from '@/shared/lib/formats/format-file-size'
+import { type EventId } from '@/shared/types'
+import { StatBoard } from '@/shared/ui'
 
 type Props = {
-  payload: Profiler;
-  id: EventId;
-};
+  payload: Profiler
+  id: EventId
+}
 
-const { getTopFunctions } = useProfiler();
-const props = defineProps<Props>();
-const metric = ref("excl_wt"); // TODO: use enum value
+const { getTopFunctions } = useProfiler()
+const props = defineProps<Props>()
+const metric = ref('excl_wt') // TODO: use enum value
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
   overall_totals: {},
-  schema: [],
-});
+  schema: []
+})
 
 const setMetric = (value: string | undefined) => {
   if (value) {
-    metric.value = value;
+    metric.value = value
   }
-};
+}
 
 const formatValue = (value: number, format: string) => {
-  if (format === "ms") {
-    return formatDuration(value);
+  if (format === 'ms') {
+    return formatDuration(value)
   }
 
-  if (format === "percent") {
-    return `${value}%`;
+  if (format === 'percent') {
+    return `${value}%`
   }
 
-  if (format === "number") {
-    return new Intl.NumberFormat("en-US", { style: "decimal" }).format(value);
+  if (format === 'number') {
+    return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value)
   }
 
-  if (format === "bytes") {
-    return formatFileSize(value, 3);
+  if (format === 'bytes') {
+    return formatFileSize(value, 3)
   }
 
-  return value;
-};
+  return value
+}
 
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: metric.value });
-});
+  data.value = await getTopFunctions(props.id, { metric: metric.value })
+})
 </script>
 
 <template>
@@ -102,7 +99,7 @@ watchEffect(async () => {
 </template>
 
 <style scoped lang="scss">
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .top-functions__body {
   @include border-style;

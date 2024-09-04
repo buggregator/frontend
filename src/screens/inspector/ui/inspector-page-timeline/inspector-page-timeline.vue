@@ -1,87 +1,80 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, type Ref } from "vue";
-import type {
-  InspectorSegment,
-  InspectorTransaction,
-  Inspector,
-} from "~/src/entities/inspector/types";
+import { computed, type ComputedRef, type Ref } from 'vue'
+import type { InspectorSegment, InspectorTransaction, Inspector } from '@/entities/inspector/types'
 
 type Props = {
-  payload: Inspector;
-};
+  payload: Inspector
+}
 
-const COLUMNS_NUMBER = 5;
+const COLUMNS_NUMBER = 5
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const segmentColor = (color: string): string => {
   switch (color) {
-    case "sqlite":
-      return "#f97316"; // orange-500
-    case "view":
-      return "#3b82f6"; // blue-500
-    case "artisan":
-      return "#a855f7"; // purple-500
-    case "pgsql":
-      return "#22c55e"; // green-500
+    case 'sqlite':
+      return '#f97316' // orange-500
+    case 'view':
+      return '#3b82f6' // blue-500
+    case 'artisan':
+      return '#a855f7' // purple-500
+    case 'pgsql':
+      return '#22c55e' // green-500
     default:
-      return "#64748b"; // slate-500
+      return '#64748b' // slate-500
   }
-};
+}
 
 const transaction: Ref<InspectorTransaction> = computed(
-  () => props.payload[0] as InspectorTransaction,
-);
+  () => props.payload[0] as InspectorTransaction
+)
 
 const layoutCells = computed(() => {
-  const maxWidth = transaction.value.duration;
-  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1);
+  const maxWidth = transaction.value.duration
+  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1)
 
   return new Array(COLUMNS_NUMBER).fill(null).reduceRight((acc, _, i) => {
-    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
+    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))))
 
     if (!i) {
       // NOTE: add last cell as full size without rounding
-      acc.push(maxWidth);
+      acc.push(maxWidth)
     }
 
-    return acc;
-  }, []);
-});
+    return acc
+  }, [])
+})
 
 const segments: ComputedRef<InspectorSegment[]> = computed(() =>
   props.payload
-    .filter((item): item is InspectorSegment => item.model === "segment")
-    .filter((el) => el?.transaction?.hash === transaction.value.hash),
-);
+    .filter((item): item is InspectorSegment => item.model === 'segment')
+    .filter((el) => el?.transaction?.hash === transaction.value.hash)
+)
 
 const segmentTypes = computed(() => {
-  const arr: string[] = [];
+  const arr: string[] = []
 
   segments.value.forEach((data) => {
     if (!arr.includes(data.type)) {
-      arr.push(data.type);
+      arr.push(data.type)
     }
-  });
+  })
 
-  return arr;
-});
+  return arr
+})
 
 const segmentRows = computed(() => {
-  const { duration } = transaction.value;
+  const { duration } = transaction.value
 
   return segments.value.map((segment: InspectorSegment) => ({
     label: segment.label,
     duration: segment.duration,
     start: segment.start,
     type: segment.type,
-    widthPercent: Math.max(
-      Number(((segment.duration * 100) / duration).toFixed(2)),
-      0.5,
-    ),
-    marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
-  }));
-});
+    widthPercent: Math.max(Number(((segment.duration * 100) / duration).toFixed(2)), 0.5),
+    marginPercent: (((segment.start || 0) * 100) / duration).toFixed()
+  }))
+})
 </script>
 
 <template>
@@ -89,10 +82,7 @@ const segmentRows = computed(() => {
     <div class="inspector-page-timeline__head">
       <h3 class="inspector-page-timeline__head-title">Timeline</h3>
 
-      <div
-        v-if="segmentTypes.length > 0"
-        class="inspector-page-timeline__head-tips"
-      >
+      <div v-if="segmentTypes.length > 0" class="inspector-page-timeline__head-tips">
         <div
           v-for="segmentType in segmentTypes"
           :key="segmentType"
@@ -101,7 +91,7 @@ const segmentRows = computed(() => {
           <div
             :style="{ background: segmentColor(segmentType) }"
             class="inspector-page-timeline__head-tip-box"
-          ></div>
+          />
 
           <span class="inspector-page-timeline__head-tip-label">
             {{ segmentType }}
@@ -114,18 +104,11 @@ const segmentRows = computed(() => {
       v-if="segmentRows.length > 0"
       class="inspector-page-timeline__body"
       :style="{
-        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`,
+        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`
       }"
     >
-      <div
-        class="inspector-page-timeline__body-cells"
-        :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
-      >
-        <div
-          v-for="cell in layoutCells"
-          :key="cell"
-          class="inspector-page-timeline__body-cell"
-        >
+      <div class="inspector-page-timeline__body-cells" :class="`grid-cols-${COLUMNS_NUMBER + 1}`">
+        <div v-for="cell in layoutCells" :key="cell" class="inspector-page-timeline__body-cell">
           {{ cell }} ms
         </div>
       </div>
@@ -136,10 +119,7 @@ const segmentRows = computed(() => {
           :key="`${segmentRow.label} - ${segmentRow.duration}`"
           class="inspector-page-timeline__segment"
         >
-          <div
-            class="inspector-page-timeline__segment-label"
-            :title="segmentRow.label"
-          >
+          <div class="inspector-page-timeline__segment-label" :title="segmentRow.label">
             {{ segmentRow.label }}
           </div>
 
@@ -157,38 +137,31 @@ const segmentRows = computed(() => {
               class="inspector-page-timeline__segment-time"
               :style="{
                 width: segmentRow.widthPercent + '%',
-                background: segmentColor(segmentRow.type),
+                background: segmentColor(segmentRow.type)
               }"
             >
-              <span v-if="segmentRow.widthPercent > 20">
-                {{ segmentRow.duration }} ms
-              </span>
+              <span v-if="segmentRow.widthPercent > 20"> {{ segmentRow.duration }} ms </span>
             </div>
 
             <div
               class="inspector-page-timeline__segment-end"
               :style="{ color: segmentColor(segmentRow.type) }"
             >
-              <span v-if="segmentRow.widthPercent <= 20">
-                {{ segmentRow.duration }} ms
-              </span>
+              <span v-if="segmentRow.widthPercent <= 20"> {{ segmentRow.duration }} ms </span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div
-      v-if="segmentRows.length === 0"
-      class="inspector-page-timeline__no-segments"
-    >
+    <div v-if="segmentRows.length === 0" class="inspector-page-timeline__no-segments">
       <h3 class="inspector-page-timeline__no-segments-placeholder">No data</h3>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .inspector-page-timeline {
   @apply py-5 relative;

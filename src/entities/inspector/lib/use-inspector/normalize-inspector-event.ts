@@ -1,6 +1,6 @@
 import moment from "moment";
-import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import type { ServerEvent, NormalizedEvent } from "@/shared/types";
+import { EVENT_TYPES } from "@/shared/types";
 import type { Inspector, InspectorTransaction } from "../../types";
 
 export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): NormalizedEvent<Inspector> => {

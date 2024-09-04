@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useMonolog } from "~/src/entities/monolog";
-import { monologMock } from '~/src/entities/monolog/mocks';
+import { useMonolog } from "@/entities/monolog";
+import { monologMock } from '@/entities/monolog/mocks';
 import Monolog from './monolog-page.vue';
 
 const { normalizeMonologEvent } = useMonolog();

@@ -1,7 +1,7 @@
 import pick from "lodash/pick";
 import moment from "moment";
-import type {NormalizedEvent, ServerEvent} from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import type {NormalizedEvent, ServerEvent} from "@/shared/types";
+import { EVENT_TYPES } from "@/shared/types";
 import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
 import { RAY_EVENT_TYPES } from "../../types";
 

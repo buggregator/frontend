@@ -1,6 +1,6 @@
 import moment from "moment/moment";
-import type {ServerEvent, NormalizedEvent, Attachment } from "~/src/shared/types";
-import {EVENT_TYPES } from "~/src/shared/types";
+import type {ServerEvent, NormalizedEvent, Attachment } from "@/shared/types";
+import {EVENT_TYPES } from "@/shared/types";
 import type {HttpDump, HttpDumpServer} from "../../types";
 
 export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>): NormalizedEvent<HttpDump> => {

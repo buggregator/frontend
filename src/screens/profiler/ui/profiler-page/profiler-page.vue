@@ -1,64 +1,64 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import { Tabs, Tab } from "vue3-tabs-component";
-import type { Profiler, ProfilerEdge } from "~/src/entities/profiler/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import type { CallStackHoverData } from "../../types";
-import { CallGraph } from "../call-graph";
-import { CallStatBoard } from "../call-stat-board";
-import { FlameGraph } from "../flame-graph";
-import { TopFunctions } from "../top-functions";
+import { computed, ref } from 'vue'
+import { Tabs, Tab } from 'vue3-tabs-component'
+import type { Profiler, ProfilerEdge } from '@/entities/profiler/types'
+import type { NormalizedEvent } from '@/shared/types'
+import type { CallStackHoverData } from '../../types'
+import { CallGraph } from '../call-graph'
+import { CallStatBoard } from '../call-stat-board'
+import { FlameGraph } from '../flame-graph'
+import { TopFunctions } from '../top-functions'
 
 type Props = {
-  event: NormalizedEvent<Profiler>;
-};
+  event: NormalizedEvent<Profiler>
+}
 
-defineProps<Props>();
+defineProps<Props>()
 
-const defaultPosition = { x: 0, y: 0 };
+const defaultPosition = { x: 0, y: 0 }
 
-const activeEdge = ref<ProfilerEdge | null>();
-const activeTab = ref("");
-const activeEdgePosition = ref(defaultPosition);
+const activeEdge = ref<ProfilerEdge | null>()
+const activeTab = ref('')
+const activeEdgePosition = ref(defaultPosition)
 
 const activeEdgeStyle = computed(() => {
-  const width = 750;
-  const height = 150;
+  const width = 750
+  const height = 150
 
-  let top = activeEdgePosition.value.y;
-  let left = activeEdgePosition.value.x;
+  let top = activeEdgePosition.value.y
+  let left = activeEdgePosition.value.x
 
   if (width + activeEdgePosition.value.x > window.innerWidth - 80) {
-    const deltaX = width + activeEdgePosition.value.x - window.innerWidth + 100;
-    left -= deltaX;
+    const deltaX = width + activeEdgePosition.value.x - window.innerWidth + 100
+    left -= deltaX
   }
 
   if (height + activeEdgePosition.value.y > window.innerHeight) {
-    top = activeEdgePosition.value.y - height;
+    top = activeEdgePosition.value.y - height
   }
 
   return {
     top: `${top + 10}px`,
     left: `${left}px`,
-    width: `${width}px`,
-  };
-});
+    width: `${width}px`
+  }
+})
 
 const setActiveEdge = (value: CallStackHoverData | undefined) => {
   if (value) {
-    const { position, ...edge } = value || {};
+    const { position, ...edge } = value || {}
 
-    activeEdge.value = edge;
-    activeEdgePosition.value = position;
+    activeEdge.value = edge
+    activeEdgePosition.value = position
   } else {
-    activeEdge.value = null;
-    activeEdgePosition.value = defaultPosition;
+    activeEdge.value = null
+    activeEdgePosition.value = defaultPosition
   }
-};
+}
 
 const tabChange = (selectedTab: { tab: { name: string } }) => {
-  activeTab.value = selectedTab.tab.name;
-};
+  activeTab.value = selectedTab.tab.name
+}
 </script>
 
 <template>

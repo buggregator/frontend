@@ -1,51 +1,47 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
-import { HttpDumpPage } from "~/src/screens/http-dump";
-import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageEventHeader } from "~/src/widgets/ui";
-import { useHttpDump } from "~/src/entities/http-dump";
-import type { HttpDumpServer } from "~/src/entities/http-dump/types";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { EventId, ServerEvent } from "~/src/shared/types";
+import { useTitle } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { PageEventHeader } from '@/widgets/ui'
+import { useHttpDump } from '@/entities/http-dump'
+import type { HttpDumpServer } from '@/entities/http-dump/types'
+import { useEvents } from '@/shared/lib/use-events'
+import type { EventId, ServerEvent } from '@/shared/types'
+import { HttpDumpPage } from '@/screens/http-dump'
 
-const { normalizeHttpDumpEvent } = useHttpDump();
+const { normalizeHttpDumpEvent } = useHttpDump()
 
-const { params } = useRoute();
-const router = useRouter();
-const eventId = params.id as EventId;
+const { params } = useRoute()
+const router = useRouter()
+const eventId = params.id as EventId
 
-useTitle(`Http dumps > ${eventId} | Buggregator`);
+useTitle(`Http dumps > ${eventId} | Buggregator`)
 
 const {
-  events: { getItem },
-} = useEvents();
+  events: { getItem }
+} = useEvents()
 
-const isLoading = ref(false);
-const serverEvent = ref<ServerEvent<HttpDumpServer> | null>(null);
+const isLoading = ref(false)
+const serverEvent = ref<ServerEvent<HttpDumpServer> | null>(null)
 
-const event = computed(() =>
-  serverEvent.value ? normalizeHttpDumpEvent(serverEvent.value) : null,
-);
+const event = computed(() => (serverEvent.value ? normalizeHttpDumpEvent(serverEvent.value) : null))
 
 const getEvent = async () => {
-  isLoading.value = true;
+  isLoading.value = true
 
   try {
-    serverEvent.value = (await getItem(
-      eventId,
-    )) as unknown as ServerEvent<HttpDumpServer>;
-    isLoading.value = false;
+    serverEvent.value = (await getItem(eventId)) as unknown as ServerEvent<HttpDumpServer>
+    isLoading.value = false
 
     if (!serverEvent.value) {
-      router.push("/404");
+      router.push('/404')
     }
   } catch (error) {
-    router.push("/404");
+    router.push('/404')
   }
-};
+}
 
-onMounted(getEvent);
+onMounted(getEvent)
 </script>
 
 <template>
@@ -55,9 +51,9 @@ onMounted(getEvent);
     </template>
 
     <div v-if="isLoading && !event" class="http-dump-event__loading">
-      <div></div>
-      <div></div>
-      <div></div>
+      <div />
+      <div />
+      <div />
     </div>
 
     <HttpDumpPage v-if="event" :event="event" />
@@ -65,7 +61,7 @@ onMounted(getEvent);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .http-dump-event {
 }
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { profilerEdgesMock } from  "~/src/entities/profiler/mocks";
+import { profilerEdgesMock } from  "@/entities/profiler/mocks";
 import CallStatBoard from './call-stat-board.vue';
 
 export default {

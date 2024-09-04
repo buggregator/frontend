@@ -1,134 +1,115 @@
 <script lang="ts" setup>
-import { useFloating } from "@floating-ui/vue";
-import { onClickOutside } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { textToColors } from "~/src/shared/lib/helpers";
-import { useEvents } from "~/src/shared/lib/use-events";
-import {
-  useSettingsStore,
-  useProfileStore,
-  useEventsStore,
-} from "~/src/shared/stores";
-import { useConnectionStore } from "~/src/shared/stores/connections";
-import { BadgeNumber, IconSvg } from "~/src/shared/ui";
-import { version } from "../../../../package.json";
-import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
+import { useFloating } from '@floating-ui/vue'
+import { onClickOutside } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { textToColors } from '@/shared/lib/helpers'
+import { useEvents } from '@/shared/lib/use-events'
+import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
+import { useConnectionStore } from '@/shared/stores/connections'
+import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { version } from '../../../../package.json'
+import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from './constants'
 
-const { isConnectedWS } = storeToRefs(useConnectionStore());
-const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
-const eventsStore = useEventsStore();
-const { availableProjects, isMultipleProjects, activeProject } =
-  storeToRefs(eventsStore);
+const { isConnectedWS } = storeToRefs(useConnectionStore())
+const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
+const eventsStore = useEventsStore()
+const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
 
-const profileStore = useProfileStore();
-const { profile } = storeToRefs(profileStore);
+const profileStore = useProfileStore()
+const { profile } = storeToRefs(profileStore)
 
-const { getItemsCount } = useEvents();
+const { getItemsCount } = useEvents()
 
-const projectDd = ref<HTMLElement | null>(null);
-const projectMenu = ref<HTMLElement | null>(null);
-const userDd = ref<HTMLElement | null>(null);
-const userMenu = ref<HTMLElement | null>(null);
+const projectDd = ref<HTMLElement | null>(null)
+const projectMenu = ref<HTMLElement | null>(null)
+const userDd = ref<HTMLElement | null>(null)
+const userMenu = ref<HTMLElement | null>(null)
 
-const isVisibleProfile = ref(false);
-const isVisibleProjects = ref(false);
+const isVisibleProfile = ref(false)
+const isVisibleProjects = ref(false)
 
 // TODO: need to check why project is empty on first load
-const isProjectLoading = computed(() => !activeProject.value);
+const isProjectLoading = computed(() => !activeProject.value)
 
 onClickOutside(projectMenu, () => {
-  isVisibleProjects.value = false;
-});
+  isVisibleProjects.value = false
+})
 
 onClickOutside(userMenu, () => {
-  isVisibleProfile.value = false;
-});
+  isVisibleProfile.value = false
+})
 
-const { floatingStyles: projectDdStyles } = useFloating(
-  projectDd,
-  projectMenu,
-  {
-    placement: "right-start",
-  },
-);
+const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
+  placement: 'right-start'
+})
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: "right",
-});
+  placement: 'right'
+})
 
-const connectionStatus = computed(() =>
-  isConnectedWS.value ? "connected" : "disconnected",
-);
+const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'))
 
 const avatar = computed(() => {
-  if (!profile.value) return null;
+  if (!profile.value) return null
 
   if (!profile.value?.avatar) {
-    return null;
+    return null
   }
 
-  if (profile.value.avatar.startsWith("<svg")) {
-    return `data:image/svg+xml;base64,${btoa(
-      profile.value.avatar.replace(/&quot;/g, '"'),
-    )}`;
+  if (profile.value.avatar.startsWith('<svg')) {
+    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`
   }
 
-  return profile.value.avatar;
-});
+  return profile.value.avatar
+})
 
 const profileEmail = computed(() => {
-  if (!profile.value) return null;
+  if (!profile.value) return null
 
-  return profile.value.email;
-});
+  return profile.value.email
+})
 
-const connectionText = computed(
-  () => `WS connection is ${connectionStatus.value}`,
-);
+const connectionText = computed(() => `WS connection is ${connectionStatus.value}`)
 
 const toggleProfileDropdown = () => {
-  isVisibleProfile.value = !isVisibleProfile.value;
-};
+  isVisibleProfile.value = !isVisibleProfile.value
+}
 
 const toggleProjects = () => {
-  isVisibleProjects.value = !isVisibleProjects.value;
-};
+  isVisibleProjects.value = !isVisibleProjects.value
+}
 
 const logout = () => {
-  profileStore.removeToken();
-  const router = useRouter();
-  router.push("/login");
-};
+  profileStore.removeToken()
+  const router = useRouter()
+  router.push('/login')
+}
 
-const path = computed(() => useRoute().path);
+const path = computed(() => useRoute().path)
 
-const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
+const { apiVersion, availableEvents } = storeToRefs(useSettingsStore())
 
-const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`,
-);
+const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`)
 
 const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/)
-    ? `v${apiVersion.value}`
-    : `@${apiVersion.value}`,
-);
+  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
+)
 
 const setProject = (projectKey: string) => {
-  eventsStore.setActiveProjectKey(projectKey);
+  eventsStore.setActiveProjectKey(projectKey)
 
-  isVisibleProjects.value = false;
-};
+  isVisibleProjects.value = false
+}
 
 const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
-);
+  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
+)
 
-const makeShortTitle = (title: string) => (title || "").substring(0, 2);
+const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
+  `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 </script>
 
 <template>
@@ -157,7 +138,7 @@ const generateRadialGradient = (input: string) =>
               :title="activeProject.name"
               class="layout-sidebar__project"
               :style="{
-                background: generateRadialGradient(activeProject.name),
+                background: generateRadialGradient(activeProject.name)
               }"
             >
               {{ makeShortTitle(activeProject.name) }}
@@ -180,7 +161,7 @@ const generateRadialGradient = (input: string) =>
           :title="EVENTS_LINKS_MAP[type].title"
           class="layout-sidebar__link"
           :class="{
-            'router-link-active': path.includes(EVENTS_LINKS_MAP[type].path),
+            'router-link-active': path.includes(EVENTS_LINKS_MAP[type].path)
           }"
         >
           <BadgeNumber
@@ -188,10 +169,7 @@ const generateRadialGradient = (input: string) =>
             class="layout-sidebar__link-badge"
             :is-visible="isVisibleEventCounts"
           >
-            <IconSvg
-              class="layout-sidebar__link-icon"
-              :name="EVENTS_LINKS_MAP[type].iconName"
-            />
+            <IconSvg class="layout-sidebar__link-icon" :name="EVENTS_LINKS_MAP[type].iconName" />
           </BadgeNumber>
         </NuxtLink>
       </template>
@@ -214,8 +192,7 @@ const generateRadialGradient = (input: string) =>
         class="layout-sidebar__dropdown-item"
         :title="project.name"
         :class="{
-          'layout-sidebar__dropdown-item--active':
-            activeProject.key === project.key,
+          'layout-sidebar__dropdown-item--active': activeProject.key === project.key
         }"
         tabindex="1"
         @click="setProject(project.key)"
@@ -259,11 +236,7 @@ const generateRadialGradient = (input: string) =>
           </button>
         </div>
 
-        <div
-          v-if="avatar"
-          class="layout-sidebar__dropdown-avatar"
-          @click="toggleProfileDropdown"
-        >
+        <div v-if="avatar" class="layout-sidebar__dropdown-avatar" @click="toggleProfileDropdown">
           <img :src="avatar" alt="profile" />
         </div>
       </div>

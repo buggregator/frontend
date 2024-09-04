@@ -1,4 +1,4 @@
-import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions} from "~/src/entities/profiler/types";
+import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions} from "@/entities/profiler/types";
 import {useProfileStore} from "../../stores";
 import type { EventId } from "../../types";
 import { REST_API_URL } from "./constants";

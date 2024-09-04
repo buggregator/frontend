@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { SentryContextApp } from "~/src/entities/sentry/types";
-import { TableBaseRow, TableBase, CodeSnippet } from "~/src/shared/ui";
+import type { SentryContextApp } from '@/entities/sentry/types'
+import { TableBaseRow, TableBase, CodeSnippet } from '@/shared/ui'
 
 type Props = {
-  app: SentryContextApp;
-};
+  app: SentryContextApp
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
@@ -46,7 +46,7 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-app {
   @apply py-5 px-4;

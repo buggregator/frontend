@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { computed, defineProps } from "vue";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { PreviewCard } from "~/src/shared/ui";
-import type { Inspector } from "../../types";
-import InspectorStatBoard from "../inspector-stat-board/inspector-stat-board.vue";
+import { computed, defineProps } from 'vue'
+import type { NormalizedEvent } from '@/shared/types'
+import { PreviewCard } from '@/shared/ui'
+import type { Inspector } from '../../types'
+import InspectorStatBoard from '../inspector-stat-board/inspector-stat-board.vue'
 
 type Props = {
-  event: NormalizedEvent<Inspector>;
-};
+  event: NormalizedEvent<Inspector>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const eventLink = computed(() => `/inspector/${props.event.id}`);
+const eventLink = computed(() => `/inspector/${props.event.id}`)
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .preview-card {
 }

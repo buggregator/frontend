@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import type { SentryRequest } from "~/src/entities/sentry/types";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import type { SentryRequest } from '@/entities/sentry/types'
+import { TableBase, TableBaseRow } from '@/shared/ui'
 
 type Props = {
-  request: SentryRequest;
-};
+  request: SentryRequest
+}
 
-defineProps<Props>();
+defineProps<Props>()
 
-const normalizeHeaderValue = (value: unknown) =>
-  Array.isArray(value) ? value[0] || value : value;
+const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value)
 </script>
 
 <template>
@@ -18,20 +17,14 @@ const normalizeHeaderValue = (value: unknown) =>
 
     <div class="sentry-page-request__wrapper">
       <code v-if="request" class="sentry-page-request__url">
-        <strong>{{ request.method || "GET" }}:</strong>
+        <strong>{{ request.method || 'GET' }}:</strong>
         {{ request.url }}
       </code>
 
-      <h3 class="sentry-page-request__title sentry-page-request__title--sub">
-        headers
-      </h3>
+      <h3 class="sentry-page-request__title sentry-page-request__title--sub">headers</h3>
 
       <TableBase v-if="request && request.headers">
-        <TableBaseRow
-          v-for="(value, title) in request.headers"
-          :key="title"
-          :title="String(title)"
-        >
+        <TableBaseRow v-for="(value, title) in request.headers" :key="title" :title="String(title)">
           {{ normalizeHeaderValue(value) }}
         </TableBaseRow>
       </TableBase>
@@ -40,7 +33,7 @@ const normalizeHeaderValue = (value: unknown) =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-request {
 }

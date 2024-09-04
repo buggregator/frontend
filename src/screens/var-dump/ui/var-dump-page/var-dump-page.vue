@@ -1,25 +1,23 @@
 <script lang="ts" setup>
-import moment from "moment/moment";
-import { computed } from "vue";
-import type { VarDump } from "~/src/entities/var-dump/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { TableBase, TableBaseRow, ValueDump } from "~/src/shared/ui";
+import moment from 'moment/moment'
+import { computed } from 'vue'
+import type { VarDump } from '@/entities/var-dump/types'
+import type { NormalizedEvent } from '@/shared/types'
+import { TableBase, TableBaseRow, ValueDump } from '@/shared/ui'
 
 type Props = {
-  event: NormalizedEvent<VarDump>;
-};
+  event: NormalizedEvent<VarDump>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const title = computed(() => {
-  const type = String(props.event.payload.payload.type || "Unknown type");
+  const type = String(props.event.payload.payload.type || 'Unknown type')
 
-  return type[0].toUpperCase() + type.slice(1);
-});
+  return type[0].toUpperCase() + type.slice(1)
+})
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
-);
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 </script>
 
 <template>
@@ -35,10 +33,7 @@ const date = computed(() =>
       </header>
 
       <section class="var-dump__body">
-        <ValueDump
-          :value="event.payload.payload.value"
-          :type="event.payload.payload.type"
-        />
+        <ValueDump :value="event.payload.payload.value" :type="event.payload.payload.type" />
       </section>
 
       <section v-if="event.payload.context.source" class="var-dump__body">
@@ -57,10 +52,7 @@ const date = computed(() =>
       <section v-if="event.payload.context.request" class="var-dump__body">
         <h3 class="var-dump__body-text">Request</h3>
         <TableBase class="var-dump__body-table">
-          <template
-            v-for="(value, name) in event.payload.context.request"
-            :key="name"
-          >
+          <template v-for="(value, name) in event.payload.context.request" :key="name">
             <TableBaseRow v-if="name && value" :title="String(name)">
               {{ value }}
             </TableBaseRow>
@@ -72,7 +64,7 @@ const date = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .var-dump {
   @apply relative;

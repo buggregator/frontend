@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { navigateTo, setPageLayout } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { REST_API_URL } from "~/src/shared/lib/io";
-import { useProfileStore, useSettingsStore } from "~/src/shared/stores";
-import { IconSvg } from "~/src/shared/ui";
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { navigateTo, setPageLayout } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { REST_API_URL } from '@/shared/lib/io'
+import { useProfileStore, useSettingsStore } from '@/shared/stores'
+import { IconSvg } from '@/shared/ui'
 
-setPageLayout("blank");
+setPageLayout('blank')
 
-const store = useProfileStore();
-const { authLogicUrl } = storeToRefs(useSettingsStore());
+const store = useProfileStore()
+const { authLogicUrl } = storeToRefs(useSettingsStore())
 
 if (store.isAuthenticated) {
-  setPageLayout("default");
-  await navigateTo("/");
+  setPageLayout('default')
+  await navigateTo('/')
 }
 
-const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`);
+const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`)
 
 const redirect = async () => {
   await navigateTo(loginUrl.value, {
-    external: true,
-  });
-};
+    external: true
+  })
+}
 </script>
 
 <template>
@@ -33,9 +33,7 @@ const redirect = async () => {
         <div class="login-form">
           <div class="login-form-left-block">
             <h1 class="login-form--title">Welcome Back</h1>
-            <p class="pb-2 text-center text-sm text-gray-800">
-              Let's get you signed in.
-            </p>
+            <p class="pb-2 text-center text-sm text-gray-800">Let's get you signed in.</p>
             <button class="login-form--button" @click="redirect">
               <IconSvg class="w-6" name="lock" fill="currentcolor" />
               Continue to SSO
@@ -46,9 +44,9 @@ const redirect = async () => {
             :style="{
               background: `url('/bg.jpg')`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center center',
+              backgroundPosition: 'center center'
             }"
-          ></div>
+          />
         </div>
       </div>
     </div>
@@ -56,7 +54,7 @@ const redirect = async () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .login-page {
   @apply bg-gray-800;

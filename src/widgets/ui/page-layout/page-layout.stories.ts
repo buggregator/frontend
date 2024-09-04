@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { PAGE_TYPES } from "~/src/shared/constants";
+import { PAGE_TYPES } from "@/shared/constants";
 import PageLayout from "./page-layout.vue";
 
 export default {

@@ -1,43 +1,34 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { useSettingsStore, THEME_MODES } from "~/src/shared/stores";
-import { AppHeader, BadgeNumber, IconSvg } from "~/src/shared/ui";
+import { useTitle } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { useSettingsStore, THEME_MODES } from '@/shared/stores'
+import { AppHeader, BadgeNumber, IconSvg } from '@/shared/ui'
 
-const settingsStore = useSettingsStore();
-const {
-  changeTheme,
-  changeNavbar,
-  changeEventCountsVisibility,
-  changeActiveCodeEditor,
-} = settingsStore;
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } =
-  storeToRefs(settingsStore);
+const settingsStore = useSettingsStore()
+const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
+  settingsStore
+const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore)
 
-useTitle("Settings | Buggregator");
+useTitle('Settings | Buggregator')
 
-const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
 // TODO: add throttle
 const changeCodeEditor = (event: Event) => {
-  const editor = (event.target as HTMLInputElement).value;
-  changeActiveCodeEditor(editor);
-};
+  const editor = (event.target as HTMLInputElement).value
+  changeActiveCodeEditor(editor)
+}
 </script>
 
 <template>
   <NuxtLayout class="settings-page">
     <template #header>
-      <AppHeader>
-        <NuxtLink to="/">Home</NuxtLink>&nbsp;/&nbsp;Settings
-      </AppHeader>
+      <AppHeader> <NuxtLink to="/"> Home </NuxtLink>&nbsp;/&nbsp;Settings </AppHeader>
     </template>
 
     <main class="settings-page__content">
-      <div class="settings-page__title">
-        Theme: {{ isDarkMode ? "Dark" : "Light" }}
-      </div>
+      <div class="settings-page__title">Theme: {{ isDarkMode ? 'Dark' : 'Light' }}</div>
 
       <div class="settings-page__control">
         <IconSvg
@@ -61,9 +52,7 @@ const changeCodeEditor = (event: Event) => {
         />
       </div>
 
-      <div class="settings-page__title">
-        Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
-      </div>
+      <div class="settings-page__title">Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}</div>
 
       <div class="settings-page__control">
         <IconSvg
@@ -88,14 +77,14 @@ const changeCodeEditor = (event: Event) => {
       </div>
 
       <div class="settings-page__title">
-        Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
+        Events Counts: {{ isVisibleEventCounts ? 'On' : 'Off' }}
       </div>
 
       <div class="settings-page__control">
         <div
           class="settings-page__control-icon"
           :class="{
-            'settings-page__control-icon--active': !isVisibleEventCounts,
+            'settings-page__control-icon--active': !isVisibleEventCounts
           }"
         >
           <IconSvg name="inspector" />
@@ -104,7 +93,7 @@ const changeCodeEditor = (event: Event) => {
         <button
           class="settings-page__control-button"
           :class="{
-            'settings-page__control-button--active': isVisibleEventCounts,
+            'settings-page__control-button--active': isVisibleEventCounts
           }"
           @click="changeEventCountsVisibility"
         >
@@ -114,7 +103,7 @@ const changeCodeEditor = (event: Event) => {
         <div
           class="settings-page__control-icon"
           :class="{
-            'settings-page__control-icon--active': isVisibleEventCounts,
+            'settings-page__control-icon--active': isVisibleEventCounts
           }"
         >
           <BadgeNumber class="settings-page__control-icon-badge" :number="15">
@@ -138,8 +127,8 @@ const changeCodeEditor = (event: Event) => {
           </label>
 
           <div class="settings-page__control-description">
-            Example of link to open files in code editor. You can replace the
-            name editor with a more preferable one
+            Example of link to open files in code editor. You can replace the name editor with a
+            more preferable one
           </div>
         </div>
       </div>
@@ -148,7 +137,7 @@ const changeCodeEditor = (event: Event) => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .settings-page {
   display: block;

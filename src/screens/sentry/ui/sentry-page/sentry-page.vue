@@ -1,47 +1,42 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { computed } from "vue";
-import { SentryException } from "~/src/entities/sentry";
-import type { Sentry } from "~/src/entities/sentry/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { SentryPageApp } from "../sentry-page-app";
-import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs";
-import { SentryPageDevice } from "../sentry-page-device";
-import { SentryPageExtra } from "../sentry-page-extra";
-import { SentryPageRequest } from "../sentry-page-request";
-import { SentryPageTags } from "../sentry-page-tags";
+import moment from 'moment'
+import { computed } from 'vue'
+import { SentryException } from '@/entities/sentry'
+import type { Sentry } from '@/entities/sentry/types'
+import type { NormalizedEvent } from '@/shared/types'
+import { SentryPageApp } from '../sentry-page-app'
+import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
+import { SentryPageDevice } from '../sentry-page-device'
+import { SentryPageExtra } from '../sentry-page-extra'
+import { SentryPageRequest } from '../sentry-page-request'
+import { SentryPageTags } from '../sentry-page-tags'
 
 type Props = {
-  event: NormalizedEvent<Sentry>;
-};
+  event: NormalizedEvent<Sentry>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const formattedTimestamp = computed(() =>
-  moment(props.event.payload.timestamp).toLocaleString(),
-);
+const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).toLocaleString())
 
-const mainException = computed(
-  () => props.event.payload?.exception?.values?.[0],
-);
+const mainException = computed(() => props.event.payload?.exception?.values?.[0])
 
-const exceptionsLength = computed(
-  () => props.event?.payload?.exception?.values?.length || 0,
-);
+const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0)
 </script>
 
 <template>
   <div class="sentry-page">
     <main class="sentry-page__main">
       <header v-if="mainException" class="sentry-page__main-header">
-        <h1 class="sentry-page__main-exception">{{ mainException.type }}</h1>
+        <h1 class="sentry-page__main-exception">
+          {{ mainException.type }}
+        </h1>
 
-        <pre
-          class="sentry-page__main-exception-message"
-          v-html="mainException.value"
-        />
+        <pre class="sentry-page__main-exception-message" v-html="mainException.value" />
 
-        <p class="sentry-page__main-date">{{ formattedTimestamp }}</p>
+        <p class="sentry-page__main-date">
+          {{ formattedTimestamp }}
+        </p>
       </header>
 
       <SentryPageTags class="sentry-page__section" :payload="event.payload" />
@@ -50,10 +45,7 @@ const exceptionsLength = computed(
         <h3 class="sentry-page__section-title">
           exceptions
 
-          <span
-            v-if="exceptionsLength > 0"
-            class="sentry-page__section-title__counter"
-          >
+          <span v-if="exceptionsLength > 0" class="sentry-page__section-title__counter">
             {{ exceptionsLength }}
           </span>
         </h3>
@@ -115,7 +107,7 @@ const exceptionsLength = computed(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page {
   @apply relative;

@@ -1,51 +1,47 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { computed, onMounted, ref } from "vue";
-import { ProfilerPage } from "~/src/screens/profiler";
-import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { PageEventHeader } from "~/src/widgets/ui";
-import { useProfiler } from "~/src/entities/profiler";
-import type { Profiler } from "~/src/entities/profiler/types";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { EventId, ServerEvent } from "~/src/shared/types";
+import { useTitle } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { PageEventHeader } from '@/widgets/ui'
+import { useProfiler } from '@/entities/profiler'
+import type { Profiler } from '@/entities/profiler/types'
+import { useEvents } from '@/shared/lib/use-events'
+import type { EventId, ServerEvent } from '@/shared/types'
+import { ProfilerPage } from '@/screens/profiler'
 
-const { normalizeProfilerEvent } = useProfiler();
+const { normalizeProfilerEvent } = useProfiler()
 
-const { params } = useRoute();
-const router = useRouter();
-const eventId = params.id as EventId;
+const { params } = useRoute()
+const router = useRouter()
+const eventId = params.id as EventId
 
-useTitle(`Profiler > ${eventId} | Buggregator`);
+useTitle(`Profiler > ${eventId} | Buggregator`)
 
 const {
-  events: { getItem },
-} = useEvents();
+  events: { getItem }
+} = useEvents()
 
-const isLoading = ref(false);
-const serverEvent = ref<ServerEvent<Profiler> | null>(null);
+const isLoading = ref(false)
+const serverEvent = ref<ServerEvent<Profiler> | null>(null)
 
-const event = computed(() =>
-  serverEvent.value ? normalizeProfilerEvent(serverEvent.value) : null,
-);
+const event = computed(() => (serverEvent.value ? normalizeProfilerEvent(serverEvent.value) : null))
 
 const getEvent = async () => {
-  isLoading.value = true;
+  isLoading.value = true
 
   try {
-    serverEvent.value = (await getItem(
-      eventId,
-    )) as unknown as ServerEvent<Profiler>;
-    isLoading.value = false;
+    serverEvent.value = (await getItem(eventId)) as unknown as ServerEvent<Profiler>
+    isLoading.value = false
 
     if (!serverEvent.value) {
-      router.push("/404");
+      router.push('/404')
     }
   } catch (error) {
-    router.push("/404");
+    router.push('/404')
   }
-};
+}
 
-onMounted(getEvent);
+onMounted(getEvent)
 </script>
 
 <template>
@@ -55,9 +51,9 @@ onMounted(getEvent);
     </template>
 
     <div v-if="isLoading && !event" class="profiler-event__loading">
-      <div></div>
-      <div></div>
-      <div></div>
+      <div />
+      <div />
+      <div />
     </div>
 
     <ProfilerPage v-if="event" :event="event" class="p-5" />
@@ -65,7 +61,7 @@ onMounted(getEvent);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .profiler-event {
   @include layout;
