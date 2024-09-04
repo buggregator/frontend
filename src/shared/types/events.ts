@@ -1,4 +1,4 @@
-import type {RayDump, RayDumpMeta} from "~/src/entities/ray/types";
+import type {RayDump, RayDumpMeta} from "@/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
 // TODO: add T prefix to all types

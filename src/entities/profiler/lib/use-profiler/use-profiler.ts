@@ -1,5 +1,5 @@
-import {useProfilerRequests} from "~/src/shared/lib/io/use-profiler-requests";
-import type {ServerEvent, NormalizedEvent, EventId} from '~/src/shared/types';
+import {useProfilerRequests} from "@/shared/lib/io/use-profiler-requests";
+import type {ServerEvent, NormalizedEvent, EventId} from '@/shared/types';
 import type {ProfileFlameChart, Profiler, ProfilerCallGraph, ProfilerTopFunctions} from "../../types";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 

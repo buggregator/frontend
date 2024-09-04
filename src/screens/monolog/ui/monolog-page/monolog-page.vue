@@ -1,28 +1,24 @@
 <script lang="ts" setup>
-import moment from "moment/moment";
-import { computed } from "vue";
-import type { Monolog } from "~/src/entities/monolog/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { CodeSnippet, TableBase, TableBaseRow } from "~/src/shared/ui";
+import moment from 'moment/moment'
+import { computed } from 'vue'
+import type { Monolog } from '@/entities/monolog/types'
+import type { NormalizedEvent } from '@/shared/types'
+import { CodeSnippet, TableBase, TableBaseRow } from '@/shared/ui'
 
 type Props = {
-  event: NormalizedEvent<Monolog>;
-};
+  event: NormalizedEvent<Monolog>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
-);
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 </script>
 
 <template>
   <div ref="main" class="monolog">
     <main class="monolog__in">
       <header class="monolog__header">
-        <h2 class="monolog__header-title">
-          Channel: {{ event.payload.channel }}
-        </h2>
+        <h2 class="monolog__header-title">Channel: {{ event.payload.channel }}</h2>
         <div class="monolog__header-meta">
           <span class="monolog__header-date">{{ date }}</span>
         </div>
@@ -62,10 +58,7 @@ const date = computed(() =>
       <section v-if="event.payload.context.request" class="monolog__body">
         <h3 class="monolog__body-text">Request</h3>
         <TableBase class="monolog__body-table">
-          <template
-            v-for="(value, name) in event.payload.context.request"
-            :key="name"
-          >
+          <template v-for="(value, name) in event.payload.context.request" :key="name">
             <TableBaseRow v-if="name && value" :title="String(name)">
               {{ value }}
             </TableBaseRow>
@@ -77,7 +70,7 @@ const date = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .monolog {
   @apply relative;

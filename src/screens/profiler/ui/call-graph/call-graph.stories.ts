@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useProfiler } from "~/src/entities/profiler";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
+import { useProfiler } from "@/entities/profiler";
+import { profilerMock } from  "@/entities/profiler/mocks";
 import CallGraph from './call-graph.vue';
 
 const { normalizeProfilerEvent } = useProfiler();

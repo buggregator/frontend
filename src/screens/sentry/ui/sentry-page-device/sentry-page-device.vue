@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import moment from "moment";
-import type { SentryDevice } from "~/src/entities/sentry/types";
-import { useFormats } from "~/src/shared/lib/formats";
-import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
+import moment from 'moment'
+import type { SentryDevice } from '@/entities/sentry/types'
+import { useFormats } from '@/shared/lib/formats'
+import { TableBase, TableBaseRow, CodeSnippet } from '@/shared/ui'
 
-const { formatFileSize } = useFormats();
+const { formatFileSize } = useFormats()
 
 type Props = {
-  device: SentryDevice;
-};
+  device: SentryDevice
+}
 
-defineProps<Props>();
+defineProps<Props>()
 
-const formatDate = (date: string) => moment(date).toLocaleString();
+const formatDate = (date: string) => moment(date).toLocaleString()
 
-const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
+const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
 </script>
 
 <template>
@@ -90,10 +90,7 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
         {{ device.orientation }}
       </TableBaseRow>
 
-      <TableBaseRow
-        v-if="device && device.screen_density"
-        title="Screen Density"
-      >
+      <TableBaseRow v-if="device && device.screen_density" title="Screen Density">
         {{ parseInt(String(device.screen_density)) }}
       </TableBaseRow>
 
@@ -101,17 +98,11 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
         {{ device.screen_dpi }}
       </TableBaseRow>
 
-      <TableBaseRow
-        v-if="device && device.screen_height_pixels"
-        title="Screen Height Pixels"
-      >
+      <TableBaseRow v-if="device && device.screen_height_pixels" title="Screen Height Pixels">
         {{ device.screen_height_pixels }}
       </TableBaseRow>
 
-      <TableBaseRow
-        v-if="device && device.screen_width_pixels"
-        title="Screen Width Pixels"
-      >
+      <TableBaseRow v-if="device && device.screen_width_pixels" title="Screen Width Pixels">
         {{ device.screen_width_pixels }}
       </TableBaseRow>
 
@@ -127,10 +118,7 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
         {{ device.timezone }}
       </TableBaseRow>
 
-      <TableBaseRow
-        v-if="device && device.battery_temperature"
-        title="Battery Temperature"
-      >
+      <TableBaseRow v-if="device && device.battery_temperature" title="Battery Temperature">
         {{ device.battery_temperature }}
       </TableBaseRow>
 
@@ -142,7 +130,7 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`;
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-device {
 }

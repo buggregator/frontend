@@ -1,23 +1,21 @@
 <script lang="ts" setup>
-import moment from "moment/moment";
-import { computed } from "vue";
-import { InspectorStatBoard } from "~/src/entities/inspector";
-import type { Inspector } from "~/src/entities/inspector/types";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
-import { InspectorPageTimeline } from "../inspector-page-timeline";
+import moment from 'moment/moment'
+import { computed } from 'vue'
+import { InspectorStatBoard } from '@/entities/inspector'
+import type { Inspector } from '@/entities/inspector/types'
+import type { NormalizedEvent } from '@/shared/types'
+import { TableBase, TableBaseRow } from '@/shared/ui'
+import { InspectorPageTimeline } from '../inspector-page-timeline'
 
 type Props = {
-  event: NormalizedEvent<Inspector>;
-};
+  event: NormalizedEvent<Inspector>
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const transaction = computed(() => props.event?.payload[0]);
+const transaction = computed(() => props.event?.payload[0])
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss")
-);
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 </script>
 
 <template>
@@ -60,7 +58,7 @@ const date = computed(() =>
               {{ value }}
             </template>
             <template v-else-if="Array.isArray(value)">
-              {{ value.join(", ") }}
+              {{ value.join(', ') }}
             </template>
             <template v-else-if="!Array.isArray(value)">
               <TableBaseRow v-for="(v, n) in value" :key="n" :title="String(n)">
@@ -75,7 +73,7 @@ const date = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .inspector-page {
   @apply relative;

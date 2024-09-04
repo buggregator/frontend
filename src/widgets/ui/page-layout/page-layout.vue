@@ -1,49 +1,45 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { computed, watchEffect } from "vue";
-import { PAGE_TYPES } from "~/src/shared/constants";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { TEventsGroup } from "~/src/shared/types";
-import { EventCard } from "../event-card";
-import { PagePlaceholder } from "../page-placeholder";
+import { useTitle } from '@vueuse/core'
+import { computed, watchEffect } from 'vue'
+import { PAGE_TYPES } from '@/shared/constants'
+import { useEvents } from '@/shared/lib/use-events'
+import type { TEventsGroup } from '@/shared/types'
+import { EventCard } from '../event-card'
+import { PagePlaceholder } from '../page-placeholder'
 
 type Props = {
-  title?: string;
-  type: TEventsGroup;
-};
+  title?: string
+  type: TEventsGroup
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "",
-});
+  title: ''
+})
 
-const { events, cachedEvents } = useEvents();
+const { events, cachedEvents } = useEvents()
 
-const isEventsPaused = computed(
-  () => cachedEvents.idsByType.value[props.type]?.length > 0,
-);
+const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
 const allEvents = computed(() => {
   if (props.type === PAGE_TYPES.ALL_EVENTS) {
-    return events.items.value;
+    return events.items.value
   }
-  return events.items.value.filter(({ type }) => type === props.type);
-});
+  return events.items.value.filter(({ type }) => type === props.type)
+})
 
 const visibleEvents = computed(() => {
   if (!isEventsPaused.value) {
-    return allEvents.value;
+    return allEvents.value
   }
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid),
-  );
-});
+    cachedEvents.idsByType.value[props.type]?.includes(uuid)
+  )
+})
 
 watchEffect(() => {
-  useTitle(
-    `${props.title || "Events"}: ${allEvents.value.length} | Buggregator`,
-  );
-});
+  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
+})
 </script>
 
 <template>
@@ -64,7 +60,7 @@ watchEffect(() => {
 </template>
 
 <style lang="scss">
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .page-layout {
   @apply flex flex-col h-full w-full;

@@ -1,76 +1,69 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { computed, ref } from "vue";
-import { Tab, Tabs } from "vue3-tabs-component";
-import type { SMTP, Attachment } from "~/src/entities/smtp/types";
-import { REST_API_URL } from "~/src/shared/lib/io";
-import type { NormalizedEvent } from "~/src/shared/types";
-import {
-  TableBase,
-  TableBaseRow,
-  CodeSnippet,
-  FileAttachment,
-} from "~/src/shared/ui";
-import { SmtpPageAddresses } from "../smtp-page-addresses";
-import { SmtpPagePreview } from "../smtp-page-preview";
+import moment from 'moment'
+import { computed, ref } from 'vue'
+import { Tab, Tabs } from 'vue3-tabs-component'
+import type { SMTP, Attachment } from '@/entities/smtp/types'
+import { REST_API_URL } from '@/shared/lib/io'
+import type { NormalizedEvent } from '@/shared/types'
+import { TableBase, TableBaseRow, CodeSnippet, FileAttachment } from '@/shared/ui'
+import { SmtpPageAddresses } from '../smtp-page-addresses'
+import { SmtpPagePreview } from '../smtp-page-preview'
 
 type Props = {
-  event: NormalizedEvent<SMTP>;
-  attachments: Attachment[];
-  htmlSource?: string;
-};
+  event: NormalizedEvent<SMTP>
+  attachments: Attachment[]
+  htmlSource?: string
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  attachments: () => [],
-});
+  attachments: () => []
+})
 
-const htmlSource = ref(props.htmlSource || props.event.payload.html);
+const htmlSource = ref(props.htmlSource || props.event.payload.html)
 
 const senders = computed(() => [
   {
-    title: "From",
-    address: props.event.payload.from,
+    title: 'From',
+    address: props.event.payload.from
   },
   {
-    title: "To",
-    address: props.event.payload.to,
+    title: 'To',
+    address: props.event.payload.to
   },
   {
-    title: "CC",
-    address: props.event.payload.cc,
+    title: 'CC',
+    address: props.event.payload.cc
   },
   {
-    title: "BCC",
-    address: props.event.payload.bcc,
+    title: 'BCC',
+    address: props.event.payload.bcc
   },
   {
-    title: "Reply to",
-    address: props.event.payload.reply_to,
-  },
-]);
+    title: 'Reply to',
+    address: props.event.payload.reply_to
+  }
+])
 
 const isHtml = computed(
-  () =>
-    props.event.payload?.html !== undefined && props.event.payload?.html !== "",
-);
+  () => props.event.payload?.html !== undefined && props.event.payload?.html !== ''
+)
 
 const isText = computed(
-  () =>
-    props.event.payload?.text !== undefined && props.event.payload?.text !== "",
-);
+  () => props.event.payload?.text !== undefined && props.event.payload?.text !== ''
+)
 
-const mail = computed(() => props.event.payload);
+const mail = computed(() => props.event.payload)
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"),
-);
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 </script>
 
 <template>
   <div ref="main" class="smtp-page">
     <main class="smtp-page__main">
       <header class="smtp-page__header">
-        <h2 class="smtp-page__header-title">{{ mail.subject }}</h2>
+        <h2 class="smtp-page__header-title">
+          {{ mail.subject }}
+        </h2>
         <div class="smtp-page__header-meta">
           <span class="smtp-page__header-date">{{ date }}</span>
         </div>
@@ -84,11 +77,11 @@ const date = computed(() =>
             class="smtp-page__sender-item"
             :class="`smtp-page__sender-${sender.title.toLowerCase()}`"
           >
-            <div class="smtp-page__sender-title">{{ sender.title }}</div>
+            <div class="smtp-page__sender-title">
+              {{ sender.title }}
+            </div>
             <div class="smtp-page__sender-address">
-              <template v-if="email.name">
-                {{ email.name }} [{{ email.email }}]
-              </template>
+              <template v-if="email.name"> {{ email.name }} [{{ email.email }}] </template>
               <template v-else>
                 {{ email.email }}
               </template>
@@ -110,11 +103,7 @@ const date = computed(() =>
             </SmtpPagePreview>
           </Tab>
           <Tab v-if="isHtml" name="HTML">
-            <CodeSnippet
-              language="html"
-              class="tab-preview-code"
-              :code="event.payload.html"
-            />
+            <CodeSnippet language="html" class="tab-preview-code" :code="event.payload.html" />
           </Tab>
           <Tab v-if="isText" name="Text">
             <CodeSnippet
@@ -123,10 +112,7 @@ const date = computed(() =>
               :code="event.payload.text"
             />
           </Tab>
-          <Tab
-            v-if="attachments.length"
-            :name="`Attachments (${attachments.length})`"
-          >
+          <Tab v-if="attachments.length" :name="`Attachments (${attachments.length})`">
             <section class="mb-5">
               <div class="flex gap-x-3">
                 <template v-for="a in attachments" :key="a.uuid">
@@ -140,11 +126,7 @@ const date = computed(() =>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet
-              class="tab-preview-code"
-              language="html"
-              :code="event.payload.raw"
-            />
+            <CodeSnippet class="tab-preview-code" language="html" :code="event.payload.raw" />
           </Tab>
           <Tab name="Tech Info">
             <section>
@@ -168,10 +150,7 @@ const date = computed(() =>
                 <TableBaseRow v-if="event.payload.bcc.length" title="Bcc">
                   <SmtpPageAddresses :addresses="event.payload.bcc" />
                 </TableBaseRow>
-                <TableBaseRow
-                  v-if="event.payload.reply_to.length"
-                  title="Reply to"
-                >
+                <TableBaseRow v-if="event.payload.reply_to.length" title="Reply to">
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>
@@ -184,7 +163,7 @@ const date = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .tab-preview-code {
   @apply max-w-full border dark:border-gray-500 rounded-md overflow-hidden;

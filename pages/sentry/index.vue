@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { PageHeader, PageLayout } from "~/src/widgets/ui";
-import { PAGE_TYPES } from "~/src/shared/constants";
+import { PageHeader, PageLayout } from '@/widgets/ui'
+import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>

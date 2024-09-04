@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { monologMock } from '~/src/entities/monolog/mocks'
-import { useEvents } from "~/src/shared/lib/use-events";
+import { monologMock } from '@/entities/monolog/mocks'
+import { useEvents } from "@/shared/lib/use-events";
 import PreviewCardDefault from './preview-card-default.vue';
 
 const { normalizeUnknownEvent } = useEvents();

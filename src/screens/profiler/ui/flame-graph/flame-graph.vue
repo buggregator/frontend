@@ -1,39 +1,39 @@
 <script lang="ts" setup>
-import { FlameChart } from "flame-chart-js";
-import debounce from "lodash.debounce";
-import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
-import type { CallStackHoverData } from "~/src/screens/profiler/types";
-import { useProfiler } from "~/src/entities/profiler";
-import type { Profiler } from "~/src/entities/profiler/types";
-import type { EventId } from "~/src/shared/types";
+import { FlameChart } from 'flame-chart-js'
+import debounce from 'lodash.debounce'
+import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { useProfiler } from '@/entities/profiler'
+import type { Profiler } from '@/entities/profiler/types'
+import type { EventId } from '@/shared/types'
+import type { CallStackHoverData } from '@/screens/profiler/types'
 
 type Props = {
-  payload: Profiler;
-  id: EventId;
-};
+  payload: Profiler
+  id: EventId
+}
 
 type Emits = {
-  hover: [value: CallStackHoverData];
-  hide: [];
-};
+  hover: [value: CallStackHoverData]
+  hide: []
+}
 
-const { getFlameChart } = useProfiler();
+const { getFlameChart } = useProfiler()
 
-const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-const canvas = ref<HTMLCanvasElement>();
-const graph = ref<HTMLCanvasElement>();
+const canvas = ref<HTMLCanvasElement>()
+const graph = ref<HTMLCanvasElement>()
 
 const renderChart = async () => {
   if (!graph.value || !canvas.value) {
-    return;
+    return
   }
 
-  const { width, height } = graph.value.getBoundingClientRect();
+  const { width, height } = graph.value.getBoundingClientRect()
 
-  canvas.value.width = width || 1;
-  canvas.value.height = height || 1;
+  canvas.value.width = width || 1
+  canvas.value.height = height || 1
 
   const flameChart = new FlameChart({
     canvas: canvas.value,
@@ -42,60 +42,59 @@ const renderChart = async () => {
     settings: {
       styles: {
         main: {
-          blockHeight: 20,
-        },
+          blockHeight: 20
+        }
       },
       options: {
         tooltip: (data, _, mouse) => {
           if (data === null) {
-            emit("hide");
+            emit('hide')
           } else {
-            emit("hover", {
+            emit('hover', {
               callee: data.data.source.name,
-              caller: "",
+              caller: '',
               cost: data.data.source.cost,
               position: {
                 x: mouse?.x ? mouse.x + 20 : 0,
-                y: mouse?.y ? mouse.y - 20 : 0,
-              },
-            });
+                y: mouse?.y ? mouse.y - 20 : 0
+              }
+            })
           }
-        },
-      },
-    },
-  });
+        }
+      }
+    }
+  })
 
-  flameChart.render();
+  flameChart.render()
   window.addEventListener(
-    "resize",
+    'resize',
     debounce(() => {
       if (!graph.value) {
-        return;
+        return
       }
 
-      const { width: windowWidth, height: windowHeight } =
-        graph.value.getBoundingClientRect();
+      const { width: windowWidth, height: windowHeight } = graph.value.getBoundingClientRect()
 
-      flameChart.resize(windowWidth, windowHeight);
-    }, 30),
-  );
-};
+      flameChart.resize(windowWidth, windowHeight)
+    }, 30)
+  )
+}
 
 onMounted(() => {
   nextTick(() => {
-    renderChart();
-  });
-});
+    renderChart()
+  })
+})
 
 onBeforeUnmount(() => {
-  emit("hide");
-});
+  emit('hide')
+})
 </script>
 
 <template>
   <div class="graph-wrapper">
     <div ref="graph" class="flame-graph">
-      <canvas ref="canvas" class="flame-graph__canvas"></canvas>
+      <canvas ref="canvas" class="flame-graph__canvas" />
     </div>
   </div>
 </template>

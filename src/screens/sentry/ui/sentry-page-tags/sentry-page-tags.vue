@@ -1,83 +1,78 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import type {
-  Sentry,
-  SentryContextRuntime,
-  SentryContextOS,
-} from "~/src/entities/sentry/types";
-import { IconSvg } from "~/src/shared/ui";
+import { computed, ref } from 'vue'
+import type { Sentry, SentryContextRuntime, SentryContextOS } from '@/entities/sentry/types'
+import { IconSvg } from '@/shared/ui'
 
 type Props = {
-  payload: Sentry;
-};
+  payload: Sentry
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const isModulesOpen = ref(false);
+const isModulesOpen = ref(false)
 
 const contextsRuntime = computed(() => {
-  const { name = "", version = "" } =
-    (props.payload.contexts?.runtime as SentryContextRuntime) || {};
+  const { name = '', version = '' } =
+    (props.payload.contexts?.runtime as SentryContextRuntime) || {}
 
-  return { name, version };
-});
+  return { name, version }
+})
 
 const contextsOS = computed(() => {
-  const { name = "", version = "" } =
-    (props.payload.contexts?.os as SentryContextOS) || {};
+  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContextOS) || {}
 
-  return { name, version };
-});
+  return { name, version }
+})
 
 const boxes = computed(() => [
   {
-    title: "runtime",
+    title: 'runtime',
     name: contextsRuntime.value.name,
-    version: contextsRuntime.value.version,
+    version: contextsRuntime.value.version
   },
   {
-    title: "os",
+    title: 'os',
     name: contextsOS.value.name,
-    version: contextsOS.value.version,
+    version: contextsOS.value.version
   },
   {
-    title: "sdk",
+    title: 'sdk',
     name: props.payload.sdk?.name,
-    version: props.payload.sdk?.version,
-  },
-]);
+    version: props.payload.sdk?.version
+  }
+])
 
 const tags = computed(() => [
   {
-    name: "env",
-    value: props.payload.environment,
+    name: 'env',
+    value: props.payload.environment
   },
   {
-    name: "logger",
-    value: props.payload.logger,
+    name: 'logger',
+    value: props.payload.logger
   },
   {
-    name: "os",
-    value: `${contextsOS.value.name} ${contextsOS.value.version}`,
+    name: 'os',
+    value: `${contextsOS.value.name} ${contextsOS.value.version}`
   },
   {
-    name: "runtime",
-    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
+    name: 'runtime',
+    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`
   },
   {
-    name: "server name",
-    value: props.payload.server_name,
-  },
-]);
+    name: 'server name',
+    value: props.payload.server_name
+  }
+])
 
 const modules = computed(() => {
-  const mods = props.payload.modules || {};
+  const mods = props.payload.modules || {}
 
   return Object.keys(mods).map((name) => ({
     name,
-    version: mods[name],
-  }));
-});
+    version: mods[name]
+  }))
+})
 </script>
 
 <template>
@@ -85,7 +80,9 @@ const modules = computed(() => {
     <div class="sentry-page-tags__boxes">
       <div v-for="box in boxes" :key="box.name" class="sentry-page-tags__box">
         <span class="sentry-page-tags__box-title">{{ box.title }}</span>
-        <h4 class="sentry-page-tags__box-name">{{ box.name }}</h4>
+        <h4 class="sentry-page-tags__box-name">
+          {{ box.name }}
+        </h4>
         <p class="sentry-page-tags__box-value">Version: {{ box.version }}</p>
       </div>
     </div>
@@ -93,26 +90,22 @@ const modules = computed(() => {
     <div class="sentry-page-tags__labels-wrapper">
       <h3 class="sentry-page-tags__title">Tags</h3>
       <div class="sentry-page-tags__labels">
-        <div
-          v-for="tag in tags"
-          :key="tag.name"
-          class="sentry-page-tags__label"
-        >
-          <div class="sentry-page-tags__label-name">{{ tag.name }}</div>
+        <div v-for="tag in tags" :key="tag.name" class="sentry-page-tags__label">
+          <div class="sentry-page-tags__label-name">
+            {{ tag.name }}
+          </div>
           <div class="sentry-page-tags__label-value">
             {{ tag.value }}
           </div>
         </div>
 
         <template v-if="payload.tags">
-          <div
-            v-for="(name, value) in payload.tags"
-            :key="value"
-            class="sentry-page-tags__label"
-          >
-            <div class="sentry-page-tags__label-name">{{ value }}</div>
+          <div v-for="(name, value) in payload.tags" :key="value" class="sentry-page-tags__label">
+            <div class="sentry-page-tags__label-name">
+              {{ value }}
+            </div>
             <div class="sentry-page-tags__label-value">
-              {{ name || " - " }}
+              {{ name || ' - ' }}
             </div>
           </div>
         </template>
@@ -122,30 +115,25 @@ const modules = computed(() => {
     <div
       class="sentry-page-tags__labels-wrapper"
       :class="{
-        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen,
+        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen
       }"
     >
-      <h3
-        class="sentry-page-tags__title"
-        @click="isModulesOpen = !isModulesOpen"
-      >
+      <h3 class="sentry-page-tags__title" @click="isModulesOpen = !isModulesOpen">
         Modules
 
         <IconSvg
           class="sentry-page-tags__title-dd"
           :class="{
-            'sentry-page-tags__title-dd--open': isModulesOpen,
+            'sentry-page-tags__title-dd--open': isModulesOpen
           }"
           name="dd"
         />
       </h3>
       <div class="sentry-page-tags__labels">
-        <div
-          v-for="module in modules"
-          :key="module.name"
-          class="sentry-page-tags__label"
-        >
-          <div class="sentry-page-tags__label-name">{{ module.name }}</div>
+        <div v-for="module in modules" :key="module.name" class="sentry-page-tags__label">
+          <div class="sentry-page-tags__label-name">
+            {{ module.name }}
+          </div>
           <div class="sentry-page-tags__label-value">
             {{ module.version }}
           </div>
@@ -156,7 +144,7 @@ const modules = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-tags {
 }

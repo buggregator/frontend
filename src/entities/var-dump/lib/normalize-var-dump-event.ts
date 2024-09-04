@@ -1,6 +1,6 @@
 import moment from "moment/moment";
-import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import type { ServerEvent, NormalizedEvent } from "@/shared/types";
+import { EVENT_TYPES } from "@/shared/types";
 import type { VarDump } from "../types";
 
 export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent<VarDump> => {

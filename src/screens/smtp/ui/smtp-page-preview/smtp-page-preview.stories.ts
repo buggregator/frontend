@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
-import {htmlEncode} from "~/src/shared/lib/helpers";
-import { HTMLCode } from '~/src/shared/mocks'
+import {htmlEncode} from "@/shared/lib/helpers";
+import { HTMLCode } from '@/shared/mocks'
 import SmtpPagePreview from './smtp-page-preview.vue';
 
 export default {

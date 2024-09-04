@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { NormalizedEvent } from "~/src/shared/types";
-import { CodeSnippet, PreviewCard } from "~/src/shared/ui";
+import type { NormalizedEvent } from '@/shared/types'
+import { CodeSnippet, PreviewCard } from '@/shared/ui'
 
 type Props = {
-  event: NormalizedEvent<unknown>;
-};
+  event: NormalizedEvent<unknown>
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>

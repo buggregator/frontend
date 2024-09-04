@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useSentry } from "~/src/entities/sentry";
-import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from '~/src/entities/sentry/mocks';
+import { useSentry } from "@/entities/sentry";
+import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from '@/entities/sentry/mocks';
 import SentryPage from './sentry-page.vue';
 
 const { normalizeSentryEvent } = useSentry();

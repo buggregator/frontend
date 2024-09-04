@@ -1,20 +1,16 @@
 <script lang="ts" setup>
-import type { SMTPUser } from "~/src/entities/smtp/types";
+import type { SMTPUser } from '@/entities/smtp/types'
 
 type Props = {
-  addresses: SMTPUser[];
-};
+  addresses: SMTPUser[]
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
   <div class="smtp-page-addresses">
-    <div
-      v-for="user in addresses"
-      :key="user.email"
-      class="smtp-page-addresses__item"
-    >
+    <div v-for="user in addresses" :key="user.email" class="smtp-page-addresses__item">
       <span v-if="user.name" class="smtp-page-addresses__item-name">
         {{ user.name }}
       </span>

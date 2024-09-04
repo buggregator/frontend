@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
-import { useProfiler } from "~/src/entities/profiler";
-import { profilerMock } from  "~/src/entities/profiler/mocks";
-import type { Profiler } from "~/src/entities/profiler/types";
+import { useProfiler } from "@/entities/profiler";
+import { profilerMock } from  "@/entities/profiler/mocks";
+import type { Profiler } from "@/entities/profiler/types";
 import FlameGraph from './flame-graph.vue';
 
 const { normalizeProfilerEvent } = useProfiler();

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useVarDump } from "~/src/entities/var-dump";
-import { varDumpObjectMock } from '~/src/entities/var-dump/mocks';
+import { useVarDump } from "@/entities/var-dump";
+import { varDumpObjectMock } from '@/entities/var-dump/mocks';
 import VarDump from './var-dump-page.vue';
 
 const { normalizeVarDumpEvent } = useVarDump();

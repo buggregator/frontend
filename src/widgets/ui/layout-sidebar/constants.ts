@@ -1,5 +1,5 @@
-import {PAGE_TYPES} from "~/src/shared/constants";
-import {EVENT_TYPES} from "~/src/shared/types";
+import {PAGE_TYPES} from "@/shared/constants";
+import {EVENT_TYPES} from "@/shared/types";
 
 export const EVENTS_NAV_ORDER: EVENT_TYPES[] = [
   PAGE_TYPES.SENTRY,

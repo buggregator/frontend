@@ -1,80 +1,69 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from "cytoscape";
-import { ref, computed, onMounted, watchEffect } from "vue";
-import { CallGraphToolbar } from "~/src/screens/profiler/ui/call-graph-toolbar";
-import { RenderGraph } from "~/src/widgets/ui";
-import { useProfiler } from "~/src/entities/profiler";
-import type {
-  Profiler,
-  ProfilerCallGraph,
-} from "~/src/entities/profiler/types";
-import { type EventId, GraphTypes } from "~/src/shared/types";
-import { CallStatBoard } from "../call-stat-board";
+import type { ElementsDefinition } from 'cytoscape'
+import { ref, computed, onMounted, watchEffect } from 'vue'
+import { RenderGraph } from '@/widgets/ui'
+import { useProfiler } from '@/entities/profiler'
+import type { Profiler, ProfilerCallGraph } from '@/entities/profiler/types'
+import { type EventId, GraphTypes } from '@/shared/types'
+import { CallStatBoard } from '../call-stat-board'
+import { CallGraphToolbar } from '@/screens/profiler/ui/call-graph-toolbar'
 
 type Props = {
-  payload: Profiler;
-  id: EventId;
-};
+  payload: Profiler
+  id: EventId
+}
 
-const { getCallGraph } = useProfiler();
+const { getCallGraph } = useProfiler()
 
-const props = defineProps<Props>();
-const isFullscreen = ref(false);
-const metric = ref(GraphTypes.WALL_TIME as GraphTypes);
-const threshold = ref(1);
-const percent = ref(10);
+const props = defineProps<Props>()
+const isFullscreen = ref(false)
+const metric = ref(GraphTypes.WALL_TIME as GraphTypes)
+const threshold = ref(1)
+const percent = ref(10)
 
-const isReadyGraph = ref(false);
-const container = ref<HTMLElement>();
+const isReadyGraph = ref(false)
+const container = ref<HTMLElement>()
 
-const elements = ref<ElementsDefinition | undefined>();
-const toolbar = ref<ProfilerCallGraph["toolbar"]>([]);
+const elements = ref<ElementsDefinition | undefined>()
+const toolbar = ref<ProfilerCallGraph['toolbar']>([])
 
-const graphKey = computed(
-  () => `${metric.value}-${threshold.value}-${percent.value}`,
-);
+const graphKey = computed(() => `${metric.value}-${threshold.value}-${percent.value}`)
 
 const setMetric = (value: GraphTypes) => {
-  metric.value = value;
-};
+  metric.value = value
+}
 
 const setThreshold = (value: number) => {
-  threshold.value = value;
-};
+  threshold.value = value
+}
 
 const setMinPercent = (value: number) => {
-  percent.value = value;
-};
+  percent.value = value
+}
 
 const graphHeight = computed(() =>
-  isFullscreen.value
-    ? window.innerHeight
-    : (container.value as HTMLElement).offsetHeight,
-);
+  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight
+)
 
 watchEffect(async () => {
   const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
     threshold: String(threshold.value),
     percentage: String(percent.value),
-    metric: String(metric.value),
-  });
+    metric: String(metric.value)
+  })
 
-  elements.value = elems;
-  toolbar.value = tools;
-});
+  elements.value = elems
+  toolbar.value = tools
+})
 
 onMounted(() => {
   // NOTE: need to show graph after parent render
-  isReadyGraph.value = true;
-});
+  isReadyGraph.value = true
+})
 </script>
 
 <template>
-  <div
-    ref="container"
-    class="call-graph"
-    :class="{ 'call-graph--fullscreen': isFullscreen }"
-  >
+  <div ref="container" class="call-graph" :class="{ 'call-graph--fullscreen': isFullscreen }">
     <RenderGraph
       v-if="isReadyGraph && graphKey && elements"
       :key="graphKey"
@@ -102,7 +91,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .call-graph {
   @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;

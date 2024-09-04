@@ -1,6 +1,6 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
-import type { RayContentLock } from "~/src/entities/ray/types";
+import type { RayContentLock } from "@/entities/ray/types";
 import {
   type TEventsCachedIdsMap,
   useEventsStore,

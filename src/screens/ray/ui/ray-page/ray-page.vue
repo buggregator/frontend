@@ -1,39 +1,34 @@
 <script lang="ts" setup>
-import moment from "moment/moment";
-import { computed } from "vue";
-import { useRay } from "~/src/entities/ray";
-import { RAY_EVENT_TYPES, type RayDump } from "~/src/entities/ray/types";
-import type { NormalizedEvent, OneOfValues } from "~/src/shared/types";
-import { TableBase, TableBaseRow } from "~/src/shared/ui";
+import moment from 'moment/moment'
+import { computed } from 'vue'
+import { useRay } from '@/entities/ray'
+import { RAY_EVENT_TYPES, type RayDump } from '@/entities/ray/types'
+import type { NormalizedEvent, OneOfValues } from '@/shared/types'
+import { TableBase, TableBaseRow } from '@/shared/ui'
 
 type Props = {
-  event: NormalizedEvent<RayDump>;
-};
+  event: NormalizedEvent<RayDump>
+}
 
-const { COMPONENT_TYPE_MAP } = useRay();
+const { COMPONENT_TYPE_MAP } = useRay()
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const title = computed(() => {
-  const type = String(props.event.payload.payloads[0].type || "Unknown type");
+  const type = String(props.event.payload.payloads[0].type || 'Unknown type')
 
-  return type[0].toUpperCase() + type.slice(1);
-});
+  return type[0].toUpperCase() + type.slice(1)
+})
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"),
-);
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 
 const classes = computed(() =>
-  props.event?.meta
-    ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
-    : [],
-);
+  props.event?.meta ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`] : []
+)
 
-const getComponent: (
-  type: RAY_EVENT_TYPES | string,
-) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (type) =>
-  COMPONENT_TYPE_MAP[type as RAY_EVENT_TYPES];
+const getComponent: (type: RAY_EVENT_TYPES | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
+  type
+) => COMPONENT_TYPE_MAP[type as RAY_EVENT_TYPES]
 </script>
 
 <template>
@@ -51,9 +46,7 @@ const getComponent: (
       <section class="ray__body">
         <template
           v-for="payload in event.payload.payloads"
-          :key="`${payload.type}-${
-            payload.origin ? payload.origin.line_number : ''
-          }`"
+          :key="`${payload.type}-${payload.origin ? payload.origin.line_number : ''}`"
         >
           <div v-if="payload.type && getComponent(payload.type)">
             <Component
@@ -95,7 +88,7 @@ const getComponent: (
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .ray {
   @apply relative;

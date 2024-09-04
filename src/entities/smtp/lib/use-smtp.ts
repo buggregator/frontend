@@ -1,5 +1,5 @@
-import { useSmtpRequests } from "~/src/shared/lib/io";
-import type { ServerEvent, NormalizedEvent, EventId, Attachment } from '~/src/shared/types';
+import { useSmtpRequests } from "@/shared/lib/io";
+import type { ServerEvent, NormalizedEvent, EventId, Attachment } from '@/shared/types';
 import type { SMTP } from "../types";
 import { normalizeSmtpEvent } from "./normalize-smtp-event";
 

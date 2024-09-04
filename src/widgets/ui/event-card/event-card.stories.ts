@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
-import { httpDumpMock } from '~/src/entities/http-dump/mocks';
-import { inspectorMock } from '~/src/entities/inspector/mocks';
-import { monologMock } from '~/src/entities/monolog/mocks';
-import { profilerMock } from  "~/src/entities/profiler/mocks";
-import { sentrySpiralMock } from '~/src/entities/sentry/mocks';
-import { smtpWelcomeMock } from '~/src/entities/smtp/mocks';
-import { varDumpObjectMock } from "~/src/entities/var-dump/mocks";
+import { httpDumpMock } from '@/entities/http-dump/mocks';
+import { inspectorMock } from '@/entities/inspector/mocks';
+import { monologMock } from '@/entities/monolog/mocks';
+import { profilerMock } from  "@/entities/profiler/mocks";
+import { sentrySpiralMock } from '@/entities/sentry/mocks';
+import { smtpWelcomeMock } from '@/entities/smtp/mocks';
+import { varDumpObjectMock } from "@/entities/var-dump/mocks";
 import EventCard from "./event-card.vue";
 
 export default {

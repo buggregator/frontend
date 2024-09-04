@@ -1,36 +1,29 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-import type { SentryFrame } from "../../types";
+import { computed, ref } from 'vue'
+import { IconSvg } from '@/shared/ui'
+import type { SentryFrame } from '../../types'
 
 type Props = {
-  frame: SentryFrame;
-  isOpen: boolean;
-};
+  frame: SentryFrame
+  isOpen: boolean
+}
 
-const props = defineProps<Props>();
-const isFrameOpen = ref(props.isOpen);
+const props = defineProps<Props>()
+const isFrameOpen = ref(props.isOpen)
 
 const hasBody = computed(() =>
-  Boolean(
-    props.frame.context_line ||
-      props.frame.post_context ||
-      props.frame.pre_context
-  )
-);
+  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
+)
 
 const toggleOpen = () => {
   if (hasBody.value) {
-    isFrameOpen.value = !isFrameOpen.value;
+    isFrameOpen.value = !isFrameOpen.value
   }
-};
+}
 </script>
 
 <template>
-  <div
-    class="sentry-exception-frame"
-    :class="{ 'sentry-exception-frame--empty': !hasBody }"
-  >
+  <div class="sentry-exception-frame" :class="{ 'sentry-exception-frame--empty': !hasBody }">
     <div class="sentry-exception-frame__head" @click="toggleOpen">
       <div class="sentry-exception-frame__head-title">
         {{ frame.filename }}
@@ -44,7 +37,7 @@ const toggleOpen = () => {
         v-if="frame.pre_context"
         class="sentry-exception-frame__head-title-dd"
         :class="{
-          'sentry-exception-frame__head-title-dd--visible': isFrameOpen,
+          'sentry-exception-frame__head-title-dd--visible': isFrameOpen
         }"
         name="dd"
       />
@@ -61,10 +54,7 @@ const toggleOpen = () => {
             {{ frame.lineno - (frame.pre_context.length - i) }}.
           </div>
 
-          <pre
-            class="sentry-exception-frame__body-line-content"
-            v-html="line"
-          />
+          <pre class="sentry-exception-frame__body-line-content" v-html="line" />
         </div>
       </template>
 
@@ -72,9 +62,7 @@ const toggleOpen = () => {
         v-if="frame.context_line"
         class="sentry-exception-frame__body-line sentry-exception-frame__body-line--selection"
       >
-        <div class="sentry-exception-frame__body-line-position">
-          {{ frame.lineno }}.
-        </div>
+        <div class="sentry-exception-frame__body-line-position">{{ frame.lineno }}.</div>
 
         <pre v-html="frame.context_line" />
       </div>
@@ -85,14 +73,9 @@ const toggleOpen = () => {
           :key="line"
           class="sentry-exception-frame__body-line"
         >
-          <div class="sentry-exception-frame__body-line-position">
-            {{ frame.lineno + i + 1 }}.
-          </div>
+          <div class="sentry-exception-frame__body-line-position">{{ frame.lineno + i + 1 }}.</div>
 
-          <pre
-            class="sentry-exception-frame__body-line-content"
-            v-html="line"
-          />
+          <pre class="sentry-exception-frame__body-line-content" v-html="line" />
         </div>
       </template>
     </div>
@@ -100,7 +83,7 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-exception-frame {
   @apply text-xs border-b border-purple-200 dark:border-gray-600;

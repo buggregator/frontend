@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useRay } from "~/src/entities/ray";
-import { rayCallerMock } from '~/src/entities/ray/mocks';
+import { useRay } from "@/entities/ray";
+import { rayCallerMock } from '@/entities/ray/mocks';
 import RayPage from './ray-page.vue';
 
 const { normalizeRayEvent } = useRay();

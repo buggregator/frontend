@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-import { watch } from "vue";
-import { LayoutSidebar } from "~/src/widgets/ui";
-import { useEvents } from "~/src/shared/lib/use-events";
-import SfdumpWrap from "~/src/shared/lib/vendor/dumper";
-import { useEventsStore } from "~/src/shared/stores";
+import { storeToRefs } from 'pinia'
+import { watch } from 'vue'
+import { LayoutSidebar } from '@/widgets/ui'
+import { useEvents } from '@/shared/lib/use-events'
+import SfdumpWrap from '@/shared/lib/vendor/dumper'
+import { useEventsStore } from '@/shared/stores'
 
-SfdumpWrap(window.document);
+SfdumpWrap(window.document)
 
-const { activeProjectKey } = storeToRefs(useEventsStore());
-const { events } = useEvents();
+const { activeProjectKey } = storeToRefs(useEventsStore())
+const { events } = useEvents()
 
 watch(
   () => activeProjectKey.value,
   () => {
-    events.getAll();
+    events.getAll()
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -39,7 +39,7 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .main-layout {
   @apply flex min-h-screen items-stretch relative;

@@ -1,29 +1,22 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { ProfilerCallGraph } from "~/src/entities/profiler/types";
-import { GraphTypes } from "~/src/shared/types";
-import { IconSvg } from "~/src/shared/ui";
+import { computed } from 'vue'
+import type { ProfilerCallGraph } from '@/entities/profiler/types'
+import { GraphTypes } from '@/shared/types'
+import { IconSvg } from '@/shared/ui'
 
-const emit = defineEmits([
-  "onMetricChange",
-  "onFullscreen",
-  "onThresholdChange",
-  "onPercentChange",
-]);
+const emit = defineEmits(['onMetricChange', 'onFullscreen', 'onThresholdChange', 'onPercentChange'])
 
 type Props = {
-  toolbar: ProfilerCallGraph["toolbar"];
-  isFullscreen: boolean;
-  metric: GraphTypes;
-  threshold: number;
-  percent: number;
-};
+  toolbar: ProfilerCallGraph['toolbar']
+  isFullscreen: boolean
+  metric: GraphTypes
+  threshold: number
+  percent: number
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const percentLabel = computed(() =>
-  props.metric === GraphTypes.CALLS ? "Min calls" : "Percent",
-);
+const percentLabel = computed(() => (props.metric === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
 </script>
 
 <template>
@@ -38,7 +31,7 @@ const percentLabel = computed(() =>
         :key="tool.metric"
         class="call-graph__toolbar-action"
         :class="{
-          'call-graph__toolbar-action--active': metric === tool.metric,
+          'call-graph__toolbar-action--active': metric === tool.metric
         }"
         :title="tool.description"
         @click="emit('onMetricChange', tool.metric)"
@@ -48,10 +41,7 @@ const percentLabel = computed(() =>
     </div>
 
     <div class="call-graph__toolbar call-graph__toolbar--right">
-      <label
-        v-if="metric !== GraphTypes.CALLS"
-        class="call-graph__toolbar-input-wr"
-      >
+      <label v-if="metric !== GraphTypes.CALLS" class="call-graph__toolbar-input-wr">
         Threshold
 
         <input

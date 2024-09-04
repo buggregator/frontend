@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import type { RayContentLock } from "~/src/entities/ray/types";
+import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";

@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { RayContentLock } from "../../types";
+import { ref } from 'vue'
+import { useEvents } from '@/shared/lib/use-events'
+import type { RayContentLock } from '../../types'
 
 type Props = {
-  name: RayContentLock["name"];
-};
+  name: RayContentLock['name']
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const disabled = ref(false);
+const disabled = ref(false)
 
-const { rayExecution } = useEvents();
+const { rayExecution } = useEvents()
 
 const continueExecution = () => {
-  disabled.value = true;
+  disabled.value = true
 
-  rayExecution.continue(props.name);
-};
+  rayExecution.continue(props.name)
+}
 
 const stopExecution = () => {
-  disabled.value = true;
-  rayExecution.stop(props.name);
-};
+  disabled.value = true
+  rayExecution.stop(props.name)
+}
 </script>
 
 <template>
@@ -33,12 +33,7 @@ const stopExecution = () => {
       @click="continueExecution"
     >
       <span class="ray-lock__button-icon">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
-          viewBox="0 0 20 20"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20">
           <path
             fill="green"
             fill-rule="evenodd"
@@ -54,7 +49,7 @@ const stopExecution = () => {
       class="ray-lock__button ray-lock__button--stop"
       @click="stopExecution"
     >
-      <span class="ray-lock__button-text"></span>
+      <span class="ray-lock__button-text" />
       <span>Stop execution</span>
     </button>
   </div>

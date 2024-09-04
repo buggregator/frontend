@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { useInspector } from '~/src/entities/inspector';
-import { inspectorMock } from '~/src/entities/inspector/mocks';
+import { useInspector } from '@/entities/inspector';
+import { inspectorMock } from '@/entities/inspector/mocks';
 import InspectorPage from './inspector-page.vue';
 
 const { normalizeInspectorEvent } = useInspector();
