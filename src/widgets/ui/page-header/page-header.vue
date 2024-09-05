@@ -64,13 +64,13 @@ const badgeNumber = computed(() =>
 
 <template>
   <AppHeader class="page-header">
-    <NuxtLink to="/" :disabled="!title"> Home </NuxtLink>
+    <RouterLink to="/" :disabled="!title"> Home </RouterLink>
 
     <template v-if="title">
       <span>&nbsp;/&nbsp;</span>
-      <NuxtLink :disabled="true">
+      <RouterLink :disabled="true">
         {{ title }}
-      </NuxtLink>
+      </RouterLink>
     </template>
 
     <template #controls>

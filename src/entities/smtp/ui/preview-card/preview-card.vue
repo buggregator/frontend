@@ -19,7 +19,7 @@ const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || n
 
 <template>
   <PreviewCard class="smtp-preview" :event="event">
-    <NuxtLink :to="eventLink" class="smtp-preview__link">
+    <RouterLink :to="eventLink" class="smtp-preview__link">
       <h3 class="smtp-preview__link-title">
         {{ event.payload.subject }}
       </h3>
@@ -29,7 +29,7 @@ const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || n
 
         <span>{{ dateFormat }}</span>
       </div>
-    </NuxtLink>
+    </RouterLink>
   </PreviewCard>
 </template>
 

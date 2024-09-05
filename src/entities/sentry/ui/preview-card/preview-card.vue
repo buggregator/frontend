@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { Ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
 import type { Sentry, SentryException as Exception } from '../../types'
@@ -39,13 +40,13 @@ const exception: Ref<Exception> = computed(() =>
 <template>
   <PreviewCard class="preview-card" :event="event">
     <SentryException v-if="hasException" :exception="exception" :max-frames="maxFrames">
-      <NuxtLink :to="eventLink" class="preview-card__link">
+      <RouterLink :to="eventLink" class="preview-card__link">
         <h3 class="preview-card__title">
           {{ exception.type }}
         </h3>
 
         <pre class="preview-card__text" v-html="exception.value" />
-      </NuxtLink>
+      </RouterLink>
     </SentryException>
 
     <div v-if="message">

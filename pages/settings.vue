@@ -24,7 +24,7 @@ const changeCodeEditor = (event: Event) => {
 <template>
   <NuxtLayout class="settings-page">
     <template #header>
-      <AppHeader> <NuxtLink to="/"> Home </NuxtLink>&nbsp;/&nbsp;Settings </AppHeader>
+      <AppHeader> <RouterLink to="/"> Home </RouterLink>&nbsp;/&nbsp;Settings </AppHeader>
     </template>
 
     <main class="settings-page__content">

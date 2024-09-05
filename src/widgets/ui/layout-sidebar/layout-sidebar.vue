@@ -115,14 +115,14 @@ const generateRadialGradient = (input: string) =>
 <template>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
-      <NuxtLink
+      <RouterLink
         to="/"
         title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
         tabindex="1"
       >
         <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
-      </NuxtLink>
+      </RouterLink>
 
       <template v-if="!isProjectLoading && isMultipleProjects">
         <hr class="layout-sidebar__sep" />
@@ -150,13 +150,13 @@ const generateRadialGradient = (input: string) =>
       </template>
 
       <template v-if="!isMultipleProjects || isProjectLoading">
-        <NuxtLink to="/" title="Events" class="layout-sidebar__link">
+        <RouterLink to="/" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
-        </NuxtLink>
+        </RouterLink>
       </template>
 
       <template v-for="type in filteredNavOrder" :key="type">
-        <NuxtLink
+        <RouterLink
           :to="EVENTS_LINKS_MAP[type].path"
           :title="EVENTS_LINKS_MAP[type].title"
           class="layout-sidebar__link"
@@ -171,12 +171,12 @@ const generateRadialGradient = (input: string) =>
           >
             <IconSvg class="layout-sidebar__link-icon" :name="EVENTS_LINKS_MAP[type].iconName" />
           </BadgeNumber>
-        </NuxtLink>
+        </RouterLink>
       </template>
 
-      <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
+      <RouterLink to="/settings" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
-      </NuxtLink>
+      </RouterLink>
     </nav>
 
     <!--  Need to place projectMenu out of nav because of overflow -->
