@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import { PAGE_TYPES } from "@/shared/constants";
-import PageLayout from "./page-layout.vue";
+import PageContent from "./page-content.vue";
 
 export default {
-  title: "Widgets/PageLayout",
-  component: PageLayout,
-} as Meta<typeof PageLayout>;
+  title: "Widgets/PageContent",
+  component: PageContent,
+} as Meta<typeof PageContent>;
 
-export const Default: StoryObj<typeof PageLayout> = {
+export const Default: StoryObj<typeof PageContent> = {
   args: {
     title: "Page Title",
     type: PAGE_TYPES.ALL_EVENTS

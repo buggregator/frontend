@@ -43,18 +43,18 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="page-layout">
-    <main v-if="visibleEvents.length" class="page-layout__events">
+  <div class="page-content">
+    <main v-if="visibleEvents.length" class="page-content__events">
       <EventCard
         v-for="event in visibleEvents"
         :key="event.uuid"
         :event="event"
-        class="page-layout__event"
+        class="page-content__event"
       />
     </main>
 
-    <section v-if="!visibleEvents.length" class="page-layout__welcome">
-      <PagePlaceholder class="page-layout__tips" />
+    <section v-if="!visibleEvents.length" class="page-content__welcome">
+      <PagePlaceholder class="page-content__tips" />
     </section>
   </div>
 </template>
@@ -62,27 +62,27 @@ watchEffect(() => {
 <style lang="scss">
 @import 'src/assets/mixins';
 
-.page-layout {
+.page-content {
   @apply flex flex-col h-full w-full;
 }
 
-.page-layout__events {
+.page-content__events {
   @include border-style;
   @apply divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
 }
 
-.page-layout__event {
+.page-content__event {
   & + & {
     @apply border-b border-gray-200 dark:border-gray-700;
   }
 }
 
-.page-layout__welcome {
+.page-content__welcome {
   @apply flex-1 flex flex-col justify-center items-center;
   @apply bg-gray-50 dark:bg-gray-800 mb-[10vh];
 }
 
-.page-layout__btn-stop-events {
+.page-content__btn-stop-events {
   @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
 
   &[disabled] {
@@ -90,17 +90,17 @@ watchEffect(() => {
   }
 }
 
-.page-layout__btn-stop-events--active {
+.page-content__btn-stop-events--active {
   @apply opacity-100 text-blue-500 dark:text-blue-500;
 }
 
-.page-layout__btn-stop-events-count {
+.page-content__btn-stop-events-count {
   @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
 
   transform: translate(60%, -60%);
 }
 
-.page-layout__clear-button {
+.page-content__clear-button {
   @include button;
   @apply bg-red-800 hover:bg-red-700;
 }

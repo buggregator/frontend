@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PageHeader, PageLayout } from '@/widgets/ui'
+import { PageHeader, PageContent } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
@@ -9,6 +9,6 @@ import { PAGE_TYPES } from '@/shared/constants'
       <PageHeader :type="PAGE_TYPES.RAY_DUMP" title="Ray Dumps" />
     </template>
 
-    <PageLayout :type="PAGE_TYPES.RAY_DUMP" title="Ray Dumps" />
+    <PageContent :type="PAGE_TYPES.RAY_DUMP" title="Ray Dumps" />
   </NuxtLayout>
 </template>
