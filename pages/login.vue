@@ -6,7 +6,7 @@ import { setPageLayout } from '#app' // eslint-disable-line @conarti/feature-sli
 import { REST_API_URL } from '@/shared/lib/io'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
 import { IconSvg } from '@/shared/ui'
-import { RouteName } from '@/app/router/types'
+import { RouteName } from '@/shared/types/app'
 
 setPageLayout('blank')
 

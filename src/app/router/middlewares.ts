@@ -1,6 +1,7 @@
 import {storeToRefs} from "pinia";
+import { RouteName} from '@/shared/types/app';
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
-import  {type TRouterMiddleware, RouteName} from "./types";
+import {type TRouterMiddleware} from "./types";
 
 
 export const auth: TRouterMiddleware = async ({ to, next }) => {
