@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from 'vue-router'
 import { PageEventHeader } from '@/widgets/ui'
 import { useSentry } from '@/entities/sentry'
 import type { Sentry } from '@/entities/sentry/types'

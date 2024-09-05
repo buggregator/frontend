@@ -1,27 +1,28 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { navigateTo, setPageLayout } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRouter } from 'vue-router'
+import { setPageLayout } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
 import { REST_API_URL } from '@/shared/lib/io'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
 import { IconSvg } from '@/shared/ui'
+import { RouteName } from '@/app/router/types'
 
 setPageLayout('blank')
 
 const store = useProfileStore()
 const { authLogicUrl } = storeToRefs(useSettingsStore())
+const router = useRouter()
 
 if (store.isAuthenticated) {
   setPageLayout('default')
-  await navigateTo('/')
+  router.replace({ name: RouteName.Home })
 }
 
 const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`)
 
 const redirect = async () => {
-  await navigateTo(loginUrl.value, {
-    external: true
-  })
+  router.replace({ path: loginUrl.value })
 }
 </script>
 

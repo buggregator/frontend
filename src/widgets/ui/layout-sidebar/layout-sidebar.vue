@@ -3,7 +3,7 @@ import { useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
-import { useRoute, useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRoute, useRouter } from 'vue-router'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'

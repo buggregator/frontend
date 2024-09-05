@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useRouter } from '#app' // eslint-disable-line @conarti/feature-sliced/layers-slices
+import { useRouter } from 'vue-router'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import type { Uuid } from '@/shared/types'
