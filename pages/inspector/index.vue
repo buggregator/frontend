@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PageHeader, PageLayout } from '@/widgets/ui'
+import { PageHeader, PageContent } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
@@ -9,6 +9,6 @@ import { PAGE_TYPES } from '@/shared/constants'
       <PageHeader :type="PAGE_TYPES.INSPECTOR" title="Inspector" />
     </template>
 
-    <PageLayout :type="PAGE_TYPES.INSPECTOR" title="Inspector" />
+    <PageContent :type="PAGE_TYPES.INSPECTOR" title="Inspector" />
   </NuxtLayout>
 </template>
