@@ -117,7 +117,7 @@ const generateRadialGradient = (input: string) =>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
       <RouterLink
-        to="/"
+        :to="{ name: RouteName.Home }"
         title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
         tabindex="1"
@@ -151,7 +151,7 @@ const generateRadialGradient = (input: string) =>
       </template>
 
       <template v-if="!isMultipleProjects || isProjectLoading">
-        <RouterLink to="/" title="Events" class="layout-sidebar__link">
+        <RouterLink :to="{ name: RouteName.Home }" title="Events" class="layout-sidebar__link">
           <IconSvg class="layout-sidebar__link-icon" name="events" />
         </RouterLink>
       </template>
