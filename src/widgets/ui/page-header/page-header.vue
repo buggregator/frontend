@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { RouteName } from '@/shared/types/app'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore } from '@/shared/stores'
@@ -64,7 +65,7 @@ const badgeNumber = computed(() =>
 
 <template>
   <AppHeader class="page-header">
-    <RouterLink to="/" :disabled="!title"> Home </RouterLink>
+    <RouterLink :to="{ name: RouteName.Home }" :disabled="!title"> Home </RouterLink>
 
     <template v-if="title">
       <span>&nbsp;/&nbsp;</span>

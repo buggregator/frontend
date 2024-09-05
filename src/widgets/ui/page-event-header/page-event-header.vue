@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { RouteName } from '@/shared/types/app'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import type { Uuid } from '@/shared/types'
@@ -22,7 +23,7 @@ const eventsListLink = computed(() =>
 const onDelete = () => {
   events.removeById(props.eventId)
 
-  router.push('/')
+  router.push({ name: RouteName.Home })
 }
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
@@ -30,7 +31,7 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 
 <template>
   <AppHeader class="page-event-header">
-    <RouterLink to="/"> Home </RouterLink>
+    <RouterLink :to="{ name: RouteName.Home }"> Home </RouterLink>
     &nbsp;/&nbsp;
     <RouterLink :to="eventsListLink">
       {{ title }}
