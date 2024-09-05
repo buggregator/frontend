@@ -1,66 +1,66 @@
 <script lang="ts" setup>
-import isString from "lodash/isString";
-import { computed } from "vue";
-import { EVENT_TYPES, type EventType, type NormalizedEvent } from "../../types";
-import { IconSvg } from "../icon-svg";
-import { DownloadType } from "./types";
+import isString from 'lodash/isString'
+import { computed } from 'vue'
+import { EVENT_TYPES, type EventType, type NormalizedEvent } from '../../types'
+import { IconSvg } from '../icon-svg'
+import { DownloadType } from './types'
 
 type Props = {
-  eventType: EventType | "unknown";
-  eventId: NormalizedEvent<unknown>["id"];
-  eventUrl: string;
-  labels: NormalizedEvent<unknown>["labels"];
-  isOpen: boolean;
-  isLocked: boolean;
-  isVisibleControls: boolean;
-};
+  eventType: EventType | 'unknown'
+  eventId: NormalizedEvent<unknown>['id']
+  eventUrl: string
+  labels: NormalizedEvent<unknown>['labels']
+  isOpen: boolean
+  isLocked: boolean
+  isVisibleControls: boolean
+}
 
 type Emits = {
-  delete: [value: boolean];
-  toggleView: [value: boolean];
-  copy: [value: boolean];
-  download: [value: DownloadType];
-  lock: [value: boolean];
-};
+  delete: [value: boolean]
+  toggleView: [value: boolean]
+  copy: [value: boolean]
+  download: [value: DownloadType]
+  lock: [value: boolean]
+}
 
 const props = withDefaults(defineProps<Props>(), {
   tags: () => [],
-  eventUrl: "",
-});
+  eventUrl: ''
+})
 
-const emit = defineEmits<Emits>();
+const emit = defineEmits<Emits>()
 
 const changeView = () => {
-  emit("toggleView", true);
-};
+  emit('toggleView', true)
+}
 
 const deleteEvent = () => {
-  emit("delete", true);
-};
+  emit('delete', true)
+}
 
 const copyEvent = () => {
-  emit("copy", true);
-};
+  emit('copy', true)
+}
 
 const downloadImageEvent = () => {
-  emit("download", DownloadType.Image);
-};
+  emit('download', DownloadType.Image)
+}
 
 const downloadFile = () => {
-  emit("download", DownloadType.File);
-};
+  emit('download', DownloadType.File)
+}
 
 const lockEvent = () => {
-  emit("lock", true);
-};
+  emit('lock', true)
+}
 
-const isVisibleTags = computed(() => props.labels.length > 0);
+const isVisibleTags = computed(() => props.labels.length > 0)
 
 const newPageLink = computed(() => {
-  if (!Object.values(EVENT_TYPES).includes(props.eventType)) return "";
+  if (!Object.values(EVENT_TYPES).includes(props.eventType)) return ''
 
-  return `/${props.eventType}/${props.eventId}`;
-});
+  return `/${props.eventType}/${props.eventId}`
+})
 </script>
 
 <template>
@@ -100,13 +100,9 @@ const newPageLink = computed(() => {
       </template>
 
       <template v-if="newPageLink">
-        <NuxtLink
-          :to="newPageLink"
-          class="preview-card-header__open"
-          title="Open full event"
-        >
+        <RouterLink :to="newPageLink" class="preview-card-header__open" title="Open full event">
           <IconSvg name="window-maximize" />
-        </NuxtLink>
+        </RouterLink>
       </template>
     </div>
 
@@ -126,10 +122,7 @@ const newPageLink = computed(() => {
             title="Download event as JSON file"
             @click="downloadFile"
           >
-            <IconSvg
-              name="file-download"
-              class="preview-card-header__button-icon"
-            />
+            <IconSvg name="file-download" class="preview-card-header__button-icon" />
           </button>
 
           <button
@@ -137,10 +130,7 @@ const newPageLink = computed(() => {
             title="Download event as PNG image"
             @click="downloadImageEvent"
           >
-            <IconSvg
-              name="image-download"
-              class="preview-card-header__button-icon"
-            />
+            <IconSvg name="image-download" class="preview-card-header__button-icon" />
           </button>
         </div>
       </div>
@@ -151,23 +141,15 @@ const newPageLink = computed(() => {
         title="Collapse event"
         @click="changeView"
       >
-        <IconSvg
-          v-if="isOpen"
-          name="minus"
-          class="preview-card-header__button-icon"
-        />
-        <IconSvg
-          v-if="!isOpen"
-          name="plus"
-          class="preview-card-header__button-icon"
-        />
+        <IconSvg v-if="isOpen" name="minus" class="preview-card-header__button-icon" />
+        <IconSvg v-if="!isOpen" name="plus" class="preview-card-header__button-icon" />
       </button>
 
       <button
         class="preview-card-header__button preview-card-header__button--lock"
         title="Lock event. Locked events will not be deleted"
         :class="{
-          'preview-card-header__button--locked': isLocked,
+          'preview-card-header__button--locked': isLocked
         }"
         @click="lockEvent"
       >
@@ -188,15 +170,15 @@ const newPageLink = computed(() => {
 
 <style lang="scss" scoped>
 $eventTypeColorsMap: (
-  "var-dump" "red",
-  "smtp" "orange",
-  "sentry" "pink",
-  "profiler" "purple",
-  "ray" "cyan",
-  "inspector" "yellow",
-  "http-dump" "lime",
-  "monolog" "zinc",
-  "unknown" "gray"
+  'var-dump' 'red',
+  'smtp' 'orange',
+  'sentry' 'pink',
+  'profiler' 'purple',
+  'ray' 'cyan',
+  'inspector' 'yellow',
+  'http-dump' 'lime',
+  'monolog' 'zinc',
+  'unknown' 'gray'
 );
 
 .preview-card-header__tags {

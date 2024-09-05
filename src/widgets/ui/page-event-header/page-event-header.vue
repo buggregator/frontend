@@ -30,15 +30,15 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 
 <template>
   <AppHeader class="page-event-header">
-    <NuxtLink to="/"> Home </NuxtLink>
+    <RouterLink to="/"> Home </RouterLink>
     &nbsp;/&nbsp;
-    <NuxtLink :to="eventsListLink">
+    <RouterLink :to="eventsListLink">
       {{ title }}
-    </NuxtLink>
+    </RouterLink>
     &nbsp;/&nbsp;
-    <NuxtLink :disabled="true">
+    <RouterLink :disabled="true">
       {{ eventId }}
-    </NuxtLink>
+    </RouterLink>
 
     <template #controls>
       <a
