@@ -2,8 +2,10 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { useSettingsStore, THEME_MODES } from '@/shared/stores'
-import { AppHeader, BadgeNumber, IconSvg } from '@/shared/ui'
+import { PageHeader, LayoutBase } from '@/widgets/ui'
+import { PAGE_TYPES } from '@/shared/constants'
+import { THEME_MODES, useSettingsStore } from '@/shared/stores'
+import { BadgeNumber, IconSvg } from '@/shared/ui'
 
 const settingsStore = useSettingsStore()
 const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
@@ -22,9 +24,9 @@ const changeCodeEditor = (event: Event) => {
 </script>
 
 <template>
-  <NuxtLayout class="settings-page">
+  <LayoutBase>
     <template #header>
-      <AppHeader> <RouterLink to="/"> Home </RouterLink>&nbsp;/&nbsp;Settings </AppHeader>
+      <PageHeader :type="PAGE_TYPES.ALL_EVENTS" title="" />
     </template>
 
     <main class="settings-page__content">
@@ -133,7 +135,7 @@ const changeCodeEditor = (event: Event) => {
         </div>
       </div>
     </main>
-  </NuxtLayout>
+  </LayoutBase>
 </template>
 
 <style lang="scss" scoped>

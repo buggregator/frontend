@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { RouteName } from './types'
-import { HomePage } from "@/screens/home";
+import { RouteName } from '@/shared/types/app'
+import {HomePage} from "@/screens/home";
+import { SettingsPage} from "@/screens/settings";
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +10,11 @@ export const router = createRouter({
       path: '/',
       name: RouteName.Home,
       component: HomePage
+    },
+    {
+      path: '/settings',
+      name: RouteName.Settings,
+      component: SettingsPage
     },
   ]
 })

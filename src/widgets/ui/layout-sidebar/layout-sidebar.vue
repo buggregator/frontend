@@ -4,6 +4,7 @@ import { onClickOutside } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { RouteName } from '@/shared/types/app'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
@@ -174,7 +175,7 @@ const generateRadialGradient = (input: string) =>
         </RouterLink>
       </template>
 
-      <RouterLink to="/settings" title="Settings" class="layout-sidebar__link">
+      <RouterLink :to="{ name: RouteName.Settings }" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
       </RouterLink>
     </nav>
