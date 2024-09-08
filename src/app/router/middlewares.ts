@@ -1,10 +1,10 @@
 import {storeToRefs} from "pinia";
-import { RouteName} from '@/shared/types/app';
+import { RouteAuthAccessError} from "@/shared/lib/errors";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
-import {type TRouterMiddleware} from "./types";
+import { type TRouterMiddleware} from "./types";
 
 
-export const auth: TRouterMiddleware = async ({ to, next }) => {
+export const auth: TRouterMiddleware = async ({ to, from, next }) => {
   const settingsStore  = useSettingsStore()
   const {isFetched, isAuthEnabled }  = storeToRefs(settingsStore)
 
@@ -13,11 +13,12 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
   }
 
   if (!isAuthEnabled.value) {
-    return undefined
+    return
   }
 
   const profileStore = useProfileStore()
   const { isAuthenticated}  = storeToRefs(profileStore)
+
   await profileStore.getStoredToken()
 
   if (isAuthenticated.value) {
@@ -26,25 +27,22 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
     } catch (e) {
       console.error(e);
 
-      return next({
-        name: RouteName.Login,
+      next({
+        name: 'login',
       })
+
+      return new RouteAuthAccessError(`Access denied`, to.path)
     }
   }
 
   if (to.name !== 'login' && !isAuthenticated.value) {
-    return next({
-      name: RouteName.Login,
-    })
+    return new RouteAuthAccessError(`Access denied`, to.path)
   }
 
   if (to.name === 'login' && to?.query?.token) {
     profileStore.setToken(String(to.query.token))
-    return next({
-      name: RouteName.Home,
-    })
   }
 
-  return undefined
+  return
 }
 

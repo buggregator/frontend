@@ -69,9 +69,9 @@ const badgeNumber = computed(() =>
 
     <template v-if="title">
       <span>&nbsp;/&nbsp;</span>
-      <RouterLink :disabled="true">
+      <div disabled>
         {{ title }}
-      </RouterLink>
+      </div>
     </template>
 
     <template #controls>

@@ -10,7 +10,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
-import { version } from '../../../../package.json'
+import { version } from '../../../../package.json' with { type: 'json' }
 import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from './constants'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
