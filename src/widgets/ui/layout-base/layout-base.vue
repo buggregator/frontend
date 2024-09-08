@@ -4,7 +4,6 @@ import { watch } from 'vue'
 import { useEvents } from '@/shared/lib/use-events'
 import SfdumpWrap from '@/shared/lib/vendor/dumper'
 import { useEventsStore } from '@/shared/stores'
-import { LayoutSidebar } from '../layout-sidebar'
 
 // TODO: mote to pages where it is needed
 SfdumpWrap(window.document)
@@ -22,14 +21,18 @@ watch(
 </script>
 
 <template>
-  <div class="layout-base">
-    <div class="layout-base__sidebar">
-      <slot name="sidebar">
-        <LayoutSidebar />
-      </slot>
+  <div
+    class="layout-base"
+    :class="{
+      'layout-base--no-sidebar': !$slots.sidebar,
+      'layout-base--no-header': !$slots.header
+    }"
+  >
+    <div v-if="$slots.sidebar" class="layout-base__sidebar">
+      <slot name="sidebar" />
     </div>
 
-    <div class="layout-base__header">
+    <div v-if="$slots.header" class="layout-base__header">
       <slot name="header" />
     </div>
 
@@ -53,14 +56,25 @@ watch(
 
 .layout-base__header {
   @include layout-head;
+
+  .layout-base--no-sidebar & {
+    @apply left-0;
+  }
 }
 
 .layout-base__content {
   @include layout-body;
-  @apply flex flex-col h-full flex-1 w-full min-h-screen absolute top-0 left-0;
 
   & > div {
     @apply flex flex-col h-full flex-1;
+  }
+
+  .layout-base--no-sidebar & {
+    @apply pl-0;
+  }
+
+  .layout-base--no-header & {
+    @apply pt-0;
   }
 }
 </style>

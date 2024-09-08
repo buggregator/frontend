@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent, LayoutBase } from '@/widgets/ui'
+import { PageHeader, PageContent, LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>
-  <LayoutBase>
+  <LayoutBase class="home-page">
+    <template #sidebar>
+      <LayoutSidebar />
+    </template>
+
     <template #header>
       <PageHeader :type="PAGE_TYPES.ALL_EVENTS" title="" />
     </template>
@@ -13,4 +17,8 @@ import { PAGE_TYPES } from '@/shared/constants'
   </LayoutBase>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.home-page {
+  display: block;
+}
+</style>
