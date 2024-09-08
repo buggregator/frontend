@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { PageHeader, LayoutPreviewEvents, LayoutBase, LayoutSidebar } from '@/widgets/ui'
-import { ALL_EVENT_TYPES, PAGE_TYPES, PAGES_SETTINGS } from '@/shared/constants'
+import { ALL_EVENT_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import type { PageEventTypes } from '@/shared/types'
 
 const route = useRoute()

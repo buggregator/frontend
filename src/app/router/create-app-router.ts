@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import {RouteAccessError, RouteAuthAccessError} from "@/shared/lib/errors";
+import { RouteAuthAccessError } from "@/shared/lib/errors";
 import { routes } from './routes'
 import type { TRouterMiddleware } from './types'
 
