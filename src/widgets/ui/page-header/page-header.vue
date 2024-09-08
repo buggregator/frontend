@@ -45,7 +45,7 @@ const visibleEvents = computed(() => {
   )
 })
 
-const hiddenEventsCount = computed(() => events.items.value.length - visibleEvents.value.length)
+const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length)
 
 const toggleUpdate = () => {
   if (isEventsPaused.value) {
