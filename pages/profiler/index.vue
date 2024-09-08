@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent } from '@/widgets/ui'
+import { PageHeader, LayoutPreviewEvents } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>
   <NuxtLayout>
     <template #header>
-      <PageHeader :type="PAGE_TYPES.PROFILER" title="Profiler" />
+      <PageHeader :type="PAGE_TYPES.Profiler" title="Profiler" />
     </template>
 
-    <PageContent :type="PAGE_TYPES.PROFILER" title="Profiler" />
+    <LayoutPreviewEvents :type="PAGE_TYPES.Profiler" title="Profiler" />
   </NuxtLayout>
 </template>

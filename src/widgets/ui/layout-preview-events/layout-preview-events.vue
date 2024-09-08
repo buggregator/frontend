@@ -3,13 +3,13 @@ import { useTitle } from '@vueuse/core'
 import { computed, watchEffect } from 'vue'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import type { TEventsGroup } from '@/shared/types'
+import type { PageEventTypes } from '@/shared/types'
 import { EventCard } from '../event-card'
 import { PagePlaceholder } from '../page-placeholder'
 
 type Props = {
   title?: string
-  type: TEventsGroup
+  type: PageEventTypes
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,7 +21,7 @@ const { events, cachedEvents } = useEvents()
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
 const allEvents = computed(() => {
-  if (props.type === PAGE_TYPES.ALL_EVENTS) {
+  if (props.type === PAGE_TYPES.ALL_EVENT_TYPES) {
     return events.items.value
   }
   return events.items.value.filter(({ type }) => type === props.type)
@@ -43,18 +43,18 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="page-content">
-    <main v-if="visibleEvents.length" class="page-content__events">
+  <div class="layout-preview-events">
+    <main v-if="visibleEvents.length" class="layout-preview-events__events">
       <EventCard
         v-for="event in visibleEvents"
         :key="event.uuid"
         :event="event"
-        class="page-content__event"
+        class="layout-preview-events__event"
       />
     </main>
 
-    <section v-if="!visibleEvents.length" class="page-content__welcome">
-      <PagePlaceholder class="page-content__tips" />
+    <section v-if="!visibleEvents.length" class="layout-preview-events__welcome">
+      <PagePlaceholder class="layout-preview-events__tips" />
     </section>
   </div>
 </template>
@@ -62,27 +62,27 @@ watchEffect(() => {
 <style lang="scss">
 @import 'src/assets/mixins';
 
-.page-content {
+.layout-preview-events {
   @apply flex flex-col h-full w-full;
 }
 
-.page-content__events {
+.layout-preview-events__events {
   @include border-style;
   @apply divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
 }
 
-.page-content__event {
+.layout-preview-events__event {
   & + & {
     @apply border-b border-gray-200 dark:border-gray-700;
   }
 }
 
-.page-content__welcome {
+.layout-preview-events__welcome {
   @apply flex-1 flex flex-col justify-center items-center;
   @apply bg-gray-50 dark:bg-gray-800 mb-[10vh];
 }
 
-.page-content__btn-stop-events {
+.layout-preview-events__btn-stop-events {
   @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
 
   &[disabled] {
@@ -90,17 +90,17 @@ watchEffect(() => {
   }
 }
 
-.page-content__btn-stop-events--active {
+.layout-preview-events__btn-stop-events--active {
   @apply opacity-100 text-blue-500 dark:text-blue-500;
 }
 
-.page-content__btn-stop-events-count {
+.layout-preview-events__btn-stop-events-count {
   @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
 
   transform: translate(60%, -60%);
 }
 
-.page-content__clear-button {
+.layout-preview-events__clear-button {
   @include button;
   @apply bg-red-800 hover:bg-red-700;
 }

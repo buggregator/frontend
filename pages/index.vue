@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent } from '@/widgets/ui' // eslint-disable-line @conarti/feature-sliced/public-api
+import { PageHeader, LayoutPreviewEvents } from '@/widgets/ui' // eslint-disable-line @conarti/feature-sliced/public-api
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
@@ -9,6 +9,6 @@ import { PAGE_TYPES } from '@/shared/constants'
       <PageHeader :type="PAGE_TYPES.ALL_EVENTS" title="" />
     </template>
 
-    <PageContent :type="PAGE_TYPES.ALL_EVENTS" title="" />
+    <LayoutPreviewEvents :type="PAGE_TYPES.ALL_EVENTS" title="" />
   </NuxtLayout>
 </template>

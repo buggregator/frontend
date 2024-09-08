@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent } from '@/widgets/ui'
+import { PageHeader, LayoutPreviewEvents } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>
   <NuxtLayout>
     <template #header>
-      <PageHeader :type="PAGE_TYPES.VAR_DUMP" title="Var Dumps" />
+      <PageHeader :type="PAGE_TYPES.VarDump" title="Var Dumps" />
     </template>
 
-    <PageContent :type="PAGE_TYPES.VAR_DUMP" title="Var Dumps" />
+    <LayoutPreviewEvents :type="PAGE_TYPES.VarDump" title="Var Dumps" />
   </NuxtLayout>
 </template>
