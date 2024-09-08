@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { PageHeader, LayoutBase } from '@/widgets/ui'
+import { PageHeader, LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
@@ -12,8 +12,6 @@ const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCode
   settingsStore
 const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore)
 
-useTitle('Settings | Buggregator')
-
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
 // TODO: add throttle
@@ -21,12 +19,18 @@ const changeCodeEditor = (event: Event) => {
   const editor = (event.target as HTMLInputElement).value
   changeActiveCodeEditor(editor)
 }
+
+useTitle('Settings | Buggregator')
 </script>
 
 <template>
-  <LayoutBase>
+  <LayoutBase class="settings-page">
+    <template #sidebar>
+      <LayoutSidebar />
+    </template>
+
     <template #header>
-      <PageHeader :type="PAGE_TYPES.ALL_EVENTS" title="" />
+      <PageHeader :type="PAGE_TYPES.ALL_EVENTS" title="Settings" />
     </template>
 
     <main class="settings-page__content">
