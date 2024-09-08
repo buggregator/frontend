@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent } from '@/widgets/ui'
+import { PageHeader, LayoutPreviewEvents } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>
   <NuxtLayout>
     <template #header>
-      <PageHeader :type="PAGE_TYPES.SMTP" title="Smtp" />
+      <PageHeader :type="PAGE_TYPES.Smtp" title="Smtp" />
     </template>
 
-    <PageContent :type="PAGE_TYPES.SMTP" title="Smtp" />
+    <LayoutPreviewEvents :type="PAGE_TYPES.Smtp" title="Smtp" />
   </NuxtLayout>
 </template>

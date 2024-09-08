@@ -4,7 +4,7 @@ import {useProfileStore, useSettingsStore} from "@/shared/stores";
 import { type TRouterMiddleware} from "./types";
 
 
-export const auth: TRouterMiddleware = async ({ to, from, next }) => {
+export const auth: TRouterMiddleware = async ({ to, next }) => {
   const settingsStore  = useSettingsStore()
   const {isFetched, isAuthEnabled }  = storeToRefs(settingsStore)
 

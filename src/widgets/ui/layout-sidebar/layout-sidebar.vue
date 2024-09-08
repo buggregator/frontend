@@ -3,15 +3,16 @@ import { useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { RouteName } from '@/shared/types/app'
+import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
 import { version } from '../../../../package.json' with { type: 'json' }
-import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from './constants'
+import { EVENTS_NAV_ORDER } from './constants'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
@@ -88,8 +89,6 @@ const logout = () => {
   router.push('/login')
 }
 
-const path = computed(() => useRoute().path)
-
 const { apiVersion, availableEvents } = storeToRefs(useSettingsStore())
 
 const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`)
@@ -157,20 +156,18 @@ const generateRadialGradient = (input: string) =>
       </template>
 
       <template v-for="type in filteredNavOrder" :key="type">
+        <!-- TODO: add router-link-active to inner routed-->
         <RouterLink
-          :to="EVENTS_LINKS_MAP[type].path"
-          :title="EVENTS_LINKS_MAP[type].title"
+          :to="{ name: PAGES_SETTINGS[type].routeName }"
+          :title="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
-          :class="{
-            'router-link-active': path.includes(EVENTS_LINKS_MAP[type].path)
-          }"
         >
           <BadgeNumber
-            :number="getItemsCount(EVENTS_LINKS_MAP[type].eventType)"
+            :number="getItemsCount(type)"
             class="layout-sidebar__link-badge"
             :is-visible="isVisibleEventCounts"
           >
-            <IconSvg class="layout-sidebar__link-icon" :name="EVENTS_LINKS_MAP[type].iconName" />
+            <IconSvg class="layout-sidebar__link-icon" :name="PAGES_SETTINGS[type].iconName" />
           </BadgeNumber>
         </RouterLink>
       </template>

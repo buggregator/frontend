@@ -2,35 +2,34 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { RouteName } from '@/shared/types/app'
-import { PAGE_TYPES } from '@/shared/constants'
+import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore } from '@/shared/stores'
-import type { EventType } from '@/shared/types'
+import { type EventType, type PageEventTypes } from '@/shared/types'
 import { AppHeader, BadgeNumber, PauseButton } from '@/shared/ui'
 
 const { events, cachedEvents, getItemsCount } = useEvents()
 const { isVisibleEventCounts } = storeToRefs(useSettingsStore())
 
 type Props = {
+  type: PageEventTypes
   title: string
-  type: EventType | typeof PAGE_TYPES.ALL_EVENTS // TODO: update types to sync page types and event types
 }
 
 const props = defineProps<Props>()
 
 const clearEvents = () => {
-  if (props.type === PAGE_TYPES.ALL_EVENTS) {
+  if (props.type === ALL_EVENT_TYPES) {
     return events.removeAll()
   }
 
-  // TODO: fix types to sing EVENT_TYPES with PAGE_TYPES
   return events.removeByType(props.type as unknown as EventType)
 }
 
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
 const allEvents = computed(() => {
-  if (props.type === PAGE_TYPES.ALL_EVENTS) {
+  if (props.type === ALL_EVENT_TYPES) {
     return events.items.value
   }
   return events.items.value.filter(({ type }) => type === props.type)
@@ -58,7 +57,7 @@ const toggleUpdate = () => {
 
 const badgeNumber = computed(() =>
   getItemsCount.value(
-    props.type !== PAGE_TYPES.ALL_EVENTS ? (props.type as unknown as EventType) : undefined
+    props.type !== ALL_EVENT_TYPES ? (props.type as unknown as EventType) : undefined
   )
 )
 </script>

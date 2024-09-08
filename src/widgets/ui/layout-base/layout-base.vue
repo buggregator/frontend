@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
+import { watch, watchEffect } from 'vue'
 import { useEvents } from '@/shared/lib/use-events'
 import SfdumpWrap from '@/shared/lib/vendor/dumper'
 import { useEventsStore } from '@/shared/stores'

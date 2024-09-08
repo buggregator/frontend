@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { PageHeader, PageContent } from '@/widgets/ui'
+import { PageHeader, LayoutPreviewEvents } from '@/widgets/ui'
 import { PAGE_TYPES } from '@/shared/constants'
 </script>
 
 <template>
   <NuxtLayout>
     <template #header>
-      <PageHeader :type="PAGE_TYPES.MONOLOG" title="Monolog" />
+      <PageHeader :type="PAGE_TYPES.Monolog" title="Monolog" />
     </template>
 
-    <PageContent :type="PAGE_TYPES.MONOLOG" title="Monolog" />
+    <LayoutPreviewEvents :type="PAGE_TYPES.Monolog" title="Monolog" />
   </NuxtLayout>
 </template>

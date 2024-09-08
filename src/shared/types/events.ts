@@ -1,6 +1,17 @@
 import type {RayDump, RayDumpMeta} from "@/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
+export enum EventTypes {
+  VarDump = "var-dump",
+  Smtp = "smtp",
+  Sentry = "sentry",
+  Profiler = "profiler",
+  Monolog = "monolog",
+  Inspector = "inspector",
+  HttpDump = "http-dump",
+  RayDump = "ray",
+}
+
 // TODO: add T prefix to all types
 
 export enum EVENT_TYPES {
@@ -17,7 +28,7 @@ export enum EVENT_TYPES {
 export type EventId = string;
 export type Uuid = string;
 
-export type EventType = OneOfValues<typeof EVENT_TYPES>;
+export type EventType = OneOfValues<typeof EventTypes>;
 
 export interface ServerEvent<T> {
   uuid: EventId,
