@@ -1,3 +1,4 @@
+import { storeToRefs } from "pinia";
 import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions} from "@/entities/profiler/types";
 import {useProfileStore} from "../../stores";
 import type { EventId } from "../../types";
