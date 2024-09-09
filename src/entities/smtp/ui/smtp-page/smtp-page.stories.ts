@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { REST_API_URL } from "@/shared/lib/io";
 import { useSmtp } from "../../lib";
 import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '../../mocks';
 import SmtpPage from "./smtp-page.vue";
@@ -26,12 +25,5 @@ export const Order: StoryObj<typeof SmtpPage> = {
 export const Text: StoryObj<typeof SmtpPage> = {
   args: {
     event: normalizeSmtpEvent(smtpTextMock)
-  }
-};
-
-export const WithSource: StoryObj<typeof SmtpPage> = {
-  args: {
-    event: normalizeSmtpEvent(smtpTextMock),
-    htmlSource: `<iframe src="${REST_API_URL}/api/smtp/${normalizeSmtpEvent(smtpTextMock).id}/html"/>`
   }
 };
