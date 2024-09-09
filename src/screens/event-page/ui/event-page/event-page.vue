@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { RouteName } from '@/shared/types/app'
 import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
+import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { EventValidationError } from '@/shared/lib/errors/validation-errors'
 import { useEvents } from '@/shared/lib/use-events'
@@ -62,7 +63,7 @@ onMounted(getEvent)
     </div>
 
     <div v-if="serverEvent">
-      <!-- TODO: create events-page-mapper component -->
+      <EventPageMapper :event="serverEvent" />
     </div>
   </LayoutBase>
 </template>

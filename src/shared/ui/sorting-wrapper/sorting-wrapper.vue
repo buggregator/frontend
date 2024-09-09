@@ -1,36 +1,29 @@
 <script lang="ts" setup>
-import { SORTING_ORDER } from "./constants";
+import { SORTING_ORDER } from './constants'
 
 type Props = {
-  sort: SORTING_ORDER;
-};
+  sort: SORTING_ORDER
+}
 
 type Emits = {
-  changeSort: [value: SORTING_ORDER];
-};
+  changeSort: [value: SORTING_ORDER]
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  sort: SORTING_ORDER.DEFAULT,
-});
+  sort: SORTING_ORDER.DEFAULT
+})
 
-const emit = defineEmits<Emits>();
+const emit = defineEmits<Emits>()
 
 const changeSortOrder = () => {
-  const sortOrderList = [
-    SORTING_ORDER.ASC,
-    SORTING_ORDER.DESC,
-    SORTING_ORDER.DEFAULT,
-  ];
+  const sortOrderList = [SORTING_ORDER.ASC, SORTING_ORDER.DESC, SORTING_ORDER.DEFAULT]
 
-  const nextSortOrderIndex = sortOrderList.findIndex(
-    (sortOrder) => sortOrder === props.sort
-  );
+  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort)
 
-  const nextSortOrder =
-    sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0];
+  const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0]
 
-  emit("changeSort", nextSortOrder);
-};
+  emit('changeSort', nextSortOrder)
+}
 </script>
 
 <template>
@@ -41,15 +34,15 @@ const changeSortOrder = () => {
       <span
         class="sorting-wrapper__marker sorting-wrapper__marker--asc"
         :class="{
-          'sorting-wrapper__marker--active': sort === SORTING_ORDER.ASC,
+          'sorting-wrapper__marker--active': sort === SORTING_ORDER.ASC
         }"
-      ></span>
+      />
       <span
         class="sorting-wrapper__marker sorting-wrapper__marker--desc"
         :class="{
-          'sorting-wrapper__marker--active': sort === SORTING_ORDER.DESC,
+          'sorting-wrapper__marker--active': sort === SORTING_ORDER.DESC
         }"
-      ></span>
+      />
     </span>
   </span>
 </template>

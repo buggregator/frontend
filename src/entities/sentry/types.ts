@@ -38,7 +38,7 @@ export type SentryRequest = Omit<SentryTypes.Request, 'headers'> & {
 export type SentryContexts = Omit<SentryTypes.Contexts, 'device' | 'app'> & {
   runtime?: SentryTypes.Runtime;
   device?: SentryDevice;
-  app?: unknown;
+  app?: unknown; // TODO: SentryContextApp
 }
 
 export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' | 'breadcrumbs' | 'level' | 'contexts'> {
