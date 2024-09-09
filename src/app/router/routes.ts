@@ -1,13 +1,13 @@
 import {RouteName} from "@/shared/types/app";
 import {auth} from "./middlewares";
-import {HomePage} from "@/screens/home";
+import {EventsListPage} from "@/screens/events-list-page";
 import {SettingsPage} from "@/screens/settings";
 
 export const routes = [
   {
     path: '/',
     name: RouteName.Home,
-    component: HomePage,
+    component: EventsListPage,
     meta: {
       middleware: [auth]
     }
@@ -15,7 +15,7 @@ export const routes = [
   {
     path: '/:type',
     name: RouteName.EventList,
-    component: HomePage,
+    component: EventsListPage,
     meta: {
       middleware: [auth]
     }
