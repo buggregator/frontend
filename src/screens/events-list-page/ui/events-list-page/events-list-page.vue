@@ -7,7 +7,7 @@ import { EventTypes, type PageEventTypes } from '@/shared/types'
 
 const route = useRoute()
 
-const paramsType = computed(() => (route?.params?.type || undefined) as PageEventTypes | undefined)
+const paramsType = computed(() => (route.params?.type || undefined) as PageEventTypes | undefined)
 
 const title = computed(() => (paramsType?.value ? PAGES_SETTINGS[paramsType.value]?.title : ''))
 
@@ -15,7 +15,7 @@ const type = computed(() => (paramsType.value as EventTypes) || ALL_EVENT_TYPES)
 </script>
 
 <template>
-  <LayoutBase class="home-page">
+  <LayoutBase class="events-list-page">
     <template #sidebar>
       <LayoutSidebar />
     </template>
@@ -29,7 +29,7 @@ const type = computed(() => (paramsType.value as EventTypes) || ALL_EVENT_TYPES)
 </template>
 
 <style lang="scss" scoped>
-.home-page {
+.events-list-page {
   display: block;
 }
 </style>
