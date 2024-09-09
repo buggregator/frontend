@@ -1,77 +1,66 @@
-import {RouteName} from "../types/app";
-import { EventTypes, } from "../types/events";
-import { type PageEventTypes } from "../types/pages";
+import { EventTypes } from "../types/events";
+import type {OneOfValues} from "../types/generics";
 
 export const ALL_EVENT_TYPES = 'all-events' as const
 
-// TODO convert it to enum
 export const PAGE_TYPES = {
   ...EventTypes,
   ALL_EVENT_TYPES,
-}
+} as const
 
-export const PAGES_SETTINGS: { [key in PageEventTypes ]: { title: string, sidebarTitle: string, iconName: string, routeName: RouteName, eventType: EventTypes | typeof ALL_EVENT_TYPES }} = {
-  [ALL_EVENT_TYPES]: {
+export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title: string, sidebarTitle: string, iconName: string, eventType: EventTypes | typeof ALL_EVENT_TYPES }} = {
+  [PAGE_TYPES.ALL_EVENT_TYPES]: {
     title: 'Home',
     sidebarTitle: 'Home',
     iconName: 'home',
-    routeName: RouteName.Home,
     eventType: ALL_EVENT_TYPES,
   },
-  [EventTypes.Sentry]: {
+  [PAGE_TYPES.Sentry]: {
     title: 'Sentry',
     sidebarTitle: 'Sentry logs',
     iconName: 'sentry',
-    routeName: RouteName.Sentry,
     eventType: EventTypes.Sentry,
   },
-  [EventTypes.Profiler]: {
+  [PAGE_TYPES.Profiler]: {
     title: 'Profiler',
     sidebarTitle: 'Profiler',
     iconName: 'profiler',
-    routeName: RouteName.Profiler,
     eventType: EventTypes.Profiler,
   },
-  [EventTypes.Smtp]: {
+  [PAGE_TYPES.Smtp]: {
     title: 'SMTP',
     sidebarTitle: 'SMTP mails',
     iconName: 'smtp',
-    routeName: RouteName.Smtp,
     eventType: EventTypes.Smtp,
   },
-  [EventTypes.HttpDump]: {
+  [PAGE_TYPES.HttpDump]: {
     title: 'Http dumps',
     sidebarTitle: 'Http dumps',
     iconName: 'http-dump',
-    routeName: RouteName.HttpDump,
     eventType: EventTypes.HttpDump,
   },
-  [EventTypes.Inspector]: {
+  [PAGE_TYPES.Inspector]: {
     title: 'Inspector',
     sidebarTitle: 'Inspector logs',
     iconName: 'inspector',
-    routeName: RouteName.Inspector,
     eventType: EventTypes.Inspector,
   },
-  [EventTypes.VarDump]: {
+  [PAGE_TYPES.VarDump]: {
     title: 'Var dump',
     sidebarTitle: 'Var dump logs',
     iconName: 'var-dump',
-    routeName: RouteName.VarDump,
     eventType: EventTypes.VarDump,
   },
-  [EventTypes.Monolog]: {
+  [PAGE_TYPES.Monolog]: {
     title: 'Monolog',
     sidebarTitle: 'Monolog logs',
     iconName: 'monolog',
-    routeName: RouteName.Monolog,
     eventType: EventTypes.Monolog,
   },
-  [EventTypes.RayDump]: {
+  [PAGE_TYPES.RayDump]: {
     title: 'Ray dump',
     sidebarTitle: 'Ray dump logs',
     iconName: 'ray',
-    routeName: RouteName.RayDump,
     eventType: EventTypes.RayDump,
   }
 }

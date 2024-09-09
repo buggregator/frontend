@@ -13,64 +13,8 @@ export const routes = [
     }
   },
   {
-    path: '/http-dump',
-    name: RouteName.HttpDump,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/inspector',
-    name: RouteName.Inspector,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/monolog',
-    name: RouteName.Monolog,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/profiler',
-    name: RouteName.Profiler,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/ray',
-    name: RouteName.RayDump,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/sentry',
-    name: RouteName.Sentry,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/smtp',
-    name: RouteName.Smtp,
-    component: HomePage,
-    meta: {
-      middleware: [auth]
-    }
-  },
-  {
-    path: '/var-dump',
-    name: RouteName.VarDump,
+    path: '/:type',
+    name: RouteName.EventList,
     component: HomePage,
     meta: {
       middleware: [auth]

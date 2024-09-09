@@ -16,7 +16,7 @@ const router = useRouter()
 
 if (store.isAuthenticated) {
   setPageLayout('default')
-  router.replace({ name: RouteName.Home })
+  router.replace({ name: RouteName.Home, params: undefined })
 }
 
 const loginUrl = computed(() => `${REST_API_URL}/${authLogicUrl.value}`)

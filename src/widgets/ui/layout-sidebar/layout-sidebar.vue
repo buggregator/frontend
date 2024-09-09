@@ -158,7 +158,7 @@ const generateRadialGradient = (input: string) =>
       <template v-for="type in filteredNavOrder" :key="type">
         <!-- TODO: add router-link-active to inner routed-->
         <RouterLink
-          :to="{ name: PAGES_SETTINGS[type].routeName }"
+          :to="{ name: RouteName.EventList, params: { type } }"
           :title="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
         >
