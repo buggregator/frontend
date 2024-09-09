@@ -34,7 +34,7 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     eventType: EventTypes.Smtp,
   },
   [PAGE_TYPES.HttpDump]: {
-    title: 'Http dumps',
+    title: 'Http Dump',
     sidebarTitle: 'Http dumps',
     iconName: 'http-dump',
     eventType: EventTypes.HttpDump,
