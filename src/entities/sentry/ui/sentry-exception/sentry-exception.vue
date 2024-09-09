@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from "vue";
-import type { SentryException } from "../../types";
-import SentryExceptionFrame from "./sentry-exception-frame.vue";
+import { computed, defineProps, withDefaults } from 'vue'
+import type { SentryException } from '../../types'
+import SentryExceptionFrame from './sentry-exception-frame.vue'
 
 type Props = {
-  exception: SentryException;
-  maxFrames?: number;
-};
+  exception: SentryException
+  maxFrames?: number
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 3,
-});
+  maxFrames: 3
+})
 
 const exceptionFrames = computed(() => {
-  const frames = props.exception.stacktrace.frames || [];
+  const frames = props.exception.stacktrace.frames || []
 
   if (props.maxFrames > 0) {
-    return frames.slice(0 - props.maxFrames).reverse();
+    return frames.slice(0 - props.maxFrames).reverse()
   }
 
-  return frames.slice().reverse();
-});
+  return frames.slice().reverse()
+})
 </script>
 
 <template>
@@ -36,10 +36,7 @@ const exceptionFrames = computed(() => {
     </slot>
 
     <div v-if="exceptionFrames.length" class="sentry-exception__frames">
-      <template
-        v-for="(frame, index) in exceptionFrames"
-        :key="frame.context_line"
-      >
+      <template v-for="(frame, index) in exceptionFrames" :key="frame.context_line">
         <SentryExceptionFrame :frame="frame" :is-open="index === 0" />
       </template>
     </div>
@@ -47,7 +44,7 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-exception {
   @apply flex flex-col;

@@ -37,9 +37,9 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
       {{ title }}
     </RouterLink>
     &nbsp;/&nbsp;
-    <RouterLink :disabled="true">
+    <div :disabled="true">
       {{ eventId }}
-    </RouterLink>
+    </div>
 
     <template #controls>
       <a

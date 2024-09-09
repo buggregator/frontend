@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { ref, defineProps } from 'vue'
 import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
+// TODO: move reusable component
+// eslint-disable-next-line @conarti/feature-sliced/layers-slices
+import { SmtpPagePreview } from '../../../smtp'
 import type { RayContentMail, RayUser } from '../../types'
-import { SmtpPagePreview } from '@/screens/smtp'
 
 type Props = {
   content: RayContentMail

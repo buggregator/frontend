@@ -26,7 +26,7 @@ export interface ProfilerEdge {
   parent: string | null,
   caller: string | null,
   callee: string,
-  cost: ProfilerCost
+  cost: Partial<ProfilerCost> // TOO: need to fix types
 }
 
 export interface Profiler {
@@ -69,3 +69,5 @@ export interface ProfileFlameChart {
   start: number
   type: "task" | string
 }
+
+export type CallStackHoverData = ProfilerEdge & { position: { x: number; y: number } }
