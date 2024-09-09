@@ -46,7 +46,7 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     eventType: EventTypes.Inspector,
   },
   [PAGE_TYPES.VarDump]: {
-    title: 'Var dump',
+    title: 'Var Dump',
     sidebarTitle: 'Var dump logs',
     iconName: 'var-dump',
     eventType: EventTypes.VarDump,
@@ -58,7 +58,7 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     eventType: EventTypes.Monolog,
   },
   [PAGE_TYPES.RayDump]: {
-    title: 'Ray dump',
+    title: 'Ray Dump',
     sidebarTitle: 'Ray dump logs',
     iconName: 'ray',
     eventType: EventTypes.RayDump,
