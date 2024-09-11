@@ -1,5 +1,5 @@
 import {RouteName} from "@/shared/types/app";
-import {auth} from "./middlewares";
+import {auth, checkType} from "./middlewares";
 import {EventPage} from "@/screens/event-page";
 import {EventsListPage} from "@/screens/events-list-page";
 import {NotFoundPage} from "@/screens/not-found";
@@ -19,7 +19,7 @@ export const routes = [
     name: RouteName.EventList,
     component: EventsListPage,
     meta: {
-      middleware: [auth]
+      middleware: [auth, checkType]
     }
   },
   {
@@ -27,7 +27,7 @@ export const routes = [
     name: RouteName.EventPage,
     component: EventPage,
     meta: {
-      middleware: [auth]
+      middleware: [auth, checkType]
     }
   },
   {
