@@ -1,8 +1,6 @@
 import {storeToRefs} from "pinia";
-import type {NavigationGuard} from "vue-router";
 import {RouteName} from "@/shared/types/app";
-import {PAGE_TYPES} from "@/shared/constants";
-import { RouteAuthAccessError} from "@/shared/lib/errors";
+import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
 import {EventTypes} from "@/shared/types";
 import { type TRouterMiddleware} from "./types";
@@ -17,6 +15,9 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
   }
 
   if (!isAuthEnabled.value) {
+    if (to.name === RouteName.Login) {
+      next({ name: RouteName.Home })
+    }
     return
   }
 
@@ -29,38 +30,41 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
     try {
       await profileStore.getProfile();
     } catch (e) {
-      console.error(e);
-
-      next({
-        name: 'login',
-      })
-
-      return new RouteAuthAccessError(`Access denied`, to.path)
+      throw new RouteAuthAccessError(`Access denied`, to.path)
     }
   }
 
-  if (to.name !== 'login' && !isAuthenticated.value) {
-    return new RouteAuthAccessError(`Access denied`, to.path)
+  if (to.name !== RouteName.Login && !isAuthenticated.value) {
+    throw new RouteAuthAccessError(`Access denied`, to.path)
   }
 
-  if (to.name === 'login' && to?.query?.token) {
+  if (to.name === RouteName.Login && to?.query?.token) {
     profileStore.setToken(String(to.query.token))
   }
 
-  return
+  return;
 }
 
 export const checkType: TRouterMiddleware = async ({ to, next }) => {
   const pageType = to.params.type
 
   if (!pageType) {
-    next({ name: RouteName.Home })
+    next({ name: to.name })
+
+    return
   }
 
-  if (Array.isArray(pageType) || !Object.values(EventTypes).includes(pageType as EventTypes)) {
-    next({ name: RouteName.NotFound })
+  if (Array.isArray(pageType)) {
+    throw new RouteAvailabilityError('Invalid Path parameter', to.path)
   }
 
-  return undefined;
+  if (
+    !Object.values(RouteName).includes(pageType as RouteName)
+    && !Object.values(EventTypes).includes(pageType as EventTypes)
+  ) {
+    throw new RouteAvailabilityError('Invalid Path', to.path)
+  }
+
+  return;
 }
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { RouteAuthAccessError } from "@/shared/lib/errors";
+import {RouteName} from "@/shared/types/app";
+import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors";
 import { routes } from './routes'
 import type { TRouterMiddleware } from './types'
 
@@ -29,12 +30,16 @@ export const createAppRouter = () => {
         await middleware({...context})
       } catch (e) {
         if (e instanceof RouteAuthAccessError) {
-          return next({
-            name: 'login',
+          next({
+            name: RouteName.Login,
           })
-        } else {
-          return
         }
+        if (e instanceof RouteAvailabilityError) {
+          next({
+            name: RouteName.NotFound
+          })
+        }
+        return
       }
     }
 
