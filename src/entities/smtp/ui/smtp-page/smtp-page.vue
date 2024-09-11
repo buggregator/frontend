@@ -5,11 +5,17 @@ import { Tab, Tabs } from 'vue3-tabs-component'
 import { htmlEncode } from '@/shared/lib/helpers'
 import { REST_API_URL } from '@/shared/lib/io'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
-import { TableBase, TableBaseRow, CodeSnippet, FileAttachment } from '@/shared/ui'
+import {
+  TableBase,
+  TableBaseRow,
+  CodeSnippet,
+  FileAttachment,
+  EmailPreviewDevice,
+  EmailPreview
+} from '@/shared/ui'
 import { useSmtp } from '../../lib'
 import type { SMTP } from '../../types'
 import { SmtpPageAddresses } from '../smtp-page-addresses'
-import { SmtpPagePreview } from '../smtp-page-preview'
 
 type Props = {
   event: NormalizedEvent<SMTP>
@@ -120,9 +126,9 @@ onMounted(getAttachmentsRequest)
             name="Preview"
             suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
           >
-            <SmtpPagePreview device="tablet">
+            <EmailPreview :device="EmailPreviewDevice.Tablet">
               <div v-html="htmlSource" />
-            </SmtpPagePreview>
+            </EmailPreview>
           </Tab>
           <Tab v-if="isHtml" name="HTML">
             <CodeSnippet language="html" class="tab-preview-code" :code="event.payload.html" />

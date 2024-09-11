@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { ref, defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
-// TODO: move reusable component
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { SmtpPagePreview } from '../../../smtp'
+import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview'
 import type { RayContentMail, RayUser } from '../../types'
 
 type Props = {
@@ -56,9 +54,9 @@ const getValuesField = (values: RayUser[]) => {
         />
       </h3>
 
-      <SmtpPagePreview v-if="!collapsed" device="tablet">
+      <EmailPreview v-if="!collapsed" :device="EmailPreviewDevice.Tablet">
         <div v-html="content.html" />
-      </SmtpPagePreview>
+      </EmailPreview>
     </div>
   </div>
 </template>
