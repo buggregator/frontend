@@ -2,6 +2,7 @@ import {RouteName} from "@/shared/types/app";
 import {auth, checkType} from "./middlewares";
 import {EventPage} from "@/screens/event-page";
 import {EventsListPage} from "@/screens/events-list-page";
+import {LoginPage} from "@/screens/login";
 import {NotFoundPage} from "@/screens/not-found";
 import {SettingsPage} from "@/screens/settings";
 
@@ -42,6 +43,14 @@ export const routes = [
     path: '/settings',
     name: RouteName.Settings,
     component: SettingsPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
+    path: '/login',
+    name: RouteName.Login,
+    component: LoginPage,
     meta: {
       middleware: [auth]
     }
