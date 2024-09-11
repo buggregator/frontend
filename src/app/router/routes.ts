@@ -1,10 +1,10 @@
 import {RouteName} from "@/shared/types/app";
+import {EventPage} from "@/pages/event-page";
+import {EventsListPage} from "@/pages/events-list-page";
+import {LoginPage} from "@/pages/login";
+import {NotFoundPage} from "@/pages/not-found";
+import {SettingsPage} from "@/pages/settings";
 import {auth, checkType} from "./middlewares";
-import {EventPage} from "@/screens/event-page";
-import {EventsListPage} from "@/screens/events-list-page";
-import {LoginPage} from "@/screens/login";
-import {NotFoundPage} from "@/screens/not-found";
-import {SettingsPage} from "@/screens/settings";
 
 export const routes = [
   {

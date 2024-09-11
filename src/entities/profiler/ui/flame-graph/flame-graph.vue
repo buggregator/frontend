@@ -2,10 +2,10 @@
 import { FlameChart } from 'flame-chart-js'
 import debounce from 'lodash.debounce'
 import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import type { CallStackHoverData } from '@/pages/profiler/types'
 import type { EventId } from '@/shared/types'
 import { useProfiler } from '../../lib'
 import type { Profiler } from '../../types'
-import type { CallStackHoverData } from '@/screens/profiler/types'
 
 type Props = {
   payload: Profiler
