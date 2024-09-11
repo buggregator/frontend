@@ -4,7 +4,7 @@ import { computed } from 'vue'
 import type { NormalizedEvent, OneOfValues } from '@/shared/types'
 import { TableBase, TableBaseRow } from '@/shared/ui'
 import { useRay } from '../../lib'
-import { RAY_EVENT_TYPES, type RayDump } from '../../types'
+import { RayEventTypes, type RayDump } from '../../types'
 
 type Props = {
   event: NormalizedEvent<RayDump>
@@ -26,9 +26,9 @@ const classes = computed(() =>
   props.event?.meta ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`] : []
 )
 
-const getComponent: (type: RAY_EVENT_TYPES | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
+const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
   type
-) => COMPONENT_TYPE_MAP[type as RAY_EVENT_TYPES]
+) => COMPONENT_TYPE_MAP[type as RayEventTypes]
 </script>
 
 <template>
