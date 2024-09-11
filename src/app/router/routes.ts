@@ -2,6 +2,7 @@ import {RouteName} from "@/shared/types/app";
 import {auth} from "./middlewares";
 import {EventPage} from "@/screens/event-page";
 import {EventsListPage} from "@/screens/events-list-page";
+import {NotFoundPage} from "@/screens/not-found";
 import {SettingsPage} from "@/screens/settings";
 
 export const routes = [
@@ -32,7 +33,7 @@ export const routes = [
   {
     path: '/404',
     name: RouteName.NotFound,
-    component: EventPage,
+    component: NotFoundPage,
     meta: {
       middleware: [auth]
     }
