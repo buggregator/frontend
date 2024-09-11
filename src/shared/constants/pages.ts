@@ -1,5 +1,4 @@
-import { EventTypes } from "../types/events";
-import type {OneOfValues} from "../types/generics";
+import { EventTypes, type OneOfValues } from "../types";
 
 export const ALL_EVENT_TYPES = 'all-events' as const
 

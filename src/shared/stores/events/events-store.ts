@@ -1,8 +1,14 @@
 import { defineStore } from "pinia";
 import { PAGE_TYPES} from "../../constants";
 import {useSettings} from "../../lib/use-settings";
-import type {EventId, EventType, ServerEvent, PageEventTypes, TProjects} from '../../types';
-import {EVENT_TYPES} from "../../types";
+import {
+  type EventId,
+  type EventType,
+  type ServerEvent,
+  type PageEventTypes,
+  type TProjects,
+  EventTypes
+} from '../../types';
 import {useSettingsStore} from "../settings";
 import {
   getStoredLockedIds,
@@ -38,17 +44,17 @@ export const useEventsStore = defineStore("eventsStore", {
     }
   }),
   getters: {
-    eventsCounts: ({events}) => (eventType: EVENT_TYPES | undefined): number => {
+    eventsCounts: ({events}) => (eventType: EventTypes | undefined): number => {
       // TODO: need to use common mapping with changed ids
       const counts = {
-        [EVENT_TYPES.VAR_DUMP]: events.filter(({type}) => type === EVENT_TYPES.VAR_DUMP).length,
-        [EVENT_TYPES.SMTP]: events.filter(({type}) => type === EVENT_TYPES.SMTP).length,
-        [EVENT_TYPES.SENTRY]: events.filter(({type}) => type === EVENT_TYPES.SENTRY).length,
-        [EVENT_TYPES.PROFILER]: events.filter(({type}) => type === EVENT_TYPES.PROFILER).length,
-        [EVENT_TYPES.MONOLOG]: events.filter(({type}) => type === EVENT_TYPES.MONOLOG).length,
-        [EVENT_TYPES.INSPECTOR]: events.filter(({type}) => type === EVENT_TYPES.INSPECTOR).length,
-        [EVENT_TYPES.HTTP_DUMP]: events.filter(({type}) => type === EVENT_TYPES.HTTP_DUMP).length,
-        [EVENT_TYPES.RAY_DUMP]: events.filter(({type}) => type === EVENT_TYPES.RAY_DUMP).length
+        [EventTypes.VarDump]: events.filter(({type}) => type === EventTypes.VarDump).length,
+        [EventTypes.Smtp]: events.filter(({type}) => type === EventTypes.Smtp).length,
+        [EventTypes.Sentry]: events.filter(({type}) => type === EventTypes.Sentry).length,
+        [EventTypes.Profiler]: events.filter(({type}) => type === EventTypes.Profiler).length,
+        [EventTypes.Monolog]: events.filter(({type}) => type === EventTypes.Monolog).length,
+        [EventTypes.Inspector]: events.filter(({type}) => type === EventTypes.Inspector).length,
+        [EventTypes.HttpDump]: events.filter(({type}) => type === EventTypes.HttpDump).length,
+        [EventTypes.RayDump]: events.filter(({type}) => type === EventTypes.RayDump).length
       }
 
       return eventType && counts[eventType] != null ? counts[eventType] : events.length;
