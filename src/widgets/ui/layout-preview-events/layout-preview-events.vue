@@ -4,7 +4,7 @@ import { computed, watchEffect } from 'vue'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import type { PageEventTypes } from '@/shared/types'
-import { EventCard } from '../event-card'
+import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
 
 type Props = {
@@ -45,7 +45,7 @@ watchEffect(() => {
 <template>
   <div class="layout-preview-events">
     <main v-if="visibleEvents.length" class="layout-preview-events__events">
-      <EventCard
+      <EventCardMapper
         v-for="event in visibleEvents"
         :key="event.uuid"
         :event="event"
