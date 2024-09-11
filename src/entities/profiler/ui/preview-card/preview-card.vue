@@ -24,7 +24,6 @@ const eventLink = computed(() => `/profiler/${props.event.id}`)
 @import 'src/assets/mixins';
 
 .preview-card {
-  @apply flex flex-col;
 }
 
 .preview-card__link {
