@@ -10,7 +10,6 @@ export default {
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
-    slot: 'Hello world!',
     event: {
       id: 'da076402-6f98-4ada-bae2-d77d405cf427',
       type: EventTypes.Monolog,
@@ -19,6 +18,7 @@ export const Default: StoryObj<typeof PreviewCard> = {
         one: 1,
         two: 2,
       },
+      payload: [],
       date: new Date(1673266869 * 1000),
       labels: [ 'Monolog', '200' ]
     },
