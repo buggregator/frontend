@@ -14,17 +14,6 @@ export enum EventTypes {
 
 // TODO: add T prefix to all types
 
-export enum EVENT_TYPES {
-  VAR_DUMP = "var-dump",
-  SMTP = "smtp",
-  SENTRY = "sentry",
-  PROFILER = "profiler",
-  MONOLOG = "monolog",
-  INSPECTOR = "inspector",
-  HTTP_DUMP = "http-dump",
-  RAY_DUMP = "ray",
-}
-
 export type EventId = string;
 export type Uuid = string;
 

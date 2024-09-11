@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {REST_API_URL} from "../../lib/io/constants";
-import {EVENT_TYPES, type EventType, type TSettings} from "../../types";
+import {type EventType, EventTypes, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -49,7 +49,7 @@ export const useSettingsStore = defineStore("settingsStore", {
       }
 
       // TODO: meed to move to the events store
-      this.availableEvents = settings?.client?.events ?? Object.values(EVENT_TYPES);
+      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
 
       this.isFetched = true
 

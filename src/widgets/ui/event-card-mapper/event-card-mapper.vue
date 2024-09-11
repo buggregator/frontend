@@ -1,5 +1,5 @@
 <script lang="ts" setup generic="T">
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
 import { useHttpDump, PreviewCard as PreviewHttpDump } from '@/entities/http-dump'
 import { useInspector, PreviewCard as PreviewInspector } from '@/entities/inspector'
 import { useMonolog, PreviewCard as PreviewMonolog } from '@/entities/monolog'
@@ -9,8 +9,7 @@ import { useSentry, PreviewCard as PreviewSentry } from '@/entities/sentry'
 import { useSmtp, PreviewCard as PreviewSMTP } from '@/entities/smtp'
 import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
-import type { ServerEvent, EventType } from '@/shared/types'
-import { EVENT_TYPES } from '@/shared/types'
+import { type ServerEvent, type EventType, EventTypes } from '@/shared/types'
 import { PreviewCardDefault } from '../preview-card-default'
 
 const { normalizeRayEvent } = useRay()
@@ -31,35 +30,35 @@ type Props = {
 const props = defineProps<Props>()
 
 const EVENT_TYPE_COMPONENTS_MAP = {
-  [EVENT_TYPES.SENTRY]: {
+  [EventTypes.Sentry]: {
     view: PreviewSentry,
     normalize: normalizeSentryEvent
   },
-  [EVENT_TYPES.MONOLOG]: {
+  [EventTypes.Monolog]: {
     view: PreviewMonolog,
     normalize: normalizeMonologEvent
   },
-  [EVENT_TYPES.VAR_DUMP]: {
+  [EventTypes.VarDump]: {
     view: PreviewVarDump,
     normalize: normalizeVarDumpEvent
   },
-  [EVENT_TYPES.RAY_DUMP]: {
+  [EventTypes.RayDump]: {
     view: PreviewRay,
     normalize: normalizeRayEvent
   },
-  [EVENT_TYPES.SMTP]: {
+  [EventTypes.Smtp]: {
     view: PreviewSMTP,
     normalize: normalizeSmtpEvent
   },
-  [EVENT_TYPES.PROFILER]: {
+  [EventTypes.Profiler]: {
     view: PreviewProfiler,
     normalize: normalizeProfilerEvent
   },
-  [EVENT_TYPES.INSPECTOR]: {
+  [EventTypes.Inspector]: {
     view: PreviewInspector,
     normalize: normalizeInspectorEvent
   },
-  [EVENT_TYPES.HTTP_DUMP]: {
+  [EventTypes.HttpDump]: {
     view: PreviewHttpDump,
     normalize: normalizeHttpDumpEvent
   },
@@ -69,7 +68,12 @@ const EVENT_TYPE_COMPONENTS_MAP = {
   }
 }
 
-const { view, normalize } = EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType]
+const componentConfig = computed(
+  () => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType] as unknown
+)
+
+const view = computed(() => componentConfig?.value?.view ?? PreviewCardDefault)
+const normalize = computed(() => componentConfig?.value?.normalize ?? normalizeUnknownEvent)
 </script>
 
 <template>

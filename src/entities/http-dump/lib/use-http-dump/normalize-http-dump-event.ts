@@ -1,13 +1,12 @@
 import moment from "moment/moment";
-import type {ServerEvent, NormalizedEvent, Attachment } from "@/shared/types";
-import {EVENT_TYPES } from "@/shared/types";
+import {type ServerEvent, type NormalizedEvent, type Attachment, EventTypes} from "@/shared/types";
 import type {HttpDump, HttpDumpServer} from "../../types";
 
 export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>): NormalizedEvent<HttpDump> => {
   const normalizedEvent: NormalizedEvent<HttpDump> = {
     id: event.uuid,
-    type: EVENT_TYPES.HTTP_DUMP,
-    labels: [EVENT_TYPES.HTTP_DUMP],
+    type: EventTypes.HttpDump,
+    labels: [EventTypes.HttpDump],
     origin: {uri: event.payload.request.uri},
     serverName: event.payload.host,
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
