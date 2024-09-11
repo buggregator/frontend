@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-// TODO: need to fix cytoscape console warnings
 import type { ElementsDefinition, NodeSingular } from 'cytoscape'
 import { defineProps, onBeforeUnmount, onMounted, ref } from 'vue'
-// eslint-disable-next-line @conarti/feature-sliced/layers-slices
-import { useCytoscape } from '@/features/lib/cytoscape'
+import { useCytoscape } from '../../lib'
 
 type Props = {
   elements: ElementsDefinition

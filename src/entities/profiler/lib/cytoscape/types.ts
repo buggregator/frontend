@@ -1,4 +1,4 @@
-import type { ProfilerCost } from "@/entities/profiler/types";
+import type { ProfilerCost } from "../../types";
 
 export type TNode = {
   data: {
