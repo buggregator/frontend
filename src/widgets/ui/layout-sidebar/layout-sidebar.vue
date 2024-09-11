@@ -156,9 +156,9 @@ const generateRadialGradient = (input: string) =>
       </template>
 
       <template v-for="type in filteredNavOrder" :key="type">
-        <!-- TODO: add router-link-active to inner routed-->
         <RouterLink
           :to="{ name: RouteName.EventList, params: { type } }"
+          :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
           :title="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
         >
@@ -293,17 +293,16 @@ const generateRadialGradient = (input: string) =>
   @apply px-1.5 py-2 md:px-2 md:py-3;
   @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
-  &.router-link-active {
-    @apply bg-blue-700 text-blue-200;
-  }
-
   .layout-sidebar__projects & {
     @apply p-1.5 md:p-2;
   }
 }
 
-.layout-sidebar__link--logo,
-.layout-sidebar__link--logo.router-link-active {
+.layout-sidebar__link--active {
+  @apply bg-blue-700 text-blue-200;
+}
+
+.layout-sidebar__link--logo {
   @apply text-blue-600 bg-transparent hover:text-blue-800  hover:bg-transparent;
   @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200 hover:dark:bg-transparent;
 }
