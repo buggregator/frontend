@@ -4,10 +4,10 @@ import { useHttpDump, HttpDumpPage } from '@/entities/http-dump'
 import { useInspector, InspectorPage } from '@/entities/inspector'
 import { useMonolog, MonologPage } from '@/entities/monolog'
 import { useProfiler, ProfilerPage } from '@/entities/profiler'
-import { useRay } from '@/entities/ray'
+import { useRay, RayPage } from '@/entities/ray'
 import { useSentry, SentryPage } from '@/entities/sentry'
 import { useSmtp, SmtpPage } from '@/entities/smtp'
-import { useVarDump } from '@/entities/var-dump'
+import { useVarDump, VarDumpPage } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
 import { type ServerEvent, EventTypes } from '@/shared/types'
 import { PreviewCardDefault } from '../preview-card-default'
@@ -38,11 +38,11 @@ const EVENT_TYPE_COMPONENTS_MAP = {
     normalize: normalizeMonologEvent
   },
   [EventTypes.VarDump]: {
-    view: PreviewCardDefault,
+    view: VarDumpPage,
     normalize: normalizeVarDumpEvent
   },
   [EventTypes.RayDump]: {
-    view: PreviewCardDefault,
+    view: RayPage,
     normalize: normalizeRayEvent
   },
   [EventTypes.Smtp]: {
