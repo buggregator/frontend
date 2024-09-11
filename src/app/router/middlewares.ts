@@ -1,6 +1,10 @@
 import {storeToRefs} from "pinia";
+import type {NavigationGuard} from "vue-router";
+import {RouteName} from "@/shared/types/app";
+import {PAGE_TYPES} from "@/shared/constants";
 import { RouteAuthAccessError} from "@/shared/lib/errors";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
+import {EventTypes} from "@/shared/types";
 import { type TRouterMiddleware} from "./types";
 
 
@@ -44,5 +48,19 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
   }
 
   return
+}
+
+export const checkType: TRouterMiddleware = async ({ to, next }) => {
+  const pageType = to.params.type
+
+  if (!pageType) {
+    next({ name: RouteName.Home })
+  }
+
+  if (Array.isArray(pageType) || !Object.values(EventTypes).includes(pageType as EventTypes)) {
+    next({ name: RouteName.NotFound })
+  }
+
+  return undefined;
 }
 
