@@ -25,6 +25,9 @@ export const useSettingsStore = defineStore("settingsStore", {
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     availableEvents: [] as EventType[],
   }),
+  getters: {
+    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+  },
   actions: {
     async fetchSettings() {
       // TODO: need to remove fetch out of the store
