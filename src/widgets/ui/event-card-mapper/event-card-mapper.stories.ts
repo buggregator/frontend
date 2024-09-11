@@ -7,56 +7,56 @@ import { profilerMock } from  "@/entities/profiler/mocks";
 import { sentrySpiralMock } from '@/entities/sentry/mocks';
 import { smtpWelcomeMock } from '@/entities/smtp/mocks';
 import { varDumpObjectMock } from "@/entities/var-dump/mocks";
-import EventCard from "./event-card.vue";
+import EventCardMapper from "./event-card-mapper.vue";
 
 export default {
-  title: "Widgets/EventCard",
-  component: EventCard
-} as Meta<typeof EventCard>;
+  title: "Widgets/EventCardMapper",
+  component: EventCardMapper
+} as Meta<typeof EventCardMapper>;
 
-export const Default: StoryObj<typeof EventCard> = {
+export const Default: StoryObj<typeof EventCardMapper> = {
   args: {
     event: { ...smtpWelcomeMock, type: "unknown" },
   }
 };
 
-export const Monolog: StoryObj<typeof EventCard> = {
+export const Monolog: StoryObj<typeof EventCardMapper> = {
   args: {
     event: monologMock,
   }
 };
 
-export const Sentry: StoryObj<typeof EventCard> = {
+export const Sentry: StoryObj<typeof EventCardMapper> = {
   args: {
     event: sentrySpiralMock,
   }
 };
 
-export const Smtp: StoryObj<typeof EventCard> = {
+export const Smtp: StoryObj<typeof EventCardMapper> = {
   args: {
     event: smtpWelcomeMock,
   }
 };
 
-export const VarDump: StoryObj<typeof EventCard> = {
+export const VarDump: StoryObj<typeof EventCardMapper> = {
   args: {
     event: varDumpObjectMock,
   }
 };
 
-export const Profiler: StoryObj<typeof EventCard> = {
+export const Profiler: StoryObj<typeof EventCardMapper> = {
   args: {
     event: profilerMock,
   }
 };
 
-export const Inspector: StoryObj<typeof EventCard> = {
+export const Inspector: StoryObj<typeof EventCardMapper> = {
   args: {
     event: inspectorMock,
   }
 };
 
-export const HttpDump: StoryObj<typeof EventCard> = {
+export const HttpDump: StoryObj<typeof EventCardMapper> = {
   args: {
     event: httpDumpMock,
   }
@@ -76,24 +76,24 @@ export const EventsList = {
   args: {
     event: inspectorMock,
   },
-  render: (args: ComponentProps<typeof EventCard>) => ({
-    components: { EventCard },
+  render: (args: ComponentProps<typeof EventCardMapper>) => ({
+    components: { EventCardMapper },
     setup() {
       return {
         args,
         eventsList,
       };
     },
-    template: `<EventCard class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>`,
+    template: `<EventCardMapper class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>`,
   }),
 };
 
-export const EventsListVirtual: StoryObj<typeof EventCard> = {
+export const EventsListVirtual: StoryObj<typeof EventCardMapper> = {
   args: {
     event: inspectorMock,
   },
-  render: (args:ComponentProps<typeof EventCard>) => ({
-    components: { EventCard },
+  render: (args:ComponentProps<typeof EventCardMapper>) => ({
+    components: { EventCardMapper },
     setup() {
       return {
         args,
@@ -109,7 +109,7 @@ export const EventsListVirtual: StoryObj<typeof EventCard> = {
     },
     template: `
     <template v-for="item in eventsList">
-      <EventCard class="border-b" :event="item" />
+      <EventCardMapper class="border-b" :event="item" />
     </template>
   `,
   }),
