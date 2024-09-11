@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import isString from 'lodash/isString'
 import { computed } from 'vue'
-import { EVENT_TYPES, type EventType, type NormalizedEvent } from '../../types'
+import { type EventType, type NormalizedEvent, RouteName } from '../../types'
 import { IconSvg } from '../icon-svg'
 import { DownloadType } from './types'
 
@@ -55,12 +55,6 @@ const lockEvent = () => {
 }
 
 const isVisibleTags = computed(() => props.labels.length > 0)
-
-const newPageLink = computed(() => {
-  if (!Object.values(EVENT_TYPES).includes(props.eventType)) return ''
-
-  return `/${props.eventType}/${props.eventId}`
-})
 </script>
 
 <template>
@@ -99,8 +93,12 @@ const newPageLink = computed(() => {
         </template>
       </template>
 
-      <template v-if="newPageLink">
-        <RouterLink :to="newPageLink" class="preview-card-header__open" title="Open full event">
+      <template v-if="eventType">
+        <RouterLink
+          :to="{ name: RouteName.EventList, params: { type: eventType, id: props.eventId } }"
+          class="preview-card-header__open"
+          title="Open full event"
+        >
           <IconSvg name="window-maximize" />
         </RouterLink>
       </template>

@@ -2,13 +2,12 @@
 import { useTitle } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { RouteName } from '@/shared/types/app'
 import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { EventValidationError } from '@/shared/lib/errors/validation-errors'
 import { useEvents } from '@/shared/lib/use-events'
-import { type EventId, type PageEventTypes, type ServerEvent } from '@/shared/types'
+import { type EventId, type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types'
 
 const { params } = useRoute()
 
