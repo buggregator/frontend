@@ -2,7 +2,7 @@ import pick from "lodash/pick";
 import moment from "moment";
 import {EventTypes, type NormalizedEvent, type ServerEvent} from "@/shared/types";
 import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
-import { RAY_EVENT_TYPES } from "../../types";
+import { RayEventTypes } from "../../types";
 
 export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
   let origin = {
@@ -33,7 +33,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     .filter(Boolean)
 
   const typeLabels = (event?.payload?.payloads || [])
-    .filter(payload => Object.values(RAY_EVENT_TYPES).includes(payload.type as RAY_EVENT_TYPES))
+    .filter(payload => Object.values(RayEventTypes).includes(payload.type as RayEventTypes))
     .map(payload => payload.type)
     .filter(Boolean)
 
