@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
-import { RouteName } from '@/shared/types/app'
-import { LayoutBase, LayoutSidebar, PageHeader } from '@/widgets/ui'
-import { PAGE_TYPES } from '@/shared/constants'
+import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
+import { RouteName } from '@/shared/types'
 
 useTitle('404 | Buggregator')
 </script>

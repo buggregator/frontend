@@ -1,8 +1,7 @@
 import {storeToRefs} from "pinia";
-import {RouteName} from "@/shared/types/app";
 import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
-import {EventTypes} from "@/shared/types";
+import {RouteName, EventTypes} from "@/shared/types";
 import { type TRouterMiddleware} from "./types";
 
 

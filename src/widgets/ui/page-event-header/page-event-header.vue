@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { RouteName } from '@/shared/types/app'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
-import type { Uuid } from '@/shared/types'
+import { RouteName, type Uuid } from '@/shared/types'
 import { AppHeader } from '@/shared/ui'
 
 type Props = {

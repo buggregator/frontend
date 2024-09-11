@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { RouteName } from '@/shared/types/app'
 import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore } from '@/shared/stores'
-import { type EventType, type PageEventTypes } from '@/shared/types'
+import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, BadgeNumber, PauseButton } from '@/shared/ui'
 
 const { events, cachedEvents, getItemsCount } = useEvents()
