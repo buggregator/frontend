@@ -1,1 +1,1 @@
-import { default as EventCardMapper } from './event-card-mapper.vue'
+export { default as EventCardMapper } from './event-card-mapper.vue'
