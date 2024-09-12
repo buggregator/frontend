@@ -84,7 +84,6 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
             target="_blank"
             class="preview-card-footer__tag"
           >
-            12314
             <span class="preview-card-footer__tag-key">{{ key }}:</span>
             <span class="preview-card-footer__tag-value">{{ value }}</span>
           </a>
