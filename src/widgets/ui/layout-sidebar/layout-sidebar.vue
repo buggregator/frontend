@@ -24,10 +24,10 @@ const { profile } = storeToRefs(profileStore)
 
 const { getItemsCount } = useEvents()
 
-const projectDd = ref<HTMLElement | null>(null)
-const projectMenu = ref<HTMLElement | null>(null)
-const userDd = ref<HTMLElement | null>(null)
-const userMenu = ref<HTMLElement | null>(null)
+const projectDd = ref<HTMLElement | undefined>()
+const projectMenu = ref<HTMLElement | undefined>()
+const userDd = ref<HTMLElement | undefined>()
+const userMenu = ref<HTMLElement | undefined>()
 
 const isVisibleProfile = ref(false)
 const isVisibleProjects = ref(false)

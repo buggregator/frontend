@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { CodeSnippet, PreviewCard } from '@/shared/ui'
 
@@ -6,12 +7,14 @@ type Props = {
   event: NormalizedEvent<unknown>
 }
 
+const code = computed(() => JSON.stringify(event, null, ' '))
+
 defineProps<Props>()
 </script>
 
 <template>
   <PreviewCard class="event-card-fallback" :event="event">
-    <CodeSnippet class="event-card-fallback__snippet" :code="event" language="json" />
+    <CodeSnippet class="event-card-fallback__snippet" :code="code" language="json" />
   </PreviewCard>
 </template>
 
