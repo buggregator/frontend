@@ -71,7 +71,7 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       </a>
 
       <template v-if="isVisibleTags">
-        <template v-for="label in labels" :key="label.title || label">
+        <template v-for="label in labels" :key="label">
           <div
             v-if="isString(label)"
             ref="tags"
