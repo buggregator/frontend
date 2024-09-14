@@ -51,7 +51,7 @@ const toggleOpen = () => {
           class="sentry-exception-frame__body-line"
         >
           <div class="sentry-exception-frame__body-line-position">
-            {{ frame.lineno - (frame.pre_context.length - i) }}.
+            {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
           </div>
 
           <pre class="sentry-exception-frame__body-line-content" v-html="line" />
@@ -73,7 +73,9 @@ const toggleOpen = () => {
           :key="line"
           class="sentry-exception-frame__body-line"
         >
-          <div class="sentry-exception-frame__body-line-position">{{ frame.lineno + i + 1 }}.</div>
+          <div class="sentry-exception-frame__body-line-position">
+            {{ (frame?.lineno ?? 0) + i + 1 }}.
+          </div>
 
           <pre class="sentry-exception-frame__body-line-content" v-html="line" />
         </div>

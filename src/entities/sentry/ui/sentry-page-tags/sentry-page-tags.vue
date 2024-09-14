@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { IconSvg } from '@/shared/ui'
-import type { Sentry, SentryContextRuntime, SentryContextOS } from '../../types'
+import type { Sentry, SentryContextRuntime, SentryContextOS, SentryContexts } from '../../types'
 
 type Props = {
   payload: Sentry
@@ -19,7 +19,7 @@ const contextsRuntime = computed(() => {
 })
 
 const contextsOS = computed(() => {
-  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContextOS) || {}
+  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContexts['os']) || {}
 
   return { name, version }
 })
@@ -78,7 +78,7 @@ const modules = computed(() => {
 <template>
   <section class="sentry-page-tags">
     <div class="sentry-page-tags__boxes">
-      <div v-for="box in boxes" :key="box.name" class="sentry-page-tags__box">
+      <div v-for="box in boxes" :key="box.title" class="sentry-page-tags__box">
         <span class="sentry-page-tags__box-title">{{ box.title }}</span>
         <h4 class="sentry-page-tags__box-name">
           {{ box.name }}
