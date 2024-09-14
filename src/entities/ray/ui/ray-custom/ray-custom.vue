@@ -11,6 +11,6 @@ defineProps<Props>()
 
 <template>
   <div class="ray-custom">
-    <ValueDump :value="content.content" />
+    <ValueDump :value="String(content.content)" />
   </div>
 </template>
