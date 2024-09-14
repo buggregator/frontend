@@ -95,7 +95,7 @@ const isVisibleTags = computed(() => props.labels.length > 0)
 
       <template v-if="eventType">
         <RouterLink
-          :to="{ name: RouteName.EventList, params: { type: eventType, id: props.eventId } }"
+          :to="{ name: RouteName.EventPage, params: { type: eventType, id: eventId } }"
           class="preview-card-header__open"
           title="Open full event"
         >
