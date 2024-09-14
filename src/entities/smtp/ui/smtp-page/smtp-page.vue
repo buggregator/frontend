@@ -3,7 +3,7 @@ import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
 import { Tab, Tabs } from 'vue3-tabs-component'
 import { htmlEncode } from '@/shared/lib/helpers'
-import { REST_API_URL } from '@/shared/lib/io'
+import { REST_API_URL, useAttachments } from '@/shared/lib/io'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
 import {
   TableBase,
@@ -13,7 +13,6 @@ import {
   EmailPreviewDevice,
   EmailPreview
 } from '@/shared/ui'
-import { useSmtp } from '../../lib'
 import type { SMTP } from '../../types'
 import { SmtpPageAddresses } from '../smtp-page-addresses'
 
@@ -25,7 +24,7 @@ const props = defineProps<Props>()
 const attachments = ref<Attachment[]>([])
 const isLoading = ref(false)
 
-const { getAttachments } = useSmtp()
+const { getAttachments, calcDownloadLink } = useAttachments()
 
 const htmlSource = computed(() =>
   props.event?.payload?.html
@@ -81,6 +80,9 @@ const isText = computed(
 const mail = computed(() => props.event.payload)
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+
+const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
+  calcDownloadLink(props.event.id, attachmentId)
 
 onMounted(getAttachmentsRequest)
 </script>
@@ -147,7 +149,7 @@ onMounted(getAttachmentsRequest)
                   <FileAttachment
                     :event-id="event.id"
                     :attachment="a"
-                    :download-url="`${REST_API_URL}/api/smtp/${event.id}/attachments/${a.uuid}`"
+                    :download-url="calcDownloadUrl(a.uuid)"
                   />
                 </template>
               </div>
@@ -167,18 +169,18 @@ onMounted(getAttachmentsRequest)
                   {{ event.payload.subject }}
                 </TableBaseRow>
                 <TableBaseRow title="From">
-                  <SmtpPageAddresses :addresses="event.payload.from" />
+                  <SmtpPageAddresses :addresses="event.payload.from || []" />
                 </TableBaseRow>
                 <TableBaseRow title="To">
-                  <SmtpPageAddresses :addresses="event.payload.to" />
+                  <SmtpPageAddresses :addresses="event.payload.to || []" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.cc.length" title="Cc">
+                <TableBaseRow v-if="event.payload.cc?.length" title="Cc">
                   <SmtpPageAddresses :addresses="event.payload.cc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.bcc.length" title="Bcc">
+                <TableBaseRow v-if="event.payload.bcc?.length" title="Bcc">
                   <SmtpPageAddresses :addresses="event.payload.bcc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.reply_to.length" title="Reply to">
+                <TableBaseRow v-if="event.payload.reply_to?.length" title="Reply to">
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>

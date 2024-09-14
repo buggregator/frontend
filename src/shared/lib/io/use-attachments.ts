@@ -3,18 +3,19 @@ import {useProfileStore} from "../../stores";
 import type { EventId, Attachment } from "../../types";
 import { REST_API_URL } from "./constants";
 
-type TUseSmtpRequests = () => {
+type TUseAttachments = () => {
   getAttachments: (id: EventId) => Promise<Attachment[]>
+  calcDownloadLink: (id: EventId, attachmentId: string) => string
 }
 
-export const useSmtpRequests: TUseSmtpRequests = () => {
+export const useAttachments: TUseAttachments = () => {
   const { token } = storeToRefs(useProfileStore())
 
   const headers = {"X-Auth-Token": token.value }
 
-  const getAttachmentsRestUrl = (id: EventId): string => `${REST_API_URL}/api/smtp/${id}/attachments`
+  const calcDownloadLink = (id: EventId, attachmentId?: string): string => `${REST_API_URL}/api/smtp/${id}/attachments${attachmentId ? `/${attachmentId}` : ''}`
 
-  const getAttachments = (id: EventId) => fetch(getAttachmentsRestUrl(id), { headers })
+  const getAttachments = (id: EventId) => fetch(calcDownloadLink(id), { headers })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {
@@ -32,6 +33,7 @@ export const useSmtpRequests: TUseSmtpRequests = () => {
     })
 
   return {
-    getAttachments
+    getAttachments,
+    calcDownloadLink
   }
 }
