@@ -32,6 +32,6 @@ defineProps<Props>()
 }
 
 .smtp-page-addresses__item-name {
-  @apply text-white bg-gray-800 px-2;
+  @apply text-white bg-gray-800;
 }
 </style>
