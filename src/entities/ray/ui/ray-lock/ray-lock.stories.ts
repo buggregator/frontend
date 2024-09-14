@@ -14,7 +14,7 @@ export default {
 
 export const Default: StoryObj<typeof RayLock> = {
   args: {
-    content: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)
+    name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name
   }
 }
 
