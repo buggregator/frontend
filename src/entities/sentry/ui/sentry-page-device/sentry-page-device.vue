@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import moment from 'moment'
+import { computed } from 'vue'
 import { useFormats } from '@/shared/lib/formats'
 import { TableBase, TableBaseRow, CodeSnippet } from '@/shared/ui'
 import type { SentryDevice } from '../../types'
@@ -10,11 +11,29 @@ type Props = {
   device: SentryDevice
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const formatDate = (date: string) => moment(date).toLocaleString()
 
-const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
+const formatedBatteryLevel = computed(() =>
+  props.device.battery_level ? `${parseInt(String(props.device.battery_level), 10)}%` : ''
+)
+
+const formattedMemory = computed(() =>
+  props.device.memory_size ? formatFileSize(props.device.memory_size as number) : ''
+)
+const formattedFreeMemory = computed(() =>
+  props.device.free_memory ? formatFileSize(props.device.free_memory as number) : ''
+)
+const formattedStorage = computed(() =>
+  props.device.storage_size ? formatFileSize(props.device.storage_size as number) : ''
+)
+const formattedFreeStorage = computed(() =>
+  props.device.free_storage ? formatFileSize(props.device.free_storage as number) : ''
+)
+const formattedBootTime = computed(() =>
+  props.device.boot_time ? formatDate(props.device.boot_time as string) : ''
+)
 </script>
 
 <template>
@@ -23,15 +42,15 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
 
     <TableBase>
       <TableBaseRow v-if="device && device.arch" title="Architectures">
-        <CodeSnippet class="mt-3" language="json" :code="device.arch" />
+        <CodeSnippet class="mt-3" language="json" :code="String(device.arch)" />
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.battery_level" title="Battery Level">
-        {{ formatBatteryLevel(device.battery_level) }}
+      <TableBaseRow v-if="formatedBatteryLevel" title="Battery Level">
+        {{ formatedBatteryLevel }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.boot_time" title="Boot Time">
-        {{ formatDate(device.boot_time) }}
+      <TableBaseRow v-if="formattedBootTime" title="Boot Time">
+        {{ formattedBootTime }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device && device.brand" title="Brand">
@@ -46,12 +65,12 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
         {{ device.family }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.free_memory" title="Free Memory">
-        {{ formatFileSize(device.free_memory) }}
+      <TableBaseRow v-if="formattedFreeMemory" title="Free Memory">
+        {{ formattedFreeMemory }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.free_storage" title="Free Storage">
-        {{ formatFileSize(device.free_storage) }}
+      <TableBaseRow v-if="formattedFreeStorage" title="Free Storage">
+        {{ formattedFreeStorage }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device && device.id" title="Id">
@@ -70,8 +89,8 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
         {{ device.manufacturer }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.memory_size" title="Memory Size">
-        {{ formatFileSize(device.memory_size) }}
+      <TableBaseRow v-if="formattedMemory" title="Memory Size">
+        {{ formattedMemory }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device && device.model" title="Model">
@@ -110,8 +129,8 @@ const formatBatteryLevel = (level: number) => `${parseInt(String(level), 10)}%`
         {{ device.simulator }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="device && device.storage_size" title="Storage Size">
-        {{ formatFileSize(device.storage_size) }}
+      <TableBaseRow v-if="formattedStorage" title="Storage Size">
+        {{ formattedStorage }}
       </TableBaseRow>
 
       <TableBaseRow v-if="device && device.timezone" title="Timezone">

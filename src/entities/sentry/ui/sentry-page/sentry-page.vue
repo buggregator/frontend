@@ -62,7 +62,6 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
               v-for="e in event.payload.exception.values"
               :key="`exception-${e.value}-${e.type}`"
               :exception="e"
-              :max-frames="null"
               class="sentry-page__section-exceptions__exception"
             />
           </template>

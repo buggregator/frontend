@@ -13,6 +13,6 @@ export default {
 
 export const Default: StoryObj<typeof SentryPageApp> = {
   args: {
-    app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app || undefined,
+    app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app,
   }
 };
