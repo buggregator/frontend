@@ -37,3 +37,8 @@ export interface NormalizedEvent<T> {
   payload: T
   meta?: T extends RayDump ? RayDumpMeta: never
 }
+
+export interface MappedEventsProps<T> {
+  view: unknown;
+  normalize: (event: ServerEvent<T>) => NormalizedEvent<T>
+}
