@@ -3,7 +3,7 @@ import moment from 'moment/moment'
 import { computed } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { TableBase, TableBaseRow } from '@/shared/ui'
-import type { Inspector } from '../../types'
+import type { Inspector, InspectorTransaction } from '../../types'
 import { InspectorPageTimeline } from '../inspector-page-timeline'
 import { InspectorStatBoard } from '../inspector-stat-board'
 
@@ -16,6 +16,10 @@ const props = defineProps<Props>()
 const transaction = computed(() => props.event?.payload[0])
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+
+const http = computed(() =>
+  transaction.value ? (transaction.value as InspectorTransaction)?.http : undefined
+)
 </script>
 
 <template>
@@ -36,11 +40,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
       <section class="inspector-page__body">
         <h3 class="inspector-page__body-text">Url</h3>
         <TableBase class="inspector-page__body-table">
-          <TableBaseRow
-            v-for="(value, name) in transaction?.http?.url"
-            :key="name"
-            :title="String(name)"
-          >
+          <TableBaseRow v-for="(value, name) in http?.url" :key="name" :title="String(name)">
             {{ value }}
           </TableBaseRow>
         </TableBase>
@@ -49,11 +49,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
       <section>
         <h3 class="inspector-page__body-text">Request</h3>
         <TableBase class="inspector-page__body-table">
-          <TableBaseRow
-            v-for="(value, name) in transaction?.http?.request"
-            :key="name"
-            :title="String(name)"
-          >
+          <TableBaseRow v-for="(value, name) in http?.request" :key="name" :title="String(name)">
             <template v-if="typeof value === 'string'">
               {{ value }}
             </template>
