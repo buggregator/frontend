@@ -3,7 +3,7 @@ import type { ComponentProps } from "vue-component-type-helpers";
 import RenderGraph from './render-graph.vue';
 
 export default {
-  title: "Widgets/RenderGraph",
+  title: "Entities/Profiler/RenderGraph",
   component: RenderGraph,
   render: (args: ComponentProps<typeof RenderGraph>) => ({
     components: { RenderGraph },

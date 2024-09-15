@@ -2,13 +2,11 @@
 import { FlameChart } from 'flame-chart-js'
 import debounce from 'lodash.debounce'
 import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
-import type { CallStackHoverData } from '@/pages/profiler/types'
 import type { EventId } from '@/shared/types'
 import { useProfiler } from '../../lib'
-import type { Profiler } from '../../types'
+import type { CallStackHoverData } from '../../types'
 
 type Props = {
-  payload: Profiler
   id: EventId
 }
 
@@ -51,6 +49,8 @@ const renderChart = async () => {
             emit('hide')
           } else {
             emit('hover', {
+              id: data.data.id,
+              parent: data.data.parent,
               callee: data.data.source.name,
               caller: '',
               cost: data.data.source.cost,

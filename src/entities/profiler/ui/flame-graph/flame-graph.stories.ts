@@ -1,14 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import type { ComponentProps } from "vue-component-type-helpers";
-import { useProfiler } from "../../lib";
 import { profilerMock } from  "../../mocks";
-import type { Profiler } from "../../types";
 import FlameGraph from './flame-graph.vue';
 
-const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "Screens/profiler/FlameGraph",
+  title: "Entities/Profiler/FlameGraph",
   component: FlameGraph,
   render: (args: ComponentProps<typeof FlameGraph>) => ({
     components: {FlameGraph},
@@ -24,6 +21,6 @@ export default {
 
 export const Default: StoryObj<typeof FlameGraph> = {
   args: {
-    payload: (normalizeProfilerEvent(profilerMock).payload as Profiler),
+    id: profilerMock.uuid,
   }
 };

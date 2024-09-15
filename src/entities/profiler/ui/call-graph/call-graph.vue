@@ -3,13 +3,12 @@ import type { ElementsDefinition } from 'cytoscape'
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { type EventId, GraphTypes } from '@/shared/types'
 import { useProfiler } from '../../lib'
-import type { Profiler, ProfilerCallGraph } from '../../types'
+import type { ProfilerCallGraph } from '../../types'
 import { CallGraphToolbar } from '../call-graph-toolbar'
 import { CallStatBoard } from '../call-stat-board'
 import { RenderGraph } from '../render-graph'
 
 type Props = {
-  payload: Profiler
   id: EventId
 }
 
@@ -71,8 +70,10 @@ onMounted(() => {
       :elements="elements"
       :height="graphHeight"
     >
-      <template #default="{ data: { name, cost } }">
-        <CallStatBoard :edge="{ callee: name, caller: '', cost }" />
+      <template #default="{ data }">
+        <CallStatBoard
+          :edge="{ callee: data?.name, caller: '', cost: data?.cost, id: '', parent: data?.parent }"
+        />
       </template>
     </RenderGraph>
 

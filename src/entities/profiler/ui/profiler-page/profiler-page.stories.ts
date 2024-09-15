@@ -6,7 +6,7 @@ import ProfilerPage from './profiler-page.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "Screens/profiler/ProfilerPage",
+  title: "Entities/Profiler/ProfilerPage",
   component: ProfilerPage
 } as Meta<typeof ProfilerPage>;
 

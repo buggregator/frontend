@@ -6,7 +6,7 @@ import { useFormats } from '../../lib/formats'
 const { formatDuration, formatFileSize } = useFormats()
 
 type Props = {
-  cost: ProfilerCost
+  cost: Partial<ProfilerCost>
   size?: 'sm' | 'md' | 'lg'
 }
 

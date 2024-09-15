@@ -1,39 +1,21 @@
 {
-  "uuid": "21a73bc3-c98a-494f-a73c-ff3531bf624e",
+  "uuid": "0191f6b4-b314-7392-905c-79381dd9f5ab",
+  "project": "default",
   "type": "profiler",
   "payload": {
-    "tags": {
-      "php": "8.1.2-1ubuntu2.10",
-      "dispatcher": "Spiral\\RoadRunnerBridge\\Http\\Dispatcher",
-      "method": "GET",
-      "url": "http://127.0.0.1:8080/email.html",
-      "controller": "sendit.mail",
-      "action": "handle"
-    },
-    "app_name": "My super app",
-    "hostname": "ButschsterLpp",
-    "date": 1678450656,
     "peaks": {
-      "d_cpu": 40,
-      "d_wt": 41,
-      "d_mu": 7704,
-      "d_pmu": 0,
+      "cpu": 864132,
       "ct": 1,
-      "wt": 206229,
-      "cpu": 44710,
-      "mu": 3104472,
-      "pmu": 3001416,
-      "p_cpu": 99.91,
-      "p_mu": 99.75,
-      "p_pmu": 100,
-      "p_wt": 99.98,
-      "excl_cpu": 90,
-      "excl_wt": 20,
-      "excl_pmu": 30,
-      "excl_mu": 40,
-      "excl_ct": 60
-    }
+      "mu": 620856,
+      "pmu": 2104624,
+      "wt": 891083
+    },
+    "tags": {
+      "uri": "http://buggregator.dev/example/call/profiler"
+    },
+    "app_name": "Simple app",
+    "hostname": "7730c08fa9ad",
+    "date": 1726420923
   },
-  "timestamp": 1678450656,
-  "project": null
+  "timestamp": 1726420923.2194
 }
