@@ -103,7 +103,7 @@ const hasAttachments = computed(
       </section>
 
       <section v-if="hasAttachments" class="http-dump-page__section">
-        <h1>Attachments ({{ event.payload.request.files.length }})</h1>
+        <h1>Attachments ({{ event.payload.request.files?.length }})</h1>
 
         <div class="http-dump-page__attachments">
           <FileAttachment
@@ -113,6 +113,7 @@ const hasAttachments = computed(
             :attachment="file"
           />
         </div>
+        §
       </section>
 
       <section v-if="hasBody" class="http-dump-page__section">
