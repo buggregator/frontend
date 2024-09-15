@@ -1,3 +1,3 @@
-declare module 'SfdumpWrap' {
-  export default function (doc: Window): () => void;
-}
+export declare function SfdumpWrap (doc: Window['document']): (id: string) => void
+
+

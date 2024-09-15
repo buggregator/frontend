@@ -1,4 +1,4 @@
-export default function (doc) {
+export function SfdumpWrap(doc) {
   let refStyle = doc.createElement('style'),
     rxEsc = /([.*+?^${}()|\[\]\/\\])/g,
     idRx = /\bsf-dump-\d+-ref[012]\w+\b/,

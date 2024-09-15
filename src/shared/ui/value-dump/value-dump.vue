@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import isString from 'lodash/isString'
 import { computed, onMounted } from 'vue'
-import SfdumpWrap from '../../lib/vendor/dumper'
 import { CodeSnippet } from '../code-snippet'
 
 type Props = {
@@ -32,10 +31,8 @@ const dumpBody = computed(() => {
 })
 
 onMounted(() => {
-  const sfdump = SfdumpWrap(window.document)
-
-  if (dumpId) {
-    sfdump(dumpId)
+  if (dumpId && window.Sfdump) {
+    window.Sfdump(dumpId)
   }
 })
 </script>
