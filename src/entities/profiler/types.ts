@@ -29,6 +29,10 @@ export interface ProfilerEdge {
   cost: Partial<ProfilerCost> // TOO: need to fix types
 }
 
+export interface ProfilerEdges {
+  [key: string]: ProfilerEdge
+}
+
 export interface Profiler {
   tags: {
     [key: string]: string | null | number
@@ -36,9 +40,14 @@ export interface Profiler {
   app_name: string,
   hostname: string,
   date: number,
-  peaks: ProfilerCost,
+  peaks: {
+    "cpu": number,
+    "ct": number,
+    "mu": number,
+    "pmu": number,
+    "wt": number
+  },
 }
-
 
 export interface ProfilerTopFunctions {
   functions: Array<ProfilerCost & { function: string }>,
@@ -47,7 +56,7 @@ export interface ProfilerTopFunctions {
     key: string
     label: string
     sortable: boolean
-    values: { key: string, format: string, type?: 'sub' }[]
+    values: { key: (keyof ProfilerCost), format: string, type?: 'sub' }[]
   }[],
   overall_totals: Partial<ProfilerCost>
 }

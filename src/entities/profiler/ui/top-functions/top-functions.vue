@@ -9,7 +9,6 @@ import { useProfiler } from '../../lib'
 import type { Profiler, ProfilerTopFunctions } from '../../types'
 
 type Props = {
-  payload: Profiler
   id: EventId
 }
 
@@ -77,7 +76,7 @@ watchEffect(async () => {
       </thead>
 
       <tbody>
-        <tr v-for="fn in data.functions" :key="fn">
+        <tr v-for="item in data.functions" :key="item.function">
           <td
             v-for="col in data.schema"
             :key="col.key"
@@ -90,7 +89,7 @@ watchEffect(async () => {
               class="table-value"
               :class="`value-${value.format}`"
             >
-              {{ formatValue(fn[value.key], value.format) }}
+              {{ formatValue(item[value.key], value.format) }}
             </div>
           </td>
         </tr>
