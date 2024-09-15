@@ -9,7 +9,7 @@ import { useSentry, SentryPage } from '@/entities/sentry'
 import { useSmtp, SmtpPage } from '@/entities/smtp'
 import { useVarDump, VarDumpPage } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
-import { type ServerEvent, EventTypes } from '@/shared/types'
+import { type ServerEvent, EventTypes, type MappedEventsProps } from '@/shared/types'
 import { PreviewCardDefault } from '../preview-card-default'
 
 const { normalizeRayEvent } = useRay()
@@ -28,7 +28,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const EVENT_TYPE_COMPONENTS_MAP = {
+const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> = {
   [EventTypes.Sentry]: {
     view: SentryPage,
     normalize: normalizeSentryEvent
@@ -60,16 +60,10 @@ const EVENT_TYPE_COMPONENTS_MAP = {
   [EventTypes.HttpDump]: {
     view: HttpDumpPage,
     normalize: normalizeHttpDumpEvent
-  },
-  unknown: {
-    view: PreviewCardDefault,
-    normalize: normalizeUnknownEvent
   }
-}
+} as Record<EventTypes, MappedEventsProps<unknown>>
 
-const componentConfig = computed(
-  () => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventTypes] as unknown
-)
+const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventTypes])
 
 const view = computed(() => componentConfig.value?.view ?? PreviewCardDefault)
 const normalize = computed(() => componentConfig.value?.normalize ?? normalizeUnknownEvent)
