@@ -6,7 +6,7 @@ import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import { type EventId } from '@/shared/types'
 import { StatBoard } from '@/shared/ui'
 import { useProfiler } from '../../lib'
-import type { Profiler, ProfilerTopFunctions } from '../../types'
+import type { ProfilerTopFunctions } from '../../types'
 
 type Props = {
   id: EventId

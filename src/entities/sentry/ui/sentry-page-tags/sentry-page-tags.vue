@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { IconSvg } from '@/shared/ui'
-import type { Sentry, SentryContextRuntime, SentryContextOS, SentryContexts } from '../../types'
+import type { Sentry, SentryContextRuntime, SentryContexts } from '../../types'
 
 type Props = {
   payload: Sentry

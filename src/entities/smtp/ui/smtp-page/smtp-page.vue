@@ -3,7 +3,7 @@ import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
 import { Tab, Tabs } from 'vue3-tabs-component'
 import { htmlEncode } from '@/shared/lib/helpers'
-import { REST_API_URL, useAttachments } from '@/shared/lib/io'
+import { useAttachments } from '@/shared/lib/io'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
 import {
   TableBase,
