@@ -11,8 +11,6 @@ export type SentryException = Omit<SentryTypes.Exception, 'mechanism'> & {
 }
 export type SentryContextRuntime = SentryTypes.Runtime
 
-export type SentryContextOS = SentryTypes.OsContext
-
 export type SentryDevice = Omit<SentryTypes.DeviceContext, 'orientation'> & {
   timezone?: string;
   type?: string;

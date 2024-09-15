@@ -49,7 +49,7 @@ const statItems = computed(() => [
       <h4 class="stat-board__item-name">
         {{ item.title }}
 
-        <span v-if="item.percent > 0" class="stat-board__item-name-detail">
+        <span v-if="item.percent && item.percent > 0" class="stat-board__item-name-detail">
           [{{ item.percent }}%]
         </span>
       </h4>
