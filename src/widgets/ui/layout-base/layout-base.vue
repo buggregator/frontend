@@ -2,11 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import { useEvents } from '@/shared/lib/use-events'
-import SfdumpWrap from '@/shared/lib/vendor/dumper'
 import { useEventsStore } from '@/shared/stores'
-
-// TODO: mote to pages where it is needed
-SfdumpWrap(window.document)
 
 const { activeProjectKey } = storeToRefs(useEventsStore())
 const { events } = useEvents()
