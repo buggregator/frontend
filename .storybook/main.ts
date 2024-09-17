@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from 'node:path';
-import vue from '@vitejs/plugin-vue'
 import {fileURLToPath} from "url";
 
 //storybook-tailwind-dark-mode
@@ -22,7 +21,8 @@ const config = {
 
   framework: {
     name: "@storybook/vue3-vite",
-    options: {}
+    options: {
+    }
   },
 
   env: (config) => {
@@ -48,11 +48,7 @@ const config = {
       '@/src': fileURLToPath(new URL('../src', import.meta.url)),
     }
 
-    const { mergeConfig } = await import('vite');
-
-    return mergeConfig(config, {
-      plugins: [vue()],
-    });
+    return config;
   }
 };
 
