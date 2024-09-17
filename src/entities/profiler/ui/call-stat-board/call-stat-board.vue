@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
-import { StatBoard } from '@/shared/ui'
+import { StatBoard, StatBoardSize } from '@/shared/ui'
 import type { ProfilerEdge } from '../../types'
 
 type Props = {
@@ -16,7 +16,7 @@ defineProps<Props>()
       {{ edge.callee }}
     </h4>
 
-    <StatBoard class="call-stat-board__body" :cost="edge.cost" size="sm" />
+    <StatBoard class="call-stat-board__body" :cost="edge.cost" :size="StatBoardSize.Small" />
   </div>
 </template>
 
