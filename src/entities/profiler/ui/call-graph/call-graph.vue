@@ -2,9 +2,9 @@
 import type { ElementsDefinition } from 'cytoscape'
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { type EventId, GraphTypes } from '@/shared/types'
+import { IconSvg } from '@/shared/ui'
 import { useProfiler } from '../../lib'
 import type { ProfilerCallGraph } from '../../types'
-import { CallGraphToolbar } from '../call-graph-toolbar'
 import { CallStatBoard } from '../call-stat-board'
 import { RenderGraph } from '../render-graph'
 
@@ -28,16 +28,24 @@ const toolbar = ref<ProfilerCallGraph['toolbar']>([])
 
 const graphKey = computed(() => `${metric.value}-${threshold.value}-${percent.value}`)
 
-const setMetric = (value: GraphTypes) => {
-  metric.value = value
+const setMetric = (value: string) => {
+  if (Object.values(GraphTypes).includes(value as GraphTypes)) {
+    metric.value = value as GraphTypes
+  } else {
+    metric.value = GraphTypes.WALL_TIME
+  }
 }
 
-const setThreshold = (value: number) => {
-  threshold.value = value
+const setThreshold = (event: Event) => {
+  threshold.value = Number((event.target as HTMLInputElement).value || 0)
 }
 
-const setMinPercent = (value: number) => {
-  percent.value = value
+const setMinPercent = (event: Event) => {
+  percent.value = Number((event.target as HTMLInputElement).value || 0)
+}
+
+const toggleFullScreen = () => {
+  isFullscreen.value = !isFullscreen.value
 }
 
 const graphHeight = computed(() =>
@@ -59,6 +67,8 @@ onMounted(() => {
   // NOTE: need to show graph after parent render
   isReadyGraph.value = true
 })
+
+const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
 </script>
 
 <template>
@@ -83,17 +93,54 @@ onMounted(() => {
       </template>
     </RenderGraph>
 
-    <CallGraphToolbar
-      :toolbar="toolbar"
-      :metric="metric"
-      :threshold="threshold"
-      :percent="percent"
-      :is-fullscreen="isFullscreen"
-      @on-metric-change="setMetric"
-      @on-threshold-change="setThreshold"
-      @on-percent-change="setMinPercent"
-      @on-fullscreen="isFullscreen = !isFullscreen"
-    />
+    <div class="call-graph__toolbar">
+      <button title="Full screen" @click="toggleFullScreen">
+        <IconSvg name="fullscreen" class="call-graph__toolbar-icon" />
+      </button>
+
+      <button
+        v-for="tool in toolbar"
+        :key="tool.metric"
+        class="call-graph__toolbar-action"
+        :class="{
+          'call-graph__toolbar-action--active': metric === tool.metric
+        }"
+        :title="tool.description"
+        @click="setMetric(tool.metric)"
+      >
+        {{ tool.label }}
+      </button>
+    </div>
+
+    <div class="call-graph__toolbar call-graph__toolbar--right">
+      <label v-if="metric !== GraphTypes.CALLS" class="call-graph__toolbar-input-wr">
+        Threshold
+
+        <input
+          class="call-graph__toolbar-input"
+          type="number"
+          :value="threshold"
+          :min="0"
+          :max="10"
+          :step="0.1"
+          @input="setThreshold"
+        />
+      </label>
+
+      <label class="call-graph__toolbar-input-wr">
+        {{ percentLabel }}
+
+        <input
+          class="call-graph__toolbar-input"
+          type="number"
+          :value="percent"
+          :min="metric === GraphTypes.CALLS ? 1 : 0"
+          :max="metric === GraphTypes.CALLS ? 1000 : 100"
+          :step="metric === GraphTypes.CALLS ? 10 : 5"
+          @input="setMinPercent"
+        />
+      </label>
+    </div>
   </div>
 </template>
 
