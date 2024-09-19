@@ -61,9 +61,7 @@ onMounted(getEvent)
       <div />
     </div>
 
-    <div v-if="serverEvent">
-      <EventPageMapper :event="serverEvent" />
-    </div>
+    <EventPageMapper v-if="serverEvent" :event="serverEvent" />
   </LayoutBase>
 </template>
 

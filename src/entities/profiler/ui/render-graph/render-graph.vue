@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="parent" class="render-graph" :style="{ height: `${height}px` }">
+  <div ref="parent" class="render-graph">
     <div ref="renderer" class="render-graph__in" />
   </div>
 
