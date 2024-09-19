@@ -26,7 +26,7 @@ const container = ref<HTMLElement>()
 const elements = ref<ElementsDefinition | undefined>()
 const toolbar = ref<ProfilerCallGraph['toolbar']>([])
 
-const graphKey = computed(() => `${metric.value}-${threshold.value}-${percent.value}`)
+const graphKey = ref('')
 
 const setMetric = (value: string) => {
   if (Object.values(GraphTypes).includes(value as GraphTypes)) {
@@ -61,6 +61,8 @@ watchEffect(async () => {
 
   elements.value = elems
   toolbar.value = tools
+
+  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`
 })
 
 onMounted(() => {
