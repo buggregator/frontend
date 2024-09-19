@@ -1,12 +1,9 @@
-export type StatBoardCost = {
-  ct: number;
-  cpu: number;
+import type {StatsBase} from "../../types";
+
+export type StatBoardCost = StatsBase & {
   p_cpu?: number;
-  wt: number;
   p_wt?: number;
-  mu: number;
   p_mu?: number;
-  pmu: number;
   p_pmu?: number;
 }
 

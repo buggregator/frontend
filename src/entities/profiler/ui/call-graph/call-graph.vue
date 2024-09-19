@@ -72,7 +72,13 @@ onMounted(() => {
     >
       <template #default="{ data }">
         <CallStatBoard
-          :edge="{ callee: data?.name, caller: '', cost: data?.cost, id: '', parent: data?.parent }"
+          :edge="{
+            callee: data?.callee,
+            caller: '',
+            cost: data?.cost,
+            id: '',
+            parent: data?.parent
+          }"
         />
       </template>
     </RenderGraph>
