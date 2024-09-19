@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import type { ElementsDefinition, NodeSingular } from 'cytoscape'
+import type { ElementsDefinition } from 'cytoscape'
 import { defineProps, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useCytoscape } from '../../lib'
+import type { ProfilerEdge } from '../../types'
 
 type Props = {
   elements: ElementsDefinition
@@ -10,7 +11,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const hoverNodeData = ref<unknown>()
+const hoverNodeData = ref<ProfilerEdge>()
 const tooltipPosition = ref<{ top: string; left: string } | undefined>()
 const destroyFn = ref()
 
@@ -18,22 +19,30 @@ const renderer = ref<HTMLElement>()
 const parent = ref<HTMLElement>()
 const tooltip = ref<HTMLElement>()
 
-const onNodeHover = (target?: NodeSingular, event?: MouseEvent) => {
-  if (!target || !event) {
+const onNodeHover = (edge?: ProfilerEdge, event?: MouseEvent) => {
+  if (!edge || !event) {
     hoverNodeData.value = undefined
     tooltipPosition.value = undefined
 
     return
   }
 
-  hoverNodeData.value = target.data()
+  const { id, callee, cost, caller, parent } = edge
+
+  hoverNodeData.value = {
+    id,
+    callee,
+    cost,
+    caller,
+    parent
+  }
 
   const x = event.offsetX
   const y = event.offsetY
 
   const { clientHeight: height = 0, clientWidth: width = 0 } = tooltip.value as HTMLElement
   const { offsetHeight: parentHeight = 0, offsetWidth: parentWidth = 0 } =
-    parent.value as HTMLElement
+    event.target as HTMLElement
 
   let top = y
   let left = x

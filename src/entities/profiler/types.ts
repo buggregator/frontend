@@ -1,4 +1,7 @@
 import type {ElementsDefinition} from "cytoscape";
+import type {StatsBase} from "@/shared/types";
+import type {StatBoardCost} from "@/shared/ui";
+
 
 export interface ProfilerCost {
   d_cpu: number;
@@ -26,11 +29,7 @@ export interface ProfilerEdge {
   parent: string | null,
   caller: string | null,
   callee: string,
-  cost: Partial<ProfilerCost> // TOO: need to fix types
-}
-
-export interface ProfilerEdges {
-  [key: string]: ProfilerEdge
+  cost: StatsBase
 }
 
 export interface Profiler {
@@ -40,13 +39,7 @@ export interface Profiler {
   app_name: string,
   hostname: string,
   date: number,
-  peaks: {
-    "cpu": number,
-    "ct": number,
-    "mu": number,
-    "pmu": number,
-    "wt": number
-  },
+  peaks: StatsBase,
 }
 
 export interface ProfilerTopFunctions {
@@ -58,7 +51,7 @@ export interface ProfilerTopFunctions {
     sortable: boolean
     values: { key: (keyof ProfilerCost), format: string, type?: 'sub' }[]
   }[],
-  overall_totals: Partial<ProfilerCost>
+  overall_totals: StatBoardCost
 }
 
 export interface ProfilerCallGraph extends ElementsDefinition {

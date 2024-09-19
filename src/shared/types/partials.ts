@@ -22,3 +22,11 @@ export enum GraphTypes {
   MEMORY = 'mu',
   CALLS = 'ct',
 }
+
+export type StatsBase = {
+  ct: number;
+  cpu: number;
+  wt: number;
+  mu: number;
+  pmu: number;
+}

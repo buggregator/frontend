@@ -18,7 +18,13 @@ const metric = ref('excl_wt') // TODO: use enum value
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
-  overall_totals: {},
+  overall_totals: {
+    cpu: 0,
+    wt: 0,
+    mu: 0,
+    pmu: 0,
+    ct: 0
+  },
   schema: []
 })
 
