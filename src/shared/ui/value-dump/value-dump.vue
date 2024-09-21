@@ -31,6 +31,12 @@ const dumpBody = computed(() => {
   return props.value
 })
 
+const baseSanitizedHtml = computed(() => {
+  return String(props.value)
+    .replace(/<script.*<\/script>/g, '')
+    .replace(/<style.*<\/style>/g, '')
+})
+
 onMounted(() => {
   if (dumpId) {
     callSfDump(dumpId)
@@ -45,7 +51,11 @@ onMounted(() => {
       :language="language"
       :code="String(dumpBody)"
     />
-    <div v-if="!isValueString && !isValueCode" class="value-dump__html" v-html="dumpBody" />
+    <div
+      v-if="!isValueString && !isValueCode"
+      class="value-dump__html"
+      v-html="baseSanitizedHtml"
+    />
   </div>
 </template>
 
