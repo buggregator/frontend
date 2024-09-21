@@ -54,7 +54,7 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content" v-html="line" />
+          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
         </div>
       </template>
 
@@ -64,7 +64,7 @@ const toggleOpen = () => {
       >
         <div class="sentry-exception-frame__body-line-position">{{ frame.lineno }}.</div>
 
-        <pre v-html="frame.context_line" />
+        <pre>{{ frame.context_line }}</pre>
       </div>
 
       <template v-if="frame.post_context">
@@ -77,7 +77,7 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) + i + 1 }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content" v-html="line" />
+          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
         </div>
       </template>
     </div>

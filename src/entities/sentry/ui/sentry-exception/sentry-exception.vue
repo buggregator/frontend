@@ -31,7 +31,7 @@ const exceptionFrames = computed(() => {
           {{ exception.type }}
         </h3>
 
-        <pre class="sentry-exception__text" v-html="exception.value" />
+        <pre class="sentry-exception__text">{{ exception.value }}</pre>
       </header>
     </slot>
 

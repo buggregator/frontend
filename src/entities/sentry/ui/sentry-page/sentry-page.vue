@@ -32,7 +32,7 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
           {{ mainException.type }}
         </h1>
 
-        <pre class="sentry-page__main-exception-message" v-html="mainException.value" />
+        <pre class="sentry-page__main-exception-message">{{ mainException.value }}</pre>
 
         <p class="sentry-page__main-date">
           {{ formattedTimestamp }}
