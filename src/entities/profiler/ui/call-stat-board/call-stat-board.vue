@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
-import { StatBoard, StatBoardSize } from '@/shared/ui'
-import type { ProfilerEdge } from '../../types'
+import { StatBoard, type StatBoardCost, StatBoardSize } from '@/shared/ui'
 
 type Props = {
-  edge: ProfilerEdge
+  cost: StatBoardCost
+  title: string
 }
 
 defineProps<Props>()
@@ -13,10 +13,10 @@ defineProps<Props>()
 <template>
   <div class="call-stat-board">
     <h4 class="call-stat-board__title">
-      {{ edge.callee }}
+      {{ title }}
     </h4>
 
-    <StatBoard class="call-stat-board__body" :cost="edge.cost" :size="StatBoardSize.Small" />
+    <StatBoard class="call-stat-board__body" :cost="cost" :size="StatBoardSize.Small" />
   </div>
 </template>
 

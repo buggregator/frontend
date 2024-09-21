@@ -107,7 +107,8 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
       <CallStatBoard
         v-if="activeEdge"
         class="profiler-page__hover-edge"
-        :edge="activeEdge"
+        :title="activeEdge.callee"
+        :cost="activeEdge.cost"
         :style="activeEdgeStyle"
       />
     </main>
