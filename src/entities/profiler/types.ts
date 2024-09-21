@@ -24,14 +24,6 @@ export interface ProfilerCost {
   excl_ct: number,
 }
 
-export interface ProfilerEdge {
-  id: string,
-  parent: string | null,
-  caller: string | null,
-  callee: string,
-  cost: StatsBase
-}
-
 export interface Profiler {
   tags: {
     [key: string]: string | null | number
@@ -72,4 +64,5 @@ export interface ProfileFlameChart {
   type: "task" | string
 }
 
-export type CallStackHoverData = ProfilerEdge & { position: { x: number; y: number } }
+
+export type CallStackHoverData = { title: string, cost: Partial<ProfilerCost>}

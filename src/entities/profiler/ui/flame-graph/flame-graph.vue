@@ -1,27 +1,51 @@
 <script lang="ts" setup>
 import { FlameChart } from 'flame-chart-js'
 import debounce from 'lodash.debounce'
-import { ref, onMounted, nextTick, onBeforeUnmount } from 'vue'
+import { ref, onMounted, nextTick, onBeforeUnmount, computed } from 'vue'
 import type { EventId } from '@/shared/types'
+import type { StatBoardCost } from '@/shared/ui'
 import { useProfiler } from '../../lib'
 import type { CallStackHoverData } from '../../types'
+import { CallStatBoard } from '../../ui/call-stat-board'
 
 type Props = {
   id: EventId
 }
 
-type Emits = {
-  hover: [value: CallStackHoverData]
-  hide: []
-}
-
 const { getFlameChart } = useProfiler()
 
+const defaultPosition = { x: 0, y: 0 }
+
 const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
 
 const canvas = ref<HTMLCanvasElement>()
 const graph = ref<HTMLCanvasElement>()
+
+const activeStatBoard = ref<CallStackHoverData>()
+const activeStatBoardPosition = ref(defaultPosition)
+
+const activeStatBoardStyle = computed(() => {
+  const width = 750
+  const height = 150
+
+  let top = activeStatBoardPosition.value.y
+  let left = activeStatBoardPosition.value.x
+
+  if (width + activeStatBoardPosition.value.x > window.innerWidth - 80) {
+    const deltaX = width + activeStatBoardPosition.value.x - window.innerWidth + 100
+    left -= deltaX
+  }
+
+  if (height + activeStatBoardPosition.value.y > window.innerHeight) {
+    top = activeStatBoardPosition.value.y - height
+  }
+
+  return {
+    top: `${top + 10}px`,
+    left: `${left}px`,
+    width: `${width}px`
+  }
+})
 
 const renderChart = async () => {
   if (!graph.value || !canvas.value) {
@@ -46,19 +70,16 @@ const renderChart = async () => {
       options: {
         tooltip: (data, _, mouse) => {
           if (data === null) {
-            emit('hide')
+            activeStatBoard.value = undefined
           } else {
-            emit('hover', {
-              id: data.data.id,
-              parent: data.data.parent,
-              callee: data.data.source.name,
-              caller: '',
+            activeStatBoard.value = {
               cost: data.data.source.cost,
-              position: {
-                x: mouse?.x ? mouse.x + 20 : 0,
-                y: mouse?.y ? mouse.y - 20 : 0
-              }
-            })
+              title: data.data.source.name
+            }
+            activeStatBoardPosition.value = {
+              x: mouse?.x ? mouse.x + 20 : 0,
+              y: mouse?.y ? mouse.y - 20 : 0
+            }
           }
         }
       }
@@ -88,7 +109,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  emit('hide')
+  activeStatBoard.value = undefined
 })
 </script>
 
@@ -97,6 +118,14 @@ onBeforeUnmount(() => {
     <div ref="graph" class="flame-graph">
       <canvas ref="canvas" class="flame-graph__canvas" />
     </div>
+
+    <CallStatBoard
+      v-if="activeStatBoard?.cost"
+      class="profiler-page__hover-edge"
+      :title="activeStatBoard.title || ''"
+      :cost="activeStatBoard.cost as StatBoardCost"
+      :style="activeStatBoardStyle"
+    />
   </div>
 </template>
 
@@ -113,5 +142,9 @@ onBeforeUnmount(() => {
 
 .flame-graph__canvas {
   @apply w-full h-full bg-white pt-3;
+}
+
+.profiler-page__hover-edge {
+  @apply absolute z-10 h-auto;
 }
 </style>

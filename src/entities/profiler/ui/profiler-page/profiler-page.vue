@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { Tabs, Tab } from 'vue3-tabs-component'
 import type { NormalizedEvent } from '@/shared/types'
-import type { Profiler, ProfilerEdge, CallStackHoverData } from '../../types'
+import type { Profiler } from '../../types'
 import { CallGraph } from '../call-graph'
-import { CallStatBoard } from '../call-stat-board'
 import { FlameGraph } from '../flame-graph'
 import { TopFunctions } from '../top-functions'
 
@@ -14,53 +13,7 @@ type Props = {
 
 defineProps<Props>()
 
-const defaultPosition = { x: 0, y: 0 }
-
-const activeEdge = ref<ProfilerEdge | null>()
 const activeTab = ref('')
-const activeEdgePosition = ref(defaultPosition)
-
-const activeEdgeStyle = computed(() => {
-  const width = 750
-  const height = 150
-
-  let top = activeEdgePosition.value.y
-  let left = activeEdgePosition.value.x
-
-  if (width + activeEdgePosition.value.x > window.innerWidth - 80) {
-    const deltaX = width + activeEdgePosition.value.x - window.innerWidth + 100
-    left -= deltaX
-  }
-
-  if (height + activeEdgePosition.value.y > window.innerHeight) {
-    top = activeEdgePosition.value.y - height
-  }
-
-  return {
-    top: `${top + 10}px`,
-    left: `${left}px`,
-    width: `${width}px`
-  }
-})
-
-const clearActiveEdge = () => {
-  activeEdge.value = null
-  activeEdgePosition.value = defaultPosition
-}
-
-const setActiveEdge = (value: CallStackHoverData | undefined) => {
-  if (!value) {
-    clearActiveEdge()
-    return
-  }
-
-  const { position, ...edge } = value || {}
-
-  activeEdge.value = edge
-  activeEdgePosition.value = position
-
-  return
-}
 
 const tabChange = (selectedTab: { tab: { name: string } }) => {
   activeTab.value = selectedTab.tab.name
@@ -77,6 +30,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
               <CallGraph
                 v-if="activeTab === 'Call graph'"
                 :id="event.id"
+                :key="activeTab"
                 :payload="event.payload"
               />
             </Tab>
@@ -88,8 +42,6 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
                 :key="activeTab"
                 :data-key="activeTab"
                 :payload="event.payload"
-                @hover="setActiveEdge"
-                @hide="clearActiveEdge"
               />
             </Tab>
 
@@ -97,20 +49,13 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
               <TopFunctions
                 v-if="activeTab === 'Top functions'"
                 :id="event.id"
+                :key="activeTab"
                 :payload="event.payload"
               />
             </Tab>
           </Tabs>
         </section>
       </div>
-
-      <CallStatBoard
-        v-if="activeEdge"
-        class="profiler-page__hover-edge"
-        :title="activeEdge.callee"
-        :cost="activeEdge.cost"
-        :style="activeEdgeStyle"
-      />
     </main>
   </div>
 </template>
@@ -142,9 +87,5 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 .profiler-page__stat-tabs .tabs-component-panel {
   @apply h-full;
-}
-
-.profiler-page__hover-edge {
-  @apply absolute z-10 h-auto;
 }
 </style>
