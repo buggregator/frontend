@@ -7,7 +7,7 @@ import { REST_API_URL } from "./constants";
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
   getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
-  getFlameChart: (id: EventId) => Promise<ProfileFlameChart>
+  getFlameChart: (id: EventId) => Promise<ProfileFlameChart[]>
 }
 
 enum ProfilerPartType {

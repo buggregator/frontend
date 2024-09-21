@@ -43,16 +43,23 @@ const activeEdgeStyle = computed(() => {
   }
 })
 
-const setActiveEdge = (value: CallStackHoverData | undefined) => {
-  if (value) {
-    const { position, ...edge } = value || {}
+const clearActiveEdge = () => {
+  activeEdge.value = null
+  activeEdgePosition.value = defaultPosition
+}
 
-    activeEdge.value = edge
-    activeEdgePosition.value = position
-  } else {
-    activeEdge.value = null
-    activeEdgePosition.value = defaultPosition
+const setActiveEdge = (value: CallStackHoverData | undefined) => {
+  if (!value) {
+    clearActiveEdge()
+    return
   }
+
+  const { position, ...edge } = value || {}
+
+  activeEdge.value = edge
+  activeEdgePosition.value = position
+
+  return
 }
 
 const tabChange = (selectedTab: { tab: { name: string } }) => {
@@ -82,7 +89,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
                 :data-key="activeTab"
                 :payload="event.payload"
                 @hover="setActiveEdge"
-                @hide="setActiveEdge"
+                @hide="clearActiveEdge"
               />
             </Tab>
 

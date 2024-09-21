@@ -7,7 +7,7 @@ type TUseProfiler = () => {
   normalizeProfilerEvent: (event: ServerEvent<Profiler>) => NormalizedEvent<Profiler>
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
   getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
-  getFlameChart: (id: EventId, params?: Record<string, string>) => Promise<ProfileFlameChart>
+  getFlameChart: (id: EventId, params?: Record<string, string>) => Promise<ProfileFlameChart[]>
 }
 
 export const useProfiler: TUseProfiler = () => {

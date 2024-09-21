@@ -66,6 +66,7 @@ const renderChart = async () => {
   })
 
   flameChart.render()
+
   window.addEventListener(
     'resize',
     debounce(() => {
