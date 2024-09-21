@@ -45,13 +45,13 @@ const exception: Ref<Exception> = computed(() =>
           {{ exception.type }}
         </h3>
 
-        <pre class="preview-card__text" v-html="exception.value" />
+        <pre class="preview-card__text">{{ exception.value }}</pre>
       </RouterLink>
     </SentryException>
 
     <div v-if="message">
       <div class="preview-card__content">
-        <pre class="preview-card__text" v-html="message" />
+        <pre class="preview-card__text">{{ message }}</pre>
       </div>
     </div>
   </PreviewCard>
