@@ -9,7 +9,7 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 3
+  maxFrames: 0
 })
 
 const exceptionFrames = computed(() => {
@@ -36,7 +36,10 @@ const exceptionFrames = computed(() => {
     </slot>
 
     <div v-if="exceptionFrames.length" class="sentry-exception__frames">
-      <template v-for="(frame, index) in exceptionFrames" :key="frame.context_line">
+      <template
+        v-for="(frame, index) in exceptionFrames"
+        :key="frame.context_line + frame.filename"
+      >
         <SentryExceptionFrame :frame="frame" :is-open="index === 0" />
       </template>
     </div>
