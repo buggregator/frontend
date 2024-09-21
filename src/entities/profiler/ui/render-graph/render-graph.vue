@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from 'cytoscape'
+import type { ElementsDefinition, NodeDataDefinition } from 'cytoscape'
 import { defineProps, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useCytoscape } from '../../lib'
-import type { ProfilerEdge } from '../../types'
+import type { CallStackHoverData } from '../../types'
 
 type Props = {
   elements: ElementsDefinition
@@ -11,7 +11,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const hoverNodeData = ref<ProfilerEdge>()
+const activeStatBoard = ref<CallStackHoverData>()
 const tooltipPosition = ref<{ top: string; left: string } | undefined>()
 const destroyFn = ref()
 
@@ -19,22 +19,17 @@ const renderer = ref<HTMLElement>()
 const parent = ref<HTMLElement>()
 const tooltip = ref<HTMLElement>()
 
-const onNodeHover = (edge?: ProfilerEdge, event?: MouseEvent) => {
-  if (!edge || !event) {
-    hoverNodeData.value = undefined
+const onNodeHover = (data?: NodeDataDefinition, event?: MouseEvent) => {
+  if (!data || !event) {
+    activeStatBoard.value = undefined
     tooltipPosition.value = undefined
 
     return
   }
 
-  const { id, callee, cost, caller, parent } = edge
-
-  hoverNodeData.value = {
-    id,
-    callee,
-    cost,
-    caller,
-    parent
+  activeStatBoard.value = {
+    title: data.name,
+    cost: data.cost
   }
 
   const x = event.offsetX
@@ -86,13 +81,13 @@ onBeforeUnmount(() => {
   <div
     ref="tooltip"
     class="render-graph__tooltip"
-    :class="{ 'render-graph__tooltip--active': hoverNodeData }"
+    :class="{ 'render-graph__tooltip--active': activeStatBoard }"
     :style="tooltipPosition"
   >
-    <div v-if="hoverNodeData">
-      <slot :data="hoverNodeData">
+    <div v-if="activeStatBoard">
+      <slot :data="activeStatBoard">
         <h4 class="render-graph__tooltip-title">
-          {{ hoverNodeData }}
+          {{ activeStatBoard }}
         </h4>
       </slot>
     </div>

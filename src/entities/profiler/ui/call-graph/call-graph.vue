@@ -2,7 +2,7 @@
 import type { ElementsDefinition } from 'cytoscape'
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { type EventId, GraphTypes } from '@/shared/types'
-import { IconSvg } from '@/shared/ui'
+import { IconSvg, type StatBoardCost } from '@/shared/ui'
 import { useProfiler } from '../../lib'
 import type { ProfilerCallGraph } from '../../types'
 import { CallStatBoard } from '../call-stat-board'
@@ -83,7 +83,11 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
       :height="graphHeight"
     >
       <template #default="{ data }">
-        <CallStatBoard :title="data?.callee" :cost="data?.cost" />
+        <CallStatBoard
+          v-if="data.cost"
+          :title="data?.title || ''"
+          :cost="data.cost as StatBoardCost"
+        />
       </template>
     </RenderGraph>
 

@@ -1,33 +1,16 @@
-import cytoscape from 'cytoscape';
-import type { Core as Cytoscape, ElementsDefinition, EventObjectNode, NodeSingular, Stylesheet } from "cytoscape";
+import cytoscape, {type NodeDataDefinition} from 'cytoscape';
+import type { Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet } from "cytoscape";
 import dagre, { type DagreLayoutOptions } from "cytoscape-dagre";
-import type {ProfilerEdge} from "../../types";
 import { cytoscapeStyles } from "./config";
 
 
 type TInitializeProps = {
   elements: ElementsDefinition,
   container: HTMLElement,
-  onNodeHover: (edge?: ProfilerEdge, event?: MouseEvent) => void,
+  onNodeHover: (data?: NodeDataDefinition, event?: MouseEvent) => void,
 }
 
 type TInitialize = (data: TInitializeProps) => () => void;
-
-const formatProfilerEdge = (node?: NodeSingular): ProfilerEdge | undefined => {
-  if (!node) {
-    return undefined;
-  }
-
-  const data = node.data();
-
-  return {
-    id: data.id,
-    parent: data.name,
-    caller: data.caller,
-    callee: data.callee,
-    cost: data.cost,
-  }
-}
 
 const initialize: TInitialize = ({
   elements,
@@ -51,7 +34,7 @@ const initialize: TInitialize = ({
   });
 
   cy.on("mouseover", "node", (event: EventObjectNode) => {
-    onNodeHover(formatProfilerEdge(event.target), event.originalEvent);
+    onNodeHover(event.target.data(), event.originalEvent);
   });
 
   cy.on("mouseout", "node", () => {
