@@ -1,13 +1,13 @@
 import moment from "moment/moment";
-import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import type { ServerEvent, NormalizedEvent } from "@/shared/types";
+import { EventTypes } from "@/shared/types";
 import type { Sentry } from "../types";
 
 export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent<Sentry> => {
   const normalizedEvent: NormalizedEvent<Sentry> = {
     id: event.uuid,
-    type: EVENT_TYPES.SENTRY,
-    labels: [EVENT_TYPES.SENTRY, 'exception'],
+    type: EventTypes.Sentry,
+    labels: [EventTypes.Sentry, 'exception'],
     origin: {
       logger: event.payload.logger,
       environment: event.payload.environment,

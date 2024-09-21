@@ -11,16 +11,11 @@ export type SentryException = Omit<SentryTypes.Exception, 'mechanism'> & {
 }
 export type SentryContextRuntime = SentryTypes.Runtime
 
-export type SentryContextOS = SentryTypes.OsContext
-export type SentryContextApp = SentryTypes.AppContext
-
 export type SentryDevice = Omit<SentryTypes.DeviceContext, 'orientation'> & {
-  orientation?: SentryTypes.DeviceContext['orientation'] | string
-  language?: string
-  id?: string
-  timezone?: string
-  battery_temperature?: string
-  locale?: string
+  timezone?: string;
+  type?: string;
+  name?: string;
+  orientation?: string;
 }
 
 type SentryLevel = SentryTypes.Breadcrumb['level'] | string
@@ -35,10 +30,16 @@ export type SentryRequest = Omit<SentryTypes.Request, 'headers'> & {
   }
 }
 
+export type SentryContextApp = SentryTypes.AppContext & {
+  app_id?: string;
+  device_app_hash?: string,
+  type?: string,
+  permissions?: string[];
+}
+
 export type SentryContexts = Omit<SentryTypes.Contexts, 'device' | 'app'> & {
-  runtime?: SentryTypes.Runtime;
   device?: SentryDevice;
-  app?: unknown;
+  app?: SentryContextApp;
 }
 
 export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' | 'breadcrumbs' | 'level' | 'contexts'> {

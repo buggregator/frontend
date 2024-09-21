@@ -1,4 +1,4 @@
-import type {Attachment, Uuid} from "~/src/shared/types";
+import type {Attachment, Uuid} from "@/shared/types";
 
 export interface HttpDumpServer {
   received_at: string,

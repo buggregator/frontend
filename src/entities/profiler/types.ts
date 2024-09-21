@@ -1,4 +1,7 @@
 import type {ElementsDefinition} from "cytoscape";
+import type {StatsBase} from "@/shared/types";
+import type {StatBoardCost} from "@/shared/ui";
+
 
 export interface ProfilerCost {
   d_cpu: number;
@@ -21,14 +24,6 @@ export interface ProfilerCost {
   excl_ct: number,
 }
 
-export interface ProfilerEdge {
-  id: string,
-  parent: string | null,
-  caller: string | null,
-  callee: string,
-  cost: ProfilerCost
-}
-
 export interface Profiler {
   tags: {
     [key: string]: string | null | number
@@ -36,9 +31,8 @@ export interface Profiler {
   app_name: string,
   hostname: string,
   date: number,
-  peaks: ProfilerCost,
+  peaks: StatsBase,
 }
-
 
 export interface ProfilerTopFunctions {
   functions: Array<ProfilerCost & { function: string }>,
@@ -47,9 +41,9 @@ export interface ProfilerTopFunctions {
     key: string
     label: string
     sortable: boolean
-    values: { key: string, format: string, type?: 'sub' }[]
+    values: { key: (keyof ProfilerCost), format: string, type?: 'sub' }[]
   }[],
-  overall_totals: Partial<ProfilerCost>
+  overall_totals: StatBoardCost
 }
 
 export interface ProfilerCallGraph extends ElementsDefinition {
@@ -69,3 +63,6 @@ export interface ProfileFlameChart {
   start: number
   type: "task" | string
 }
+
+
+export type CallStackHoverData = { title: string, cost: Partial<ProfilerCost>}

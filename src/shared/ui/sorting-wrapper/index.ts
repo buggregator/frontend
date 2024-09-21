@@ -1,4 +1,4 @@
-import { SORTING_ORDER } from "./constants";
+import { SortingOrder } from "./constants";
 import SortingWrapper from "./sorting-wrapper.vue";
 
-export { SortingWrapper, SORTING_ORDER };
+export { SortingWrapper, SortingOrder };

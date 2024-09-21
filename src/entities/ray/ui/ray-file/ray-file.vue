@@ -1,27 +1,25 @@
 <script lang="ts" setup>
 // TODO: need to rename component
-import { ref, computed } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-import type { RayFrame } from "../../types";
+import { ref, computed } from 'vue'
+import { IconSvg } from '@/shared/ui'
+import type { RayFrame } from '../../types'
 
 type Props = {
-  file: RayFrame;
-};
+  file: RayFrame
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const collapsed = ref(true);
+const collapsed = ref(true)
 
-const hasSnippets = computed(() =>
-  props.file.snippet ? props.file.snippet.length > 0 : false
-);
+const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false))
 </script>
 <template>
   <div class="ray-file" @click="collapsed = !collapsed">
     <div class="ray-file__header">
       <div class="ray-file__title" :title="file.file_name">
         <div>
-          {{ file.class || "null" }}:{{ file.method }}
+          {{ file.class || 'null' }}:{{ file.method }}
           <span class="ray-file__title-in">at line</span>
           {{ file.line_number }}
         </div>
@@ -42,7 +40,7 @@ const hasSnippets = computed(() =>
         :key="line.line_number"
         class="ray-file__snippet"
         :class="{
-          'ray-file__snippet--highlight': file.line_number === line.line_number,
+          'ray-file__snippet--highlight': file.line_number === line.line_number
         }"
       >
         <div class="ray-file__snippet-num">{{ line.line_number }}.</div>
@@ -53,7 +51,7 @@ const hasSnippets = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .ray-file {
   @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
 }
@@ -68,7 +66,7 @@ const hasSnippets = computed(() =>
 
 .ray-file__title-in {
   @include text-muted;
-  @apply  font-light;
+  @apply font-light;
 }
 
 .ray-file__icon {

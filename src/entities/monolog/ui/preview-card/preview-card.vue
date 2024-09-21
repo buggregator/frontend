@@ -1,31 +1,31 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { PreviewCard, CodeSnippet } from "~/src/shared/ui";
-import type { Monolog } from "../../types";
+import { computed, ref } from 'vue'
+import type { NormalizedEvent } from '@/shared/types'
+import { PreviewCard, CodeSnippet } from '@/shared/ui'
+import type { Monolog } from '../../types'
 
 type Props = {
-  event: NormalizedEvent<Monolog>;
-};
+  event: NormalizedEvent<Monolog>
+}
 
-const props = defineProps<Props>();
-const message = ref(props.event.payload.message);
+const props = defineProps<Props>()
+const message = ref(props.event.payload.message)
 
 const shortMessage = computed(() => {
-  const lines = message.value.split("\n");
+  const lines = message.value.split('\n')
 
   if (lines.length > 10) {
-    return `${lines.slice(0, 8).join("\n")}\n...`;
+    return `${lines.slice(0, 8).join('\n')}\n...`
   }
 
-  return message.value;
-});
+  return message.value
+})
 
-const isFullMessage = ref(message.value.length === shortMessage.value.length);
+const isFullMessage = ref(message.value.length === shortMessage.value.length)
 
 const toggleView = () => {
-  isFullMessage.value = !isFullMessage.value;
-};
+  isFullMessage.value = !isFullMessage.value
+}
 </script>
 
 <template>
@@ -44,11 +44,7 @@ const toggleView = () => {
       :code="event.payload.context"
     />
 
-    <CodeSnippet
-      class="preview-card__snippet"
-      language="json"
-      :code="event.payload.extra"
-    />
+    <CodeSnippet class="preview-card__snippet" language="json" :code="event.payload.extra" />
   </PreviewCard>
 </template>
 

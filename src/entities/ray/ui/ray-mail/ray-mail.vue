@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { ref, defineProps } from "vue";
-import { IconSvg, TableBase, TableBaseRow } from "~/src/shared/ui";
-import type { RayContentMail, RayUser } from "../../types";
-import { SmtpPagePreview } from "~/src/screens/smtp";
+import { defineProps, ref } from 'vue'
+import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
+import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview'
+import type { RayContentMail, RayUser } from '../../types'
 
 type Props = {
-  content: RayContentMail;
-};
+  content: RayContentMail
+}
 
-defineProps<Props>();
+defineProps<Props>()
 
-const collapsed = ref(true);
+const collapsed = ref(true)
 
 const getValuesField = (values: RayUser[]) => {
-  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || [];
-  return formattedValues.join(", ");
-};
+  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || []
+  return formattedValues.join(', ')
+}
 </script>
 
 <template>
@@ -39,10 +39,7 @@ const getValuesField = (values: RayUser[]) => {
       <TableBaseRow v-if="content.bcc && content.bcc.length > 0" title="Bcc">
         {{ getValuesField(content.bcc) }}
       </TableBaseRow>
-      <TableBaseRow
-        v-if="content.reply_to && content.reply_to.length > 0"
-        title="Reply to"
-      >
+      <TableBaseRow v-if="content.reply_to && content.reply_to.length > 0" title="Reply to">
         {{ getValuesField(content.reply_to) }}
       </TableBaseRow>
     </TableBase>
@@ -57,9 +54,9 @@ const getValuesField = (values: RayUser[]) => {
         />
       </h3>
 
-      <SmtpPagePreview v-if="!collapsed" device="tablet">
+      <EmailPreview v-if="!collapsed" :device="EmailPreviewDevice.Tablet">
         <div v-html="content.html" />
-      </SmtpPagePreview>
+      </EmailPreview>
     </div>
   </div>
 </template>
