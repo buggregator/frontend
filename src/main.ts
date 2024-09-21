@@ -1,5 +1,6 @@
 import './assets/index.css'
 
+import 'highlight.js/lib/common'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import {createAppRouter} from "@/app/router";
