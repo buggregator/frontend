@@ -83,15 +83,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
       :height="graphHeight"
     >
       <template #default="{ data }">
-        <CallStatBoard
-          :edge="{
-            callee: data?.callee,
-            caller: '',
-            cost: data?.cost,
-            id: '',
-            parent: data?.parent
-          }"
-        />
+        <CallStatBoard :title="data?.callee" :cost="data?.cost" />
       </template>
     </RenderGraph>
 

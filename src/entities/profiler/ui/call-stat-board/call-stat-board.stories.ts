@@ -9,6 +9,7 @@ export default {
 
 export const Default: StoryObj<typeof CallStatBoard> = {
   args: {
-    edge: profilerEdgesMock.e5
+    title: profilerEdgesMock.e5.caller,
+    cost: profilerEdgesMock.e5.cost
   }
 };
