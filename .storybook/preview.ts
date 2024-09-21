@@ -3,7 +3,7 @@ import { setup } from '@storybook/vue3';
 import "../src/assets/index.css";
 import "../src/assets/vendor";
 import "./stories.css"
-import { SfdumpWrap } from '../src/shared/lib/vendor/dumper'
+import { SfdumpWrap } from '../src/shared/lib/vendor/sf-dumper/dumper'
 import 'tailwindcss/tailwind.css'
 import type { Preview } from '@storybook/vue3'
 
@@ -66,12 +66,5 @@ const pinia = createPinia();
 setup((app) => {
   app.use(pinia)
 })
-
-declare global {
-  interface Window {
-    Sfdump: (id: string) => void;
-  }
-}
-window.Sfdump = SfdumpWrap(window.document)
 
 export default preview;
