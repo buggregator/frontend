@@ -6,11 +6,14 @@ import type { RayFrame } from '../../types'
 
 type Props = {
   file: RayFrame
+  isOpen?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  isOpen: false
+})
 
-const collapsed = ref(true)
+const collapsed = ref(props.isOpen)
 
 const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false))
 </script>
