@@ -111,7 +111,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? "Min ca
         :key="tool.metric"
         class="call-graph__toolbar-action"
         :class="{
-          'call-graph__toolbar-action--active': metric === tool.metric
+          'call-graph__toolbar-action--active': metric === tool.metric,
         }"
         :title="tool.description"
         @click="setMetric(tool.metric)"

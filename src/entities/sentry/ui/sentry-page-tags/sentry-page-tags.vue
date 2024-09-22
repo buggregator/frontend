@@ -131,7 +131,7 @@ const modules = computed(() => {
     <div
       class="sentry-page-tags__labels-wrapper"
       :class="{
-        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen
+        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen,
       }"
     >
       <h3
@@ -143,7 +143,7 @@ const modules = computed(() => {
         <IconSvg
           class="sentry-page-tags__title-dd"
           :class="{
-            'sentry-page-tags__title-dd--open': isModulesOpen
+            'sentry-page-tags__title-dd--open': isModulesOpen,
           }"
           name="dd"
         />

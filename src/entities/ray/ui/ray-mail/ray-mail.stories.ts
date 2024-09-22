@@ -13,6 +13,7 @@ export default {
 
 export const Default: StoryObj<typeof RayMail> = {
   args: {
-    content: normalizeRayEvent(rayLaravelMailableMock).payload.payloads[0].content as RayContentMail
+    content: normalizeRayEvent(rayLaravelMailableMock).payload.payloads[0]
+      .content as RayContentMail
   }
 };

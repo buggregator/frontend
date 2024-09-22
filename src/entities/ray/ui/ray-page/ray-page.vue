@@ -23,7 +23,9 @@ const title = computed(() => {
 const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 
 const classes = computed(() =>
-  props.event?.meta ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`] : []
+  props.event?.meta
+    ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
+    : []
 );
 
 const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (

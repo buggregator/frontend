@@ -19,6 +19,7 @@ export const Default: StoryObj<typeof RayMeasure> = {
 
 export const Start: StoryObj<typeof RayMeasure> = {
   args: {
-    measure: normalizeRayEvent(rayMeasureStartMock).payload.payloads[0].content as RayContentMeasure
+    measure: normalizeRayEvent(rayMeasureStartMock).payload.payloads[0]
+      .content as RayContentMeasure
   }
 };

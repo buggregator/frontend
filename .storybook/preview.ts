@@ -3,7 +3,6 @@ import { setup } from "@storybook/vue3"
 import "../src/assets/index.css"
 import "../src/assets/vendor"
 import "./stories.css"
-import { SfdumpWrap } from "../src/shared/lib/vendor/sf-dumper/dumper"
 import "tailwindcss/tailwind.css"
 import type { Preview } from "@storybook/vue3"
 

@@ -42,7 +42,7 @@ export function SfdumpWrap(doc) {
       event.initEvent(
         "sf-dump-expanded" === newClass ? "sfbeforedumpexpand" : "sfbeforedumpcollapse",
         true,
-        false
+        false,
       );
       s.dispatchEvent(event);
     }
@@ -126,8 +126,8 @@ export function SfdumpWrap(doc) {
   function resetHighlightedNodes(root) {
     Array.from(
       root.querySelectorAll(
-        ".sf-dump-str, .sf-dump-key, .sf-dump-public, .sf-dump-protected, .sf-dump-private"
-      )
+        ".sf-dump-str, .sf-dump-key, .sf-dump-public, .sf-dump-protected, .sf-dump-private",
+      ),
     ).forEach(function (strNode) {
       strNode.className = strNode.className.replace(/\bsf-dump-highlight\b/, "");
       strNode.className = strNode.className.replace(/\bsf-dump-highlight-active\b/, "");
@@ -138,7 +138,7 @@ export function SfdumpWrap(doc) {
     root = doc.getElementById(root);
     var indentRx = new RegExp(
         "^(" + (root.getAttribute("data-indent-pad") || " ").replace(rxEsc, "\\$1") + ")+",
-        "m"
+        "m",
       ),
       options = { maxDepth: 1, maxStringLength: 160, fileLinkFormat: false },
       elt = root.getElementsByTagName("A"),
@@ -224,7 +224,7 @@ export function SfdumpWrap(doc) {
           if (f && t && f[0] !== t[0]) {
             r.innerHTML = r.innerHTML.replace(
               new RegExp("^" + f[0].replace(rxEsc, "\\$1"), "mg"),
-              t[0]
+              t[0],
             );
           }
           if (/\bsf-dump-compact\b/.test(r.className)) {
@@ -246,7 +246,7 @@ export function SfdumpWrap(doc) {
         e = a.parentNode.parentNode;
         e.className = e.className.replace(
           /\bsf-dump-str-(expand|collapse)\b/,
-          a.parentNode.className
+          a.parentNode.className,
         );
       }
     });
@@ -335,7 +335,7 @@ export function SfdumpWrap(doc) {
         },
         count: function () {
           return this.nodes.length;
-        }
+        },
       };
 
       function showCurrent(state) {
@@ -388,7 +388,7 @@ export function SfdumpWrap(doc) {
             "sf-dump-key",
             "sf-dump-public",
             "sf-dump-protected",
-            "sf-dump-private"
+            "sf-dump-private",
           ]
             .map(xpathHasClass)
             .join(" or ");
@@ -405,7 +405,7 @@ export function SfdumpWrap(doc) {
             root,
             null,
             XPathResult.ORDERED_NODE_ITERATOR_TYPE,
-            null
+            null,
           );
 
           let node;
@@ -414,7 +414,7 @@ export function SfdumpWrap(doc) {
         }, 400);
       });
       Array.from(
-        search.querySelectorAll(".sf-dump-search-input-next, .sf-dump-search-input-previous")
+        search.querySelectorAll(".sf-dump-search-input-next, .sf-dump-search-input-previous"),
       ).forEach(function (btn) {
         addEventListener(btn, "click", function (e) {
           e.preventDefault();
@@ -473,7 +473,7 @@ export function SfdumpWrap(doc) {
           h = elt.innerHTML;
           elt[elt.innerText ? "innerText" : "textContent"] = s.substring(
             0,
-            options.maxStringLength
+            options.maxStringLength,
           );
           elt.className += " sf-dump-str-collapse";
           elt.innerHTML =

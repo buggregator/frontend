@@ -37,13 +37,13 @@ const changeSortOrder = () => {
       <span
         class="sorting-wrapper__marker sorting-wrapper__marker--asc"
         :class="{
-          'sorting-wrapper__marker--active': sort === SortingOrder.Asc
+          'sorting-wrapper__marker--active': sort === SortingOrder.Asc,
         }"
       />
       <span
         class="sorting-wrapper__marker sorting-wrapper__marker--desc"
         :class="{
-          'sorting-wrapper__marker--active': sort === SortingOrder.Desc
+          'sorting-wrapper__marker--active': sort === SortingOrder.Desc,
         }"
       />
     </span>

@@ -83,7 +83,7 @@ useTitle("Settings | Buggregator");
       <div
         class="settings-page-content__control-icon"
         :class="{
-          'settings-page-content__control-icon--active': !isVisibleEventCounts
+          'settings-page-content__control-icon--active': !isVisibleEventCounts,
         }"
       >
         <IconSvg name="inspector" />
@@ -92,7 +92,7 @@ useTitle("Settings | Buggregator");
       <button
         class="settings-page-content__control-button"
         :class="{
-          'settings-page-content__control-button--active': isVisibleEventCounts
+          'settings-page-content__control-button--active': isVisibleEventCounts,
         }"
         @click="changeEventCountsVisibility"
       >
@@ -102,7 +102,7 @@ useTitle("Settings | Buggregator");
       <div
         class="settings-page-content__control-icon"
         :class="{
-          'settings-page-content__control-icon--active': isVisibleEventCounts
+          'settings-page-content__control-icon--active': isVisibleEventCounts,
         }"
       >
         <BadgeNumber

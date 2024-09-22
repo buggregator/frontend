@@ -9,5 +9,5 @@ export type StatBoardCost = StatsBase & {
 
 export enum StatBoardSize {
   Small = "sm",
-  Medium = "md"
+  Medium = "md",
 }

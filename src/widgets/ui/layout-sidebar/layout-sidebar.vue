@@ -141,7 +141,7 @@ const generateRadialGradient = (input: string) =>
               :title="activeProject.name"
               class="layout-sidebar__project"
               :style="{
-                background: generateRadialGradient(activeProject.name)
+                background: generateRadialGradient(activeProject.name),
               }"
             >
               {{ makeShortTitle(activeProject.name) }}
@@ -210,7 +210,7 @@ const generateRadialGradient = (input: string) =>
         class="layout-sidebar__dropdown-item"
         :title="project.name"
         :class="{
-          'layout-sidebar__dropdown-item--active': activeProject.key === project.key
+          'layout-sidebar__dropdown-item--active': activeProject.key === project.key,
         }"
         tabindex="1"
         @click="setProject(project.key)"

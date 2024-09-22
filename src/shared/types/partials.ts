@@ -20,7 +20,7 @@ export enum GraphTypes {
   WALL_TIME = "wt",
   MEMORY_CHANGE = "pmu",
   MEMORY = "mu",
-  CALLS = "ct"
+  CALLS = "ct",
 }
 
 export type StatsBase = {

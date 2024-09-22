@@ -139,7 +139,7 @@ onMounted(() => {
     ref="eventRef"
     class="preview-card"
     :class="{
-      'preview-card--initialized': isInit && !isDeleting
+      'preview-card--initialized': isInit && !isDeleting,
     }"
   >
     <div class="preview-card__in">

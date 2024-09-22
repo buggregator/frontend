@@ -52,7 +52,7 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
         :key="line.line_number"
         class="ray-file__snippet"
         :class="{
-          'ray-file__snippet--highlight': file.line_number === line.line_number
+          'ray-file__snippet--highlight': file.line_number === line.line_number,
         }"
       >
         <div class="ray-file__snippet-num">

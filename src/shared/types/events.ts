@@ -9,7 +9,7 @@ export enum EventTypes {
   Monolog = "monolog",
   Inspector = "inspector",
   HttpDump = "http-dump",
-  RayDump = "ray"
+  RayDump = "ray",
 }
 
 // TODO: add T prefix to all types

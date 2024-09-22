@@ -24,7 +24,7 @@ const selectDevice = (device: Device) => {
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Mobile
+          'attachment-preview__btn--active': currentDevice === Device.Mobile,
         }"
         @click="selectDevice(Device.Mobile)"
       >
@@ -36,7 +36,7 @@ const selectDevice = (device: Device) => {
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Tablet
+          'attachment-preview__btn--active': currentDevice === Device.Tablet,
         }"
         @click="selectDevice(Device.Tablet)"
       >
@@ -48,7 +48,7 @@ const selectDevice = (device: Device) => {
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Desktop
+          'attachment-preview__btn--active': currentDevice === Device.Desktop,
         }"
         @click="selectDevice(Device.Desktop)"
       >
@@ -63,7 +63,7 @@ const selectDevice = (device: Device) => {
       :class="{
         'attachment-preview__device--desktop': currentDevice === Device.Desktop,
         'attachment-preview__device--tablet': currentDevice === Device.Tablet,
-        'attachment-preview__device--mobile': currentDevice === Device.Mobile
+        'attachment-preview__device--mobile': currentDevice === Device.Mobile,
       }"
     >
       <div class="attachment-preview__device-in">

@@ -3,11 +3,11 @@ export enum LocalStorageKeys {
   Navbar = "navbar",
   EventCounts = "event_counts",
   CodeEditor = "code_editor",
-  Token = "token"
+  Token = "token",
 }
 
 export enum SessionStorageKeys {
   Project = "project",
   CachedEvents = "cached_events",
-  LockedEvents = "locked_events"
+  LockedEvents = "locked_events",
 }

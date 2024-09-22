@@ -21,7 +21,7 @@ watch(
     class="layout-base"
     :class="{
       'layout-base--no-sidebar': !$slots.sidebar,
-      'layout-base--no-header': !$slots.header
+      'layout-base--no-header': !$slots.header,
     }"
   >
     <div

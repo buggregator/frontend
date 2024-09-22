@@ -32,7 +32,7 @@ const ddStates = ref(
         :key="key"
         class="sentry-page-extra__wrapper"
         :class="{
-          'sentry-page-extra__wrapper--open': ddStates[key]
+          'sentry-page-extra__wrapper--open': ddStates[key],
         }"
       >
         <h3
@@ -44,7 +44,7 @@ const ddStates = ref(
           <IconSvg
             class="sentry-page-extra__title-dd"
             :class="{
-              'sentry-page-extra__title-dd--open': ddStates[key]
+              'sentry-page-extra__title-dd--open': ddStates[key],
             }"
             name="dd"
           />

@@ -109,7 +109,7 @@ const segmentRows = computed(() => {
       v-if="segmentRows.length > 0"
       class="inspector-page-timeline__body"
       :style="{
-        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`
+        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`,
       }"
     >
       <div
@@ -152,7 +152,7 @@ const segmentRows = computed(() => {
               class="inspector-page-timeline__segment-time"
               :style="{
                 width: segmentRow.widthPercent + '%',
-                background: segmentColor(segmentRow.type)
+                background: segmentColor(segmentRow.type),
               }"
             >
               <span v-if="segmentRow.widthPercent > 20"> {{ segmentRow.duration }} ms </span>

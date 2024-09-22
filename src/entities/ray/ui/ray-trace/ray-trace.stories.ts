@@ -13,6 +13,7 @@ export default {
 
 export const Default: StoryObj<typeof RayTrace> = {
   args: {
-    frames: (normalizeRayEvent(rayTraceMock).payload.payloads[0].content as RayContentFrames).frames
+    frames: (normalizeRayEvent(rayTraceMock).payload.payloads[0].content as RayContentFrames)
+      .frames
   }
 };

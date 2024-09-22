@@ -173,7 +173,7 @@ const isVisibleTags = computed(() => props.labels.length > 0);
         class="preview-card-header__button preview-card-header__button--lock"
         title="Lock event. Locked events will not be deleted"
         :class="{
-          'preview-card-header__button--locked': isLocked
+          'preview-card-header__button--locked': isLocked,
         }"
         @click="lockEvent"
       >

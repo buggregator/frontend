@@ -4,5 +4,5 @@ export enum RouteName {
   Home = "home",
   EventList = "event-list",
   EventPage = "event-page",
-  NotFound = "not-found" // TODO: add screen for 404
+  NotFound = "not-found", // TODO: add screen for 404
 }

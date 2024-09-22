@@ -14,7 +14,8 @@ const uri = computed(() => decodeURI(props.event.payload?.request?.uri));
 
 const hasPostData = computed(
   () =>
-    props.event.payload?.request?.post && Object.keys(props.event.payload?.request?.post).length > 0
+    props.event.payload?.request?.post &&
+    Object.keys(props.event.payload?.request?.post).length > 0
 );
 
 const hasQuery = computed(

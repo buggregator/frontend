@@ -17,7 +17,7 @@ type TUseProfilerRequests = () => {
 enum ProfilerPartType {
   FlameChart = "flame-chart",
   CallGraph = "call-graph",
-  TopFunctions = "top"
+  TopFunctions = "top",
 }
 
 export const useProfilerRequests: TUseProfilerRequests = () => {

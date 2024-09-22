@@ -47,7 +47,7 @@ const statItems = computed(() => [
   <section
     class="stat-board"
     :class="{
-      'stat-board--small': size === StatBoardSize.Small
+      'stat-board--small': size === StatBoardSize.Small,
     }"
   >
     <div

@@ -43,7 +43,7 @@ const toggleOpen = () => {
         v-if="frame.pre_context"
         class="sentry-exception-frame__head-title-dd"
         :class="{
-          'sentry-exception-frame__head-title-dd--visible': isFrameOpen
+          'sentry-exception-frame__head-title-dd--visible': isFrameOpen,
         }"
         name="dd"
       />

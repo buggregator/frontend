@@ -19,7 +19,7 @@ export enum RayEventTypes {
   View = "view",
   Event = "event",
   Job = "job_event",
-  Lock = "create_lock"
+  Lock = "create_lock",
 }
 
 export interface RayFrame {
