@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, type Ref } from 'vue'
-import type { InspectorSegment, InspectorTransaction, Inspector } from '../../types'
+import { computed, type ComputedRef, type Ref } from "vue"
+import type { InspectorSegment, InspectorTransaction, Inspector } from "../../types"
 
 type Props = {
   payload: Inspector
@@ -12,16 +12,16 @@ const props = defineProps<Props>()
 
 const segmentColor = (color: string): string => {
   switch (color) {
-    case 'sqlite':
-      return '#f97316' // orange-500
-    case 'view':
-      return '#3b82f6' // blue-500
-    case 'artisan':
-      return '#a855f7' // purple-500
-    case 'pgsql':
-      return '#22c55e' // green-500
+    case "sqlite":
+      return "#f97316" // orange-500
+    case "view":
+      return "#3b82f6" // blue-500
+    case "artisan":
+      return "#a855f7" // purple-500
+    case "pgsql":
+      return "#22c55e" // green-500
     default:
-      return '#64748b' // slate-500
+      return "#64748b" // slate-500
   }
 }
 
@@ -47,7 +47,7 @@ const layoutCells = computed(() => {
 
 const segments: ComputedRef<InspectorSegment[]> = computed(() =>
   props.payload
-    .filter((item): item is InspectorSegment => item.model === 'segment')
+    .filter((item): item is InspectorSegment => item.model === "segment")
     .filter((el) => el?.transaction?.hash === transaction.value.hash)
 )
 
@@ -181,7 +181,7 @@ const segmentRows = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .inspector-page-timeline {
   @apply py-5 relative;

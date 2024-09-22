@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import TableBaseRow from './table-base-row.vue'
-import TableBase from './table-base.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import TableBaseRow from "./table-base-row.vue"
+import TableBase from "./table-base.vue"
 
 export default {
-  title: 'Shared/TableBase',
+  title: "Shared/TableBase",
   component: TableBase
 } as Meta<typeof TableBase>
 

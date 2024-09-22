@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { SMTPUser } from '../../types'
+import type { SMTPUser } from "../../types"
 
 type Props = {
   addresses: SMTPUser[]

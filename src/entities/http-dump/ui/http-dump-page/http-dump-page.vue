@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { defineProps, computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import { TableBase, TableBaseRow, FileAttachment } from '@/shared/ui'
-import type { HttpDump } from '../../types'
+import { defineProps, computed } from "vue"
+import type { NormalizedEvent } from "@/shared/types"
+import { TableBase, TableBaseRow, FileAttachment } from "@/shared/ui"
+import type { HttpDump } from "../../types"
 
 type Props = {
   event: NormalizedEvent<HttpDump>
@@ -145,7 +145,7 @@ const hasAttachments = computed(
 </template>
 
 <style lang="scss" scoped>
-@import '../../../../assets/mixins';
+@import "../../../../assets/mixins";
 
 .http-dump-page {
   @apply relative flex-1 flex flex-col;

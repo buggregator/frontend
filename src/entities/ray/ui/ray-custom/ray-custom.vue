@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ValueDump } from '@/shared/ui'
-import type { RayContentCustom } from '../../types'
+import { ValueDump } from "@/shared/ui"
+import type { RayContentCustom } from "../../types"
 
 type Props = {
   content: RayContentCustom

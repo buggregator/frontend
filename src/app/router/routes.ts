@@ -1,14 +1,14 @@
-import { EventPage } from '@/pages/event-page'
-import { EventsListPage } from '@/pages/events-list-page'
-import { LoginPage } from '@/pages/login'
-import { NotFoundPage } from '@/pages/not-found'
-import { SettingsPage } from '@/pages/settings'
-import { RouteName } from '@/shared/types'
-import { auth, checkType } from './middlewares'
+import { EventPage } from "@/pages/event-page"
+import { EventsListPage } from "@/pages/events-list-page"
+import { LoginPage } from "@/pages/login"
+import { NotFoundPage } from "@/pages/not-found"
+import { SettingsPage } from "@/pages/settings"
+import { RouteName } from "@/shared/types"
+import { auth, checkType } from "./middlewares"
 
 export const routes = [
   {
-    path: '/',
+    path: "/",
     name: RouteName.Home,
     component: EventsListPage,
     meta: {
@@ -16,7 +16,7 @@ export const routes = [
     }
   },
   {
-    path: '/:type',
+    path: "/:type",
     name: RouteName.EventList,
     component: EventsListPage,
     meta: {
@@ -24,7 +24,7 @@ export const routes = [
     }
   },
   {
-    path: '/:type/:id',
+    path: "/:type/:id",
     name: RouteName.EventPage,
     component: EventPage,
     meta: {
@@ -32,7 +32,7 @@ export const routes = [
     }
   },
   {
-    path: '/404',
+    path: "/404",
     name: RouteName.NotFound,
     component: NotFoundPage,
     meta: {
@@ -40,7 +40,7 @@ export const routes = [
     }
   },
   {
-    path: '/settings',
+    path: "/settings",
     name: RouteName.Settings,
     component: SettingsPage,
     meta: {
@@ -48,7 +48,7 @@ export const routes = [
     }
   },
   {
-    path: '/login',
+    path: "/login",
     name: RouteName.Login,
     component: LoginPage,
     meta: {

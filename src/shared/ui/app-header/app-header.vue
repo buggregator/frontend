@@ -13,7 +13,7 @@
 </template>
 
 <style lang="scss" scoped>
-@import '../../../assets/mixins';
+@import "../../../assets/mixins";
 
 .header {
   @apply flex justify-between h-full;

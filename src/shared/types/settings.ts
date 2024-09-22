@@ -1,4 +1,4 @@
-import { type EventType } from './events'
+import { type EventType } from "./events"
 
 export type TProfile = {
   username: string

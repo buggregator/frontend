@@ -1,12 +1,12 @@
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from "pinia"
 import type {
   ProfileFlameChart,
   ProfilerCallGraph,
   ProfilerTopFunctions
-} from '@/entities/profiler/types'
-import { useProfileStore } from '../../stores'
-import type { EventId } from '../../types'
-import { REST_API_URL } from './constants'
+} from "@/entities/profiler/types"
+import { useProfileStore } from "../../stores"
+import type { EventId } from "../../types"
+import { REST_API_URL } from "./constants"
 
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
@@ -15,15 +15,15 @@ type TUseProfilerRequests = () => {
 }
 
 enum ProfilerPartType {
-  FlameChart = 'flame-chart',
-  CallGraph = 'call-graph',
-  TopFunctions = 'top'
+  FlameChart = "flame-chart",
+  CallGraph = "call-graph",
+  TopFunctions = "top"
 }
 
 export const useProfilerRequests: TUseProfilerRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const headers = { 'X-Auth-Token': token.value }
+  const headers = { "X-Auth-Token": token.value }
 
   const getProfilerPartsRestUrl = ({
     id,
@@ -50,11 +50,11 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
         }
 
         if (response?.code === 403) {
-          console.error('Forbidden')
+          console.error("Forbidden")
           return {}
         }
 
-        console.error('Fetch Error')
+        console.error("Fetch Error")
 
         return {}
       })
@@ -68,11 +68,11 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
         }
 
         if (response?.code === 403) {
-          console.error('Forbidden')
+          console.error("Forbidden")
           return {}
         }
 
-        console.error('Fetch Error')
+        console.error("Fetch Error")
 
         return {}
       })
@@ -86,11 +86,11 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
         }
 
         if (response?.code === 403) {
-          console.error('Forbidden')
+          console.error("Forbidden")
           return []
         }
 
-        console.error('Fetch Error')
+        console.error("Fetch Error")
 
         return []
       })

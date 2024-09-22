@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import { useRay } from '../../lib'
-import { rayLaravelMailableMock } from '../../mocks-laravel'
-import type { RayContentMail } from '../../types'
-import RayMail from './ray-mail.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import { useRay } from "../../lib"
+import { rayLaravelMailableMock } from "../../mocks-laravel"
+import type { RayContentMail } from "../../types"
+import RayMail from "./ray-mail.vue"
 
 const { normalizeRayEvent } = useRay()
 
 export default {
-  title: 'Entities/ray/RayMail',
+  title: "Entities/ray/RayMail",
   component: RayMail
 } as Meta<typeof RayMail>
 

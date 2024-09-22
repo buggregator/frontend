@@ -1,1 +1,1 @@
-export { default as CallGraph } from './call-graph.vue'
+export { default as CallGraph } from "./call-graph.vue"

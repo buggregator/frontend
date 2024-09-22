@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SortingOrder } from './constants'
+import { SortingOrder } from "./constants"
 
 type Props = {
   sort: SortingOrder
@@ -22,7 +22,7 @@ const changeSortOrder = () => {
 
   const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0]
 
-  emit('changeSort', nextSortOrder)
+  emit("changeSort", nextSortOrder)
 }
 </script>
 

@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import AppHeader from './app-header.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import AppHeader from "./app-header.vue"
 
 const AppHeaderMeta: Meta<typeof AppHeader> = {
-  title: 'Shared/AppHeader',
+  title: "Shared/AppHeader",
   component: AppHeader,
   parameters: {
     slots: {
-      default: 'Page title',
-      controls: ''
+      default: "Page title",
+      controls: ""
     }
   },
   render: (args: ComponentProps<typeof AppHeader>, { parameters }) => ({
@@ -35,7 +35,7 @@ export default AppHeaderMeta
 export const Default: StoryObj<typeof AppHeader> = {
   parameters: {
     slots: {
-      default: 'Page title'
+      default: "Page title"
     }
   }
 }

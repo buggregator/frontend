@@ -1,11 +1,11 @@
-import { action } from '@storybook/addon-actions'
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import { SortingOrder } from './constants'
-import SortingWrapper from './sorting-wrapper.vue'
+import { action } from "@storybook/addon-actions"
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import { SortingOrder } from "./constants"
+import SortingWrapper from "./sorting-wrapper.vue"
 
 export default {
-  title: 'Shared/SortingWrapper',
+  title: "Shared/SortingWrapper",
   component: SortingWrapper,
   render: (args: ComponentProps<typeof SortingWrapper>) => ({
     components: { SortingWrapper },

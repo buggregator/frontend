@@ -1,9 +1,9 @@
-import { LocalStorageKeys } from '../../types'
+import { LocalStorageKeys } from "../../types"
 
 export const getStoredToken = (): string => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.Token)
 
-  return storedCodeEditor || ''
+  return storedCodeEditor || ""
 }
 
 export const setStoredToken = (token: string) => {

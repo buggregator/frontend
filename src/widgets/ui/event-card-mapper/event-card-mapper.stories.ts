@@ -1,22 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import { httpDumpMock } from '@/entities/http-dump/mocks'
-import { inspectorMock } from '@/entities/inspector/mocks'
-import { monologMock } from '@/entities/monolog/mocks'
-import { profilerMock } from '@/entities/profiler/mocks'
-import { sentrySpiralMock } from '@/entities/sentry/mocks'
-import { smtpWelcomeMock } from '@/entities/smtp/mocks'
-import { varDumpObjectMock } from '@/entities/var-dump/mocks'
-import EventCardMapper from './event-card-mapper.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import { httpDumpMock } from "@/entities/http-dump/mocks"
+import { inspectorMock } from "@/entities/inspector/mocks"
+import { monologMock } from "@/entities/monolog/mocks"
+import { profilerMock } from "@/entities/profiler/mocks"
+import { sentrySpiralMock } from "@/entities/sentry/mocks"
+import { smtpWelcomeMock } from "@/entities/smtp/mocks"
+import { varDumpObjectMock } from "@/entities/var-dump/mocks"
+import EventCardMapper from "./event-card-mapper.vue"
 
 export default {
-  title: 'Widgets/EventCardMapper',
+  title: "Widgets/EventCardMapper",
   component: EventCardMapper
 } as Meta<typeof EventCardMapper>
 
 export const Default: StoryObj<typeof EventCardMapper> = {
   args: {
-    event: { ...smtpWelcomeMock, type: 'unknown' }
+    event: { ...smtpWelcomeMock, type: "unknown" }
   }
 }
 

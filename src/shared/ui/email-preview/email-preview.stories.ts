@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import { htmlEncode } from '../../lib/helpers'
-import { HTMLCode } from '../../mocks'
-import EmailPreview from './email-preview.vue'
-import { Device } from './types'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import { htmlEncode } from "../../lib/helpers"
+import { HTMLCode } from "../../mocks"
+import EmailPreview from "./email-preview.vue"
+import { Device } from "./types"
 
 export default {
-  title: 'Shared/EmailPreview',
+  title: "Shared/EmailPreview",
   component: EmailPreview,
   render: (args: ComponentProps<typeof EmailPreview>) => ({
     components: { EmailPreview },

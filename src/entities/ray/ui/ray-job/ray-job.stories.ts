@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import { useRay } from '../../lib'
-import { rayLaravelJobsMock } from '../../mocks-laravel'
-import type { RayContentJob } from '../../types'
-import RayJob from './ray-job.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import { useRay } from "../../lib"
+import { rayLaravelJobsMock } from "../../mocks-laravel"
+import type { RayContentJob } from "../../types"
+import RayJob from "./ray-job.vue"
 
 const { normalizeRayEvent } = useRay()
 
 export default {
-  title: 'Entities/ray/RayJob',
+  title: "Entities/ray/RayJob",
   component: RayJob
 } as Meta<typeof RayJob>
 

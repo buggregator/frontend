@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import moment from 'moment'
-import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import type { Sentry } from '../..//types'
-import { SentryException } from '../sentry-exception'
-import { SentryPageApp } from '../sentry-page-app'
-import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
-import { SentryPageDevice } from '../sentry-page-device'
-import { SentryPageExtra } from '../sentry-page-extra'
-import { SentryPageRequest } from '../sentry-page-request'
-import { SentryPageTags } from '../sentry-page-tags'
+import moment from "moment"
+import { computed } from "vue"
+import type { NormalizedEvent } from "@/shared/types"
+import type { Sentry } from "../..//types"
+import { SentryException } from "../sentry-exception"
+import { SentryPageApp } from "../sentry-page-app"
+import { SentryPageBreadcrumbs } from "../sentry-page-breadcrumbs"
+import { SentryPageDevice } from "../sentry-page-device"
+import { SentryPageExtra } from "../sentry-page-extra"
+import { SentryPageRequest } from "../sentry-page-request"
+import { SentryPageTags } from "../sentry-page-tags"
 
 type Props = {
   event: NormalizedEvent<Sentry>
@@ -119,7 +119,7 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .sentry-page {
   @apply relative;

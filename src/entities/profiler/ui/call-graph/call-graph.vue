@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from 'cytoscape'
-import { ref, computed, onMounted, watchEffect } from 'vue'
-import { type EventId, GraphTypes } from '@/shared/types'
-import { IconSvg, type StatBoardCost } from '@/shared/ui'
-import { useProfiler } from '../../lib'
-import type { ProfilerCallGraph } from '../../types'
-import { CallStatBoard } from '../call-stat-board'
-import { RenderGraph } from '../render-graph'
+import type { ElementsDefinition } from "cytoscape"
+import { ref, computed, onMounted, watchEffect } from "vue"
+import { type EventId, GraphTypes } from "@/shared/types"
+import { IconSvg, type StatBoardCost } from "@/shared/ui"
+import { useProfiler } from "../../lib"
+import type { ProfilerCallGraph } from "../../types"
+import { CallStatBoard } from "../call-stat-board"
+import { RenderGraph } from "../render-graph"
 
 type Props = {
   id: EventId
@@ -24,9 +24,9 @@ const isReadyGraph = ref(false)
 const container = ref<HTMLElement>()
 
 const elements = ref<ElementsDefinition | undefined>()
-const toolbar = ref<ProfilerCallGraph['toolbar']>([])
+const toolbar = ref<ProfilerCallGraph["toolbar"]>([])
 
-const graphKey = ref('')
+const graphKey = ref("")
 
 const setMetric = (value: string) => {
   if (Object.values(GraphTypes).includes(value as GraphTypes)) {
@@ -70,7 +70,7 @@ onMounted(() => {
   isReadyGraph.value = true
 })
 
-const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
+const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"))
 </script>
 
 <template>
@@ -156,7 +156,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .call-graph {
   @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;

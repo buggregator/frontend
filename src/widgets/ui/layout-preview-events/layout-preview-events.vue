@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { computed, watchEffect } from 'vue'
-import { PAGE_TYPES } from '@/shared/constants'
-import { useEvents } from '@/shared/lib/use-events'
-import type { PageEventTypes } from '@/shared/types'
-import { EventCardMapper } from '../event-card-mapper'
-import { PagePlaceholder } from '../page-placeholder'
+import { useTitle } from "@vueuse/core"
+import { computed, watchEffect } from "vue"
+import { PAGE_TYPES } from "@/shared/constants"
+import { useEvents } from "@/shared/lib/use-events"
+import type { PageEventTypes } from "@/shared/types"
+import { EventCardMapper } from "../event-card-mapper"
+import { PagePlaceholder } from "../page-placeholder"
 
 type Props = {
   title?: string
@@ -13,7 +13,7 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: ''
+  title: ""
 })
 
 const { events, cachedEvents } = useEvents()
@@ -38,7 +38,7 @@ const visibleEvents = computed(() => {
 })
 
 watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
+  useTitle(`${props.title || "Events"}: ${allEvents.value.length} | Buggregator`)
 })
 </script>
 
@@ -66,7 +66,7 @@ watchEffect(() => {
 </template>
 
 <style lang="scss">
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .layout-preview-events {
   @apply flex flex-col h-full w-full;

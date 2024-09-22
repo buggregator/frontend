@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { THEME_MODES, useSettingsStore } from '@/shared/stores'
-import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { useTitle } from "@vueuse/core"
+import { storeToRefs } from "pinia"
+import { computed } from "vue"
+import { THEME_MODES, useSettingsStore } from "@/shared/stores"
+import { BadgeNumber, IconSvg } from "@/shared/ui"
 
 const settingsStore = useSettingsStore()
 const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
@@ -18,13 +18,13 @@ const changeCodeEditor = (event: Event) => {
   changeActiveCodeEditor(editor)
 }
 
-useTitle('Settings | Buggregator')
+useTitle("Settings | Buggregator")
 </script>
 
 <template>
   <main class="settings-page-content">
     <div class="settings-page-content__title">
-      Theme: {{ isDarkMode ? 'Dark' : 'Light' }}
+      Theme: {{ isDarkMode ? "Dark" : "Light" }}
     </div>
 
     <div class="settings-page-content__control">
@@ -50,7 +50,7 @@ useTitle('Settings | Buggregator')
     </div>
 
     <div class="settings-page-content__title">
-      Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}
+      Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
     </div>
 
     <div class="settings-page-content__control">
@@ -76,7 +76,7 @@ useTitle('Settings | Buggregator')
     </div>
 
     <div class="settings-page-content__title">
-      Events Counts: {{ isVisibleEventCounts ? 'On' : 'Off' }}
+      Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
     </div>
 
     <div class="settings-page-content__control">
@@ -140,7 +140,7 @@ useTitle('Settings | Buggregator')
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .settings-page-content {
   @apply p-4 grid gap-4 gap-x-10 mr-auto min-w-[50%];

@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import { useSentry } from '../../lib'
-import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from '../../mocks'
-import SentryPage from './sentry-page.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import { useSentry } from "../../lib"
+import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from "../../mocks"
+import SentryPage from "./sentry-page.vue"
 
 const { normalizeSentryEvent } = useSentry()
 
 export default {
-  title: 'Screens/sentry/SentryPage',
+  title: "Screens/sentry/SentryPage",
   component: SentryPage
 } as Meta<typeof SentryPage>
 

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import type { NormalizedEvent, OneOfValues } from '@/shared/types'
-import { PreviewCard } from '@/shared/ui'
-import { COMPONENT_TYPE_MAP } from '../../lib/use-ray/config'
-import type { RayDump } from '../../types'
-import { RayEventTypes } from '../../types'
+import { computed } from "vue"
+import type { NormalizedEvent, OneOfValues } from "@/shared/types"
+import { PreviewCard } from "@/shared/ui"
+import { COMPONENT_TYPE_MAP } from "../../lib/use-ray/config"
+import type { RayDump } from "../../types"
+import { RayEventTypes } from "../../types"
 
 type Props = {
   event: NormalizedEvent<RayDump>
@@ -13,8 +13,8 @@ type Props = {
 const props = defineProps<Props>()
 
 const classes = computed(() => [
-  `text-${props.event?.meta?.size || 'sm'}`,
-  `text-${props.event?.meta?.color || 'gray'}-500`
+  `text-${props.event?.meta?.size || "sm"}`,
+  `text-${props.event?.meta?.color || "gray"}-500`
 ])
 
 const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (

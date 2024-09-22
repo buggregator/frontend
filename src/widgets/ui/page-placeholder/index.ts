@@ -1,1 +1,1 @@
-export { default as PagePlaceholder } from './page-placeholder.vue'
+export { default as PagePlaceholder } from "./page-placeholder.vue"

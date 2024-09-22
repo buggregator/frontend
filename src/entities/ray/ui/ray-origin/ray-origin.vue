@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import type { Ref } from 'vue'
-import type { RayFrame, RayPayloadOrigin } from '../../types'
-import { RayFile } from '../ray-file'
+import { computed } from "vue"
+import type { Ref } from "vue"
+import type { RayFrame, RayPayloadOrigin } from "../../types"
+import { RayFile } from "../ray-file"
 
 type Props = {
   origin: RayPayloadOrigin
@@ -15,8 +15,8 @@ const originFile: Ref<RayFrame> = computed(
     ({
       file_name: props.origin.file,
       line_number: props.origin.line_number,
-      class_name: '',
-      function_name: ''
+      class_name: "",
+      function_name: ""
     }) as unknown as RayFrame
 )
 </script>

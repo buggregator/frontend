@@ -1,14 +1,14 @@
-/** @type {import('tailwindcss').Config} */
-import defaultColors from 'tailwindcss/colors.js'
-import defaultTheme from 'tailwindcss/defaultTheme.js'
+/** @type {import("tailwindcss").Config} */
+import defaultColors from "tailwindcss/colors.js"
+import defaultTheme from "tailwindcss/defaultTheme.js"
 
 export default {
-  darkMode: 'class',
+  darkMode: "class",
   content: [
-    './src/assets/**/*.{scss,css}',
-    './src/**/*.{js,vue,ts}',
-    './src/**/*.stories.{js,vue,ts}',
-    './src/app.vue'
+    "./src/assets/**/*.{scss,css}",
+    "./src/**/*.{js,vue,ts}",
+    "./src/**/*.stories.{js,vue,ts}",
+    "./src/app.vue"
   ],
   safelist: [
     {
@@ -17,24 +17,24 @@ export default {
   ],
   variants: {
     extend: {
-      opacity: ['disabled'],
-      borderWidth: ['hover', 'first'],
-      ringWidth: ['hover']
+      opacity: ["disabled"],
+      borderWidth: ["hover", "first"],
+      ringWidth: ["hover"]
     }
   },
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Nunito', defaultTheme.fontFamily.sans]
+        sans: ["Nunito", defaultTheme.fontFamily.sans]
       },
       transitionProperty: {
-        height: 'height'
+        height: "height"
       },
       boxShadow: {
-        bottom: 'inset 0 -38px 38px -38px #ececec'
+        bottom: "inset 0 -38px 38px -38px #ececec"
       },
       fontSize: {
-        '2xs': ['0.6rem', { lineHeight: '1rem' }]
+        "2xs": ["0.6rem", { lineHeight: "1rem" }]
       }
     },
     fontWeight: {
@@ -42,8 +42,8 @@ export default {
     },
     colors: {
       ...defaultColors,
-      transparent: 'transparent',
-      current: 'currentColor',
+      transparent: "transparent",
+      current: "currentColor",
       purple: defaultColors.indigo,
       red: defaultColors.rose,
       orange: defaultColors.amber

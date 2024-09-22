@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { REST_API_URL } from '../../lib/io/constants'
-import { type EventType, EventTypes, type TSettings } from '../../types'
-import { THEME_MODES } from './constants'
+import { defineStore } from "pinia"
+import { REST_API_URL } from "../../lib/io/constants"
+import { type EventType, EventTypes, type TSettings } from "../../types"
+import { THEME_MODES } from "./constants"
 import {
   getStoredEventsCountVisibility,
   getStoredFixedHeader,
@@ -11,15 +11,15 @@ import {
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
   setStoredPrimaryCodeEditor
-} from './local-storage-actions'
+} from "./local-storage-actions"
 
-export const useSettingsStore = defineStore('settingsStore', {
+export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
-    apiVersion: '',
+    apiVersion: "",
     isFetched: false,
     isAuthEnabled: false,
-    authLogicUrl: '/login',
-    codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
+    authLogicUrl: "/login",
+    codeEditor: getStoredPrimaryCodeEditor() || "phpstorm",
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),

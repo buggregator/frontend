@@ -1,5 +1,5 @@
-import { type EventId, SessionStorageKeys } from '../../types'
-import type { TEventsCachedIdsMap } from './types'
+import { type EventId, SessionStorageKeys } from "../../types"
+import type { TEventsCachedIdsMap } from "./types"
 
 const { sessionStorage } = window
 

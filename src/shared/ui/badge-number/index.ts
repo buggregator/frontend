@@ -1,1 +1,1 @@
-export { default as BadgeNumber } from './badge-number.vue'
+export { default as BadgeNumber } from "./badge-number.vue"

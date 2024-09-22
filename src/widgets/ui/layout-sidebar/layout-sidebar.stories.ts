@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import LayoutSidebar from './layout-sidebar.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import LayoutSidebar from "./layout-sidebar.vue"
 
 export default {
-  title: 'Widgets/LayoutSidebar',
+  title: "Widgets/LayoutSidebar",
   component: LayoutSidebar,
   render: () => ({
     components: { LayoutSidebar },

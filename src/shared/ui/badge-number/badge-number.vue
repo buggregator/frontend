@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed } from "vue"
 
 type Props = {
   number: number
@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<Props>(), {
   isVisible: true
 })
 
-const normalizedNumber = computed(() => (props.number > 99 ? '*' : props.number))
+const normalizedNumber = computed(() => (props.number > 99 ? "*" : props.number))
 const isVisibleBadge = computed(() => props.number > 0 && props.isVisible)
 </script>
 
@@ -28,7 +28,7 @@ const isVisibleBadge = computed(() => props.number > 0 && props.isVisible)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .badge-number {
   @apply relative inline-flex;

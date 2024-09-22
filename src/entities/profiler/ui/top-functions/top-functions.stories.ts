@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import { profilerMock } from '../../mocks'
-import TopFunctions from './top-functions.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import { profilerMock } from "../../mocks"
+import TopFunctions from "./top-functions.vue"
 
 export default {
-  title: 'Entities/Profiler/TopFunctions',
+  title: "Entities/Profiler/TopFunctions",
   component: TopFunctions
 } as Meta<typeof TopFunctions>
 

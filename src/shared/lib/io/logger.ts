@@ -1,6 +1,6 @@
-import type { LoggerParams } from './types'
+import type { LoggerParams } from "./types"
 
-const isProduction: boolean = (import.meta.env.VITE_APP_MODE as string) === 'production'
+const isProduction: boolean = (import.meta.env.VITE_APP_MODE as string) === "production"
 
 export const logger = (params: LoggerParams): void => {
   if (isProduction) {

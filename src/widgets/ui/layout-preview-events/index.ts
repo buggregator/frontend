@@ -1,1 +1,1 @@
-export { default as LayoutPreviewEvents } from './layout-preview-events.vue'
+export { default as LayoutPreviewEvents } from "./layout-preview-events.vue"

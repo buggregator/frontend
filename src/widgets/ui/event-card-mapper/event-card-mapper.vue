@@ -1,21 +1,21 @@
 <script lang="ts" setup generic="T">
-import { computed, defineProps } from 'vue'
-import { useHttpDump, PreviewCard as PreviewHttpDump } from '@/entities/http-dump'
-import { useInspector, PreviewCard as PreviewInspector } from '@/entities/inspector'
-import { useMonolog, PreviewCard as PreviewMonolog } from '@/entities/monolog'
-import { useProfiler, PreviewCard as PreviewProfiler } from '@/entities/profiler'
-import { useRay, PreviewCard as PreviewRay } from '@/entities/ray'
-import { useSentry, PreviewCard as PreviewSentry } from '@/entities/sentry'
-import { useSmtp, PreviewCard as PreviewSMTP } from '@/entities/smtp'
-import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump'
-import { useEvents } from '@/shared/lib/use-events'
+import { computed, defineProps } from "vue"
+import { useHttpDump, PreviewCard as PreviewHttpDump } from "@/entities/http-dump"
+import { useInspector, PreviewCard as PreviewInspector } from "@/entities/inspector"
+import { useMonolog, PreviewCard as PreviewMonolog } from "@/entities/monolog"
+import { useProfiler, PreviewCard as PreviewProfiler } from "@/entities/profiler"
+import { useRay, PreviewCard as PreviewRay } from "@/entities/ray"
+import { useSentry, PreviewCard as PreviewSentry } from "@/entities/sentry"
+import { useSmtp, PreviewCard as PreviewSMTP } from "@/entities/smtp"
+import { useVarDump, PreviewCard as PreviewVarDump } from "@/entities/var-dump"
+import { useEvents } from "@/shared/lib/use-events"
 import {
   type ServerEvent,
   type EventType,
   EventTypes,
   type MappedEventsProps
-} from '@/shared/types'
-import { PreviewCardDefault } from '../preview-card-default'
+} from "@/shared/types"
+import { PreviewCardDefault } from "../preview-card-default"
 
 const { normalizeRayEvent } = useRay()
 

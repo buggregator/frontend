@@ -1,4 +1,4 @@
-import type { Attachment, Uuid } from '@/shared/types'
+import type { Attachment, Uuid } from "@/shared/types"
 
 export interface HttpDumpServer {
   received_at: string
@@ -24,7 +24,7 @@ export interface HttpDumpServer {
 }
 
 export interface HttpDump extends HttpDumpServer {
-  request: Omit<HttpDumpServer['request'], 'files'> & {
+  request: Omit<HttpDumpServer["request"], "files"> & {
     files?: Attachment[]
   }
 }

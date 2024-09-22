@@ -1,4 +1,4 @@
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router"
 
 export type TRouterMiddleware = (params: {
   to: RouteLocationNormalized

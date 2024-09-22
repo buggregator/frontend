@@ -1,8 +1,8 @@
-import { storeToRefs } from 'pinia'
-import type { Ref } from 'vue'
-import { useEventsStore } from '../../stores'
-import type { EventId, EventType, ServerEvent } from '../../types'
-import { useApiTransport } from '../use-api-transport'
+import { storeToRefs } from "pinia"
+import type { Ref } from "vue"
+import { useEventsStore } from "../../stores"
+import type { EventId, EventType, ServerEvent } from "../../types"
+import { useApiTransport } from "../use-api-transport"
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>

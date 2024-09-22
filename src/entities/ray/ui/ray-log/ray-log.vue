@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ValueDump } from '@/shared/ui'
+import { ValueDump } from "@/shared/ui"
 
 type Props = {
   log: string | number

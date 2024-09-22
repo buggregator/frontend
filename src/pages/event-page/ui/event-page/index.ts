@@ -1,1 +1,1 @@
-export { default as EventPage } from './event-page.vue'
+export { default as EventPage } from "./event-page.vue"

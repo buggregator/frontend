@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard } from '@/shared/ui'
-import type { Inspector } from '../../types'
-import InspectorStatBoard from '../inspector-stat-board/inspector-stat-board.vue'
+import { computed, defineProps } from "vue"
+import type { NormalizedEvent } from "@/shared/types"
+import { PreviewCard } from "@/shared/ui"
+import type { Inspector } from "../../types"
+import InspectorStatBoard from "../inspector-stat-board/inspector-stat-board.vue"
 
 type Props = {
   event: NormalizedEvent<Inspector>
@@ -29,7 +29,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .preview-card {
 }

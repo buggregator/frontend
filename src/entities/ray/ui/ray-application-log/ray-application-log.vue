@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { RayContentApplicationLog } from '../../types'
+import type { RayContentApplicationLog } from "../../types"
 
 type Props = {
   content: RayContentApplicationLog
@@ -13,7 +13,7 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .ray-application-log {
   @include code-example();

@@ -11,8 +11,8 @@ export const textToColors = (input: string): string[] => {
   // Extract up to three characters from the input string
   const chars =
     input.length >= 3
-      ? input.slice(0, 3).split('')
-      : input.padEnd(3, input[0]).slice(0, 3).split('')
+      ? input.slice(0, 3).split("")
+      : input.padEnd(3, input[0]).slice(0, 3).split("")
 
   // Calculate the hue for each character
   // Generate the HSL colors list

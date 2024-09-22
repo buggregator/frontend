@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import IconSvg from './icon-svg.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import IconSvg from "./icon-svg.vue"
 
-const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || '').split(',')
+const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || "").split(",")
 
 export default {
-  title: 'Shared/IconSvg',
+  title: "Shared/IconSvg",
   component: IconSvg,
   argTypes: {
     name: {
-      control: { type: 'select' },
+      control: { type: "select" },
       options: iconNames
     }
   },
@@ -26,7 +26,7 @@ export default {
 
 export const Default: StoryObj<typeof IconSvg> = {
   args: {
-    name: 'github'
+    name: "github"
   }
 }
 export const AllIcons: StoryObj<typeof IconSvg> = {

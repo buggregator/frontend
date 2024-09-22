@@ -1,4 +1,4 @@
-import type { Uuid } from './events'
+import type { Uuid } from "./events"
 
 export interface Source {
   file: string
@@ -16,11 +16,11 @@ export interface Attachment {
 }
 
 export enum GraphTypes {
-  CPU = 'cpu',
-  WALL_TIME = 'wt',
-  MEMORY_CHANGE = 'pmu',
-  MEMORY = 'mu',
-  CALLS = 'ct'
+  CPU = "cpu",
+  WALL_TIME = "wt",
+  MEMORY_CHANGE = "pmu",
+  MEMORY = "mu",
+  CALLS = "ct"
 }
 
 export type StatsBase = {

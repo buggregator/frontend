@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
-import { RouteName } from '@/shared/types'
+import { useTitle } from "@vueuse/core"
+import { LayoutBase, LayoutSidebar } from "@/widgets/ui"
+import { RouteName } from "@/shared/types"
 
-useTitle('404 | Buggregator')
+useTitle("404 | Buggregator")
 </script>
 
 <template>
@@ -27,7 +27,7 @@ useTitle('404 | Buggregator')
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .error {
   @apply text-gray-600 dark:text-gray-300;

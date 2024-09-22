@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import type { ComponentProps } from 'vue-component-type-helpers'
-import { useRay } from '../../lib'
-import { rayExceptionMock } from '../../mocks'
-import type { RayContentException } from '../../types'
-import RayFile from './ray-file.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import type { ComponentProps } from "vue-component-type-helpers"
+import { useRay } from "../../lib"
+import { rayExceptionMock } from "../../mocks"
+import type { RayContentException } from "../../types"
+import RayFile from "./ray-file.vue"
 
 const { normalizeRayEvent } = useRay()
 
 export default {
-  title: 'Entities/ray/RayFile',
+  title: "Entities/ray/RayFile",
   component: RayFile,
   render: (args: ComponentProps<typeof RayFile>) => ({
     components: { RayFile },

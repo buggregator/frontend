@@ -1,8 +1,8 @@
-import { storeToRefs } from 'pinia'
-import { RouteAuthAccessError, RouteAvailabilityError } from '@/shared/lib/errors'
-import { useProfileStore, useSettingsStore } from '@/shared/stores'
-import { RouteName, EventTypes } from '@/shared/types'
-import { type TRouterMiddleware } from './types'
+import { storeToRefs } from "pinia"
+import { RouteAuthAccessError, RouteAvailabilityError } from "@/shared/lib/errors"
+import { useProfileStore, useSettingsStore } from "@/shared/stores"
+import { RouteName, EventTypes } from "@/shared/types"
+import { type TRouterMiddleware } from "./types"
 
 export const auth: TRouterMiddleware = async ({ to, next }) => {
   const settingsStore = useSettingsStore()
@@ -53,14 +53,14 @@ export const checkType: TRouterMiddleware = async ({ to, next }) => {
   }
 
   if (Array.isArray(pageType)) {
-    throw new RouteAvailabilityError('Invalid Path parameter', to.path)
+    throw new RouteAvailabilityError("Invalid Path parameter", to.path)
   }
 
   if (
     !Object.values(RouteName).includes(pageType as RouteName) &&
     !Object.values(EventTypes).includes(pageType as EventTypes)
   ) {
-    throw new RouteAvailabilityError('Invalid Path', to.path)
+    throw new RouteAvailabilityError("Invalid Path", to.path)
   }
 
   return

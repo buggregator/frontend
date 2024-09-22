@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
-import { PAGE_TYPES } from '../../constants'
-import { useSettings } from '../../lib/use-settings'
+import { defineStore } from "pinia"
+import { PAGE_TYPES } from "../../constants"
+import { useSettings } from "../../lib/use-settings"
 import {
   type EventId,
   type EventType,
@@ -8,8 +8,8 @@ import {
   type PageEventTypes,
   type TProjects,
   EventTypes
-} from '../../types'
-import { useSettingsStore } from '../settings'
+} from "../../types"
+import { useSettingsStore } from "../settings"
 import {
   getStoredLockedIds,
   setStoredCachedIds,
@@ -18,8 +18,8 @@ import {
   setStoredProject,
   removeStoredProject,
   getStoredProject
-} from './local-storage-actions'
-import type { TEventsCachedIdsMap } from './types'
+} from "./local-storage-actions"
+import type { TEventsCachedIdsMap } from "./types"
 
 const MAX_EVENTS_COUNT = 500
 
@@ -35,13 +35,13 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[]
 }
 
-export const useEventsStore = defineStore('eventsStore', {
+export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
     projects: {
-      available: [] as TProjects['data'],
+      available: [] as TProjects["data"],
       activeKey: undefined as string | undefined
     }
   }),
@@ -227,7 +227,7 @@ export const useEventsStore = defineStore('eventsStore', {
     initActiveProjectKey() {
       this.projects.activeKey = getStoredProject() || this.activeProjectKey
     },
-    setAvailableProjects(projects: TProjects['data']) {
+    setAvailableProjects(projects: TProjects["data"]) {
       if (projects.length > 0) {
         this.projects.available = projects
 

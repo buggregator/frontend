@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from 'vue'
-import type { SentryException } from '../../types'
-import SentryExceptionFrame from './sentry-exception-frame.vue'
+import { computed, defineProps, withDefaults } from "vue"
+import type { SentryException } from "../../types"
+import SentryExceptionFrame from "./sentry-exception-frame.vue"
 
 type Props = {
   exception: SentryException
@@ -50,7 +50,7 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .sentry-exception {
   @apply flex flex-col;

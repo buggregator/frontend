@@ -1,1 +1,1 @@
-export { default as HttpDumpPage } from './http-dump-page.vue'
+export { default as HttpDumpPage } from "./http-dump-page.vue"

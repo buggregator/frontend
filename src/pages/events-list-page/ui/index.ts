@@ -1,1 +1,1 @@
-export * from './events-list-page'
+export * from "./events-list-page"

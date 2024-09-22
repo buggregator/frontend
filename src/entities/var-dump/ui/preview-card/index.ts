@@ -1,3 +1,3 @@
-import PreviewCard from './preview-card.vue'
+import PreviewCard from "./preview-card.vue"
 
 export { PreviewCard }

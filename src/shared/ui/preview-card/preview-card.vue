@@ -1,13 +1,13 @@
 <script lang="ts" setup generic="T">
-import download from 'downloadjs'
-import { toBlob, toPng } from 'html-to-image'
-import { ref, computed, onBeforeMount, onMounted } from 'vue'
-import { REST_API_URL } from '../../lib/io'
-import { useEvents } from '../../lib/use-events'
-import type { NormalizedEvent } from '../../types'
-import PreviewCardFooter from './preview-card-footer.vue'
-import PreviewCardHeader from './preview-card-header.vue'
-import { DownloadType } from './types'
+import download from "downloadjs"
+import { toBlob, toPng } from "html-to-image"
+import { ref, computed, onBeforeMount, onMounted } from "vue"
+import { REST_API_URL } from "../../lib/io"
+import { useEvents } from "../../lib/use-events"
+import type { NormalizedEvent } from "../../types"
+import PreviewCardFooter from "./preview-card-footer.vue"
+import PreviewCardHeader from "./preview-card-header.vue"
+import { DownloadType } from "./types"
 
 type Props = {
   event: NormalizedEvent<T>
@@ -86,7 +86,7 @@ const downloadFile = async () => {
       download(
         JSON.stringify(event, null, 2),
         `${props.event.type}-${props.event.id}.json`,
-        'application/json'
+        "application/json"
       )
     }
   } catch (e) {

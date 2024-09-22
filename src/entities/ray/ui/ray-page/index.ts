@@ -1,1 +1,1 @@
-export { default as RayPage } from './ray-page.vue'
+export { default as RayPage } from "./ray-page.vue"

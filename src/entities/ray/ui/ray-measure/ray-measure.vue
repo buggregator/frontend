@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { TableBase, TableBaseRow } from '@/shared/ui'
-import type { RayContentMeasure } from '../../types'
+import { computed } from "vue"
+import { TableBase, TableBaseRow } from "@/shared/ui"
+import type { RayContentMeasure } from "../../types"
 
 type Props = {
   measure: RayContentMeasure
@@ -11,12 +11,12 @@ const props = defineProps<Props>()
 
 const convertMilliseconds = (milliseconds: number): string => (milliseconds / 1000).toFixed(4)
 
-const prettySize = (bytes: number, separator = '', postFix = ''): string => {
+const prettySize = (bytes: number, separator = "", postFix = ""): string => {
   if (!bytes) {
-    return 'n/a'
+    return "n/a"
   }
 
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
   const i = Math.min(
     Number(parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))), 10)),
     sizes.length - 1

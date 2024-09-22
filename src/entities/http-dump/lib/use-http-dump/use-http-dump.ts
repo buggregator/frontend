@@ -1,6 +1,6 @@
-import type { ServerEvent, NormalizedEvent } from '@/shared/types'
-import type { HttpDump, HttpDumpServer } from '../../types'
-import { normalizeHttpDumpEvent } from './normalize-http-dump-event'
+import type { ServerEvent, NormalizedEvent } from "@/shared/types"
+import type { HttpDump, HttpDumpServer } from "../../types"
+import { normalizeHttpDumpEvent } from "./normalize-http-dump-event"
 
 type TUseInspector = () => {
   normalizeHttpDumpEvent: (event: ServerEvent<HttpDumpServer>) => NormalizedEvent<HttpDump>

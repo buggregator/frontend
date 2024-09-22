@@ -1,6 +1,6 @@
-import type { ElementsDefinition } from 'cytoscape'
-import type { StatsBase } from '@/shared/types'
-import type { StatBoardCost } from '@/shared/ui'
+import type { ElementsDefinition } from "cytoscape"
+import type { StatsBase } from "@/shared/types"
+import type { StatBoardCost } from "@/shared/ui"
 
 export interface ProfilerCost {
   d_cpu: number
@@ -40,7 +40,7 @@ export interface ProfilerTopFunctions {
     key: string
     label: string
     sortable: boolean
-    values: { key: keyof ProfilerCost; format: string; type?: 'sub' }[]
+    values: { key: keyof ProfilerCost; format: string; type?: "sub" }[]
   }[]
   overall_totals: StatBoardCost
 }
@@ -60,7 +60,7 @@ export interface ProfileFlameChart {
   duration: number
   name: string
   start: number
-  type: 'task' | string
+  type: "task" | string
 }
 
 export type CallStackHoverData = { title: string; cost: Partial<ProfilerCost> }

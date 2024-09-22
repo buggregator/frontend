@@ -1,6 +1,6 @@
-import moment from 'moment'
-import { type ServerEvent, type NormalizedEvent, EventTypes } from '@/shared/types'
-import type { Inspector, InspectorTransaction } from '../../types'
+import moment from "moment"
+import { type ServerEvent, type NormalizedEvent, EventTypes } from "@/shared/types"
+import type { Inspector, InspectorTransaction } from "../../types"
 
 export const normalizeInspectorEvent = (
   event: ServerEvent<Inspector>
@@ -18,7 +18,7 @@ export const normalizeInspectorEvent = (
   }
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format('HH:mm:ss'))
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"))
   }
 
   return normalizedEvent

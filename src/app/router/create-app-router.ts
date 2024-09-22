@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { RouteAuthAccessError, RouteAvailabilityError } from '@/shared/lib/errors'
-import { RouteName } from '@/shared/types'
-import { routes } from './routes'
-import type { TRouterMiddleware } from './types'
+import { createRouter, createWebHistory } from "vue-router"
+import { RouteAuthAccessError, RouteAvailabilityError } from "@/shared/lib/errors"
+import { RouteName } from "@/shared/types"
+import { routes } from "./routes"
+import type { TRouterMiddleware } from "./types"
 
 export const createAppRouter = () => {
   const router = createRouter({

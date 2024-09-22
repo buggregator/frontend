@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { REST_API_URL } from '@/shared/lib/io'
-import { useEvents } from '@/shared/lib/use-events'
-import { RouteName, type Uuid } from '@/shared/types'
-import { AppHeader } from '@/shared/ui'
+import { computed } from "vue"
+import { useRouter } from "vue-router"
+import { REST_API_URL } from "@/shared/lib/io"
+import { useEvents } from "@/shared/lib/use-events"
+import { RouteName, type Uuid } from "@/shared/types"
+import { AppHeader } from "@/shared/ui"
 
 type Props = {
   title: string
@@ -17,7 +17,7 @@ const { events } = useEvents()
 const router = useRouter()
 
 const eventsListLink = computed(() =>
-  router.currentRoute.value.path.replace(`/${props.eventId}`, '')
+  router.currentRoute.value.path.replace(`/${props.eventId}`, "")
 )
 const onDelete = () => {
   events.removeById(props.eventId)
@@ -64,7 +64,7 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .page-event-header {
   @apply flex justify-between h-full flex-wrap py-1 gap-1;

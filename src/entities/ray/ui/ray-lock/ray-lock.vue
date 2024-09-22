@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useEvents } from '@/shared/lib/use-events'
-import type { RayContentLock } from '../../types'
+import { ref } from "vue"
+import { useEvents } from "@/shared/lib/use-events"
+import type { RayContentLock } from "../../types"
 
 type Props = {
-  name: RayContentLock['name']
+  name: RayContentLock["name"]
 }
 
 const props = defineProps<Props>()

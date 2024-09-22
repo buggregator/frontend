@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { useSettingsStore } from '@/shared/stores'
-import type { RayFrame } from '../../types'
+import { storeToRefs } from "pinia"
+import { computed } from "vue"
+import { useSettingsStore } from "@/shared/stores"
+import type { RayFrame } from "../../types"
 
 type Props = {
   frame: RayFrame
@@ -27,7 +27,7 @@ const callLink = computed(
       class="ray-frame__name"
       :href="callLink"
     >
-      <code class="ray-frame__code"> {{ frame.class || 'null' }}:{{ frame.method }} </code>
+      <code class="ray-frame__code"> {{ frame.class || "null" }}:{{ frame.method }} </code>
     </a>
   </div>
 </template>

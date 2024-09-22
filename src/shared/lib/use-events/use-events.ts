@@ -1,11 +1,11 @@
-import { storeToRefs } from 'pinia'
-import type { Ref } from 'vue'
-import type { RayContentLock } from '@/entities/ray/types'
-import { type TEventsCachedIdsMap, useEventsStore } from '../../stores'
-import type { ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes } from '../../types'
-import { useApiTransport } from '../use-api-transport'
-import { normalizeUnknownEvent } from './normalize-unknown-event'
-import { type TUseEventsApi, useEventsApi } from './use-events-api'
+import { storeToRefs } from "pinia"
+import type { Ref } from "vue"
+import type { RayContentLock } from "@/entities/ray/types"
+import { type TEventsCachedIdsMap, useEventsStore } from "../../stores"
+import type { ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes } from "../../types"
+import { useApiTransport } from "../use-api-transport"
+import { normalizeUnknownEvent } from "./normalize-unknown-event"
+import { type TUseEventsApi, useEventsApi } from "./use-events-api"
 
 type TUseEvents = () => {
   normalizeUnknownEvent: (event: ServerEvent<unknown>) => NormalizedEvent<unknown>
@@ -22,8 +22,8 @@ type TUseEvents = () => {
     remove: (id: EventId) => void
   }
   rayExecution: {
-    continue: (contentName: RayContentLock['name']) => void
-    stop: (contentName: RayContentLock['name']) => void
+    continue: (contentName: RayContentLock["name"]) => void
+    stop: (contentName: RayContentLock["name"]) => void
   }
 }
 

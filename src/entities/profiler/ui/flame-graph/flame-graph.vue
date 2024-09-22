@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { FlameChart } from 'flame-chart-js'
-import debounce from 'lodash.debounce'
-import { ref, onMounted, nextTick, onBeforeUnmount, computed } from 'vue'
-import type { EventId } from '@/shared/types'
-import type { StatBoardCost } from '@/shared/ui'
-import { useProfiler } from '../../lib'
-import type { CallStackHoverData } from '../../types'
-import { CallStatBoard } from '../../ui/call-stat-board'
+import { FlameChart } from "flame-chart-js"
+import debounce from "lodash.debounce"
+import { ref, onMounted, nextTick, onBeforeUnmount, computed } from "vue"
+import type { EventId } from "@/shared/types"
+import type { StatBoardCost } from "@/shared/ui"
+import { useProfiler } from "../../lib"
+import type { CallStackHoverData } from "../../types"
+import { CallStatBoard } from "../../ui/call-stat-board"
 
 type Props = {
   id: EventId
@@ -89,7 +89,7 @@ const renderChart = async () => {
   flameChart.render()
 
   window.addEventListener(
-    'resize',
+    "resize",
     debounce(() => {
       if (!graph.value) {
         return

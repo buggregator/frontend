@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import moment from 'moment/moment'
-import { computed } from 'vue'
-import type { NormalizedEvent, OneOfValues } from '@/shared/types'
-import { TableBase, TableBaseRow } from '@/shared/ui'
-import { useRay } from '../../lib'
-import { RayEventTypes, type RayDump } from '../../types'
+import moment from "moment/moment"
+import { computed } from "vue"
+import type { NormalizedEvent, OneOfValues } from "@/shared/types"
+import { TableBase, TableBaseRow } from "@/shared/ui"
+import { useRay } from "../../lib"
+import { RayEventTypes, type RayDump } from "../../types"
 
 type Props = {
   event: NormalizedEvent<RayDump>
@@ -15,12 +15,12 @@ const { COMPONENT_TYPE_MAP } = useRay()
 const props = defineProps<Props>()
 
 const title = computed(() => {
-  const type = String(props.event.payload.payloads[0].type || 'Unknown type')
+  const type = String(props.event.payload.payloads[0].type || "Unknown type")
 
   return type[0].toUpperCase() + type.slice(1)
 })
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"))
 
 const classes = computed(() =>
   props.event?.meta ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`] : []
@@ -95,7 +95,7 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 </template>
 
 <style lang="scss" scoped>
-@import '../../../../assets/mixins';
+@import "../../../../assets/mixins";
 
 .ray {
   @apply relative;

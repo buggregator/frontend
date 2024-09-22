@@ -1,1 +1,1 @@
-export { default as CallStatBoard } from './call-stat-board.vue'
+export { default as CallStatBoard } from "./call-stat-board.vue"

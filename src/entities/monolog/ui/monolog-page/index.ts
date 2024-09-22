@@ -1,1 +1,1 @@
-export { default as MonologPage } from './monolog-page.vue'
+export { default as MonologPage } from "./monolog-page.vue"

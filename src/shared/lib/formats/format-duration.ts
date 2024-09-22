@@ -19,8 +19,8 @@ export const formatDuration = (inputMs: number) => {
     .map(
       ([key, val]) =>
         `${
-          key === 'ms' && Number(val.toFixed(4)) % 1 !== 0 ? val.toFixed(4) : val.toFixed(0)
+          key === "ms" && Number(val.toFixed(4)) % 1 !== 0 ? val.toFixed(4) : val.toFixed(0)
         } ${key}`
     )
-    .join(', ')
+    .join(", ")
 }

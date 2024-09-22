@@ -1,15 +1,15 @@
-import type { RayDump, RayDumpMeta } from '@/entities/ray/types'
-import type { OneOfValues } from './generics'
+import type { RayDump, RayDumpMeta } from "@/entities/ray/types"
+import type { OneOfValues } from "./generics"
 
 export enum EventTypes {
-  VarDump = 'var-dump',
-  Smtp = 'smtp',
-  Sentry = 'sentry',
-  Profiler = 'profiler',
-  Monolog = 'monolog',
-  Inspector = 'inspector',
-  HttpDump = 'http-dump',
-  RayDump = 'ray'
+  VarDump = "var-dump",
+  Smtp = "smtp",
+  Sentry = "sentry",
+  Profiler = "profiler",
+  Monolog = "monolog",
+  Inspector = "inspector",
+  HttpDump = "http-dump",
+  RayDump = "ray"
 }
 
 // TODO: add T prefix to all types
@@ -29,7 +29,7 @@ export interface ServerEvent<T> {
 
 export interface NormalizedEvent<T> {
   id: EventId
-  type: EventType | 'unknown'
+  type: EventType | "unknown"
   labels: (string | { title: string; value: string; context: string })[]
   origin: object | null
   serverName: string

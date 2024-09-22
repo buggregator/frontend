@@ -1,1 +1,1 @@
-export { default as InspectorPage } from './inspector-page.vue'
+export { default as InspectorPage } from "./inspector-page.vue"

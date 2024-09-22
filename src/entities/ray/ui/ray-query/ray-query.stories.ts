@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/vue3'
-import { useRay } from '../../lib'
-import { rayLaravelQueryMock, rayLaravelQueryNoBindingsMock } from '../../mocks-laravel'
-import type { RayContentSQL } from '../../types'
-import RayQuery from './ray-query.vue'
+import type { Meta, StoryObj } from "@storybook/vue3"
+import { useRay } from "../../lib"
+import { rayLaravelQueryMock, rayLaravelQueryNoBindingsMock } from "../../mocks-laravel"
+import type { RayContentSQL } from "../../types"
+import RayQuery from "./ray-query.vue"
 
 const { normalizeRayEvent } = useRay()
 
 export default {
-  title: 'Entities/ray/RayQuery',
+  title: "Entities/ray/RayQuery",
   component: RayQuery
 } as Meta<typeof RayQuery>
 

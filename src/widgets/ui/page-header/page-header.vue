@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { ALL_EVENT_TYPES } from '@/shared/constants'
-import { useEvents } from '@/shared/lib/use-events'
-import { useSettingsStore } from '@/shared/stores'
-import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
-import { AppHeader, BadgeNumber, PauseButton } from '@/shared/ui'
+import { storeToRefs } from "pinia"
+import { computed } from "vue"
+import { ALL_EVENT_TYPES } from "@/shared/constants"
+import { useEvents } from "@/shared/lib/use-events"
+import { useSettingsStore } from "@/shared/stores"
+import { type EventType, type PageEventTypes, RouteName } from "@/shared/types"
+import { AppHeader, BadgeNumber, PauseButton } from "@/shared/ui"
 
 const { events, cachedEvents, getItemsCount } = useEvents()
 const { isVisibleEventCounts } = storeToRefs(useSettingsStore())
@@ -101,7 +101,7 @@ const badgeNumber = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@import "src/assets/mixins";
 
 .page-header {
   @apply flex justify-between h-full;

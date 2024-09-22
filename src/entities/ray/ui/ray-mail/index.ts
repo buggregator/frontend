@@ -1,1 +1,1 @@
-export { default as RayMail } from './ray-mail.vue'
+export { default as RayMail } from "./ray-mail.vue"
