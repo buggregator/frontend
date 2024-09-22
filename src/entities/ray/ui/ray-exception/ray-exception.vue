@@ -1,12 +1,24 @@
 <script lang="ts" setup>
-import type { RayContentException } from "../../types";
-import { RayFile } from "../ray-file";
+import { computed, defineProps, withDefaults } from 'vue'
+import type { RayContentException } from '../../types'
+import { RayFile } from '../ray-file'
+
+const RAY_MAX_EXCEPTION_FRAMES = 10
 
 type Props = {
-  exception: RayContentException;
-};
+  exception: RayContentException
+  maxFrames?: number
+}
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  maxFrames: 0
+})
+
+const exceptionFrames = computed(() => {
+  const frames = props.exception.frames || []
+
+  return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse()
+})
 </script>
 
 <template>
@@ -22,18 +34,13 @@ defineProps<Props>();
     </header>
 
     <div class="ray-exception__files">
-      <RayFile
-        v-for="(file, i) in exception.frames"
-        :key="i"
-        :file="file"
-        :collapsed="i !== 0"
-      />
+      <RayFile v-for="(file, i) in exceptionFrames" :key="i" :file="file" :is-open="i !== 0" />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .ray-exception {
   @apply flex flex-col;
 }
