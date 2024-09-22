@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import { TableBase, TableBaseRow, CodeSnippet } from "~/src/shared/ui";
-import type { RayContentSQL } from "../../types";
+import { computed } from 'vue'
+import { TableBase, TableBaseRow, CodeSnippet } from '@/shared/ui'
+import type { RayContentSQL } from '../../types'
 
 type Props = {
-  content: RayContentSQL;
-};
+  content: RayContentSQL
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const formattedSql = computed(() =>
   (props.content?.bindings || []).reduce(
-    (result, binding) => (result || "").replace(/\?/, `'${binding}'`),
-    props.content?.sql || ""
+    (result, binding) => (result || '').replace(/\?/, `'${binding}'`),
+    props.content?.sql || ''
   )
-);
+)
 </script>
 
 <template>

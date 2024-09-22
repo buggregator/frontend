@@ -1,5 +1,5 @@
 import {
-  RAY_EVENT_TYPES,
+  RayEventTypes,
   type RayContentApplicationLog,
   type RayContentCarbon,
   type RayContentCustom,
@@ -36,107 +36,107 @@ import { RayTable } from "../../ui/ray-table";
 import { RayTrace } from "../../ui/ray-trace";
 import { RayView } from "../../ui/ray-view";
 
-export const COMPONENT_TYPE_MAP: Record<RAY_EVENT_TYPES, {
+export const COMPONENT_TYPE_MAP: Record<RayEventTypes, {
   view: unknown,
   getProps: (payload: RayPayload) => Record<string, unknown>
 }> = {
-  [RAY_EVENT_TYPES.LOG]: {
+  [RayEventTypes.Log]: {
     view: RayLog,
     getProps: (payload: RayPayload) => ({
       log: (payload.content as RayContentLog).values[0],
     }),
   },
-  [RAY_EVENT_TYPES.CUSTOM]: {
+  [RayEventTypes.Custom]: {
     view: RayCustom,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentCustom,
     }),
   },
-  [RAY_EVENT_TYPES.CALLER]: {
+  [RayEventTypes.Caller]: {
     view: RayFrame,
     getProps: (payload: RayPayload) => ({
       frame: (payload.content as RayContentFrame).frame,
     }),
   },
-  [RAY_EVENT_TYPES.CARBON]: {
+  [RayEventTypes.Carbon]: {
     view: RayCarbon,
     getProps: (payload: RayPayload) => ({
       carbon: payload.content as RayContentCarbon,
     }),
   },
-  [RAY_EVENT_TYPES.TRACE]: {
+  [RayEventTypes.Trace]: {
     view: RayTrace,
     getProps: (payload: RayPayload) => ({
       frames: (payload.content as RayContentFrames).frames,
     }),
   },
-  [RAY_EVENT_TYPES.EXCEPTION]: {
+  [RayEventTypes.Exception]: {
     view: RayException,
     getProps: (payload: RayPayload) => ({
       exception: payload.content as RayContentException,
     }),
   },
-  [RAY_EVENT_TYPES.TABLE]: {
+  [RayEventTypes.Table]: {
     view: RayTable,
     getProps: (payload: RayPayload) => ({
       table: payload.content as RayContentObject,
     }),
   },
-  [RAY_EVENT_TYPES.MEASURE]: {
+  [RayEventTypes.Measure]: {
     view: RayMeasure,
     getProps: (payload: RayPayload) => ({
       measure: payload.content as RayContentMeasure,
     }),
   },
-  [RAY_EVENT_TYPES.QUERY]: {
+  [RayEventTypes.Query]: {
     view: RayQuery,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentSQL,
     }),
   },
-  [RAY_EVENT_TYPES.ELOQUENT]: {
+  [RayEventTypes.Eloquent]: {
     view: RayEloquent,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentEloquent,
     }),
   },
-  [RAY_EVENT_TYPES.APPLICATION_LOG]: {
+  [RayEventTypes.ApplicationLog]: {
     view: RayApplicationLog,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentApplicationLog,
     }),
   },
-  [RAY_EVENT_TYPES.VIEW]: {
+  [RayEventTypes.View]: {
     view: RayView,
     getProps: (payload: RayPayload) => ({
       view: payload.content as RayContentView,
     }),
   },
-  [RAY_EVENT_TYPES.EVENT]: {
+  [RayEventTypes.Event]: {
     view: RayEvent,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentEvent,
     }),
   },
-  [RAY_EVENT_TYPES.JOB]: {
+  [RayEventTypes.Job]: {
     view: RayJob,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentJob,
     }),
   },
-  [RAY_EVENT_TYPES.LOCK]: {
+  [RayEventTypes.Lock]: {
     view: RayLock,
     getProps: (payload: RayPayload) => ({
       name: (payload.content as RayContentLock).name,
     }),
   },
-  [RAY_EVENT_TYPES.MAILABLE]: {
+  [RayEventTypes.Mailable]: {
     view: RayMail,
     getProps: (payload: RayPayload) => ({
       content: payload.content as RayContentMail,
     }),
   },
-  [RAY_EVENT_TYPES.NOTIFY]: {
+  [RayEventTypes.Notify]: {
     view: RayOrigin,
     getProps: (payload: RayPayload) => ({ origin: payload.origin }),
   },

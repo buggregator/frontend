@@ -3,5 +3,5 @@ import profilerMock from './profiler.json';
 
 export {
   profilerMock,
-  profilerEdgesMock
+  profilerEdgesMock,
 }

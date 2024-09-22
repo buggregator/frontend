@@ -1,4 +1,4 @@
 import type {EventId} from "../../types/events";
-import type { TEventsGroup } from "../../types/pages";
+import type { PageEventTypes } from "../../types/pages";
 
-export type TEventsCachedIdsMap = Record<TEventsGroup, EventId[]>;
+export type TEventsCachedIdsMap = Record<PageEventTypes, EventId[]>;

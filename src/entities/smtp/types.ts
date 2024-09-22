@@ -1,5 +1,5 @@
 export interface SMTPUser {
-  name: string,
+  name?: string,
   email: string,
 }
 

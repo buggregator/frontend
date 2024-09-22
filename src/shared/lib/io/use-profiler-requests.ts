@@ -1,4 +1,5 @@
-import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions} from "~/src/entities/profiler/types";
+import { storeToRefs } from "pinia";
+import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions} from "@/entities/profiler/types";
 import {useProfileStore} from "../../stores";
 import type { EventId } from "../../types";
 import { REST_API_URL } from "./constants";
@@ -6,7 +7,7 @@ import { REST_API_URL } from "./constants";
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
   getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
-  getFlameChart: (id: EventId) => Promise<ProfileFlameChart>
+  getFlameChart: (id: EventId) => Promise<ProfileFlameChart[]>
 }
 
 enum ProfilerPartType {

@@ -1,25 +1,25 @@
-export enum RAY_EVENT_TYPES {
-  LOG = "log",
+export enum RayEventTypes {
+  Log = "log",
   // SIZE = "size",
-  CUSTOM = "custom",
+  Custom = "custom",
   // LABEL = "label",
-  CALLER = "caller",
-  CARBON = "carbon",
+  Caller = "caller",
+  Carbon = "carbon",
   // COLOR = "color",
-  EXCEPTION = "exception",
+  Exception = "exception",
   // HIDE = "hide",
-  MEASURE = "measure",
-  NOTIFY = "notify",
-  MAILABLE = "mailable",
-  TABLE = "table",
-  TRACE = "trace",
-  QUERY = "executed_query",
-  APPLICATION_LOG = "application_log",
-  ELOQUENT = "eloquent_model",
-  VIEW = "view",
-  EVENT = "event",
-  JOB = "job_event",
-  LOCK = "create_lock",
+  Measure = "measure",
+  Notify = "notify",
+  Mailable = "mailable",
+  Table = "table",
+  Trace = "trace",
+  Query = "executed_query",
+  ApplicationLog = "application_log",
+  Eloquent = "eloquent_model",
+  View = "view",
+  Event = "event",
+  Job = "job_event",
+  Lock = "create_lock",
 }
 
 export interface RayFrame {
@@ -160,7 +160,7 @@ export interface RayContentCustom {
 }
 
 export interface RayPayload {
-  type: RAY_EVENT_TYPES | string,
+  type: RayEventTypes | string,
   origin?: RayPayloadOrigin,
   content: RayContentException
     | RayContent

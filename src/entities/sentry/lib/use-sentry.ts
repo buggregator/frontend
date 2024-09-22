@@ -1,4 +1,4 @@
-import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { ServerEvent, NormalizedEvent } from '@/shared/types';
 import type { Sentry } from "../types";
 import { normalizeSentryEvent } from "./normalize-sentry-event";
 

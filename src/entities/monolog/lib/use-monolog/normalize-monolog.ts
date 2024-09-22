@@ -1,13 +1,12 @@
 import moment from "moment/moment";
-import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import {type ServerEvent, type NormalizedEvent, EventTypes} from "@/shared/types";
 import type { Monolog } from "../../types";
 
 export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<Monolog> => {
   const normalizedEvent: NormalizedEvent<Monolog> = {
     id: event.uuid,
-    type: EVENT_TYPES.MONOLOG,
-    labels: [EVENT_TYPES.MONOLOG, event.payload.channel],
+    type: EventTypes.Monolog,
+    labels: [EventTypes.Monolog, event.payload.channel],
     origin: event.payload?.context?.source || null,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { ValueDump } from "~/src/shared/ui";
-import type { RayContentView } from "../../types";
+import { ValueDump } from '@/shared/ui'
+import type { RayContentView } from '../../types'
 
 type Props = {
-  view: RayContentView;
-};
+  view: RayContentView
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>

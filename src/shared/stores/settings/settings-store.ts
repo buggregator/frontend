@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {REST_API_URL} from "../../lib/io/constants";
-import {EVENT_TYPES, type EventType, type TSettings} from "../../types";
+import {type EventType, EventTypes, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -25,6 +25,9 @@ export const useSettingsStore = defineStore("settingsStore", {
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     availableEvents: [] as EventType[],
   }),
+  getters: {
+    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+  },
   actions: {
     async fetchSettings() {
       // TODO: need to remove fetch out of the store
@@ -46,7 +49,7 @@ export const useSettingsStore = defineStore("settingsStore", {
       }
 
       // TODO: meed to move to the events store
-      this.availableEvents = settings?.client?.events ?? Object.values(EVENT_TYPES);
+      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
 
       this.isFetched = true
 

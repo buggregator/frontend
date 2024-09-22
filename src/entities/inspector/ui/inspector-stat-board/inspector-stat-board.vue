@@ -1,20 +1,16 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { defineProps, computed } from "vue";
-import type { InspectorTransaction } from "../../types";
+import moment from 'moment'
+import { defineProps, computed } from 'vue'
+import type { InspectorTransaction } from '../../types'
 
 type Props = {
-  transaction: InspectorTransaction;
-};
+  transaction: InspectorTransaction
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const processDate = computed(() =>
-  moment(props.transaction.timestamp).toLocaleString()
-);
-const processResult = computed(() =>
-  (props.transaction.result || "success").toUpperCase()
-);
+const processDate = computed(() => moment(props.transaction.timestamp).toLocaleString())
+const processResult = computed(() => (props.transaction.result || 'success').toUpperCase())
 </script>
 
 <template>
@@ -28,9 +24,7 @@ const processResult = computed(() =>
 
     <div class="inspector-stat-board__item">
       <h4 class="inspector-stat-board__item-name">Duration</h4>
-      <strong class="inspector-stat-board__item-value">
-        {{ transaction.duration }} ms
-      </strong>
+      <strong class="inspector-stat-board__item-value"> {{ transaction.duration }} ms </strong>
     </div>
 
     <div class="inspector-stat-board__item">

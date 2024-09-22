@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import type { Meta, StoryObj } from "@storybook/vue3";
-import { EVENT_TYPES } from "../../types";
+import { EventTypes} from "../../types";
 import PreviewCardHeader from './preview-card-header.vue';
 
 export default {
@@ -13,8 +13,8 @@ export default {
     onDownload: action('Downloaded event'),
     eventType: {
       control: { type: 'select' },
-      options: Object.values(EVENT_TYPES),
-      mapping: EVENT_TYPES
+      options: Object.values(EventTypes),
+      mapping: EventTypes
     },
   },
 } as Meta<typeof PreviewCardHeader>;
@@ -23,7 +23,7 @@ export default {
 export const Default: StoryObj<typeof PreviewCardHeader> = {
   args: {
     eventUrl: 'https://github.com/buggregator/spiral-app',
-    eventType: EVENT_TYPES.SENTRY,
+    eventType: EventTypes.Sentry,
     isOpen: true,
     isVisibleControls: true,
     eventId: 'test-event-id',

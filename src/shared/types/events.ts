@@ -1,23 +1,23 @@
-import type {RayDump, RayDumpMeta} from "~/src/entities/ray/types";
+import type {RayDump, RayDumpMeta} from "@/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
-// TODO: add T prefix to all types
-
-export enum EVENT_TYPES {
-  VAR_DUMP = "var-dump",
-  SMTP = "smtp",
-  SENTRY = "sentry",
-  PROFILER = "profiler",
-  MONOLOG = "monolog",
-  INSPECTOR = "inspector",
-  HTTP_DUMP = "http-dump",
-  RAY_DUMP = "ray",
+export enum EventTypes {
+  VarDump = "var-dump",
+  Smtp = "smtp",
+  Sentry = "sentry",
+  Profiler = "profiler",
+  Monolog = "monolog",
+  Inspector = "inspector",
+  HttpDump = "http-dump",
+  RayDump = "ray",
 }
+
+// TODO: add T prefix to all types
 
 export type EventId = string;
 export type Uuid = string;
 
-export type EventType = OneOfValues<typeof EVENT_TYPES>;
+export type EventType = OneOfValues<typeof EventTypes>;
 
 export interface ServerEvent<T> {
   uuid: EventId,
@@ -36,4 +36,9 @@ export interface NormalizedEvent<T> {
   date: Date | null,
   payload: T
   meta?: T extends RayDump ? RayDumpMeta: never
+}
+
+export interface MappedEventsProps<T> {
+  view: unknown;
+  normalize: (event: ServerEvent<T>) => NormalizedEvent<T>
 }

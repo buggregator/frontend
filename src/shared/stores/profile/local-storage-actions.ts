@@ -1,15 +1,15 @@
-import {LOCAL_STORAGE_KEYS} from "../../types";
+import {LocalStorageKeys} from "../../types";
 
 export const getStoredToken = (): string => {
-  const storedCodeEditor = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.Token);
 
   return storedCodeEditor || '';
 };
 
 export const setStoredToken = (token: string) => {
-  localStorage?.setItem(LOCAL_STORAGE_KEYS.TOKEN, token);
+  localStorage?.setItem(LocalStorageKeys.Token, token);
 }
 
 export const removeStoredToken = () => {
-  localStorage?.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
+  localStorage?.removeItem(LocalStorageKeys.Token);
 }

@@ -1,6 +1,5 @@
 # Ignore artifacts:
-.nuxt
-.output
+dist
 node-modules
 package-lock.json
 storybook-static

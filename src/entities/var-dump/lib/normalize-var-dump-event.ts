@@ -1,13 +1,12 @@
 import moment from "moment/moment";
-import type { ServerEvent, NormalizedEvent } from "~/src/shared/types";
-import { EVENT_TYPES } from "~/src/shared/types";
+import {type ServerEvent, type NormalizedEvent, EventTypes} from "@/shared/types";
 import type { VarDump } from "../types";
 
 export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent<VarDump> => {
   const normalizedEvent: NormalizedEvent<VarDump> = {
     id: event.uuid,
-    type: EVENT_TYPES.VAR_DUMP,
-    labels: [EVENT_TYPES.VAR_DUMP],
+    type: EventTypes.VarDump,
+    labels: [EventTypes.VarDump],
     origin: {
       file: event.payload.context?.source?.file || "",
       name: event.payload.context?.source?.name || "",

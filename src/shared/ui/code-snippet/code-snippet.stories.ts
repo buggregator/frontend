@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import { HTMLCode, PHPCode } from '../../mocks';
-import { EVENT_TYPES } from "../../types";
+import {EventTypes} from "../../types";
 import CodeSnippet from "./code-snippet.vue";
 
 export default {
@@ -19,7 +19,7 @@ export const Object: StoryObj<typeof CodeSnippet> = {
   args: {
     code: {
       id: 'da076402-6f98-4ada-bae2-d77d405cf427',
-      type: EVENT_TYPES.MONOLOG,
+      type: EventTypes.Monolog,
       serverName: "My server",
       origin: {
         one: 1,

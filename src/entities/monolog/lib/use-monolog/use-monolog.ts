@@ -1,4 +1,4 @@
-import type { ServerEvent, NormalizedEvent } from '~/src/shared/types';
+import type { ServerEvent, NormalizedEvent } from '@/shared/types';
 import type { Monolog } from "../../types";
 import { normalizeMonolog } from "./normalize-monolog";
 

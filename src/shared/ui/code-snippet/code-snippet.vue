@@ -1,41 +1,41 @@
 <script lang="ts" setup>
-import highlightPlugin from "@highlightjs/vue-plugin";
-import isString from "lodash/isString";
-import { ref, computed } from "vue";
-import { IconSvg } from "../icon-svg";
+import highlightPlugin from '@highlightjs/vue-plugin'
+import isString from 'lodash/isString'
+import { ref, computed } from 'vue'
+import { IconSvg } from '../icon-svg'
 
-const CodeHighlight = highlightPlugin.component;
+const CodeHighlight = highlightPlugin.component
 
 type Props = {
-  code?: string | Record<string, unknown> | Array<unknown> | null;
-  language?: string;
-};
+  code?: string | Record<string, unknown> | Array<unknown> | null
+  language?: string
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  language: "plaintext",
-  code: "",
-});
+  language: 'plaintext',
+  code: ''
+})
 
-const isCopied = ref(false);
+const isCopied = ref(false)
 
 const normalizedCode = computed(() =>
-  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code,
-);
+  !isString(props.code) ? JSON.stringify(props.code, null, ' ') : props.code
+)
 
 const copyCode = (): void => {
-  isCopied.value = true;
+  isCopied.value = true
 
   navigator.clipboard
     .writeText(normalizedCode.value)
     .then(() => {
       setTimeout(() => {
-        isCopied.value = false;
-      }, 200);
+        isCopied.value = false
+      }, 200)
     })
     .catch((e) => {
-      console.error(e);
-    });
-};
+      console.error(e)
+    })
+}
 </script>
 
 <template>
@@ -50,11 +50,7 @@ const copyCode = (): void => {
       Copy
     </button>
 
-    <CodeHighlight
-      :language="language"
-      :autodetect="false"
-      :code="normalizedCode"
-    />
+    <CodeHighlight :language="language" :autodetect="false" :code="normalizedCode" />
   </div>
 </template>
 

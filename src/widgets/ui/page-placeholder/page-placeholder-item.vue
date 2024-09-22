@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { IconSvg } from "~/src/shared/ui";
+import { IconSvg } from '@/shared/ui'
 
 type Props = {
-  iconName: string;
-  title: string;
-  linkUrl: string;
-};
+  iconName: string
+  title: string
+  linkUrl: string
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
