@@ -134,6 +134,7 @@ onMounted(getAttachmentsRequest)
             suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
           >
             <EmailPreview :device="EmailPreviewDevice.Tablet">
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="htmlSource" />
             </EmailPreview>
           </Tab>

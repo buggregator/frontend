@@ -82,6 +82,7 @@ const getValuesField = (values: RayUser[]) => {
         v-if="!collapsed"
         :device="EmailPreviewDevice.Tablet"
       >
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="content.html" />
       </EmailPreview>
     </div>

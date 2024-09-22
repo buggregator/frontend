@@ -51,11 +51,13 @@ onMounted(() => {
       :language="language"
       :code="String(dumpBody)"
     />
+    <!-- eslint-disable vue/no-v-html -->
     <div
       v-if="!isValueString && !isValueCode"
       class="value-dump__html"
       v-html="baseSanitizedHtml"
     />
+    <!-- eslint-enable -->
   </div>
 </template>
 
