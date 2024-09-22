@@ -7,7 +7,7 @@ import {
 } from "@/shared/types";
 import type { HttpDump, HttpDumpServer } from "../../types";
 
-// TODO: remove eslint comment
+// TODO: eslint remove comment
 // eslint-disable-next-line max-len
 export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>): NormalizedEvent<HttpDump> => {
   const normalizedEvent: NormalizedEvent<HttpDump> = {

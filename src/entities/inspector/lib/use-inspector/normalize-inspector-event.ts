@@ -2,7 +2,7 @@ import moment from "moment";
 import { type ServerEvent, type NormalizedEvent, EventTypes } from "@/shared/types";
 import type { Inspector, InspectorTransaction } from "../../types";
 
-// TODO: remove eslint comment
+// TODO: eslint remove comment
 // eslint-disable-next-line max-len
 export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): NormalizedEvent<Inspector> => {
   const transaction = event.payload[0] as InspectorTransaction;

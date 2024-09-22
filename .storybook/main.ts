@@ -7,24 +7,24 @@ const config = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
-    "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)"
+    "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
 
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions"
+    "@storybook/addon-interactions",
   ],
 
   framework: {
     name: "@storybook/vue3-vite",
-    options: {}
+    options: {},
   },
 
   env: (config) => {
     const iconComponentFolder = path.resolve(
       __dirname,
-      "../src/shared/ui/icon-svg/icon-svg-originals"
+      "../src/shared/ui/icon-svg/icon-svg-originals",
     )
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
       ? []
@@ -34,22 +34,22 @@ const config = {
           .filter((dirent) => dirent.isFile())
           .map((dirent) => path.parse(dirent.name).name)
           .filter((name) => !String(name).includes("IconSvg"))
-          .join()
+          .join();
 
     return {
       ...config,
-      STORYBOOK_ICON_SVG_NAMES: allIconNamesList
+      STORYBOOK_ICON_SVG_NAMES: allIconNamesList,
     }
   },
 
   viteFinal: async (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@/src": fileURLToPath(new URL("../src", import.meta.url))
+      "@/src": fileURLToPath(new URL("../src", import.meta.url)),
     }
 
-    return config
+    return config;
   }
 }
 
-export default config
+export default config;

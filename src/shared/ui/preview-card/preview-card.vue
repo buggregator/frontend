@@ -27,7 +27,7 @@ const isDeleting = ref(false);
 const isInit = ref(true);
 const { events, lockedIds } = useEvents();
 
-// TODO: fix eslint rule to newline in array function
+// TODO: eslint fix rule to newline in array function
 const normalizedOrigin = computed(() => {
   const originEntriesList = Object.entries(props.event.origin || {})
     .map(([key, value]) =>
