@@ -1,2 +1,1 @@
-export * from "./use-var-dump";
-
+export * from './use-var-dump'

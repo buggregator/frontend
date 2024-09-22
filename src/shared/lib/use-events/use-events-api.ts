@@ -1,9 +1,8 @@
-import { storeToRefs } from "pinia";
-import type { Ref } from 'vue';
-import { useEventsStore } from "../../stores";
-import type { EventId, EventType, ServerEvent } from '../../types';
+import { storeToRefs } from 'pinia'
+import type { Ref } from 'vue'
+import { useEventsStore } from '../../stores'
+import type { EventId, EventType, ServerEvent } from '../../types'
 import { useApiTransport } from '../use-api-transport'
-
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
@@ -15,26 +14,18 @@ export type TUseEventsApi = {
 }
 
 export const useEventsApi = (): TUseEventsApi => {
-  const eventsStore = useEventsStore();
+  const eventsStore = useEventsStore()
 
-  const {
-    lockedIds,
-    events,
-  } = storeToRefs(eventsStore)
+  const { lockedIds, events } = storeToRefs(eventsStore)
 
-  const {
-    deleteEventsAll,
-    deleteEventsList,
-    deleteEventsByType,
-    getEventsAll,
-    getEvent,
-  } = useApiTransport();
+  const { deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent } =
+    useApiTransport()
 
   const removeList = async (uuids: EventId[]) => {
     const res = await deleteEventsList(uuids)
 
     if (res) {
-      eventsStore.removeByIds(uuids);
+      eventsStore.removeByIds(uuids)
     }
   }
 
@@ -74,21 +65,23 @@ export const useEventsApi = (): TUseEventsApi => {
     const res = await deleteEventsByType(eventType)
 
     if (res) {
-      eventsStore.removeByType(eventType);
+      eventsStore.removeByType(eventType)
     }
   }
 
   const getAll = () => {
-    getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
-      if (eventsList.length) {
-        eventsStore.initializeEvents(eventsList);
-      } else {
-        // NOTE: clear cached events hardly
-        eventsStore.removeAll();
-      }
-    }).catch((e) => {
-      console.error(e);
-    })
+    getEventsAll()
+      .then((eventsList: ServerEvent<unknown>[]) => {
+        if (eventsList.length) {
+          eventsStore.initializeEvents(eventsList)
+        } else {
+          // NOTE: clear cached events hardly
+          eventsStore.removeAll()
+        }
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   }
 
   return {
@@ -97,6 +90,6 @@ export const useEventsApi = (): TUseEventsApi => {
     getAll,
     removeAll,
     removeByType,
-    removeById,
+    removeById
   }
 }

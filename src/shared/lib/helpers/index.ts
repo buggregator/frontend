@@ -1,2 +1,2 @@
-export * from './htmlEncode';
-export * from './textToColors';
+export * from './htmlEncode'
+export * from './textToColors'

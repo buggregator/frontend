@@ -14,7 +14,6 @@ Buggregator is a comprehensive, lightweight server designed for debugging applic
 
 ![storybook](https://github.com/buggregator/frontend/assets/773481/4a7166ee-2f3e-4fda-b7c5-ede3b2601abc)
 
-
 ## Documentation, Installation and Usage Instructions
 
 See the [documentation](https://docs.buggregator.dev/) for detailed installation and usage instructions.

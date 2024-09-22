@@ -1,1 +1,1 @@
-export { default as TopFunctions } from './top-functions.vue';
+export { default as TopFunctions } from './top-functions.vue'

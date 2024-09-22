@@ -1,7 +1,7 @@
-import {defineStore} from "pinia";
-import {REST_API_URL} from "../../lib/io/constants";
-import {type EventType, EventTypes, type TSettings} from "../../types";
-import {THEME_MODES} from "./constants";
+import { defineStore } from 'pinia'
+import { REST_API_URL } from '../../lib/io/constants'
+import { type EventType, EventTypes, type TSettings } from '../../types'
+import { THEME_MODES } from './constants'
 import {
   getStoredEventsCountVisibility,
   getStoredFixedHeader,
@@ -10,10 +10,10 @@ import {
   setStoredFixedHeader,
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
-  setStoredPrimaryCodeEditor,
-} from "./local-storage-actions";
+  setStoredPrimaryCodeEditor
+} from './local-storage-actions'
 
-export const useSettingsStore = defineStore("settingsStore", {
+export const useSettingsStore = defineStore('settingsStore', {
   state: () => ({
     apiVersion: '',
     isFetched: false,
@@ -23,10 +23,10 @@ export const useSettingsStore = defineStore("settingsStore", {
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
-    availableEvents: [] as EventType[],
+    availableEvents: [] as EventType[]
   }),
   getters: {
-    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`
   },
   actions: {
     async fetchSettings() {
@@ -34,48 +34,46 @@ export const useSettingsStore = defineStore("settingsStore", {
       const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
         .then((response) => response.json())
         .catch((e) => {
-          console.error(e);
+          console.error(e)
 
           return null
-        });
+        })
 
       if (settings.version) {
         this.apiVersion = settings.version
       }
 
       if (settings.auth) {
-        this.isAuthEnabled = settings.auth.enabled;
-        this.authLogicUrl = settings.auth.login_url;
+        this.isAuthEnabled = settings.auth.enabled
+        this.authLogicUrl = settings.auth.login_url
       }
 
       // TODO: meed to move to the events store
-      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
+      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes)
 
       this.isFetched = true
 
       return settings
     },
     changeTheme() {
-      this.themeType = this.themeType === THEME_MODES.DARK
-        ? THEME_MODES.LIGHT
-        : THEME_MODES.DARK;
+      this.themeType = this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK
 
       setStoredActiveTheme(this.themeType)
     },
     changeNavbar() {
-      this.isFixedHeader = !this.isFixedHeader;
+      this.isFixedHeader = !this.isFixedHeader
 
       setStoredFixedHeader(this.isFixedHeader)
     },
     changeEventCountsVisibility() {
-      this.isVisibleEventCounts = !this.isVisibleEventCounts;
+      this.isVisibleEventCounts = !this.isVisibleEventCounts
 
       setStoredEventsCountVisibility(this.isVisibleEventCounts)
     },
     changeActiveCodeEditor(editor: string) {
-      this.codeEditor = editor;
+      this.codeEditor = editor
 
-      setStoredPrimaryCodeEditor(editor);
+      setStoredPrimaryCodeEditor(editor)
     }
-  },
-});
+  }
+})

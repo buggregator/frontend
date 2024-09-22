@@ -1,4 +1,3 @@
-
 import { SfdumpWrap } from './dumper'
 
 const dump = SfdumpWrap(window.document)

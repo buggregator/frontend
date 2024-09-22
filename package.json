@@ -10,15 +10,14 @@
     "postinstall": "yarn prepare",
     "prepare": "husky && husky install",
     "lint": "yarn codestyle && yarn typecheck",
-    "codestyle": "eslint . --fix",
+    "codestyle": "prettier --write ./src && eslint ./src --fix",
     "test": "echo \"TODO: need to add tests\"",
     "storybook": "storybook dev -p 6006",
     "sb": "storybook dev -p 6006",
     "test:unit": "vitest",
     "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
-    "typecheck": "vue-tsc --build --force",
-    "format": "prettier --write src/"
+    "typecheck": "vue-tsc --build --force"
   },
   "type": "module",
   "lint-staged": {

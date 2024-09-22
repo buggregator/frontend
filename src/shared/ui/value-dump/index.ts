@@ -1,3 +1,3 @@
-import ValueDump from './value-dump.vue';
+import ValueDump from './value-dump.vue'
 
-export { ValueDump };
+export { ValueDump }

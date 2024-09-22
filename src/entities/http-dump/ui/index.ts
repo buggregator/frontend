@@ -1,2 +1,2 @@
-export * from './preview-card';
-export * from './http-dump-page';
+export * from './preview-card'
+export * from './http-dump-page'

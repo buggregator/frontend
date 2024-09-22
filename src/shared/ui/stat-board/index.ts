@@ -1,6 +1,4 @@
-import StatBoard from "./stat-board.vue";
-export * from "./types";
+import StatBoard from './stat-board.vue'
+export * from './types'
 
-export {
-  StatBoard
-}
+export { StatBoard }

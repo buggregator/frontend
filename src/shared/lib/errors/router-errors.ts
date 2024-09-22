@@ -1,7 +1,7 @@
 export class RouteAvailabilityError extends Error {
   constructor(message: string, routeName: string) {
-    super(message);
-    this.name = "RouteAvailabilityError";
+    super(message)
+    this.name = 'RouteAvailabilityError'
 
     console.error(`RouteAvailabilityError: the route ${routeName} is not available`)
   }
@@ -9,8 +9,8 @@ export class RouteAvailabilityError extends Error {
 
 export class RouteAuthAccessError extends Error {
   constructor(message: string, routeName: string) {
-    super(message);
-    this.name = "RouteAuthAccessError";
+    super(message)
+    this.name = 'RouteAuthAccessError'
 
     console.error(`RouteAuthAccessError: the route ${routeName} is not permitted without token`)
   }

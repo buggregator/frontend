@@ -1,1 +1,1 @@
-export { default as RayQuery } from './ray-query.vue';
+export { default as RayQuery } from './ray-query.vue'

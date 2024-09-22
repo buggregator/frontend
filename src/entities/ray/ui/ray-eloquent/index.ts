@@ -1,1 +1,1 @@
-export { default as RayEloquent } from './ray-eloquent.vue';
+export { default as RayEloquent } from './ray-eloquent.vue'

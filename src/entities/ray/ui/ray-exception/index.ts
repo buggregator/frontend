@@ -1,1 +1,1 @@
-export { default as RayException } from './ray-exception.vue';
+export { default as RayException } from './ray-exception.vue'

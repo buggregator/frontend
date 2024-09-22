@@ -1,1 +1,1 @@
-export type OneOfValues<T> = T[keyof T];
+export type OneOfValues<T> = T[keyof T]

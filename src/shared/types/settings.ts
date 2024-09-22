@@ -1,27 +1,26 @@
-import {type EventType} from "./events";
+import { type EventType } from './events'
 
-export type TProfile =  {
-  username: string,
-  email: string,
-  avatar: string,
+export type TProfile = {
+  username: string
+  email: string
+  avatar: string
 }
 
 export type TSettings = {
   auth: {
-    enabled: boolean,
-    login_url: string,
-  },
-  version: string,
+    enabled: boolean
+    login_url: string
+  }
+  version: string
   client: {
-    events: EventType[],
+    events: EventType[]
   }
 }
 
-
 export type TProjects = {
   data: {
-    name: string,
-    key: string,
-    is_default: boolean,
+    name: string
+    key: string
+    is_default: boolean
   }[]
 }

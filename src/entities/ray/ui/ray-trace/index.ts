@@ -1,1 +1,1 @@
-export { default as RayTrace } from './ray-trace.vue';
+export { default as RayTrace } from './ray-trace.vue'

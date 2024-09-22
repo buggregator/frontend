@@ -1,3 +1,3 @@
-import PageHeader from "./page-header.vue";
+import PageHeader from './page-header.vue'
 
-export { PageHeader };
+export { PageHeader }

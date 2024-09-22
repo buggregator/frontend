@@ -5,4 +5,3 @@ export type TRouterMiddleware = (params: {
   from: RouteLocationNormalized
   next: NavigationGuardNext
 }) => Promise<undefined>
-

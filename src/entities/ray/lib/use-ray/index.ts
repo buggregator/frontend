@@ -1,2 +1,1 @@
-export * from "./use-ray";
-
+export * from './use-ray'

@@ -1,2 +1,1 @@
-export * from "./use-smtp";
-
+export * from './use-smtp'

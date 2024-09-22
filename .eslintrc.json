@@ -45,6 +45,7 @@
         "ts": "never",
         "tsx": "never"
       }
-    ]
+    ],
+    "comma-dangle": ["error", "never"]
   }
 }

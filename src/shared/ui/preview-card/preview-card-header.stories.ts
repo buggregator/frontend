@@ -1,10 +1,10 @@
 import { action } from '@storybook/addon-actions'
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { EventTypes} from "../../types";
-import PreviewCardHeader from './preview-card-header.vue';
+import type { Meta, StoryObj } from '@storybook/vue3'
+import { EventTypes } from '../../types'
+import PreviewCardHeader from './preview-card-header.vue'
 
 export default {
-  title: "Shared/PreviewCardHeader",
+  title: 'Shared/PreviewCardHeader',
   component: PreviewCardHeader,
   argTypes: {
     onDelete: action('Delete event'),
@@ -15,10 +15,9 @@ export default {
       control: { type: 'select' },
       options: Object.values(EventTypes),
       mapping: EventTypes
-    },
-  },
-} as Meta<typeof PreviewCardHeader>;
-
+    }
+  }
+} as Meta<typeof PreviewCardHeader>
 
 export const Default: StoryObj<typeof PreviewCardHeader> = {
   args: {
@@ -27,6 +26,6 @@ export const Default: StoryObj<typeof PreviewCardHeader> = {
     isOpen: true,
     isVisibleControls: true,
     eventId: 'test-event-id',
-    labels: ['one', 'two', 'tree'],
+    labels: ['one', 'two', 'tree']
   }
-};
+}

@@ -1,18 +1,17 @@
-import type {Meta, StoryObj} from "@storybook/vue3";
-import StatBoard from "./stat-board.vue";
-import {StatBoardSize} from "./types";
+import type { Meta, StoryObj } from '@storybook/vue3'
+import StatBoard from './stat-board.vue'
+import { StatBoardSize } from './types'
 
 export default {
-  title: "Shared/StatBoard",
+  title: 'Shared/StatBoard',
   component: StatBoard,
   argTypes: {
     size: {
       control: 'select',
-      options: [...Object.values(StatBoardSize), undefined],
-    },
-  },
-} as Meta<typeof StatBoard>;
-
+      options: [...Object.values(StatBoardSize), undefined]
+    }
+  }
+} as Meta<typeof StatBoard>
 
 export const Default: StoryObj<typeof StatBoard> = {
   args: {
@@ -22,10 +21,9 @@ export const Default: StoryObj<typeof StatBoard> = {
       cpu: 44750,
       mu: 3112176,
       pmu: 3001416
-    },
+    }
   }
-};
-
+}
 
 export const LargePeaks: StoryObj<typeof StatBoard> = {
   args: {
@@ -34,10 +32,10 @@ export const LargePeaks: StoryObj<typeof StatBoard> = {
       wt: 2062700000,
       cpu: 447500000,
       mu: 31121760000,
-      pmu: 30014160000,
-    },
+      pmu: 30014160000
+    }
   }
-};
+}
 
 export const SmallSize: StoryObj<typeof StatBoard> = {
   args: {
@@ -50,4 +48,4 @@ export const SmallSize: StoryObj<typeof StatBoard> = {
     },
     size: StatBoardSize.Small
   }
-};
+}

@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
-import { PAGE_TYPES} from "../../constants";
-import {useSettings} from "../../lib/use-settings";
+import { defineStore } from 'pinia'
+import { PAGE_TYPES } from '../../constants'
+import { useSettings } from '../../lib/use-settings'
 import {
   type EventId,
   type EventType,
@@ -8,18 +8,20 @@ import {
   type PageEventTypes,
   type TProjects,
   EventTypes
-} from '../../types';
-import {useSettingsStore} from "../settings";
+} from '../../types'
+import { useSettingsStore } from '../settings'
 import {
   getStoredLockedIds,
   setStoredCachedIds,
   setStoredLockedIds,
   getStoredCachedIds,
-  setStoredProject, removeStoredProject, getStoredProject
-} from "./local-storage-actions";
-import type {TEventsCachedIdsMap} from "./types";
+  setStoredProject,
+  removeStoredProject,
+  getStoredProject
+} from './local-storage-actions'
+import type { TEventsCachedIdsMap } from './types'
 
-const MAX_EVENTS_COUNT = 500;
+const MAX_EVENTS_COUNT = 500
 
 const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.Sentry]: [] as EventId[],
@@ -30,37 +32,41 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.VarDump]: [] as EventId[],
   [PAGE_TYPES.HttpDump]: [] as EventId[],
   [PAGE_TYPES.Monolog]: [] as EventId[],
-  [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
-};
+  [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[]
+}
 
-export const useEventsStore = defineStore("eventsStore", {
+export const useEventsStore = defineStore('eventsStore', {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],
-      activeKey: undefined as string | undefined,
+      activeKey: undefined as string | undefined
     }
   }),
   getters: {
-    eventsCounts: ({events}) => (eventType: EventTypes | undefined): number => {
-      // TODO: need to use common mapping with changed ids
-      const counts = {
-        [EventTypes.VarDump]: events.filter(({type}) => type === EventTypes.VarDump).length,
-        [EventTypes.Smtp]: events.filter(({type}) => type === EventTypes.Smtp).length,
-        [EventTypes.Sentry]: events.filter(({type}) => type === EventTypes.Sentry).length,
-        [EventTypes.Profiler]: events.filter(({type}) => type === EventTypes.Profiler).length,
-        [EventTypes.Monolog]: events.filter(({type}) => type === EventTypes.Monolog).length,
-        [EventTypes.Inspector]: events.filter(({type}) => type === EventTypes.Inspector).length,
-        [EventTypes.HttpDump]: events.filter(({type}) => type === EventTypes.HttpDump).length,
-        [EventTypes.RayDump]: events.filter(({type}) => type === EventTypes.RayDump).length
-      }
+    eventsCounts:
+      ({ events }) =>
+      (eventType: EventTypes | undefined): number => {
+        // TODO: need to use common mapping with changed ids
+        const counts = {
+          [EventTypes.VarDump]: events.filter(({ type }) => type === EventTypes.VarDump).length,
+          [EventTypes.Smtp]: events.filter(({ type }) => type === EventTypes.Smtp).length,
+          [EventTypes.Sentry]: events.filter(({ type }) => type === EventTypes.Sentry).length,
+          [EventTypes.Profiler]: events.filter(({ type }) => type === EventTypes.Profiler).length,
+          [EventTypes.Monolog]: events.filter(({ type }) => type === EventTypes.Monolog).length,
+          [EventTypes.Inspector]: events.filter(({ type }) => type === EventTypes.Inspector).length,
+          [EventTypes.HttpDump]: events.filter(({ type }) => type === EventTypes.HttpDump).length,
+          [EventTypes.RayDump]: events.filter(({ type }) => type === EventTypes.RayDump).length
+        }
 
-      return eventType && counts[eventType] != null ? counts[eventType] : events.length;
-    },
+        return eventType && counts[eventType] != null ? counts[eventType] : events.length
+      },
     cachedIdsTypesList({ cachedIds }) {
-      return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as PageEventTypes)
+      return Object.entries(cachedIds)
+        .filter(([_, value]) => value.length > 0)
+        .map(([key]) => key as PageEventTypes)
     },
     activeProjectKey: ({ projects }) => projects.activeKey,
     activeProject: ({ projects }) => {
@@ -70,178 +76,178 @@ export const useEventsStore = defineStore("eventsStore", {
       return storedProject || defaultProject || projects.available[0]
     },
     availableProjects: ({ projects }) => projects.available,
-    isMultipleProjects: ({ projects }) => (
-      projects.available.length > 1 ||
-      !projects.available.some((proj) => proj.is_default)
-    ),
+    isMultipleProjects: ({ projects }) =>
+      projects.available.length > 1 || !projects.available.some((proj) => proj.is_default)
   },
   actions: {
-    async initialize (): Promise<void> {
-      const {api: { getProjects }} = useSettings();
-      this.initActiveProjectKey();
+    async initialize(): Promise<void> {
+      const {
+        api: { getProjects }
+      } = useSettings()
+      this.initActiveProjectKey()
 
       try {
-        const { data } = await getProjects();
+        const { data } = await getProjects()
         if (data) {
-          this.setAvailableProjects(data);
+          this.setAvailableProjects(data)
         }
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
     },
     // events
-    initializeEvents (events: ServerEvent<unknown>[]): void {
-      const { availableEvents } = useSettingsStore();
+    initializeEvents(events: ServerEvent<unknown>[]): void {
+      const { availableEvents } = useSettingsStore()
 
       this.events = events
         .filter((el) => availableEvents.includes(el.type as EventType))
-        .slice(0, MAX_EVENTS_COUNT);
+        .slice(0, MAX_EVENTS_COUNT)
 
-      this.syncCachedWithActive(events.map(({ uuid }) => uuid));
-      this.initActiveProjectKey();
+      this.syncCachedWithActive(events.map(({ uuid }) => uuid))
+      this.initActiveProjectKey()
     },
     addList(events: ServerEvent<unknown>[]): void {
-      const { availableEvents } = useSettingsStore();
+      const { availableEvents } = useSettingsStore()
       events
         .filter((el) => availableEvents.includes(el.type as EventType))
         .forEach((event) => {
-        const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
-        if (!isExistedEvent) {
-          this.events.unshift(event)
+          const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid)
+          if (!isExistedEvent) {
+            this.events.unshift(event)
 
-          if (this.events.length > MAX_EVENTS_COUNT) {
-            this.events.pop()
-          }
-        } else {
-          this.events = this.events.map((el) => {
-            if (el.uuid !== event.uuid) {
-              return el; // add new
+            if (this.events.length > MAX_EVENTS_COUNT) {
+              this.events.pop()
             }
+          } else {
+            this.events = this.events.map((el) => {
+              if (el.uuid !== event.uuid) {
+                return el // add new
+              }
 
-            return event; // replace existed
-          });
-        }
-      });
+              return event // replace existed
+            })
+          }
+        })
     },
     removeAll() {
       if (this.lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => this.lockedIds.includes(uuid));
+        this.events = this.events.filter(({ uuid }) => this.lockedIds.includes(uuid))
 
         return
       }
 
-      this.events.length = 0;
+      this.events.length = 0
 
-      this.removeCachedAll();
+      this.removeCachedAll()
     },
     removeByIds(eventUuids: EventId[]) {
       if (this.lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid) || this.lockedIds.includes(uuid));
+        this.events = this.events.filter(
+          ({ uuid }) => !eventUuids.includes(uuid) || this.lockedIds.includes(uuid)
+        )
 
         return
       }
 
-      this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid));
+      this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid))
 
-      this.removeCachedByIds(eventUuids);
+      this.removeCachedByIds(eventUuids)
     },
     removeById(eventUuid: EventId) {
-      this.removeByIds([eventUuid]);
+      this.removeByIds([eventUuid])
 
-      this.removeCachedById(eventUuid);
+      this.removeCachedById(eventUuid)
     },
     removeByType(eventType: EventType) {
       if (this.lockedIds.length) {
-        this.events = this.events.filter(({ type, uuid }) => type !== eventType || this.lockedIds.includes(uuid));
+        this.events = this.events.filter(
+          ({ type, uuid }) => type !== eventType || this.lockedIds.includes(uuid)
+        )
 
         return
       }
 
-      this.events = this.events.filter(({ type }) => type !== eventType);
+      this.events = this.events.filter(({ type }) => type !== eventType)
     },
     // cached ids
     addCachedByType(cachedType: PageEventTypes) {
       this.events
-        .filter(({ type }) =>
-          type === cachedType || cachedType === PAGE_TYPES.ALL_EVENT_TYPES
-        )
+        .filter(({ type }) => type === cachedType || cachedType === PAGE_TYPES.ALL_EVENT_TYPES)
         .forEach((event) => {
-          this.cachedIds[cachedType].push(event.uuid);
-        });
+          this.cachedIds[cachedType].push(event.uuid)
+        })
 
-      setStoredCachedIds(this.cachedIds);
+      setStoredCachedIds(this.cachedIds)
     },
     removeCachedByType(type: PageEventTypes) {
-      this.cachedIds[type].length = 0;
-      setStoredCachedIds(this.cachedIds);
+      this.cachedIds[type].length = 0
+      setStoredCachedIds(this.cachedIds)
     },
     removeCachedByIds(uuids: EventId[]) {
       this.cachedIdsTypesList.forEach((type) => {
-        this.cachedIds[type] = this.cachedIds[type].filter(
-          (uuid: EventId) => !uuids.includes(uuid)
-        );
-      });
+        this.cachedIds[type] = this.cachedIds[type].filter((uuid: EventId) => !uuids.includes(uuid))
+      })
 
-      setStoredCachedIds(this.cachedIds);
+      setStoredCachedIds(this.cachedIds)
     },
     removeCachedById(eventUuid: EventId) {
-      this.removeCachedByIds([eventUuid]);
+      this.removeCachedByIds([eventUuid])
     },
     removeCachedAll() {
-      this.cachedIds = initialCachedIds;
-      setStoredCachedIds(this.cachedIds);
+      this.cachedIds = initialCachedIds
+      setStoredCachedIds(this.cachedIds)
     },
     syncCachedWithActive(activeIds: EventId[]) {
       if (!activeIds.length) {
-        this.removeCachedAll();
+        this.removeCachedAll()
 
-        return;
+        return
       }
 
       this.cachedIdsTypesList.forEach((type) => {
-        this.cachedIds[type] = this.cachedIds[type].filter(
-          (uuid: EventId) => activeIds.includes(uuid)
-        );
-      });
+        this.cachedIds[type] = this.cachedIds[type].filter((uuid: EventId) =>
+          activeIds.includes(uuid)
+        )
+      })
 
-      setStoredCachedIds(this.cachedIds);
+      setStoredCachedIds(this.cachedIds)
     },
     // locked ids
     removeLockedIds(eventUuid: EventId) {
-      this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
+      this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid)
 
-      setStoredLockedIds(this.lockedIds);
+      setStoredLockedIds(this.lockedIds)
     },
     addLockedIds(eventUuid: EventId) {
-      this.lockedIds.push(eventUuid);
+      this.lockedIds.push(eventUuid)
 
-      setStoredLockedIds(this.lockedIds);
+      setStoredLockedIds(this.lockedIds)
     },
     // projects
     initActiveProjectKey() {
-      this.projects.activeKey = getStoredProject() || this.activeProjectKey;
+      this.projects.activeKey = getStoredProject() || this.activeProjectKey
     },
     setAvailableProjects(projects: TProjects['data']) {
       if (projects.length > 0) {
-        this.projects.available = projects;
+        this.projects.available = projects
 
         if (!this.projects.activeKey) {
-          const defaultProject = projects.find((proj) => proj.is_default) || projects[0];
-          this.setActiveProjectKey(defaultProject.key);
+          const defaultProject = projects.find((proj) => proj.is_default) || projects[0]
+          this.setActiveProjectKey(defaultProject.key)
         }
       } else {
-        this.resetActiveProjectKey();
+        this.resetActiveProjectKey()
       }
     },
     setActiveProjectKey(project: string) {
-      this.projects.activeKey = project;
+      this.projects.activeKey = project
 
-      setStoredProject(project);
+      setStoredProject(project)
     },
     resetActiveProjectKey() {
-      this.projects.activeKey = undefined;
+      this.projects.activeKey = undefined
 
-      removeStoredProject();
+      removeStoredProject()
     }
-  },
-});
+  }
+})

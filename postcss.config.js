@@ -4,4 +4,4 @@ import tailwindConfig from './tailwind.config.js'
 
 export default {
   plugins: [autoprefixer, tailwind(tailwindConfig)]
-};
+}

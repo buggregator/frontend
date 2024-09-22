@@ -1,4 +1,4 @@
-@import "highlight.js/styles/github-dark.css";
-@import "tailwind.css";
-@import "symfony-var-dump.css";
-@import "./vue3-tabs-component.scss";
+@import 'highlight.js/styles/github-dark.css';
+@import 'tailwind.css';
+@import 'symfony-var-dump.css';
+@import './vue3-tabs-component.scss';

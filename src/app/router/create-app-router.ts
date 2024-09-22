@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors";
-import {RouteName} from "@/shared/types";
+import { RouteAuthAccessError, RouteAvailabilityError } from '@/shared/lib/errors'
+import { RouteName } from '@/shared/types'
 import { routes } from './routes'
 import type { TRouterMiddleware } from './types'
 
 export const createAppRouter = () => {
   const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes
   })
 
   router.beforeEach(async (to, from, next) => {
@@ -22,16 +22,16 @@ export const createAppRouter = () => {
     const context = {
       to,
       from,
-      next,
+      next
     }
 
     for (const middleware of middlewares) {
       try {
-        await middleware({...context})
+        await middleware({ ...context })
       } catch (e) {
         if (e instanceof RouteAuthAccessError) {
           next({
-            name: RouteName.Login,
+            name: RouteName.Login
           })
         }
         if (e instanceof RouteAvailabilityError) {

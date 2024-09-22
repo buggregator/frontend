@@ -1,3 +1,3 @@
-import CodeSnippet from "./code-snippet.vue";
+import CodeSnippet from './code-snippet.vue'
 
 export { CodeSnippet }
