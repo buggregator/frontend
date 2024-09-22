@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue"
-import { IconSvg } from "@/shared/ui"
-import type { Sentry, SentryContextRuntime, SentryContexts } from "../../types"
+import { computed, ref } from "vue";
+import { IconSvg } from "@/shared/ui";
+import type { Sentry, SentryContextRuntime, SentryContexts } from "../../types";
 
 type Props = {
-  payload: Sentry
-}
+  payload: Sentry;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const isModulesOpen = ref(false)
+const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
   const { name = "", version = "" } =
-    (props.payload.contexts?.runtime as SentryContextRuntime) || {}
+    (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
-  return { name, version }
-})
+  return { name, version };
+});
 
 const contextsOS = computed(() => {
-  const { name = "", version = "" } = (props.payload.contexts?.os as SentryContexts["os"]) || {}
+  const { name = "", version = "" } = (props.payload.contexts?.os as SentryContexts["os"]) || {};
 
-  return { name, version }
-})
+  return { name, version };
+});
 
 const boxes = computed(() => [
   {
@@ -40,7 +40,7 @@ const boxes = computed(() => [
     name: props.payload.sdk?.name,
     version: props.payload.sdk?.version
   }
-])
+]);
 
 const tags = computed(() => [
   {
@@ -63,16 +63,16 @@ const tags = computed(() => [
     name: "server name",
     value: props.payload.server_name
   }
-])
+]);
 
 const modules = computed(() => {
-  const mods = props.payload.modules || {}
+  const mods = props.payload.modules || {};
 
   return Object.keys(mods).map((name) => ({
     name,
     version: mods[name]
-  }))
-})
+  }));
+});
 </script>
 
 <template>

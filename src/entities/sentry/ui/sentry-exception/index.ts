@@ -1,3 +1,3 @@
-import SentryException from "./sentry-exception.vue"
+import SentryException from "./sentry-exception.vue";
 
-export { SentryException }
+export { SentryException };

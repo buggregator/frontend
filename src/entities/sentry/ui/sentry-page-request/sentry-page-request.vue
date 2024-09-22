@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { TableBase, TableBaseRow } from "@/shared/ui"
-import type { SentryRequest } from "../../types"
+import { TableBase, TableBaseRow } from "@/shared/ui";
+import type { SentryRequest } from "../../types";
 
 type Props = {
-  request: SentryRequest
-}
+  request: SentryRequest;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value)
+const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value);
 </script>
 
 <template>

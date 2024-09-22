@@ -1,4 +1,4 @@
-import type { Stylesheet } from "cytoscape"
+import type { Stylesheet } from "cytoscape";
 
 export const cytoscapeStyles: Stylesheet[] = [
   {
@@ -39,4 +39,4 @@ export const cytoscapeStyles: Stylesheet[] = [
       "control-point-distance": 5
     }
   }
-]
+];

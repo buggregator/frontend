@@ -1,70 +1,70 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, type Ref } from "vue"
-import type { InspectorSegment, InspectorTransaction, Inspector } from "../../types"
+import { computed, type ComputedRef, type Ref } from "vue";
+import type { InspectorSegment, InspectorTransaction, Inspector } from "../../types";
 
 type Props = {
-  payload: Inspector
-}
+  payload: Inspector;
+};
 
-const COLUMNS_NUMBER = 5
+const COLUMNS_NUMBER = 5;
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const segmentColor = (color: string): string => {
   switch (color) {
     case "sqlite":
-      return "#f97316" // orange-500
+      return "#f97316"; // orange-500
     case "view":
-      return "#3b82f6" // blue-500
+      return "#3b82f6"; // blue-500
     case "artisan":
-      return "#a855f7" // purple-500
+      return "#a855f7"; // purple-500
     case "pgsql":
-      return "#22c55e" // green-500
+      return "#22c55e"; // green-500
     default:
-      return "#64748b" // slate-500
+      return "#64748b"; // slate-500
   }
-}
+};
 
 const transaction: Ref<InspectorTransaction> = computed(
   () => props.payload[0] as InspectorTransaction
-)
+);
 
 const layoutCells = computed(() => {
-  const maxWidth = transaction.value.duration
-  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1)
+  const maxWidth = transaction.value.duration;
+  const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1);
 
   return new Array(COLUMNS_NUMBER).fill(null).reduceRight((acc, _, i) => {
-    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))))
+    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
 
     if (!i) {
       // NOTE: add last cell as full size without rounding
-      acc.push(maxWidth)
+      acc.push(maxWidth);
     }
 
-    return acc
-  }, [])
-})
+    return acc;
+  }, []);
+});
 
 const segments: ComputedRef<InspectorSegment[]> = computed(() =>
   props.payload
     .filter((item): item is InspectorSegment => item.model === "segment")
     .filter((el) => el?.transaction?.hash === transaction.value.hash)
-)
+);
 
 const segmentTypes = computed(() => {
-  const arr: string[] = []
+  const arr: string[] = [];
 
   segments.value.forEach((data) => {
     if (!arr.includes(data.type)) {
-      arr.push(data.type)
+      arr.push(data.type);
     }
-  })
+  });
 
-  return arr
-})
+  return arr;
+});
 
 const segmentRows = computed(() => {
-  const { duration } = transaction.value
+  const { duration } = transaction.value;
 
   return segments.value.map((segment: InspectorSegment) => ({
     label: segment.label,
@@ -73,8 +73,8 @@ const segmentRows = computed(() => {
     type: segment.type,
     widthPercent: Math.max(Number(((segment.duration * 100) / duration).toFixed(2)), 0.5),
     marginPercent: (((segment.start || 0) * 100) / duration).toFixed()
-  }))
-})
+  }));
+});
 </script>
 
 <template>

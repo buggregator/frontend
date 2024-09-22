@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import moment from "moment/moment"
-import { computed } from "vue"
-import type { NormalizedEvent } from "@/shared/types"
-import { CodeSnippet, TableBase, TableBaseRow } from "@/shared/ui"
-import type { Monolog } from "../../types"
+import moment from "moment/moment";
+import { computed } from "vue";
+import type { NormalizedEvent } from "@/shared/types";
+import { CodeSnippet, TableBase, TableBaseRow } from "@/shared/ui";
+import type { Monolog } from "../../types";
 
 type Props = {
-  event: NormalizedEvent<Monolog>
-}
+  event: NormalizedEvent<Monolog>;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"))
+const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 </script>
 
 <template>

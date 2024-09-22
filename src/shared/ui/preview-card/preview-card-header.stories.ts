@@ -1,7 +1,7 @@
-import { action } from "@storybook/addon-actions"
-import type { Meta, StoryObj } from "@storybook/vue3"
-import { EventTypes } from "../../types"
-import PreviewCardHeader from "./preview-card-header.vue"
+import { action } from "@storybook/addon-actions";
+import type { Meta, StoryObj } from "@storybook/vue3";
+import { EventTypes } from "../../types";
+import PreviewCardHeader from "./preview-card-header.vue";
 
 export default {
   title: "Shared/PreviewCardHeader",
@@ -17,7 +17,7 @@ export default {
       mapping: EventTypes
     }
   }
-} as Meta<typeof PreviewCardHeader>
+} as Meta<typeof PreviewCardHeader>;
 
 export const Default: StoryObj<typeof PreviewCardHeader> = {
   args: {
@@ -28,4 +28,4 @@ export const Default: StoryObj<typeof PreviewCardHeader> = {
     eventId: "test-event-id",
     labels: ["one", "two", "tree"]
   }
-}
+};

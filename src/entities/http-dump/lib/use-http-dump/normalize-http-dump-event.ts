@@ -1,6 +1,11 @@
-import moment from "moment/moment"
-import { type ServerEvent, type NormalizedEvent, type Attachment, EventTypes } from "@/shared/types"
-import type { HttpDump, HttpDumpServer } from "../../types"
+import moment from "moment/moment";
+import {
+  type ServerEvent,
+  type NormalizedEvent,
+  type Attachment,
+  EventTypes
+} from "@/shared/types";
+import type { HttpDump, HttpDumpServer } from "../../types";
 
 export const normalizeHttpDumpEvent = (
   event: ServerEvent<HttpDumpServer>
@@ -28,11 +33,11 @@ export const normalizeHttpDumpEvent = (
         )
       }
     }
-  }
+  };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"))
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
   }
 
-  return normalizedEvent
-}
+  return normalizedEvent;
+};

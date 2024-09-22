@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia"
-import { watch } from "vue"
-import { useEvents } from "@/shared/lib/use-events"
-import { useEventsStore } from "@/shared/stores"
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
+import { useEvents } from "@/shared/lib/use-events";
+import { useEventsStore } from "@/shared/stores";
 
-const { activeProjectKey } = storeToRefs(useEventsStore())
-const { events } = useEvents()
+const { activeProjectKey } = storeToRefs(useEventsStore());
+const { events } = useEvents();
 
 watch(
   () => activeProjectKey.value,
   () => {
-    events.getAll()
+    events.getAll();
   },
   { immediate: true }
-)
+);
 </script>
 
 <template>

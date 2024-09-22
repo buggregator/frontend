@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import type { NormalizedEvent } from "@/shared/types"
-import { PreviewCard } from "@/shared/ui"
-import type { HttpDump } from "../../types"
+import type { NormalizedEvent } from "@/shared/types";
+import { PreviewCard } from "@/shared/ui";
+import type { HttpDump } from "../../types";
 
 type Props = {
-  event: NormalizedEvent<HttpDump>
-}
+  event: NormalizedEvent<HttpDump>;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const uri = decodeURI(props.event.payload.request.uri)
+const uri = decodeURI(props.event.payload.request.uri);
 </script>
 
 <template>

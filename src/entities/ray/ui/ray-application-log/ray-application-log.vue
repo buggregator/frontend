@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { RayContentApplicationLog } from "../../types"
+import type { RayContentApplicationLog } from "../../types";
 
 type Props = {
-  content: RayContentApplicationLog
-}
+  content: RayContentApplicationLog;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>

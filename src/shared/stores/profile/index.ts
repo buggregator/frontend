@@ -1,1 +1,1 @@
-export { useProfileStore } from "./profile-store"
+export { useProfileStore } from "./profile-store";

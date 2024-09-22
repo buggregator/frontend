@@ -1,3 +1,3 @@
-import SentryPageBreadcrumbs from "./sentry-page-breadcrumbs.vue"
+import SentryPageBreadcrumbs from "./sentry-page-breadcrumbs.vue";
 
-export { SentryPageBreadcrumbs }
+export { SentryPageBreadcrumbs };

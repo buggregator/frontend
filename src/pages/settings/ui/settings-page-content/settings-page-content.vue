@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core"
-import { storeToRefs } from "pinia"
-import { computed } from "vue"
-import { THEME_MODES, useSettingsStore } from "@/shared/stores"
-import { BadgeNumber, IconSvg } from "@/shared/ui"
+import { useTitle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { THEME_MODES, useSettingsStore } from "@/shared/stores";
+import { BadgeNumber, IconSvg } from "@/shared/ui";
 
-const settingsStore = useSettingsStore()
+const settingsStore = useSettingsStore();
 const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
-  settingsStore
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore)
+  settingsStore;
+const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore);
 
-const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 
 // TODO: add throttle
 const changeCodeEditor = (event: Event) => {
-  const editor = (event.target as HTMLInputElement).value
-  changeActiveCodeEditor(editor)
-}
+  const editor = (event.target as HTMLInputElement).value;
+  changeActiveCodeEditor(editor);
+};
 
-useTitle("Settings | Buggregator")
+useTitle("Settings | Buggregator");
 </script>
 
 <template>

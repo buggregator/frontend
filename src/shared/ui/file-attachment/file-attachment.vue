@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import { useFormats } from "../../lib/formats"
-import type { Attachment } from "../../types"
+import { computed } from "vue";
+import { useFormats } from "../../lib/formats";
+import type { Attachment } from "../../types";
 
-const { formatFileSize } = useFormats()
+const { formatFileSize } = useFormats();
 
 type Props = {
-  eventId: string
-  attachment: Attachment
-  downloadUrl?: string
-}
+  eventId: string;
+  attachment: Attachment;
+  downloadUrl?: string;
+};
 
-const props = defineProps<Props>()
-const size = computed(() => formatFileSize(props.attachment.size || 0))
+const props = defineProps<Props>();
+const size = computed(() => formatFileSize(props.attachment.size || 0));
 </script>
 
 <template>

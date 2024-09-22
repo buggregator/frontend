@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue"
-import { IconSvg } from "@/shared/ui"
-import type { SentryFrame } from "../../types"
+import { computed, ref } from "vue";
+import { IconSvg } from "@/shared/ui";
+import type { SentryFrame } from "../../types";
 
 type Props = {
-  frame: SentryFrame
-  isOpen: boolean
-}
+  frame: SentryFrame;
+  isOpen: boolean;
+};
 
-const props = defineProps<Props>()
-const isFrameOpen = ref(props.isOpen)
+const props = defineProps<Props>();
+const isFrameOpen = ref(props.isOpen);
 
 const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
-)
+);
 
 const toggleOpen = () => {
   if (hasBody.value) {
-    isFrameOpen.value = !isFrameOpen.value
+    isFrameOpen.value = !isFrameOpen.value;
   }
-}
+};
 </script>
 
 <template>

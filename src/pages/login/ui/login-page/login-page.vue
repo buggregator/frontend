@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core"
-import { storeToRefs } from "pinia"
-import { useRouter } from "vue-router"
-import { LayoutBase } from "@/widgets/ui"
-import { useProfileStore, useSettingsStore } from "@/shared/stores"
-import { RouteName } from "@/shared/types"
-import { IconSvg } from "@/shared/ui"
+import { useTitle } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { LayoutBase } from "@/widgets/ui";
+import { useProfileStore, useSettingsStore } from "@/shared/stores";
+import { RouteName } from "@/shared/types";
+import { IconSvg } from "@/shared/ui";
 
-useTitle("Login | Buggregator")
+useTitle("Login | Buggregator");
 
-const store = useProfileStore()
-const { loginLinkUrl } = storeToRefs(useSettingsStore())
-const router = useRouter()
+const store = useProfileStore();
+const { loginLinkUrl } = storeToRefs(useSettingsStore());
+const router = useRouter();
 
 if (store.isAuthenticated) {
-  router.replace({ name: RouteName.Home })
+  router.replace({ name: RouteName.Home });
 }
 
 const redirect = () => {
-  router.replace({ path: loginLinkUrl.value })
-}
+  router.replace({ path: loginLinkUrl.value });
+};
 </script>
 
 <template>

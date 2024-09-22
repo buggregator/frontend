@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { defineProps } from "vue"
+import { defineProps } from "vue";
 
 type Props = {
-  title?: string
-}
+  title?: string;
+};
 
 withDefaults(defineProps<Props>(), {
   title: ""
-})
+});
 </script>
 
 <template>

@@ -1,19 +1,19 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import { HTMLCode, PHPCode } from "../../mocks"
-import { EventTypes } from "../../types"
-import CodeSnippet from "./code-snippet.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import { HTMLCode, PHPCode } from "../../mocks";
+import { EventTypes } from "../../types";
+import CodeSnippet from "./code-snippet.vue";
 
 export default {
   title: "Shared/CodeSnippet",
   component: CodeSnippet
-} as Meta<typeof CodeSnippet>
+} as Meta<typeof CodeSnippet>;
 
 export const Default: StoryObj<typeof CodeSnippet> = {
   args: {
     code: "Hello World!",
     language: "text"
   }
-}
+};
 
 export const Object: StoryObj<typeof CodeSnippet> = {
   args: {
@@ -30,18 +30,18 @@ export const Object: StoryObj<typeof CodeSnippet> = {
     },
     language: "javascript"
   }
-}
+};
 
 export const HTMLString: StoryObj<typeof CodeSnippet> = {
   args: {
     code: HTMLCode,
     language: "html"
   }
-}
+};
 
 export const PHPString = {
   args: {
     code: PHPCode,
     language: "php"
   }
-}
+};

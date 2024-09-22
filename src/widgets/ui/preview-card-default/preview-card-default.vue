@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import type { NormalizedEvent } from "@/shared/types"
-import { CodeSnippet, PreviewCard } from "@/shared/ui"
+import { computed } from "vue";
+import type { NormalizedEvent } from "@/shared/types";
+import { CodeSnippet, PreviewCard } from "@/shared/ui";
 
 type Props = {
-  event: NormalizedEvent<unknown>
-}
+  event: NormalizedEvent<unknown>;
+};
 
-const code = computed(() => JSON.stringify(event, null, " "))
+const code = computed(() => JSON.stringify(event, null, " "));
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>

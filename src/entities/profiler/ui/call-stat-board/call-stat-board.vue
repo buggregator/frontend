@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { defineProps } from "vue"
-import { StatBoard, type StatBoardCost, StatBoardSize } from "@/shared/ui"
+import { defineProps } from "vue";
+import { StatBoard, type StatBoardCost, StatBoardSize } from "@/shared/ui";
 
 type Props = {
-  cost: StatBoardCost
-  title: string
-}
+  cost: StatBoardCost;
+  title: string;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>

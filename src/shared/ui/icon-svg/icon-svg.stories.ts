@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import type { ComponentProps } from "vue-component-type-helpers"
-import IconSvg from "./icon-svg.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
+import IconSvg from "./icon-svg.vue";
 
-const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || "").split(",")
+const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || "").split(",");
 
 export default {
   title: "Shared/IconSvg",
@@ -18,24 +18,24 @@ export default {
     setup() {
       return {
         args
-      }
+      };
     },
     template: '<div style="width: 50px"><IconSvg v-bind="args" /></div>'
   })
-} as Meta<typeof IconSvg>
+} as Meta<typeof IconSvg>;
 
 export const Default: StoryObj<typeof IconSvg> = {
   args: {
     name: "github"
   }
-}
+};
 export const AllIcons: StoryObj<typeof IconSvg> = {
   render: () => ({
     components: { IconSvg },
     setup() {
       return {
         names: iconNames
-      }
+      };
     },
     template: `
       <div style="display: flex; flex-wrap: wrap;">
@@ -46,4 +46,4 @@ export const AllIcons: StoryObj<typeof IconSvg> = {
       </div>
     `
   })
-}
+};

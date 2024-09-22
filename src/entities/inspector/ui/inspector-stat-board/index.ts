@@ -1,3 +1,3 @@
-import InspectorStatBoard from "./inspector-stat-board.vue"
+import InspectorStatBoard from "./inspector-stat-board.vue";
 
-export { InspectorStatBoard }
+export { InspectorStatBoard };

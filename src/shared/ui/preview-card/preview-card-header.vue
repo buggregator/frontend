@@ -1,60 +1,60 @@
 <script lang="ts" setup>
-import isString from "lodash/isString"
-import { computed } from "vue"
-import { type EventType, type NormalizedEvent, RouteName } from "../../types"
-import { IconSvg } from "../icon-svg"
-import { DownloadType } from "./types"
+import isString from "lodash/isString";
+import { computed } from "vue";
+import { type EventType, type NormalizedEvent, RouteName } from "../../types";
+import { IconSvg } from "../icon-svg";
+import { DownloadType } from "./types";
 
 type Props = {
-  eventType: EventType | "unknown"
-  eventId: NormalizedEvent<unknown>["id"]
-  eventUrl: string
-  labels: NormalizedEvent<unknown>["labels"]
-  isOpen: boolean
-  isLocked: boolean
-  isVisibleControls: boolean
-}
+  eventType: EventType | "unknown";
+  eventId: NormalizedEvent<unknown>["id"];
+  eventUrl: string;
+  labels: NormalizedEvent<unknown>["labels"];
+  isOpen: boolean;
+  isLocked: boolean;
+  isVisibleControls: boolean;
+};
 
 type Emits = {
-  delete: [value: boolean]
-  toggleView: [value: boolean]
-  copy: [value: boolean]
-  download: [value: DownloadType]
-  lock: [value: boolean]
-}
+  delete: [value: boolean];
+  toggleView: [value: boolean];
+  copy: [value: boolean];
+  download: [value: DownloadType];
+  lock: [value: boolean];
+};
 
 const props = withDefaults(defineProps<Props>(), {
   tags: () => [],
   eventUrl: ""
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
 const changeView = () => {
-  emit("toggleView", true)
-}
+  emit("toggleView", true);
+};
 
 const deleteEvent = () => {
-  emit("delete", true)
-}
+  emit("delete", true);
+};
 
 const copyEvent = () => {
-  emit("copy", true)
-}
+  emit("copy", true);
+};
 
 const downloadImageEvent = () => {
-  emit("download", DownloadType.Image)
-}
+  emit("download", DownloadType.Image);
+};
 
 const downloadFile = () => {
-  emit("download", DownloadType.File)
-}
+  emit("download", DownloadType.File);
+};
 
 const lockEvent = () => {
-  emit("lock", true)
-}
+  emit("lock", true);
+};
 
-const isVisibleTags = computed(() => props.labels.length > 0)
+const isVisibleTags = computed(() => props.labels.length > 0);
 </script>
 
 <template>

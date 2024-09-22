@@ -1,6 +1,6 @@
-import { action } from "@storybook/addon-actions"
-import type { Meta, StoryObj } from "@storybook/vue3"
-import PauseButton from "./pause-button.vue"
+import { action } from "@storybook/addon-actions";
+import type { Meta, StoryObj } from "@storybook/vue3";
+import PauseButton from "./pause-button.vue";
 
 export default {
   title: "Shared/PauseButton",
@@ -9,7 +9,7 @@ export default {
     onToggleUpdate: action("Toggle pause"),
     onToggleView: action("Toggle event")
   }
-} as Meta<typeof PauseButton>
+} as Meta<typeof PauseButton>;
 
 export const Default: StoryObj<typeof PauseButton> = {
   args: {
@@ -17,7 +17,7 @@ export const Default: StoryObj<typeof PauseButton> = {
     isPaused: false,
     totalNewEventsCount: 10
   }
-}
+};
 
 export const Disabled: StoryObj<typeof PauseButton> = {
   args: {
@@ -25,7 +25,7 @@ export const Disabled: StoryObj<typeof PauseButton> = {
     isPaused: false,
     totalNewEventsCount: 10
   }
-}
+};
 
 export const Paused: StoryObj<typeof PauseButton> = {
   args: {
@@ -33,4 +33,4 @@ export const Paused: StoryObj<typeof PauseButton> = {
     isPaused: true,
     totalNewEventsCount: 10
   }
-}
+};

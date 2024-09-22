@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import moment from "moment"
-import { computed, onMounted, ref } from "vue"
-import { Tab, Tabs } from "vue3-tabs-component"
-import { htmlEncode } from "@/shared/lib/helpers"
-import { useAttachments } from "@/shared/lib/io"
-import type { NormalizedEvent, Attachment } from "@/shared/types"
+import moment from "moment";
+import { computed, onMounted, ref } from "vue";
+import { Tab, Tabs } from "vue3-tabs-component";
+import { htmlEncode } from "@/shared/lib/helpers";
+import { useAttachments } from "@/shared/lib/io";
+import type { NormalizedEvent, Attachment } from "@/shared/types";
 import {
   TableBase,
   TableBaseRow,
@@ -12,40 +12,40 @@ import {
   FileAttachment,
   EmailPreviewDevice,
   EmailPreview
-} from "@/shared/ui"
-import type { SMTP } from "../../types"
-import { SmtpPageAddresses } from "../smtp-page-addresses"
+} from "@/shared/ui";
+import type { SMTP } from "../../types";
+import { SmtpPageAddresses } from "../smtp-page-addresses";
 
 type Props = {
-  event: NormalizedEvent<SMTP>
-}
+  event: NormalizedEvent<SMTP>;
+};
 
-const props = defineProps<Props>()
-const attachments = ref<Attachment[]>([])
-const isLoading = ref(false)
+const props = defineProps<Props>();
+const attachments = ref<Attachment[]>([]);
+const isLoading = ref(false);
 
-const { getAttachments, calcDownloadLink } = useAttachments()
+const { getAttachments, calcDownloadLink } = useAttachments();
 
 const htmlSource = computed(() =>
   props.event?.payload?.html
     ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
     : undefined
-)
+);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
-  isLoading.value = true
+  isLoading.value = true;
 
   try {
-    isLoading.value = false
+    isLoading.value = false;
 
     await getAttachments(props.event.id).then((_attachments: Attachment[]) => {
-      attachments.value = _attachments
-    })
+      attachments.value = _attachments;
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 const senders = computed(() => [
   {
     title: "From",
@@ -67,24 +67,24 @@ const senders = computed(() => [
     title: "Reply to",
     address: props.event.payload.reply_to
   }
-])
+]);
 
 const isHtml = computed(
   () => props.event.payload?.html !== undefined && props.event.payload?.html !== ""
-)
+);
 
 const isText = computed(
   () => props.event.payload?.text !== undefined && props.event.payload?.text !== ""
-)
+);
 
-const mail = computed(() => props.event.payload)
+const mail = computed(() => props.event.payload);
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"))
+const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 
 const calcDownloadUrl = (attachmentId: Attachment["uuid"]) =>
-  calcDownloadLink(props.event.id, attachmentId)
+  calcDownloadLink(props.event.id, attachmentId);
 
-onMounted(getAttachmentsRequest)
+onMounted(getAttachmentsRequest);
 </script>
 
 <template>

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import type { ComponentProps } from "vue-component-type-helpers"
-import AppHeader from "./app-header.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
+import AppHeader from "./app-header.vue";
 
 const AppHeaderMeta: Meta<typeof AppHeader> = {
   title: "Shared/AppHeader",
@@ -17,7 +17,7 @@ const AppHeaderMeta: Meta<typeof AppHeader> = {
       return {
         args,
         parameters
-      }
+      };
     },
     template: `
     <AppHeader
@@ -28,9 +28,9 @@ const AppHeaderMeta: Meta<typeof AppHeader> = {
     </AppHeader>
 `
   })
-}
+};
 
-export default AppHeaderMeta
+export default AppHeaderMeta;
 
 export const Default: StoryObj<typeof AppHeader> = {
   parameters: {
@@ -38,7 +38,7 @@ export const Default: StoryObj<typeof AppHeader> = {
       default: "Page title"
     }
   }
-}
+};
 
 export const WithActions: StoryObj<typeof AppHeader> = {
   parameters: {
@@ -49,4 +49,4 @@ export const WithActions: StoryObj<typeof AppHeader> = {
         </button>`
     }
   }
-}
+};

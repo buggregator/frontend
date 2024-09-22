@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from "vue"
-import type { RayContentException } from "../../types"
-import { RayFile } from "../ray-file"
+import { computed, defineProps, withDefaults } from "vue";
+import type { RayContentException } from "../../types";
+import { RayFile } from "../ray-file";
 
-const RAY_MAX_EXCEPTION_FRAMES = 10
+const RAY_MAX_EXCEPTION_FRAMES = 10;
 
 type Props = {
-  exception: RayContentException
-  maxFrames?: number
-}
+  exception: RayContentException;
+  maxFrames?: number;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   maxFrames: 0
-})
+});
 
 const exceptionFrames = computed(() => {
-  const frames = props.exception.frames || []
+  const frames = props.exception.frames || [];
 
-  return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse()
-})
+  return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse();
+});
 </script>
 
 <template>

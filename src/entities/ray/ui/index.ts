@@ -1,2 +1,2 @@
-export * from "./preview-card"
-export * from "./ray-page"
+export * from "./preview-card";
+export * from "./ray-page";

@@ -17,30 +17,30 @@ import {
   type RayContentSQL,
   type RayContentView,
   type RayPayload
-} from "../../types"
-import { RayApplicationLog } from "../../ui/ray-application-log"
-import { RayCarbon } from "../../ui/ray-carbon"
-import { RayCustom } from "../../ui/ray-custom"
-import { RayEloquent } from "../../ui/ray-eloquent"
-import { RayEvent } from "../../ui/ray-event"
-import { RayException } from "../../ui/ray-exception"
-import { RayFrame } from "../../ui/ray-frame"
-import { RayJob } from "../../ui/ray-job"
-import { RayLock } from "../../ui/ray-lock"
-import { RayLog } from "../../ui/ray-log"
-import { RayMail } from "../../ui/ray-mail"
-import { RayMeasure } from "../../ui/ray-measure"
-import { RayOrigin } from "../../ui/ray-origin"
-import { RayQuery } from "../../ui/ray-query"
-import { RayTable } from "../../ui/ray-table"
-import { RayTrace } from "../../ui/ray-trace"
-import { RayView } from "../../ui/ray-view"
+} from "../../types";
+import { RayApplicationLog } from "../../ui/ray-application-log";
+import { RayCarbon } from "../../ui/ray-carbon";
+import { RayCustom } from "../../ui/ray-custom";
+import { RayEloquent } from "../../ui/ray-eloquent";
+import { RayEvent } from "../../ui/ray-event";
+import { RayException } from "../../ui/ray-exception";
+import { RayFrame } from "../../ui/ray-frame";
+import { RayJob } from "../../ui/ray-job";
+import { RayLock } from "../../ui/ray-lock";
+import { RayLog } from "../../ui/ray-log";
+import { RayMail } from "../../ui/ray-mail";
+import { RayMeasure } from "../../ui/ray-measure";
+import { RayOrigin } from "../../ui/ray-origin";
+import { RayQuery } from "../../ui/ray-query";
+import { RayTable } from "../../ui/ray-table";
+import { RayTrace } from "../../ui/ray-trace";
+import { RayView } from "../../ui/ray-view";
 
 export const COMPONENT_TYPE_MAP: Record<
   RayEventTypes,
   {
-    view: unknown
-    getProps: (payload: RayPayload) => Record<string, unknown>
+    view: unknown;
+    getProps: (payload: RayPayload) => Record<string, unknown>;
   }
 > = {
   [RayEventTypes.Log]: {
@@ -143,4 +143,4 @@ export const COMPONENT_TYPE_MAP: Record<
     view: RayOrigin,
     getProps: (payload: RayPayload) => ({ origin: payload.origin })
   }
-}
+};

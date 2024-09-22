@@ -1,29 +1,29 @@
 <script lang="ts" setup>
-import { SortingOrder } from "./constants"
+import { SortingOrder } from "./constants";
 
 type Props = {
-  sort: SortingOrder
-}
+  sort: SortingOrder;
+};
 
 type Emits = {
-  changeSort: [value: SortingOrder]
-}
+  changeSort: [value: SortingOrder];
+};
 
 const props = withDefaults(defineProps<Props>(), {
   sort: SortingOrder.Default
-})
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
 const changeSortOrder = () => {
-  const sortOrderList = [SortingOrder.Asc, SortingOrder.Desc, SortingOrder.Default]
+  const sortOrderList = [SortingOrder.Asc, SortingOrder.Desc, SortingOrder.Default];
 
-  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort)
+  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort);
 
-  const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0]
+  const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0];
 
-  emit("changeSort", nextSortOrder)
-}
+  emit("changeSort", nextSortOrder);
+};
 </script>
 
 <template>

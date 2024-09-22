@@ -1,18 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import { useRay } from "../../lib"
-import { rayLockMock } from "../../mocks"
-import type { RayContentLock } from "../../types"
-import RayLock from "./ray-lock.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import { useRay } from "../../lib";
+import { rayLockMock } from "../../mocks";
+import type { RayContentLock } from "../../types";
+import RayLock from "./ray-lock.vue";
 
-const { normalizeRayEvent } = useRay()
+const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayLock",
   component: RayLock
-} as Meta<typeof RayLock>
+} as Meta<typeof RayLock>;
 
 export const Default: StoryObj<typeof RayLock> = {
   args: {
     name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name
   }
-}
+};

@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia"
-import { computed } from "vue"
-import { useSettingsStore } from "@/shared/stores"
-import type { RayFrame } from "../../types"
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { useSettingsStore } from "@/shared/stores";
+import type { RayFrame } from "../../types";
 
 type Props = {
-  frame: RayFrame
-}
+  frame: RayFrame;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const { codeEditor } = storeToRefs(useSettingsStore())
+const { codeEditor } = storeToRefs(useSettingsStore());
 
 const callLink = computed(
   () =>
     `${codeEditor}://open?file=${encodeURIComponent(
       props.frame.file_name
     )}&line=${props.frame.line_number}`
-)
+);
 </script>
 
 <template>

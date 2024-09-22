@@ -1,6 +1,6 @@
-import type { Meta } from "@storybook/vue3"
-import type { ComponentProps } from "vue-component-type-helpers"
-import RenderGraph from "./render-graph.vue"
+import type { Meta } from "@storybook/vue3";
+import type { ComponentProps } from "vue-component-type-helpers";
+import RenderGraph from "./render-graph.vue";
 
 export default {
   title: "Entities/Profiler/RenderGraph",
@@ -10,11 +10,11 @@ export default {
     setup() {
       return {
         args
-      }
+      };
     },
     template: `<RenderGraph :elements="args.elements" :height="500" />`
   })
-} as Meta<typeof RenderGraph>
+} as Meta<typeof RenderGraph>;
 
 export const TestData: Meta<typeof RenderGraph> = {
   args: {
@@ -44,4 +44,4 @@ export const TestData: Meta<typeof RenderGraph> = {
       ]
     }
   }
-}
+};

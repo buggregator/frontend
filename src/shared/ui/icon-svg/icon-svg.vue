@@ -1,9 +1,9 @@
 <script setup lang="ts">
 type Props = {
-  name: string
-}
+  name: string;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>

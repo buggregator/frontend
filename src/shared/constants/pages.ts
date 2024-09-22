@@ -1,19 +1,19 @@
-import { EventTypes, type OneOfValues } from "../types"
+import { EventTypes, type OneOfValues } from "../types";
 
-export const ALL_EVENT_TYPES = "all-events" as const
+export const ALL_EVENT_TYPES = "all-events" as const;
 
 export const PAGE_TYPES = {
   ...EventTypes,
   ALL_EVENT_TYPES
-} as const
+} as const;
 
 export const PAGES_SETTINGS: {
   [key in OneOfValues<typeof PAGE_TYPES>]: {
-    title: string
-    sidebarTitle: string
-    iconName: string
-    eventType: EventTypes | typeof ALL_EVENT_TYPES
-  }
+    title: string;
+    sidebarTitle: string;
+    iconName: string;
+    eventType: EventTypes | typeof ALL_EVENT_TYPES;
+  };
 } = {
   [PAGE_TYPES.ALL_EVENT_TYPES]: {
     title: "Home",
@@ -69,4 +69,4 @@ export const PAGES_SETTINGS: {
     iconName: "ray",
     eventType: EventTypes.RayDump
   }
-}
+};

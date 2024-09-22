@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { IconSvg } from "@/shared/ui"
-import PagePlaceholderItem from "./page-placeholder-item.vue"
+import { IconSvg } from "@/shared/ui";
+import PagePlaceholderItem from "./page-placeholder-item.vue";
 
 const items = [
   {
@@ -18,7 +18,7 @@ const items = [
     title: "Join our discord",
     linkUrl: "https://discord.gg/vDsCD3EKUB"
   }
-]
+];
 </script>
 
 <template>

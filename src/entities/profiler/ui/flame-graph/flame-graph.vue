@@ -1,61 +1,61 @@
 <script lang="ts" setup>
-import { FlameChart } from "flame-chart-js"
-import debounce from "lodash.debounce"
-import { ref, onMounted, nextTick, onBeforeUnmount, computed } from "vue"
-import type { EventId } from "@/shared/types"
-import type { StatBoardCost } from "@/shared/ui"
-import { useProfiler } from "../../lib"
-import type { CallStackHoverData } from "../../types"
-import { CallStatBoard } from "../../ui/call-stat-board"
+import { FlameChart } from "flame-chart-js";
+import debounce from "lodash.debounce";
+import { ref, onMounted, nextTick, onBeforeUnmount, computed } from "vue";
+import type { EventId } from "@/shared/types";
+import type { StatBoardCost } from "@/shared/ui";
+import { useProfiler } from "../../lib";
+import type { CallStackHoverData } from "../../types";
+import { CallStatBoard } from "../../ui/call-stat-board";
 
 type Props = {
-  id: EventId
-}
+  id: EventId;
+};
 
-const { getFlameChart } = useProfiler()
+const { getFlameChart } = useProfiler();
 
-const defaultPosition = { x: 0, y: 0 }
+const defaultPosition = { x: 0, y: 0 };
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const canvas = ref<HTMLCanvasElement>()
-const graph = ref<HTMLCanvasElement>()
+const canvas = ref<HTMLCanvasElement>();
+const graph = ref<HTMLCanvasElement>();
 
-const activeStatBoard = ref<CallStackHoverData>()
-const activeStatBoardPosition = ref(defaultPosition)
+const activeStatBoard = ref<CallStackHoverData>();
+const activeStatBoardPosition = ref(defaultPosition);
 
 const activeStatBoardStyle = computed(() => {
-  const width = 750
-  const height = 150
+  const width = 750;
+  const height = 150;
 
-  let top = activeStatBoardPosition.value.y
-  let left = activeStatBoardPosition.value.x
+  let top = activeStatBoardPosition.value.y;
+  let left = activeStatBoardPosition.value.x;
 
   if (width + activeStatBoardPosition.value.x > window.innerWidth - 80) {
-    const deltaX = width + activeStatBoardPosition.value.x - window.innerWidth + 100
-    left -= deltaX
+    const deltaX = width + activeStatBoardPosition.value.x - window.innerWidth + 100;
+    left -= deltaX;
   }
 
   if (height + activeStatBoardPosition.value.y > window.innerHeight) {
-    top = activeStatBoardPosition.value.y - height
+    top = activeStatBoardPosition.value.y - height;
   }
 
   return {
     top: `${top + 10}px`,
     left: `${left}px`,
     width: `${width}px`
-  }
-})
+  };
+});
 
 const renderChart = async () => {
   if (!graph.value || !canvas.value) {
-    return
+    return;
   }
 
-  const { width, height } = graph.value.getBoundingClientRect()
+  const { width, height } = graph.value.getBoundingClientRect();
 
-  canvas.value.width = width || 1
-  canvas.value.height = height || 1
+  canvas.value.width = width || 1;
+  canvas.value.height = height || 1;
 
   const flameChart = new FlameChart({
     canvas: canvas.value,
@@ -70,47 +70,47 @@ const renderChart = async () => {
       options: {
         tooltip: (data, _, mouse) => {
           if (data === null) {
-            activeStatBoard.value = undefined
+            activeStatBoard.value = undefined;
           } else {
             activeStatBoard.value = {
               cost: data.data.source.cost,
               title: data.data.source.name
-            }
+            };
             activeStatBoardPosition.value = {
               x: mouse?.x ? mouse.x + 20 : 0,
               y: mouse?.y ? mouse.y - 20 : 0
-            }
+            };
           }
         }
       }
     }
-  })
+  });
 
-  flameChart.render()
+  flameChart.render();
 
   window.addEventListener(
     "resize",
     debounce(() => {
       if (!graph.value) {
-        return
+        return;
       }
 
-      const { width: windowWidth, height: windowHeight } = graph.value.getBoundingClientRect()
+      const { width: windowWidth, height: windowHeight } = graph.value.getBoundingClientRect();
 
-      flameChart.resize(windowWidth, windowHeight)
+      flameChart.resize(windowWidth, windowHeight);
     }, 30)
-  )
-}
+  );
+};
 
 onMounted(() => {
   nextTick(() => {
-    renderChart()
-  })
-})
+    renderChart();
+  });
+});
 
 onBeforeUnmount(() => {
-  activeStatBoard.value = undefined
-})
+  activeStatBoard.value = undefined;
+});
 </script>
 
 <template>

@@ -1,2 +1,2 @@
-export * from "./preview-card"
-export * from "./profiler-page"
+export * from "./preview-card";
+export * from "./profiler-page";

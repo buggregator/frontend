@@ -1,76 +1,76 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from "cytoscape"
-import { ref, computed, onMounted, watchEffect } from "vue"
-import { type EventId, GraphTypes } from "@/shared/types"
-import { IconSvg, type StatBoardCost } from "@/shared/ui"
-import { useProfiler } from "../../lib"
-import type { ProfilerCallGraph } from "../../types"
-import { CallStatBoard } from "../call-stat-board"
-import { RenderGraph } from "../render-graph"
+import type { ElementsDefinition } from "cytoscape";
+import { ref, computed, onMounted, watchEffect } from "vue";
+import { type EventId, GraphTypes } from "@/shared/types";
+import { IconSvg, type StatBoardCost } from "@/shared/ui";
+import { useProfiler } from "../../lib";
+import type { ProfilerCallGraph } from "../../types";
+import { CallStatBoard } from "../call-stat-board";
+import { RenderGraph } from "../render-graph";
 
 type Props = {
-  id: EventId
-}
+  id: EventId;
+};
 
-const { getCallGraph } = useProfiler()
+const { getCallGraph } = useProfiler();
 
-const props = defineProps<Props>()
-const isFullscreen = ref(false)
-const metric = ref(GraphTypes.WALL_TIME as GraphTypes)
-const threshold = ref(1)
-const percent = ref(10)
+const props = defineProps<Props>();
+const isFullscreen = ref(false);
+const metric = ref(GraphTypes.WALL_TIME as GraphTypes);
+const threshold = ref(1);
+const percent = ref(10);
 
-const isReadyGraph = ref(false)
-const container = ref<HTMLElement>()
+const isReadyGraph = ref(false);
+const container = ref<HTMLElement>();
 
-const elements = ref<ElementsDefinition | undefined>()
-const toolbar = ref<ProfilerCallGraph["toolbar"]>([])
+const elements = ref<ElementsDefinition | undefined>();
+const toolbar = ref<ProfilerCallGraph["toolbar"]>([]);
 
-const graphKey = ref("")
+const graphKey = ref("");
 
 const setMetric = (value: string) => {
   if (Object.values(GraphTypes).includes(value as GraphTypes)) {
-    metric.value = value as GraphTypes
+    metric.value = value as GraphTypes;
   } else {
-    metric.value = GraphTypes.WALL_TIME
+    metric.value = GraphTypes.WALL_TIME;
   }
-}
+};
 
 const setThreshold = (event: Event) => {
-  threshold.value = Number((event.target as HTMLInputElement).value || 0)
-}
+  threshold.value = Number((event.target as HTMLInputElement).value || 0);
+};
 
 const setMinPercent = (event: Event) => {
-  percent.value = Number((event.target as HTMLInputElement).value || 0)
-}
+  percent.value = Number((event.target as HTMLInputElement).value || 0);
+};
 
 const toggleFullScreen = () => {
-  isFullscreen.value = !isFullscreen.value
-}
+  isFullscreen.value = !isFullscreen.value;
+};
 
 const graphHeight = computed(() =>
   isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight
-)
+);
 
 watchEffect(async () => {
   const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
     threshold: String(threshold.value),
     percentage: String(percent.value),
     metric: String(metric.value)
-  })
+  });
 
-  elements.value = elems
-  toolbar.value = tools
+  elements.value = elems;
+  toolbar.value = tools;
 
-  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`
-})
+  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`;
+});
 
 onMounted(() => {
   // NOTE: need to show graph after parent render
-  isReadyGraph.value = true
-})
+  isReadyGraph.value = true;
+});
 
-const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"))
+const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"));
 </script>
 
 <template>

@@ -1,3 +1,3 @@
-import SentryPageTags from "./sentry-page-tags.vue"
+import SentryPageTags from "./sentry-page-tags.vue";
 
-export { SentryPageTags }
+export { SentryPageTags };

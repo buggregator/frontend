@@ -1,1 +1,1 @@
-export { default as RayLog } from "./ray-log.vue"
+export { default as RayLog } from "./ray-log.vue";

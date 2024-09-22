@@ -1,21 +1,21 @@
 <script lang="ts" setup>
 // TODO: need to rename component
-import { ref, computed } from "vue"
-import { IconSvg } from "@/shared/ui"
-import type { RayFrame } from "../../types"
+import { ref, computed } from "vue";
+import { IconSvg } from "@/shared/ui";
+import type { RayFrame } from "../../types";
 
 type Props = {
-  file: RayFrame
-  isOpen?: boolean
-}
+  file: RayFrame;
+  isOpen?: boolean;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   isOpen: false
-})
+});
 
-const collapsed = ref(props.isOpen)
+const collapsed = ref(props.isOpen);
 
-const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false))
+const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false));
 </script>
 <template>
   <div

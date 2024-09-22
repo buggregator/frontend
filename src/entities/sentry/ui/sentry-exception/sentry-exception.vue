@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from "vue"
-import type { SentryException } from "../../types"
-import SentryExceptionFrame from "./sentry-exception-frame.vue"
+import { computed, defineProps, withDefaults } from "vue";
+import type { SentryException } from "../../types";
+import SentryExceptionFrame from "./sentry-exception-frame.vue";
 
 type Props = {
-  exception: SentryException
-  maxFrames?: number
-}
+  exception: SentryException;
+  maxFrames?: number;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   maxFrames: 0
-})
+});
 
 const exceptionFrames = computed(() => {
-  const frames = props.exception?.stacktrace?.frames || []
+  const frames = props.exception?.stacktrace?.frames || [];
 
   if (props.maxFrames > 0) {
-    return frames.slice(0 - props.maxFrames).reverse()
+    return frames.slice(0 - props.maxFrames).reverse();
   }
 
-  return frames.slice().reverse()
-})
+  return frames.slice().reverse();
+});
 </script>
 
 <template>

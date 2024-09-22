@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import moment from "moment"
-import { computed } from "vue"
-import type { NormalizedEvent } from "@/shared/types"
-import { PreviewCard } from "@/shared/ui"
-import type { SMTP } from "../../types"
+import moment from "moment";
+import { computed } from "vue";
+import type { NormalizedEvent } from "@/shared/types";
+import { PreviewCard } from "@/shared/ui";
+import type { SMTP } from "../../types";
 
 type Props = {
-  event: NormalizedEvent<SMTP>
-}
+  event: NormalizedEvent<SMTP>;
+};
 
-const props = defineProps<Props>()
-const eventLink = computed(() => `/smtp/${props.event.id}`)
+const props = defineProps<Props>();
+const eventLink = computed(() => `/smtp/${props.event.id}`);
 
-const dateFormat = computed(() => moment(props.event.date).fromNow())
+const dateFormat = computed(() => moment(props.event.date).fromNow());
 
-const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || null)
+const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || null);
 </script>
 
 <template>

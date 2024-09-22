@@ -1,10 +1,10 @@
 export const formatDuration = (inputMs: number) => {
-  let ms = inputMs
+  let ms = inputMs;
   if (ms < 0) {
-    ms = -ms
+    ms = -ms;
   }
 
-  ms /= 1_000
+  ms /= 1_000;
 
   const time = {
     d: Math.floor(ms / 86_400_000),
@@ -12,7 +12,7 @@ export const formatDuration = (inputMs: number) => {
     m: Math.floor(ms / 60_000) % 60,
     s: Math.floor(ms / 1_000) % 60,
     ms: ms % 1_000
-  }
+  };
 
   return Object.entries(time)
     .filter(([_, val]) => val !== 0)
@@ -22,5 +22,5 @@ export const formatDuration = (inputMs: number) => {
           key === "ms" && Number(val.toFixed(4)) % 1 !== 0 ? val.toFixed(4) : val.toFixed(0)
         } ${key}`
     )
-    .join(", ")
-}
+    .join(", ");
+};

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { computed } from "vue"
+import { computed } from "vue";
 
 type Props = {
-  number: number
-  isVisible?: boolean
-}
+  number: number;
+  isVisible?: boolean;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   isVisible: true
-})
+});
 
-const normalizedNumber = computed(() => (props.number > 99 ? "*" : props.number))
-const isVisibleBadge = computed(() => props.number > 0 && props.isVisible)
+const normalizedNumber = computed(() => (props.number > 99 ? "*" : props.number));
+const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
 </script>
 
 <template>

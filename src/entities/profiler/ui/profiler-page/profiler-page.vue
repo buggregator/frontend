@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { ref } from "vue"
-import { Tabs, Tab } from "vue3-tabs-component"
-import type { NormalizedEvent } from "@/shared/types"
-import type { Profiler } from "../../types"
-import { CallGraph } from "../call-graph"
-import { FlameGraph } from "../flame-graph"
-import { TopFunctions } from "../top-functions"
+import { ref } from "vue";
+import { Tabs, Tab } from "vue3-tabs-component";
+import type { NormalizedEvent } from "@/shared/types";
+import type { Profiler } from "../../types";
+import { CallGraph } from "../call-graph";
+import { FlameGraph } from "../flame-graph";
+import { TopFunctions } from "../top-functions";
 
 type Props = {
-  event: NormalizedEvent<Profiler>
-}
+  event: NormalizedEvent<Profiler>;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const activeTab = ref("")
+const activeTab = ref("");
 
 const tabChange = (selectedTab: { tab: { name: string } }) => {
-  activeTab.value = selectedTab.tab.name
-}
+  activeTab.value = selectedTab.tab.name;
+};
 </script>
 
 <template>

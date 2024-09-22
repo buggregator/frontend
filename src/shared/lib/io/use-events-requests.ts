@@ -1,58 +1,58 @@
-import { storeToRefs } from "pinia"
-import { useEventsStore, useProfileStore } from "../../stores"
-import type { EventId, EventType, ServerEvent } from "../../types"
-import { REST_API_URL } from "./constants"
+import { storeToRefs } from "pinia";
+import { useEventsStore, useProfileStore } from "../../stores";
+import type { EventId, EventType, ServerEvent } from "../../types";
+import { REST_API_URL } from "./constants";
 
 type TUseEventsRequests = () => {
-  getAll: () => Promise<ServerEvent<unknown>[]>
-  getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>
-  deleteAll: () => Promise<void | Response>
-  deleteList: (uuids: EventId[]) => Promise<void | Response>
-  deleteSingle: (id: EventId) => Promise<void | Response>
-  deleteByType: (type: EventType) => Promise<void | Response>
-}
+  getAll: () => Promise<ServerEvent<unknown>[]>;
+  getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>;
+  deleteAll: () => Promise<void | Response>;
+  deleteList: (uuids: EventId[]) => Promise<void | Response>;
+  deleteSingle: (id: EventId) => Promise<void | Response>;
+  deleteByType: (type: EventType) => Promise<void | Response>;
+};
 
 // TODO: add 403 response handling
 
 export const useEventsRequests: TUseEventsRequests = () => {
-  const { token } = storeToRefs(useProfileStore())
+  const { token } = storeToRefs(useProfileStore());
 
-  const { activeProjectKey: project } = storeToRefs(useEventsStore())
+  const { activeProjectKey: project } = storeToRefs(useEventsStore());
 
-  const headers = { "X-Auth-Token": token.value }
+  const headers = { "X-Auth-Token": token.value };
   const getEventRestUrl = (param: string): string =>
-    `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ""}`
+    `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ""}`;
   const getEventsPreviewRestUrl = (): string =>
-    `${REST_API_URL}/api/events/preview${project.value ? `?project=${project.value}` : ""}`
+    `${REST_API_URL}/api/events/preview${project.value ? `?project=${project.value}` : ""}`;
 
   const getAll = () =>
     fetch(getEventsPreviewRestUrl(), { headers })
       .then((response) => response.json())
       .then((response) => {
         if (response?.data) {
-          return response.data as ServerEvent<unknown>[]
+          return response.data as ServerEvent<unknown>[];
         }
 
         if (response?.code === 403) {
-          console.error("Forbidden")
-          return []
+          console.error("Forbidden");
+          return [];
         }
 
-        console.error("Fetch Error")
+        console.error("Fetch Error");
 
-        return []
+        return [];
       })
-      .then((events: ServerEvent<unknown>[]) => events)
+      .then((events: ServerEvent<unknown>[]) => events);
 
   const getSingle = (id: EventId) =>
     fetch(getEventRestUrl(id), { headers })
       .then((response) => response.json())
       .then((response) => {
         if (response) {
-          return response as ServerEvent<EventType>
+          return response as ServerEvent<EventType>;
         }
-        return null
-      })
+        return null;
+      });
 
   const deleteSingle = (id: EventId) =>
     fetch(getEventRestUrl(id), {
@@ -60,8 +60,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
       headers,
       ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null)
     }).catch((err) => {
-      console.error("Fetch Error", err)
-    })
+      console.error("Fetch Error", err);
+    });
 
   const deleteAll = () =>
     fetch(getEventsPreviewRestUrl(), {
@@ -69,8 +69,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
       headers,
       ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null)
     }).catch((err) => {
-      console.error("Fetch Error", err)
-    })
+      console.error("Fetch Error", err);
+    });
 
   const deleteList = (uuids: EventId[]) =>
     fetch(getEventsPreviewRestUrl(), {
@@ -78,8 +78,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
       headers,
       body: JSON.stringify({ uuids })
     }).catch((err) => {
-      console.error("Fetch Error", err)
-    })
+      console.error("Fetch Error", err);
+    });
 
   const deleteByType = (type: EventType) =>
     fetch(getEventsPreviewRestUrl(), {
@@ -90,8 +90,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
         ...(project.value ? { project: project.value } : null)
       })
     }).catch((err) => {
-      console.error("Fetch Error", err)
-    })
+      console.error("Fetch Error", err);
+    });
 
   return {
     getAll,
@@ -100,5 +100,5 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteList,
     deleteSingle,
     deleteByType
-  }
-}
+  };
+};

@@ -1,3 +1,3 @@
-import FileAttachment from "./file-attachment.vue"
+import FileAttachment from "./file-attachment.vue";
 
-export { FileAttachment }
+export { FileAttachment };

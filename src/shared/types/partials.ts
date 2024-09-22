@@ -1,18 +1,18 @@
-import type { Uuid } from "./events"
+import type { Uuid } from "./events";
 
 export interface Source {
-  file: string
-  name: string
-  line: string
-  file_excerpt?: boolean
+  file: string;
+  name: string;
+  line: string;
+  file_excerpt?: boolean;
 }
 
 export interface Attachment {
-  uuid: Uuid
-  name: string
-  size: number
-  mime: string
-  path: string
+  uuid: Uuid;
+  name: string;
+  size: number;
+  mime: string;
+  path: string;
 }
 
 export enum GraphTypes {
@@ -24,9 +24,9 @@ export enum GraphTypes {
 }
 
 export type StatsBase = {
-  ct: number
-  cpu: number
-  wt: number
-  mu: number
-  pmu: number
-}
+  ct: number;
+  cpu: number;
+  wt: number;
+  mu: number;
+  pmu: number;
+};

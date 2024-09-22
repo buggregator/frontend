@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import { EventTypes } from "../../types"
-import PreviewCard from "./preview-card.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import { EventTypes } from "../../types";
+import PreviewCard from "./preview-card.vue";
 
 export default {
   title: "Shared/PreviewCard",
   component: PreviewCard
-} as Meta<typeof PreviewCard>
+} as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
@@ -22,4 +22,4 @@ export const Default: StoryObj<typeof PreviewCard> = {
       labels: ["Monolog", "200"]
     }
   }
-}
+};

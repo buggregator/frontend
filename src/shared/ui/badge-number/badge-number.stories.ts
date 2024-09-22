@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import BadgeNumber from "./badge-number.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import BadgeNumber from "./badge-number.vue";
 
 export default {
   title: "Shared/BadgeNumber",
@@ -8,7 +8,7 @@ export default {
     setup() {
       return {
         args
-      }
+      };
     },
     components: { BadgeNumber },
     template: `
@@ -19,18 +19,18 @@ export default {
       </BadgeNumber>
     `
   })
-} as Meta<typeof BadgeNumber>
+} as Meta<typeof BadgeNumber>;
 
 export const Default: StoryObj<typeof BadgeNumber> = {
   args: {
     number: 1,
     isVisible: true
   }
-}
+};
 
 export const Maximum: StoryObj<typeof BadgeNumber> = {
   args: {
     number: 10000,
     isVisible: true
   }
-}
+};

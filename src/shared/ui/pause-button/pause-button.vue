@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-import pluralize from "pluralize"
-import { computed } from "vue"
-import { IconSvg } from "../icon-svg"
+import pluralize from "pluralize";
+import { computed } from "vue";
+import { IconSvg } from "../icon-svg";
 
 type Props = {
-  disabledPause: boolean
-  isPaused: boolean
-  totalNewEventsCount: number
-}
+  disabledPause: boolean;
+  isPaused: boolean;
+  totalNewEventsCount: number;
+};
 
 type Emits = {
-  toggleUpdate: [value: boolean]
-}
+  toggleUpdate: [value: boolean];
+};
 
-const emit = defineEmits<Emits>()
-const props = defineProps<Props>()
+const emit = defineEmits<Emits>();
+const props = defineProps<Props>();
 
-const titleEventsCount = computed(() => pluralize("new event", props.totalNewEventsCount, true))
+const titleEventsCount = computed(() => pluralize("new event", props.totalNewEventsCount, true));
 
 const toggleUpdate = () => {
-  emit("toggleUpdate", true)
-}
+  emit("toggleUpdate", true);
+};
 </script>
 
 <template>

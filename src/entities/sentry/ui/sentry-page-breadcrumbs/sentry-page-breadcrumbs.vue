@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import moment from "moment"
-import { CodeSnippet } from "@/shared/ui"
-import type { SentryBreadcrumb } from "../../types"
+import moment from "moment";
+import { CodeSnippet } from "@/shared/ui";
+import type { SentryBreadcrumb } from "../../types";
 
 type Props = {
-  breadcrumbs: SentryBreadcrumb[]
-}
+  breadcrumbs: SentryBreadcrumb[];
+};
 
 withDefaults(defineProps<Props>(), {
   breadcrumbs: () => [] as SentryBreadcrumb[]
-})
+});
 
 const formatDate = (timestamp?: number): string =>
-  timestamp ? moment.unix(timestamp).fromNow() : ""
+  timestamp ? moment.unix(timestamp).fromNow() : "";
 
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase()
+const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase();
 </script>
 
 <template>

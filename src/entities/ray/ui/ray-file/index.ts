@@ -1,1 +1,1 @@
-export { default as RayFile } from "./ray-file.vue"
+export { default as RayFile } from "./ray-file.vue";

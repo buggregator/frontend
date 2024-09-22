@@ -1,115 +1,115 @@
 <script lang="ts" setup>
-import { useFloating } from "@floating-ui/vue"
-import { onClickOutside } from "@vueuse/core"
-import { storeToRefs } from "pinia"
-import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
-import { PAGES_SETTINGS } from "@/shared/constants"
-import { textToColors } from "@/shared/lib/helpers"
-import { useEvents } from "@/shared/lib/use-events"
-import { useSettingsStore, useProfileStore, useEventsStore } from "@/shared/stores"
-import { useConnectionStore } from "@/shared/stores/connections"
-import { RouteName } from "@/shared/types"
-import { BadgeNumber, IconSvg } from "@/shared/ui"
-import { version } from "../../../../package.json" with { type: "json" }
-import { EVENTS_NAV_ORDER } from "./constants"
+import { useFloating } from "@floating-ui/vue";
+import { onClickOutside } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { PAGES_SETTINGS } from "@/shared/constants";
+import { textToColors } from "@/shared/lib/helpers";
+import { useEvents } from "@/shared/lib/use-events";
+import { useSettingsStore, useProfileStore, useEventsStore } from "@/shared/stores";
+import { useConnectionStore } from "@/shared/stores/connections";
+import { RouteName } from "@/shared/types";
+import { BadgeNumber, IconSvg } from "@/shared/ui";
+import { version } from "../../../../package.json" with { type: "json" };
+import { EVENTS_NAV_ORDER } from "./constants";
 
-const { isConnectedWS } = storeToRefs(useConnectionStore())
-const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
-const eventsStore = useEventsStore()
-const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
+const { isConnectedWS } = storeToRefs(useConnectionStore());
+const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
+const eventsStore = useEventsStore();
+const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore);
 
-const profileStore = useProfileStore()
-const { profile } = storeToRefs(profileStore)
+const profileStore = useProfileStore();
+const { profile } = storeToRefs(profileStore);
 
-const { getItemsCount } = useEvents()
+const { getItemsCount } = useEvents();
 
-const projectDd = ref<HTMLElement | undefined>()
-const projectMenu = ref<HTMLElement | undefined>()
-const userDd = ref<HTMLElement | undefined>()
-const userMenu = ref<HTMLElement | undefined>()
+const projectDd = ref<HTMLElement | undefined>();
+const projectMenu = ref<HTMLElement | undefined>();
+const userDd = ref<HTMLElement | undefined>();
+const userMenu = ref<HTMLElement | undefined>();
 
-const isVisibleProfile = ref(false)
-const isVisibleProjects = ref(false)
+const isVisibleProfile = ref(false);
+const isVisibleProjects = ref(false);
 
 // TODO: need to check why project is empty on first load
-const isProjectLoading = computed(() => !activeProject.value)
+const isProjectLoading = computed(() => !activeProject.value);
 
 onClickOutside(projectMenu, () => {
-  isVisibleProjects.value = false
-})
+  isVisibleProjects.value = false;
+});
 
 onClickOutside(userMenu, () => {
-  isVisibleProfile.value = false
-})
+  isVisibleProfile.value = false;
+});
 
 const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
   placement: "right-start"
-})
+});
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
   placement: "right"
-})
+});
 
-const connectionStatus = computed(() => (isConnectedWS.value ? "connected" : "disconnected"))
+const connectionStatus = computed(() => (isConnectedWS.value ? "connected" : "disconnected"));
 
 const avatar = computed(() => {
-  if (!profile.value) return null
+  if (!profile.value) return null;
 
   if (!profile.value?.avatar) {
-    return null
+    return null;
   }
 
   if (profile.value.avatar.startsWith("<svg")) {
-    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`
+    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`;
   }
 
-  return profile.value.avatar
-})
+  return profile.value.avatar;
+});
 
 const profileEmail = computed(() => {
-  if (!profile.value) return null
+  if (!profile.value) return null;
 
-  return profile.value.email
-})
+  return profile.value.email;
+});
 
-const connectionText = computed(() => `WS connection is ${connectionStatus.value}`)
+const connectionText = computed(() => `WS connection is ${connectionStatus.value}`);
 
 const toggleProfileDropdown = () => {
-  isVisibleProfile.value = !isVisibleProfile.value
-}
+  isVisibleProfile.value = !isVisibleProfile.value;
+};
 
 const toggleProjects = () => {
-  isVisibleProjects.value = !isVisibleProjects.value
-}
+  isVisibleProjects.value = !isVisibleProjects.value;
+};
 
 const logout = () => {
-  profileStore.removeToken()
-  const router = useRouter()
-  router.push("/login")
-}
+  profileStore.removeToken();
+  const router = useRouter();
+  router.push("/login");
+};
 
-const { apiVersion, availableEvents } = storeToRefs(useSettingsStore())
+const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
 
-const clientVersion = ref(!version || version === "0.0.1" ? "@dev" : `v${version}`)
+const clientVersion = ref(!version || version === "0.0.1" ? "@dev" : `v${version}`);
 
 const serverVersion = computed(() =>
   String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
-)
+);
 
 const setProject = (projectKey: string) => {
-  eventsStore.setActiveProjectKey(projectKey)
+  eventsStore.setActiveProjectKey(projectKey);
 
-  isVisibleProjects.value = false
-}
+  isVisibleProjects.value = false;
+};
 
 const filteredNavOrder = computed(() =>
   EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
-)
+);
 
-const makeShortTitle = (title: string) => (title || "").substring(0, 2)
+const makeShortTitle = (title: string) => (title || "").substring(0, 2);
 const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`
+  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
 </script>
 
 <template>

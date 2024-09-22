@@ -1,76 +1,76 @@
 <script lang="ts" setup>
-import type { ElementsDefinition, NodeDataDefinition } from "cytoscape"
-import { defineProps, onBeforeUnmount, onMounted, ref } from "vue"
-import { useCytoscape } from "../../lib"
-import type { CallStackHoverData } from "../../types"
+import type { ElementsDefinition, NodeDataDefinition } from "cytoscape";
+import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
+import { useCytoscape } from "../../lib";
+import type { CallStackHoverData } from "../../types";
 
 type Props = {
-  elements: ElementsDefinition
-  height: number
-}
+  elements: ElementsDefinition;
+  height: number;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const activeStatBoard = ref<CallStackHoverData>()
-const tooltipPosition = ref<{ top: string; left: string } | undefined>()
-const destroyFn = ref()
+const activeStatBoard = ref<CallStackHoverData>();
+const tooltipPosition = ref<{ top: string; left: string } | undefined>();
+const destroyFn = ref();
 
-const renderer = ref<HTMLElement>()
-const parent = ref<HTMLElement>()
-const tooltip = ref<HTMLElement>()
+const renderer = ref<HTMLElement>();
+const parent = ref<HTMLElement>();
+const tooltip = ref<HTMLElement>();
 
 const onNodeHover = (data?: NodeDataDefinition, event?: MouseEvent) => {
   if (!data || !event) {
-    activeStatBoard.value = undefined
-    tooltipPosition.value = undefined
+    activeStatBoard.value = undefined;
+    tooltipPosition.value = undefined;
 
-    return
+    return;
   }
 
   activeStatBoard.value = {
     title: data.name,
     cost: data.cost
-  }
+  };
 
-  const x = event.offsetX
-  const y = event.offsetY
+  const x = event.offsetX;
+  const y = event.offsetY;
 
-  const { clientHeight: height = 0, clientWidth: width = 0 } = tooltip.value as HTMLElement
+  const { clientHeight: height = 0, clientWidth: width = 0 } = tooltip.value as HTMLElement;
   const { offsetHeight: parentHeight = 0, offsetWidth: parentWidth = 0 } =
-    event.target as HTMLElement
+    event.target as HTMLElement;
 
-  let top = y
-  let left = x
+  let top = y;
+  let left = x;
 
   if (width + x > parentWidth - 80) {
-    const deltaX = width + x - parentWidth + 100
+    const deltaX = width + x - parentWidth + 100;
 
-    left -= deltaX
+    left -= deltaX;
   }
 
   if (height + y > parentHeight) {
-    top = y - height
+    top = y - height;
   }
 
   tooltipPosition.value = {
     top: `${top + 20}px`,
     left: `${left}px`
-  }
-}
+  };
+};
 
-const { initialize } = useCytoscape()
+const { initialize } = useCytoscape();
 
 onMounted(() => {
   destroyFn.value = initialize({
     container: renderer.value as HTMLElement,
     elements: props.elements,
     onNodeHover
-  })
-})
+  });
+});
 
 onBeforeUnmount(() => {
-  destroyFn.value()
-})
+  destroyFn.value();
+});
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core"
-import { PageHeader, LayoutBase, LayoutSidebar } from "@/widgets/ui"
-import { PAGE_TYPES } from "@/shared/constants"
-import { SettingsPageContent } from "../settings-page-content"
+import { useTitle } from "@vueuse/core";
+import { PageHeader, LayoutBase, LayoutSidebar } from "@/widgets/ui";
+import { PAGE_TYPES } from "@/shared/constants";
+import { SettingsPageContent } from "../settings-page-content";
 
-useTitle("Settings | Buggregator")
+useTitle("Settings | Buggregator");
 </script>
 
 <template>

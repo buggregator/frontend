@@ -1,1 +1,1 @@
-export { default as RayCarbon } from "./ray-carbon.vue"
+export { default as RayCarbon } from "./ray-carbon.vue";

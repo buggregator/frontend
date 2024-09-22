@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { computed, defineProps } from "vue"
-import { useFormats } from "../../lib/formats"
-import { StatBoardSize, type StatBoardCost } from "./types"
+import { computed, defineProps } from "vue";
+import { useFormats } from "../../lib/formats";
+import { StatBoardSize, type StatBoardCost } from "./types";
 
-const { formatDuration, formatFileSize } = useFormats()
+const { formatDuration, formatFileSize } = useFormats();
 
 type Props = {
-  cost: StatBoardCost
-  size?: StatBoardSize
-}
+  cost: StatBoardCost;
+  size?: StatBoardSize;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   size: StatBoardSize.Medium
-})
+});
 
 const statItems = computed(() => [
   {
@@ -40,7 +40,7 @@ const statItems = computed(() => [
     value: formatFileSize(props.cost.pmu || 0, 3) || "—",
     percent: props.cost?.p_pmu
   }
-])
+]);
 </script>
 
 <template>

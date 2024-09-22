@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import type { Ref } from "vue"
-import { RouterLink } from "vue-router"
-import type { NormalizedEvent } from "@/shared/types"
-import { PreviewCard } from "@/shared/ui"
-import type { Sentry, SentryException as Exception } from "../../types"
-import { SentryException } from "../sentry-exception"
+import { computed } from "vue";
+import type { Ref } from "vue";
+import { RouterLink } from "vue-router";
+import type { NormalizedEvent } from "@/shared/types";
+import { PreviewCard } from "@/shared/ui";
+import type { Sentry, SentryException as Exception } from "../../types";
+import { SentryException } from "../sentry-exception";
 
 type Props = {
-  event: NormalizedEvent<Sentry>
-  maxFrames?: number
-}
+  event: NormalizedEvent<Sentry>;
+  maxFrames?: number;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   maxFrames: 3
-})
+});
 
-const eventLink = computed(() => `/sentry/${props.event.id}`)
+const eventLink = computed(() => `/sentry/${props.event.id}`);
 
-const exceptionValues = computed(() => props.event?.payload?.exception?.values || [])
+const exceptionValues = computed(() => props.event?.payload?.exception?.values || []);
 
-const hasException = computed(() => exceptionValues.value.length > 0)
+const hasException = computed(() => exceptionValues.value.length > 0);
 
-const message = computed(() => props.event.payload?.message || "")
+const message = computed(() => props.event.payload?.message || "");
 
 const exception: Ref<Exception> = computed(() =>
   exceptionValues.value.length > 0
@@ -34,7 +34,7 @@ const exception: Ref<Exception> = computed(() =>
           frames: []
         }
       }
-)
+);
 </script>
 
 <template>

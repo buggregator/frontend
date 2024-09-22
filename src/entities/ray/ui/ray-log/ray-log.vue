@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { ValueDump } from "@/shared/ui"
+import { ValueDump } from "@/shared/ui";
 
 type Props = {
-  log: string | number
-}
+  log: string | number;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>

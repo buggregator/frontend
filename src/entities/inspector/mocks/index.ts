@@ -1,3 +1,3 @@
-import inspectorMock from "./inspector.json"
+import inspectorMock from "./inspector.json";
 
-export { inspectorMock }
+export { inspectorMock };

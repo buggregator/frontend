@@ -17,4 +17,4 @@ final class UserBanService
         $this->ws->disconnect($user->getId());
     }
 }
-`
+`;

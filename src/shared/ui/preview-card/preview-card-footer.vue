@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia"
-import { withDefaults, defineProps, computed } from "vue"
-import { useSettingsStore } from "../../stores/settings"
-import { IconSvg } from "../icon-svg"
+import { storeToRefs } from "pinia";
+import { withDefaults, defineProps, computed } from "vue";
+import { useSettingsStore } from "../../stores/settings";
+import { IconSvg } from "../icon-svg";
 
 // TODO: Move this to a shared file
 const KEY_MAP: { [key: string]: string } = {
@@ -12,60 +12,60 @@ const KEY_MAP: { [key: string]: string } = {
   line_number: "line",
   hostname: "host",
   environment: "env"
-}
+};
 
 type Props = {
-  serverName: string
+  serverName: string;
   originConfig: {
-    [key: string]: string
-  } | null
-}
+    [key: string]: string;
+  } | null;
+};
 
 const props = withDefaults(defineProps<Props>(), {
   serverName: "",
   originConfig: null
-})
+});
 
-const { codeEditor } = storeToRefs(useSettingsStore())
+const { codeEditor } = storeToRefs(useSettingsStore());
 
 const mappedOrigins = computed(() =>
   Object.entries(props.originConfig || {}).reduce(
     (acc, [key, value]) => {
-      const fileName = props.originConfig?.file || ""
+      const fileName = props.originConfig?.file || "";
 
       if (key === "name" && fileName.includes(value, fileName.length - value.length)) {
-        return acc
+        return acc;
       }
 
       if (!value || value === "undefined") {
-        return acc
+        return acc;
       }
 
-      const mappedKey = KEY_MAP[key] || key
-      acc[mappedKey] = value
+      const mappedKey = KEY_MAP[key] || key;
+      acc[mappedKey] = value;
 
-      return acc
+      return acc;
     },
     {} as { [key: string]: string }
   )
-)
+);
 
 const editorLink = computed(() => {
   if (!props.originConfig) {
-    return ""
+    return "";
   }
 
-  const fileName = mappedOrigins.value.file || ""
-  const line = mappedOrigins.value.line || ""
+  const fileName = mappedOrigins.value.file || "";
+  const line = mappedOrigins.value.line || "";
 
   if (!fileName || fileName === "unknown") {
-    return ""
+    return "";
   }
 
-  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ""}`
-})
+  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ""}`;
+});
 
-const isEditorLink = (key: string) => !!editorLink.value && (key === "file" || key === "line")
+const isEditorLink = (key: string) => !!editorLink.value && (key === "file" || key === "line");
 </script>
 
 <template>

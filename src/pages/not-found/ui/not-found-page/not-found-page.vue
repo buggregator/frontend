@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core"
-import { LayoutBase, LayoutSidebar } from "@/widgets/ui"
-import { RouteName } from "@/shared/types"
+import { useTitle } from "@vueuse/core";
+import { LayoutBase, LayoutSidebar } from "@/widgets/ui";
+import { RouteName } from "@/shared/types";
 
-useTitle("404 | Buggregator")
+useTitle("404 | Buggregator");
 </script>
 
 <template>

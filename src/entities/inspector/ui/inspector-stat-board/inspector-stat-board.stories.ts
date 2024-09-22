@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import { useInspector } from "../../lib"
-import { inspectorMock } from "../../mocks"
-import InspectorStatBoard from "./inspector-stat-board.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import { useInspector } from "../../lib";
+import { inspectorMock } from "../../mocks";
+import InspectorStatBoard from "./inspector-stat-board.vue";
 
-const { normalizeInspectorEvent } = useInspector()
+const { normalizeInspectorEvent } = useInspector();
 
 export default {
   title: "Entities/inspector/InspectorStatBoard",
   component: InspectorStatBoard
-} as Meta<typeof InspectorStatBoard>
+} as Meta<typeof InspectorStatBoard>;
 
 export const Default: StoryObj<typeof InspectorStatBoard> = {
   args: {
     transaction: normalizeInspectorEvent(inspectorMock).payload[0]
   }
-}
+};

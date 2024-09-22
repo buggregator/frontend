@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { defineProps, ref } from "vue"
-import { IconSvg, TableBase, TableBaseRow } from "@/shared/ui"
-import { EmailPreviewDevice, EmailPreview } from "@/shared/ui/email-preview"
-import type { RayContentMail, RayUser } from "../../types"
+import { defineProps, ref } from "vue";
+import { IconSvg, TableBase, TableBaseRow } from "@/shared/ui";
+import { EmailPreviewDevice, EmailPreview } from "@/shared/ui/email-preview";
+import type { RayContentMail, RayUser } from "../../types";
 
 type Props = {
-  content: RayContentMail
-}
+  content: RayContentMail;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const collapsed = ref(true)
+const collapsed = ref(true);
 
 const getValuesField = (values: RayUser[]) => {
-  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || []
-  return formattedValues.join(", ")
-}
+  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || [];
+  return formattedValues.join(", ");
+};
 </script>
 
 <template>

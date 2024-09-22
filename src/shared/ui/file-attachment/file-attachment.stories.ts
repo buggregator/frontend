@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/vue3"
-import FileAttachment from "./file-attachment.vue"
+import type { Meta, StoryObj } from "@storybook/vue3";
+import FileAttachment from "./file-attachment.vue";
 
 export default {
   title: "Shared/FileAttachment",
   component: FileAttachment
-} as Meta<typeof FileAttachment>
+} as Meta<typeof FileAttachment>;
 
 export const Default: StoryObj<typeof FileAttachment> = {
   args: {
@@ -17,4 +17,4 @@ export const Default: StoryObj<typeof FileAttachment> = {
       path: "example.com/attachment.txt"
     }
   }
-}
+};
