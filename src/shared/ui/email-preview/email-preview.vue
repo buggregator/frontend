@@ -8,7 +8,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  device: Device.Desktop
+  device: Device.Desktop,
 });
 
 const currentDevice = ref(props.device);

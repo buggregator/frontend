@@ -9,7 +9,8 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const eventLink = computed(() => `/profiler/${props.event.id}`);
+const eventLink = computed(() =>
+  `/profiler/${props.event.id}`);
 </script>
 
 <template>

@@ -7,11 +7,11 @@ const { normalizeMonologEvent } = useMonolog();
 
 export default {
   title: "Screens/Monolog/MonologPage",
-  component: Monolog
+  component: Monolog,
 } as Meta<typeof Monolog>;
 
 export const Default: StoryObj<typeof Monolog> = {
   args: {
-    event: normalizeMonologEvent(monologMock)
-  }
+    event: normalizeMonologEvent(monologMock),
+  },
 };

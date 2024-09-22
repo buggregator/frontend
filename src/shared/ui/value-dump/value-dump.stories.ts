@@ -4,24 +4,24 @@ import ValueDump from "./value-dump.vue";
 
 export default {
   title: "Shared/ValueDump",
-  component: ValueDump
+  component: ValueDump,
 } as Meta<typeof ValueDump>;
 
 export const String: StoryObj<typeof ValueDump> = {
   args: {
     value: HTMLEscapedString,
-    type: "string"
-  }
+    type: "string",
+  },
 };
 
 export const Boolean: StoryObj<typeof ValueDump> = {
   args: {
-    value: true
-  }
+    value: true,
+  },
 };
 
 export const SfDump: StoryObj<typeof ValueDump> = {
   args: {
-    value: SFDumpCode
-  }
+    value: SFDumpCode,
+  },
 };

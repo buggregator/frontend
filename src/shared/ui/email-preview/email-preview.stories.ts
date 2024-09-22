@@ -8,38 +8,39 @@ import { Device } from "./types";
 export default {
   title: "Shared/EmailPreview",
   component: EmailPreview,
-  render: (args: ComponentProps<typeof EmailPreview>) => ({
-    components: { EmailPreview },
-    setup() {
-      return {
-        args
-      };
-    },
-    template: `<div style="height: 100vh">
+  render: (args: ComponentProps<typeof EmailPreview>) =>
+    ({
+      components: { EmailPreview },
+      setup() {
+        return {
+          args,
+        };
+      },
+      template: `<div style="height: 100vh">
       <EmailPreview v-bind="args">
         <iframe srcdoc="<html>${htmlEncode(HTMLCode)}</html>"></iframe>
       </EmailPreview>
-    </div>`
-  })
+    </div>`,
+    }),
 } as Meta<typeof EmailPreview>;
 
 export const Default: StoryObj<typeof EmailPreview> = {
-  args: {}
+  args: {},
 };
 export const Tablet = {
   args: {
-    device: Device.Tablet
-  }
+    device: Device.Tablet,
+  },
 };
 
 export const Mobile: StoryObj<typeof EmailPreview> = {
   args: {
-    device: Device.Mobile
-  }
+    device: Device.Mobile,
+  },
 };
 
 export const Desktop: StoryObj<typeof EmailPreview> = {
   args: {
-    device: Device.Desktop
-  }
+    device: Device.Desktop,
+  },
 };

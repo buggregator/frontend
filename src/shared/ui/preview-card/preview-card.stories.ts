@@ -4,7 +4,7 @@ import PreviewCard from "./preview-card.vue";
 
 export default {
   title: "Shared/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
@@ -15,11 +15,11 @@ export const Default: StoryObj<typeof PreviewCard> = {
       serverName: "My server",
       origin: {
         one: 1,
-        two: 2
+        two: 2,
       },
       payload: [],
       date: new Date(1673266869 * 1000),
-      labels: ["Monolog", "200"]
-    }
-  }
+      labels: ["Monolog", "200"],
+    },
+  },
 };

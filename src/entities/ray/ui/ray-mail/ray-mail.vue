@@ -13,7 +13,8 @@ defineProps<Props>();
 const collapsed = ref(true);
 
 const getValuesField = (values: RayUser[]) => {
-  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || [];
+  const formattedValues = values.map((v) =>
+    `${v.name}[${v.email}]`) || [];
   return formattedValues.join(", ");
 };
 </script>
@@ -95,7 +96,8 @@ const getValuesField = (values: RayUser[]) => {
 }
 
 .ray-mail__icon {
-  @apply w-5 h-4 border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded mt-0.5 flex items-center justify-center;
+  @apply border border-purple-300 shadow bg-white dark:bg-gray-600;
+  @apply w-5 h-4 py-1 rounded mt-0.5 flex items-center justify-center;
 
   .icon-svg {
     width: 10px;

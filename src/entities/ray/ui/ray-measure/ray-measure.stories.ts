@@ -8,18 +8,18 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayMeasure",
-  component: RayMeasure
+  component: RayMeasure,
 } as Meta<typeof RayMeasure>;
 
 export const Default: StoryObj<typeof RayMeasure> = {
   args: {
-    measure: normalizeRayEvent(rayMeasureMock).payload.payloads[0].content as RayContentMeasure
-  }
+    measure: normalizeRayEvent(rayMeasureMock).payload.payloads[0].content as RayContentMeasure,
+  },
 };
 
 export const Start: StoryObj<typeof RayMeasure> = {
   args: {
     measure: normalizeRayEvent(rayMeasureStartMock).payload.payloads[0]
-      .content as RayContentMeasure
-  }
+      .content as RayContentMeasure,
+  },
 };

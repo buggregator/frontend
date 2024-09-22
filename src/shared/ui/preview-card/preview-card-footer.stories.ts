@@ -3,7 +3,7 @@ import PreviewCardFooter from "./preview-card-footer.vue";
 
 export default {
   title: "Shared/PreviewCardFooter",
-  component: PreviewCardFooter
+  component: PreviewCardFooter,
 } as Meta<typeof PreviewCardFooter>;
 
 export const Default: StoryObj<typeof PreviewCardFooter> = {
@@ -11,7 +11,7 @@ export const Default: StoryObj<typeof PreviewCardFooter> = {
     serverName: "My server",
     originConfig: {
       one: "1",
-      two: "2"
-    }
-  }
+      two: "2",
+    },
+  },
 };

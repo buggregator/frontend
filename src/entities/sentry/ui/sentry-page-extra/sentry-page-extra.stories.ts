@@ -7,17 +7,17 @@ const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Screens/sentry/SentryPageExtra",
-  component: SentryPageExtra
+  component: SentryPageExtra,
 } as Meta<typeof SentryPageExtra>;
 
 export const Laravel: StoryObj<typeof SentryPageExtra> = {
   args: {
-    extra: normalizeSentryEvent(sentryLaravelMock).payload.extra
-  }
+    extra: normalizeSentryEvent(sentryLaravelMock).payload.extra,
+  },
 };
 
 export const Spiral: StoryObj<typeof SentryPageExtra> = {
   args: {
-    extra: normalizeSentryEvent(sentrySpiralMock).payload.extra
-  }
+    extra: normalizeSentryEvent(sentrySpiralMock).payload.extra,
+  },
 };

@@ -6,18 +6,18 @@ const items = [
   {
     iconName: "github",
     title: "Github repository",
-    linkUrl: "https://github.com/buggregator"
+    linkUrl: "https://github.com/buggregator",
   },
   {
     iconName: "docs",
     title: "Documentation",
-    linkUrl: "https://docs.buggregator.dev"
+    linkUrl: "https://docs.buggregator.dev",
   },
   {
     iconName: "discord",
     title: "Join our discord",
-    linkUrl: "https://discord.gg/vDsCD3EKUB"
-  }
+    linkUrl: "https://discord.gg/vDsCD3EKUB",
+  },
 ];
 </script>
 

@@ -8,7 +8,8 @@ type Props = {
 
 defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value);
+const normalizeHeaderValue = (value: unknown) =>
+  (Array.isArray(value) ? value[0] || value : value);
 </script>
 
 <template>

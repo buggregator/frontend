@@ -12,11 +12,13 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   type: "",
-  language: "plaintext"
+  language: "plaintext",
 });
 
-const isValueString = computed(() => isString(props.value) && props.type === "string");
-const isValueCode = computed(() => isString(props.value) && props.type === "code");
+const isValueString = computed(() =>
+  isString(props.value) && props.type === "string");
+const isValueCode = computed(() =>
+  isString(props.value) && props.type === "code");
 
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null;
 const dumpBody = computed(() => {

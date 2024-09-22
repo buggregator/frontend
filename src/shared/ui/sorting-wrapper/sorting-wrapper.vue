@@ -10,7 +10,7 @@ type Emits = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  sort: SortingOrder.Default
+  sort: SortingOrder.Default,
 });
 
 const emit = defineEmits<Emits>();
@@ -18,7 +18,8 @@ const emit = defineEmits<Emits>();
 const changeSortOrder = () => {
   const sortOrderList = [SortingOrder.Asc, SortingOrder.Desc, SortingOrder.Default];
 
-  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort);
+  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) =>
+    sortOrder === props.sort);
 
   const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0];
 
@@ -60,7 +61,11 @@ const changeSortOrder = () => {
 }
 
 .sorting-wrapper__marker {
-  @apply opacity-40 hover:opacity-100 w-0 h-0 border-l-[4px] border-l-transparent border-t-[6px] border-t-gray-500 border-r-[4px] border-r-transparent border-b-[6px] border-b-transparent;
+  @apply border-b-[6px] border-b-transparent;
+  @apply border-r-[4px] border-r-transparent;
+  @apply border-l-[4px] border-l-transparent;
+  @apply border-t-[6px] border-t-gray-500;
+  @apply w-0 h-0 opacity-40 hover:opacity-100;
 }
 
 .sorting-wrapper__marker--asc {

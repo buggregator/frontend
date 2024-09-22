@@ -8,11 +8,11 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayCustom",
-  component: RayCustom
+  component: RayCustom,
 } as Meta<typeof RayCustom>;
 
 export const Default: StoryObj<typeof RayCustom> = {
   args: {
-    content: normalizeRayEvent(rayTextMock).payload.payloads[0].content as RayContentCustom
-  }
+    content: normalizeRayEvent(rayTextMock).payload.payloads[0].content as RayContentCustom,
+  },
 };

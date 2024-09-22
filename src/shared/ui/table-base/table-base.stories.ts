@@ -4,13 +4,17 @@ import TableBase from "./table-base.vue";
 
 export default {
   title: "Shared/TableBase",
-  component: TableBase
+  component: TableBase,
 } as Meta<typeof TableBase>;
 
 export const Default: StoryObj<typeof TableBase> = {
-  render: () => ({
-    components: { TableBase, TableBaseRow },
-    template: `<TableBase>
+  render: () =>
+    ({
+      components: {
+        TableBase,
+        TableBaseRow,
+      },
+      template: `<TableBase>
     <TableBaseRow title="Row 1">
       This is a row 1
     </TableBaseRow>
@@ -20,14 +24,18 @@ export const Default: StoryObj<typeof TableBase> = {
     <TableBaseRow title="Row 3">
       This is a row 3
     </TableBaseRow>
-  </TableBase>`
-  })
+  </TableBase>`,
+    }),
 };
 
 export const NoTitles: StoryObj<typeof TableBase> = {
-  render: () => ({
-    components: { TableBase, TableBaseRow },
-    template: `<TableBase>
+  render: () =>
+    ({
+      components: {
+        TableBase,
+        TableBaseRow,
+      },
+      template: `<TableBase>
     <TableBaseRow>
       This is a row 1
     </TableBaseRow>
@@ -37,13 +45,17 @@ export const NoTitles: StoryObj<typeof TableBase> = {
     <TableBaseRow>
       This is a row 3
     </TableBaseRow>
-  </TableBase>`
-  })
+  </TableBase>`,
+    }),
 };
 
 export const RowOnly: StoryObj<typeof TableBase> = {
-  render: () => ({
-    components: { TableBase, TableBaseRow },
-    template: `<TableBaseRow title="">This is a row 1</TableBaseRow>`
-  })
+  render: () =>
+    ({
+      components: {
+        TableBase,
+        TableBaseRow,
+      },
+      template: '<TableBaseRow title="">This is a row 1</TableBaseRow>',
+    }),
 };

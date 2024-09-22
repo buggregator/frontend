@@ -15,5 +15,5 @@ export {
   varDumpObjectMock,
   varDumpStringMock,
   varDumpEmptyStringMock,
-  varCodeMock
+  varCodeMock,
 };

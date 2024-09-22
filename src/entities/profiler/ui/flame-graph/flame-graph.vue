@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { FlameChart } from "flame-chart-js";
 import debounce from "lodash.debounce";
-import { ref, onMounted, nextTick, onBeforeUnmount, computed } from "vue";
+import {
+  ref, onMounted, nextTick, onBeforeUnmount, computed,
+} from "vue";
 import type { EventId } from "@/shared/types";
 import type { StatBoardCost } from "@/shared/ui";
 import { useProfiler } from "../../lib";
@@ -14,7 +16,10 @@ type Props = {
 
 const { getFlameChart } = useProfiler();
 
-const defaultPosition = { x: 0, y: 0 };
+const defaultPosition = {
+  x: 0,
+  y: 0,
+};
 
 const props = defineProps<Props>();
 
@@ -43,7 +48,7 @@ const activeStatBoardStyle = computed(() => {
   return {
     top: `${top + 10}px`,
     left: `${left}px`,
-    width: `${width}px`
+    width: `${width}px`,
   };
 });
 
@@ -64,8 +69,8 @@ const renderChart = async () => {
     settings: {
       styles: {
         main: {
-          blockHeight: 20
-        }
+          blockHeight: 20,
+        },
       },
       options: {
         tooltip: (data, _, mouse) => {
@@ -74,16 +79,16 @@ const renderChart = async () => {
           } else {
             activeStatBoard.value = {
               cost: data.data.source.cost,
-              title: data.data.source.name
+              title: data.data.source.name,
             };
             activeStatBoardPosition.value = {
               x: mouse?.x ? mouse.x + 20 : 0,
-              y: mouse?.y ? mouse.y - 20 : 0
+              y: mouse?.y ? mouse.y - 20 : 0,
             };
           }
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   flameChart.render();
@@ -98,7 +103,7 @@ const renderChart = async () => {
       const { width: windowWidth, height: windowHeight } = graph.value.getBoundingClientRect();
 
       flameChart.resize(windowWidth, windowHeight);
-    }, 30)
+    }, 30),
   );
 };
 

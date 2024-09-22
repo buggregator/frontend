@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia";
 import type {
   ProfileFlameChart,
   ProfilerCallGraph,
-  ProfilerTopFunctions
+  ProfilerTopFunctions,
 } from "@/entities/profiler/types";
 import { useProfileStore } from "../../stores";
 import type { EventId } from "../../types";
@@ -28,7 +28,7 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
   const getProfilerPartsRestUrl = ({
     id,
     params,
-    type
+    type,
   }: {
     id: EventId;
     params?: Record<string, string>;
@@ -42,8 +42,16 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
   };
 
   const getTopFunctions = (id: EventId, params?: Record<string, string>) =>
-    fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.TopFunctions }), { headers })
-      .then((response) => response.json())
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        params,
+        type: ProfilerPartType.TopFunctions,
+      }),
+      { headers },
+    )
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response) {
           return response;
@@ -60,8 +68,16 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
       });
 
   const getCallGraph = (id: EventId, params?: Record<string, string>) =>
-    fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.CallGraph }), { headers })
-      .then((response) => response.json())
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        params,
+        type: ProfilerPartType.CallGraph,
+      }),
+      { headers },
+    )
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response) {
           return response;
@@ -78,8 +94,15 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
       });
 
   const getFlameChart = (id: EventId) =>
-    fetch(getProfilerPartsRestUrl({ id, type: ProfilerPartType.FlameChart }), { headers })
-      .then((response) => response.json())
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        type: ProfilerPartType.FlameChart,
+      }),
+      { headers },
+    )
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response) {
           return response;
@@ -98,6 +121,6 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
   return {
     getTopFunctions,
     getCallGraph,
-    getFlameChart
+    getFlameChart,
   };
 };

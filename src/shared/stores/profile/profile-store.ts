@@ -4,14 +4,15 @@ import type { TProfile } from "../../types";
 import { getStoredToken, removeStoredToken, setStoredToken } from "./local-storage-actions";
 
 export const useProfileStore = defineStore("profileStore", {
-  state: () => ({
-    token: "" as string,
-    profile: undefined as TProfile | undefined
-  }),
+  state: () =>
+    ({
+      token: "" as string,
+      profile: undefined as TProfile | undefined,
+    }),
   getters: {
     isAuthenticated(): boolean {
       return !!this.token && this.token !== "null";
-    }
+    },
   },
   actions: {
     setToken(token: string): void {
@@ -21,7 +22,7 @@ export const useProfileStore = defineStore("profileStore", {
     async getProfile(): Promise<TProfile> {
       // TODO: need to remove fetch out of the store
       const profile = await fetch(`${REST_API_URL}/api/me`, {
-        headers: { "X-Auth-Token": this.token || "" }
+        headers: { "X-Auth-Token": this.token || "" },
       })
         .then((response) => {
           if (!response.ok && response.status === 403) {
@@ -60,6 +61,6 @@ export const useProfileStore = defineStore("profileStore", {
     removeToken(): void {
       this.token = "";
       removeStoredToken();
-    }
-  }
+    },
+  },
 });

@@ -17,15 +17,15 @@ const { events } = useEvents();
 const router = useRouter();
 
 const eventsListLink = computed(() =>
-  router.currentRoute.value.path.replace(`/${props.eventId}`, "")
-);
+  router.currentRoute.value.path.replace(`/${props.eventId}`, ""));
 const onDelete = () => {
   events.removeById(props.eventId);
 
   router.push({ name: RouteName.Home });
 };
 
-const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
+const eventUrl = computed(() =>
+  `${REST_API_URL}/api/event/${props.eventId}`);
 </script>
 
 <template>

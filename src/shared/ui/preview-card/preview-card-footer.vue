@@ -11,7 +11,7 @@ const KEY_MAP: { [key: string]: string } = {
   symfony_version: "symfony",
   line_number: "line",
   hostname: "host",
-  environment: "env"
+  environment: "env",
 };
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   serverName: "",
-  originConfig: null
+  originConfig: null,
 });
 
 const { codeEditor } = storeToRefs(useSettingsStore());
@@ -46,9 +46,8 @@ const mappedOrigins = computed(() =>
 
       return acc;
     },
-    {} as { [key: string]: string }
-  )
-);
+    {} as { [key: string]: string },
+  ));
 
 const editorLink = computed(() => {
   if (!props.originConfig) {
@@ -65,7 +64,8 @@ const editorLink = computed(() => {
   return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ""}`;
 });
 
-const isEditorLink = (key: string) => !!editorLink.value && (key === "file" || key === "line");
+const isEditorLink = (key: string) =>
+  !!editorLink.value && (key === "file" || key === "line");
 </script>
 
 <template>
@@ -118,7 +118,9 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === "file" || k
 }
 
 .preview-card-footer__tag {
-  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap gap-1 leading-none cursor-pointer;
+  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs border-gray-600 rounded;
+  @apply px-2 py-1 border leading-none cursor-pointer;
+  @apply flex flex-wrap gap-1;
 }
 
 .preview-card-footer__tag-key {

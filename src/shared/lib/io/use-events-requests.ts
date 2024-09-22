@@ -27,7 +27,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   const getAll = () =>
     fetch(getEventsPreviewRestUrl(), { headers })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response?.data) {
           return response.data as ServerEvent<unknown>[];
@@ -42,11 +43,13 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
         return [];
       })
-      .then((events: ServerEvent<unknown>[]) => events);
+      .then((events: ServerEvent<unknown>[]) =>
+        events);
 
   const getSingle = (id: EventId) =>
     fetch(getEventRestUrl(id), { headers })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response) {
           return response as ServerEvent<EventType>;
@@ -58,7 +61,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     fetch(getEventRestUrl(id), {
       method: "DELETE",
       headers,
-      ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null)
+      ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null),
     }).catch((err) => {
       console.error("Fetch Error", err);
     });
@@ -67,7 +70,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     fetch(getEventsPreviewRestUrl(), {
       method: "DELETE",
       headers,
-      ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null)
+      ...(project.value ? { body: JSON.stringify({ project: project.value }) } : null),
     }).catch((err) => {
       console.error("Fetch Error", err);
     });
@@ -76,7 +79,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     fetch(getEventsPreviewRestUrl(), {
       method: "DELETE",
       headers,
-      body: JSON.stringify({ uuids })
+      body: JSON.stringify({ uuids }),
     }).catch((err) => {
       console.error("Fetch Error", err);
     });
@@ -87,8 +90,8 @@ export const useEventsRequests: TUseEventsRequests = () => {
       headers,
       body: JSON.stringify({
         type,
-        ...(project.value ? { project: project.value } : null)
-      })
+        ...(project.value ? { project: project.value } : null),
+      }),
     }).catch((err) => {
       console.error("Fetch Error", err);
     });
@@ -99,6 +102,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteAll,
     deleteList,
     deleteSingle,
-    deleteByType
+    deleteByType,
   };
 };

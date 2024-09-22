@@ -7,13 +7,13 @@ const { normalizeMonologEvent } = useMonolog();
 
 export default {
   title: "Entities/monolog/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeMonologEvent(monologMock)
-  }
+    event: normalizeMonologEvent(monologMock),
+  },
 };
 
 export const WithOrigin: StoryObj<typeof PreviewCard> = {
@@ -23,14 +23,14 @@ export const WithOrigin: StoryObj<typeof PreviewCard> = {
       origin: {
         file: "/var/www/html/vendor/symfony/http-kernel/HttpKernel.php",
         line_number: 151,
-        name: "Symfony\\Component\\HttpKernel\\HttpKernel->handleRaw"
-      }
-    }
-  }
+        name: "Symfony\\Component\\HttpKernel\\HttpKernel->handleRaw",
+      },
+    },
+  },
 };
 
 export const ComplexObject: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeMonologEvent(monologExtendedMock)
-  }
+    event: normalizeMonologEvent(monologExtendedMock),
+  },
 };

@@ -33,7 +33,8 @@ defineProps<Props>();
 }
 
 .page-placeholder-item__link {
-  @apply text-blue-600 dark:text-blue-200 underline break-all text-xs md:text-sm lg:text-base leading-none;
+  @apply text-blue-600 dark:text-blue-200 text-xs md:text-sm lg:text-base;
+  @apply underline break-all leading-none;
 }
 
 .page-placeholder-item__icon {

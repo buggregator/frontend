@@ -11,7 +11,7 @@ import {
   CodeSnippet,
   FileAttachment,
   EmailPreviewDevice,
-  EmailPreview
+  EmailPreview,
 } from "@/shared/ui";
 import type { SMTP } from "../../types";
 import { SmtpPageAddresses } from "../smtp-page-addresses";
@@ -29,8 +29,7 @@ const { getAttachments, calcDownloadLink } = useAttachments();
 const htmlSource = computed(() =>
   props.event?.payload?.html
     ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
-    : undefined
-);
+    : undefined);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
@@ -46,40 +45,41 @@ const getAttachmentsRequest = async () => {
     console.error(error);
   }
 };
-const senders = computed(() => [
-  {
-    title: "From",
-    address: props.event.payload.from
-  },
-  {
-    title: "To",
-    address: props.event.payload.to
-  },
-  {
-    title: "CC",
-    address: props.event.payload.cc
-  },
-  {
-    title: "BCC",
-    address: props.event.payload.bcc
-  },
-  {
-    title: "Reply to",
-    address: props.event.payload.reply_to
-  }
-]);
+const senders = computed(() =>
+  [
+    {
+      title: "From",
+      address: props.event.payload.from,
+    },
+    {
+      title: "To",
+      address: props.event.payload.to,
+    },
+    {
+      title: "CC",
+      address: props.event.payload.cc,
+    },
+    {
+      title: "BCC",
+      address: props.event.payload.bcc,
+    },
+    {
+      title: "Reply to",
+      address: props.event.payload.reply_to,
+    },
+  ]);
 
-const isHtml = computed(
-  () => props.event.payload?.html !== undefined && props.event.payload?.html !== ""
-);
+const isHtml = computed(() =>
+  props.event.payload?.html !== undefined && props.event.payload?.html !== "");
 
-const isText = computed(
-  () => props.event.payload?.text !== undefined && props.event.payload?.text !== ""
-);
+const isText = computed(() =>
+  props.event.payload?.text !== undefined && props.event.payload?.text !== "");
 
-const mail = computed(() => props.event.payload);
+const mail = computed(() =>
+  props.event.payload);
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 
 const calcDownloadUrl = (attachmentId: Attachment["uuid"]) =>
   calcDownloadLink(props.event.id, attachmentId);

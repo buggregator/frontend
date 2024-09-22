@@ -3,9 +3,9 @@ import LoginPage from "./login-page.vue";
 
 export default {
   title: "Screens/Login/LoginPage",
-  component: LoginPage
+  component: LoginPage,
 } as Meta<typeof LoginPage>;
 
 export const Default: StoryObj<typeof LoginPage> = {
-  args: {}
+  args: {},
 };

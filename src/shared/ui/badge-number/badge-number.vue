@@ -7,11 +7,13 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  isVisible: true
+  isVisible: true,
 });
 
-const normalizedNumber = computed(() => (props.number > 99 ? "*" : props.number));
-const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
+const normalizedNumber = computed(() =>
+  (props.number > 99 ? "*" : props.number));
+const isVisibleBadge = computed(() =>
+  props.number > 0 && props.isVisible);
 </script>
 
 <template>

@@ -7,11 +7,11 @@ const { normalizeProfilerEvent } = useProfiler();
 
 export default {
   title: "Entities/Profiler/ProfilerPage",
-  component: ProfilerPage
+  component: ProfilerPage,
 } as Meta<typeof ProfilerPage>;
 
 export const Default: StoryObj<typeof ProfilerPage> = {
   args: {
-    event: normalizeProfilerEvent(profilerMock)
-  }
+    event: normalizeProfilerEvent(profilerMock),
+  },
 };

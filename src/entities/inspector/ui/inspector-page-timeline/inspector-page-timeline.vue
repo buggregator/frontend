@@ -25,9 +25,8 @@ const segmentColor = (color: string): string => {
   }
 };
 
-const transaction: Ref<InspectorTransaction> = computed(
-  () => props.payload[0] as InspectorTransaction
-);
+const transaction: Ref<InspectorTransaction> = computed(() =>
+props.payload[0] as InspectorTransaction);
 
 const layoutCells = computed(() => {
   const maxWidth = transaction.value.duration;
@@ -47,9 +46,10 @@ const layoutCells = computed(() => {
 
 const segments: ComputedRef<InspectorSegment[]> = computed(() =>
   props.payload
-    .filter((item): item is InspectorSegment => item.model === "segment")
-    .filter((el) => el?.transaction?.hash === transaction.value.hash)
-);
+    .filter((item): item is InspectorSegment =>
+      item.model === "segment")
+    .filter((el) =>
+      el?.transaction?.hash === transaction.value.hash));
 
 const segmentTypes = computed(() => {
   const arr: string[] = [];
@@ -66,14 +66,15 @@ const segmentTypes = computed(() => {
 const segmentRows = computed(() => {
   const { duration } = transaction.value;
 
-  return segments.value.map((segment: InspectorSegment) => ({
-    label: segment.label,
-    duration: segment.duration,
-    start: segment.start,
-    type: segment.type,
-    widthPercent: Math.max(Number(((segment.duration * 100) / duration).toFixed(2)), 0.5),
-    marginPercent: (((segment.start || 0) * 100) / duration).toFixed()
-  }));
+  return segments.value.map((segment: InspectorSegment) =>
+    ({
+      label: segment.label,
+      duration: segment.duration,
+      start: segment.start,
+      type: segment.type,
+      widthPercent: Math.max(Number(((segment.duration * 100) / duration).toFixed(2)), 0.5),
+      marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
+    }));
 });
 </script>
 

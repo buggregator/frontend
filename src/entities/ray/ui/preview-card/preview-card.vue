@@ -12,14 +12,14 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const classes = computed(() => [
-  `text-${props.event?.meta?.size || "sm"}`,
-  `text-${props.event?.meta?.color || "gray"}-500`
-]);
+const classes = computed(() =>
+  [
+    `text-${props.event?.meta?.size || "sm"}`,
+    `text-${props.event?.meta?.color || "gray"}-500`,
+  ]);
 
-const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
-  type
-) => COMPONENT_TYPE_MAP[type as RayEventTypes];
+const getComponent = (type: RayEventTypes | string): OneOfValues<typeof COMPONENT_TYPE_MAP> =>
+  COMPONENT_TYPE_MAP[type as RayEventTypes];
 </script>
 
 <template>

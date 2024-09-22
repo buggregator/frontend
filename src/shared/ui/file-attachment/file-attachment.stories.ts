@@ -3,7 +3,7 @@ import FileAttachment from "./file-attachment.vue";
 
 export default {
   title: "Shared/FileAttachment",
-  component: FileAttachment
+  component: FileAttachment,
 } as Meta<typeof FileAttachment>;
 
 export const Default: StoryObj<typeof FileAttachment> = {
@@ -14,7 +14,7 @@ export const Default: StoryObj<typeof FileAttachment> = {
       name: "attachment.txt",
       size: 234234,
       mime: "text/plain",
-      path: "example.com/attachment.txt"
-    }
-  }
+      path: "example.com/attachment.txt",
+    },
+  },
 };

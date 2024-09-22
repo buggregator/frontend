@@ -7,11 +7,11 @@ const { normalizeProfilerEvent } = useProfiler();
 
 export default {
   title: "Entities/Profiler/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Event: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeProfilerEvent(profilerMock)
-  }
+    event: normalizeProfilerEvent(profilerMock),
+  },
 };

@@ -13,18 +13,20 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  title: ""
+  title: "",
 });
 
 const { events, cachedEvents } = useEvents();
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0);
+const isEventsPaused = computed(() =>
+  cachedEvents.idsByType.value[props.type]?.length > 0);
 
 const allEvents = computed(() => {
   if (props.type === PAGE_TYPES.ALL_EVENT_TYPES) {
     return events.items.value;
   }
-  return events.items.value.filter(({ type }) => type === props.type);
+  return events.items.value.filter(({ type }) =>
+    type === props.type);
 });
 
 const visibleEvents = computed(() => {
@@ -33,8 +35,7 @@ const visibleEvents = computed(() => {
   }
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid)
-  );
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
 });
 
 watchEffect(() => {
@@ -89,7 +90,9 @@ watchEffect(() => {
 }
 
 .layout-preview-events__btn-stop-events {
-  @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+  @apply mr-3 text-xs rounded-sm transition-all duration-300 relative;
+  @apply text-gray-800 dark:text-white;
+  @apply opacity-40 hover:opacity-100;
 
   &[disabled] {
     @apply hover:opacity-40;

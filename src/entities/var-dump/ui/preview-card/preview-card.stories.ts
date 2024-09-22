@@ -8,7 +8,7 @@ import {
   varDumpObjectMock,
   varDumpStringMock,
   varDumpEmptyStringMock,
-  varCodeMock
+  varCodeMock,
 } from "../../mocks";
 import PreviewCard from "./preview-card.vue";
 
@@ -16,53 +16,53 @@ const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
   title: "Entities/var-dump/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpObjectMock)
-  }
+    event: normalizeVarDumpEvent(varDumpObjectMock),
+  },
 };
 
 export const Number: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpNumberMock)
-  }
+    event: normalizeVarDumpEvent(varDumpNumberMock),
+  },
 };
 
 export const String: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpStringMock)
-  }
+    event: normalizeVarDumpEvent(varDumpStringMock),
+  },
 };
 
 export const StringEmpty: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpEmptyStringMock)
-  }
+    event: normalizeVarDumpEvent(varDumpEmptyStringMock),
+  },
 };
 
 export const BooleanTrue: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpTrueMock)
-  }
+    event: normalizeVarDumpEvent(varDumpTrueMock),
+  },
 };
 
 export const BooleanFalse: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpFalseMock)
-  }
+    event: normalizeVarDumpEvent(varDumpFalseMock),
+  },
 };
 
 export const Array: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpArrayMock)
-  }
+    event: normalizeVarDumpEvent(varDumpArrayMock),
+  },
 };
 
 export const Code: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeVarDumpEvent(varCodeMock)
-  }
+    event: normalizeVarDumpEvent(varCodeMock),
+  },
 };

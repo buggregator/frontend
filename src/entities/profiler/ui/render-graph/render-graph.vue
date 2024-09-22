@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ElementsDefinition, NodeDataDefinition } from "cytoscape";
-import { defineProps, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+  defineProps, onBeforeUnmount, onMounted, ref,
+} from "vue";
 import { useCytoscape } from "../../lib";
 import type { CallStackHoverData } from "../../types";
 
@@ -29,7 +31,7 @@ const onNodeHover = (data?: NodeDataDefinition, event?: MouseEvent) => {
 
   activeStatBoard.value = {
     title: data.name,
-    cost: data.cost
+    cost: data.cost,
   };
 
   const x = event.offsetX;
@@ -54,7 +56,7 @@ const onNodeHover = (data?: NodeDataDefinition, event?: MouseEvent) => {
 
   tooltipPosition.value = {
     top: `${top + 20}px`,
-    left: `${left}px`
+    left: `${left}px`,
   };
 };
 
@@ -64,7 +66,7 @@ onMounted(() => {
   destroyFn.value = initialize({
     container: renderer.value as HTMLElement,
     elements: props.elements,
-    onNodeHover
+    onNodeHover,
   });
 });
 

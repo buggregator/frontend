@@ -8,11 +8,11 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayLog",
-  component: RayLog
+  component: RayLog,
 } as Meta<typeof RayLog>;
 
 export const Default: StoryObj<typeof RayLog> = {
   args: {
-    log: (normalizeRayEvent(rayColorMock).payload.payloads[0].content as RayContentLog).values[0]
-  }
+    log: (normalizeRayEvent(rayColorMock).payload.payloads[0].content as RayContentLog).values[0],
+  },
 };

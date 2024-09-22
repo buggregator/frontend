@@ -17,7 +17,8 @@ const title = computed(() => {
   return type[0].toUpperCase() + type.slice(1);
 });
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 </script>
 
 <template>

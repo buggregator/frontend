@@ -1,7 +1,9 @@
 <script lang="ts" setup generic="T">
 import download from "downloadjs";
 import { toBlob, toPng } from "html-to-image";
-import { ref, computed, onBeforeMount, onMounted } from "vue";
+import {
+  ref, computed, onBeforeMount, onMounted,
+} from "vue";
 import { REST_API_URL } from "../../lib/io";
 import { useEvents } from "../../lib/use-events";
 import type { NormalizedEvent } from "../../types";
@@ -25,15 +27,19 @@ const isDeleting = ref(false);
 const isInit = ref(true);
 const { events, lockedIds } = useEvents();
 
+// TODO: fix eslint rule to newline in array function
 const normalizedOrigin = computed(() => {
   const originEntriesList = Object.entries(props.event.origin || {})
-    .map(([key, value]) => [key, String(value)])
-    .filter(([_, value]) => Boolean(value));
+    .map(([key, value]) =>
+      [key, String(value)])
+    .filter((res) =>
+      Boolean(res[1]));
 
   return originEntriesList.length > 0 ? Object.fromEntries(originEntriesList) : null;
 });
 
-const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);
+const eventUrl = computed(() =>
+  `${REST_API_URL}/api/event/${props.event.id}`);
 
 const toggleView = () => {
   isCollapsed.value = !isCollapsed.value;
@@ -71,7 +77,8 @@ const downloadImage = () => {
       .then((dataUrl) => {
         download(dataUrl, `${props.event.type}-${props.event.id}.png`);
       })
-      .catch((e) => console.error(e))
+      .catch((e) =>
+        console.error(e))
       .finally(() => {
         changeVisibleControls(true);
       });
@@ -86,7 +93,7 @@ const downloadFile = async () => {
       download(
         JSON.stringify(event, null, 2),
         `${props.event.type}-${props.event.id}.json`,
-        "application/json"
+        "application/json",
       );
     }
   } catch (e) {
@@ -113,7 +120,8 @@ const copyCode = () => {
           navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e) =>
+        console.error(e))
       .finally(() => {
         changeVisibleControls(true);
       });

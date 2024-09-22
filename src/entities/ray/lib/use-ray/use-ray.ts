@@ -8,7 +8,8 @@ type TUseRay = () => {
   COMPONENT_TYPE_MAP: typeof COMPONENT_TYPE_MAP;
 };
 
-export const useRay: TUseRay = () => ({
-  normalizeRayEvent,
-  COMPONENT_TYPE_MAP
-});
+export const useRay: TUseRay = () =>
+  ({
+    normalizeRayEvent,
+    COMPONENT_TYPE_MAP,
+  });

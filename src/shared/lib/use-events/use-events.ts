@@ -2,7 +2,9 @@ import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
 import type { RayContentLock } from "@/entities/ray/types";
 import { type TEventsCachedIdsMap, useEventsStore } from "../../stores";
-import type { ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes } from "../../types";
+import type {
+  ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes,
+} from "../../types";
 import { useApiTransport } from "../use-api-transport";
 import { normalizeUnknownEvent } from "./normalize-unknown-event";
 import { type TUseEventsApi, useEventsApi } from "./use-events-api";
@@ -41,16 +43,16 @@ export const useEvents: TUseEvents = () => {
     cachedEvents: {
       idsByType: cachedIds as Ref<TEventsCachedIdsMap>,
       stopUpdatesByType: eventsStore.addCachedByType,
-      runUpdatesByType: eventsStore.removeCachedByType
+      runUpdatesByType: eventsStore.removeCachedByType,
     },
     lockedIds: {
       items: lockedIds as unknown as Ref<EventId[]>,
       add: eventsStore.addLockedIds,
-      remove: eventsStore.removeLockedIds
+      remove: eventsStore.removeLockedIds,
     },
     rayExecution: {
       continue: rayContinueExecution,
-      stop: rayStopExecution
-    }
+      stop: rayStopExecution,
+    },
   };
 };

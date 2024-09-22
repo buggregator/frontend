@@ -10,40 +10,42 @@ export default {
   argTypes: {
     name: {
       control: { type: "select" },
-      options: iconNames
-    }
-  },
-  render: (args: ComponentProps<typeof IconSvg>) => ({
-    components: { IconSvg },
-    setup() {
-      return {
-        args
-      };
+      options: iconNames,
     },
-    template: '<div style="width: 50px"><IconSvg v-bind="args" /></div>'
-  })
+  },
+  render: (args: ComponentProps<typeof IconSvg>) =>
+    ({
+      components: { IconSvg },
+      setup() {
+        return {
+          args,
+        };
+      },
+      template: '<div style="width: 50px"><IconSvg v-bind="args" /></div>',
+    }),
 } as Meta<typeof IconSvg>;
 
 export const Default: StoryObj<typeof IconSvg> = {
   args: {
-    name: "github"
-  }
+    name: "github",
+  },
 };
 export const AllIcons: StoryObj<typeof IconSvg> = {
-  render: () => ({
-    components: { IconSvg },
-    setup() {
-      return {
-        names: iconNames
-      };
-    },
-    template: `
+  render: () =>
+    ({
+      components: { IconSvg },
+      setup() {
+        return {
+          names: iconNames,
+        };
+      },
+      template: `
       <div style="display: flex; flex-wrap: wrap;">
         <figure v-for="name in names" class="flex flex-col items-center p-3 justify-between" style="width: 200px;">
           <IconSvg :name="name" style="width: 50px; margin: auto;" />
           <figcaption>{{ name }}</figcaption>
         </figure>
       </div>
-    `
-  })
+    `,
+    }),
 };

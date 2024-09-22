@@ -13,7 +13,7 @@ export const useApiTransport = () => {
   const createPayload = (additional?: Record<string, unknown>) => {
     const payload = {
       token: token.value,
-      project: project.value
+      project: project.value,
     };
     if (additional) {
       Object.assign(payload, additional);
@@ -24,10 +24,13 @@ export const useApiTransport = () => {
   const { centrifuge } = useCentrifuge();
   const eventsStore = useEventsStore();
   const connectionStore = useConnectionStore();
-  const { getAll, getSingle, deleteAll, deleteList, deleteSingle, deleteByType } =
+  const {
+    getAll, getSingle, deleteAll, deleteList, deleteSingle, deleteByType,
+  } =
     useEventsRequests();
 
-  const getWSConnection = () => connectionStore.isConnectedWS;
+  const getWSConnection = () =>
+    connectionStore.isConnectedWS;
   // todo: move to useCentrifuge
   // const checkWSConnectionFail = (onConnectionLost: () => void) => {
   //   if (!getWSConnection()) {
@@ -89,7 +92,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload());
+      return centrifuge.rpc("delete:api/events", createPayload());
     }
 
     return deleteAll();
@@ -105,7 +108,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload({ uuids }));
+      return centrifuge.rpc("delete:api/events", createPayload({ uuids }));
     }
 
     return deleteList(uuids);
@@ -113,7 +116,7 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload());
+      return centrifuge.rpc("delete:api/events", createPayload());
     }
 
     return deleteByType(type);
@@ -137,6 +140,6 @@ export const useApiTransport = () => {
     deleteEventsList,
     deleteEventsByType,
     rayStopExecution,
-    rayContinueExecution
+    rayContinueExecution,
   };
 };

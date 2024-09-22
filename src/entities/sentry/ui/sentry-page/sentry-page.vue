@@ -17,11 +17,14 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).toLocaleString());
+const formattedTimestamp = computed(() =>
+  moment(props.event.payload.timestamp).toLocaleString());
 
-const mainException = computed(() => props.event.payload?.exception?.values?.[0]);
+const mainException = computed(() =>
+  props.event.payload?.exception?.values?.[0]);
 
-const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0);
+const exceptionsLength = computed(() =>
+  props.event?.payload?.exception?.values?.length || 0);
 </script>
 
 <template>
@@ -157,7 +160,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__section-title__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply rounded-full text-xs px-2 py-1 ml-2;
 }
 
 .sentry-page__section-exceptions {

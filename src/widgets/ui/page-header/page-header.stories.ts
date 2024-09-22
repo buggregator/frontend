@@ -4,7 +4,7 @@ import PageHeader from "./page-header.vue";
 
 const PageHeaderMeta: Meta<typeof PageHeader> = {
   title: "Widgets/PageHeader",
-  component: PageHeader
+  component: PageHeader,
 };
 
 export default PageHeaderMeta;
@@ -12,6 +12,6 @@ export default PageHeaderMeta;
 export const Default: StoryObj<typeof PageHeader> = {
   args: {
     title: "Page title",
-    type: PAGE_TYPES.ALL_EVENT_TYPES
-  }
+    type: PAGE_TYPES.ALL_EVENT_TYPES,
+  },
 };

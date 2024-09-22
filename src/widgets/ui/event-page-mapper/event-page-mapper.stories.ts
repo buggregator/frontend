@@ -10,53 +10,56 @@ import EventPageMapper from "./event-page-mapper.vue";
 
 export default {
   title: "Widgets/EventsPageMapper",
-  component: EventPageMapper
+  component: EventPageMapper,
 } as Meta<typeof EventPageMapper>;
 
 export const Default: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: { ...smtpWelcomeMock, type: "unknown" }
-  }
+    event: {
+      ...smtpWelcomeMock,
+      type: "unknown",
+    },
+  },
 };
 
 export const Monolog: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: monologMock
-  }
+    event: monologMock,
+  },
 };
 
 export const Sentry: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: sentrySpiralMock
-  }
+    event: sentrySpiralMock,
+  },
 };
 
 export const Smtp: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: smtpWelcomeMock
-  }
+    event: smtpWelcomeMock,
+  },
 };
 
 export const VarDump: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: varDumpObjectMock
-  }
+    event: varDumpObjectMock,
+  },
 };
 
 export const Profiler: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: profilerMock
-  }
+    event: profilerMock,
+  },
 };
 
 export const Inspector: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: inspectorMock
-  }
+    event: inspectorMock,
+  },
 };
 
 export const HttpDump: StoryObj<typeof EventPageMapper> = {
   args: {
-    event: httpDumpMock
-  }
+    event: httpDumpMock,
+  },
 };

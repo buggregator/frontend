@@ -8,5 +8,5 @@ export const EVENTS_NAV_ORDER: EventTypes[] = [
   EventTypes.Inspector,
   EventTypes.VarDump,
   EventTypes.Monolog,
-  EventTypes.RayDump
+  EventTypes.RayDump,
 ];

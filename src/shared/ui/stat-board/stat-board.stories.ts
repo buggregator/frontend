@@ -8,9 +8,9 @@ export default {
   argTypes: {
     size: {
       control: "select",
-      options: [...Object.values(StatBoardSize), undefined]
-    }
-  }
+      options: [...Object.values(StatBoardSize), undefined],
+    },
+  },
 } as Meta<typeof StatBoard>;
 
 export const Default: StoryObj<typeof StatBoard> = {
@@ -20,9 +20,9 @@ export const Default: StoryObj<typeof StatBoard> = {
       wt: 206270,
       cpu: 44750,
       mu: 3112176,
-      pmu: 3001416
-    }
-  }
+      pmu: 3001416,
+    },
+  },
 };
 
 export const LargePeaks: StoryObj<typeof StatBoard> = {
@@ -32,9 +32,9 @@ export const LargePeaks: StoryObj<typeof StatBoard> = {
       wt: 2062700000,
       cpu: 447500000,
       mu: 31121760000,
-      pmu: 30014160000
-    }
-  }
+      pmu: 30014160000,
+    },
+  },
 };
 
 export const SmallSize: StoryObj<typeof StatBoard> = {
@@ -44,8 +44,8 @@ export const SmallSize: StoryObj<typeof StatBoard> = {
       wt: 206270,
       cpu: 44750,
       mu: 3112176,
-      pmu: 3001416
+      pmu: 3001416,
     },
-    size: StatBoardSize.Small
-  }
+    size: StatBoardSize.Small,
+  },
 };

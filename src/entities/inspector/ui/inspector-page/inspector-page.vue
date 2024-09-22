@@ -13,13 +13,14 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const transaction = computed(() => props.event?.payload[0]);
+const transaction = computed(() =>
+  props.event?.payload[0]);
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 
 const http = computed(() =>
-  transaction.value ? (transaction.value as InspectorTransaction)?.http : undefined
-);
+  transaction.value ? (transaction.value as InspectorTransaction)?.http : undefined);
 </script>
 
 <template>

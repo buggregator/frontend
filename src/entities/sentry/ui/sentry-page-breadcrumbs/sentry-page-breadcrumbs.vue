@@ -8,13 +8,15 @@ type Props = {
 };
 
 withDefaults(defineProps<Props>(), {
-  breadcrumbs: () => [] as SentryBreadcrumb[]
+  breadcrumbs: () =>
+[] as SentryBreadcrumb[],
 });
 
 const formatDate = (timestamp?: number): string =>
   timestamp ? moment.unix(timestamp).fromNow() : "";
 
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase();
+const getClassByLevel = (breadcrumb: SentryBreadcrumb) =>
+  breadcrumb.level?.toLowerCase();
 </script>
 
 <template>
@@ -115,7 +117,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply rounded-full text-xs px-2 py-1 ml-2;
 }
 
 .sentry-page-breadcrumbs__in {
@@ -124,7 +127,9 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__nav {
-  @apply border-b border-purple-300 dark:border-purple-700 grid bg-purple-50 dark:bg-purple-800 text-xs font-bold text-purple-600 dark:text-purple-100 rounded-t;
+  @apply border-purple-300 dark:border-purple-700;
+  @apply bg-purple-50 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply grid text-xs font-bold rounded-t border-b;
 }
 
 .sentry-page-breadcrumbs__nav-col-title {
@@ -132,7 +137,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__cols-wr {
-  @apply bg-gray-100 dark:bg-gray-800 max-h-full flex-1 overflow-y-scroll divide-y divide-purple-300 dark:divide-purple-600;
+  @apply bg-gray-100 dark:bg-gray-800divide-purple-300 dark:divide-purple-600;
+  @apply max-h-full flex-1 overflow-y-scroll divide-y;
 }
 
 .sentry-page-breadcrumbs__cols {
@@ -153,7 +159,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__col-details {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 text-2xs my-3 gap-3;
+  @apply flex flex-row flex-wrap items-center text-2xs my-3 gap-3;
+  @apply text-purple-600 dark:text-purple-100;
 }
 
 .sentry-page-breadcrumbs__col-detail {

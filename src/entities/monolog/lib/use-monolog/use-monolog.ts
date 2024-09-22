@@ -6,6 +6,7 @@ type TUseMonolog = () => {
   normalizeMonologEvent: (event: ServerEvent<Monolog>) => NormalizedEvent<Monolog>;
 };
 
-export const useMonolog: TUseMonolog = () => ({
-  normalizeMonologEvent: normalizeMonolog
-});
+export const useMonolog: TUseMonolog = () =>
+  ({
+    normalizeMonologEvent: normalizeMonolog,
+  });

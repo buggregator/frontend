@@ -11,5 +11,5 @@ export {
   sentryJSMock,
   sentryJSEventMock,
   sentryLaravelMock,
-  sentrySpiralMock
+  sentrySpiralMock,
 };

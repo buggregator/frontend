@@ -7,16 +7,16 @@ const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Screens/sentry/SentryPageDevice",
-  component: SentryPageDevice
+  component: SentryPageDevice,
 } as Meta<typeof SentryPageDevice>;
 export const Device: StoryObj<typeof SentryPageDevice> = {
   args: {
-    device: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.device
-  }
+    device: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.device,
+  },
 };
 
 export const Spiral: StoryObj<typeof SentryPageDevice> = {
   args: {
-    device: normalizeSentryEvent(sentrySpiralMock).payload?.contexts?.device
-  }
+    device: normalizeSentryEvent(sentrySpiralMock).payload?.contexts?.device,
+  },
 };

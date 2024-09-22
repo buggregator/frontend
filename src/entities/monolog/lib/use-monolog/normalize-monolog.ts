@@ -10,7 +10,7 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
     origin: event.payload?.context?.source || null,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
+    payload: event.payload,
   };
 
   if (normalizedEvent.date) {

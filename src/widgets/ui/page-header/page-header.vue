@@ -25,13 +25,15 @@ const clearEvents = () => {
   return events.removeByType(props.type as unknown as EventType);
 };
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0);
+const isEventsPaused = computed(() =>
+  cachedEvents.idsByType.value[props.type]?.length > 0);
 
 const allEvents = computed(() => {
   if (props.type === ALL_EVENT_TYPES) {
     return events.items.value;
   }
-  return events.items.value.filter(({ type }) => type === props.type);
+  return events.items.value.filter(({ type }) =>
+    type === props.type);
 });
 
 const visibleEvents = computed(() => {
@@ -40,11 +42,11 @@ const visibleEvents = computed(() => {
   }
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid)
-  );
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
 });
 
-const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length);
+const hiddenEventsCount = computed(() =>
+  allEvents.value.length - visibleEvents.value.length);
 
 const toggleUpdate = () => {
   if (isEventsPaused.value) {
@@ -55,10 +57,7 @@ const toggleUpdate = () => {
 };
 
 const badgeNumber = computed(() =>
-  getItemsCount.value(
-    props.type !== ALL_EVENT_TYPES ? (props.type as unknown as EventType) : undefined
-  )
-);
+  getItemsCount.value(props.type !== ALL_EVENT_TYPES ? (props.type as EventType) : undefined));
 </script>
 
 <template>

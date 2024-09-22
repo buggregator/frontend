@@ -6,6 +6,7 @@ type TUseSentry = () => {
   normalizeSentryEvent: (event: ServerEvent<Sentry>) => NormalizedEvent<Sentry>;
 };
 
-export const useSentry: TUseSentry = () => ({
-  normalizeSentryEvent
-});
+export const useSentry: TUseSentry = () =>
+  ({
+    normalizeSentryEvent,
+  });

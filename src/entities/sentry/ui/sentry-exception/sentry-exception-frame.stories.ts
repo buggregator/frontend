@@ -7,7 +7,7 @@ const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Entities/sentry/SentryExceptionFrame",
-  component: SentryExceptionFrame
+  component: SentryExceptionFrame,
 } as Meta<typeof SentryExceptionFrame>;
 
 export const Frame: StoryObj<typeof SentryExceptionFrame> = {
@@ -15,6 +15,6 @@ export const Frame: StoryObj<typeof SentryExceptionFrame> = {
     isOpen: true,
     frame:
       normalizeSentryEvent(sentrySpiralMock).payload?.exception?.values?.[0]?.stacktrace
-        ?.frames?.[1]
-  }
+        ?.frames?.[1],
+  },
 };

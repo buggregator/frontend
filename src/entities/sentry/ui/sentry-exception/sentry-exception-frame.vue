@@ -12,8 +12,7 @@ const props = defineProps<Props>();
 const isFrameOpen = ref(props.isOpen);
 
 const hasBody = computed(() =>
-  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
-);
+  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context));
 
 const toggleOpen = () => {
   if (hasBody.value) {
@@ -103,7 +102,8 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__head {
-  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2 justify-between items-start cursor-pointer;
+  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2;
+  @apply justify-between items-start cursor-pointer;
 
   .sentry-exception-frame--empty & {
     @apply cursor-default;

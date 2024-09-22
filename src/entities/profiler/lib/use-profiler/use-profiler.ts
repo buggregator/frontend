@@ -4,7 +4,7 @@ import type {
   ProfileFlameChart,
   Profiler,
   ProfilerCallGraph,
-  ProfilerTopFunctions
+  ProfilerTopFunctions,
 } from "../../types";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 
@@ -22,6 +22,6 @@ export const useProfiler: TUseProfiler = () => {
     normalizeProfilerEvent,
     getTopFunctions,
     getCallGraph,
-    getFlameChart
+    getFlameChart,
   };
 };

@@ -12,47 +12,47 @@ export const routes = [
     name: RouteName.Home,
     component: EventsListPage,
     meta: {
-      middleware: [auth]
-    }
+      middleware: [auth],
+    },
   },
   {
     path: "/:type",
     name: RouteName.EventList,
     component: EventsListPage,
     meta: {
-      middleware: [auth, checkType]
-    }
+      middleware: [auth, checkType],
+    },
   },
   {
     path: "/:type/:id",
     name: RouteName.EventPage,
     component: EventPage,
     meta: {
-      middleware: [auth, checkType]
-    }
+      middleware: [auth, checkType],
+    },
   },
   {
     path: "/404",
     name: RouteName.NotFound,
     component: NotFoundPage,
     meta: {
-      middleware: [auth]
-    }
+      middleware: [auth],
+    },
   },
   {
     path: "/settings",
     name: RouteName.Settings,
     component: SettingsPage,
     meta: {
-      middleware: [auth]
-    }
+      middleware: [auth],
+    },
   },
   {
     path: "/login",
     name: RouteName.Login,
     component: LoginPage,
     meta: {
-      middleware: [auth]
-    }
-  }
+      middleware: [auth],
+    },
+  },
 ];

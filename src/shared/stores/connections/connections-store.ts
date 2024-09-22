@@ -2,13 +2,14 @@ import { defineStore } from "pinia";
 import { ConnectionStatus } from "./types";
 
 export const useConnectionStore = defineStore("connectionStore", {
-  state: () => ({
-    wsConnectionStatus: ConnectionStatus.DISCONNECTED
-  }),
+  state: () =>
+    ({
+      wsConnectionStatus: ConnectionStatus.DISCONNECTED,
+    }),
   getters: {
     isConnectedWS({ wsConnectionStatus }) {
       return wsConnectionStatus === ConnectionStatus.CONNECTED;
-    }
+    },
   },
   actions: {
     setStatus(newStatus: ConnectionStatus) {
@@ -19,6 +20,6 @@ export const useConnectionStore = defineStore("connectionStore", {
     },
     addWSConnection() {
       this.setStatus(ConnectionStatus.CONNECTED);
-    }
-  }
+    },
+  },
 });

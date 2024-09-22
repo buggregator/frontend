@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ElementsDefinition } from "cytoscape";
-import { ref, computed, onMounted, watchEffect } from "vue";
+import {
+  ref, computed, onMounted, watchEffect,
+} from "vue";
 import { type EventId, GraphTypes } from "@/shared/types";
 import { IconSvg, type StatBoardCost } from "@/shared/ui";
 import { useProfiler } from "../../lib";
@@ -49,14 +51,13 @@ const toggleFullScreen = () => {
 };
 
 const graphHeight = computed(() =>
-  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight
-);
+  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight);
 
 watchEffect(async () => {
   const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
     threshold: String(threshold.value),
     percentage: String(percent.value),
-    metric: String(metric.value)
+    metric: String(metric.value),
   });
 
   elements.value = elems;
@@ -70,7 +71,8 @@ onMounted(() => {
   isReadyGraph.value = true;
 });
 
-const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"));
+const percentLabel = computed(() =>
+  (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"));
 </script>
 
 <template>

@@ -7,11 +7,11 @@ const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
   title: "Entities/http-dump/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeHttpDumpEvent(httpDumpMock)
-  }
+    event: normalizeHttpDumpEvent(httpDumpMock),
+  },
 };

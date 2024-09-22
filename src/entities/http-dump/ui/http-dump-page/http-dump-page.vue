@@ -10,37 +10,30 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const uri = computed(() => decodeURI(props.event.payload?.request?.uri));
+const uri = computed(() =>
+  decodeURI(props.event.payload?.request?.uri));
 
-const hasPostData = computed(
-  () =>
-    props.event.payload?.request?.post &&
-    Object.keys(props.event.payload?.request?.post).length > 0
-);
+const hasPostData = computed(() =>
+  props.event.payload?.request?.post
+    && Object.keys(props.event.payload?.request?.post).length > 0);
 
-const hasQuery = computed(
-  () =>
-    props.event.payload?.request?.query &&
-    Object.keys(props.event.payload?.request?.query).length > 0
-);
+const hasQuery = computed(() =>
+  props.event.payload?.request?.query
+    && Object.keys(props.event.payload?.request?.query).length > 0);
 
-const hasHeaders = computed(
-  () => Object.keys(props.event.payload?.request?.headers || {}).length > 0
-);
+const hasHeaders = computed(() =>
+  Object.keys(props.event.payload?.request?.headers || {}).length > 0);
 
-const hasCookies = computed(
-  () =>
-    props.event.payload?.request?.cookies &&
-    Object.keys(props.event.payload?.request?.cookies).length > 0
-);
+const hasCookies = computed(() =>
+  props.event.payload?.request?.cookies
+    && Object.keys(props.event.payload?.request?.cookies).length > 0);
 
-const hasBody = computed(() => props.event.payload?.request?.body?.length > 0);
+const hasBody = computed(() =>
+  props.event.payload?.request?.body?.length > 0);
 
-const hasAttachments = computed(
-  () =>
-    props.event.payload?.request?.files &&
-    Object.keys(props.event.payload?.request?.files).length > 0
-);
+const hasAttachments = computed(() =>
+  props.event.payload?.request?.files
+    && Object.keys(props.event.payload?.request?.files).length > 0);
 </script>
 
 <template>

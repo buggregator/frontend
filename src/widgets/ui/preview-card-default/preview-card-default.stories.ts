@@ -7,11 +7,14 @@ const { normalizeUnknownEvent } = useEvents();
 
 export default {
   title: "Widgets/PreviewCardDefault",
-  component: PreviewCardDefault
+  component: PreviewCardDefault,
 } as Meta<typeof PreviewCardDefault>;
 
 export const Default: StoryObj<typeof PreviewCardDefault> = {
   args: {
-    event: normalizeUnknownEvent({ ...monologMock, type: "unknown" })
-  }
+    event: normalizeUnknownEvent({
+      ...monologMock,
+      type: "unknown",
+    }),
+  },
 };

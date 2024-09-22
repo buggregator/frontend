@@ -27,6 +27,7 @@ defineProps<Props>();
 }
 
 .ray-trace__files {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
+  @apply flex-col justify-center w-full border rounded overflow-hidden;
+  @apply border-purple-300 dark:border-gray-400;
 }
 </style>

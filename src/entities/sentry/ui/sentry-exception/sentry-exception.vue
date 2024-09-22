@@ -9,7 +9,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 0
+  maxFrames: 0,
 });
 
 const exceptionFrames = computed(() => {
@@ -61,7 +61,8 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-500 border-b-0;
+  @apply dark:bg-gray-900 bg-gray-100 border-purple-300 dark:border-gray-500;
+  @apply p-3 rounded-t-md border border-b-0;
 }
 
 .sentry-exception__title {
@@ -74,6 +75,7 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__frames {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-500 border-t-0 rounded-b-md overflow-hidden;
+  @apply border border-purple-300 dark:border-gray-500 border-t-0 rounded-b-md;
+  @apply flex-col justify-center w-full overflow-hidden;
 }
 </style>

@@ -43,5 +43,5 @@ export {
   rayTextMock,
   rayTraceMock,
   rayBooleanTrueMock,
-  rayBooleanFalseMock
+  rayBooleanFalseMock,
 };

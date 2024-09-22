@@ -1,34 +1,36 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
 import { useSentry } from "../../lib";
-import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } from "../../mocks";
+import {
+  sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock,
+} from "../../mocks";
 import PreviewCard from "./preview-card.vue";
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Entities/sentry/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 export const Spiral: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSentryEvent(sentrySpiralMock)
-  }
+    event: normalizeSentryEvent(sentrySpiralMock),
+  },
 };
 
 export const Laravel: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSentryEvent(sentryLaravelMock)
-  }
+    event: normalizeSentryEvent(sentryLaravelMock),
+  },
 };
 
 export const Event: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSentryEvent(sentryMock)
-  }
+    event: normalizeSentryEvent(sentryMock),
+  },
 };
 
 export const JSEvent: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSentryEvent(sentryJSEventMock)
-  }
+    event: normalizeSentryEvent(sentryJSEventMock),
+  },
 };

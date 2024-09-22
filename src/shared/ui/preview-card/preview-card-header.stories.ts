@@ -14,9 +14,9 @@ export default {
     eventType: {
       control: { type: "select" },
       options: Object.values(EventTypes),
-      mapping: EventTypes
-    }
-  }
+      mapping: EventTypes,
+    },
+  },
 } as Meta<typeof PreviewCardHeader>;
 
 export const Default: StoryObj<typeof PreviewCardHeader> = {
@@ -26,6 +26,6 @@ export const Default: StoryObj<typeof PreviewCardHeader> = {
     isOpen: true,
     isVisibleControls: true,
     eventId: "test-event-id",
-    labels: ["one", "two", "tree"]
-  }
+    labels: ["one", "two", "tree"],
+  },
 };

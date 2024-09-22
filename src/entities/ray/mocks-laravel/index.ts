@@ -21,5 +21,5 @@ export {
   rayLaravelQueryMock,
   rayLaravelQueryNoBindingsMock,
   rayLaravelViewsMock,
-  rayLaravelApplicationLogMock
+  rayLaravelApplicationLogMock,
 };

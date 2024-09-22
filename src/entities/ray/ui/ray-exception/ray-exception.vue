@@ -11,7 +11,7 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 0
+  maxFrames: 0,
 });
 
 const exceptionFrames = computed(() => {
@@ -51,7 +51,8 @@ const exceptionFrames = computed(() => {
 }
 
 .ray-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
+  @apply dark:bg-gray-900 bg-gray-100 p-3 border-purple-300 dark:border-gray-400;
+  @apply rounded-t-md border border-b-0;
 }
 
 .ray-exception__title {
@@ -69,7 +70,8 @@ const exceptionFrames = computed(() => {
 }
 
 .ray-exception__files {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
+  @apply border border-t-0 border-purple-300 dark:border-gray-400;
+  @apply flex-col justify-center w-full rounded-b-md overflow-hidden;
 }
 
 .ray__body-text {

@@ -7,17 +7,17 @@ const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
   title: "Screens/http-dump/HttpDumpPage",
-  component: HttpDumpPage
+  component: HttpDumpPage,
 } as Meta<typeof HttpDumpPage>;
 
 export const Default: StoryObj<typeof HttpDumpPage> = {
   args: {
-    event: normalizeHttpDumpEvent(httpDumpMock)
-  }
+    event: normalizeHttpDumpEvent(httpDumpMock),
+  },
 };
 
 export const WithPdf: StoryObj<typeof HttpDumpPage> = {
   args: {
-    event: normalizeHttpDumpEvent(httpDumpPdfMock)
-  }
+    event: normalizeHttpDumpEvent(httpDumpPdfMock),
+  },
 };

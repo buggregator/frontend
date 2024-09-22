@@ -6,7 +6,8 @@ export const textToColors = (input: string): string[] => {
   };
 
   // Function to generate an HSL color based on a base hue
-  const getHslColor = (hue: number) => `hsl(${hue}, 70%, 50%)`;
+  const getHslColor = (hue: number) =>
+    `hsl(${hue}, 70%, 50%)`;
 
   // Extract up to three characters from the input string
   const chars =

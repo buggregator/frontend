@@ -9,15 +9,13 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const ddStates = ref(
-  Object.keys(props.extra || {}).reduce(
-    (acc, key) => {
-      acc[key] = false;
-      return acc;
-    },
-    {} as Record<string, boolean>
-  )
-);
+const ddStates = ref(Object.keys(props.extra || {}).reduce(
+  (acc, key) => {
+    acc[key] = false;
+    return acc;
+  },
+    {} as Record<string, boolean>,
+));
 </script>
 
 <template>

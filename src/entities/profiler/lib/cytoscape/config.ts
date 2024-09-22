@@ -18,8 +18,8 @@ export const cytoscapeStyles: Stylesheet[] = [
       width: "label",
       height: "label",
       "border-width": "2px",
-      "border-color": "#000"
-    }
+      "border-color": "#000",
+    },
   },
   {
     selector: "edge",
@@ -36,7 +36,7 @@ export const cytoscapeStyles: Stylesheet[] = [
       "curve-style": "bezier",
       "taxi-direction": "downward",
       "edge-distances": "node-position",
-      "control-point-distance": 5
-    }
-  }
+      "control-point-distance": 5,
+    },
+  },
 ];

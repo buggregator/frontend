@@ -6,6 +6,7 @@ type TUseInspector = () => {
   normalizeInspectorEvent: (event: ServerEvent<Inspector>) => NormalizedEvent<Inspector>;
 };
 
-export const useInspector: TUseInspector = () => ({
-  normalizeInspectorEvent
-});
+export const useInspector: TUseInspector = () =>
+  ({
+    normalizeInspectorEvent,
+  });

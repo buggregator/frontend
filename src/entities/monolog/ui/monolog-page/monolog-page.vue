@@ -11,7 +11,8 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 </script>
 
 <template>

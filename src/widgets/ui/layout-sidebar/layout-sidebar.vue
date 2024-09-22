@@ -33,7 +33,8 @@ const isVisibleProfile = ref(false);
 const isVisibleProjects = ref(false);
 
 // TODO: need to check why project is empty on first load
-const isProjectLoading = computed(() => !activeProject.value);
+const isProjectLoading = computed(() =>
+  !activeProject.value);
 
 onClickOutside(projectMenu, () => {
   isVisibleProjects.value = false;
@@ -44,14 +45,15 @@ onClickOutside(userMenu, () => {
 });
 
 const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
-  placement: "right-start"
+  placement: "right-start",
 });
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: "right"
+  placement: "right",
 });
 
-const connectionStatus = computed(() => (isConnectedWS.value ? "connected" : "disconnected"));
+const connectionStatus = computed(() =>
+  (isConnectedWS.value ? "connected" : "disconnected"));
 
 const avatar = computed(() => {
   if (!profile.value) return null;
@@ -73,7 +75,8 @@ const profileEmail = computed(() => {
   return profile.value.email;
 });
 
-const connectionText = computed(() => `WS connection is ${connectionStatus.value}`);
+const connectionText = computed(() =>
+  `WS connection is ${connectionStatus.value}`);
 
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value;
@@ -94,8 +97,7 @@ const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
 const clientVersion = ref(!version || version === "0.0.1" ? "@dev" : `v${version}`);
 
 const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
-);
+  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`);
 
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey);
@@ -104,10 +106,11 @@ const setProject = (projectKey: string) => {
 };
 
 const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
-);
+  EVENTS_NAV_ORDER.filter((type) =>
+    availableEvents.value.includes(type)));
 
-const makeShortTitle = (title: string) => (title || "").substring(0, 2);
+const makeShortTitle = (title: string) =>
+  (title || "").substring(0, 2);
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
 </script>

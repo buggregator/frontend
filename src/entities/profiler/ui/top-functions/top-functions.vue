@@ -23,9 +23,9 @@ const data = ref<ProfilerTopFunctions>({
     wt: 0,
     mu: 0,
     pmu: 0,
-    ct: 0
+    ct: 0,
   },
-  schema: []
+  schema: [],
 });
 
 const setMetric = (value: string | undefined) => {

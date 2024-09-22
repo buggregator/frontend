@@ -47,6 +47,7 @@ class WSConnection {
   }
 }
 
-export const useCentrifuge: TUseCentrifuge = () => ({
-  centrifuge: WSConnection.getInstance().getCentrifuge()
-});
+export const useCentrifuge: TUseCentrifuge = () =>
+  ({
+    centrifuge: WSConnection.getInstance().getCentrifuge(),
+  });

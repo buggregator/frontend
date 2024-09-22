@@ -31,42 +31,45 @@ const props = defineProps<Props>();
 const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> = {
   [EventTypes.Sentry]: {
     view: SentryPage,
-    normalize: normalizeSentryEvent
+    normalize: normalizeSentryEvent,
   },
   [EventTypes.Monolog]: {
     view: MonologPage,
-    normalize: normalizeMonologEvent
+    normalize: normalizeMonologEvent,
   },
   [EventTypes.VarDump]: {
     view: VarDumpPage,
-    normalize: normalizeVarDumpEvent
+    normalize: normalizeVarDumpEvent,
   },
   [EventTypes.RayDump]: {
     view: RayPage,
-    normalize: normalizeRayEvent
+    normalize: normalizeRayEvent,
   },
   [EventTypes.Smtp]: {
     view: SmtpPage,
-    normalize: normalizeSmtpEvent
+    normalize: normalizeSmtpEvent,
   },
   [EventTypes.Profiler]: {
     view: ProfilerPage,
-    normalize: normalizeProfilerEvent
+    normalize: normalizeProfilerEvent,
   },
   [EventTypes.Inspector]: {
     view: InspectorPage,
-    normalize: normalizeInspectorEvent
+    normalize: normalizeInspectorEvent,
   },
   [EventTypes.HttpDump]: {
     view: HttpDumpPage,
-    normalize: normalizeHttpDumpEvent
-  }
+    normalize: normalizeHttpDumpEvent,
+  },
 } as Record<EventTypes, MappedEventsProps<unknown>>;
 
-const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventTypes]);
+const componentConfig = computed(() =>
+  EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventTypes]);
 
-const view = computed(() => componentConfig.value?.view ?? PreviewCardDefault);
-const normalize = computed(() => componentConfig.value?.normalize ?? normalizeUnknownEvent);
+const view = computed(() =>
+  componentConfig.value?.view ?? PreviewCardDefault);
+const normalize = computed(() =>
+  componentConfig.value?.normalize ?? normalizeUnknownEvent);
 </script>
 
 <template>

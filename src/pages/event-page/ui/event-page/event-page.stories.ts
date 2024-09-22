@@ -3,9 +3,9 @@ import EventPage from "./event-page.vue";
 
 export default {
   title: "Screens/EventPage/EventPage",
-  component: EventPage
+  component: EventPage,
 } as Meta<typeof EventPage>;
 
 export const Default: StoryObj<typeof EventPage> = {
-  args: {}
+  args: {},
 };

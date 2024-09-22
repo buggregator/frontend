@@ -8,12 +8,12 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayException",
-  component: RayException
+  component: RayException,
 } as Meta<typeof RayException>;
 
 export const Default: StoryObj<typeof RayException> = {
   args: {
     exception: normalizeRayEvent(rayExceptionMock).payload.payloads[0]
-      .content as RayContentException
-  }
+      .content as RayContentException,
+  },
 };

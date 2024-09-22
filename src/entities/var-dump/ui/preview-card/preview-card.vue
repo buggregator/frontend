@@ -10,9 +10,12 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const eventValue = computed(() => String(props.event.payload?.payload?.value || ""));
-const eventType = computed(() => String(props.event.payload?.payload?.type || "string"));
-const eventLanguage = computed(() => String(props.event.payload?.payload?.language || `plaintext`));
+const eventValue = computed(() =>
+  String(props.event.payload?.payload?.value || ""));
+const eventType = computed(() =>
+  String(props.event.payload?.payload?.type || "string"));
+const eventLanguage = computed(() =>
+  String(props.event.payload?.payload?.language || "plaintext"));
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import PageEventHeader from "./page-event-header.vue";
 
 const PageEventHeaderMeta: Meta<typeof PageEventHeader> = {
   title: "Widgets/PageEventHeader",
-  component: PageEventHeader
+  component: PageEventHeader,
 };
 
 export default PageEventHeaderMeta;
@@ -11,6 +11,6 @@ export default PageEventHeaderMeta;
 export const Default: StoryObj<typeof PageEventHeader> = {
   args: {
     title: "Monolog",
-    eventId: "1"
-  }
+    eventId: "1",
+  },
 };

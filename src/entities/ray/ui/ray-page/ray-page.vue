@@ -20,17 +20,16 @@ const title = computed(() => {
   return type[0].toUpperCase() + type.slice(1);
 });
 
-const date = computed(() => moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() =>
+  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
 
 const classes = computed(() =>
   props.event?.meta
     ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
-    : []
-);
+    : []);
 
-const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
-  type
-) => COMPONENT_TYPE_MAP[type as RayEventTypes];
+const getComponent = (type: RayEventTypes | string): OneOfValues<typeof COMPONENT_TYPE_MAP> =>
+  COMPONENT_TYPE_MAP[type as RayEventTypes];
 </script>
 
 <template>

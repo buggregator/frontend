@@ -24,8 +24,9 @@ type Emits = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  tags: () => [],
-  eventUrl: ""
+  tags: () =>
+    [],
+  eventUrl: "",
 });
 
 const emit = defineEmits<Emits>();
@@ -54,7 +55,8 @@ const lockEvent = () => {
   emit("lock", true);
 };
 
-const isVisibleTags = computed(() => props.labels.length > 0);
+const isVisibleTags = computed(() =>
+  props.labels.length > 0);
 </script>
 
 <template>
@@ -226,21 +228,40 @@ $eventTypeColorsMap: (
 
   /* Applied tailwind classes depends on event type
    Need to keep declaration for tailwind correct work:
-   'var-dump' 'bg-red-50 dark:bg-red-700 text-red-800 dark:text-red-50 dark:border-red-600' 'bg-red-100 dark:bg-red-500',
-   'Smtp' 'bg-orange-50 dark:bg-orange-700 text-orange-800 dark:text-orange-50 dark:border-orange-600' 'bg-orange-100 dark:bg-orange-500',
-   'Sentry' 'bg-pink-50 dark:bg-pink-700 text-pink-800 dark:text-pink-50 dark:border-pink-600' 'bg-pink-100 dark:bg-pink-500',
-   'profiler' 'bg-purple-50 dark:bg-purple-700 text-purple-800 dark:text-purple-50 dark:border-purple-600' 'bg-purple-100 dark:bg-purple-500',
-   'ray' 'bg-cyan-50 dark:bg-cyan-700 text-cyan-800 dark:text-cyan-50 dark:border-cyan-600' 'bg-cyan-100 dark:bg-cyan-500',
-   'inspector' 'bg-yellow-50 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-50 dark:border-yellow-600' 'bg-yellow-100 dark:bg-yellow-500',
-   'monolog' 'bg-zinc-50 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-50 dark:border-zinc-600' 'bg-zinc-100 dark:bg-zinc-500'
-   'http-dump' 'bg-lime-50 dark:bg-lime-700 text-lime-800 dark:text-lime-50 dark:border-lime-600' 'bg-lime-100 dark:bg-lime-500' */
+   'var-dump'
+      'bg-red-50 dark:bg-red-700 text-red-800 dark:text-red-50 dark:border-red-600'
+      'bg-red-100 dark:bg-red-500',
+   'Smtp'
+      'bg-orange-50 dark:bg-orange-700 text-orange-800 dark:text-orange-50 dark:border-orange-600'
+       'bg-orange-100 dark:bg-orange-500',
+   'Sentry'
+      'bg-pink-50 dark:bg-pink-700 text-pink-800 dark:text-pink-50 dark:border-pink-600'
+      'bg-pink-100 dark:bg-pink-500',
+   'profiler'
+      'bg-purple-50 dark:bg-purple-700 text-purple-800 dark:text-purple-50 dark:border-purple-600'
+      'bg-purple-100 dark:bg-purple-500',
+   'ray'
+      'bg-cyan-50 dark:bg-cyan-700 text-cyan-800 dark:text-cyan-50 dark:border-cyan-600'
+      'bg-cyan-100 dark:bg-cyan-500',
+   'inspector'
+      'bg-yellow-50 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-50 dark:border-yellow-600'
+      'bg-yellow-100 dark:bg-yellow-500',
+   'monolog'
+      'bg-zinc-50 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-50 dark:border-zinc-600'
+       'bg-zinc-100 dark:bg-zinc-500'
+   'http-dump'
+      'bg-lime-50 dark:bg-lime-700 text-lime-800 dark:text-lime-50 dark:border-lime-600'
+       'bg-lime-100 dark:bg-lime-500'
+    */
+  /* eslint-enable */
 
   @each $map in $eventTypeColorsMap {
     $name: nth($map, 1);
     $color: nth($map, 2);
 
     &--#{$name} {
-      @apply bg-#{$color}-50 dark:bg-#{$color}-700 text-#{$color}-800 dark:text-#{$color}-50 dark:border-#{$color}-600;
+      @apply text-#{$color}-800 dark:text-#{$color}-50 dark:border-#{$color}-600;
+      @apply bg-#{$color}-50 dark:bg-#{$color}-700;
 
       &:hover {
         @apply bg-#{$color}-100 dark:bg-#{$color}-500;
@@ -273,7 +294,8 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__buttons-expand {
-  @apply relative left-[2px] flex border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
+  @apply relative left-[2px] flex border-x-2 rounded-3xl  cursor-pointer;
+  @apply border-transparent dark:border-transparent;
 
   &:hover {
     @apply bg-gray-200 dark:bg-gray-700;
@@ -294,8 +316,9 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button {
-  @apply w-4 h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
+  @apply w-4 h-4 rounded-full opacity-90  transition-all  ring-offset-1;
   @apply text-white bg-gray-300 dark:bg-gray-600 ring-blue-200 dark:ring-blue-800;
+  @apply hover:opacity-100 hover:ring-4;
 }
 
 .preview-card-header__button--copy {
@@ -325,7 +348,9 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--locked {
-  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 dark:ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
+  @apply bg-green-700 dark:bg-green-700 hover:bg-green-800 dark:hover:bg-green-500;
+  @apply text-white dark:text-white;
+  @apply ring-2 ring-green-700 dark:ring-green-700;
 }
 
 .preview-card-header__button-icon {

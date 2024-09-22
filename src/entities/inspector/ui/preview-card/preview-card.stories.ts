@@ -7,11 +7,11 @@ const { normalizeInspectorEvent } = useInspector();
 
 export default {
   title: "Entities/inspector/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const Default: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeInspectorEvent(inspectorMock)
-  }
+    event: normalizeInspectorEvent(inspectorMock),
+  },
 };

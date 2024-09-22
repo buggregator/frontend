@@ -8,12 +8,12 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayTrace",
-  component: RayTrace
+  component: RayTrace,
 } as Meta<typeof RayTrace>;
 
 export const Default: StoryObj<typeof RayTrace> = {
   args: {
     frames: (normalizeRayEvent(rayTraceMock).payload.payloads[0].content as RayContentFrames)
-      .frames
-  }
+      .frames,
+  },
 };

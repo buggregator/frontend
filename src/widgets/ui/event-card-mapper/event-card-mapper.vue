@@ -13,7 +13,7 @@ import {
   type ServerEvent,
   type EventType,
   EventTypes,
-  type MappedEventsProps
+  type MappedEventsProps,
 } from "@/shared/types";
 import { PreviewCardDefault } from "../preview-card-default";
 
@@ -37,46 +37,49 @@ const props = defineProps<Props>();
 const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> = {
   [EventTypes.Sentry]: {
     view: PreviewSentry,
-    normalize: normalizeSentryEvent
+    normalize: normalizeSentryEvent,
   },
   [EventTypes.Monolog]: {
     view: PreviewMonolog,
-    normalize: normalizeMonologEvent
+    normalize: normalizeMonologEvent,
   },
   [EventTypes.VarDump]: {
     view: PreviewVarDump,
-    normalize: normalizeVarDumpEvent
+    normalize: normalizeVarDumpEvent,
   },
   [EventTypes.RayDump]: {
     view: PreviewRay,
-    normalize: normalizeRayEvent
+    normalize: normalizeRayEvent,
   },
   [EventTypes.Smtp]: {
     view: PreviewSMTP,
-    normalize: normalizeSmtpEvent
+    normalize: normalizeSmtpEvent,
   },
   [EventTypes.Profiler]: {
     view: PreviewProfiler,
-    normalize: normalizeProfilerEvent
+    normalize: normalizeProfilerEvent,
   },
   [EventTypes.Inspector]: {
     view: PreviewInspector,
-    normalize: normalizeInspectorEvent
+    normalize: normalizeInspectorEvent,
   },
   [EventTypes.HttpDump]: {
     view: PreviewHttpDump,
-    normalize: normalizeHttpDumpEvent
+    normalize: normalizeHttpDumpEvent,
   },
   unknown: {
     view: PreviewCardDefault,
-    normalize: normalizeUnknownEvent
-  }
+    normalize: normalizeUnknownEvent,
+  },
 } as Record<EventTypes, MappedEventsProps<unknown>>;
 
-const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType]);
+const componentConfig = computed(() =>
+  EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType]);
 
-const view = computed(() => componentConfig?.value?.view ?? PreviewCardDefault);
-const normalize = computed(() => componentConfig?.value?.normalize ?? normalizeUnknownEvent);
+const view = computed(() =>
+  componentConfig?.value?.view ?? PreviewCardDefault);
+const normalize = computed(() =>
+  componentConfig?.value?.normalize ?? normalizeUnknownEvent);
 </script>
 
 <template>

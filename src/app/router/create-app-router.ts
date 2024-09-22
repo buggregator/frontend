@@ -7,7 +7,7 @@ import type { TRouterMiddleware } from "./types";
 export const createAppRouter = () => {
   const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
   });
 
   router.beforeEach(async (to, from, next) => {
@@ -22,21 +22,22 @@ export const createAppRouter = () => {
     const context = {
       to,
       from,
-      next
+      next,
     };
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const middleware of middlewares) {
       try {
         await middleware({ ...context });
       } catch (e) {
         if (e instanceof RouteAuthAccessError) {
           next({
-            name: RouteName.Login
+            name: RouteName.Login,
           });
         }
         if (e instanceof RouteAvailabilityError) {
           next({
-            name: RouteName.NotFound
+            name: RouteName.NotFound,
           });
         }
         return;

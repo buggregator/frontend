@@ -15,63 +15,72 @@ const contextsRuntime = computed(() => {
   const { name = "", version = "" } =
     (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
-  return { name, version };
+  return {
+    name,
+    version,
+  };
 });
 
 const contextsOS = computed(() => {
   const { name = "", version = "" } = (props.payload.contexts?.os as SentryContexts["os"]) || {};
 
-  return { name, version };
+  return {
+    name,
+    version,
+  };
 });
 
-const boxes = computed(() => [
-  {
-    title: "runtime",
-    name: contextsRuntime.value.name,
-    version: contextsRuntime.value.version
-  },
-  {
-    title: "os",
-    name: contextsOS.value.name,
-    version: contextsOS.value.version
-  },
-  {
-    title: "sdk",
-    name: props.payload.sdk?.name,
-    version: props.payload.sdk?.version
-  }
-]);
+const boxes = computed(() =>
+  [
+    {
+      title: "runtime",
+      name: contextsRuntime.value.name,
+      version: contextsRuntime.value.version,
+    },
+    {
+      title: "os",
+      name: contextsOS.value.name,
+      version: contextsOS.value.version,
+    },
+    {
+      title: "sdk",
+      name: props.payload.sdk?.name,
+      version: props.payload.sdk?.version,
+    },
+  ]);
 
-const tags = computed(() => [
-  {
-    name: "env",
-    value: props.payload.environment
-  },
-  {
-    name: "logger",
-    value: props.payload.logger
-  },
-  {
-    name: "os",
-    value: `${contextsOS.value.name} ${contextsOS.value.version}`
-  },
-  {
-    name: "runtime",
-    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`
-  },
-  {
-    name: "server name",
-    value: props.payload.server_name
-  }
-]);
+const tags = computed(() =>
+  [
+    {
+      name: "env",
+      value: props.payload.environment,
+    },
+    {
+      name: "logger",
+      value: props.payload.logger,
+    },
+    {
+      name: "os",
+      value: `${contextsOS.value.name} ${contextsOS.value.version}`,
+    },
+    {
+      name: "runtime",
+      value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
+    },
+    {
+      name: "server name",
+      value: props.payload.server_name,
+    },
+  ]);
 
 const modules = computed(() => {
   const mods = props.payload.modules || {};
 
-  return Object.keys(mods).map((name) => ({
-    name,
-    version: mods[name]
-  }));
+  return Object.keys(mods).map((name) =>
+    ({
+      name,
+      version: mods[name],
+    }));
 });
 </script>
 
@@ -217,7 +226,8 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__box {
-  @apply border border-purple-300 dark:border-gray-400 rounded px-4 pb-2 pt-1 hover:bg-purple-50 dark:hover:bg-purple-600 cursor-pointer mb-3 md:mb-0;
+  @apply border border-purple-300 dark:border-gray-400 hover:bg-purple-50 dark:hover:bg-purple-600;
+  @apply rounded cursor-pointer mb-3 md:mb-0 px-4 pb-2 pt-1;
 }
 
 .sentry-page-tags__box-title {

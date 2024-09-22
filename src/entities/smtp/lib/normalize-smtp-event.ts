@@ -11,7 +11,7 @@ export const normalizeSmtpEvent = (event: ServerEvent<SMTP>): NormalizedEvent<SM
     origin: null,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
+    payload: event.payload,
   };
 
   if (normalizedEvent.date) {

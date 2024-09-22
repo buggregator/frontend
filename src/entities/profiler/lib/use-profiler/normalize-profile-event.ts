@@ -7,10 +7,13 @@ export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): Normalized
     id: event.uuid,
     type: EventTypes.Profiler,
     labels: [EventTypes.Profiler],
-    origin: { name: event.payload.app_name, ...event.payload.tags },
+    origin: {
+      name: event.payload.app_name,
+      ...event.payload.tags,
+    },
     serverName: event.payload.hostname,
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
+    payload: event.payload,
   };
 
   if (normalizedEvent.date) {

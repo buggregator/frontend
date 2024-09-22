@@ -66,7 +66,9 @@ const stopExecution = () => {
 }
 
 .ray-lock__button {
-  @apply px-5 py-2 flex items-center space-x-3 bg-gray-100 dark:bg-gray-800 border dark:border-gray-600 text-sm font-medium hover:bg-gray-50 focus:outline-none disabled:opacity-50; // active:bg-grey-300;
+  @apply bg-gray-100 dark:bg-gray-800 border dark:border-gray-600 hover:bg-gray-50;
+  @apply flex items-center text-sm font-medium focus:outline-none disabled:opacity-50;
+  @apply px-5 py-2 space-x-3;
 }
 
 .ray-lock__button--continue {

@@ -10,11 +10,11 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
     origin: {
       file: event.payload.context?.source?.file || "",
       name: event.payload.context?.source?.name || "",
-      line_number: event.payload.context?.source?.line || ""
+      line_number: event.payload.context?.source?.line || "",
     },
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
+    payload: event.payload,
   };
 
   if (normalizedEvent.date) {
@@ -29,7 +29,7 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
     normalizedEvent.labels.push({
       title: "CLI",
       value: `${event.payload.context.cli.identifier}`,
-      context: `${event.payload.context.cli.command_line}`
+      context: `${event.payload.context.cli.command_line}`,
     });
   }
 

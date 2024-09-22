@@ -1,5 +1,7 @@
 import cytoscape, { type NodeDataDefinition } from "cytoscape";
-import type { Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet } from "cytoscape";
+import type {
+  Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet,
+} from "cytoscape";
 import dagre, { type DagreLayoutOptions } from "cytoscape-dagre";
 import { cytoscapeStyles } from "./config";
 
@@ -23,9 +25,9 @@ const initialize: TInitialize = ({ elements, container, onNodeHover }) => {
       nodeSep: 10,
       edgeSep: 10,
       rankSep: 80,
-      rankDir: "TB"
+      rankDir: "TB",
     } as DagreLayoutOptions,
-    style: cytoscapeStyles as Stylesheet[]
+    style: cytoscapeStyles as Stylesheet[],
   });
 
   cy.on("mouseover", "node", (event: EventObjectNode) => {
@@ -36,7 +38,8 @@ const initialize: TInitialize = ({ elements, container, onNodeHover }) => {
     onNodeHover(undefined, undefined);
   });
 
-  return () => cy.destroy();
+  return () =>
+    cy.destroy();
 };
 
 export { initialize };

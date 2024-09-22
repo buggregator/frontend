@@ -9,8 +9,10 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const processDate = computed(() => moment(props.transaction.timestamp).toLocaleString());
-const processResult = computed(() => (props.transaction.result || "success").toUpperCase());
+const processDate = computed(() =>
+  moment(props.transaction.timestamp).toLocaleString());
+const processResult = computed(() =>
+  (props.transaction.result || "success").toUpperCase());
 </script>
 
 <template>

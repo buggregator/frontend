@@ -18,7 +18,8 @@ export const useAttachments: TUseAttachments = () => {
 
   const getAttachments = (id: EventId) =>
     fetch(calcDownloadLink(id), { headers })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json())
       .then((response) => {
         if (response?.data) {
           return response.data;
@@ -36,6 +37,6 @@ export const useAttachments: TUseAttachments = () => {
 
   return {
     getAttachments,
-    calcDownloadLink
+    calcDownloadLink,
   };
 };

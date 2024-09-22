@@ -7,17 +7,17 @@ const { normalizeSmtpEvent } = useSmtp();
 
 export default {
   title: "Entities/SMTP/PreviewCard",
-  component: PreviewCard
+  component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 
 export const OrderShipped: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSmtpEvent(smtpOrderMock)
-  }
+    event: normalizeSmtpEvent(smtpOrderMock),
+  },
 };
 
 export const Welcome: StoryObj<typeof PreviewCard> = {
   args: {
-    event: normalizeSmtpEvent(smtpWelcomeMock)
-  }
+    event: normalizeSmtpEvent(smtpWelcomeMock),
+  },
 };

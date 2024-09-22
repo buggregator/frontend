@@ -8,11 +8,11 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayJob",
-  component: RayJob
+  component: RayJob,
 } as Meta<typeof RayJob>;
 
 export const Default: StoryObj<typeof RayJob> = {
   args: {
-    content: normalizeRayEvent(rayLaravelJobsMock).payload.payloads[0].content as RayContentJob
-  }
+    content: normalizeRayEvent(rayLaravelJobsMock).payload.payloads[0].content as RayContentJob,
+  },
 };

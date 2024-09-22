@@ -8,11 +8,11 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayLock",
-  component: RayLock
+  component: RayLock,
 } as Meta<typeof RayLock>;
 
 export const Default: StoryObj<typeof RayLock> = {
   args: {
-    name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name
-  }
+    name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name,
+  },
 };

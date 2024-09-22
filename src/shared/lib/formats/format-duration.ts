@@ -11,16 +11,15 @@ export const formatDuration = (inputMs: number) => {
     h: Math.floor(ms / 3_600_000) % 24,
     m: Math.floor(ms / 60_000) % 60,
     s: Math.floor(ms / 1_000) % 60,
-    ms: ms % 1_000
+    ms: ms % 1_000,
   };
 
   return Object.entries(time)
-    .filter(([_, val]) => val !== 0)
-    .map(
-      ([key, val]) =>
-        `${
-          key === "ms" && Number(val.toFixed(4)) % 1 !== 0 ? val.toFixed(4) : val.toFixed(0)
-        } ${key}`
-    )
+    .filter((entry) =>
+      entry[1] !== 0)
+    .map(([key, val]) =>
+      `${
+        key === "ms" && Number(val.toFixed(4)) % 1 !== 0 ? val.toFixed(4) : val.toFixed(0)
+      } ${key}`)
     .join(", ");
 };

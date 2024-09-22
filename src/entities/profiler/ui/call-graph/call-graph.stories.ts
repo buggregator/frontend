@@ -4,11 +4,11 @@ import CallGraph from "./call-graph.vue";
 
 export default {
   title: "Entities/Profiler/CallGraph",
-  component: CallGraph
+  component: CallGraph,
 } as Meta<typeof CallGraph>;
 
 export const Default: StoryObj<typeof CallGraph> = {
   args: {
-    id: profilerMock.uuid
-  }
+    id: profilerMock.uuid,
+  },
 };

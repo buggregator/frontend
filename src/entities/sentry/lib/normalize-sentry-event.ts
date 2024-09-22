@@ -11,11 +11,11 @@ export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEven
     origin: {
       logger: event.payload.logger,
       environment: event.payload.environment,
-      release: event.payload?.release || "-"
+      release: event.payload?.release || "-",
     },
     serverName: event.payload?.server_name || "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
+    payload: event.payload,
   };
 
   if (normalizedEvent.date) {

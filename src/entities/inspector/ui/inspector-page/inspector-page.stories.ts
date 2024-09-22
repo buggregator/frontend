@@ -7,11 +7,11 @@ const { normalizeInspectorEvent } = useInspector();
 
 export default {
   title: "Screens/inspector/InspectorPage",
-  component: InspectorPage
+  component: InspectorPage,
 } as Meta<typeof InspectorPage>;
 
 export const Default: StoryObj<typeof InspectorPage> = {
   args: {
-    event: normalizeInspectorEvent(inspectorMock)
-  }
+    event: normalizeInspectorEvent(inspectorMock),
+  },
 };

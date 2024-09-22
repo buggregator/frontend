@@ -7,11 +7,11 @@ const { normalizeInspectorEvent } = useInspector();
 
 export default {
   title: "Screens/inspector/InspectorPageTimeline",
-  component: InspectorPageTimeline
+  component: InspectorPageTimeline,
 } as Meta<typeof InspectorPageTimeline>;
 
 export const Default: StoryObj<typeof InspectorPageTimeline> = {
   args: {
-    payload: normalizeInspectorEvent(inspectorMock).payload
-  }
+    payload: normalizeInspectorEvent(inspectorMock).payload,
+  },
 };

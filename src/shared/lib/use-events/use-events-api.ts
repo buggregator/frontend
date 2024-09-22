@@ -18,7 +18,9 @@ export const useEventsApi = (): TUseEventsApi => {
 
   const { lockedIds, events } = storeToRefs(eventsStore);
 
-  const { deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent } =
+  const {
+    deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent,
+  } =
     useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
@@ -32,8 +34,10 @@ export const useEventsApi = (): TUseEventsApi => {
   const removeAll = async () => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ uuid }) => !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid);
+        .filter(({ uuid }) =>
+          !lockedIds.value.includes(uuid))
+        .map(({ uuid }) =>
+          uuid);
 
       await removeList(removedIds);
 
@@ -54,8 +58,10 @@ export const useEventsApi = (): TUseEventsApi => {
   const removeByType = async (eventType: EventType) => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ type, uuid }) => type === eventType && !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid);
+        .filter(({ type, uuid }) =>
+          type === eventType && !lockedIds.value.includes(uuid))
+        .map(({ uuid }) =>
+          uuid);
 
       await removeList(removedIds);
 
@@ -90,6 +96,6 @@ export const useEventsApi = (): TUseEventsApi => {
     getAll,
     removeAll,
     removeByType,
-    removeById
+    removeById,
   };
 };

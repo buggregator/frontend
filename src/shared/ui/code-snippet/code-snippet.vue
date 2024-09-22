@@ -13,14 +13,13 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   language: "plaintext",
-  code: ""
+  code: "",
 });
 
 const isCopied = ref(false);
 
 const normalizedCode = computed(() =>
-  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code
-);
+  !isString(props.code) ? JSON.stringify(props.code, null, " ") : props.code);
 
 const copyCode = (): void => {
   isCopied.value = true;
@@ -67,7 +66,8 @@ const copyCode = (): void => {
 }
 
 .code-snippet__copy {
-  @apply invisible flex rounded-full items-center gap-x-2 absolute top-3 right-3 px-2 bg-gray-800 border text-gray-100 transition-all text-xs font-bold border-gray-600;
+  @apply bg-gray-800 border text-gray-100 transition-all text-xs font-bold border-gray-600;
+  @apply invisible flex rounded-full items-center gap-x-2 absolute top-3 right-3 px-2;
 
   &:hover {
     @apply border-gray-200 text-white bg-gray-900;

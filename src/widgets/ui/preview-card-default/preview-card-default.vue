@@ -7,9 +7,9 @@ type Props = {
   event: NormalizedEvent<unknown>;
 };
 
-const code = computed(() => JSON.stringify(event, null, " "));
-
-defineProps<Props>();
+const props = defineProps<Props>();
+const code = computed(() =>
+  JSON.stringify(props.event, null, " "));
 </script>
 
 <template>

@@ -10,29 +10,32 @@ import {
   setStoredFixedHeader,
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
-  setStoredPrimaryCodeEditor
+  setStoredPrimaryCodeEditor,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
-  state: () => ({
-    apiVersion: "",
-    isFetched: false,
-    isAuthEnabled: false,
-    authLogicUrl: "/login",
-    codeEditor: getStoredPrimaryCodeEditor() || "phpstorm",
-    themeType: getStoredActiveTheme(),
-    isFixedHeader: getStoredFixedHeader(),
-    isVisibleEventCounts: getStoredEventsCountVisibility(),
-    availableEvents: [] as EventType[]
-  }),
+  state: () =>
+    ({
+      apiVersion: "",
+      isFetched: false,
+      isAuthEnabled: false,
+      authLogicUrl: "/login",
+      codeEditor: getStoredPrimaryCodeEditor() || "phpstorm",
+      themeType: getStoredActiveTheme(),
+      isFixedHeader: getStoredFixedHeader(),
+      isVisibleEventCounts: getStoredEventsCountVisibility(),
+      availableEvents: [] as EventType[],
+    }),
   getters: {
-    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`
+    loginLinkUrl: ({ authLogicUrl }) =>
+      `${REST_API_URL}/${authLogicUrl}`,
   },
   actions: {
     async fetchSettings() {
       // TODO: need to remove fetch out of the store
       const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
-        .then((response) => response.json())
+        .then((response) =>
+          response.json())
         .catch((e) => {
           console.error(e);
 
@@ -74,6 +77,6 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.codeEditor = editor;
 
       setStoredPrimaryCodeEditor(editor);
-    }
-  }
+    },
+  },
 });

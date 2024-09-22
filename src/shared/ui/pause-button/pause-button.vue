@@ -16,7 +16,8 @@ type Emits = {
 const emit = defineEmits<Emits>();
 const props = defineProps<Props>();
 
-const titleEventsCount = computed(() => pluralize("new event", props.totalNewEventsCount, true));
+const titleEventsCount = computed(() =>
+  pluralize("new event", props.totalNewEventsCount, true));
 
 const toggleUpdate = () => {
   emit("toggleUpdate", true);

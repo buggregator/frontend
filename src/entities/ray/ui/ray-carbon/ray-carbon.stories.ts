@@ -8,11 +8,11 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Entities/ray/RayCarbon",
-  component: RayCarbon
+  component: RayCarbon,
 } as Meta<typeof RayCarbon>;
 
 export const Default: StoryObj<typeof RayCarbon> = {
   args: {
-    carbon: normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbon
-  }
+    carbon: normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbon,
+  },
 };

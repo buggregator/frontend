@@ -7,11 +7,11 @@ const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
   title: "Screens/VarDump/VarDumpPage",
-  component: VarDump
+  component: VarDump,
 } as Meta<typeof VarDump>;
 
 export const Default: StoryObj<typeof VarDump> = {
   args: {
-    event: normalizeVarDumpEvent(varDumpObjectMock)
-  }
+    event: normalizeVarDumpEvent(varDumpObjectMock),
+  },
 };

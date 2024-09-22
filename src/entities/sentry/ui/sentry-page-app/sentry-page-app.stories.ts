@@ -7,11 +7,11 @@ const { normalizeSentryEvent } = useSentry();
 
 export default {
   title: "Screens/sentry/SentryPageApp",
-  component: SentryPageApp
+  component: SentryPageApp,
 } as Meta<typeof SentryPageApp>;
 
 export const Default: StoryObj<typeof SentryPageApp> = {
   args: {
-    app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app
-  }
+    app: normalizeSentryEvent(sentryCommonMock).payload?.contexts?.app,
+  },
 };

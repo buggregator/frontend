@@ -6,6 +6,7 @@ type TUseVarDump = () => {
   normalizeVarDumpEvent: (event: ServerEvent<VarDump>) => NormalizedEvent<VarDump>;
 };
 
-export const useVarDump: TUseVarDump = () => ({
-  normalizeVarDumpEvent
-});
+export const useVarDump: TUseVarDump = () =>
+  ({
+    normalizeVarDumpEvent,
+  });

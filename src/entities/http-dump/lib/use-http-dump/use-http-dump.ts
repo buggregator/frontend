@@ -6,6 +6,7 @@ type TUseInspector = () => {
   normalizeHttpDumpEvent: (event: ServerEvent<HttpDumpServer>) => NormalizedEvent<HttpDump>;
 };
 
-export const useHttpDump: TUseInspector = () => ({
-  normalizeHttpDumpEvent
-});
+export const useHttpDump: TUseInspector = () =>
+  ({
+    normalizeHttpDumpEvent,
+  });

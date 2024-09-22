@@ -10,11 +10,14 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const eventLink = computed(() => `/smtp/${props.event.id}`);
+const eventLink = computed(() =>
+  `/smtp/${props.event.id}`);
 
-const dateFormat = computed(() => moment(props.event.date).fromNow());
+const dateFormat = computed(() =>
+  moment(props.event.date).fromNow());
 
-const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || null);
+const emailRecipient = computed(() =>
+  props?.event?.payload?.to?.[0]?.email || null);
 </script>
 
 <template>

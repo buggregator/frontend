@@ -14,9 +14,10 @@ export const useSettings = (): TUseSettings => {
 
   const getProjects = () =>
     fetch(`${REST_API_URL}/api/projects`, {
-      headers: { "X-Auth-Token": token.value || "" }
+      headers: { "X-Auth-Token": token.value || "" },
     })
-      .then((response) => response.json())
+      .then((response) =>
+        response.json())
       .catch((e) => {
         console.error(e);
 
@@ -25,7 +26,7 @@ export const useSettings = (): TUseSettings => {
 
   return {
     api: {
-      getProjects
-    }
+      getProjects,
+    },
   };
 };

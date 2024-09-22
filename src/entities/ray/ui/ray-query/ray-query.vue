@@ -11,10 +11,10 @@ const props = defineProps<Props>();
 
 const formattedSql = computed(() =>
   (props.content?.bindings || []).reduce(
-    (result, binding) => (result || "").replace(/\?/, `'${binding}'`),
-    props.content?.sql || ""
-  )
-);
+    (result, binding) =>
+      (result || "").replace(/\?/, `'${binding}'`),
+    props.content?.sql || "",
+  ));
 </script>
 
 <template>

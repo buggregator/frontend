@@ -8,11 +8,12 @@ const { activeProjectKey } = storeToRefs(useEventsStore());
 const { events } = useEvents();
 
 watch(
-  () => activeProjectKey.value,
+  () =>
+    activeProjectKey.value,
   () => {
     events.getAll();
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 
@@ -52,8 +53,9 @@ watch(
 }
 
 .layout-base__sidebar {
-  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
   @include layout-sidebar;
+  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50;
+  @apply w-full h-full sticky top-0 h-screen max-h-screen;
 }
 
 .layout-base__header {

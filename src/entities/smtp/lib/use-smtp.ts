@@ -6,6 +6,7 @@ type TUseSmtp = () => {
   normalizeSmtpEvent: (event: ServerEvent<SMTP>) => NormalizedEvent<SMTP>;
 };
 
-export const useSmtp: TUseSmtp = () => ({
-  normalizeSmtpEvent
-});
+export const useSmtp: TUseSmtp = () =>
+  ({
+    normalizeSmtpEvent,
+  });

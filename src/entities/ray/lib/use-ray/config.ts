@@ -16,7 +16,7 @@ import {
   type RayContentObject,
   type RayContentSQL,
   type RayContentView,
-  type RayPayload
+  type RayPayload,
 } from "../../types";
 import { RayApplicationLog } from "../../ui/ray-application-log";
 import { RayCarbon } from "../../ui/ray-carbon";
@@ -45,102 +45,119 @@ export const COMPONENT_TYPE_MAP: Record<
 > = {
   [RayEventTypes.Log]: {
     view: RayLog,
-    getProps: (payload: RayPayload) => ({
-      log: (payload.content as RayContentLog).values[0]
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        log: (payload.content as RayContentLog).values[0],
+      }),
   },
   [RayEventTypes.Custom]: {
     view: RayCustom,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentCustom
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentCustom,
+      }),
   },
   [RayEventTypes.Caller]: {
     view: RayFrame,
-    getProps: (payload: RayPayload) => ({
-      frame: (payload.content as RayContentFrame).frame
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        frame: (payload.content as RayContentFrame).frame,
+      }),
   },
   [RayEventTypes.Carbon]: {
     view: RayCarbon,
-    getProps: (payload: RayPayload) => ({
-      carbon: payload.content as RayContentCarbon
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        carbon: payload.content as RayContentCarbon,
+      }),
   },
   [RayEventTypes.Trace]: {
     view: RayTrace,
-    getProps: (payload: RayPayload) => ({
-      frames: (payload.content as RayContentFrames).frames
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        frames: (payload.content as RayContentFrames).frames,
+      }),
   },
   [RayEventTypes.Exception]: {
     view: RayException,
-    getProps: (payload: RayPayload) => ({
-      exception: payload.content as RayContentException
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        exception: payload.content as RayContentException,
+      }),
   },
   [RayEventTypes.Table]: {
     view: RayTable,
-    getProps: (payload: RayPayload) => ({
-      table: payload.content as RayContentObject
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        table: payload.content as RayContentObject,
+      }),
   },
   [RayEventTypes.Measure]: {
     view: RayMeasure,
-    getProps: (payload: RayPayload) => ({
-      measure: payload.content as RayContentMeasure
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        measure: payload.content as RayContentMeasure,
+      }),
   },
   [RayEventTypes.Query]: {
     view: RayQuery,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentSQL
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentSQL,
+      }),
   },
   [RayEventTypes.Eloquent]: {
     view: RayEloquent,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentEloquent
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentEloquent,
+      }),
   },
   [RayEventTypes.ApplicationLog]: {
     view: RayApplicationLog,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentApplicationLog
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentApplicationLog,
+      }),
   },
   [RayEventTypes.View]: {
     view: RayView,
-    getProps: (payload: RayPayload) => ({
-      view: payload.content as RayContentView
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        view: payload.content as RayContentView,
+      }),
   },
   [RayEventTypes.Event]: {
     view: RayEvent,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentEvent
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentEvent,
+      }),
   },
   [RayEventTypes.Job]: {
     view: RayJob,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentJob
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentJob,
+      }),
   },
   [RayEventTypes.Lock]: {
     view: RayLock,
-    getProps: (payload: RayPayload) => ({
-      name: (payload.content as RayContentLock).name
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        name: (payload.content as RayContentLock).name,
+      }),
   },
   [RayEventTypes.Mailable]: {
     view: RayMail,
-    getProps: (payload: RayPayload) => ({
-      content: payload.content as RayContentMail
-    })
+    getProps: (payload: RayPayload) =>
+      ({
+        content: payload.content as RayContentMail,
+      }),
   },
   [RayEventTypes.Notify]: {
     view: RayOrigin,
-    getProps: (payload: RayPayload) => ({ origin: payload.origin })
-  }
+    getProps: (payload: RayPayload) =>
+      ({ origin: payload.origin }),
+  },
 };
