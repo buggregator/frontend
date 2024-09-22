@@ -12,7 +12,8 @@
     "package.json",
     "postcss.config.js",
     "tailwind.config.js",
-    "src/shared/lib/vendor/",
+    "src/shared/lib/vendor/**/*.js",
+    "dist/",
     "index.html"
   ],
   "parserOptions": {

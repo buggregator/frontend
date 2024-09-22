@@ -1,5 +1,5 @@
 
-import { SfdumpWrap } from './dumper.js'
+import { SfdumpWrap } from './dumper'
 
 const dump = SfdumpWrap(window.document)
 
