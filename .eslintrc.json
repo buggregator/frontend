@@ -13,8 +13,6 @@
     "postcss.config.js",
     "tailwind.config.js",
     "src/shared/lib/vendor/",
-    "layouts/",
-    "pages/",
     "index.html"
   ],
   "parserOptions": {

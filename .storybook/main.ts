@@ -7,9 +7,6 @@ const config = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
-    "../components/**/*.stories.@(js|jsx|ts|tsx)",
-    "../layouts/**/*.stories.@(js|jsx|ts|tsx)",
-    "../pages/**/*.stories.@(js|jsx|ts|tsx)",
     "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
 
