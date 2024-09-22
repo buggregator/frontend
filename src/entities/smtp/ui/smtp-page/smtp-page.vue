@@ -145,13 +145,13 @@ onMounted(getAttachmentsRequest)
           <Tab v-if="attachments.length" :name="`Attachments (${attachments.length})`">
             <section class="mb-5">
               <div class="flex gap-x-3">
-                <template v-for="a in attachments" :key="a.uuid">
-                  <FileAttachment
-                    :event-id="event.id"
-                    :attachment="a"
-                    :download-url="calcDownloadUrl(a.uuid)"
-                  />
-                </template>
+                <FileAttachment
+                  v-for="a in attachments"
+                  :key="a.uuid"
+                  :event-id="event.id"
+                  :attachment="a"
+                  :download-url="calcDownloadUrl(a.uuid)"
+                />
               </div>
             </section>
           </Tab>

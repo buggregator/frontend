@@ -116,7 +116,7 @@ const segmentRows = computed(() => {
       <div class="inspector-page-timeline__segments">
         <div
           v-for="segmentRow in segmentRows"
-          :key="`${segmentRow.label} - ${segmentRow.duration}`"
+          :key="`${segmentRow.label}-${segmentRow.duration}`"
           class="inspector-page-timeline__segment"
         >
           <div class="inspector-page-timeline__segment-label" :title="segmentRow.label">

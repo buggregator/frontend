@@ -155,22 +155,22 @@ const generateRadialGradient = (input: string) =>
         </RouterLink>
       </template>
 
-      <template v-for="type in filteredNavOrder" :key="type">
-        <RouterLink
-          :to="{ name: RouteName.EventList, params: { type } }"
-          :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
-          :title="PAGES_SETTINGS[type].sidebarTitle"
-          class="layout-sidebar__link"
+      <RouterLink
+        v-for="type in filteredNavOrder"
+        :key="type"
+        class="layout-sidebar__link"
+        :to="{ name: RouteName.EventList, params: { type } }"
+        :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
+        :title="PAGES_SETTINGS[type].sidebarTitle"
+      >
+        <BadgeNumber
+          :number="getItemsCount(type)"
+          class="layout-sidebar__link-badge"
+          :is-visible="isVisibleEventCounts"
         >
-          <BadgeNumber
-            :number="getItemsCount(type)"
-            class="layout-sidebar__link-badge"
-            :is-visible="isVisibleEventCounts"
-          >
-            <IconSvg class="layout-sidebar__link-icon" :name="PAGES_SETTINGS[type].iconName" />
-          </BadgeNumber>
-        </RouterLink>
-      </template>
+          <IconSvg class="layout-sidebar__link-icon" :name="PAGES_SETTINGS[type].iconName" />
+        </BadgeNumber>
+      </RouterLink>
 
       <RouterLink :to="{ name: RouteName.Settings }" title="Settings" class="layout-sidebar__link">
         <IconSvg class="layout-sidebar__link-icon" name="settings" />
