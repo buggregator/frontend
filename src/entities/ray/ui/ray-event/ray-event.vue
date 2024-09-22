@@ -11,12 +11,18 @@ defineProps<Props>()
 
 <template>
   <div class="ray-event">
-    <ValueDump v-if="content.class_based_event" :value="content.event" />
+    <ValueDump
+      v-if="content.class_based_event"
+      :value="content.event"
+    />
     <h3 class="ray-event__text">
       Event:
       <code class="ray-event__text-in">{{ content.name }}</code>
     </h3>
-    <ValueDump v-if="content.payload" :value="String(content.payload)" />
+    <ValueDump
+      v-if="content.payload"
+      :value="String(content.payload)"
+    />
   </div>
 </template>
 

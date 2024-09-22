@@ -24,7 +24,10 @@ const items = [
 <template>
   <div class="page-placeholder">
     <div class="page-placeholder__logo">
-      <IconSvg class="page-placeholder__logo-in" name="logo" />
+      <IconSvg
+        class="page-placeholder__logo-in"
+        name="logo"
+      />
     </div>
     <ul class="page-placeholder__list">
       <PagePlaceholderItem

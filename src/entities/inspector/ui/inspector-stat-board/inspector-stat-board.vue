@@ -16,19 +16,25 @@ const processResult = computed(() => (props.transaction.result || 'success').toU
 <template>
   <section class="inspector-stat-board">
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Timestamp</h4>
+      <h4 class="inspector-stat-board__item-name">
+        Timestamp
+      </h4>
       <strong class="inspector-stat-board__item-value">
         {{ processDate }}
       </strong>
     </div>
 
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Duration</h4>
+      <h4 class="inspector-stat-board__item-name">
+        Duration
+      </h4>
       <strong class="inspector-stat-board__item-value"> {{ transaction.duration }} ms </strong>
     </div>
 
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Result</h4>
+      <h4 class="inspector-stat-board__item-name">
+        Result
+      </h4>
       <span class="inspector-stat-board__item-value">{{ processResult }}</span>
     </div>
   </section>

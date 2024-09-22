@@ -44,7 +44,10 @@ watchEffect(() => {
 
 <template>
   <div class="layout-preview-events">
-    <main v-if="visibleEvents.length" class="layout-preview-events__events">
+    <main
+      v-if="visibleEvents.length"
+      class="layout-preview-events__events"
+    >
       <EventCardMapper
         v-for="event in visibleEvents"
         :key="event.uuid"
@@ -53,7 +56,10 @@ watchEffect(() => {
       />
     </main>
 
-    <section v-if="!visibleEvents.length" class="layout-preview-events__welcome">
+    <section
+      v-if="!visibleEvents.length"
+      class="layout-preview-events__welcome"
+    >
       <PagePlaceholder class="layout-preview-events__tips" />
     </section>
   </div>

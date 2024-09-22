@@ -18,7 +18,10 @@ const isVisibleBadge = computed(() => props.number > 0 && props.isVisible)
   <div class="badge-number">
     <slot />
 
-    <div v-if="isVisibleBadge" class="badge-number__badge">
+    <div
+      v-if="isVisibleBadge"
+      class="badge-number__badge"
+    >
       {{ normalizedNumber }}
     </div>
   </div>

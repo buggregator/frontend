@@ -160,7 +160,11 @@ onMounted(() => {
         @dblclick="toggleView"
       />
 
-      <div v-if="!isCollapsed && !isOptimized" ref="event_body" class="preview-card__body">
+      <div
+        v-if="!isCollapsed && !isOptimized"
+        ref="event_body"
+        class="preview-card__body"
+      >
         <slot />
       </div>
 

@@ -35,7 +35,10 @@ const exceptionFrames = computed(() => {
       </header>
     </slot>
 
-    <div v-if="exceptionFrames.length" class="sentry-exception__frames">
+    <div
+      v-if="exceptionFrames.length"
+      class="sentry-exception__frames"
+    >
       <SentryExceptionFrame
         v-for="(frame, index) in exceptionFrames"
         :key="`${frame.context_line}-${frame.filename}`"

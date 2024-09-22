@@ -23,7 +23,10 @@ const callLink = computed(
 <template>
   <div class="ray-frame">
     <h3>Called from</h3>
-    <a class="ray-frame__name" :href="callLink">
+    <a
+      class="ray-frame__name"
+      :href="callLink"
+    >
       <code class="ray-frame__code"> {{ frame.class || 'null' }}:{{ frame.method }} </code>
     </a>
   </div>

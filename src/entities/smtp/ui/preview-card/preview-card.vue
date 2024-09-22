@@ -18,8 +18,14 @@ const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || n
 </script>
 
 <template>
-  <PreviewCard class="smtp-preview" :event="event">
-    <RouterLink :to="eventLink" class="smtp-preview__link">
+  <PreviewCard
+    class="smtp-preview"
+    :event="event"
+  >
+    <RouterLink
+      :to="eventLink"
+      class="smtp-preview__link"
+    >
       <h3 class="smtp-preview__link-title">
         {{ event.payload.subject }}
       </h3>

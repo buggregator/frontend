@@ -27,7 +27,10 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 <template>
   <div class="sentry-page">
     <main class="sentry-page__main">
-      <header v-if="mainException" class="sentry-page__main-header">
+      <header
+        v-if="mainException"
+        class="sentry-page__main-header"
+      >
         <h1 class="sentry-page__main-exception">
           {{ mainException.type }}
         </h1>
@@ -39,13 +42,22 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
         </p>
       </header>
 
-      <SentryPageTags class="sentry-page__section" :payload="event.payload" />
+      <SentryPageTags
+        class="sentry-page__section"
+        :payload="event.payload"
+      />
 
-      <section v-if="mainException" class="sentry-page__section">
+      <section
+        v-if="mainException"
+        class="sentry-page__section"
+      >
         <h3 class="sentry-page__section-title">
           exceptions
 
-          <span v-if="exceptionsLength > 0" class="sentry-page__section-title__counter">
+          <span
+            v-if="exceptionsLength > 0"
+            class="sentry-page__section-title__counter"
+          >
             {{ exceptionsLength }}
           </span>
         </h3>
@@ -54,8 +66,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
           <template
             v-if="
               event.payload.exception &&
-              event.payload.exception.values &&
-              event.payload.exception.values.length > 0
+                event.payload.exception.values &&
+                event.payload.exception.values.length > 0
             "
           >
             <SentryException
@@ -72,8 +84,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
       <SentryPageBreadcrumbs
         v-if="
           event.payload.breadcrumbs &&
-          event.payload.breadcrumbs.values &&
-          event.payload.breadcrumbs.values.length > 0
+            event.payload.breadcrumbs.values &&
+            event.payload.breadcrumbs.values.length > 0
         "
         :breadcrumbs="event.payload.breadcrumbs.values"
         class="sentry-page__section"

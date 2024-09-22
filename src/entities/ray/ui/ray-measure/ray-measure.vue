@@ -34,7 +34,12 @@ const maxMemoryUsage = computed(() => prettySize(props.measure.max_memory_usage_
 
 <template>
   <div class="ray-measure">
-    <h3 v-if="measure.is_new_timer" class="ray-measure__title">Start measuring performance...</h3>
+    <h3
+      v-if="measure.is_new_timer"
+      class="ray-measure__title"
+    >
+      Start measuring performance...
+    </h3>
 
     <TableBase v-else>
       <TableBaseRow title="Total time">

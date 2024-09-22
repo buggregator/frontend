@@ -18,9 +18,15 @@ const collapsed = ref(props.isOpen)
 const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false))
 </script>
 <template>
-  <div class="ray-file" @click="collapsed = !collapsed">
+  <div
+    class="ray-file"
+    @click="collapsed = !collapsed"
+  >
     <div class="ray-file__header">
-      <div class="ray-file__title" :title="file.file_name">
+      <div
+        class="ray-file__title"
+        :title="file.file_name"
+      >
         <div>
           {{ file.class || 'null' }}:{{ file.method }}
           <span class="ray-file__title-in">at line</span>
@@ -37,7 +43,10 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
       />
     </div>
 
-    <div v-if="hasSnippets && !collapsed" class="ray-file__body">
+    <div
+      v-if="hasSnippets && !collapsed"
+      class="ray-file__body"
+    >
       <div
         v-for="line in file.snippet"
         :key="line.line_number"
@@ -46,7 +55,9 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
           'ray-file__snippet--highlight': file.line_number === line.line_number
         }"
       >
-        <div class="ray-file__snippet-num">{{ line.line_number }}.</div>
+        <div class="ray-file__snippet-num">
+          {{ line.line_number }}.
+        </div>
         <pre>{{ line.text }}</pre>
       </div>
     </div>

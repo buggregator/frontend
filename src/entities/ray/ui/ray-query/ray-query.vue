@@ -19,12 +19,17 @@ const formattedSql = computed(() =>
 
 <template>
   <div class="ray-query">
-    <CodeSnippet language="sql" :code="formattedSql" />
+    <CodeSnippet
+      language="sql"
+      :code="formattedSql"
+    />
     <TableBase>
       <TableBaseRow title="Connection name">
         {{ content.connection_name }}
       </TableBaseRow>
-      <TableBaseRow title="Time"> {{ content.time }}ms </TableBaseRow>
+      <TableBaseRow title="Time">
+        {{ content.time }}ms
+      </TableBaseRow>
     </TableBase>
   </div>
 </template>

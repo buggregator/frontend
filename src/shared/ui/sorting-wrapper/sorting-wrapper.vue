@@ -27,7 +27,10 @@ const changeSortOrder = () => {
 </script>
 
 <template>
-  <span class="sorting-wrapper" @click="changeSortOrder">
+  <span
+    class="sorting-wrapper"
+    @click="changeSortOrder"
+  >
     <slot />
 
     <span class="sorting-wrapper__markers">

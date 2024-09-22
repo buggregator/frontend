@@ -30,7 +30,10 @@ const toggleUpdate = () => {
     :disabled="!isPaused && disabledPause"
     @click="toggleUpdate"
   >
-    <IconSvg :name="!isPaused ? 'bolt' : 'bolt-slash'" class="pause-button__icon" />
+    <IconSvg
+      :name="!isPaused ? 'bolt' : 'bolt-slash'"
+      class="pause-button__icon"
+    />
     <span>{{ isPaused ? 'Paused' : 'Listening' }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"

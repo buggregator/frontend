@@ -24,11 +24,17 @@ watch(
       'layout-base--no-header': !$slots.header
     }"
   >
-    <div v-if="$slots.sidebar" class="layout-base__sidebar">
+    <div
+      v-if="$slots.sidebar"
+      class="layout-base__sidebar"
+    >
       <slot name="sidebar" />
     </div>
 
-    <div v-if="$slots.header" class="layout-base__header">
+    <div
+      v-if="$slots.header"
+      class="layout-base__header"
+    >
       <slot name="header" />
     </div>
 

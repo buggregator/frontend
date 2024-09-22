@@ -74,8 +74,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="parent" class="render-graph">
-    <div ref="renderer" class="render-graph__in" />
+  <div
+    ref="parent"
+    class="render-graph"
+  >
+    <div
+      ref="renderer"
+      class="render-graph__in"
+    />
   </div>
 
   <div

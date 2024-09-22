@@ -15,8 +15,14 @@ const eventLink = computed(() => `/inspector/${props.event.id}`)
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
-    <RouterLink :to="eventLink" class="preview-card__link">
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
+    <RouterLink
+      :to="eventLink"
+      class="preview-card__link"
+    >
       <InspectorStatBoard :transaction="event.payload[0]" />
     </RouterLink>
   </PreviewCard>

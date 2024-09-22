@@ -25,8 +25,8 @@
       "eslint --fix"
     ],
     "*.{vue,html}": [
-      "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "eslint --fix"
     ],
     "*.json": [
       "prettier --write"
@@ -65,7 +65,7 @@
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-storybook": "^0.8.0",

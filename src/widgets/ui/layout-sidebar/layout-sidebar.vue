@@ -121,11 +121,14 @@ const generateRadialGradient = (input: string) =>
         class="layout-sidebar__link layout-sidebar__link--logo"
         tabindex="1"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
+        <IconSvg
+          class="layout-sidebar__link-icon"
+          name="logo-short"
+        />
       </RouterLink>
 
       <template v-if="!isProjectLoading && isMultipleProjects">
-        <hr class="layout-sidebar__sep" />
+        <hr class="layout-sidebar__sep">
 
         <div class="layout-sidebar__projects">
           <button
@@ -146,12 +149,19 @@ const generateRadialGradient = (input: string) =>
           </button>
         </div>
 
-        <hr class="layout-sidebar__sep" />
+        <hr class="layout-sidebar__sep">
       </template>
 
       <template v-if="!isMultipleProjects || isProjectLoading">
-        <RouterLink :to="{ name: RouteName.Home }" title="Events" class="layout-sidebar__link">
-          <IconSvg class="layout-sidebar__link-icon" name="events" />
+        <RouterLink
+          :to="{ name: RouteName.Home }"
+          title="Events"
+          class="layout-sidebar__link"
+        >
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="events"
+          />
         </RouterLink>
       </template>
 
@@ -168,12 +178,22 @@ const generateRadialGradient = (input: string) =>
           class="layout-sidebar__link-badge"
           :is-visible="isVisibleEventCounts"
         >
-          <IconSvg class="layout-sidebar__link-icon" :name="PAGES_SETTINGS[type].iconName" />
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            :name="PAGES_SETTINGS[type].iconName"
+          />
         </BadgeNumber>
       </RouterLink>
 
-      <RouterLink :to="{ name: RouteName.Settings }" title="Settings" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="settings" />
+      <RouterLink
+        :to="{ name: RouteName.Settings }"
+        title="Settings"
+        class="layout-sidebar__link"
+      >
+        <IconSvg
+          class="layout-sidebar__link-icon"
+          name="settings"
+        />
       </RouterLink>
     </nav>
 
@@ -212,7 +232,11 @@ const generateRadialGradient = (input: string) =>
     </div>
 
     <div>
-      <div v-if="isAuthEnabled" ref="userDd" class="layout-sidebar__dropdown">
+      <div
+        v-if="isAuthEnabled"
+        ref="userDd"
+        class="layout-sidebar__dropdown"
+      >
         <div
           v-if="isVisibleProfile"
           ref="userMenu"
@@ -229,13 +253,23 @@ const generateRadialGradient = (input: string) =>
             class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
-            <IconSvg class="layout-sidebar__dropdown-item-icon" name="logout" />
+            <IconSvg
+              class="layout-sidebar__dropdown-item-icon"
+              name="logout"
+            />
             Logout
           </button>
         </div>
 
-        <div v-if="avatar" class="layout-sidebar__dropdown-avatar" @click="toggleProfileDropdown">
-          <img :src="avatar" alt="profile" />
+        <div
+          v-if="avatar"
+          class="layout-sidebar__dropdown-avatar"
+          @click="toggleProfileDropdown"
+        >
+          <img
+            :src="avatar"
+            alt="profile"
+          >
         </div>
       </div>
 

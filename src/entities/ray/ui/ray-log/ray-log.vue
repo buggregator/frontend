@@ -10,7 +10,10 @@ defineProps<Props>()
 
 <template>
   <div class="ray-log">
-    <ValueDump v-if="log" :value="String(log)" />
+    <ValueDump
+      v-if="log"
+      :value="String(log)"
+    />
   </div>
 </template>
 

@@ -37,7 +37,9 @@ const size = computed(() => formatFileSize(props.attachment.size || 0))
       <div class="file-attachment__name">
         {{ attachment.name }}
       </div>
-      <div class="file-attachment__size">({{ size }})</div>
+      <div class="file-attachment__size">
+        ({{ size }})
+      </div>
     </div>
   </component>
 </template>

@@ -80,9 +80,14 @@ const segmentRows = computed(() => {
 <template>
   <section class="inspector-page-timeline">
     <div class="inspector-page-timeline__head">
-      <h3 class="inspector-page-timeline__head-title">Timeline</h3>
+      <h3 class="inspector-page-timeline__head-title">
+        Timeline
+      </h3>
 
-      <div v-if="segmentTypes.length > 0" class="inspector-page-timeline__head-tips">
+      <div
+        v-if="segmentTypes.length > 0"
+        class="inspector-page-timeline__head-tips"
+      >
         <div
           v-for="segmentType in segmentTypes"
           :key="segmentType"
@@ -107,8 +112,15 @@ const segmentRows = computed(() => {
         'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`
       }"
     >
-      <div class="inspector-page-timeline__body-cells" :class="`grid-cols-${COLUMNS_NUMBER + 1}`">
-        <div v-for="cell in layoutCells" :key="cell" class="inspector-page-timeline__body-cell">
+      <div
+        class="inspector-page-timeline__body-cells"
+        :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
+      >
+        <div
+          v-for="cell in layoutCells"
+          :key="cell"
+          class="inspector-page-timeline__body-cell"
+        >
           {{ cell }} ms
         </div>
       </div>
@@ -119,7 +131,10 @@ const segmentRows = computed(() => {
           :key="`${segmentRow.label}-${segmentRow.duration}`"
           class="inspector-page-timeline__segment"
         >
-          <div class="inspector-page-timeline__segment-label" :title="segmentRow.label">
+          <div
+            class="inspector-page-timeline__segment-label"
+            :title="segmentRow.label"
+          >
             {{ segmentRow.label }}
           </div>
 
@@ -154,8 +169,13 @@ const segmentRows = computed(() => {
       </div>
     </div>
 
-    <div v-if="segmentRows.length === 0" class="inspector-page-timeline__no-segments">
-      <h3 class="inspector-page-timeline__no-segments-placeholder">No data</h3>
+    <div
+      v-if="segmentRows.length === 0"
+      class="inspector-page-timeline__no-segments"
+    >
+      <h3 class="inspector-page-timeline__no-segments-placeholder">
+        No data
+      </h3>
     </div>
   </section>
 </template>

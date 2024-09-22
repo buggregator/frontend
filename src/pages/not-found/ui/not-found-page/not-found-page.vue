@@ -15,11 +15,13 @@ useTitle('404 | Buggregator')
     <div class="error">
       <h1 class="error__title">
         404
-        <br />
+        <br>
         Page not found
       </h1>
 
-      <RouterLink :to="{ name: RouteName.Home }"> Go to home </RouterLink>
+      <RouterLink :to="{ name: RouteName.Home }">
+        Go to home
+      </RouterLink>
     </div>
   </LayoutBase>
 </template>

@@ -13,18 +13,29 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 
 <template>
   <section class="sentry-page-request">
-    <h3 class="sentry-page-request__title">request</h3>
+    <h3 class="sentry-page-request__title">
+      request
+    </h3>
 
     <div class="sentry-page-request__wrapper">
-      <code v-if="request" class="sentry-page-request__url">
+      <code
+        v-if="request"
+        class="sentry-page-request__url"
+      >
         <strong>{{ request.method || 'GET' }}:</strong>
         {{ request.url }}
       </code>
 
-      <h3 class="sentry-page-request__title sentry-page-request__title--sub">headers</h3>
+      <h3 class="sentry-page-request__title sentry-page-request__title--sub">
+        headers
+      </h3>
 
       <TableBase v-if="request && request.headers">
-        <TableBaseRow v-for="(value, title) in request.headers" :key="title" :title="String(title)">
+        <TableBaseRow
+          v-for="(value, title) in request.headers"
+          :key="title"
+          :title="String(title)"
+        >
           {{ normalizeHeaderValue(value) }}
         </TableBaseRow>
       </TableBase>

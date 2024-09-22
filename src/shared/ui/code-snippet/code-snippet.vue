@@ -46,11 +46,18 @@ const copyCode = (): void => {
       :class="{ 'code-snippet__copy--active': isCopied }"
       @click.stop="copyCode"
     >
-      <IconSvg name="copy" class="code-snippet__copy-icon" />
+      <IconSvg
+        name="copy"
+        class="code-snippet__copy-icon"
+      />
       Copy
     </button>
 
-    <CodeHighlight :language="language" :autodetect="false" :code="normalizedCode" />
+    <CodeHighlight
+      :language="language"
+      :autodetect="false"
+      :code="normalizedCode"
+    />
   </div>
 </template>
 

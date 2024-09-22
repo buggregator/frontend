@@ -38,9 +38,19 @@ const exception: Ref<Exception> = computed(() =>
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
-    <SentryException v-if="hasException" :exception="exception" :max-frames="maxFrames">
-      <RouterLink :to="eventLink" class="preview-card__link">
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
+    <SentryException
+      v-if="hasException"
+      :exception="exception"
+      :max-frames="maxFrames"
+    >
+      <RouterLink
+        :to="eventLink"
+        class="preview-card__link"
+      >
         <h3 class="preview-card__title">
           {{ exception.type }}
         </h3>

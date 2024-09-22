@@ -74,7 +74,11 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 </script>
 
 <template>
-  <div ref="container" class="call-graph" :class="{ 'call-graph--fullscreen': isFullscreen }">
+  <div
+    ref="container"
+    class="call-graph"
+    :class="{ 'call-graph--fullscreen': isFullscreen }"
+  >
     <RenderGraph
       v-if="isReadyGraph && graphKey && elements"
       :key="graphKey"
@@ -92,8 +96,14 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
     </RenderGraph>
 
     <div class="call-graph__toolbar">
-      <button title="Full screen" @click="toggleFullScreen">
-        <IconSvg name="fullscreen" class="call-graph__toolbar-icon" />
+      <button
+        title="Full screen"
+        @click="toggleFullScreen"
+      >
+        <IconSvg
+          name="fullscreen"
+          class="call-graph__toolbar-icon"
+        />
       </button>
 
       <button
@@ -111,7 +121,10 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
     </div>
 
     <div class="call-graph__toolbar call-graph__toolbar--right">
-      <label v-if="metric !== GraphTypes.CALLS" class="call-graph__toolbar-input-wr">
+      <label
+        v-if="metric !== GraphTypes.CALLS"
+        class="call-graph__toolbar-input-wr"
+      >
         Threshold
 
         <input
@@ -122,7 +135,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
           :max="10"
           :step="0.1"
           @input="setThreshold"
-        />
+        >
       </label>
 
       <label class="call-graph__toolbar-input-wr">
@@ -136,7 +149,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
           :max="metric === GraphTypes.CALLS ? 1000 : 100"
           :step="metric === GraphTypes.CALLS ? 10 : 5"
           @input="setMinPercent"
-        />
+        >
       </label>
     </div>
   </div>

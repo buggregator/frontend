@@ -11,35 +11,62 @@ defineProps<Props>()
 
 <template>
   <section class="sentry-page-app">
-    <h3 class="sentry-page-app__title">app</h3>
+    <h3 class="sentry-page-app__title">
+      app
+    </h3>
 
     <TableBase>
-      <TableBaseRow v-if="app.type" title="App type">
+      <TableBaseRow
+        v-if="app.type"
+        title="App type"
+      >
         {{ app.type }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.app_build" title="App Build">
+      <TableBaseRow
+        v-if="app.app_build"
+        title="App Build"
+      >
         {{ app.app_build }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.app_identifier" title="Build ID">
+      <TableBaseRow
+        v-if="app.app_identifier"
+        title="Build ID"
+      >
         {{ app.app_identifier }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.app_id" title="ID">
+      <TableBaseRow
+        v-if="app.app_id"
+        title="ID"
+      >
         {{ app.app_id }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.app_name" title="Build Name">
+      <TableBaseRow
+        v-if="app.app_name"
+        title="Build Name"
+      >
         {{ app.app_name }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.app_version" title="Version">
+      <TableBaseRow
+        v-if="app.app_version"
+        title="Version"
+      >
         {{ app.app_version }}
       </TableBaseRow>
 
-      <TableBaseRow v-if="app.permissions" title="Permissions">
-        <CodeSnippet class="mt-3" language="json" :code="app.permissions" />
+      <TableBaseRow
+        v-if="app.permissions"
+        title="Permissions"
+      >
+        <CodeSnippet
+          class="mt-3"
+          language="json"
+          :code="app.permissions"
+        />
       </TableBaseRow>
     </TableBase>
   </section>

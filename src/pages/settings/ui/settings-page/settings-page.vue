@@ -14,7 +14,10 @@ useTitle('Settings | Buggregator')
     </template>
 
     <template #header>
-      <PageHeader :type="PAGE_TYPES.ALL_EVENT_TYPES" title="Settings" />
+      <PageHeader
+        :type="PAGE_TYPES.ALL_EVENT_TYPES"
+        title="Settings"
+      />
     </template>
 
     <SettingsPageContent />

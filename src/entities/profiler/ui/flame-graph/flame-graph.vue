@@ -115,8 +115,14 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="graph-wrapper">
-    <div ref="graph" class="flame-graph">
-      <canvas ref="canvas" class="flame-graph__canvas" />
+    <div
+      ref="graph"
+      class="flame-graph"
+    >
+      <canvas
+        ref="canvas"
+        class="flame-graph__canvas"
+      />
     </div>
 
     <CallStatBoard
