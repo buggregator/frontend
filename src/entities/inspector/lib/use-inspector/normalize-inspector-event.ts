@@ -1,10 +1,10 @@
-import moment from "moment";
-import { type ServerEvent, type NormalizedEvent, EventTypes } from "@/shared/types";
-import type { Inspector, InspectorTransaction } from "../../types";
+import moment from 'moment';
+import { type ServerEvent, type NormalizedEvent, EventTypes } from '@/shared/types';
+import type { Inspector, InspectorTransaction } from '../../types';
 
-// TODO: eslint remove comment
-// eslint-disable-next-line max-len
-export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): NormalizedEvent<Inspector> => {
+type NormalizeInspectorEvent = (event: ServerEvent<Inspector>) => NormalizedEvent<Inspector>;
+
+export const normalizeInspectorEvent: NormalizeInspectorEvent = (event) => {
   const transaction = event.payload[0] as InspectorTransaction;
 
   const normalizedEvent: NormalizedEvent<Inspector> = {
@@ -17,12 +17,14 @@ export const normalizeInspectorEvent = (event: ServerEvent<Inspector>): Normaliz
       os: transaction.host.os,
     },
     serverName: transaction.host.hostname,
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
+    date: event.timestamp
+      ? new Date(event.timestamp * 1000)
+      : null,
     payload: event.payload,
   };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format('HH:mm:ss'));
   }
 
   return normalizedEvent;

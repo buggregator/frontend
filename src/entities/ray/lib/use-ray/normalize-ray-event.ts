@@ -1,20 +1,20 @@
-import pick from "lodash/pick";
-import moment from "moment";
-import { EventTypes, type NormalizedEvent, type ServerEvent } from "@/shared/types";
+import pick from 'lodash/pick';
+import moment from 'moment';
+import { EventTypes, type NormalizedEvent, type ServerEvent } from '@/shared/types';
 import type {
   RayContentColor,
   RayContentLabel,
   RayContentSize,
   RayDump,
   RayDumpMeta,
-} from "../../types";
-import { RayEventTypes } from "../../types";
+} from '../../types';
+import { RayEventTypes } from '../../types';
 
 export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
   let origin = {
     php_version: event.payload.meta?.php_version,
-    laravel_version: "",
-    symfony_version: "",
+    laravel_version: '',
+    symfony_version: '',
   };
 
   if (event.payload.meta?.laravel_version) {
@@ -27,50 +27,51 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     if (payload.origin) {
       origin = {
         ...origin,
-        ...pick(payload.origin, ["file", "line_number", "hostname"]),
+        ...pick(payload.origin, [
+          'file',
+          'line_number',
+          'hostname',
+        ]),
       };
     }
   });
 
   const labels = (event?.payload?.payloads || [])
-    .filter((payload) =>
-      payload.type === "label")
-    .map((payload) =>
-      (payload?.content as RayContentLabel)?.label)
+    .filter((payload) => payload.type === 'label')
+    .map((payload) => (payload?.content as RayContentLabel)?.label)
     .filter(Boolean);
 
   const typeLabels = (event?.payload?.payloads || [])
-    .filter((payload) =>
-      Object.values(RayEventTypes).includes(payload.type as RayEventTypes))
-    .map((payload) =>
-      payload.type)
+    .filter((payload) => Object.values(RayEventTypes).includes(payload.type as RayEventTypes))
+    .map((payload) => payload.type)
     .filter(Boolean);
 
   const color =
     (event?.payload?.payloads || [])
-      .filter((payload) =>
-        payload.type === "color")
-      .map((payload) =>
-        (payload.content as RayContentColor)?.color)
+      .filter((payload) => payload.type === 'color')
+      .map((payload) => (payload.content as RayContentColor)?.color)
       .filter(Boolean)
-      .shift() || ("black" as RayDumpMeta["color"]);
+      .shift() || ('black' as RayDumpMeta['color']);
 
   const size = ((event?.payload?.payloads || [])
-    .filter((payload) =>
-      payload.type === "size")
-    .map((payload) =>
-      (payload.content as RayContentSize)?.size)
+    .filter((payload) => payload.type === 'size')
+    .map((payload) => (payload.content as RayContentSize)?.size)
     .filter(Boolean)
-    .shift() || "md") as RayDumpMeta["size"];
+    .shift() || 'md') as RayDumpMeta['size'];
 
   const normalizedEvent: NormalizedEvent<RayDump> = {
     id: event.uuid,
     type: EventTypes.RayDump,
-    labels: [EventTypes.RayDump, ...labels, ...typeLabels].filter((x, i, a) =>
-      a.indexOf(x) === i),
+    labels: [
+      EventTypes.RayDump,
+      ...labels,
+      ...typeLabels,
+    ].filter((x, i, a) => a.indexOf(x) === i),
     origin,
-    serverName: "",
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
+    serverName: '',
+    date: event.timestamp
+      ? new Date(event.timestamp * 1000)
+      : null,
     payload: event.payload,
     meta: {
       color,
@@ -79,7 +80,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
   };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format('HH:mm:ss'));
   }
 
   return normalizedEvent;

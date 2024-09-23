@@ -1,14 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import StatBoard from "./stat-board.vue";
-import { StatBoardSize } from "./types";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import StatBoard from './stat-board.vue';
+import { StatBoardSize } from './types';
 
 export default {
-  title: "Shared/StatBoard",
+  title: 'Shared/StatBoard',
   component: StatBoard,
   argTypes: {
     size: {
-      control: "select",
-      options: [...Object.values(StatBoardSize), undefined],
+      control: 'select',
+      options: [
+        ...Object.values(StatBoardSize),
+        undefined,
+      ],
     },
   },
 } as Meta<typeof StatBoard>;

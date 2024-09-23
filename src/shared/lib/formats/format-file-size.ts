@@ -6,7 +6,16 @@ export const formatFileSize = (inputBytes: number, fraction = 1) => {
     return `${bytes} B`;
   }
 
-  const units = ["Kb", "Mb", "Gb", "Tb", "b", "Eb", "Zb", "Yb"];
+  const units = [
+    'Kb',
+    'Mb',
+    'Gb',
+    'Tb',
+    'b',
+    'Eb',
+    'Zb',
+    'Yb',
+  ];
   let u = -1;
   const r: number = 10 ** 1;
 
