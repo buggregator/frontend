@@ -1,1 +1,1 @@
-export { default as RayCustom } from "./ray-custom.vue";
+export { default as RayCustom } from './ray-custom.vue';

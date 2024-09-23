@@ -1,20 +1,20 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import FileAttachment from "./file-attachment.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import FileAttachment from './file-attachment.vue';
 
 export default {
-  title: "Shared/FileAttachment",
+  title: 'Shared/FileAttachment',
   component: FileAttachment,
 } as Meta<typeof FileAttachment>;
 
 export const Default: StoryObj<typeof FileAttachment> = {
   args: {
-    eventId: "cbdd3296-1e25-4191-9f52-0e2d7e7d6aae",
+    eventId: 'cbdd3296-1e25-4191-9f52-0e2d7e7d6aae',
     attachment: {
-      uuid: "cbdd3296-1e25-4191-9f52-0e2d7e7d6aae",
-      name: "attachment.txt",
+      uuid: 'cbdd3296-1e25-4191-9f52-0e2d7e7d6aae',
+      name: 'attachment.txt',
       size: 234234,
-      mime: "text/plain",
-      path: "example.com/attachment.txt",
+      mime: 'text/plain',
+      path: 'example.com/attachment.txt',
     },
   },
 };

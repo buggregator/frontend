@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { FlameChart } from "flame-chart-js";
-import debounce from "lodash.debounce";
+import { FlameChart } from 'flame-chart-js';
+import debounce from 'lodash.debounce';
 import {
   ref, onMounted, nextTick, onBeforeUnmount, computed,
-} from "vue";
-import type { EventId } from "@/shared/types";
-import type { StatBoardCost } from "@/shared/ui";
-import { useProfiler } from "../../lib";
-import type { CallStackHoverData } from "../../types";
-import { CallStatBoard } from "../../ui/call-stat-board";
+} from 'vue';
+import type { EventId } from '@/shared/types';
+import type { StatBoardCost } from '@/shared/ui';
+import { useProfiler } from '../../lib';
+import type { CallStackHoverData } from '../../types';
+import { CallStatBoard } from '../../ui/call-stat-board';
 
 type Props = {
   id: EventId;
@@ -38,6 +38,7 @@ const activeStatBoardStyle = computed(() => {
 
   if (width + activeStatBoardPosition.value.x > window.innerWidth - 80) {
     const deltaX = width + activeStatBoardPosition.value.x - window.innerWidth + 100;
+
     left -= deltaX;
   }
 
@@ -82,8 +83,12 @@ const renderChart = async () => {
               title: data.data.source.name,
             };
             activeStatBoardPosition.value = {
-              x: mouse?.x ? mouse.x + 20 : 0,
-              y: mouse?.y ? mouse.y - 20 : 0,
+              x: mouse?.x
+                ? mouse.x + 20
+                : 0,
+              y: mouse?.y
+                ? mouse.y - 20
+                : 0,
             };
           }
         },
@@ -94,7 +99,7 @@ const renderChart = async () => {
   flameChart.render();
 
   window.addEventListener(
-    "resize",
+    'resize',
     debounce(() => {
       if (!graph.value) {
         return;

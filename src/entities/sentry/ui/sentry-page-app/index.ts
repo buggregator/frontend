@@ -1,1 +1,1 @@
-export { default as SentryPageApp } from "./sentry-page-app.vue";
+export { default as SentryPageApp } from './sentry-page-app.vue';

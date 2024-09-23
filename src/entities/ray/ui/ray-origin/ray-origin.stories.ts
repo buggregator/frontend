@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useRay } from "../../lib";
-import { rayCallerMock } from "../../mocks";
-import type { RayPayloadOrigin } from "../../types";
-import RayOrigin from "./ray-origin.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useRay } from '../../lib';
+import { rayCallerMock } from '../../mocks';
+import type { RayPayloadOrigin } from '../../types';
+import RayOrigin from './ray-origin.vue';
 
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayOrigin",
+  title: 'Entities/ray/RayOrigin',
   component: RayOrigin,
 } as Meta<typeof RayOrigin>;
 

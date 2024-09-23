@@ -1,23 +1,21 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { computed } from "vue";
-import type { NormalizedEvent } from "@/shared/types";
-import { PreviewCard } from "@/shared/ui";
-import type { SMTP } from "../../types";
+import moment from 'moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import { PreviewCard } from '@/shared/ui';
+import type { SMTP } from '../../types';
 
 type Props = {
   event: NormalizedEvent<SMTP>;
 };
 
 const props = defineProps<Props>();
-const eventLink = computed(() =>
-  `/smtp/${props.event.id}`);
+const eventLink = computed(() => `/smtp/${props.event.id}`);
 
-const dateFormat = computed(() =>
-  moment(props.event.date).fromNow());
+const dateFormat = computed(() => moment(props.event.date).fromNow());
 
-const emailRecipient = computed(() =>
-  props?.event?.payload?.to?.[0]?.email || null);
+const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || null);
+
 </script>
 
 <template>
@@ -43,7 +41,7 @@ const emailRecipient = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .smtp-preview {
 }

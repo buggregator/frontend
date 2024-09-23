@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import isString from "lodash/isString";
-import { computed, onMounted } from "vue";
-import { callSfDump } from "../../lib/vendor/sf-dumper";
-import { CodeSnippet } from "../code-snippet";
+import isString from 'lodash/isString';
+import { computed, onMounted } from 'vue';
+import { callSfDump } from '../../lib/vendor/sf-dumper';
+import { CodeSnippet } from '../code-snippet';
 
 type Props = {
   value: string | number | boolean;
@@ -11,19 +11,19 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  type: "",
-  language: "plaintext",
+  type: '',
+  language: 'plaintext',
 });
 
-const isValueString = computed(() =>
-  isString(props.value) && props.type === "string");
-const isValueCode = computed(() =>
-  isString(props.value) && props.type === "code");
+const isValueString = computed(() => isString(props.value) && props.type === 'string');
+const isValueCode = computed(() => isString(props.value) && props.type === 'code');
 
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null;
 const dumpBody = computed(() => {
-  if (props.type === "boolean") {
-    return props.value === "1" ? "true" : "false";
+  if (props.type === 'boolean') {
+    return props.value === '1'
+      ? 'true'
+      : 'false';
   }
 
   if (isValueString.value) {
@@ -33,11 +33,9 @@ const dumpBody = computed(() => {
   return props.value;
 });
 
-const baseSanitizedHtml = computed(() => {
-  return String(props.value)
-    .replace(/<script.*<\/script>/g, "")
-    .replace(/<style.*<\/style>/g, "");
-});
+const baseSanitizedHtml = computed(() => String(props.value)
+  .replace(/<script.*<\/script>/g, '')
+  .replace(/<style.*<\/style>/g, ''));
 
 onMounted(() => {
   if (dumpId) {
@@ -64,7 +62,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .value-dump {
   display: block;

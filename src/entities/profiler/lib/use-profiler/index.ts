@@ -1,1 +1,1 @@
-export * from "./use-profiler";
+export * from './use-profiler';

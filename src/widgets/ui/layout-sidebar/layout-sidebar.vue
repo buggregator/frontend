@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { useFloating } from "@floating-ui/vue";
-import { onClickOutside } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { PAGES_SETTINGS } from "@/shared/constants";
-import { textToColors } from "@/shared/lib/helpers";
-import { useEvents } from "@/shared/lib/use-events";
-import { useSettingsStore, useProfileStore, useEventsStore } from "@/shared/stores";
-import { useConnectionStore } from "@/shared/stores/connections";
-import { RouteName } from "@/shared/types";
-import { BadgeNumber, IconSvg } from "@/shared/ui";
-import { version } from "../../../../package.json" with { type: "json" };
-import { EVENTS_NAV_ORDER } from "./constants";
+import { useFloating } from '@floating-ui/vue';
+import { onClickOutside } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { PAGES_SETTINGS } from '@/shared/constants';
+import { textToColors } from '@/shared/lib/helpers';
+import { useEvents } from '@/shared/lib/use-events';
+import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores';
+import { useConnectionStore } from '@/shared/stores/connections';
+import { RouteName } from '@/shared/types';
+import { BadgeNumber, IconSvg } from '@/shared/ui';
+import { version } from '../../../../package.json' with { type: 'json' };
+import { EVENTS_NAV_ORDER } from './constants';
 
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
@@ -33,8 +33,7 @@ const isVisibleProfile = ref(false);
 const isVisibleProjects = ref(false);
 
 // TODO: need to check why project is empty on first load
-const isProjectLoading = computed(() =>
-  !activeProject.value);
+const isProjectLoading = computed(() => !activeProject.value);
 
 onClickOutside(projectMenu, () => {
   isVisibleProjects.value = false;
@@ -45,15 +44,16 @@ onClickOutside(userMenu, () => {
 });
 
 const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
-  placement: "right-start",
+  placement: 'right-start',
 });
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: "right",
+  placement: 'right',
 });
 
-const connectionStatus = computed(() =>
-  (isConnectedWS.value ? "connected" : "disconnected"));
+const connectionStatus = computed(() => (isConnectedWS.value
+  ? 'connected'
+  : 'disconnected'));
 
 const avatar = computed(() => {
   if (!profile.value) return null;
@@ -62,7 +62,7 @@ const avatar = computed(() => {
     return null;
   }
 
-  if (profile.value.avatar.startsWith("<svg")) {
+  if (profile.value.avatar.startsWith('<svg')) {
     return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`;
   }
 
@@ -75,8 +75,7 @@ const profileEmail = computed(() => {
   return profile.value.email;
 });
 
-const connectionText = computed(() =>
-  `WS connection is ${connectionStatus.value}`);
+const connectionText = computed(() => `WS connection is ${connectionStatus.value}`);
 
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value;
@@ -89,15 +88,19 @@ const toggleProjects = () => {
 const logout = () => {
   profileStore.removeToken();
   const router = useRouter();
-  router.push("/login");
+
+  router.push('/login');
 };
 
 const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
 
-const clientVersion = ref(!version || version === "0.0.1" ? "@dev" : `v${version}`);
+const clientVersion = ref(!version || version === '0.0.1'
+  ? '@dev'
+  : `v${version}`);
 
-const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`);
+const serverVersion = computed(() => String(apiVersion.value).match(/^[0-9.]+.*$/)
+  ? `v${apiVersion.value}`
+  : `@${apiVersion.value}`);
 
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey);
@@ -105,14 +108,16 @@ const setProject = (projectKey: string) => {
   isVisibleProjects.value = false;
 };
 
+// TODO: remove comment
+/* eslint-disable */
 const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) =>
-    availableEvents.value.includes(type)));
+  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
+);
+/* eslint-enable */
 
-const makeShortTitle = (title: string) =>
-  (title || "").substring(0, 2);
-const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
+const makeShortTitle = (title: string) => (title || '').substring(0, 2);
+const generateRadialGradient = (input: string) => `linear-gradient(to right, ${textToColors(input || '').join(', ')})`;
+
 </script>
 
 <template>

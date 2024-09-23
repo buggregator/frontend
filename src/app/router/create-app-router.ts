@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { RouteAuthAccessError, RouteAvailabilityError } from "@/shared/lib/errors";
-import { RouteName } from "@/shared/types";
-import { routes } from "./routes";
-import type { TRouterMiddleware } from "./types";
+import { createRouter, createWebHistory } from 'vue-router';
+import { RouteAuthAccessError, RouteAvailabilityError } from '@/shared/lib/errors';
+import { RouteName } from '@/shared/types';
+import { routes } from './routes';
+import type { TRouterMiddleware } from './types';
 
 export const createAppRouter = () => {
   const router = createRouter({
@@ -16,7 +16,9 @@ export const createAppRouter = () => {
     }
 
     const middlewares = (
-      Array.isArray(to.meta.middleware) ? to.meta.middleware : [to.meta.middleware]
+      Array.isArray(to.meta.middleware)
+        ? to.meta.middleware
+        : [to.meta.middleware]
     ) as TRouterMiddleware[];
 
     const context = {
@@ -40,6 +42,7 @@ export const createAppRouter = () => {
             name: RouteName.NotFound,
           });
         }
+
         return;
       }
     }

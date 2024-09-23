@@ -1,1 +1,1 @@
-export { default as InspectorPageTimeline } from "./inspector-page-timeline.vue";
+export { default as InspectorPageTimeline } from './inspector-page-timeline.vue';

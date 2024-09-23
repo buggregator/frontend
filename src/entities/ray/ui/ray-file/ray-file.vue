@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 // TODO: need to rename component
-import { ref, computed } from "vue";
-import { IconSvg } from "@/shared/ui";
-import type { RayFrame } from "../../types";
+import { ref, computed } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type { RayFrame } from '../../types';
 
 type Props = {
   file: RayFrame;
@@ -15,8 +15,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const collapsed = ref(props.isOpen);
 
-const hasSnippets = computed(() =>
-  (props.file.snippet ? props.file.snippet.length > 0 : false));
+const hasSnippets = computed(() => (props.file.snippet
+  ? props.file.snippet.length > 0
+  : false));
+
 </script>
 <template>
   <div
@@ -29,7 +31,7 @@ const hasSnippets = computed(() =>
         :title="file.file_name"
       >
         <div>
-          {{ file.class || "null" }}:{{ file.method }}
+          {{ file.class || 'null' }}:{{ file.method }}
           <span class="ray-file__title-in">at line</span>
           {{ file.line_number }}
         </div>
@@ -66,7 +68,7 @@ const hasSnippets = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .ray-file {
   @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
 }

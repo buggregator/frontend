@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import { IconSvg } from "@/shared/ui";
-import type { Sentry, SentryContextRuntime, SentryContexts } from "../../types";
+import { computed, ref } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type { Sentry, SentryContextRuntime, SentryContexts } from '../../types';
 
 type Props = {
   payload: Sentry;
@@ -12,7 +12,7 @@ const props = defineProps<Props>();
 const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
-  const { name = "", version = "" } =
+  const { name = '', version = '' } =
     (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
   return {
@@ -22,7 +22,7 @@ const contextsRuntime = computed(() => {
 });
 
 const contextsOS = computed(() => {
-  const { name = "", version = "" } = (props.payload.contexts?.os as SentryContexts["os"]) || {};
+  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContexts['os']) || {};
 
   return {
     name,
@@ -30,58 +30,56 @@ const contextsOS = computed(() => {
   };
 });
 
-const boxes = computed(() =>
-  [
-    {
-      title: "runtime",
-      name: contextsRuntime.value.name,
-      version: contextsRuntime.value.version,
-    },
-    {
-      title: "os",
-      name: contextsOS.value.name,
-      version: contextsOS.value.version,
-    },
-    {
-      title: "sdk",
-      name: props.payload.sdk?.name,
-      version: props.payload.sdk?.version,
-    },
-  ]);
+const boxes = computed(() => [
+  {
+    title: 'runtime',
+    name: contextsRuntime.value.name,
+    version: contextsRuntime.value.version,
+  },
+  {
+    title: 'os',
+    name: contextsOS.value.name,
+    version: contextsOS.value.version,
+  },
+  {
+    title: 'sdk',
+    name: props.payload.sdk?.name,
+    version: props.payload.sdk?.version,
+  },
+]);
 
-const tags = computed(() =>
-  [
-    {
-      name: "env",
-      value: props.payload.environment,
-    },
-    {
-      name: "logger",
-      value: props.payload.logger,
-    },
-    {
-      name: "os",
-      value: `${contextsOS.value.name} ${contextsOS.value.version}`,
-    },
-    {
-      name: "runtime",
-      value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
-    },
-    {
-      name: "server name",
-      value: props.payload.server_name,
-    },
-  ]);
+const tags = computed(() => [
+  {
+    name: 'env',
+    value: props.payload.environment,
+  },
+  {
+    name: 'logger',
+    value: props.payload.logger,
+  },
+  {
+    name: 'os',
+    value: `${contextsOS.value.name} ${contextsOS.value.version}`,
+  },
+  {
+    name: 'runtime',
+    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
+  },
+  {
+    name: 'server name',
+    value: props.payload.server_name,
+  },
+]);
 
 const modules = computed(() => {
   const mods = props.payload.modules || {};
 
-  return Object.keys(mods).map((name) =>
-    ({
-      name,
-      version: mods[name],
-    }));
+  return Object.keys(mods).map((name) => ({
+    name,
+    version: mods[name],
+  }));
 });
+
 </script>
 
 <template>
@@ -130,7 +128,7 @@ const modules = computed(() => {
               {{ value }}
             </div>
             <div class="sentry-page-tags__label-value">
-              {{ name || " - " }}
+              {{ name || ' - ' }}
             </div>
           </div>
         </template>
@@ -176,7 +174,7 @@ const modules = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-tags {
 }

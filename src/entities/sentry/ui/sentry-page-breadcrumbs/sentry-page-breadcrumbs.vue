@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { CodeSnippet } from "@/shared/ui";
-import type { SentryBreadcrumb } from "../../types";
+import moment from 'moment';
+import { CodeSnippet } from '@/shared/ui';
+import type { SentryBreadcrumb } from '../../types';
 
 type Props = {
   breadcrumbs: SentryBreadcrumb[];
 };
 
 withDefaults(defineProps<Props>(), {
-  breadcrumbs: () =>
-[] as SentryBreadcrumb[],
+  breadcrumbs: () => [] as SentryBreadcrumb[],
 });
 
-const formatDate = (timestamp?: number): string =>
-  timestamp ? moment.unix(timestamp).fromNow() : "";
+const formatDate = (timestamp?: number): string => timestamp
+  ? moment.unix(timestamp).fromNow()
+  : '';
 
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) =>
-  breadcrumb.level?.toLowerCase();
+const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase();
+
 </script>
 
 <template>
@@ -105,7 +105,7 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-breadcrumbs {
   @apply py-5 px-4;

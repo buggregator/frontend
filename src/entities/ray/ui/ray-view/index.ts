@@ -1,1 +1,1 @@
-export { default as RayView } from "./ray-view.vue";
+export { default as RayView } from './ray-view.vue';

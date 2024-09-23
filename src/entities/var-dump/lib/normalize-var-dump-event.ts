@@ -1,6 +1,6 @@
-import moment from "moment/moment";
-import { type ServerEvent, type NormalizedEvent, EventTypes } from "@/shared/types";
-import type { VarDump } from "../types";
+import moment from 'moment/moment';
+import { type ServerEvent, type NormalizedEvent, EventTypes } from '@/shared/types';
+import type { VarDump } from '../types';
 
 export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent<VarDump> => {
   const normalizedEvent: NormalizedEvent<VarDump> = {
@@ -8,17 +8,19 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
     type: EventTypes.VarDump,
     labels: [EventTypes.VarDump],
     origin: {
-      file: event.payload.context?.source?.file || "",
-      name: event.payload.context?.source?.name || "",
-      line_number: event.payload.context?.source?.line || "",
+      file: event.payload.context?.source?.file || '',
+      name: event.payload.context?.source?.name || '',
+      line_number: event.payload.context?.source?.line || '',
     },
-    serverName: "",
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
+    serverName: '',
+    date: event.timestamp
+      ? new Date(event.timestamp * 1000)
+      : null,
     payload: event.payload,
   };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format('HH:mm:ss'));
   }
 
   if (event.payload?.payload?.label) {
@@ -27,7 +29,7 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
 
   if (event.payload?.context?.cli) {
     normalizedEvent.labels.push({
-      title: "CLI",
+      title: 'CLI',
       value: `${event.payload.context.cli.identifier}`,
       context: `${event.payload.context.cli.command_line}`,
     });

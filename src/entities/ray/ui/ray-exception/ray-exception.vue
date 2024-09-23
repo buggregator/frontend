@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from "vue";
-import type { RayContentException } from "../../types";
-import { RayFile } from "../ray-file";
+import { computed, defineProps, withDefaults } from 'vue';
+import type { RayContentException } from '../../types';
+import { RayFile } from '../ray-file';
 
 const RAY_MAX_EXCEPTION_FRAMES = 10;
 
@@ -19,6 +19,7 @@ const exceptionFrames = computed(() => {
 
   return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse();
 });
+
 </script>
 
 <template>
@@ -45,7 +46,7 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .ray-exception {
   @apply flex flex-col;
 }

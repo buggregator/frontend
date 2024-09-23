@@ -17,13 +17,15 @@ export const formatDuration = (inputMs: number) => {
 
   return Object.entries(time)
     .filter((entry) => entry[1] !== 0)
-    .map(([
-      key,
-      val,
-    ]) => `${
-      key === 'ms' && Number(val.toFixed(4)) % 1 !== 0
-        ? val.toFixed(4)
-        : val.toFixed(0)
-    } ${key}`)
+    .map(
+      ([
+        key,
+        val,
+      ]) => `${
+        key === 'ms' && Number(val.toFixed(4)) % 1 !== 0
+          ? val.toFixed(4)
+          : val.toFixed(0)
+      } ${key}`,
+    )
     .join(', ');
 };

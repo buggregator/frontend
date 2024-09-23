@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useVarDump } from "../../lib";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useVarDump } from '../../lib';
 import {
   varDumpArrayMock,
   varDumpFalseMock,
@@ -9,13 +9,13 @@ import {
   varDumpStringMock,
   varDumpEmptyStringMock,
   varCodeMock,
-} from "../../mocks";
-import PreviewCard from "./preview-card.vue";
+} from '../../mocks';
+import PreviewCard from './preview-card.vue';
 
 const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
-  title: "Entities/var-dump/PreviewCard",
+  title: 'Entities/var-dump/PreviewCard',
   component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 

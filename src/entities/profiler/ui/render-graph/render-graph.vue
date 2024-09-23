@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { ElementsDefinition, NodeDataDefinition } from "cytoscape";
+import type { ElementsDefinition, NodeDataDefinition } from 'cytoscape';
 import {
   defineProps, onBeforeUnmount, onMounted, ref,
-} from "vue";
-import { useCytoscape } from "../../lib";
-import type { CallStackHoverData } from "../../types";
+} from 'vue';
+import { useCytoscape } from '../../lib';
+import type { CallStackHoverData } from '../../types';
 
 type Props = {
   elements: ElementsDefinition;
@@ -18,7 +18,6 @@ const tooltipPosition = ref<{ top: string; left: string } | undefined>();
 const destroyFn = ref();
 
 const renderer = ref<HTMLElement>();
-const parent = ref<HTMLElement>();
 const tooltip = ref<HTMLElement>();
 
 const onNodeHover = (data?: NodeDataDefinition, event?: MouseEvent) => {
@@ -76,10 +75,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    ref="parent"
-    class="render-graph"
-  >
+  <div class="render-graph">
     <div
       ref="renderer"
       class="render-graph__in"

@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import isString from "lodash/isString";
-import { computed } from "vue";
-import { type EventType, type NormalizedEvent, RouteName } from "../../types";
-import { IconSvg } from "../icon-svg";
-import { DownloadType } from "./types";
+import isString from 'lodash/isString';
+import { computed } from 'vue';
+import { type EventType, type NormalizedEvent, RouteName } from '../../types';
+import { IconSvg } from '../icon-svg';
+import { DownloadType } from './types';
 
 type Props = {
-  eventType: EventType | "unknown";
-  eventId: NormalizedEvent<unknown>["id"];
+  eventType: EventType | 'unknown';
+  eventId: NormalizedEvent<unknown>['id'];
   eventUrl: string;
-  labels: NormalizedEvent<unknown>["labels"];
+  labels: NormalizedEvent<unknown>['labels'];
   isOpen: boolean;
   isLocked: boolean;
   isVisibleControls: boolean;
@@ -24,39 +24,38 @@ type Emits = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  tags: () =>
-    [],
-  eventUrl: "",
+  tags: () => [],
+  eventUrl: '',
 });
 
 const emit = defineEmits<Emits>();
 
 const changeView = () => {
-  emit("toggleView", true);
+  emit('toggleView', true);
 };
 
 const deleteEvent = () => {
-  emit("delete", true);
+  emit('delete', true);
 };
 
 const copyEvent = () => {
-  emit("copy", true);
+  emit('copy', true);
 };
 
 const downloadImageEvent = () => {
-  emit("download", DownloadType.Image);
+  emit('download', DownloadType.Image);
 };
 
 const downloadFile = () => {
-  emit("download", DownloadType.File);
+  emit('download', DownloadType.File);
 };
 
 const lockEvent = () => {
-  emit("lock", true);
+  emit('lock', true);
 };
 
-const isVisibleTags = computed(() =>
-  props.labels.length > 0);
+const isVisibleTags = computed(() => props.labels.length > 0);
+
 </script>
 
 <template>
@@ -202,15 +201,15 @@ const isVisibleTags = computed(() =>
 
 <style lang="scss" scoped>
 $eventTypeColorsMap: (
-  "var-dump" "red",
-  "smtp" "orange",
-  "sentry" "pink",
-  "profiler" "purple",
-  "ray" "cyan",
-  "inspector" "yellow",
-  "http-dump" "lime",
-  "monolog" "zinc",
-  "unknown" "gray"
+  'var-dump' 'red',
+  'smtp' 'orange',
+  'sentry' 'pink',
+  'profiler' 'purple',
+  'ray' 'cyan',
+  'inspector' 'yellow',
+  'http-dump' 'lime',
+  'monolog' 'zinc',
+  'unknown' 'gray'
 );
 
 .preview-card-header__tags {

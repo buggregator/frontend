@@ -1,1 +1,1 @@
-export { default as RayTable } from "./ray-table.vue";
+export { default as RayTable } from './ray-table.vue';

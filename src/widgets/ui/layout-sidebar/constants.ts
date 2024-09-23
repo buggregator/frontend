@@ -1,4 +1,4 @@
-import { EventTypes } from "@/shared/types";
+import { EventTypes } from '@/shared/types';
 
 export const EVENTS_NAV_ORDER: EventTypes[] = [
   EventTypes.Sentry,

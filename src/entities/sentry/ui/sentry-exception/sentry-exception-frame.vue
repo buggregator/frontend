@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import { IconSvg } from "@/shared/ui";
-import type { SentryFrame } from "../../types";
+import { computed, ref } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type { SentryFrame } from '../../types';
 
 type Props = {
   frame: SentryFrame;
@@ -11,14 +11,19 @@ type Props = {
 const props = defineProps<Props>();
 const isFrameOpen = ref(props.isOpen);
 
+// TODO: remove comment
+/* eslint-disable */
 const hasBody = computed(() =>
-  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context));
+  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context),
+);
+/* eslint-enable */
 
 const toggleOpen = () => {
   if (hasBody.value) {
     isFrameOpen.value = !isFrameOpen.value;
   }
 };
+
 </script>
 
 <template>
@@ -95,7 +100,7 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-exception-frame {
   @apply text-xs border-b border-purple-200 dark:border-gray-600;

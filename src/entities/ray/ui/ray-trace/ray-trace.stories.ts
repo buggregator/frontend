@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useRay } from "../../lib";
-import { rayTraceMock } from "../../mocks";
-import type { RayContentFrames } from "../../types";
-import RayTrace from "./ray-trace.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useRay } from '../../lib';
+import { rayTraceMock } from '../../mocks';
+import type { RayContentFrames } from '../../types';
+import RayTrace from './ray-trace.vue';
 
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayTrace",
+  title: 'Entities/ray/RayTrace',
   component: RayTrace,
 } as Meta<typeof RayTrace>;
 

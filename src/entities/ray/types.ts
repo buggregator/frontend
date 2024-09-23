@@ -1,25 +1,25 @@
 export enum RayEventTypes {
-  Log = "log",
+  Log = 'log',
   // SIZE = "size",
-  Custom = "custom",
+  Custom = 'custom',
   // LABEL = "label",
-  Caller = "caller",
-  Carbon = "carbon",
+  Caller = 'caller',
+  Carbon = 'carbon',
   // COLOR = "color",
-  Exception = "exception",
+  Exception = 'exception',
   // HIDE = "hide",
-  Measure = "measure",
-  Notify = "notify",
-  Mailable = "mailable",
-  Table = "table",
-  Trace = "trace",
-  Query = "executed_query",
-  ApplicationLog = "application_log",
-  Eloquent = "eloquent_model",
-  View = "view",
-  Event = "event",
-  Job = "job_event",
-  Lock = "create_lock",
+  Measure = 'measure',
+  Notify = 'notify',
+  Mailable = 'mailable',
+  Table = 'table',
+  Trace = 'trace',
+  Query = 'executed_query',
+  ApplicationLog = 'application_log',
+  Eloquent = 'eloquent_model',
+  View = 'view',
+  Event = 'event',
+  Job = 'job_event',
+  Lock = 'create_lock',
 }
 
 export interface RayFrame {
@@ -203,5 +203,5 @@ export interface RayDump {
 
 export interface RayDumpMeta {
   color: string;
-  size: "sm" | "md" | "lg" | "xl";
+  size: 'sm' | 'md' | 'lg' | 'xl';
 }

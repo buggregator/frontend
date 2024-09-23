@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps } from 'vue';
 
 type Props = {
   title?: string;
 };
 
 withDefaults(defineProps<Props>(), {
-  title: "",
+  title: '',
 });
 </script>
 
@@ -22,7 +22,7 @@ withDefaults(defineProps<Props>(), {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 .table-base-row {
   @include text-responsive;
   @apply md:flex md:space-y-1 py-1 md:py-2 px-2 md:px-4 items-center sm:divide-x;

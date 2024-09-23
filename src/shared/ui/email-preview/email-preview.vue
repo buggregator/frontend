@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { IconSvg } from "../icon-svg";
-import { Device } from "./types";
+import { ref } from 'vue';
+import { IconSvg } from '../icon-svg';
+import { Device } from './types';
 
 type Props = {
   device: Device;
@@ -16,6 +16,7 @@ const currentDevice = ref(props.device);
 const selectDevice = (device: Device) => {
   currentDevice.value = device;
 };
+
 </script>
 
 <template>
@@ -81,7 +82,7 @@ iframe {
 </style>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .attachment-preview {
   @apply flex-1 flex flex-col items-center h-full;
@@ -156,13 +157,13 @@ iframe {
   &::after {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-12 h-12 my-4;
-    content: "";
+    content: '';
   }
 
   &::before {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
-    content: "";
+    content: '';
   }
 }
 
@@ -172,13 +173,13 @@ iframe {
   &::before {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
-    content: "";
+    content: '';
   }
 
   &::after {
     @include border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
-    content: "";
+    content: '';
   }
 }
 </style>

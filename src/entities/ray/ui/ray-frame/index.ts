@@ -1,1 +1,1 @@
-export { default as RayFrame } from "./ray-frame.vue";
+export { default as RayFrame } from './ray-frame.vue';

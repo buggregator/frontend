@@ -1,1 +1,1 @@
-export { default as LayoutBase } from "./layout-base.vue";
+export { default as LayoutBase } from './layout-base.vue';

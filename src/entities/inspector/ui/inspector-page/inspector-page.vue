@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import moment from "moment/moment";
-import { computed } from "vue";
-import type { NormalizedEvent } from "@/shared/types";
-import { TableBase, TableBaseRow } from "@/shared/ui";
-import type { Inspector, InspectorTransaction } from "../../types";
-import { InspectorPageTimeline } from "../inspector-page-timeline";
-import { InspectorStatBoard } from "../inspector-stat-board";
+import moment from 'moment/moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import { TableBase, TableBaseRow } from '@/shared/ui';
+import type { Inspector, InspectorTransaction } from '../../types';
+import { InspectorPageTimeline } from '../inspector-page-timeline';
+import { InspectorStatBoard } from '../inspector-stat-board';
 
 type Props = {
   event: NormalizedEvent<Inspector>;
@@ -13,14 +13,14 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const transaction = computed(() =>
-  props.event?.payload[0]);
+const transaction = computed(() => props.event?.payload[0]);
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
 
-const http = computed(() =>
-  transaction.value ? (transaction.value as InspectorTransaction)?.http : undefined);
+const http = computed(() => transaction.value
+  ? (transaction.value as InspectorTransaction)?.http
+  : undefined);
+
 </script>
 
 <template>
@@ -70,7 +70,7 @@ const http = computed(() =>
               {{ value }}
             </template>
             <template v-else-if="Array.isArray(value)">
-              {{ value.join(", ") }}
+              {{ value.join(', ') }}
             </template>
             <template v-else-if="!Array.isArray(value)">
               <TableBaseRow
@@ -89,7 +89,7 @@ const http = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .inspector-page {
   @apply relative;

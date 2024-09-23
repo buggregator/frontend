@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useSentry } from "../../lib";
-import { sentryCommonMock } from "../../mocks";
-import SentryException from "./sentry-exception.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useSentry } from '../../lib';
+import { sentryCommonMock } from '../../mocks';
+import SentryException from './sentry-exception.vue';
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Entities/sentry/SentryException",
+  title: 'Entities/sentry/SentryException',
   component: SentryException,
 } as Meta<typeof SentryException>;
 

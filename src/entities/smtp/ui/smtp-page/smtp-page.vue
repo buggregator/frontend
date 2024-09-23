@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { computed, onMounted, ref } from "vue";
-import { Tab, Tabs } from "vue3-tabs-component";
-import { htmlEncode } from "@/shared/lib/helpers";
-import { useAttachments } from "@/shared/lib/io";
-import type { NormalizedEvent, Attachment } from "@/shared/types";
+import moment from 'moment';
+import { computed, onMounted, ref } from 'vue';
+import { Tab, Tabs } from 'vue3-tabs-component';
+import { htmlEncode } from '@/shared/lib/helpers';
+import { useAttachments } from '@/shared/lib/io';
+import type { NormalizedEvent, Attachment } from '@/shared/types';
 import {
   TableBase,
   TableBaseRow,
@@ -12,9 +12,9 @@ import {
   FileAttachment,
   EmailPreviewDevice,
   EmailPreview,
-} from "@/shared/ui";
-import type { SMTP } from "../../types";
-import { SmtpPageAddresses } from "../smtp-page-addresses";
+} from '@/shared/ui';
+import type { SMTP } from '../../types';
+import { SmtpPageAddresses } from '../smtp-page-addresses';
 
 type Props = {
   event: NormalizedEvent<SMTP>;
@@ -26,10 +26,9 @@ const isLoading = ref(false);
 
 const { getAttachments, calcDownloadLink } = useAttachments();
 
-const htmlSource = computed(() =>
-  props.event?.payload?.html
-    ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
-    : undefined);
+const htmlSource = computed(() => props.event?.payload?.html
+  ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
+  : undefined);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
@@ -45,44 +44,42 @@ const getAttachmentsRequest = async () => {
     console.error(error);
   }
 };
-const senders = computed(() =>
-  [
-    {
-      title: "From",
-      address: props.event.payload.from,
-    },
-    {
-      title: "To",
-      address: props.event.payload.to,
-    },
-    {
-      title: "CC",
-      address: props.event.payload.cc,
-    },
-    {
-      title: "BCC",
-      address: props.event.payload.bcc,
-    },
-    {
-      title: "Reply to",
-      address: props.event.payload.reply_to,
-    },
-  ]);
+const senders = computed(() => [
+  {
+    title: 'From',
+    address: props.event.payload.from,
+  },
+  {
+    title: 'To',
+    address: props.event.payload.to,
+  },
+  {
+    title: 'CC',
+    address: props.event.payload.cc,
+  },
+  {
+    title: 'BCC',
+    address: props.event.payload.bcc,
+  },
+  {
+    title: 'Reply to',
+    address: props.event.payload.reply_to,
+  },
+]);
 
-const isHtml = computed(() =>
-  props.event.payload?.html !== undefined && props.event.payload?.html !== "");
+const isHtml = computed(
+  () => props.event.payload?.html !== undefined && props.event.payload?.html !== '',
+);
 
-const isText = computed(() =>
-  props.event.payload?.text !== undefined && props.event.payload?.text !== "");
+const isText = computed(
+  () => props.event.payload?.text !== undefined && props.event.payload?.text !== '',
+);
 
-const mail = computed(() =>
-  props.event.payload);
+const mail = computed(() => props.event.payload);
 
-const date = computed(() =>
-  moment(props.event.date).format("DD.MM.YYYY HH:mm:ss"));
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
 
-const calcDownloadUrl = (attachmentId: Attachment["uuid"]) =>
-  calcDownloadLink(props.event.id, attachmentId);
+const calcDownloadUrl = (attachmentId: Attachment['uuid']) => calcDownloadLink(props.event.id, attachmentId);
 
 onMounted(getAttachmentsRequest);
 </script>
@@ -227,7 +224,7 @@ onMounted(getAttachmentsRequest);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .tab-preview-code {
   @apply max-w-full border dark:border-gray-500 rounded-md overflow-hidden;

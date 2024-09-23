@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useRay } from "../../lib";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useRay } from '../../lib';
 import {
   rayCallerMock,
   rayCarbonMock,
@@ -22,7 +22,7 @@ import {
   rayLockMock,
   rayBooleanTrueMock,
   rayBooleanFalseMock,
-} from "../../mocks";
+} from '../../mocks';
 import {
   rayLaravelEloquentMock,
   rayLaravelEventsMock,
@@ -31,13 +31,13 @@ import {
   rayLaravelQueryNoBindingsMock,
   rayLaravelViewsMock,
   rayLaravelApplicationLogMock,
-} from "../../mocks-laravel";
-import PreviewCard from "./preview-card.vue";
+} from '../../mocks-laravel';
+import PreviewCard from './preview-card.vue';
 
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/PreviewCard",
+  title: 'Entities/ray/PreviewCard',
   component: PreviewCard,
 } as Meta<typeof PreviewCard>;
 

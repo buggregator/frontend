@@ -1,1 +1,1 @@
-export { default as FlameGraph } from "./flame-graph.vue";
+export { default as FlameGraph } from './flame-graph.vue';

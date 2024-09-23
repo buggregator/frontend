@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { computed, watchEffect } from "vue";
-import { PAGE_TYPES } from "@/shared/constants";
-import { useEvents } from "@/shared/lib/use-events";
-import type { PageEventTypes } from "@/shared/types";
-import { EventCardMapper } from "../event-card-mapper";
-import { PagePlaceholder } from "../page-placeholder";
+import { useTitle } from '@vueuse/core';
+import { computed, watchEffect } from 'vue';
+import { PAGE_TYPES } from '@/shared/constants';
+import { useEvents } from '@/shared/lib/use-events';
+import type { PageEventTypes } from '@/shared/types';
+import { EventCardMapper } from '../event-card-mapper';
+import { PagePlaceholder } from '../page-placeholder';
 
 type Props = {
   title?: string;
@@ -13,33 +13,35 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "",
+  title: '',
 });
 
 const { events, cachedEvents } = useEvents();
 
-const isEventsPaused = computed(() =>
-  cachedEvents.idsByType.value[props.type]?.length > 0);
+const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0);
 
 const allEvents = computed(() => {
   if (props.type === PAGE_TYPES.ALL_EVENT_TYPES) {
     return events.items.value;
   }
-  return events.items.value.filter(({ type }) =>
-    type === props.type);
+
+  return events.items.value.filter(({ type }) => type === props.type);
 });
 
 const visibleEvents = computed(() => {
   if (!isEventsPaused.value) {
     return allEvents.value;
   }
-
+  // TODO: remove comment
+  /* eslint-disable */
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid));
+    cachedEvents.idsByType.value[props.type]?.includes(uuid),
+  );
+  /* eslint-enable */
 });
 
 watchEffect(() => {
-  useTitle(`${props.title || "Events"}: ${allEvents.value.length} | Buggregator`);
+  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`);
 });
 </script>
 
@@ -67,7 +69,7 @@ watchEffect(() => {
 </template>
 
 <style lang="scss">
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .layout-preview-events {
   @apply flex flex-col h-full w-full;

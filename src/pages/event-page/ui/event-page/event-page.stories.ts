@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import EventPage from "./event-page.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import EventPage from './event-page.vue';
 
 export default {
-  title: "Screens/EventPage/EventPage",
+  title: 'Screens/EventPage/EventPage',
   component: EventPage,
 } as Meta<typeof EventPage>;
 

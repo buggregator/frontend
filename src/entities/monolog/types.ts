@@ -1,6 +1,7 @@
-import type { Source } from "@/shared/types";
+import type { Source } from '@/shared/types';
 
-export type StatusCode = number; // TODO: update type
+// TODO: update type
+export type StatusCode = number;
 
 export interface Monolog {
   message: string;

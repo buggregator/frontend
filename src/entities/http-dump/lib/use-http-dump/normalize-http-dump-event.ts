@@ -23,13 +23,15 @@ export const normalizeHttpDumpEvent: NormalizeHttpDumpEvent = (event) => {
       ...event.payload,
       request: {
         ...event.payload.request,
-        files: (event?.payload?.request?.files || []).map((file) => ({
-          uuid: file.uuid,
-          name: file.name,
-          size: file.size,
-          mime: file.mime,
-          path: file.uri || '',
-        }) as Attachment),
+        files: (event?.payload?.request?.files || []).map(
+          (file) => ({
+            uuid: file.uuid,
+            name: file.name,
+            size: file.size,
+            mime: file.mime,
+            path: file.uri || '',
+          }) as Attachment,
+        ),
       },
     },
   };

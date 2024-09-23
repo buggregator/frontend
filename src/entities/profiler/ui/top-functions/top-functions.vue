@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // TODO: need to create storybook test for this component
-import { ref, watchEffect } from "vue";
-import { formatDuration } from "@/shared/lib/formats/format-duration";
-import { formatFileSize } from "@/shared/lib/formats/format-file-size";
-import { type EventId } from "@/shared/types";
-import { StatBoard } from "@/shared/ui";
-import { useProfiler } from "../../lib";
-import type { ProfilerTopFunctions } from "../../types";
+import { ref, watchEffect } from 'vue';
+import { formatDuration } from '@/shared/lib/formats/format-duration';
+import { formatFileSize } from '@/shared/lib/formats/format-file-size';
+import { type EventId } from '@/shared/types';
+import { StatBoard } from '@/shared/ui';
+import { useProfiler } from '../../lib';
+import type { ProfilerTopFunctions } from '../../types';
 
 type Props = {
   id: EventId;
@@ -14,7 +14,8 @@ type Props = {
 
 const { getTopFunctions } = useProfiler();
 const props = defineProps<Props>();
-const metric = ref("excl_wt"); // TODO: use enum value
+// TODO: use enum value
+const metric = ref('excl_wt');
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
@@ -35,19 +36,19 @@ const setMetric = (value: string | undefined) => {
 };
 
 const formatValue = (value: number, format: string) => {
-  if (format === "ms") {
+  if (format === 'ms') {
     return formatDuration(value);
   }
 
-  if (format === "percent") {
+  if (format === 'percent') {
     return `${value}%`;
   }
 
-  if (format === "number") {
-    return new Intl.NumberFormat("en-US", { style: "decimal" }).format(value);
+  if (format === 'number') {
+    return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value);
   }
 
-  if (format === "bytes") {
+  if (format === 'bytes') {
     return formatFileSize(value, 3);
   }
 
@@ -111,7 +112,7 @@ watchEffect(async () => {
 </template>
 
 <style scoped lang="scss">
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .top-functions__body {
   @include border-style;

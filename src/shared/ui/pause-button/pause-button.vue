@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import pluralize from "pluralize";
-import { computed } from "vue";
-import { IconSvg } from "../icon-svg";
+import pluralize from 'pluralize';
+import { computed } from 'vue';
+import { IconSvg } from '../icon-svg';
 
 type Props = {
   disabledPause: boolean;
@@ -16,12 +16,12 @@ type Emits = {
 const emit = defineEmits<Emits>();
 const props = defineProps<Props>();
 
-const titleEventsCount = computed(() =>
-  pluralize("new event", props.totalNewEventsCount, true));
+const titleEventsCount = computed(() => pluralize('new event', props.totalNewEventsCount, true));
 
 const toggleUpdate = () => {
-  emit("toggleUpdate", true);
+  emit('toggleUpdate', true);
 };
+
 </script>
 
 <template>
@@ -35,7 +35,7 @@ const toggleUpdate = () => {
       :name="!isPaused ? 'bolt' : 'bolt-slash'"
       class="pause-button__icon"
     />
-    <span>{{ isPaused ? "Paused" : "Listening" }}</span>
+    <span>{{ isPaused ? 'Paused' : 'Listening' }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"
       class="pause-button__count"
@@ -47,7 +47,7 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .pause-button {
   @include button;

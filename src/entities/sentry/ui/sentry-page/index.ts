@@ -1,1 +1,1 @@
-export { default as SentryPage } from "./sentry-page.vue";
+export { default as SentryPage } from './sentry-page.vue';

@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useRay } from "../../lib";
-import { rayExceptionMock } from "../../mocks";
-import type { RayContentException } from "../../types";
-import RayException from "./ray-exception.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useRay } from '../../lib';
+import { rayExceptionMock } from '../../mocks';
+import type { RayContentException } from '../../types';
+import RayException from './ray-exception.vue';
 
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayException",
+  title: 'Entities/ray/RayException',
   component: RayException,
 } as Meta<typeof RayException>;
 

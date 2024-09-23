@@ -180,11 +180,13 @@ export default [
 
       "func-names": "error",
       "func-style": ["error", "expression"],
-      "function-paren-newline": ["error", "multiline"],
+      // TODO: fix this rule
+      "function-paren-newline": ["error", "consistent"],
       "id-denylist": "off",
       "id-length": "off",
       "id-match": "off",
       "implicit-arrow-linebreak": ["error", "beside"],
+      "arrow-body-style": ["error", "as-needed"],
 
       indent: [
         "error",
@@ -272,7 +274,7 @@ export default [
         "error",
         {
           position: "above",
-          ignorePattern: "",
+          ignorePattern: "NOTE",
           applyDefaultPatterns: true,
         },
       ],

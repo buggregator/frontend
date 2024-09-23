@@ -1,1 +1,1 @@
-export * from "./use-inspector";
+export * from './use-inspector';

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { NormalizedEvent } from "@/shared/types";
-import { PreviewCard, StatBoard } from "@/shared/ui";
-import type { Profiler } from "../../types";
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import { PreviewCard, StatBoard } from '@/shared/ui';
+import type { Profiler } from '../../types';
 
 type Props = {
   event: NormalizedEvent<Profiler>;
 };
 
 const props = defineProps<Props>();
-const eventLink = computed(() =>
-  `/profiler/${props.event.id}`);
+const eventLink = computed(() => `/profiler/${props.event.id}`);
+
 </script>
 
 <template>
@@ -28,7 +28,7 @@ const eventLink = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .preview-card {
 }

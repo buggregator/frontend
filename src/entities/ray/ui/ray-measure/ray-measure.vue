@@ -32,7 +32,9 @@ const prettySize = (bytes: number, separator = '', postFix = ''): string => {
 };
 
 const totalTime = computed(() => `${convertMilliseconds(props.measure.total_time)} s`);
-const timeSinceLastCall = computed(() => `${convertMilliseconds(props.measure.time_since_last_call)} s`);
+const timeSinceLastCall = computed(
+  () => `${convertMilliseconds(props.measure.time_since_last_call)} s`,
+);
 const maxMemoryUsage = computed(() => prettySize(props.measure.max_memory_usage_during_total_time));
 
 </script>

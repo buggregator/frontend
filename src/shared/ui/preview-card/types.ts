@@ -1,4 +1,4 @@
 export enum DownloadType {
-  File = "file",
-  Image = "image",
+  File = 'file',
+  Image = 'image',
 }

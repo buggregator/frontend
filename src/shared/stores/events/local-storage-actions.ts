@@ -1,5 +1,5 @@
-import { type EventId, SessionStorageKeys } from "../../types";
-import type { TEventsCachedIdsMap } from "./types";
+import { type EventId, SessionStorageKeys } from '../../types';
+import type { TEventsCachedIdsMap } from './types';
 
 const { sessionStorage } = window;
 
@@ -31,8 +31,7 @@ export const setStoredLockedIds = (lockedIds: EventId[]) => {
   sessionStorage?.setItem(SessionStorageKeys.LockedEvents, JSON.stringify(lockedIds));
 };
 
-export const getStoredProject = (): string | null =>
-  sessionStorage?.getItem(SessionStorageKeys.Project) || null;
+export const getStoredProject = () => sessionStorage?.getItem(SessionStorageKeys.Project) || null;
 
 export const removeStoredProject = () => {
   sessionStorage?.removeItem(SessionStorageKeys.Project);

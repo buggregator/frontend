@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { RayFrame } from "../../types";
-import { RayFile } from "../ray-file";
+import type { RayFrame } from '../../types';
+import { RayFile } from '../ray-file';
 
 type Props = {
   frames: RayFrame[];

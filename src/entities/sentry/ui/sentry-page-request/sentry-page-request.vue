@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { TableBase, TableBaseRow } from "@/shared/ui";
-import type { SentryRequest } from "../../types";
+import { TableBase, TableBaseRow } from '@/shared/ui';
+import type { SentryRequest } from '../../types';
 
 type Props = {
   request: SentryRequest;
@@ -8,8 +8,10 @@ type Props = {
 
 defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) =>
-  (Array.isArray(value) ? value[0] || value : value);
+const normalizeHeaderValue = (value: unknown) => (Array.isArray(value)
+  ? value[0] || value
+  : value);
+
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const normalizeHeaderValue = (value: unknown) =>
         v-if="request"
         class="sentry-page-request__url"
       >
-        <strong>{{ request.method || "GET" }}:</strong>
+        <strong>{{ request.method || 'GET' }}:</strong>
         {{ request.url }}
       </code>
 
@@ -45,7 +47,7 @@ const normalizeHeaderValue = (value: unknown) =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-request {
 }

@@ -1,1 +1,1 @@
-export { default as RayJob } from "./ray-job.vue";
+export { default as RayJob } from './ray-job.vue';

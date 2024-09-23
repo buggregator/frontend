@@ -1,8 +1,8 @@
-import { storeToRefs } from "pinia";
-import type { RayContentLock } from "@/entities/ray/types";
-import { useEventsStore, useConnectionStore, useProfileStore } from "../../stores";
-import type { EventId, EventType } from "../../types";
-import { useCentrifuge, useEventsRequests } from "../io";
+import { storeToRefs } from 'pinia';
+import type { RayContentLock } from '@/entities/ray/types';
+import { useEventsStore, useConnectionStore, useProfileStore } from '../../stores';
+import type { EventId, EventType } from '../../types';
+import { useCentrifuge, useEventsRequests } from '../io';
 
 let isEventsEmitted = false;
 
@@ -15,9 +15,11 @@ export const useApiTransport = () => {
       token: token.value,
       project: project.value,
     };
+
     if (additional) {
       Object.assign(payload, additional);
     }
+
     return payload;
   };
 
@@ -29,8 +31,7 @@ export const useApiTransport = () => {
   } =
     useEventsRequests();
 
-  const getWSConnection = () =>
-    connectionStore.isConnectedWS;
+  const getWSConnection = () => connectionStore.isConnectedWS;
   // todo: move to useCentrifuge
   // const checkWSConnectionFail = (onConnectionLost: () => void) => {
   //   if (!getWSConnection()) {
@@ -42,25 +43,25 @@ export const useApiTransport = () => {
   // }
 
   const subscribeToEvents = (): void => {
-    centrifuge.on("connected", () => {
+    centrifuge.on('connected', () => {
       connectionStore.addWSConnection();
     });
 
-    centrifuge.on("disconnected", () => {
+    centrifuge.on('disconnected', () => {
       connectionStore.removeWSConnection();
     });
 
-    centrifuge.on("error", () => {
+    centrifuge.on('error', () => {
       connectionStore.removeWSConnection();
     });
 
-    centrifuge.on("message", () => {
+    centrifuge.on('message', () => {
       connectionStore.addWSConnection();
     });
 
-    centrifuge.on("publication", (ctx) => {
+    centrifuge.on('publication', (ctx) => {
       // We need to handle only events from the channel 'events' with event name 'event.received'
-      if (ctx.data?.event === "event.received") {
+      if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null;
 
         if (event && event.project === project.value) {
@@ -92,7 +93,7 @@ export const useApiTransport = () => {
 
   const deleteEventsAll = () => {
     if (getWSConnection()) {
-      return centrifuge.rpc("delete:api/events", createPayload());
+      return centrifuge.rpc('delete:api/events', createPayload());
     }
 
     return deleteAll();
@@ -108,7 +109,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc("delete:api/events", createPayload({ uuids }));
+      return centrifuge.rpc('delete:api/events', createPayload({ uuids }));
     }
 
     return deleteList(uuids);
@@ -116,19 +117,19 @@ export const useApiTransport = () => {
 
   const deleteEventsByType = (type: EventType) => {
     if (getWSConnection()) {
-      return centrifuge.rpc("delete:api/events", createPayload());
+      return centrifuge.rpc('delete:api/events', createPayload());
     }
 
     return deleteByType(type);
   };
 
   // NOTE: works only with ws
-  const rayStopExecution = (hash: RayContentLock["name"]) => {
+  const rayStopExecution = (hash: RayContentLock['name']) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }));
   };
 
   // NOTE: works only with ws
-  const rayContinueExecution = (hash: RayContentLock["name"]) => {
+  const rayContinueExecution = (hash: RayContentLock['name']) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload());
   };
 

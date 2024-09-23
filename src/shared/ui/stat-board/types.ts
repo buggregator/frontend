@@ -1,4 +1,4 @@
-import type { StatsBase } from "../../types";
+import type { StatsBase } from '../../types';
 
 export type StatBoardCost = StatsBase & {
   p_cpu?: number;
@@ -8,6 +8,6 @@ export type StatBoardCost = StatsBase & {
 };
 
 export enum StatBoardSize {
-  Small = "sm",
-  Medium = "md",
+  Small = 'sm',
+  Medium = 'md',
 }

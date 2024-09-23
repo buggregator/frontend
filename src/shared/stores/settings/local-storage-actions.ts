@@ -1,9 +1,9 @@
-import { LocalStorageKeys } from "../../types";
-import { THEME_MODES } from "./constants";
+import { LocalStorageKeys } from '../../types';
+import { THEME_MODES } from './constants';
 
 export const getStoredActiveTheme = () => {
   const isStoredTheme = window?.localStorage.getItem(LocalStorageKeys.Theme);
-  const isSystemDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isSystemDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (isStoredTheme) {
     if (isStoredTheme === THEME_MODES.DARK) {
@@ -37,14 +37,14 @@ export const setStoredActiveTheme = (themeName: string) => {
 };
 
 export const getStoredFixedHeader = () => {
-  const storedValue: string = window?.localStorage.getItem(LocalStorageKeys.Navbar) || "true";
+  const storedValue: string = window?.localStorage.getItem(LocalStorageKeys.Navbar) || 'true';
 
-  const isFixed: boolean = storedValue === "true";
+  const isFixed: boolean = storedValue === 'true';
 
   if (isFixed) {
-    document?.documentElement?.classList?.add("navbar-fixed");
+    document?.documentElement?.classList?.add('navbar-fixed');
   } else {
-    document?.documentElement?.classList?.remove("navbar-fixed");
+    document?.documentElement?.classList?.remove('navbar-fixed');
   }
 
   return isFixed;
@@ -54,16 +54,16 @@ export const setStoredFixedHeader = (state: boolean) => {
   window?.localStorage.setItem(LocalStorageKeys.Navbar, String(state));
 
   if (state) {
-    window?.document?.documentElement?.classList?.add("navbar-fixed");
+    window?.document?.documentElement?.classList?.add('navbar-fixed');
   } else {
-    window?.document?.documentElement?.classList?.remove("navbar-fixed");
+    window?.document?.documentElement?.classList?.remove('navbar-fixed');
   }
 };
 
 export const getStoredEventsCountVisibility = (): boolean => {
-  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.EventCounts) || "true";
+  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.EventCounts) || 'true';
 
-  return storageValue === "true";
+  return storageValue === 'true';
 };
 
 export const setStoredEventsCountVisibility = (state: boolean) => {
@@ -73,7 +73,7 @@ export const setStoredEventsCountVisibility = (state: boolean) => {
 export const getStoredPrimaryCodeEditor = (): string => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
 
-  return storedCodeEditor || "";
+  return storedCodeEditor || '';
 };
 
 export const setStoredPrimaryCodeEditor = (editor: string) => {

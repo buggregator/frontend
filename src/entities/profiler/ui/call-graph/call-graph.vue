@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from "cytoscape";
+import type { ElementsDefinition } from 'cytoscape';
 import {
   ref, computed, onMounted, watchEffect,
-} from "vue";
-import { type EventId, GraphTypes } from "@/shared/types";
-import { IconSvg, type StatBoardCost } from "@/shared/ui";
-import { useProfiler } from "../../lib";
-import type { ProfilerCallGraph } from "../../types";
-import { CallStatBoard } from "../call-stat-board";
-import { RenderGraph } from "../render-graph";
+} from 'vue';
+import { type EventId, GraphTypes } from '@/shared/types';
+import { IconSvg, type StatBoardCost } from '@/shared/ui';
+import { useProfiler } from '../../lib';
+import type { ProfilerCallGraph } from '../../types';
+import { CallStatBoard } from '../call-stat-board';
+import { RenderGraph } from '../render-graph';
 
 type Props = {
   id: EventId;
@@ -26,9 +26,9 @@ const isReadyGraph = ref(false);
 const container = ref<HTMLElement>();
 
 const elements = ref<ElementsDefinition | undefined>();
-const toolbar = ref<ProfilerCallGraph["toolbar"]>([]);
+const tools = ref<ProfilerCallGraph['toolbar']>([]);
 
-const graphKey = ref("");
+const graphKey = ref('');
 
 const setMetric = (value: string) => {
   if (Object.values(GraphTypes).includes(value as GraphTypes)) {
@@ -50,18 +50,19 @@ const toggleFullScreen = () => {
   isFullscreen.value = !isFullscreen.value;
 };
 
-const graphHeight = computed(() =>
-  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight);
+const graphHeight = computed(() => isFullscreen.value
+  ? window.innerHeight
+  : (container.value as HTMLElement).offsetHeight);
 
 watchEffect(async () => {
-  const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
+  const { toolbar, ...elems } = await getCallGraph(props.id, {
     threshold: String(threshold.value),
     percentage: String(percent.value),
     metric: String(metric.value),
   });
 
   elements.value = elems;
-  toolbar.value = tools;
+  tools.value = toolbar;
 
   graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`;
 });
@@ -71,8 +72,10 @@ onMounted(() => {
   isReadyGraph.value = true;
 });
 
-const percentLabel = computed(() =>
-  (metric.value === GraphTypes.CALLS ? "Min calls" : "Percent"));
+const percentLabel = computed(() => (metric.value === GraphTypes.CALLS
+  ? 'Min calls'
+  : 'Percent'));
+
 </script>
 
 <template>
@@ -109,7 +112,7 @@ const percentLabel = computed(() =>
       </button>
 
       <button
-        v-for="tool in toolbar"
+        v-for="tool in tools"
         :key="tool.metric"
         class="call-graph__toolbar-action"
         :class="{
@@ -158,7 +161,7 @@ const percentLabel = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .call-graph {
   @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;

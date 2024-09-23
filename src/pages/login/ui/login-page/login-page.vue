@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-import { LayoutBase } from "@/widgets/ui";
-import { useProfileStore, useSettingsStore } from "@/shared/stores";
-import { RouteName } from "@/shared/types";
-import { IconSvg } from "@/shared/ui";
+import { useTitle } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+import { LayoutBase } from '@/widgets/ui';
+import { useProfileStore, useSettingsStore } from '@/shared/stores';
+import { RouteName } from '@/shared/types';
+import { IconSvg } from '@/shared/ui';
 
-useTitle("Login | Buggregator");
+useTitle('Login | Buggregator');
 
 const store = useProfileStore();
 const { loginLinkUrl } = storeToRefs(useSettingsStore());
@@ -20,6 +20,7 @@ if (store.isAuthenticated) {
 const redirect = () => {
   router.replace({ path: loginLinkUrl.value });
 };
+
 </script>
 
 <template>
@@ -56,7 +57,7 @@ const redirect = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .login-page {
   @apply bg-gray-800;
@@ -86,7 +87,7 @@ const redirect = () => {
 .login-page__form-right-block {
   @apply w-0 md:w-1/2 h-full rounded-r-2xl;
 
-  background: url("/src/assets/static/bg.jpg");
+  background: url('/src/assets/static/bg.jpg');
   background-size: cover;
   background-position: center center;
 }

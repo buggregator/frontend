@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, defineProps } from "vue";
-import { useFormats } from "../../lib/formats";
-import { StatBoardSize, type StatBoardCost } from "./types";
+import { computed, defineProps } from 'vue';
+import { useFormats } from '../../lib/formats';
+import { StatBoardSize, type StatBoardCost } from './types';
 
 const { formatDuration, formatFileSize } = useFormats();
 
@@ -14,34 +14,34 @@ const props = withDefaults(defineProps<Props>(), {
   size: StatBoardSize.Medium,
 });
 
-const statItems = computed(() =>
-  [
-    {
-      title: "Calls",
-      value: props.cost.ct || 0,
-      percent: null,
-    },
-    {
-      title: "CPU time",
-      value: formatDuration(props.cost.cpu || 0) || "—",
-      percent: props.cost?.p_cpu,
-    },
-    {
-      title: "Wall time",
-      value: formatDuration(props.cost.wt || 0) || "—",
-      percent: props.cost?.p_wt,
-    },
-    {
-      title: "Memory usage",
-      value: formatFileSize(props.cost.mu || 0, 3) || "—",
-      percent: props.cost?.p_mu,
-    },
-    {
-      title: "Peak memory usage",
-      value: formatFileSize(props.cost.pmu || 0, 3) || "—",
-      percent: props.cost?.p_pmu,
-    },
-  ]);
+const statItems = computed(() => [
+  {
+    title: 'Calls',
+    value: props.cost.ct || 0,
+    percent: null,
+  },
+  {
+    title: 'CPU time',
+    value: formatDuration(props.cost.cpu || 0) || '—',
+    percent: props.cost?.p_cpu,
+  },
+  {
+    title: 'Wall time',
+    value: formatDuration(props.cost.wt || 0) || '—',
+    percent: props.cost?.p_wt,
+  },
+  {
+    title: 'Memory usage',
+    value: formatFileSize(props.cost.mu || 0, 3) || '—',
+    percent: props.cost?.p_mu,
+  },
+  {
+    title: 'Peak memory usage',
+    value: formatFileSize(props.cost.pmu || 0, 3) || '—',
+    percent: props.cost?.p_pmu,
+  },
+]);
+
 </script>
 
 <template>
@@ -75,7 +75,7 @@ const statItems = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .stat-board {
   @apply flex flex-col sm:flex-row justify-between items-start;

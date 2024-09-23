@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IconSvg } from "@/shared/ui";
+import { IconSvg } from '@/shared/ui';
 
 type Props = {
   iconName: string;

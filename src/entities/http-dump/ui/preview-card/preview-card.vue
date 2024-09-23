@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { NormalizedEvent } from "@/shared/types";
-import { PreviewCard } from "@/shared/ui";
-import type { HttpDump } from "../../types";
+import type { NormalizedEvent } from '@/shared/types';
+import { PreviewCard } from '@/shared/ui';
+import type { HttpDump } from '../../types';
 
 type Props = {
   event: NormalizedEvent<HttpDump>;
@@ -10,6 +10,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const uri = decodeURI(props.event.payload.request.uri);
+
 </script>
 
 <template>
@@ -25,7 +26,7 @@ const uri = decodeURI(props.event.payload.request.uri);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .preview-card {
   @apply text-2xs md:text-xs;

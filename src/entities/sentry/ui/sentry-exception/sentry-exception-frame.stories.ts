@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import { useSentry } from "../../lib";
-import { sentrySpiralMock } from "../../mocks";
-import SentryExceptionFrame from "./sentry-exception-frame.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import { useSentry } from '../../lib';
+import { sentrySpiralMock } from '../../mocks';
+import SentryExceptionFrame from './sentry-exception-frame.vue';
 
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Entities/sentry/SentryExceptionFrame",
+  title: 'Entities/sentry/SentryExceptionFrame',
   component: SentryExceptionFrame,
 } as Meta<typeof SentryExceptionFrame>;
 

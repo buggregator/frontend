@@ -1,9 +1,9 @@
-import cytoscape, { type NodeDataDefinition } from "cytoscape";
+import cytoscape, { type NodeDataDefinition } from 'cytoscape';
 import type {
   Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet,
-} from "cytoscape";
-import dagre, { type DagreLayoutOptions } from "cytoscape-dagre";
-import { cytoscapeStyles } from "./config";
+} from 'cytoscape';
+import dagre, { type DagreLayoutOptions } from 'cytoscape-dagre';
+import { cytoscapeStyles } from './config';
 
 type TInitializeProps = {
   elements: ElementsDefinition;
@@ -21,25 +21,24 @@ const initialize: TInitialize = ({ elements, container, onNodeHover }) => {
     wheelSensitivity: 0.4,
     elements,
     layout: {
-      name: "dagre",
+      name: 'dagre',
       nodeSep: 10,
       edgeSep: 10,
       rankSep: 80,
-      rankDir: "TB",
+      rankDir: 'TB',
     } as DagreLayoutOptions,
     style: cytoscapeStyles as Stylesheet[],
   });
 
-  cy.on("mouseover", "node", (event: EventObjectNode) => {
+  cy.on('mouseover', 'node', (event: EventObjectNode) => {
     onNodeHover(event.target.data(), event.originalEvent);
   });
 
-  cy.on("mouseout", "node", () => {
+  cy.on('mouseout', 'node', () => {
     onNodeHover(undefined, undefined);
   });
 
-  return () =>
-    cy.destroy();
+  return () => cy.destroy();
 };
 
 export { initialize };

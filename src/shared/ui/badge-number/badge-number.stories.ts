@@ -1,25 +1,24 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
-import BadgeNumber from "./badge-number.vue";
+import type { Meta, StoryObj } from '@storybook/vue3';
+import BadgeNumber from './badge-number.vue';
 
 export default {
-  title: "Shared/BadgeNumber",
+  title: 'Shared/BadgeNumber',
   component: BadgeNumber,
-  render: (args) =>
-    ({
-      setup() {
-        return {
-          args,
-        };
-      },
-      components: { BadgeNumber },
-      template: `
+  render: (args) => ({
+    setup() {
+      return {
+        args,
+      };
+    },
+    components: { BadgeNumber },
+    template: `
       <BadgeNumber v-bind="args">
         <button style="width: 100px">
           Button
         </button>
       </BadgeNumber>
     `,
-    }),
+  }),
 } as Meta<typeof BadgeNumber>;
 
 export const Default: StoryObj<typeof BadgeNumber> = {

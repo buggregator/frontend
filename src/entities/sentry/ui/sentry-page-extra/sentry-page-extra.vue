@@ -1,21 +1,25 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { IconSvg, TableBase, TableBaseRow } from "@/shared/ui";
-import type { Sentry } from "../../types";
+import { ref } from 'vue';
+import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui';
+import type { Sentry } from '../../types';
 
 type Props = {
-  extra: Sentry["extra"];
+  extra: Sentry['extra'];
 };
 
 const props = defineProps<Props>();
 
-const ddStates = ref(Object.keys(props.extra || {}).reduce(
-  (acc, key) => {
-    acc[key] = false;
-    return acc;
-  },
+const ddStates = ref(
+  Object.keys(props.extra || {}).reduce(
+    (acc, key) => {
+      acc[key] = false;
+
+      return acc;
+    },
     {} as Record<string, boolean>,
-));
+  ),
+);
+
 </script>
 
 <template>
@@ -66,7 +70,7 @@ const ddStates = ref(Object.keys(props.extra || {}).reduce(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .sentry-page-extra {
 }

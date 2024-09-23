@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-import { watch } from "vue";
-import { useEvents } from "@/shared/lib/use-events";
-import { useEventsStore } from "@/shared/stores";
+import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
+import { useEvents } from '@/shared/lib/use-events';
+import { useEventsStore } from '@/shared/stores';
 
 const { activeProjectKey } = storeToRefs(useEventsStore());
 const { events } = useEvents();
 
 watch(
-  () =>
-    activeProjectKey.value,
+  () => activeProjectKey.value,
   () => {
     events.getAll();
   },
@@ -46,7 +45,7 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .layout-base {
   @apply flex min-h-screen items-stretch relative;

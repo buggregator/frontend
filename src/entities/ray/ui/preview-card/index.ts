@@ -1,1 +1,1 @@
-export { default as PreviewCard } from "./preview-card.vue";
+export { default as PreviewCard } from './preview-card.vue';

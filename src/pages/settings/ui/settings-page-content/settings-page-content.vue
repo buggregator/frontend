@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useTitle } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { THEME_MODES, useSettingsStore } from "@/shared/stores";
-import { BadgeNumber, IconSvg } from "@/shared/ui";
+import { useTitle } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+import { THEME_MODES, useSettingsStore } from '@/shared/stores';
+import { BadgeNumber, IconSvg } from '@/shared/ui';
 
 const settingsStore = useSettingsStore();
 const {
@@ -14,22 +14,22 @@ const {
   themeType, isFixedHeader, isVisibleEventCounts, codeEditor,
 } = storeToRefs(settingsStore);
 
-const isDarkMode = computed(() =>
-  themeType.value === THEME_MODES.DARK);
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 
 // TODO: add throttle
 const changeCodeEditor = (event: Event) => {
   const editor = (event.target as HTMLInputElement).value;
+
   changeActiveCodeEditor(editor);
 };
 
-useTitle("Settings | Buggregator");
+useTitle('Settings | Buggregator');
 </script>
 
 <template>
   <main class="settings-page-content">
     <div class="settings-page-content__title">
-      Theme: {{ isDarkMode ? "Dark" : "Light" }}
+      Theme: {{ isDarkMode ? 'Dark' : 'Light' }}
     </div>
 
     <div class="settings-page-content__control">
@@ -55,7 +55,7 @@ useTitle("Settings | Buggregator");
     </div>
 
     <div class="settings-page-content__title">
-      Fixed Header: {{ isFixedHeader ? "On" : "Off" }}
+      Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}
     </div>
 
     <div class="settings-page-content__control">
@@ -81,7 +81,7 @@ useTitle("Settings | Buggregator");
     </div>
 
     <div class="settings-page-content__title">
-      Events Counts: {{ isVisibleEventCounts ? "On" : "Off" }}
+      Events Counts: {{ isVisibleEventCounts ? 'On' : 'Off' }}
     </div>
 
     <div class="settings-page-content__control">
@@ -145,7 +145,7 @@ useTitle("Settings | Buggregator");
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@import 'src/assets/mixins';
 
 .settings-page-content {
   @apply p-4 grid gap-4 gap-x-10 mr-auto min-w-[50%];
