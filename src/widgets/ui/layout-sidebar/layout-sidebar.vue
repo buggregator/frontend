@@ -109,11 +109,10 @@ const setProject = (projectKey: string) => {
 };
 
 // TODO: remove comment
-/* eslint-disable */
+
 const filteredNavOrder = computed(() =>
   EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
 );
-/* eslint-enable */
 
 const makeShortTitle = (title: string) => (title || '').substring(0, 2);
 const generateRadialGradient = (input: string) => `linear-gradient(to right, ${textToColors(input || '').join(', ')})`;

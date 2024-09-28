@@ -33,11 +33,10 @@ const visibleEvents = computed(() => {
     return allEvents.value;
   }
   // TODO: remove comment
-  /* eslint-disable */
+
   return allEvents.value.filter(({ uuid }) =>
     cachedEvents.idsByType.value[props.type]?.includes(uuid),
   );
-  /* eslint-enable */
 });
 
 watchEffect(() => {

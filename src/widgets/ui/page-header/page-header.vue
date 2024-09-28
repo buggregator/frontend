@@ -41,11 +41,10 @@ const visibleEvents = computed(() => {
   }
 
   // TODO: remove comment
-  /* eslint-disable */
+
   return allEvents.value.filter(({ uuid }) =>
     cachedEvents.idsByType.value[props.type]?.includes(uuid),
   );
-  /* eslint-enable */
 });
 
 const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length);

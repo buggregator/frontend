@@ -12,11 +12,10 @@ const props = defineProps<Props>();
 const isFrameOpen = ref(props.isOpen);
 
 // TODO: remove comment
-/* eslint-disable */
+
 const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context),
 );
-/* eslint-enable */
 
 const toggleOpen = () => {
   if (hasBody.value) {
