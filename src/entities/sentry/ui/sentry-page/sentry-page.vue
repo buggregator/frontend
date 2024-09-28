@@ -22,7 +22,6 @@ const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).
 const mainException = computed(() => props.event.payload?.exception?.values?.[0]);
 
 const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0);
-
 </script>
 
 <template>

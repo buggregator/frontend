@@ -67,7 +67,6 @@ const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.typ
 
 const view = computed(() => componentConfig.value?.view ?? PreviewCardDefault);
 const normalize = computed(() => componentConfig.value?.normalize ?? normalizeUnknownEvent);
-
 </script>
 
 <template>

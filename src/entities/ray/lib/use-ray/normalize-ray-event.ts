@@ -27,11 +27,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     if (payload.origin) {
       origin = {
         ...origin,
-        ...pick(payload.origin, [
-          'file',
-          'line_number',
-          'hostname',
-        ]),
+        ...pick(payload.origin, ['file', 'line_number', 'hostname']),
       };
     }
   });
@@ -62,16 +58,10 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
   const normalizedEvent: NormalizedEvent<RayDump> = {
     id: event.uuid,
     type: EventTypes.RayDump,
-    labels: [
-      EventTypes.RayDump,
-      ...labels,
-      ...typeLabels,
-    ].filter((x, i, a) => a.indexOf(x) === i),
+    labels: [EventTypes.RayDump, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
     origin,
     serverName: '',
-    date: event.timestamp
-      ? new Date(event.timestamp * 1000)
-      : null,
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload,
     meta: {
       color,

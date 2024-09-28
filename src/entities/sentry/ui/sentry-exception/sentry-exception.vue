@@ -21,7 +21,6 @@ const exceptionFrames = computed(() => {
 
   return frames.slice().reverse();
 });
-
 </script>
 
 <template>

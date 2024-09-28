@@ -13,27 +13,27 @@ export const useAttachments: TUseAttachments = () => {
 
   const headers = { 'X-Auth-Token': token.value };
 
-  const calcDownloadLink = (id: EventId, attachmentId?: string): string => `${REST_API_URL}/api/smtp/${id}/attachments${attachmentId
-    ? `/${attachmentId}`
-    : ''}`;
+  const calcDownloadLink = (id: EventId, attachmentId?: string): string =>
+    `${REST_API_URL}/api/smtp/${id}/attachments${attachmentId ? `/${attachmentId}` : ''}`;
 
-  const getAttachments = (id: EventId) => fetch(calcDownloadLink(id), { headers })
-    .then((response) => response.json())
-    .then((response) => {
-      if (response?.data) {
-        return response.data;
-      }
+  const getAttachments = (id: EventId) =>
+    fetch(calcDownloadLink(id), { headers })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response?.data) {
+          return response.data;
+        }
 
-      if (response?.code === 403) {
-        console.error('Forbidden');
+        if (response?.code === 403) {
+          console.error('Forbidden');
+
+          return [];
+        }
+
+        console.error('Fetch Error');
 
         return [];
-      }
-
-      console.error('Fetch Error');
-
-      return [];
-    });
+      });
 
   return {
     getAttachments,

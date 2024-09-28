@@ -20,7 +20,6 @@ if (store.isAuthenticated) {
 const redirect = () => {
   router.replace({ path: loginLinkUrl.value });
 };
-
 </script>
 
 <template>

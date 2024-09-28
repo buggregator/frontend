@@ -20,7 +20,6 @@ const classes = computed(() => [
 type GetComponent = (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
 
 const getComponent: GetComponent = (type) => COMPONENT_TYPE_MAP[type as RayEventTypes];
-
 </script>
 
 <template>

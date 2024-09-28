@@ -15,10 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const collapsed = ref(props.isOpen);
 
-const hasSnippets = computed(() => (props.file.snippet
-  ? props.file.snippet.length > 0
-  : false));
-
+const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false));
 </script>
 <template>
   <div

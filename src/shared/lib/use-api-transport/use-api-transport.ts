@@ -26,9 +26,7 @@ export const useApiTransport = () => {
   const { centrifuge } = useCentrifuge();
   const eventsStore = useEventsStore();
   const connectionStore = useConnectionStore();
-  const {
-    getAll, getSingle, deleteAll, deleteList, deleteSingle, deleteByType,
-  } =
+  const { getAll, getSingle, deleteAll, deleteList, deleteSingle, deleteByType } =
     useEventsRequests();
 
   const getWSConnection = () => connectionStore.isConnectedWS;

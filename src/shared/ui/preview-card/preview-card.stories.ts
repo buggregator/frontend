@@ -19,10 +19,7 @@ export const Default: StoryObj<typeof PreviewCard> = {
       },
       payload: [],
       date: new Date(1673266869 * 1000),
-      labels: [
-        'Monolog',
-        '200',
-      ],
+      labels: ['Monolog', '200'],
     },
   },
 };

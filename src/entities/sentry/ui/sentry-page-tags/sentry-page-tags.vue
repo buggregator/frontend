@@ -79,7 +79,6 @@ const modules = computed(() => {
     version: mods[name],
   }));
 });
-
 </script>
 
 <template>
@@ -224,8 +223,9 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__box {
-  @apply border border-purple-300 dark:border-gray-400 hover:bg-purple-50 dark:hover:bg-purple-600;
   @apply rounded cursor-pointer mb-3 md:mb-0 px-4 pb-2 pt-1;
+  @apply border border-purple-300 dark:border-gray-400;
+  @apply hover:bg-purple-50 dark:hover:bg-purple-600;
 }
 
 .sentry-page-tags__box-title {

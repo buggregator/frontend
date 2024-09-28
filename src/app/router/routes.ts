@@ -20,10 +20,7 @@ export const routes = [
     name: RouteName.EventList,
     component: EventsListPage,
     meta: {
-      middleware: [
-        auth,
-        checkType,
-      ],
+      middleware: [auth, checkType],
     },
   },
   {
@@ -31,10 +28,7 @@ export const routes = [
     name: RouteName.EventPage,
     component: EventPage,
     meta: {
-      middleware: [
-        auth,
-        checkType,
-      ],
+      middleware: [auth, checkType],
     },
   },
   {

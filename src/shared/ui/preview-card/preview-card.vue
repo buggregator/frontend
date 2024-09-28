@@ -1,9 +1,7 @@
 <script lang="ts" setup generic="T">
 import download from 'downloadjs';
 import { toBlob, toPng } from 'html-to-image';
-import {
-  ref, computed, onBeforeMount, onMounted,
-} from 'vue';
+import { ref, computed, onBeforeMount, onMounted } from 'vue';
 import { REST_API_URL } from '../../lib/io';
 import { useEvents } from '../../lib/use-events';
 import type { NormalizedEvent } from '../../types';
@@ -30,18 +28,10 @@ const { events, lockedIds } = useEvents();
 // TODO: eslint fix rule to newline in array function
 const normalizedOrigin = computed(() => {
   const originEntriesList = Object.entries(props.event.origin || {})
-    .map(([
-      key,
-      value,
-    ]) => [
-      key,
-      String(value),
-    ])
+    .map(([key, value]) => [key, String(value)])
     .filter((res) => Boolean(res[1]));
 
-  return originEntriesList.length > 0
-    ? Object.fromEntries(originEntriesList)
-    : null;
+  return originEntriesList.length > 0 ? Object.fromEntries(originEntriesList) : null;
 });
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);

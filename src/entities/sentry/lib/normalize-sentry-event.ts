@@ -7,19 +7,14 @@ export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEven
   const normalizedEvent: NormalizedEvent<Sentry> = {
     id: event.uuid,
     type: EventTypes.Sentry,
-    labels: [
-      EventTypes.Sentry,
-      'exception',
-    ],
+    labels: [EventTypes.Sentry, 'exception'],
     origin: {
       logger: event.payload.logger,
       environment: event.payload.environment,
       release: event.payload?.release || '-',
     },
     serverName: event.payload?.server_name || '',
-    date: event.timestamp
-      ? new Date(event.timestamp * 1000)
-      : null,
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload,
   };
 

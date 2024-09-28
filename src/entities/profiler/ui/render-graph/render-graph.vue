@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { ElementsDefinition, NodeDataDefinition } from 'cytoscape';
-import {
-  defineProps, onBeforeUnmount, onMounted, ref,
-} from 'vue';
+import { defineProps, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useCytoscape } from '../../lib';
 import type { CallStackHoverData } from '../../types';
 

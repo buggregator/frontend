@@ -1,15 +1,13 @@
 import cytoscape, { type NodeDataDefinition } from 'cytoscape';
-import type {
-  Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet,
-} from 'cytoscape';
+import type { Core as Cytoscape, ElementsDefinition, EventObjectNode, Stylesheet } from 'cytoscape';
 import dagre, { type DagreLayoutOptions } from 'cytoscape-dagre';
 import { cytoscapeStyles } from './config';
 
-type TInitializeProps = {
+interface TInitializeProps {
   elements: ElementsDefinition;
   container: HTMLElement;
   onNodeHover: (data?: NodeDataDefinition, event?: MouseEvent) => void;
-};
+}
 
 type TInitialize = (data: TInitializeProps) => () => void;
 

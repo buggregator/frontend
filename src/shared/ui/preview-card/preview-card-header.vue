@@ -55,7 +55,6 @@ const lockEvent = () => {
 };
 
 const isVisibleTags = computed(() => props.labels.length > 0);
-
 </script>
 
 <template>

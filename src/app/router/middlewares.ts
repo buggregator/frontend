@@ -58,8 +58,8 @@ export const checkType: TRouterMiddleware = async ({ to, next }) => {
   }
 
   if (
-    !Object.values(RouteName).includes(pageType as RouteName)
-    && !Object.values(EventTypes).includes(pageType as EventTypes)
+    !Object.values(RouteName).includes(pageType as RouteName) &&
+    !Object.values(EventTypes).includes(pageType as EventTypes)
   ) {
     throw new RouteAvailabilityError('Invalid Path', to.path);
   }

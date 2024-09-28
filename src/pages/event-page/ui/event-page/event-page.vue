@@ -7,20 +7,14 @@ import { EventPageMapper } from '@/widgets/ui/event-page-mapper';
 import { PAGES_SETTINGS } from '@/shared/constants';
 import { EventValidationError } from '@/shared/lib/errors/validation-errors';
 import { useEvents } from '@/shared/lib/use-events';
-import {
-  type EventId, type PageEventTypes, type ServerEvent, RouteName,
-} from '@/shared/types';
+import { type EventId, type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types';
 
 const { params } = useRoute();
 
 const paramsType = computed(() => (params?.type || undefined) as PageEventTypes | undefined);
-const pageName = computed(() => (paramsType?.value
-  ? PAGES_SETTINGS[paramsType.value]?.title
-  : ''));
+const pageName = computed(() => (paramsType?.value ? PAGES_SETTINGS[paramsType.value]?.title : ''));
 
-const title = computed(() => (paramsType?.value
-  ? PAGES_SETTINGS[paramsType.value]?.title
-  : ''));
+const title = computed(() => (paramsType?.value ? PAGES_SETTINGS[paramsType.value]?.title : ''));
 
 const router = useRouter();
 const eventId = params.id as EventId;

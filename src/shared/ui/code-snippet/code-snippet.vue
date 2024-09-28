@@ -18,9 +18,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isCopied = ref(false);
 
-const normalizedCode = computed(() => !isString(props.code)
-  ? JSON.stringify(props.code, null, ' ')
-  : props.code);
+const normalizedCode = computed(() =>
+  !isString(props.code) ? JSON.stringify(props.code, null, ' ') : props.code,
+);
 
 const copyCode = (): void => {
   isCopied.value = true;
@@ -36,7 +36,6 @@ const copyCode = (): void => {
       console.error(e);
     });
 };
-
 </script>
 
 <template>

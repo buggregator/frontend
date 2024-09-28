@@ -19,7 +19,6 @@ const exceptionFrames = computed(() => {
 
   return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse();
 });
-
 </script>
 
 <template>

@@ -8,10 +8,7 @@ export default {
   argTypes: {
     size: {
       control: 'select',
-      options: [
-        ...Object.values(StatBoardSize),
-        undefined,
-      ],
+      options: [...Object.values(StatBoardSize), undefined],
     },
   },
 } as Meta<typeof StatBoard>;

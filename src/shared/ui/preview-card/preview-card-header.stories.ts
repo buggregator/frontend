@@ -26,10 +26,6 @@ export const Default: StoryObj<typeof PreviewCardHeader> = {
     isOpen: true,
     isVisibleControls: true,
     eventId: 'test-event-id',
-    labels: [
-      'one',
-      'two',
-      'tree',
-    ],
+    labels: ['one', 'two', 'tree'],
   },
 };

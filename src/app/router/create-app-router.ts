@@ -16,10 +16,9 @@ export const createAppRouter = () => {
     }
 
     const middlewares = (
-      Array.isArray(to.meta.middleware)
-        ? to.meta.middleware
-        : [to.meta.middleware]
-    ) as TRouterMiddleware[];
+      Array.isArray(to.meta.middleware) ?
+        to.meta.middleware
+      : [to.meta.middleware]) as TRouterMiddleware[];
 
     const context = {
       to,
@@ -27,7 +26,6 @@ export const createAppRouter = () => {
       next,
     };
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const middleware of middlewares) {
       try {
         await middleware({ ...context });

@@ -16,12 +16,8 @@ export interface InspectorTransaction {
         remote_address: string;
         [key: string]: string;
       };
-      cookies: {
-        [key: string]: string;
-      };
-      headers: {
-        [key: string]: string;
-      };
+      cookies: Record<string, string>;
+      headers: Record<string, string>;
     };
     url: {
       protocol: string;

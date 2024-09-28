@@ -57,10 +57,9 @@ const toggleUpdate = () => {
   }
 };
 
-const badgeNumber = computed(() => getItemsCount.value(props.type !== ALL_EVENT_TYPES
-  ? (props.type as EventType)
-  : undefined));
-
+const badgeNumber = computed(() =>
+  getItemsCount.value(props.type !== ALL_EVENT_TYPES ? (props.type as EventType) : undefined),
+);
 </script>
 
 <template>

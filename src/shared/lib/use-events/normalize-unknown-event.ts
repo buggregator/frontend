@@ -6,8 +6,6 @@ export const normalizeUnknownEvent = (event: ServerEvent<unknown>): NormalizedEv
   labels: [String(event.type)],
   origin: null,
   serverName: '',
-  date: event.timestamp
-    ? new Date(event.timestamp * 1000)
-    : null,
+  date: event.timestamp ? new Date(event.timestamp * 1000) : null,
   payload: event.payload,
 });

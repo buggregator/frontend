@@ -22,17 +22,15 @@ const title = computed(() => {
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
 
-const classes = computed(() => props.event?.meta
-  ? [
-    `text-${props.event.meta?.size}`,
-    `text-${props.event.meta?.color}-500`,
-  ]
-  : []);
+const classes = computed(() =>
+  props.event?.meta ?
+    [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
+  : [],
+);
 
 type GetComponents = (type: OneOfValues<RayEventTypes>) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
 
 const getComponent: GetComponents = (type) => COMPONENT_TYPE_MAP[type as RayEventTypes];
-
 </script>
 
 <template>

@@ -26,10 +26,7 @@ export const Object: StoryObj<typeof CodeSnippet> = {
         two: 2,
       },
       date: new Date(1673266869 * 1000),
-      labels: [
-        'Monolog',
-        '200',
-      ],
+      labels: ['Monolog', '200'],
     },
     language: 'javascript',
   },

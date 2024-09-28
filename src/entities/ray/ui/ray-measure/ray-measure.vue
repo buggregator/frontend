@@ -16,13 +16,7 @@ const prettySize = (bytes: number, separator = '', postFix = ''): string => {
     return 'n/a';
   }
 
-  const sizes = [
-    'Bytes',
-    'KB',
-    'MB',
-    'GB',
-    'TB',
-  ];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.min(
     Number(parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))), 10)),
     sizes.length - 1,
@@ -36,7 +30,6 @@ const timeSinceLastCall = computed(
   () => `${convertMilliseconds(props.measure.time_since_last_call)} s`,
 );
 const maxMemoryUsage = computed(() => prettySize(props.measure.max_memory_usage_during_total_time));
-
 </script>
 
 <template>

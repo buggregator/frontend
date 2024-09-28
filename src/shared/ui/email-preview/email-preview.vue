@@ -16,7 +16,6 @@ const currentDevice = ref(props.device);
 const selectDevice = (device: Device) => {
   currentDevice.value = device;
 };
-
 </script>
 
 <template>

@@ -15,26 +15,25 @@ const props = defineProps<Props>();
 
 const formatDate = (date: string) => moment(date).toLocaleString();
 
-const formatedBatteryLevel = computed(() => props.device.battery_level
-  ? `${parseInt(String(props.device.battery_level), 10)}%`
-  : '');
+const formatedBatteryLevel = computed(() =>
+  props.device.battery_level ? `${parseInt(String(props.device.battery_level), 10)}%` : '',
+);
 
-const formattedMemory = computed(() => props.device.memory_size
-  ? formatFileSize(props.device.memory_size as number)
-  : '');
-const formattedFreeMemory = computed(() => props.device.free_memory
-  ? formatFileSize(props.device.free_memory as number)
-  : '');
-const formattedStorage = computed(() => props.device.storage_size
-  ? formatFileSize(props.device.storage_size as number)
-  : '');
-const formattedFreeStorage = computed(() => props.device.free_storage
-  ? formatFileSize(props.device.free_storage as number)
-  : '');
-const formattedBootTime = computed(() => props.device.boot_time
-  ? formatDate(props.device.boot_time as string)
-  : '');
-
+const formattedMemory = computed(() =>
+  props.device.memory_size ? formatFileSize(props.device.memory_size as number) : '',
+);
+const formattedFreeMemory = computed(() =>
+  props.device.free_memory ? formatFileSize(props.device.free_memory as number) : '',
+);
+const formattedStorage = computed(() =>
+  props.device.storage_size ? formatFileSize(props.device.storage_size as number) : '',
+);
+const formattedFreeStorage = computed(() =>
+  props.device.free_storage ? formatFileSize(props.device.free_storage as number) : '',
+);
+const formattedBootTime = computed(() =>
+  props.device.boot_time ? formatDate(props.device.boot_time as string) : '',
+);
 </script>
 
 <template>

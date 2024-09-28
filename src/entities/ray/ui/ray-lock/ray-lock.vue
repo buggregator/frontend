@@ -23,7 +23,6 @@ const stopExecution = () => {
   disabled.value = true;
   rayExecution.stop(props.name);
 };
-
 </script>
 
 <template>

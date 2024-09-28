@@ -10,7 +10,6 @@ type Props = {
 const props = defineProps<Props>();
 
 const uri = decodeURI(props.event.payload.request.uri);
-
 </script>
 
 <template>

@@ -6,15 +6,10 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
   const normalizedEvent: NormalizedEvent<Monolog> = {
     id: event.uuid,
     type: EventTypes.Monolog,
-    labels: [
-      EventTypes.Monolog,
-      event.payload.channel,
-    ],
+    labels: [EventTypes.Monolog, event.payload.channel],
     origin: event.payload?.context?.source || null,
     serverName: '',
-    date: event.timestamp
-      ? new Date(event.timestamp * 1000)
-      : null,
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload,
   };
 

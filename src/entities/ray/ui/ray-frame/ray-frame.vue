@@ -13,9 +13,9 @@ const props = defineProps<Props>();
 const { codeEditor } = storeToRefs(useSettingsStore());
 
 const callLink = computed(
-  () => `${codeEditor}://open?file=${encodeURIComponent(props.frame.file_name)}&line=${props.frame.line_number}`,
+  () =>
+    `${codeEditor}://open?file=${encodeURIComponent(props.frame.file_name)}&line=${props.frame.line_number}`,
 );
-
 </script>
 
 <template>

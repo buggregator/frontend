@@ -13,7 +13,6 @@ type Props = {
 
 const props = defineProps<Props>();
 const size = computed(() => formatFileSize(props.attachment.size || 0));
-
 </script>
 
 <template>

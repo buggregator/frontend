@@ -24,16 +24,17 @@ const hasException = computed(() => exceptionValues.value.length > 0);
 
 const message = computed(() => props.event.payload?.message || '');
 
-const exception: Ref<Exception> = computed(() => exceptionValues.value.length > 0
-  ? exceptionValues.value[0]
+const exception: Ref<Exception> = computed(() =>
+  exceptionValues.value.length > 0 ?
+    exceptionValues.value[0]
   : {
-    type: 'Unknown',
-    value: 'Something went wrong',
-    stacktrace: {
-      frames: [],
+      type: 'Unknown',
+      value: 'Something went wrong',
+      stacktrace: {
+        frames: [],
+      },
     },
-  });
-
+);
 </script>
 
 <template>

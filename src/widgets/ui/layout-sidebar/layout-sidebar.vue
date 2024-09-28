@@ -51,9 +51,7 @@ const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
   placement: 'right',
 });
 
-const connectionStatus = computed(() => (isConnectedWS.value
-  ? 'connected'
-  : 'disconnected'));
+const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'));
 
 const avatar = computed(() => {
   if (!profile.value) return null;
@@ -94,13 +92,11 @@ const logout = () => {
 
 const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
 
-const clientVersion = ref(!version || version === '0.0.1'
-  ? '@dev'
-  : `v${version}`);
+const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`);
 
-const serverVersion = computed(() => String(apiVersion.value).match(/^[0-9.]+.*$/)
-  ? `v${apiVersion.value}`
-  : `@${apiVersion.value}`);
+const serverVersion = computed(() =>
+  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`,
+);
 
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey);
@@ -115,8 +111,8 @@ const filteredNavOrder = computed(() =>
 );
 
 const makeShortTitle = (title: string) => (title || '').substring(0, 2);
-const generateRadialGradient = (input: string) => `linear-gradient(to right, ${textToColors(input || '').join(', ')})`;
-
+const generateRadialGradient = (input: string) =>
+  `linear-gradient(to right, ${textToColors(input || '').join(', ')})`;
 </script>
 
 <template>
@@ -344,8 +340,9 @@ const generateRadialGradient = (input: string) => `linear-gradient(to right, ${t
 }
 
 .layout-sidebar__link--logo {
-  @apply text-blue-600 bg-transparent hover:text-blue-800  hover:bg-transparent;
-  @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200 hover:dark:bg-transparent;
+  @apply text-blue-600 bg-transparent hover:text-blue-800 hover:bg-transparent;
+  @apply dark:text-blue-500 dark:bg-transparent;
+  @apply hover:dark:text-blue-200 hover:dark:bg-transparent;
 }
 
 .layout-sidebar__link-icon {

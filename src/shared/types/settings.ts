@@ -1,12 +1,12 @@
 import { type EventType } from './events';
 
-export type TProfile = {
+export interface TProfile {
   username: string;
   email: string;
   avatar: string;
-};
+}
 
-export type TSettings = {
+export interface TSettings {
   auth: {
     enabled: boolean;
     login_url: string;
@@ -15,12 +15,12 @@ export type TSettings = {
   client: {
     events: EventType[];
   };
-};
+}
 
-export type TProjects = {
+export interface TProjects {
   data: {
     name: string;
     key: string;
     is_default: boolean;
   }[];
-};
+}

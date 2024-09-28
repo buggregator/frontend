@@ -10,11 +10,8 @@ const props = withDefaults(defineProps<Props>(), {
   isVisible: true,
 });
 
-const normalizedNumber = computed(() => (props.number > 99
-  ? '*'
-  : props.number));
+const normalizedNumber = computed(() => (props.number > 99 ? '*' : props.number));
 const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
-
 </script>
 
 <template>

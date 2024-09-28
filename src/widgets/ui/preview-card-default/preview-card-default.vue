@@ -9,7 +9,6 @@ type Props = {
 
 const props = defineProps<Props>();
 const code = computed(() => JSON.stringify(props.event, null, ' '));
-
 </script>
 
 <template>

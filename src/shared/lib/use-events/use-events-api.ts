@@ -4,23 +4,21 @@ import { useEventsStore } from '../../stores';
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { useApiTransport } from '../use-api-transport';
 
-export type TUseEventsApi = {
+export interface TUseEventsApi {
   items: Ref<ServerEvent<unknown>[]>;
   getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>;
   getAll: () => void;
   removeAll: () => void;
   removeByType: (type: EventType) => void;
   removeById: (id: EventId) => void;
-};
+}
 
 export const useEventsApi = (): TUseEventsApi => {
   const eventsStore = useEventsStore();
 
   const { lockedIds, events } = storeToRefs(eventsStore);
 
-  const {
-    deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent,
-  } =
+  const { deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent } =
     useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {

@@ -8,10 +8,7 @@ type Props = {
 
 defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) => (Array.isArray(value)
-  ? value[0] || value
-  : value);
-
+const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value);
 </script>
 
 <template>
@@ -25,7 +22,7 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value)
         v-if="request"
         class="sentry-page-request__url"
       >
-        <strong>{{ request.method || 'GET' }}:</strong>
+        <strong>{{ some || request.method || 'GET' }}:</strong>
         {{ request.url }}
       </code>
 
@@ -53,7 +50,8 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value)
 }
 
 .sentry-page-request__wrapper {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-md border border-purple-300 dark:border-gray-400;
+  @apply dark:bg-gray-900 bg-gray-100 border border-purple-300 dark:border-gray-400;
+  @apply p-3 rounded-md;
 }
 
 .sentry-page-request__title {

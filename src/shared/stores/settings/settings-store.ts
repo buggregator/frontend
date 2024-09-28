@@ -56,9 +56,7 @@ export const useSettingsStore = defineStore('settingsStore', {
       return settings;
     },
     changeTheme() {
-      this.themeType = this.themeType === THEME_MODES.DARK
-        ? THEME_MODES.LIGHT
-        : THEME_MODES.DARK;
+      this.themeType = this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK;
 
       setStoredActiveTheme(this.themeType);
     },

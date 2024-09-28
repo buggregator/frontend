@@ -11,12 +11,10 @@ withDefaults(defineProps<Props>(), {
   breadcrumbs: () => [] as SentryBreadcrumb[],
 });
 
-const formatDate = (timestamp?: number): string => timestamp
-  ? moment.unix(timestamp).fromNow()
-  : '';
+const formatDate = (timestamp?: number): string =>
+  timestamp ? moment.unix(timestamp).fromNow() : '';
 
 const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase();
-
 </script>
 
 <template>
@@ -27,9 +25,7 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
       <span
         v-if="breadcrumbs.length > 0"
         class="sentry-page-breadcrumbs__counter"
-      >{{
-        breadcrumbs.length
-      }}</span>
+      >{{ breadcrumbs.length }}</span>
     </h3>
     <div class="sentry-page-breadcrumbs__in">
       <nav
@@ -91,9 +87,7 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
             <span
               class="sentry-page-breadcrumbs__col-level-badge"
               :class="getClassByLevel(b)"
-            >{{
-              b.level
-            }}</span>
+            >{{ b.level }}</span>
           </div>
           <div class="sentry-page-breadcrumbs__col">
             {{ formatDate(b.timestamp) }}

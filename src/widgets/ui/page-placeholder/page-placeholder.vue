@@ -19,7 +19,6 @@ const items = [
     linkUrl: 'https://discord.gg/vDsCD3EKUB',
   },
 ];
-
 </script>
 
 <template>

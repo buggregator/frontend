@@ -26,7 +26,6 @@ const isFullMessage = ref(message.value.length === shortMessage.value.length);
 const toggleView = () => {
   isFullMessage.value = !isFullMessage.value;
 };
-
 </script>
 
 <template>

@@ -23,10 +23,10 @@ export enum GraphTypes {
   CALLS = 'ct',
 }
 
-export type StatsBase = {
+export interface StatsBase {
   ct: number;
   cpu: number;
   wt: number;
   mu: number;
   pmu: number;
-};
+}

@@ -10,9 +10,7 @@ export interface HttpDumpServer {
     body: string;
     query: Record<string, unknown>;
     post: Record<string, unknown>;
-    cookies: {
-      [key: string]: string;
-    };
+    cookies: Record<string, string>;
     files?: {
       mime: string;
       name: string;

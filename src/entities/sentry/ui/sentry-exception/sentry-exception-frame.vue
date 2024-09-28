@@ -22,7 +22,6 @@ const toggleOpen = () => {
     isFrameOpen.value = !isFrameOpen.value;
   }
 };
-
 </script>
 
 <template>

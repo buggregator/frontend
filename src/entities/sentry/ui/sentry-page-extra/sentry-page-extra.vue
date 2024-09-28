@@ -19,7 +19,6 @@ const ddStates = ref(
     {} as Record<string, boolean>,
   ),
 );
-
 </script>
 
 <template>

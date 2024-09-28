@@ -2,18 +2,14 @@
 // so we need to guess Api and WS connection urls.
 const guessWsConnection = (): string => {
   const WS_HOST = window.location.host;
-  const WS_PROTOCOL = window.location.protocol === 'https:'
-    ? 'wss'
-    : 'ws';
+  const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss' : 'ws';
 
   return `${WS_PROTOCOL}://${WS_HOST}/connection/websocket`;
 };
 
 const guessRestApiConnection = (): string => {
   const API_HOST = window.location.host;
-  const API_PROTOCOL = window.location.protocol === 'https:'
-    ? 'https'
-    : 'http';
+  const API_PROTOCOL = window.location.protocol === 'https:' ? 'https' : 'http';
 
   return `${API_PROTOCOL}://${API_HOST}`;
 };

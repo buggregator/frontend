@@ -16,11 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const changeSortOrder = () => {
-  const sortOrderList = [
-    SortingOrder.Asc,
-    SortingOrder.Desc,
-    SortingOrder.Default,
-  ];
+  const sortOrderList = [SortingOrder.Asc, SortingOrder.Desc, SortingOrder.Default];
 
   const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort);
 
@@ -28,7 +24,6 @@ const changeSortOrder = () => {
 
   emit('changeSort', nextSortOrder);
 };
-
 </script>
 
 <template>

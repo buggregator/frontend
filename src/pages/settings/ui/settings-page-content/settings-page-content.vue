@@ -6,13 +6,9 @@ import { THEME_MODES, useSettingsStore } from '@/shared/stores';
 import { BadgeNumber, IconSvg } from '@/shared/ui';
 
 const settingsStore = useSettingsStore();
-const {
-  changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor,
-} =
+const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
   settingsStore;
-const {
-  themeType, isFixedHeader, isVisibleEventCounts, codeEditor,
-} = storeToRefs(settingsStore);
+const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore);
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 

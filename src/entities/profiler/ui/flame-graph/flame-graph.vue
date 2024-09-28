@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import { FlameChart } from 'flame-chart-js';
 import debounce from 'lodash.debounce';
-import {
-  ref, onMounted, nextTick, onBeforeUnmount, computed,
-} from 'vue';
+import { ref, onMounted, nextTick, onBeforeUnmount, computed } from 'vue';
 import type { EventId } from '@/shared/types';
 import type { StatBoardCost } from '@/shared/ui';
 import { useProfiler } from '../../lib';
@@ -83,12 +81,8 @@ const renderChart = async () => {
               title: data.data.source.name,
             };
             activeStatBoardPosition.value = {
-              x: mouse?.x
-                ? mouse.x + 20
-                : 0,
-              y: mouse?.y
-                ? mouse.y - 20
-                : 0,
+              x: mouse?.x ? mouse.x + 20 : 0,
+              y: mouse?.y ? mouse.y - 20 : 0,
             };
           }
         },

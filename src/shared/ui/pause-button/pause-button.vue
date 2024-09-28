@@ -21,7 +21,6 @@ const titleEventsCount = computed(() => pluralize('new event', props.totalNewEve
 const toggleUpdate = () => {
   emit('toggleUpdate', true);
 };
-
 </script>
 
 <template>

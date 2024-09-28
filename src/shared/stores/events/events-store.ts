@@ -47,7 +47,8 @@ export const useEventsStore = defineStore('eventsStore', {
   }),
   getters: {
     eventsCounts:
-      ({ events }) => (eventType: EventTypes | undefined): number => {
+      ({ events }) =>
+      (eventType: EventTypes | undefined): number => {
         // TODO: need to use common mapping with changed ids
         const counts = {
           [EventTypes.VarDump]: events.filter(({ type }) => type === EventTypes.VarDump).length,
@@ -60,9 +61,7 @@ export const useEventsStore = defineStore('eventsStore', {
           [EventTypes.RayDump]: events.filter(({ type }) => type === EventTypes.RayDump).length,
         };
 
-        return eventType && counts[eventType] != null
-          ? counts[eventType]
-          : events.length;
+        return eventType && counts[eventType] != null ? counts[eventType] : events.length;
       },
     cachedIdsTypesList({ cachedIds }) {
       return Object.entries(cachedIds)
@@ -77,8 +76,8 @@ export const useEventsStore = defineStore('eventsStore', {
       return storedProject || defaultProject || projects.available[0];
     },
     availableProjects: ({ projects }) => projects.available,
-    isMultipleProjects: ({ projects }) => projects.available.length > 1
-      || !projects.available.some((proj) => proj.is_default),
+    isMultipleProjects: ({ projects }) =>
+      projects.available.length > 1 || !projects.available.some((proj) => proj.is_default),
   },
   actions: {
     async initialize(): Promise<void> {
@@ -214,8 +213,9 @@ export const useEventsStore = defineStore('eventsStore', {
       }
 
       this.cachedIdsTypesList.forEach((type) => {
-        this.cachedIds[type] =
-          this.cachedIds[type].filter((uuid: EventId) => activeIds.includes(uuid));
+        this.cachedIds[type] = this.cachedIds[type].filter((uuid: EventId) =>
+          activeIds.includes(uuid),
+        );
       });
 
       setStoredCachedIds(this.cachedIds);

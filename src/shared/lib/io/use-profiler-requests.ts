@@ -38,84 +38,85 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
 
     const searchParams = new URLSearchParams(params).toString();
 
-    return searchParams
-      ? `${url}?${searchParams}`
-      : url;
+    return searchParams ? `${url}?${searchParams}` : url;
   };
 
-  const getTopFunctions = (id: EventId, params?: Record<string, string>) => fetch(
-    getProfilerPartsRestUrl({
-      id,
-      params,
-      type: ProfilerPartType.TopFunctions,
-    }),
-    { headers },
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      if (response) {
-        return response;
-      }
+  const getTopFunctions = (id: EventId, params?: Record<string, string>) =>
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        params,
+        type: ProfilerPartType.TopFunctions,
+      }),
+      { headers },
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        if (response) {
+          return response;
+        }
 
-      if (response?.code === 403) {
-        console.error('Forbidden');
+        if (response?.code === 403) {
+          console.error('Forbidden');
 
-        return {};
-      }
+          return {};
+        }
 
-      console.error('Fetch Error');
-
-      return {};
-    });
-
-  const getCallGraph = (id: EventId, params?: Record<string, string>) => fetch(
-    getProfilerPartsRestUrl({
-      id,
-      params,
-      type: ProfilerPartType.CallGraph,
-    }),
-    { headers },
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      if (response) {
-        return response;
-      }
-
-      if (response?.code === 403) {
-        console.error('Forbidden');
+        console.error('Fetch Error');
 
         return {};
-      }
+      });
 
-      console.error('Fetch Error');
+  const getCallGraph = (id: EventId, params?: Record<string, string>) =>
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        params,
+        type: ProfilerPartType.CallGraph,
+      }),
+      { headers },
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        if (response) {
+          return response;
+        }
 
-      return {};
-    });
+        if (response?.code === 403) {
+          console.error('Forbidden');
 
-  const getFlameChart = (id: EventId) => fetch(
-    getProfilerPartsRestUrl({
-      id,
-      type: ProfilerPartType.FlameChart,
-    }),
-    { headers },
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      if (response) {
-        return response;
-      }
+          return {};
+        }
 
-      if (response?.code === 403) {
-        console.error('Forbidden');
+        console.error('Fetch Error');
+
+        return {};
+      });
+
+  const getFlameChart = (id: EventId) =>
+    fetch(
+      getProfilerPartsRestUrl({
+        id,
+        type: ProfilerPartType.FlameChart,
+      }),
+      { headers },
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+
+        if (response?.code === 403) {
+          console.error('Forbidden');
+
+          return [];
+        }
+
+        console.error('Fetch Error');
 
         return [];
-      }
-
-      console.error('Fetch Error');
-
-      return [];
-    });
+      });
 
   return {
     getTopFunctions,

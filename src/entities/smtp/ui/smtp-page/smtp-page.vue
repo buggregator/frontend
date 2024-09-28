@@ -26,9 +26,11 @@ const isLoading = ref(false);
 
 const { getAttachments, calcDownloadLink } = useAttachments();
 
-const htmlSource = computed(() => props.event?.payload?.html
-  ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
-  : undefined);
+const htmlSource = computed(() =>
+  props.event?.payload?.html ?
+    `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
+  : undefined,
+);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
@@ -79,7 +81,8 @@ const mail = computed(() => props.event.payload);
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
 
-const calcDownloadUrl = (attachmentId: Attachment['uuid']) => calcDownloadLink(props.event.id, attachmentId);
+const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
+  calcDownloadLink(props.event.id, attachmentId);
 
 onMounted(getAttachmentsRequest);
 </script>

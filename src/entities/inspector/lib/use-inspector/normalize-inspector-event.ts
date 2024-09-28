@@ -17,9 +17,7 @@ export const normalizeInspectorEvent: NormalizeInspectorEvent = (event) => {
       os: transaction.host.os,
     },
     serverName: transaction.host.hostname,
-    date: event.timestamp
-      ? new Date(event.timestamp * 1000)
-      : null,
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload,
   };
 

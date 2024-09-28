@@ -17,7 +17,6 @@ const getValuesField = (values: RayUser[]) => {
 
   return formattedValues.join(', ');
 };
-
 </script>
 
 <template>

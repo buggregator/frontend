@@ -4,9 +4,7 @@ export type SentryFrame = SentryTypes.StackFrame;
 
 export type SentryException = Omit<SentryTypes.Exception, 'mechanism'> & {
   mechanism?: Omit<SentryTypes.Mechanism, 'data'> & {
-    data?: {
-      [key: string]: string | boolean | number;
-    };
+    data?: Record<string, string | boolean | number>;
   };
 };
 export type SentryContextRuntime = SentryTypes.Runtime;
@@ -25,9 +23,7 @@ export type SentryBreadcrumb = Omit<SentryTypes.Breadcrumb, 'level'> & {
 };
 
 export type SentryRequest = Omit<SentryTypes.Request, 'headers'> & {
-  headers?: {
-    [key: string]: string | string[];
-  };
+  headers?: Record<string, string | string[]>;
 };
 
 export type SentryContextApp = SentryTypes.AppContext & {
@@ -54,7 +50,5 @@ export interface Sentry
     values: SentryBreadcrumb[];
   };
   level?: SentryLevel;
-  modules?: {
-    [key: string]: string;
-  };
+  modules?: Record<string, string>;
 }

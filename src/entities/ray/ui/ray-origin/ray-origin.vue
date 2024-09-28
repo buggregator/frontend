@@ -11,14 +11,14 @@ type Props = {
 const props = defineProps<Props>();
 
 const originFile: Ref<RayFrame> = computed(
-  () => ({
-    file_name: props.origin.file,
-    line_number: props.origin.line_number,
-    class_name: '',
-    function_name: '',
-  }) as unknown as RayFrame,
+  () =>
+    ({
+      file_name: props.origin.file,
+      line_number: props.origin.line_number,
+      class_name: '',
+      function_name: '',
+    }) as unknown as RayFrame,
 );
-
 </script>
 
 <template>

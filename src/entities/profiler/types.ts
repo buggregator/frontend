@@ -24,9 +24,7 @@ export interface ProfilerCost {
 }
 
 export interface Profiler {
-  tags: {
-    [key: string]: string | null | number;
-  };
+  tags: Record<string, string | null | number>;
   app_name: string;
   hostname: string;
   date: number;
@@ -34,7 +32,7 @@ export interface Profiler {
 }
 
 export interface ProfilerTopFunctions {
-  functions: Array<ProfilerCost & { function: string }>;
+  functions: (ProfilerCost & { function: string })[];
   schema: {
     description: string;
     key: string;
@@ -46,11 +44,11 @@ export interface ProfilerTopFunctions {
 }
 
 export interface ProfilerCallGraph extends ElementsDefinition {
-  toolbar: Array<{
+  toolbar: {
     description: string;
     label: string;
     metric: (keyof ProfilerCost)[number];
-  }>;
+  }[];
 }
 
 export interface ProfileFlameChart {
@@ -63,4 +61,4 @@ export interface ProfileFlameChart {
   type: 'task' | string;
 }
 
-export type CallStackHoverData = { title: string; cost: Partial<ProfilerCost> };
+export interface CallStackHoverData { title: string; cost: Partial<ProfilerCost> }

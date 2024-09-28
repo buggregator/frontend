@@ -21,9 +21,7 @@ const isValueCode = computed(() => isString(props.value) && props.type === 'code
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null;
 const dumpBody = computed(() => {
   if (props.type === 'boolean') {
-    return props.value === '1'
-      ? 'true'
-      : 'false';
+    return props.value === '1' ? 'true' : 'false';
   }
 
   if (isValueString.value) {
@@ -33,9 +31,11 @@ const dumpBody = computed(() => {
   return props.value;
 });
 
-const baseSanitizedHtml = computed(() => String(props.value)
-  .replace(/<script.*<\/script>/g, '')
-  .replace(/<style.*<\/style>/g, ''));
+const baseSanitizedHtml = computed(() =>
+  String(props.value)
+    .replace(/<script.*<\/script>/g, '')
+    .replace(/<style.*<\/style>/g, ''),
+);
 
 onMounted(() => {
   if (dumpId) {

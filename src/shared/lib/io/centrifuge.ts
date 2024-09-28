@@ -15,31 +15,19 @@ class WSConnection {
     this.centrifuge = new Centrifuge(WS_URL);
 
     this.centrifuge.on('connected', (ctx) => {
-      logger([
-        'connected',
-        ctx,
-      ]);
+      logger(['connected', ctx]);
     });
 
     this.centrifuge.on('publication', (ctx) => {
-      logger([
-        'publication',
-        ctx,
-      ]);
+      logger(['publication', ctx]);
     });
 
     this.centrifuge.on('disconnected', (ctx) => {
-      logger([
-        'disconnected',
-        ctx,
-      ]);
+      logger(['disconnected', ctx]);
     });
 
     this.centrifuge.on('error', (ctx) => {
-      logger([
-        'error',
-        ctx,
-      ]);
+      logger(['error', ctx]);
     });
 
     this.centrifuge.connect();

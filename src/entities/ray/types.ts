@@ -53,9 +53,7 @@ export interface RayContentArray {
 }
 
 export interface RayContentObject {
-  values: {
-    [key: string]: string;
-  };
+  values: Record<string, string>;
 }
 
 export interface RayContentException {

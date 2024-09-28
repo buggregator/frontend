@@ -28,29 +28,28 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { codeEditor } = storeToRefs(useSettingsStore());
 
-const mappedOrigins = computed(() => Object.entries(props.originConfig || {}).reduce(
-  (acc, [
-    key,
-    value,
-  ]) => {
-    const fileName = props.originConfig?.file || '';
+const mappedOrigins = computed(() =>
+  Object.entries(props.originConfig || {}).reduce(
+    (acc, [key, value]) => {
+      const fileName = props.originConfig?.file || '';
 
-    if (key === 'name' && fileName.includes(value, fileName.length - value.length)) {
+      if (key === 'name' && fileName.includes(value, fileName.length - value.length)) {
+        return acc;
+      }
+
+      if (!value || value === 'undefined') {
+        return acc;
+      }
+
+      const mappedKey = KEY_MAP[key] || key;
+
+      acc[mappedKey] = value;
+
       return acc;
-    }
-
-    if (!value || value === 'undefined') {
-      return acc;
-    }
-
-    const mappedKey = KEY_MAP[key] || key;
-
-    acc[mappedKey] = value;
-
-    return acc;
-  },
+    },
     {} as { [key: string]: string },
-));
+  ),
+);
 
 const editorLink = computed(() => {
   if (!props.originConfig) {
@@ -64,13 +63,10 @@ const editorLink = computed(() => {
     return '';
   }
 
-  return `${codeEditor.value}://open?file=${fileName}${line
-    ? `&line=${line}`
-    : ''}`;
+  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ''}`;
 });
 
 const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line');
-
 </script>
 
 <template>

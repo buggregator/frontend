@@ -50,9 +50,11 @@ const layoutCells = computed(() => {
   }, []);
 });
 
-const segments: ComputedRef<InspectorSegment[]> = computed(() => props.payload
-  .filter((item): item is InspectorSegment => item.model === 'segment')
-  .filter((el) => el?.transaction?.hash === transaction.value.hash));
+const segments: ComputedRef<InspectorSegment[]> = computed(() =>
+  props.payload
+    .filter((item): item is InspectorSegment => item.model === 'segment')
+    .filter((el) => el?.transaction?.hash === transaction.value.hash),
+);
 
 const segmentTypes = computed(() => {
   const arr: string[] = [];
@@ -78,7 +80,6 @@ const segmentRows = computed(() => {
     marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
   }));
 });
-
 </script>
 
 <template>

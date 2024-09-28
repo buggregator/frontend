@@ -41,7 +41,6 @@ const statItems = computed(() => [
     percent: props.cost?.p_pmu,
   },
 ]);
-
 </script>
 
 <template>

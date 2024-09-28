@@ -13,9 +13,7 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
       line_number: event.payload.context?.source?.line || '',
     },
     serverName: '',
-    date: event.timestamp
-      ? new Date(event.timestamp * 1000)
-      : null,
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload,
   };
 

@@ -2,9 +2,7 @@ import { storeToRefs } from 'pinia';
 import type { Ref } from 'vue';
 import type { RayContentLock } from '@/entities/ray/types';
 import { type TEventsCachedIdsMap, useEventsStore } from '../../stores';
-import type {
-  ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes,
-} from '../../types';
+import type { ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes } from '../../types';
 import { useApiTransport } from '../use-api-transport';
 import { normalizeUnknownEvent } from './normalize-unknown-event';
 import { type TUseEventsApi, useEventsApi } from './use-events-api';
