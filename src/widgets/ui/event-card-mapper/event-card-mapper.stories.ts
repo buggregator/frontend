@@ -87,8 +87,14 @@ export const EventsList = {
         eventsList,
       };
     },
-    template:
-      '<EventCardMapper class="border-b" v-for="event in eventsList" :event="event" :key="event.uuid"/>',
+    template: `
+      <EventCardMapper
+        class="border-b"
+        v-for="event in eventsList"
+        :event="event"
+        :key="event.uuid"
+      />
+    `,
   }),
 };
 

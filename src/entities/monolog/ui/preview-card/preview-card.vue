@@ -15,7 +15,10 @@ const shortMessage = computed(() => {
   const lines = message.value.split('\n');
 
   if (lines.length > 10) {
-    return `${lines.slice(0, 8).join('\n')}\n...`;
+    return `${lines.slice(
+      0,
+      8,
+    ).join('\n')}\n...`;
   }
 
   return message.value;
@@ -26,6 +29,7 @@ const isFullMessage = ref(message.value.length === shortMessage.value.length);
 const toggleView = () => {
   isFullMessage.value = !isFullMessage.value;
 };
+
 </script>
 
 <template>
@@ -61,7 +65,8 @@ const toggleView = () => {
 }
 
 .preview-card__snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words;
+  @apply relative border-b-0 mt-0 break-words;
+  @apply bg-gray-200 dark:bg-gray-800 text-white;
 
   & + & {
     @apply border-t-2;

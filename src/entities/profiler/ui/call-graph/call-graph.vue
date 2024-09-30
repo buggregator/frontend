@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ElementsDefinition } from 'cytoscape';
-import { ref, computed, onMounted, watchEffect } from 'vue';
+import {
+  ref, computed, onMounted, watchEffect,
+} from 'vue';
 import { type EventId, GraphTypes } from '@/shared/types';
 import { IconSvg, type StatBoardCost } from '@/shared/ui';
 import { useProfiler } from '../../lib';
@@ -49,15 +51,19 @@ const toggleFullScreen = () => {
 };
 
 const graphHeight = computed(() =>
-  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight,
-);
+  isFullscreen.value
+    ? window.innerHeight
+    : (container.value as HTMLElement).offsetHeight);
 
 watchEffect(async () => {
-  const { toolbar, ...elems } = await getCallGraph(props.id, {
-    threshold: String(threshold.value),
-    percentage: String(percent.value),
-    metric: String(metric.value),
-  });
+  const { toolbar, ...elems } = await getCallGraph(
+    props.id,
+    {
+      threshold: String(threshold.value),
+      percentage: String(percent.value),
+      metric: String(metric.value),
+    },
+  );
 
   elements.value = elems;
   tools.value = toolbar;
@@ -71,6 +77,7 @@ onMounted(() => {
 });
 
 const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'));
+
 </script>
 
 <template>
@@ -159,7 +166,8 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 @import 'src/assets/mixins';
 
 .call-graph {
-  @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;
+  @apply flex rounded bg-white dark:bg-gray-800;
+  @apply relative min-h-min min-w-min h-ful l-mt-3 pt-3
 }
 
 .call-graph__graph {
@@ -167,7 +175,8 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 }
 
 .call-graph--fullscreen {
-  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full bg-gray-800 z-[99999];
+  @apply rounded-none w-full h-full bg-gray-800;
+  @apply fixed mt-0 top-0 left-0 z-[99999];
 }
 
 .call-graph__toolbar {
@@ -195,6 +204,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 }
 
 .call-graph__toolbar-input {
-  @apply border-gray-600 text-gray-600 w-10 font-bold text-right bg-gray-300 ml-1 py-1 rounded;
+  @apply border-gray-600 text-gray-600 bg-gray-300;
+  @apply w-10 font-bold text-right ml-1 py-1 rounded;
 }
 </style>

@@ -1,19 +1,31 @@
 <script lang="ts" setup generic="T">
 import { computed, defineProps } from 'vue';
-import { useHttpDump, PreviewCard as PreviewHttpDump } from '@/entities/http-dump';
-import { useInspector, PreviewCard as PreviewInspector } from '@/entities/inspector';
+import {
+  useHttpDump,
+  PreviewCard as PreviewHttpDump,
+} from '@/entities/http-dump';
+import {
+  useInspector,
+  PreviewCard as PreviewInspector,
+} from '@/entities/inspector';
 import { useMonolog, PreviewCard as PreviewMonolog } from '@/entities/monolog';
-import { useProfiler, PreviewCard as PreviewProfiler } from '@/entities/profiler';
+import {
+  useProfiler,
+  PreviewCard as PreviewProfiler,
+} from '@/entities/profiler';
 import { useRay, PreviewCard as PreviewRay } from '@/entities/ray';
 import { useSentry, PreviewCard as PreviewSentry } from '@/entities/sentry';
 import { useSmtp, PreviewCard as PreviewSMTP } from '@/entities/smtp';
-import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump';
+import {
+  useVarDump,
+  PreviewCard as PreviewVarDump,
+} from '@/entities/var-dump';
 import { useEvents } from '@/shared/lib/use-events';
 import {
   type ServerEvent,
   type EventType,
-  EventTypes,
   type MappedEventsProps,
+  EventTypes,
 } from '@/shared/types';
 import { PreviewCardDefault } from '../preview-card-default';
 
@@ -34,7 +46,9 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> = {
+type EventTypeComponentsMap = Record<EventTypes, MappedEventsProps<unknown>>;
+
+const EVENT_TYPE_COMPONENTS_MAP: EventTypeComponentsMap = {
   [EventTypes.Sentry]: {
     view: PreviewSentry,
     normalize: normalizeSentryEvent,
@@ -71,12 +85,19 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
     view: PreviewCardDefault,
     normalize: normalizeUnknownEvent,
   },
-} as Record<EventTypes, MappedEventsProps<unknown>>;
+} as EventTypeComponentsMap;
 
-const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType]);
+const componentConfig = computed(
+  () => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType],
+);
 
-const view = computed(() => componentConfig?.value?.view ?? PreviewCardDefault);
-const normalize = computed(() => componentConfig?.value?.normalize ?? normalizeUnknownEvent);
+const view = computed(
+  () => componentConfig?.value?.view ?? PreviewCardDefault,
+);
+const normalize = computed(
+  () => componentConfig?.value?.normalize ?? normalizeUnknownEvent,
+);
+
 </script>
 
 <template>

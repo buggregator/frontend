@@ -3,7 +3,9 @@ export class RouteAvailabilityError extends Error {
     super(message);
     this.name = 'RouteAvailabilityError';
 
-    console.error(`RouteAvailabilityError: the route ${routeName} is not available`);
+    console.error(
+      `RouteAvailabilityError: the route ${routeName} is not available`,
+    );
   }
 }
 
@@ -12,6 +14,8 @@ export class RouteAuthAccessError extends Error {
     super(message);
     this.name = 'RouteAuthAccessError';
 
-    console.error(`RouteAuthAccessError: the route ${routeName} is not permitted without token`);
+    console.error(
+      `RouteAuthAccessError: the route ${routeName} is not permitted without token`,
+    );
   }
 }

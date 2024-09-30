@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { REST_API_URL } from '../../lib/io/constants';
-import { type EventType, EventTypes, type TSettings } from '../../types';
+import {
+  type EventType, EventTypes, type TSettings,
+} from '../../types';
 import { THEME_MODES } from './constants';
 import {
   getStoredEventsCountVisibility,
@@ -13,67 +15,74 @@ import {
   setStoredPrimaryCodeEditor,
 } from './local-storage-actions';
 
-export const useSettingsStore = defineStore('settingsStore', {
-  state: () => ({
-    apiVersion: '',
-    isFetched: false,
-    isAuthEnabled: false,
-    authLogicUrl: '/login',
-    codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
-    themeType: getStoredActiveTheme(),
-    isFixedHeader: getStoredFixedHeader(),
-    isVisibleEventCounts: getStoredEventsCountVisibility(),
-    availableEvents: [] as EventType[],
-  }),
-  getters: {
-    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+export const useSettingsStore = defineStore(
+  'settingsStore',
+  {
+    state: () => ({
+      apiVersion: '',
+      authLogicUrl: '/login',
+      availableEvents: [] as EventType[],
+      codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
+      isAuthEnabled: false,
+      isFetched: false,
+      isFixedHeader: getStoredFixedHeader(),
+      isVisibleEventCounts: getStoredEventsCountVisibility(),
+      themeType: getStoredActiveTheme(),
+    }),
+    getters: {
+      loginLinkUrl:
+        ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+    },
+    actions: {
+      changeActiveCodeEditor(editor: string) {
+        this.codeEditor = editor;
+
+        setStoredPrimaryCodeEditor(editor);
+      },
+      changeEventCountsVisibility() {
+        this.isVisibleEventCounts = !this.isVisibleEventCounts;
+
+        setStoredEventsCountVisibility(this.isVisibleEventCounts);
+      },
+      changeNavbar() {
+        this.isFixedHeader = !this.isFixedHeader;
+
+        setStoredFixedHeader(this.isFixedHeader);
+      },
+      changeTheme() {
+        this.themeType = this.themeType === THEME_MODES.DARK
+          ? THEME_MODES.LIGHT
+          : THEME_MODES.DARK;
+
+        setStoredActiveTheme(this.themeType);
+      },
+      async fetchSettings() {
+        // TODO: need to remove fetch out of the store
+        const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
+          .then((response) => response.json())
+          .catch((e) => {
+            console.error(e);
+
+            return null;
+          });
+
+        if (settings.version) {
+          this.apiVersion = settings.version;
+        }
+
+        if (settings.auth) {
+          this.isAuthEnabled = settings.auth.enabled;
+          this.authLogicUrl = settings.auth.login_url;
+        }
+
+        // TODO: meed to move to the events store
+        this.availableEvents = settings?.client?.events
+          ?? Object.values(EventTypes);
+
+        this.isFetched = true;
+
+        return settings;
+      },
+    },
   },
-  actions: {
-    async fetchSettings() {
-      // TODO: need to remove fetch out of the store
-      const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
-        .then((response) => response.json())
-        .catch((e) => {
-          console.error(e);
-
-          return null;
-        });
-
-      if (settings.version) {
-        this.apiVersion = settings.version;
-      }
-
-      if (settings.auth) {
-        this.isAuthEnabled = settings.auth.enabled;
-        this.authLogicUrl = settings.auth.login_url;
-      }
-
-      // TODO: meed to move to the events store
-      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
-
-      this.isFetched = true;
-
-      return settings;
-    },
-    changeTheme() {
-      this.themeType = this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK;
-
-      setStoredActiveTheme(this.themeType);
-    },
-    changeNavbar() {
-      this.isFixedHeader = !this.isFixedHeader;
-
-      setStoredFixedHeader(this.isFixedHeader);
-    },
-    changeEventCountsVisibility() {
-      this.isVisibleEventCounts = !this.isVisibleEventCounts;
-
-      setStoredEventsCountVisibility(this.isVisibleEventCounts);
-    },
-    changeActiveCodeEditor(editor: string) {
-      this.codeEditor = editor;
-
-      setStoredPrimaryCodeEditor(editor);
-    },
-  },
-});
+);

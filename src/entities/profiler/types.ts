@@ -61,4 +61,7 @@ export interface ProfileFlameChart {
   type: 'task' | string;
 }
 
-export interface CallStackHoverData { title: string; cost: Partial<ProfilerCost> }
+export interface CallStackHoverData {
+  title: string;
+  cost: Partial<ProfilerCost>;
+}

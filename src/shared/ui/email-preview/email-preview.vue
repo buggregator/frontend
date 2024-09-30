@@ -7,15 +7,19 @@ type Props = {
   device: Device;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  device: Device.Desktop,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    device: Device.Desktop,
+  },
+);
 
 const currentDevice = ref(props.device);
 
 const selectDevice = (device: Device) => {
   currentDevice.value = device;
 };
+
 </script>
 
 <template>

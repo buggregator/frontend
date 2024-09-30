@@ -9,27 +9,47 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const convertMilliseconds = (milliseconds: number): string => (milliseconds / 1000).toFixed(4);
+const convertMilliseconds = (
+  milliseconds: number,
+): string => (milliseconds / 1000).toFixed(4);
 
-const prettySize = (bytes: number, separator = '', postFix = ''): string => {
+const prettySize = (
+  bytes: number,
+  separator = '',
+  postFix = '',
+): string => {
   if (!bytes) {
     return 'n/a';
   }
 
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = [
+    'Bytes',
+    'KB',
+    'MB',
+    'GB',
+    'TB',
+  ];
   const i = Math.min(
-    Number(parseInt(String(Math.floor(Math.log(bytes) / Math.log(1024))), 10)),
+    Number(parseInt(
+      String(Math.floor(Math.log(bytes) / Math.log(1024))),
+      10,
+    )),
     sizes.length - 1,
   );
 
   return `${(bytes / 1024 ** i).toFixed(2)}${separator} ${sizes[i]}${postFix}`;
 };
 
-const totalTime = computed(() => `${convertMilliseconds(props.measure.total_time)} s`);
+const totalTime = computed(
+  () => `${convertMilliseconds(props.measure.total_time)} s`,
+);
 const timeSinceLastCall = computed(
   () => `${convertMilliseconds(props.measure.time_since_last_call)} s`,
 );
-const maxMemoryUsage = computed(() => prettySize(props.measure.max_memory_usage_during_total_time));
+const maxMemoryUsage = computed(
+  () => prettySize(props.measure.max_memory_usage_during_total_time),
+);
+
 </script>
 
 <template>

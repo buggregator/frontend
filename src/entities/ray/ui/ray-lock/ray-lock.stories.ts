@@ -13,6 +13,12 @@ export default {
 
 export const Default: StoryObj<typeof RayLock> = {
   args: {
-    name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name,
+    name: (
+      normalizeRayEvent(rayLockMock)
+        .payload
+        .payloads[0]
+        .content as RayContentLock
+    )
+      ?.name,
   },
 };

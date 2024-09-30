@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 import { IconSvg } from '@/shared/ui';
-import type { Sentry, SentryContextRuntime, SentryContexts } from '../../types';
+import type {
+  Sentry, SentryContextRuntime, SentryContexts,
+} from '../../types';
 
 type Props = {
   payload: Sentry;
@@ -12,8 +14,10 @@ const props = defineProps<Props>();
 const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
-  const { name = '', version = '' } =
-    (props.payload.contexts?.runtime as SentryContextRuntime) || {};
+  const {
+    name = '',
+    version = '',
+  } = (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
   return {
     name,
@@ -22,7 +26,10 @@ const contextsRuntime = computed(() => {
 });
 
 const contextsOS = computed(() => {
-  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContexts['os']) || {};
+  const {
+    name = '',
+    version = '',
+  } = (props.payload.contexts?.os as SentryContexts['os']) || {};
 
   return {
     name,
@@ -79,6 +86,7 @@ const modules = computed(() => {
     version: mods[name],
   }));
 });
+
 </script>
 
 <template>
@@ -192,7 +200,8 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
+  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md;
+  @apply border border-purple-300 dark:border-gray-400;
 
   & + & {
     @apply mt-5;
@@ -200,7 +209,8 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__labels {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
+  @apply text-purple-600 dark:text-purple-100 gap-3 mt-3;
+  @apply flex flex-row flex-wrap items-center;
 
   .sentry-page-tags__labels-wrapper--partial & {
     @apply max-h-[200px] overflow-y-auto;

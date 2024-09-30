@@ -26,7 +26,8 @@ defineProps<Props>();
 }
 
 .ray-eloquent__title {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800 flex w-full overflow-auto;
+  @apply p-3 bg-gray-800 flex w-full overflow-auto;
+  @apply border border-gray-300 dark:border-gray-600;
 }
 
 .ray-eloquent__title-in {

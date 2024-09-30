@@ -10,6 +10,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const uri = decodeURI(props.event.payload.request.uri);
+
 </script>
 
 <template>
@@ -18,8 +19,12 @@ const uri = decodeURI(props.event.payload.request.uri);
     :event="event"
   >
     <div class="preview-card__content">
-      <span class="preview-card__method"> {{ event.payload.request.method }} </span>:
-      <span class="preview-card__uri">/{{ uri }}</span>
+      <span class="preview-card__method">
+        {{ event.payload.request.method }}
+      </span>:
+      <span class="preview-card__uri">
+        /{{ uri }}
+      </span>
     </div>
   </PreviewCard>
 </template>

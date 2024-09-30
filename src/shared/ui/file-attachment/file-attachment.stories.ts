@@ -10,11 +10,11 @@ export const Default: StoryObj<typeof FileAttachment> = {
   args: {
     eventId: 'cbdd3296-1e25-4191-9f52-0e2d7e7d6aae',
     attachment: {
-      uuid: 'cbdd3296-1e25-4191-9f52-0e2d7e7d6aae',
-      name: 'attachment.txt',
-      size: 234234,
       mime: 'text/plain',
+      name: 'attachment.txt',
       path: 'example.com/attachment.txt',
+      size: 234234,
+      uuid: 'cbdd3296-1e25-4191-9f52-0e2d7e7d6aae',
     },
   },
 };

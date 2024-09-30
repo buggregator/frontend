@@ -14,14 +14,18 @@ const isFrameOpen = ref(props.isOpen);
 // TODO: remove comment
 
 const hasBody = computed(() =>
-  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context),
-);
+  Boolean(
+    props.frame.context_line
+    || props.frame.post_context
+    || props.frame.pre_context,
+  ));
 
 const toggleOpen = () => {
   if (hasBody.value) {
     isFrameOpen.value = !isFrameOpen.value;
   }
 };
+
 </script>
 
 <template>
@@ -65,13 +69,18 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <pre
+            class="sentry-exception-frame__body-line-content"
+          >{{ line }}</pre>
         </div>
       </template>
 
       <div
         v-if="frame.context_line"
-        class="sentry-exception-frame__body-line sentry-exception-frame__body-line--selection"
+        class="
+          sentry-exception-frame__body-line
+          sentry-exception-frame__body-line--selection
+        "
       >
         <div class="sentry-exception-frame__body-line-position">
           {{ frame.lineno }}.
@@ -90,7 +99,9 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) + i + 1 }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <pre
+            class="sentry-exception-frame__body-line-content"
+          >{{ line }}</pre>
         </div>
       </template>
     </div>

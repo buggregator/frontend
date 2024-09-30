@@ -5,9 +5,12 @@ type Props = {
   title?: string;
 };
 
-withDefaults(defineProps<Props>(), {
-  title: '',
-});
+withDefaults(
+  defineProps<Props>(),
+  {
+    title: '',
+  },
+);
 </script>
 
 <template>
@@ -25,7 +28,8 @@ withDefaults(defineProps<Props>(), {
 @import 'src/assets/mixins';
 .table-base-row {
   @include text-responsive;
-  @apply md:flex md:space-y-1 py-1 md:py-2 px-2 md:px-4 items-center sm:divide-x;
+  @apply items-center sm:divide-x;
+  @apply md:flex md:space-y-1 py-1 md:py-2 px-2 md:px-4 ;
   @apply bg-gray-50 dark:bg-gray-800 divide-gray-300 dark:divide-gray-700;
 }
 

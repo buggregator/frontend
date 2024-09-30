@@ -12,29 +12,34 @@ type Props = {
   maxFrames?: number;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 3,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    maxFrames: 3,
+  },
+);
 
 const eventLink = computed(() => `/sentry/${props.event.id}`);
 
-const exceptionValues = computed(() => props.event?.payload?.exception?.values || []);
+const exceptionValues = computed(
+  () => props.event?.payload?.exception?.values || [],
+);
 
 const hasException = computed(() => exceptionValues.value.length > 0);
 
 const message = computed(() => props.event.payload?.message || '');
 
 const exception: Ref<Exception> = computed(() =>
-  exceptionValues.value.length > 0 ?
-    exceptionValues.value[0]
-  : {
+  exceptionValues.value.length > 0
+    ? exceptionValues.value[0]
+    : {
       type: 'Unknown',
       value: 'Something went wrong',
       stacktrace: {
         frames: [],
       },
-    },
-);
+    });
+
 </script>
 
 <template>
@@ -74,8 +79,9 @@ const exception: Ref<Exception> = computed(() =>
 }
 
 .preview-card__link {
-  @apply dark:bg-gray-800 bg-gray-100 p-3 border border-purple-300 dark:border-gray-500;
+  @apply dark:bg-gray-800 bg-gray-100 p-3;
   @apply cursor-pointer block rounded-t-md;
+  @apply border border-purple-300 dark:border-gray-500;
 }
 
 .preview-card__title {
@@ -84,11 +90,12 @@ const exception: Ref<Exception> = computed(() =>
 
 .preview-card__text {
   @include code-example();
-  @apply text-sm break-words whitespace-pre-wrap overflow-auto text-opacity-60 dark:bg-gray-900;
-  @apply p-3 mb-3;
+  @apply text-sm break-words text-opacity-60 dark:bg-gray-900;
+  @apply p-3 mb-3 whitespace-pre-wrap overflow-auto;
 }
 
 .preview-card__frames {
-  @apply border border-purple-200 dark:border-gray-500 flex-col justify-center w-full;
+  @apply flex-col justify-center w-full;
+  @apply border border-purple-200 dark:border-gray-500;
 }
 </style>

@@ -8,6 +8,8 @@ export const logger = (params: LoggerParams): void => {
   }
 
   console.info(
-    `[ApiConnection logger]:Centrifuge "${params[0]}" called with params: "${JSON.stringify(params[1])}"`,
+    `[ApiConnection logger]:Centrifuge "${params[0]}" called with params: "${
+      JSON.stringify(params[1])
+    }"`,
   );
 };

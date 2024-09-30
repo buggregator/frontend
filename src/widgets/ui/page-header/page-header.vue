@@ -4,10 +4,16 @@ import { computed } from 'vue';
 import { ALL_EVENT_TYPES } from '@/shared/constants';
 import { useEvents } from '@/shared/lib/use-events';
 import { useSettingsStore } from '@/shared/stores';
-import { type EventType, type PageEventTypes, RouteName } from '@/shared/types';
-import { AppHeader, BadgeNumber, PauseButton } from '@/shared/ui';
+import {
+  type EventType, type PageEventTypes, RouteName,
+} from '@/shared/types';
+import {
+  AppHeader, BadgeNumber, PauseButton,
+} from '@/shared/ui';
 
-const { events, cachedEvents, getItemsCount } = useEvents();
+const {
+  events, cachedEvents, getItemsCount,
+} = useEvents();
 const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 type Props = {
@@ -25,7 +31,9 @@ const clearEvents = () => {
   return events.removeByType(props.type as unknown as EventType);
 };
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0);
+const isEventsPaused = computed(
+  () => cachedEvents.idsByType.value[props.type]?.length > 0,
+);
 
 const allEvents = computed(() => {
   if (props.type === ALL_EVENT_TYPES) {
@@ -40,14 +48,13 @@ const visibleEvents = computed(() => {
     return allEvents.value;
   }
 
-  // TODO: remove comment
-
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid),
-  );
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
 });
 
-const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length);
+const hiddenEventsCount = computed(
+  () => allEvents.value.length - visibleEvents.value.length,
+);
 
 const toggleUpdate = () => {
   if (isEventsPaused.value) {
@@ -58,8 +65,12 @@ const toggleUpdate = () => {
 };
 
 const badgeNumber = computed(() =>
-  getItemsCount.value(props.type !== ALL_EVENT_TYPES ? (props.type as EventType) : undefined),
-);
+  getItemsCount.value(
+    props.type === ALL_EVENT_TYPES
+      ? undefined
+      : (props.type as EventType),
+  ));
+
 </script>
 
 <template>

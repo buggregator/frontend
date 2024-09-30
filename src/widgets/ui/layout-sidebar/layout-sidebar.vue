@@ -7,7 +7,9 @@ import { useRouter } from 'vue-router';
 import { PAGES_SETTINGS } from '@/shared/constants';
 import { textToColors } from '@/shared/lib/helpers';
 import { useEvents } from '@/shared/lib/use-events';
-import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores';
+import {
+  useSettingsStore, useProfileStore, useEventsStore,
+} from '@/shared/stores';
 import { useConnectionStore } from '@/shared/stores/connections';
 import { RouteName } from '@/shared/types';
 import { BadgeNumber, IconSvg } from '@/shared/ui';
@@ -17,7 +19,9 @@ import { EVENTS_NAV_ORDER } from './constants';
 const { isConnectedWS } = storeToRefs(useConnectionStore());
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
 const eventsStore = useEventsStore();
-const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore);
+const {
+  availableProjects, isMultipleProjects, activeProject,
+} = storeToRefs(eventsStore);
 
 const profileStore = useProfileStore();
 const { profile } = storeToRefs(profileStore);
@@ -35,23 +39,39 @@ const isVisibleProjects = ref(false);
 // TODO: need to check why project is empty on first load
 const isProjectLoading = computed(() => !activeProject.value);
 
-onClickOutside(projectMenu, () => {
-  isVisibleProjects.value = false;
-});
+onClickOutside(
+  projectMenu,
+  () => {
+    isVisibleProjects.value = false;
+  },
+);
 
-onClickOutside(userMenu, () => {
-  isVisibleProfile.value = false;
-});
+onClickOutside(
+  userMenu,
+  () => {
+    isVisibleProfile.value = false;
+  },
+);
 
-const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
-  placement: 'right-start',
-});
+const { floatingStyles: projectDdStyles } = useFloating(
+  projectDd,
+  projectMenu,
+  {
+    placement: 'right-start',
+  },
+);
 
-const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: 'right',
-});
+const { floatingStyles: userDdStyles } = useFloating(
+  userDd,
+  userMenu,
+  {
+    placement: 'right',
+  },
+);
 
-const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'));
+const connectionStatus = computed(
+  () => (isConnectedWS.value ? 'connected' : 'disconnected'),
+);
 
 const avatar = computed(() => {
   if (!profile.value) return null;
@@ -61,7 +81,10 @@ const avatar = computed(() => {
   }
 
   if (profile.value.avatar.startsWith('<svg')) {
-    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`;
+    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(
+      /&quot;/g,
+      '"',
+    ))}`;
   }
 
   return profile.value.avatar;
@@ -73,7 +96,9 @@ const profileEmail = computed(() => {
   return profile.value.email;
 });
 
-const connectionText = computed(() => `WS connection is ${connectionStatus.value}`);
+const connectionText = computed(
+  () => `WS connection is ${connectionStatus.value}`,
+);
 
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value;
@@ -90,12 +115,19 @@ const logout = () => {
   router.push('/login');
 };
 
-const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
+const {
+  apiVersion,
+  availableEvents,
+} = storeToRefs(useSettingsStore());
 
 const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`);
 
-const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`,
+const serverVersion = computed(
+  () =>
+    String(apiVersion.value)
+      .match(/^[0-9.]+.*$/)
+      ? `v${apiVersion.value}`
+      : `@${apiVersion.value}`,
 );
 
 const setProject = (projectKey: string) => {
@@ -107,12 +139,15 @@ const setProject = (projectKey: string) => {
 // TODO: remove comment
 
 const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
-);
+  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)));
 
-const makeShortTitle = (title: string) => (title || '').substring(0, 2);
+const makeShortTitle = (title: string) => (title || '').substring(
+  0,
+  2,
+);
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || '').join(', ')})`;
+
 </script>
 
 <template>
@@ -213,7 +248,8 @@ const generateRadialGradient = (input: string) =>
         class="layout-sidebar__dropdown-item"
         :title="project.name"
         :class="{
-          'layout-sidebar__dropdown-item--active': activeProject.key === project.key,
+          'layout-sidebar__dropdown-item--active':
+            activeProject.key === project.key,
         }"
         tabindex="1"
         @click="setProject(project.key)"
@@ -248,12 +284,18 @@ const generateRadialGradient = (input: string) =>
         >
           <button
             v-if="profileEmail"
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
+            class="
+              layout-sidebar__dropdown-item
+              layout-sidebar__dropdown-item--active
+            "
           >
             {{ profileEmail }}
           </button>
           <button
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
+            class="
+              layout-sidebar__dropdown-item
+              layout-sidebar__dropdown-item--active
+            "
             @click="logout"
           >
             <IconSvg

@@ -6,9 +6,15 @@ import { THEME_MODES, useSettingsStore } from '@/shared/stores';
 import { BadgeNumber, IconSvg } from '@/shared/ui';
 
 const settingsStore = useSettingsStore();
-const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
-  settingsStore;
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore);
+const {
+  changeTheme,
+  changeNavbar,
+  changeEventCountsVisibility,
+  changeActiveCodeEditor,
+} = settingsStore;
+const {
+  themeType, isFixedHeader, isVisibleEventCounts, codeEditor,
+} = storeToRefs(settingsStore);
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 
@@ -32,12 +38,16 @@ useTitle('Settings | Buggregator');
       <IconSvg
         name="sun"
         class="settings-page-content__control-icon"
-        :class="{ 'settings-page-content__control-icon--active': !isDarkMode }"
+        :class="{
+          'settings-page-content__control-icon--active': !isDarkMode
+        }"
       />
 
       <button
         class="settings-page-content__control-button"
-        :class="{ 'settings-page-content__control-button--active': isDarkMode }"
+        :class="{
+          'settings-page-content__control-button--active': isDarkMode
+        }"
         @click="changeTheme"
       >
         <span class="settings-page-content__control-button-in" />
@@ -46,7 +56,9 @@ useTitle('Settings | Buggregator');
       <IconSvg
         class="settings-page-content__control-icon"
         name="moon"
-        :class="{ 'settings-page-content__control-icon--active': isDarkMode }"
+        :class="{
+          'settings-page-content__control-icon--active': isDarkMode
+        }"
       />
     </div>
 
@@ -58,12 +70,16 @@ useTitle('Settings | Buggregator');
       <IconSvg
         name="lock-off"
         class="settings-page-content__control-icon"
-        :class="{ 'settings-page-content__control-icon--active': !isFixedHeader }"
+        :class="{
+          'settings-page-content__control-icon--active': !isFixedHeader
+        }"
       />
 
       <button
         class="settings-page-content__control-button"
-        :class="{ 'settings-page-content__control-button--active': isFixedHeader }"
+        :class="{
+          'settings-page-content__control-button--active': isFixedHeader
+        }"
         @click="changeNavbar"
       >
         <span class="settings-page-content__control-button-in" />
@@ -72,7 +88,9 @@ useTitle('Settings | Buggregator');
       <IconSvg
         class="settings-page-content__control-icon"
         name="lock"
-        :class="{ 'settings-page-content__control-icon--active': isFixedHeader }"
+        :class="{
+          'settings-page-content__control-icon--active': isFixedHeader
+        }"
       />
     </div>
 
@@ -132,7 +150,8 @@ useTitle('Settings | Buggregator');
         </label>
 
         <div class="settings-page-content__control-description">
-          Example of link to open files in code editor. You can replace the name editor with a more
+          Example of link to open files in code editor.
+          You can replace the name editor with a more
           preferable one
         </div>
       </div>
@@ -175,7 +194,8 @@ useTitle('Settings | Buggregator');
 }
 
 .settings-page-content__control-button-in {
-  @apply inline-block h-6 w-6 transform rounded-full transition bg-blue-600 translate-x-2;
+  @apply h-6 w-6 bg-blue-600 transform translate-x-2;
+  @apply inline-block rounded-full transition;
 
   .settings-page-content__control-button--active & {
     @apply translate-x-8;

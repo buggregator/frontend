@@ -16,9 +16,9 @@ export const createAppRouter = () => {
     }
 
     const middlewares = (
-      Array.isArray(to.meta.middleware) ?
-        to.meta.middleware
-      : [to.meta.middleware]) as TRouterMiddleware[];
+      Array.isArray(to.meta.middleware)
+        ? to.meta.middleware
+        : [to.meta.middleware]) as TRouterMiddleware[];
 
     const context = {
       to,
@@ -26,9 +26,9 @@ export const createAppRouter = () => {
       next,
     };
 
-    for (const middleware of middlewares) {
+    for (let i = 0; i < middlewares.length; i += 1) {
       try {
-        await middleware({ ...context });
+        await middlewares[i]({ ...context });
       } catch (e) {
         if (e instanceof RouteAuthAccessError) {
           next({

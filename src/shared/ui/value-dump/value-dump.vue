@@ -10,13 +10,20 @@ type Props = {
   language?: string;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  type: '',
-  language: 'plaintext',
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    type: '',
+    language: 'plaintext',
+  },
+);
 
-const isValueString = computed(() => isString(props.value) && props.type === 'string');
-const isValueCode = computed(() => isString(props.value) && props.type === 'code');
+const isValueString = computed(
+  () => isString(props.value) && props.type === 'string',
+);
+const isValueCode = computed(
+  () => isString(props.value) && props.type === 'code',
+);
 
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null;
 const dumpBody = computed(() => {
@@ -33,9 +40,14 @@ const dumpBody = computed(() => {
 
 const baseSanitizedHtml = computed(() =>
   String(props.value)
-    .replace(/<script.*<\/script>/g, '')
-    .replace(/<style.*<\/style>/g, ''),
-);
+    .replace(
+      /<script.*<\/script>/g,
+      '',
+    )
+    .replace(
+      /<style.*<\/style>/g,
+      '',
+    ));
 
 onMounted(() => {
   if (dumpId) {

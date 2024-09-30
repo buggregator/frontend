@@ -9,21 +9,35 @@ type Emits = {
   changeSort: [value: SortingOrder];
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  sort: SortingOrder.Default,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    sort: SortingOrder.Default,
+  },
+);
 
 const emit = defineEmits<Emits>();
 
 const changeSortOrder = () => {
-  const sortOrderList = [SortingOrder.Asc, SortingOrder.Desc, SortingOrder.Default];
+  const sortOrderList = [
+    SortingOrder.Asc,
+    SortingOrder.Desc,
+    SortingOrder.Default,
+  ];
 
-  const nextSortOrderIndex = sortOrderList.findIndex((sortOrder) => sortOrder === props.sort);
+  const nextSortOrderIndex = sortOrderList.findIndex(
+    (sortOrder) => sortOrder === props.sort,
+  );
 
-  const nextSortOrder = sortOrderList[nextSortOrderIndex + 1] || sortOrderList[0];
+  const nextSortOrder = sortOrderList[nextSortOrderIndex + 1]
+    || sortOrderList[0];
 
-  emit('changeSort', nextSortOrder);
+  emit(
+    'changeSort',
+    nextSortOrder,
+  );
 };
+
 </script>
 
 <template>
@@ -52,11 +66,13 @@ const changeSortOrder = () => {
 
 <style lang="scss" scoped>
 .sorting-wrapper {
-  @apply cursor-pointer relative bg-transparent inline-flex items-center;
+  @apply cursor-pointer relative bg-transparent;
+  @apply inline-flex items-center;
 }
 
 .sorting-wrapper__markers {
-  @apply flex items-center h-full flex-col text-gray-400 dark:text-gray-600 gap-y-1 ml-1;
+  @apply h-full gap-y-1 ml-1 text-gray-400 dark:text-gray-600;
+  @apply flex items-center flex-col;
 }
 
 .sorting-wrapper__marker {

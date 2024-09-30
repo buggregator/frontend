@@ -21,10 +21,10 @@ const data = ref<ProfilerTopFunctions>({
   functions: [],
   overall_totals: {
     cpu: 0,
-    wt: 0,
+    ct: 0,
     mu: 0,
     pmu: 0,
-    ct: 0,
+    wt: 0,
   },
   schema: [],
 });
@@ -45,18 +45,27 @@ const formatValue = (value: number, format: string) => {
   }
 
   if (format === 'number') {
-    return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value);
+    return new Intl.NumberFormat(
+      'en-US',
+      { style: 'decimal' },
+    ).format(value);
   }
 
   if (format === 'bytes') {
-    return formatFileSize(value, 3);
+    return formatFileSize(
+      value,
+      3,
+    );
   }
 
   return value;
 };
 
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: metric.value });
+  data.value = await getTopFunctions(
+    props.id,
+    { metric: metric.value },
+  );
 });
 </script>
 
@@ -136,7 +145,8 @@ td {
 }
 
 td.selected {
-  @apply border-x text-gray-800 dark:text-gray-100 border-gray-400 dark:border-gray-500;
+  @apply border-x border-gray-400 dark:border-gray-500;
+  @apply text-gray-800 dark:text-gray-100;
 }
 
 thead td {

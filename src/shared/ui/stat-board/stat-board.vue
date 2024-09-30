@@ -10,9 +10,12 @@ type Props = {
   size?: StatBoardSize;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  size: StatBoardSize.Medium,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    size: StatBoardSize.Medium,
+  },
+);
 
 const statItems = computed(() => [
   {
@@ -32,15 +35,22 @@ const statItems = computed(() => [
   },
   {
     title: 'Memory usage',
-    value: formatFileSize(props.cost.mu || 0, 3) || '—',
+    value: formatFileSize(
+      props.cost.mu || 0,
+      3,
+    ) || '—',
     percent: props.cost?.p_mu,
   },
   {
     title: 'Peak memory usage',
-    value: formatFileSize(props.cost.pmu || 0, 3) || '—',
+    value: formatFileSize(
+      props.cost.pmu || 0,
+      3,
+    ) || '—',
     percent: props.cost?.p_pmu,
   },
 ]);
+
 </script>
 
 <template>
@@ -78,8 +88,8 @@ const statItems = computed(() => [
 
 .stat-board {
   @apply flex flex-col sm:flex-row justify-between items-start;
-  @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
-  @apply bg-gray-200 dark:bg-gray-800;
+  @apply divide-y sm:divide-y-0 sm:divide-x;
+  @apply bg-gray-200 dark:bg-gray-800 divide-gray-300 dark:divide-gray-500;
   @apply p-0 sm:p-4 lg:p-6;
 }
 
@@ -98,7 +108,8 @@ const statItems = computed(() => [
 }
 
 .stat-board__item-name {
-  @apply text-2xs text-gray-600 dark:text-gray-300 font-bold uppercase truncate mb-0 sm:mb-1;
+  @apply text-2xs text-gray-600 dark:text-gray-300 font-bold;
+  @apply uppercase truncate mb-0 sm:mb-1;
 
   .stat-board--small & {
     @apply sm:mb-0;

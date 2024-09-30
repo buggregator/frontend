@@ -15,22 +15,32 @@ const { COMPONENT_TYPE_MAP } = useRay();
 const props = defineProps<Props>();
 
 const title = computed(() => {
-  const type = String(props.event.payload.payloads[0].type || 'Unknown type');
+  const type = String(
+    props.event.payload.payloads[0].type
+    || 'Unknown type',
+  );
 
   return type[0].toUpperCase() + type.slice(1);
 });
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
-
-const classes = computed(() =>
-  props.event?.meta ?
-    [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
-  : [],
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
 );
 
-type GetComponents = (type: OneOfValues<RayEventTypes>) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
+const classes = computed(() =>
+  props.event?.meta
+    ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
+    : []);
 
-const getComponent: GetComponents = (type) => COMPONENT_TYPE_MAP[type as RayEventTypes];
+type GetComponents = (
+  type: OneOfValues<RayEventTypes>
+) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
+
+const getComponent: GetComponents = (type) =>
+  COMPONENT_TYPE_MAP[type as RayEventTypes];
+
+const calcPayloadKey = (type: string, line: string = '') => `${type}-${line}`;
+
 </script>
 
 <template>
@@ -51,7 +61,7 @@ const getComponent: GetComponents = (type) => COMPONENT_TYPE_MAP[type as RayEven
       <section class="ray__body">
         <template
           v-for="payload in event.payload.payloads"
-          :key="`${payload.type}-${payload.origin ? payload.origin.line_number : ''}`"
+          :key="calcPayloadKey(payload.type, payload.origin.line_number)"
         >
           <div v-if="payload.type && getComponent(payload.type)">
             <Component

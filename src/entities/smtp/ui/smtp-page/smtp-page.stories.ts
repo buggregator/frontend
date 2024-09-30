@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3';
 import { useSmtp } from '../../lib';
-import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '../../mocks';
+import {
+  smtpOrderMock, smtpTextMock, smtpWelcomeMock,
+} from '../../mocks';
 import SmtpPage from './smtp-page.vue';
 
 const { normalizeSmtpEvent } = useSmtp();

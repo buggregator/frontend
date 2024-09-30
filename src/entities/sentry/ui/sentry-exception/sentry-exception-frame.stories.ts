@@ -14,7 +14,13 @@ export const Frame: StoryObj<typeof SentryExceptionFrame> = {
   args: {
     isOpen: true,
     frame:
-      normalizeSentryEvent(sentrySpiralMock).payload?.exception?.values?.[0]?.stacktrace
-        ?.frames?.[1],
+      normalizeSentryEvent(sentrySpiralMock)
+        .payload
+        ?.exception
+        ?.values
+        ?.[0]
+        ?.stacktrace
+        ?.frames
+        ?.[1],
   },
 };

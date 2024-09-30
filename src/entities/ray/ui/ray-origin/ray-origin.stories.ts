@@ -13,6 +13,9 @@ export default {
 
 export const Default: StoryObj<typeof RayOrigin> = {
   args: {
-    origin: normalizeRayEvent(rayCallerMock).payload.payloads[0].origin as RayPayloadOrigin,
+    origin: normalizeRayEvent(rayCallerMock)
+      .payload
+      .payloads[0]
+      .origin as RayPayloadOrigin,
   },
 };

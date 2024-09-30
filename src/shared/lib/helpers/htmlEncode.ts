@@ -1,2 +1,5 @@
 export const htmlEncode = (input: string): string =>
-  input.replace(/./gm, (s: string) => (s.match(/[a-z0-9\s]+/i) ? s : `&#${s.charCodeAt(0)};`));
+  input.replace(
+    /./gm,
+    (s: string) => (s.match(/[a-z0-9\s]+/i) ? s : `&#${s.charCodeAt(0)};`),
+  );

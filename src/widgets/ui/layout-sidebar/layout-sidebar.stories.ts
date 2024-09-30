@@ -6,7 +6,9 @@ export default {
   component: LayoutSidebar,
   render: () => ({
     components: { LayoutSidebar },
-    template: '<div style="width: 100px; height: 100vh"><LayoutSidebar /></div>',
+    template: `
+      <div style="width: 100px; height: 100vh"><LayoutSidebar /></div>
+    `,
   }),
 } as Meta<typeof LayoutSidebar>;
 

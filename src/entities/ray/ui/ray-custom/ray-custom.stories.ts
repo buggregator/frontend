@@ -13,6 +13,9 @@ export default {
 
 export const Default: StoryObj<typeof RayCustom> = {
   args: {
-    content: normalizeRayEvent(rayTextMock).payload.payloads[0].content as RayContentCustom,
+    content: normalizeRayEvent(rayTextMock)
+      .payload
+      .payloads[0]
+      .content as RayContentCustom,
   },
 };

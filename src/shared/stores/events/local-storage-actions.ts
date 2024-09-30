@@ -14,7 +14,10 @@ export const getStoredCachedIds = (): TEventsCachedIdsMap | null => {
 };
 
 export const setStoredCachedIds = (cachedEventMap: TEventsCachedIdsMap) => {
-  sessionStorage?.setItem(SessionStorageKeys.CachedEvents, JSON.stringify(cachedEventMap));
+  sessionStorage?.setItem(
+    SessionStorageKeys.CachedEvents,
+    JSON.stringify(cachedEventMap),
+  );
 };
 
 export const getStoredLockedIds = (): EventId[] | null => {
@@ -28,10 +31,15 @@ export const getStoredLockedIds = (): EventId[] | null => {
 };
 
 export const setStoredLockedIds = (lockedIds: EventId[]) => {
-  sessionStorage?.setItem(SessionStorageKeys.LockedEvents, JSON.stringify(lockedIds));
+  sessionStorage?.setItem(
+    SessionStorageKeys.LockedEvents,
+    JSON.stringify(lockedIds),
+  );
 };
 
-export const getStoredProject = () => sessionStorage?.getItem(SessionStorageKeys.Project) || null;
+export const getStoredProject = () =>
+  sessionStorage?.getItem(SessionStorageKeys.Project)
+  || null;
 
 export const removeStoredProject = () => {
   sessionStorage?.removeItem(SessionStorageKeys.Project);
@@ -39,7 +47,10 @@ export const removeStoredProject = () => {
 
 export const setStoredProject = (project: string | null) => {
   if (project) {
-    sessionStorage?.setItem(SessionStorageKeys.Project, project);
+    sessionStorage?.setItem(
+      SessionStorageKeys.Project,
+      project,
+    );
   } else {
     removeStoredProject();
   }

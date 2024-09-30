@@ -13,9 +13,12 @@ export const useSettings = (): TUseSettings => {
   const { token } = storeToRefs(useProfileStore());
 
   const getProjects = () =>
-    fetch(`${REST_API_URL}/api/projects`, {
-      headers: { 'X-Auth-Token': token.value || '' },
-    })
+    fetch(
+      `${REST_API_URL}/api/projects`,
+      {
+        headers: { 'X-Auth-Token': token.value || '' },
+      },
+    )
       .then((response) => response.json())
       .catch((e) => {
         console.error(e);

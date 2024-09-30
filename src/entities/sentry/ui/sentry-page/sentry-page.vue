@@ -17,11 +17,18 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).toLocaleString());
+const formattedTimestamp = computed(
+  () => moment(props.event.payload.timestamp).toLocaleString(),
+);
 
-const mainException = computed(() => props.event.payload?.exception?.values?.[0]);
+const mainException = computed(
+  () => props.event.payload?.exception?.values?.[0],
+);
 
-const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0);
+const exceptionsLength = computed(
+  () => props.event?.payload?.exception?.values?.length || 0,
+);
+
 </script>
 
 <template>
@@ -35,7 +42,9 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
           {{ mainException.type }}
         </h1>
 
-        <pre class="sentry-page__main-exception-message">{{ mainException.value }}</pre>
+        <pre
+          class="sentry-page__main-exception-message"
+        >{{ mainException.value }}</pre>
 
         <p class="sentry-page__main-date">
           {{ formattedTimestamp }}
@@ -134,7 +143,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__main-exception {
-  @apply font-bold text-sm sm:text-base md:text-lg lg:text-2xl break-all sm:break-normal mb-3;
+  @apply font-bold break-all sm:break-normal mb-3;
+  @apply text-sm sm:text-base md:text-lg lg:text-2xl;
 }
 
 .sentry-page__main-date {
@@ -157,7 +167,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__section-title__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply text-purple-600 dark:text-purple-100;
+  @apply bg-purple-100 dark:bg-purple-800;
   @apply rounded-full text-xs px-2 py-1 ml-2;
 }
 

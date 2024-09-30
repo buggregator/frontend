@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core';
-import { PageHeader, LayoutBase, LayoutSidebar } from '@/widgets/ui';
+import {
+  PageHeader, LayoutBase, LayoutSidebar,
+} from '@/widgets/ui';
 import { PAGE_TYPES } from '@/shared/constants';
 import { SettingsPageContent } from '../settings-page-content';
 

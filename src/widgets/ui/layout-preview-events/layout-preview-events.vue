@@ -12,13 +12,18 @@ type Props = {
   type: PageEventTypes;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  title: '',
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    title: '',
+  },
+);
 
 const { events, cachedEvents } = useEvents();
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0);
+const isEventsPaused = computed(
+  () => cachedEvents.idsByType.value[props.type]?.length > 0,
+);
 
 const allEvents = computed(() => {
   if (props.type === PAGE_TYPES.ALL_EVENT_TYPES) {
@@ -35,12 +40,13 @@ const visibleEvents = computed(() => {
   // TODO: remove comment
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid),
-  );
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
 });
 
 watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`);
+  useTitle(
+    `${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`,
+  );
 });
 </script>
 
@@ -105,7 +111,9 @@ watchEffect(() => {
 }
 
 .layout-preview-events__btn-stop-events-count {
-  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
+  @apply bg-red-600 text-white w-4 h-4 rounded-full;
+  @apply flex justify-center;
+  @apply absolute right-0 bottom-0;
 
   transform: translate(60%, -60%);
 }

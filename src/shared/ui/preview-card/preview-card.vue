@@ -1,7 +1,9 @@
 <script lang="ts" setup generic="T">
 import download from 'downloadjs';
 import { toBlob, toPng } from 'html-to-image';
-import { ref, computed, onBeforeMount, onMounted } from 'vue';
+import {
+  ref, computed, onBeforeMount, onMounted,
+} from 'vue';
 import { REST_API_URL } from '../../lib/io';
 import { useEvents } from '../../lib/use-events';
 import type { NormalizedEvent } from '../../types';
@@ -31,7 +33,9 @@ const normalizedOrigin = computed(() => {
     .map(([key, value]) => [key, String(value)])
     .filter((res) => Boolean(res[1]));
 
-  return originEntriesList.length > 0 ? Object.fromEntries(originEntriesList) : null;
+  return originEntriesList.length > 0
+    ? Object.fromEntries(originEntriesList)
+    : null;
 });
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.event.id}`);
@@ -47,9 +51,12 @@ const changeVisibleControls = (value = true) => {
 const deleteEvent = () => {
   isDeleting.value = true;
 
-  setTimeout(() => {
-    events?.removeById(props.event.id);
-  }, 200);
+  setTimeout(
+    () => {
+      events?.removeById(props.event.id);
+    },
+    200,
+  );
 };
 
 const toggleEventLock = () => {
@@ -70,7 +77,10 @@ const downloadImage = () => {
   if (eventRef.value) {
     toPng(eventRef.value as HTMLInputElement)
       .then((dataUrl) => {
-        download(dataUrl, `${props.event.type}-${props.event.id}.png`);
+        download(
+          dataUrl,
+          `${props.event.type}-${props.event.id}.png`,
+        );
       })
       .catch((e) => console.error(e))
       .finally(() => {
@@ -85,7 +95,11 @@ const downloadFile = async () => {
 
     if (event) {
       download(
-        JSON.stringify(event, null, 2),
+        JSON.stringify(
+          event,
+          null,
+          2,
+        ),
         `${props.event.type}-${props.event.id}.json`,
         'application/json',
       );
@@ -128,9 +142,12 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  setTimeout(() => {
-    isInit.value = true;
-  }, 200);
+  setTimeout(
+    () => {
+      isInit.value = true;
+    },
+    200,
+  );
 });
 </script>
 
@@ -170,7 +187,10 @@ onMounted(() => {
       </div>
 
       <PreviewCardFooter
-        v-if="!isCollapsed && !isOptimized && (normalizedOrigin || event.serverName)"
+        v-if="!isCollapsed
+          && !isOptimized
+          && (normalizedOrigin || event.serverName)
+        "
         class="preview-card__footer"
         :server-name="event.serverName"
         :origin-config="normalizedOrigin"
@@ -191,7 +211,8 @@ onMounted(() => {
 }
 
 .preview-card__in {
-  @apply flex flex-grow flex-col p-2 lg:p-3 dark:bg-gray-700 opacity-100 overflow-hidden;
+  @apply p-2 lg:p-3 dark:bg-gray-700 opacity-100 overflow-hidden;
+  @apply flex flex-grow flex-col;
 
   &:hover {
     @apply bg-gray-50 dark:bg-gray-900;

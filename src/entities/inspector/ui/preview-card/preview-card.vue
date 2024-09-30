@@ -12,6 +12,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const eventLink = computed(() => `/inspector/${props.event.id}`);
+
 </script>
 
 <template>
@@ -35,6 +36,7 @@ const eventLink = computed(() => `/inspector/${props.event.id}`);
 }
 
 .preview-card__link {
-  @apply flex-grow cursor-pointer rounded-md overflow-hidden mb-2 border dark:border-gray-500;
+  @apply flex-grow cursor-pointer rounded-md overflow-hidden mb-2;
+  @apply border dark:border-gray-500;
 }
 </style>

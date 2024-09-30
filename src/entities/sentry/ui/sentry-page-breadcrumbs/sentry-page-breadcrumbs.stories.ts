@@ -12,12 +12,20 @@ export default {
 
 export const Laravel: StoryObj<typeof SentryPageBreadcrumbs> = {
   args: {
-    breadcrumbs: normalizeSentryEvent(sentryLaravelMock).payload.breadcrumbs?.values,
+    breadcrumbs:
+      normalizeSentryEvent(sentryLaravelMock)
+        .payload
+        .breadcrumbs
+        ?.values,
   },
 };
 
 export const Spiral: StoryObj<typeof SentryPageBreadcrumbs> = {
   args: {
-    breadcrumbs: normalizeSentryEvent(sentrySpiralMock).payload.breadcrumbs?.values,
+    breadcrumbs:
+      normalizeSentryEvent(sentrySpiralMock)
+        .payload
+        .breadcrumbs
+        ?.values,
   },
 };

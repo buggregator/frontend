@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue';
 import type { NormalizedEvent } from '@/shared/types';
-import { TableBase, TableBaseRow, FileAttachment } from '@/shared/ui';
+import {
+  TableBase, TableBaseRow, FileAttachment,
+} from '@/shared/ui';
 import type { HttpDump } from '../../types';
 
 type Props = {
@@ -14,14 +16,14 @@ const uri = computed(() => decodeURI(props.event.payload?.request?.uri));
 
 const hasPostData = computed(
   () =>
-    props.event.payload?.request?.post &&
-    Object.keys(props.event.payload?.request?.post).length > 0,
+    props.event.payload?.request?.post
+    && Object.keys(props.event.payload?.request?.post).length > 0,
 );
 
 const hasQuery = computed(
   () =>
-    props.event.payload?.request?.query &&
-    Object.keys(props.event.payload?.request?.query).length > 0,
+    props.event.payload?.request?.query
+    && Object.keys(props.event.payload?.request?.query).length > 0,
 );
 
 const hasHeaders = computed(
@@ -30,24 +32,27 @@ const hasHeaders = computed(
 
 const hasCookies = computed(
   () =>
-    props.event.payload?.request?.cookies &&
-    Object.keys(props.event.payload?.request?.cookies).length > 0,
+    props.event.payload?.request?.cookies
+    && Object.keys(props.event.payload?.request?.cookies).length > 0,
 );
 
 const hasBody = computed(() => props.event.payload?.request?.body?.length > 0);
 
 const hasAttachments = computed(
   () =>
-    props.event.payload?.request?.files &&
-    Object.keys(props.event.payload?.request?.files).length > 0,
+    props.event.payload?.request?.files
+    && Object.keys(props.event.payload?.request?.files).length > 0,
 );
+
 </script>
 
 <template>
   <div class="http-dump-page">
     <main class="http-dump-page__main">
       <h2 class="http-dump-page__title">
-        <span class="http-dump-page__title-method"> {{ event.payload.request.method }} </span>:
+        <span class="http-dump-page__title-method">
+          {{ event.payload.request.method }}
+        </span>:
         <span class="http-dump-page__title-uri">/{{ uri }}</span>
       </h2>
 

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import moment from 'moment';
-import { computed, onMounted, ref } from 'vue';
+import {
+  computed, onMounted, ref,
+} from 'vue';
 import { Tab, Tabs } from 'vue3-tabs-component';
 import { htmlEncode } from '@/shared/lib/helpers';
 import { useAttachments } from '@/shared/lib/io';
@@ -27,10 +29,9 @@ const isLoading = ref(false);
 const { getAttachments, calcDownloadLink } = useAttachments();
 
 const htmlSource = computed(() =>
-  props.event?.payload?.html ?
-    `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
-  : undefined,
-);
+  props.event?.payload?.html
+    ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
+    : undefined);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
@@ -79,10 +80,15 @@ const isText = computed(
 
 const mail = computed(() => props.event.payload);
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
+);
 
 const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
-  calcDownloadLink(props.event.id, attachmentId);
+  calcDownloadLink(
+    props.event.id,
+    attachmentId,
+  );
 
 onMounted(getAttachmentsRequest);
 </script>

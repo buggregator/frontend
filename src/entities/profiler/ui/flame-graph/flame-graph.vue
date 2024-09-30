@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { FlameChart } from 'flame-chart-js';
 import debounce from 'lodash.debounce';
-import { ref, onMounted, nextTick, onBeforeUnmount, computed } from 'vue';
+import {
+  ref, onMounted, nextTick, onBeforeUnmount, computed,
+} from 'vue';
 import type { EventId } from '@/shared/types';
 import type { StatBoardCost } from '@/shared/ui';
 import { useProfiler } from '../../lib';
@@ -35,7 +37,10 @@ const activeStatBoardStyle = computed(() => {
   let left = activeStatBoardPosition.value.x;
 
   if (width + activeStatBoardPosition.value.x > window.innerWidth - 80) {
-    const deltaX = width + activeStatBoardPosition.value.x - window.innerWidth + 100;
+    const deltaX = width
+        + activeStatBoardPosition.value.x
+        - window.innerWidth
+        + 100;
 
     left -= deltaX;
   }
@@ -94,15 +99,24 @@ const renderChart = async () => {
 
   window.addEventListener(
     'resize',
-    debounce(() => {
-      if (!graph.value) {
-        return;
-      }
+    debounce(
+      () => {
+        if (!graph.value) {
+          return;
+        }
 
-      const { width: windowWidth, height: windowHeight } = graph.value.getBoundingClientRect();
+        const {
+          width: windowWidth,
+          height: windowHeight,
+        } = graph.value.getBoundingClientRect();
 
-      flameChart.resize(windowWidth, windowHeight);
-    }, 30),
+        flameChart.resize(
+          windowWidth,
+          windowHeight,
+        );
+      },
+      30,
+    ),
   );
 };
 

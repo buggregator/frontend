@@ -12,6 +12,11 @@ export default {
 
 export const Exception: StoryObj<typeof SentryException> = {
   args: {
-    exception: normalizeSentryEvent(sentryCommonMock).payload?.exception?.values?.[0],
+    exception:
+      normalizeSentryEvent(sentryCommonMock)
+        .payload
+        ?.exception
+        ?.values
+        ?.[0],
   },
 };

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui';
+import {
+  IconSvg, TableBase, TableBaseRow,
+} from '@/shared/ui';
 import type { Sentry } from '../../types';
 
 type Props = {
@@ -19,6 +21,7 @@ const ddStates = ref(
     {} as Record<string, boolean>,
   ),
 );
+
 </script>
 
 <template>
@@ -75,7 +78,8 @@ const ddStates = ref(
 }
 
 .sentry-page-extra__wrapper {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 border border-purple-300 dark:border-gray-400;
+  @apply dark:bg-gray-900 bg-gray-100 p-3 ;
+  @apply border border-purple-300 dark:border-gray-400;
 
   &:first-child {
     @apply rounded-t-md;

@@ -13,6 +13,11 @@ export default {
 
 export const Default: StoryObj<typeof RayLog> = {
   args: {
-    log: (normalizeRayEvent(rayColorMock).payload.payloads[0].content as RayContentLog).values[0],
+    log: (
+      normalizeRayEvent(rayColorMock)
+        .payload
+        .payloads[0]
+        .content as RayContentLog
+    ).values[0],
   },
 };

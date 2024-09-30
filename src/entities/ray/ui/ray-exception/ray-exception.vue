@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from 'vue';
+import {
+  computed, defineProps, withDefaults,
+} from 'vue';
 import type { RayContentException } from '../../types';
 import { RayFile } from '../ray-file';
 
@@ -10,15 +12,19 @@ type Props = {
   maxFrames?: number;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 0,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    maxFrames: 0,
+  },
+);
 
 const exceptionFrames = computed(() => {
   const frames = props.exception.frames || [];
 
   return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse();
 });
+
 </script>
 
 <template>
@@ -51,8 +57,8 @@ const exceptionFrames = computed(() => {
 }
 
 .ray-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 border-purple-300 dark:border-gray-400;
-  @apply rounded-t-md border border-b-0;
+  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md;
+  @apply border border-b-0 border-purple-300 dark:border-gray-400;
 }
 
 .ray-exception__title {
@@ -66,7 +72,8 @@ const exceptionFrames = computed(() => {
 
 .ray-exception__text {
   @include code-example();
-  @apply mb-2 text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
+  @apply mb-2 text-xs text-opacity-60;
+  @apply break-words whitespace-pre-wrap overflow-auto;
 }
 
 .ray-exception__files {

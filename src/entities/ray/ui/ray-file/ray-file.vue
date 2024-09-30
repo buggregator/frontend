@@ -9,13 +9,19 @@ type Props = {
   isOpen?: boolean;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  isOpen: false,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    isOpen: false,
+  },
+);
 
 const collapsed = ref(props.isOpen);
 
-const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false));
+const hasSnippets = computed(
+  () => (props.file.snippet ? props.file.snippet.length > 0 : false),
+);
+
 </script>
 <template>
   <div
@@ -67,11 +73,13 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 <style lang="scss" scoped>
 @import 'src/assets/mixins';
 .ray-file {
-  @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
+  @apply text-xs cursor-pointer;
+  @apply border-b border-purple-200 dark:border-gray-600;
 }
 
 .ray-file__header {
-  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2 justify-between items-start;
+  @apply  py-2 px-3 flex space-x-2 justify-between items-start;
+  @apply bg-purple-50 dark:bg-gray-800;
 }
 
 .ray-file__title {

@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { TableBaseRow, TableBase, CodeSnippet } from '@/shared/ui';
+import {
+  TableBaseRow, TableBase, CodeSnippet,
+} from '@/shared/ui';
 import type { SentryContextApp } from '../../types';
 
 type Props = {

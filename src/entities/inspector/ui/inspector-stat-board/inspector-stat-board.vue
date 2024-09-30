@@ -9,8 +9,13 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const processDate = computed(() => moment(props.transaction.timestamp).toLocaleString());
-const processResult = computed(() => (props.transaction.result || 'success').toUpperCase());
+const processDate = computed(
+  () => moment(props.transaction.timestamp).toLocaleString(),
+);
+const processResult = computed(
+  () => (props.transaction.result || 'success').toUpperCase(),
+);
+
 </script>
 
 <template>
@@ -28,14 +33,18 @@ const processResult = computed(() => (props.transaction.result || 'success').toU
       <h4 class="inspector-stat-board__item-name">
         Duration
       </h4>
-      <strong class="inspector-stat-board__item-value"> {{ transaction.duration }} ms </strong>
+      <strong class="inspector-stat-board__item-value">
+        {{ transaction.duration }} ms
+      </strong>
     </div>
 
     <div class="inspector-stat-board__item">
       <h4 class="inspector-stat-board__item-name">
         Result
       </h4>
-      <span class="inspector-stat-board__item-value">{{ processResult }}</span>
+      <span class="inspector-stat-board__item-value">
+        {{ processResult }}
+      </span>
     </div>
   </section>
 </template>
@@ -44,7 +53,8 @@ const processResult = computed(() => (props.transaction.result || 'success').toU
 .inspector-stat-board {
   @apply flex flex-col sm:flex-row justify-between items-start;
   @apply bg-gray-200 dark:bg-gray-800;
-  @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
+  @apply divide-y sm:divide-y-0 sm:divide-x;
+  @apply divide-gray-300 dark:divide-gray-500;
   @apply p-0 sm:p-4 lg:p-6;
 }
 

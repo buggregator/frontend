@@ -16,11 +16,11 @@ export default {
 export const Default: StoryObj<typeof StatBoard> = {
   args: {
     cost: {
-      ct: 1,
-      wt: 206270,
       cpu: 44750,
+      ct: 1,
       mu: 3112176,
       pmu: 3001416,
+      wt: 206270,
     },
   },
 };
@@ -28,11 +28,11 @@ export const Default: StoryObj<typeof StatBoard> = {
 export const LargePeaks: StoryObj<typeof StatBoard> = {
   args: {
     cost: {
-      ct: 1,
-      wt: 2062700000,
       cpu: 447500000,
+      ct: 1,
       mu: 31121760000,
       pmu: 30014160000,
+      wt: 2062700000,
     },
   },
 };
@@ -40,11 +40,11 @@ export const LargePeaks: StoryObj<typeof StatBoard> = {
 export const SmallSize: StoryObj<typeof StatBoard> = {
   args: {
     cost: {
-      ct: 1,
-      wt: 206270,
       cpu: 44750,
+      ct: 1,
       mu: 3112176,
       pmu: 3001416,
+      wt: 206270,
     },
     size: StatBoardSize.Small,
   },

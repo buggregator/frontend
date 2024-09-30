@@ -1,17 +1,19 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
-import { withDefaults, defineProps, computed } from 'vue';
+import {
+  withDefaults, defineProps, computed,
+} from 'vue';
 import { useSettingsStore } from '../../stores/settings';
 import { IconSvg } from '../icon-svg';
 
 // TODO: Move this to a shared file
 const KEY_MAP: { [key: string]: string } = {
-  php_version: 'php',
-  laravel_version: 'laravel',
-  symfony_version: 'symfony',
-  line_number: 'line',
-  hostname: 'host',
   environment: 'env',
+  hostname: 'host',
+  laravel_version: 'laravel',
+  line_number: 'line',
+  php_version: 'php',
+  symfony_version: 'symfony',
 };
 
 type Props = {
@@ -21,10 +23,13 @@ type Props = {
   } | null;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  serverName: '',
-  originConfig: null,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    serverName: '',
+    originConfig: null,
+  },
+);
 
 const { codeEditor } = storeToRefs(useSettingsStore());
 
@@ -33,7 +38,10 @@ const mappedOrigins = computed(() =>
     (acc, [key, value]) => {
       const fileName = props.originConfig?.file || '';
 
-      if (key === 'name' && fileName.includes(value, fileName.length - value.length)) {
+      if (key === 'name' && fileName.includes(
+        value,
+        fileName.length - value.length,
+      )) {
         return acc;
       }
 
@@ -48,8 +56,7 @@ const mappedOrigins = computed(() =>
       return acc;
     },
     {} as { [key: string]: string },
-  ),
-);
+  ));
 
 const editorLink = computed(() => {
   if (!props.originConfig) {
@@ -67,6 +74,7 @@ const editorLink = computed(() => {
 });
 
 const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line');
+
 </script>
 
 <template>
@@ -119,9 +127,11 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .preview-card-footer__tag {
-  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs border-gray-600 rounded;
-  @apply px-2 py-1 border leading-none cursor-pointer;
-  @apply flex flex-wrap gap-1;
+  @apply hover:bg-gray-200 hover:dark:bg-gray-700;
+  @apply px-2 py-1 gap-1;
+  @apply text-2xs lg:text-xs border border-gray-600;
+  @apply flex flex-wrap;
+  @apply leading-none cursor-pointer rounded;
 }
 
 .preview-card-footer__tag-key {
@@ -133,7 +143,8 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .preview-card-footer__host {
-  @apply inline-flex items-center justify-start gap-1 py-1 text-gray-600 dark:text-gray-300;
+  @apply gap-1 py-1 text-gray-600 dark:text-gray-300;
+  @apply inline-flex items-center justify-start;
 }
 
 .preview-card-footer__host-icon {

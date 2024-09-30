@@ -2,7 +2,10 @@ import type { Meta, StoryObj } from '@storybook/vue3';
 import type { ComponentProps } from 'vue-component-type-helpers';
 import IconSvg from './icon-svg.vue';
 
-const iconNames = ((import.meta.env.STORYBOOK_ICON_SVG_NAMES as string) || '').split(',');
+const iconNames = (
+  (import.meta.env.STORYBOOK_ICON_SVG_NAMES as string)
+  || ''
+).split(',');
 
 export default {
   title: 'Shared/IconSvg',
@@ -39,7 +42,11 @@ export const AllIcons: StoryObj<typeof IconSvg> = {
     },
     template: `
       <div style="display: flex; flex-wrap: wrap;">
-        <figure v-for="name in names" class="flex flex-col items-center p-3 justify-between" style="width: 200px;">
+        <figure
+          v-for="name in names"
+          class="flex flex-col items-center p-3 justify-between"
+          style="width: 200px;"
+        >
           <IconSvg :name="name" style="width: 50px; margin: auto;" />
           <figcaption>{{ name }}</figcaption>
         </figure>

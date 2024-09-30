@@ -27,12 +27,23 @@ export const getStoredActiveTheme = () => {
 };
 
 export const setStoredActiveTheme = (themeName: string) => {
-  window?.localStorage.setItem(LocalStorageKeys.Theme, themeName);
+  window?.localStorage.setItem(
+    LocalStorageKeys.Theme,
+    themeName,
+  );
 
   if (themeName === THEME_MODES.LIGHT) {
-    window?.document?.documentElement?.classList?.remove(THEME_MODES.DARK);
+    window
+      ?.document
+      ?.documentElement
+      ?.classList
+      ?.remove(THEME_MODES.DARK);
   } else {
-    window?.document?.documentElement?.classList?.add(THEME_MODES.DARK);
+    window
+      ?.document
+      ?.documentElement
+      ?.classList
+      ?.add(THEME_MODES.DARK);
   }
 };
 
@@ -51,31 +62,55 @@ export const getStoredFixedHeader = () => {
 };
 
 export const setStoredFixedHeader = (state: boolean) => {
-  window?.localStorage.setItem(LocalStorageKeys.Navbar, String(state));
+  window?.localStorage.setItem(
+    LocalStorageKeys.Navbar,
+    String(state),
+  );
 
   if (state) {
-    window?.document?.documentElement?.classList?.add('navbar-fixed');
+    window
+      ?.document
+      ?.documentElement
+      ?.classList
+      ?.add('navbar-fixed');
   } else {
-    window?.document?.documentElement?.classList?.remove('navbar-fixed');
+    window
+      ?.document
+      ?.documentElement
+      ?.classList
+      ?.remove('navbar-fixed');
   }
 };
 
 export const getStoredEventsCountVisibility = (): boolean => {
-  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.EventCounts) || 'true';
+  const storageValue = window
+    ?.localStorage
+    ?.getItem(LocalStorageKeys.EventCounts)
+    || 'true';
 
   return storageValue === 'true';
 };
 
 export const setStoredEventsCountVisibility = (state: boolean) => {
-  window?.localStorage?.setItem(LocalStorageKeys.EventCounts, String(state));
+  window
+    ?.localStorage
+    ?.setItem(
+      LocalStorageKeys.EventCounts,
+      String(state),
+    );
 };
 
 export const getStoredPrimaryCodeEditor = (): string => {
-  const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
+  const storageValue = window
+    ?.localStorage
+    ?.getItem(LocalStorageKeys.CodeEditor);
 
-  return storedCodeEditor || '';
+  return storageValue || '';
 };
 
 export const setStoredPrimaryCodeEditor = (editor: string) => {
-  window?.localStorage?.setItem(LocalStorageKeys.CodeEditor, editor);
+  window?.localStorage?.setItem(
+    LocalStorageKeys.CodeEditor,
+    editor,
+  );
 };

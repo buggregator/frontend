@@ -8,7 +8,12 @@ type Props = {
 
 defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value);
+const normalizeHeaderValue = (value: unknown) =>
+  (Array.isArray(value)
+    ? value[0] || value
+    : value
+  );
+
 </script>
 
 <template>
@@ -50,7 +55,8 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 }
 
 .sentry-page-request__wrapper {
-  @apply dark:bg-gray-900 bg-gray-100 border border-purple-300 dark:border-gray-400;
+  @apply dark:bg-gray-900 bg-gray-100 border;
+  @apply border-purple-300 dark:border-gray-400;
   @apply p-3 rounded-md;
 }
 

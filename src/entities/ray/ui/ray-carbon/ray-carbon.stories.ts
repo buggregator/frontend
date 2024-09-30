@@ -13,6 +13,9 @@ export default {
 
 export const Default: StoryObj<typeof RayCarbon> = {
   args: {
-    carbon: normalizeRayEvent(rayCarbonMock).payload.payloads[0].content as RayContentCarbon,
+    carbon: normalizeRayEvent(rayCarbonMock)
+      .payload
+      .payloads[0]
+      .content as RayContentCarbon,
   },
 };

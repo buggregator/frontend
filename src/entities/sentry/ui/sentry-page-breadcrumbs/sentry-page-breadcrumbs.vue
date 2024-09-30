@@ -7,14 +7,20 @@ type Props = {
   breadcrumbs: SentryBreadcrumb[];
 };
 
-withDefaults(defineProps<Props>(), {
-  breadcrumbs: () => [] as SentryBreadcrumb[],
-});
+withDefaults(
+  defineProps<Props>(),
+  {
+    breadcrumbs: () => [] as SentryBreadcrumb[],
+  },
+);
 
 const formatDate = (timestamp?: number): string =>
   timestamp ? moment.unix(timestamp).fromNow() : '';
 
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase();
+const getClassByLevel = (
+  breadcrumb: SentryBreadcrumb,
+) => breadcrumb.level?.toLowerCase();
+
 </script>
 
 <template>
@@ -116,7 +122,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__in {
-  @apply flex flex-col border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
+  @apply border border-purple-300 dark:border-gray-400;
+  @apply flex flex-col rounded overflow-hidden;
   max-height: 600px;
 }
 
@@ -158,7 +165,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__col-detail {
-  @apply flex border border-purple-300 dark:border-purple-700 rounded items-center;
+  @apply border border-purple-300 dark:border-purple-700;
+  @apply flex rounded items-center;
 }
 
 .sentry-page-breadcrumbs__col-detail-title {

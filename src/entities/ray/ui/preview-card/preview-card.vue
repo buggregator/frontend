@@ -12,14 +12,23 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const classes = computed(() => [
-  `text-${props.event?.meta?.size || 'sm'}`,
-  `text-${props.event?.meta?.color || 'gray'}-500`,
-]);
+const classes = computed(
+  () => [
+    `text-${props.event?.meta?.size || 'sm'}`,
+    `text-${props.event?.meta?.color || 'gray'}-500`,
+    '',
+  ],
+);
 
-type GetComponent = (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
+type GetComponent = (
+  type: RayEventTypes | string
+) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
 
-const getComponent: GetComponent = (type) => COMPONENT_TYPE_MAP[type as RayEventTypes];
+const getComponent: GetComponent = (type) =>
+  COMPONENT_TYPE_MAP[type as RayEventTypes];
+
+const calcPayloadKey = (type: string, line: string = '') => `${type}-${line}`;
+
 </script>
 
 <template>
@@ -29,7 +38,7 @@ const getComponent: GetComponent = (type) => COMPONENT_TYPE_MAP[type as RayEvent
   >
     <template
       v-for="payload in event.payload.payloads"
-      :key="`${payload.type}-${payload.origin ? payload.origin.line_number : ''}`"
+      :key="calcPayloadKey(payload.type, payload.origin.line_number)"
     >
       <div v-if="payload.type && getComponent(payload.type)">
         <Component

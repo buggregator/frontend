@@ -23,7 +23,11 @@ export default {
 
 export const Default: StoryObj<typeof RayFile> = {
   args: {
-    file: (normalizeRayEvent(rayExceptionMock).payload.payloads[0].content as RayContentException)
-      .frames[0],
+    file: (
+      normalizeRayEvent(rayExceptionMock)
+        .payload
+        .payloads[0]
+        .content as RayContentException
+    ).frames[0],
   },
 };

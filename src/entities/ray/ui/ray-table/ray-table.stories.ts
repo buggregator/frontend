@@ -13,6 +13,9 @@ export default {
 
 export const Default: StoryObj<typeof RayTable> = {
   args: {
-    table: normalizeRayEvent(rayTableMock).payload.payloads[0].content as RayContentObject,
+    table: normalizeRayEvent(rayTableMock)
+      .payload
+      .payloads[0]
+      .content as RayContentObject,
   },
 };

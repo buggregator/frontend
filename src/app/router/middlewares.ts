@@ -29,12 +29,18 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
     try {
       await profileStore.getProfile();
     } catch (e) {
-      throw new RouteAuthAccessError('Access denied', to.path);
+      throw new RouteAuthAccessError(
+        'Access denied',
+        to.path,
+      );
     }
   }
 
   if (to.name !== RouteName.Login && !isAuthenticated.value) {
-    throw new RouteAuthAccessError('Access denied', to.path);
+    throw new RouteAuthAccessError(
+      'Access denied',
+      to.path,
+    );
   }
 
   if (to.name === RouteName.Login && to?.query?.token) {
@@ -54,14 +60,20 @@ export const checkType: TRouterMiddleware = async ({ to, next }) => {
   }
 
   if (Array.isArray(pageType)) {
-    throw new RouteAvailabilityError('Invalid Path parameter', to.path);
+    throw new RouteAvailabilityError(
+      'Invalid Path parameter',
+      to.path,
+    );
   }
 
   if (
-    !Object.values(RouteName).includes(pageType as RouteName) &&
-    !Object.values(EventTypes).includes(pageType as EventTypes)
+    !Object.values(RouteName).includes(pageType as RouteName)
+    && !Object.values(EventTypes).includes(pageType as EventTypes)
   ) {
-    throw new RouteAvailabilityError('Invalid Path', to.path);
+    throw new RouteAvailabilityError(
+      'Invalid Path',
+      to.path,
+    );
   }
 
   return;

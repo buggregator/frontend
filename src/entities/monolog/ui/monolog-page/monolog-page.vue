@@ -2,7 +2,9 @@
 import moment from 'moment/moment';
 import { computed } from 'vue';
 import type { NormalizedEvent } from '@/shared/types';
-import { CodeSnippet, TableBase, TableBaseRow } from '@/shared/ui';
+import {
+  CodeSnippet, TableBase, TableBaseRow,
+} from '@/shared/ui';
 import type { Monolog } from '../../types';
 
 type Props = {
@@ -12,6 +14,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
+
 </script>
 
 <template>

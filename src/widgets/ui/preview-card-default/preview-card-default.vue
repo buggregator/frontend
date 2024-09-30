@@ -8,7 +8,12 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-const code = computed(() => JSON.stringify(props.event, null, ' '));
+const code = computed(() => JSON.stringify(
+  props.event,
+  null,
+  ' ',
+));
+
 </script>
 
 <template>
@@ -30,6 +35,7 @@ const code = computed(() => JSON.stringify(props.event, null, ' '));
 }
 
 .event-card-fallback__snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words;
+  @apply bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white;
+  @apply relative break-words;
 }
 </style>

@@ -19,6 +19,7 @@ const originFile: Ref<RayFrame> = computed(
       function_name: '',
     }) as unknown as RayFrame,
 );
+
 </script>
 
 <template>

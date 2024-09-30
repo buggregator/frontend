@@ -3,7 +3,9 @@ import type { Monolog } from '../../types';
 import { normalizeMonolog } from './normalize-monolog';
 
 type TUseMonolog = () => {
-  normalizeMonologEvent: (event: ServerEvent<Monolog>) => NormalizedEvent<Monolog>;
+  normalizeMonologEvent: (
+    event: ServerEvent<Monolog>
+  ) => NormalizedEvent<Monolog>;
 };
 
 export const useMonolog: TUseMonolog = () => ({

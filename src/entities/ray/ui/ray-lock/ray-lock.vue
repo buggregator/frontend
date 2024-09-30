@@ -23,6 +23,7 @@ const stopExecution = () => {
   disabled.value = true;
   rayExecution.stop(props.name);
 };
+
 </script>
 
 <template>
@@ -66,9 +67,11 @@ const stopExecution = () => {
 }
 
 .ray-lock__button {
-  @apply bg-gray-100 dark:bg-gray-800 border dark:border-gray-600 hover:bg-gray-50;
-  @apply flex items-center text-sm font-medium focus:outline-none disabled:opacity-50;
-  @apply px-5 py-2 space-x-3;
+  @apply bg-gray-100 dark:bg-gray-800 hover:bg-gray-50;
+  @apply focus:outline-none disabled:opacity-50;
+  @apply px-5 py-2 space-x-3 text-sm font-medium ;
+  @apply flex items-center;
+  @apply border dark:border-gray-600;
 }
 
 .ray-lock__button--continue {
@@ -76,7 +79,7 @@ const stopExecution = () => {
 }
 
 .ray-lock__button--stop {
-  @apply border-l-0 rounded-r-full; // active:bg-grey-300;
+  @apply border-l-0 rounded-r-full;
 }
 
 .ray-lock__button-text {

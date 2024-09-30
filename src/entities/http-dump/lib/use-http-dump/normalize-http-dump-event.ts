@@ -7,16 +7,18 @@ import {
 } from '@/shared/types';
 import type { HttpDump, HttpDumpServer } from '../../types';
 
-type NormalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>) => NormalizedEvent<HttpDump>;
+type NormalizeHttpDumpEvent = (
+  event: ServerEvent<HttpDumpServer>
+) => NormalizedEvent<HttpDump>;
 
 export const normalizeHttpDumpEvent: NormalizeHttpDumpEvent = (event) => {
   const normalizedEvent: NormalizedEvent<HttpDump> = {
+    date: event.timestamp
+      ? new Date(event.timestamp * 1000)
+      : null,
     id: event.uuid,
-    type: EventTypes.HttpDump,
     labels: [EventTypes.HttpDump],
     origin: { uri: event.payload.request.uri },
-    serverName: event.payload.host,
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: {
       ...event.payload,
       request: {
@@ -24,19 +26,23 @@ export const normalizeHttpDumpEvent: NormalizeHttpDumpEvent = (event) => {
         files: (event?.payload?.request?.files || []).map(
           (file) =>
             ({
-              uuid: file.uuid,
-              name: file.name,
-              size: file.size,
               mime: file.mime,
+              name: file.name,
               path: file.uri || '',
+              size: file.size,
+              uuid: file.uuid,
             }) as Attachment,
         ),
       },
     },
+    serverName: event.payload.host,
+    type: EventTypes.HttpDump,
   };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format('HH:mm:ss'));
+    normalizedEvent.labels.unshift(
+      moment(normalizedEvent.date).format('HH:mm:ss'),
+    );
   }
 
   return normalizedEvent;

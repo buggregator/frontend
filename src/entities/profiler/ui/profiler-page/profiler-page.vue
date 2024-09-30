@@ -18,6 +18,7 @@ const activeTab = ref('');
 const tabChange = (selectedTab: { tab: { name: string } }) => {
   activeTab.value = selectedTab.tab.name;
 };
+
 </script>
 
 <template>

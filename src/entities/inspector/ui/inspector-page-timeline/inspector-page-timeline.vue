@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, type Ref } from 'vue';
-import type { InspectorSegment, InspectorTransaction, Inspector } from '../../types';
+import {
+  computed, type ComputedRef, type Ref,
+} from 'vue';
+import type {
+  InspectorSegment, InspectorTransaction, Inspector,
+} from '../../types';
 
 type Props = {
   payload: Inspector;
@@ -38,23 +42,25 @@ const layoutCells = computed(() => {
   const maxWidth = transaction.value.duration;
   const cellWidth = Math.floor(maxWidth / COLUMNS_NUMBER + 1);
 
-  return new Array(COLUMNS_NUMBER).fill(null).reduceRight((acc, _, i) => {
-    acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
+  return new Array(COLUMNS_NUMBER).fill(null).reduceRight(
+    (acc, _, i) => {
+      acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))));
 
-    if (!i) {
+      if (!i) {
       // NOTE: add last cell as full size without rounding
-      acc.push(maxWidth);
-    }
+        acc.push(maxWidth);
+      }
 
-    return acc;
-  }, []);
+      return acc;
+    },
+    [],
+  );
 });
 
 const segments: ComputedRef<InspectorSegment[]> = computed(() =>
   props.payload
     .filter((item): item is InspectorSegment => item.model === 'segment')
-    .filter((el) => el?.transaction?.hash === transaction.value.hash),
-);
+    .filter((el) => el?.transaction?.hash === transaction.value.hash));
 
 const segmentTypes = computed(() => {
   const arr: string[] = [];
@@ -72,14 +78,18 @@ const segmentRows = computed(() => {
   const { duration } = transaction.value;
 
   return segments.value.map((segment: InspectorSegment) => ({
-    label: segment.label,
     duration: segment.duration,
+    label: segment.label,
+    marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
     start: segment.start,
     type: segment.type,
-    widthPercent: Math.max(Number(((segment.duration * 100) / duration).toFixed(2)), 0.5),
-    marginPercent: (((segment.start || 0) * 100) / duration).toFixed(),
+    widthPercent: Math.max(
+      Number(((segment.duration * 100) / duration).toFixed(2)),
+      0.5,
+    ),
   }));
 });
+
 </script>
 
 <template>
@@ -160,14 +170,18 @@ const segmentRows = computed(() => {
                 background: segmentColor(segmentRow.type),
               }"
             >
-              <span v-if="segmentRow.widthPercent > 20"> {{ segmentRow.duration }} ms </span>
+              <span v-if="segmentRow.widthPercent > 20">
+                {{ segmentRow.duration }} ms
+              </span>
             </div>
 
             <div
               class="inspector-page-timeline__segment-end"
               :style="{ color: segmentColor(segmentRow.type) }"
             >
-              <span v-if="segmentRow.widthPercent <= 20"> {{ segmentRow.duration }} ms </span>
+              <span v-if="segmentRow.widthPercent <= 20">
+                {{ segmentRow.duration }} ms
+              </span>
             </div>
           </div>
         </div>
@@ -215,7 +229,8 @@ const segmentRows = computed(() => {
 
 .inspector-page-timeline__body {
   @include border-style;
-  @apply bg-gradient-to-r from-gray-300 dark:from-gray-900 from-[1px] to-transparent to-[1px];
+  @apply bg-gradient-to-r to-transparent to-[1px];
+  @apply from-gray-300 dark:from-gray-900 from-[1px];
   @apply border-l-transparent;
 }
 
@@ -239,7 +254,8 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 py-1 opacity-20 overflow-auto;
+  @apply font-bold whitespace-nowrap px-2 py-1 opacity-20 overflow-auto;
+  @apply text-2xs md:text-xs;
 
   .inspector-page-timeline__segment:hover & {
     @apply opacity-100;

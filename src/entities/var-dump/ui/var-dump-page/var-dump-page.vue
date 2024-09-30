@@ -2,7 +2,9 @@
 import moment from 'moment/moment';
 import { computed } from 'vue';
 import type { NormalizedEvent } from '@/shared/types';
-import { TableBase, TableBaseRow, ValueDump } from '@/shared/ui';
+import {
+  TableBase, TableBaseRow, ValueDump,
+} from '@/shared/ui';
 import type { VarDump } from '../../types';
 
 type Props = {
@@ -17,7 +19,10 @@ const title = computed(() => {
   return type[0].toUpperCase() + type.slice(1);
 });
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
+);
+
 </script>
 
 <template>

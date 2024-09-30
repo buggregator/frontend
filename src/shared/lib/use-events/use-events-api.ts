@@ -1,7 +1,9 @@
 import { storeToRefs } from 'pinia';
 import type { Ref } from 'vue';
 import { useEventsStore } from '../../stores';
-import type { EventId, EventType, ServerEvent } from '../../types';
+import type {
+  EventId, EventType, ServerEvent,
+} from '../../types';
 import { useApiTransport } from '../use-api-transport';
 
 export interface TUseEventsApi {
@@ -18,8 +20,13 @@ export const useEventsApi = (): TUseEventsApi => {
 
   const { lockedIds, events } = storeToRefs(eventsStore);
 
-  const { deleteEventsAll, deleteEventsList, deleteEventsByType, getEventsAll, getEvent } =
-    useApiTransport();
+  const {
+    deleteEventsAll,
+    deleteEventsList,
+    deleteEventsByType,
+    getEventsAll,
+    getEvent,
+  } = useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
     const res = await deleteEventsList(uuids);
@@ -54,7 +61,11 @@ export const useEventsApi = (): TUseEventsApi => {
   const removeByType = async (eventType: EventType) => {
     if (lockedIds.value.length) {
       const removedIds = events.value
-        .filter(({ type, uuid }) => type === eventType && !lockedIds.value.includes(uuid))
+        .filter(
+          ({ type, uuid }) =>
+            type === eventType
+            && !lockedIds.value.includes(uuid),
+        )
         .map(({ uuid }) => uuid);
 
       await removeList(removedIds);
@@ -85,11 +96,11 @@ export const useEventsApi = (): TUseEventsApi => {
   };
 
   return {
-    items: events as unknown as Ref<ServerEvent<unknown>[]>,
-    getItem: getEvent,
     getAll,
+    getItem: getEvent,
+    items: events as unknown as Ref<ServerEvent<unknown>[]>,
     removeAll,
-    removeByType,
     removeById,
+    removeByType,
   };
 };

@@ -13,6 +13,10 @@ export default {
 
 export const Default: StoryObj<typeof RayFrame> = {
   args: {
-    frame: (normalizeRayEvent(rayCallerMock).payload.payloads[0].content as RayContentFrame).frame,
+    frame: (normalizeRayEvent(rayCallerMock)
+      .payload
+      .payloads[0]
+      .content as RayContentFrame
+    ).frame,
   },
 };

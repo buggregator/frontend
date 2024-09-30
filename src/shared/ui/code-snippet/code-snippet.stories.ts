@@ -18,15 +18,15 @@ export const Default: StoryObj<typeof CodeSnippet> = {
 export const Object: StoryObj<typeof CodeSnippet> = {
   args: {
     code: {
+      date: new Date(1673266869 * 1000),
       id: 'da076402-6f98-4ada-bae2-d77d405cf427',
-      type: EventTypes.Monolog,
-      serverName: 'My server',
+      labels: ['Monolog', '200'],
       origin: {
         one: 1,
         two: 2,
       },
-      date: new Date(1673266869 * 1000),
-      labels: ['Monolog', '200'],
+      serverName: 'My server',
+      type: EventTypes.Monolog,
     },
     language: 'javascript',
   },

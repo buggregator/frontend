@@ -10,7 +10,7 @@
     "postinstall": "yarn prepare",
     "prepare": "husky && husky install",
     "lint": "yarn codestyle && yarn typecheck",
-    "codestyle": "prettier --write ./src && eslint ./src --fix",
+    "codestyle": "prettier --write \"**/*.{json,html,css,scss,md}\" && eslint . --fix",
     "test": "echo \"TODO: need to add tests\"",
     "storybook": "storybook dev -p 6006",
     "sb": "storybook dev -p 6006",
@@ -21,18 +21,12 @@
   },
   "type": "module",
   "lint-staged": {
-    "*.{js,ts}": [
+    "*.{js,ts,vue}": [
       "eslint --fix"
     ],
-    "*.{vue,html}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.json": [
+    "*.{json,html,css,scss,md}": [
       "prettier --write"
-    ],
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    ]
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.24.7",

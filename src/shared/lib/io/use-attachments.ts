@@ -14,10 +14,17 @@ export const useAttachments: TUseAttachments = () => {
   const headers = { 'X-Auth-Token': token.value };
 
   const calcDownloadLink = (id: EventId, attachmentId?: string): string =>
-    `${REST_API_URL}/api/smtp/${id}/attachments${attachmentId ? `/${attachmentId}` : ''}`;
+    `${REST_API_URL}/api/smtp/${id}/attachments${
+      attachmentId
+        ? `/${attachmentId}`
+        : ''
+    }`;
 
   const getAttachments = (id: EventId) =>
-    fetch(calcDownloadLink(id), { headers })
+    fetch(
+      calcDownloadLink(id),
+      { headers },
+    )
       .then((response) => response.json())
       .then((response) => {
         if (response?.data) {

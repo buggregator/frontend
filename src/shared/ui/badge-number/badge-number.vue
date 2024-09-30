@@ -6,12 +6,20 @@ type Props = {
   isVisible?: boolean;
 };
 
-const props = withDefaults(defineProps<Props>(), {
-  isVisible: true,
-});
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    isVisible: true,
+  },
+);
 
-const normalizedNumber = computed(() => (props.number > 99 ? '*' : props.number));
-const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
+const normalizedNumber = computed(
+  () => (props.number > 99 ? '*' : props.number),
+);
+const isVisibleBadge = computed(
+  () => props.number > 0 && props.isVisible,
+);
+
 </script>
 
 <template>
@@ -35,9 +43,12 @@ const isVisibleBadge = computed(() => props.number > 0 && props.isVisible);
 }
 
 .badge-number__badge {
-  @apply bg-red-700 dark:bg-red-800 text-white shadow-lg ring-1 dark:ring-gray-800 ring-gray-300;
+  @apply bg-red-700 dark:bg-red-800 dark:ring-gray-800;
   @apply flex justify-center items-center;
   @apply absolute rounded-full font-thin leading-none;
-  @apply sm:-right-2 sm:-top-2 -right-1 -top-1 sm:w-4 sm:h-4 w-3 h-3 sm:text-[10px] text-[8px];
+  @apply sm:-right-2 sm:-top-2 -right-1 -top-1;
+  @apply sm:w-4 sm:h-4 w-3 h-3;
+  @apply sm:text-[10px] text-[8px] text-white;
+  @apply ring-1 ring-gray-300 shadow-lg;
 }
 </style>

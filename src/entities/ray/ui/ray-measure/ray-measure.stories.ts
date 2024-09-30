@@ -13,13 +13,18 @@ export default {
 
 export const Default: StoryObj<typeof RayMeasure> = {
   args: {
-    measure: normalizeRayEvent(rayMeasureMock).payload.payloads[0].content as RayContentMeasure,
+    measure: normalizeRayEvent(rayMeasureMock)
+      .payload
+      .payloads[0]
+      .content as RayContentMeasure,
   },
 };
 
 export const Start: StoryObj<typeof RayMeasure> = {
   args: {
-    measure: normalizeRayEvent(rayMeasureStartMock).payload.payloads[0]
+    measure: normalizeRayEvent(rayMeasureStartMock)
+      .payload
+      .payloads[0]
       .content as RayContentMeasure,
   },
 };

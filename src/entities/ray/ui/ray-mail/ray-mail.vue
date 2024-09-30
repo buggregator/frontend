@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue';
-import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui';
+import {
+  IconSvg, TableBase, TableBaseRow,
+} from '@/shared/ui';
 import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview';
 import type { RayContentMail, RayUser } from '../../types';
 
@@ -17,6 +19,7 @@ const getValuesField = (values: RayUser[]) => {
 
   return formattedValues.join(', ');
 };
+
 </script>
 
 <template>
