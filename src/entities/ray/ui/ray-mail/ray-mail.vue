@@ -1,51 +1,79 @@
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue'
-import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
-import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview'
-import type { RayContentMail, RayUser } from '../../types'
+import { defineProps, ref } from 'vue';
+import {
+  IconSvg, TableBase, TableBaseRow,
+} from '@/shared/ui';
+import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview';
+import type { RayContentMail, RayUser } from '../../types';
 
 type Props = {
-  content: RayContentMail
-}
+  content: RayContentMail;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const collapsed = ref(true)
+const collapsed = ref(true);
 
 const getValuesField = (values: RayUser[]) => {
-  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || []
-  return formattedValues.join(', ')
-}
+  const formattedValues = values.map((v) => `${v.name}[${v.email}]`) || [];
+
+  return formattedValues.join(', ');
+};
+
 </script>
 
 <template>
   <div class="ray-mail">
     <TableBase>
-      <TableBaseRow v-if="content.subject" title="Subject">
+      <TableBaseRow
+        v-if="content.subject"
+        title="Subject"
+      >
         {{ content.subject }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.mailable_class" title="Mailable class">
+      <TableBaseRow
+        v-if="content.mailable_class"
+        title="Mailable class"
+      >
         {{ content.mailable_class }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.from && content.from.length > 0" title="From">
+      <TableBaseRow
+        v-if="content.from && content.from.length > 0"
+        title="From"
+      >
         {{ getValuesField(content.from) }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.to && content.to.length > 0" title="To">
+      <TableBaseRow
+        v-if="content.to && content.to.length > 0"
+        title="To"
+      >
         {{ getValuesField(content.to) }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.cc && content.cc.length > 0" title="Cc">
+      <TableBaseRow
+        v-if="content.cc && content.cc.length > 0"
+        title="Cc"
+      >
         {{ getValuesField(content.cc) }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.bcc && content.bcc.length > 0" title="Bcc">
+      <TableBaseRow
+        v-if="content.bcc && content.bcc.length > 0"
+        title="Bcc"
+      >
         {{ getValuesField(content.bcc) }}
       </TableBaseRow>
-      <TableBaseRow v-if="content.reply_to && content.reply_to.length > 0" title="Reply to">
+      <TableBaseRow
+        v-if="content.reply_to && content.reply_to.length > 0"
+        title="Reply to"
+      >
         {{ getValuesField(content.reply_to) }}
       </TableBaseRow>
     </TableBase>
 
     <div class="ray-mail__collapsable">
-      <h3 class="ray-mail__collapsable-header" @click="collapsed = !collapsed">
+      <h3
+        class="ray-mail__collapsable-header"
+        @click="collapsed = !collapsed"
+      >
         <span>HTML</span>
         <IconSvg
           class="ray-mail__icon"
@@ -54,7 +82,11 @@ const getValuesField = (values: RayUser[]) => {
         />
       </h3>
 
-      <EmailPreview v-if="!collapsed" :device="EmailPreviewDevice.Tablet">
+      <EmailPreview
+        v-if="!collapsed"
+        :device="EmailPreviewDevice.Tablet"
+      >
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="content.html" />
       </EmailPreview>
     </div>
@@ -67,7 +99,8 @@ const getValuesField = (values: RayUser[]) => {
 }
 
 .ray-mail__icon {
-  @apply w-5 h-4 border border-purple-300 shadow bg-white dark:bg-gray-600 py-1 rounded mt-0.5 flex items-center justify-center;
+  @apply border border-purple-300 shadow bg-white dark:bg-gray-600;
+  @apply w-5 h-4 py-1 rounded mt-0.5 flex items-center justify-center;
 
   .icon-svg {
     width: 10px;

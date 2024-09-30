@@ -1,69 +1,86 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { ALL_EVENT_TYPES } from '@/shared/constants'
-import { useEvents } from '@/shared/lib/use-events'
-import { useSettingsStore } from '@/shared/stores'
-import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
-import { AppHeader, BadgeNumber, PauseButton } from '@/shared/ui'
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+import { ALL_EVENT_TYPES } from '@/shared/constants';
+import { useEvents } from '@/shared/lib/use-events';
+import { useSettingsStore } from '@/shared/stores';
+import {
+  type EventType, type PageEventTypes, RouteName,
+} from '@/shared/types';
+import {
+  AppHeader, BadgeNumber, PauseButton,
+} from '@/shared/ui';
 
-const { events, cachedEvents, getItemsCount } = useEvents()
-const { isVisibleEventCounts } = storeToRefs(useSettingsStore())
+const {
+  events, cachedEvents, getItemsCount,
+} = useEvents();
+const { isVisibleEventCounts } = storeToRefs(useSettingsStore());
 
 type Props = {
-  type: PageEventTypes
-  title: string
-}
+  type: PageEventTypes;
+  title: string;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const clearEvents = () => {
   if (props.type === ALL_EVENT_TYPES) {
-    return events.removeAll()
+    return events.removeAll();
   }
 
-  return events.removeByType(props.type as unknown as EventType)
-}
+  return events.removeByType(props.type as unknown as EventType);
+};
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
+const isEventsPaused = computed(
+  () => cachedEvents.idsByType.value[props.type]?.length > 0,
+);
 
 const allEvents = computed(() => {
   if (props.type === ALL_EVENT_TYPES) {
-    return events.items.value
+    return events.items.value;
   }
-  return events.items.value.filter(({ type }) => type === props.type)
-})
+
+  return events.items.value.filter(({ type }) => type === props.type);
+});
 
 const visibleEvents = computed(() => {
   if (!isEventsPaused.value) {
-    return allEvents.value
+    return allEvents.value;
   }
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid)
-  )
-})
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
+});
 
-const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length)
+const hiddenEventsCount = computed(
+  () => allEvents.value.length - visibleEvents.value.length,
+);
 
 const toggleUpdate = () => {
   if (isEventsPaused.value) {
-    cachedEvents.runUpdatesByType(props.type)
+    cachedEvents.runUpdatesByType(props.type);
   } else {
-    cachedEvents.stopUpdatesByType(props.type)
+    cachedEvents.stopUpdatesByType(props.type);
   }
-}
+};
 
 const badgeNumber = computed(() =>
   getItemsCount.value(
-    props.type !== ALL_EVENT_TYPES ? (props.type as unknown as EventType) : undefined
-  )
-)
+    props.type === ALL_EVENT_TYPES
+      ? undefined
+      : (props.type as EventType),
+  ));
+
 </script>
 
 <template>
   <AppHeader class="page-header">
-    <RouterLink :to="{ name: RouteName.Home }" :disabled="!title"> Home </RouterLink>
+    <RouterLink
+      :to="{ name: RouteName.Home }"
+      :disabled="!title"
+    >
+      Home
+    </RouterLink>
 
     <template v-if="title">
       <span>&nbsp;/&nbsp;</span>
@@ -80,8 +97,16 @@ const badgeNumber = computed(() =>
         @toggle-update="toggleUpdate"
       />
 
-      <BadgeNumber :number="badgeNumber" :is-visible="isVisibleEventCounts">
-        <button class="page-header__clear-button" @click="clearEvents">Clear events</button>
+      <BadgeNumber
+        :number="badgeNumber"
+        :is-visible="isVisibleEventCounts"
+      >
+        <button
+          class="page-header__clear-button"
+          @click="clearEvents"
+        >
+          Clear events
+        </button>
       </BadgeNumber>
     </template>
   </AppHeader>

@@ -1,31 +1,42 @@
 <script lang="ts" setup>
-import moment from 'moment'
-import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard } from '@/shared/ui'
-import type { SMTP } from '../../types'
+import moment from 'moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import { PreviewCard } from '@/shared/ui';
+import type { SMTP } from '../../types';
 
 type Props = {
-  event: NormalizedEvent<SMTP>
-}
+  event: NormalizedEvent<SMTP>;
+};
 
-const props = defineProps<Props>()
-const eventLink = computed(() => `/smtp/${props.event.id}`)
+const props = defineProps<Props>();
+const eventLink = computed(() => `/smtp/${props.event.id}`);
 
-const dateFormat = computed(() => moment(props.event.date).fromNow())
+const dateFormat = computed(() => moment(props.event.date).fromNow());
 
-const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || null)
+const emailRecipient = computed(
+  () => props?.event?.payload?.to?.[0]?.email || null,
+);
+
 </script>
 
 <template>
-  <PreviewCard class="smtp-preview" :event="event">
-    <RouterLink :to="eventLink" class="smtp-preview__link">
+  <PreviewCard
+    class="smtp-preview"
+    :event="event"
+  >
+    <RouterLink
+      :to="eventLink"
+      class="smtp-preview__link"
+    >
       <h3 class="smtp-preview__link-title">
         {{ event.payload.subject }}
       </h3>
 
       <div class="smtp-preview__link-text">
-        <span v-if="emailRecipient"> <strong>To:</strong> {{ emailRecipient }} </span>
+        <span v-if="emailRecipient">
+          <strong>To:</strong> {{ emailRecipient }}
+        </span>
 
         <span>{{ dateFormat }}</span>
       </div>

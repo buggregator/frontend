@@ -1,26 +1,38 @@
 <script lang="ts" setup>
 // TODO: need to rename component
-import { ref, computed } from 'vue'
-import { IconSvg } from '@/shared/ui'
-import type { RayFrame } from '../../types'
+import { ref, computed } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type { RayFrame } from '../../types';
 
 type Props = {
-  file: RayFrame
-  isOpen?: boolean
-}
+  file: RayFrame;
+  isOpen?: boolean;
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  isOpen: false
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    isOpen: false,
+  },
+);
 
-const collapsed = ref(props.isOpen)
+const collapsed = ref(props.isOpen);
 
-const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.length > 0 : false))
+const hasSnippets = computed(
+  () => (props.file.snippet ? props.file.snippet.length > 0 : false),
+);
+
 </script>
 <template>
-  <div class="ray-file" @click="collapsed = !collapsed">
+  <div
+    class="ray-file"
+    @click="collapsed = !collapsed"
+  >
     <div class="ray-file__header">
-      <div class="ray-file__title" :title="file.file_name">
+      <div
+        class="ray-file__title"
+        :title="file.file_name"
+      >
         <div>
           {{ file.class || 'null' }}:{{ file.method }}
           <span class="ray-file__title-in">at line</span>
@@ -37,16 +49,21 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
       />
     </div>
 
-    <div v-if="hasSnippets && !collapsed" class="ray-file__body">
+    <div
+      v-if="hasSnippets && !collapsed"
+      class="ray-file__body"
+    >
       <div
         v-for="line in file.snippet"
         :key="line.line_number"
         class="ray-file__snippet"
         :class="{
-          'ray-file__snippet--highlight': file.line_number === line.line_number
+          'ray-file__snippet--highlight': file.line_number === line.line_number,
         }"
       >
-        <div class="ray-file__snippet-num">{{ line.line_number }}.</div>
+        <div class="ray-file__snippet-num">
+          {{ line.line_number }}.
+        </div>
         <pre>{{ line.text }}</pre>
       </div>
     </div>
@@ -56,11 +73,13 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 <style lang="scss" scoped>
 @import 'src/assets/mixins';
 .ray-file {
-  @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
+  @apply text-xs cursor-pointer;
+  @apply border-b border-purple-200 dark:border-gray-600;
 }
 
 .ray-file__header {
-  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2 justify-between items-start;
+  @apply  py-2 px-3 flex space-x-2 justify-between items-start;
+  @apply bg-purple-50 dark:bg-gray-800;
 }
 
 .ray-file__title {

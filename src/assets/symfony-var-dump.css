@@ -6,7 +6,7 @@ pre.sf-dump {
 }
 
 pre.sf-dump:after {
-  content: "";
+  content: '';
   visibility: hidden;
   display: block;
   height: 0;

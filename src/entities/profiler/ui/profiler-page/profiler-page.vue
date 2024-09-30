@@ -1,31 +1,38 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { Tabs, Tab } from 'vue3-tabs-component'
-import type { NormalizedEvent } from '@/shared/types'
-import type { Profiler } from '../../types'
-import { CallGraph } from '../call-graph'
-import { FlameGraph } from '../flame-graph'
-import { TopFunctions } from '../top-functions'
+import { ref } from 'vue';
+import { Tabs, Tab } from 'vue3-tabs-component';
+import type { NormalizedEvent } from '@/shared/types';
+import type { Profiler } from '../../types';
+import { CallGraph } from '../call-graph';
+import { FlameGraph } from '../flame-graph';
+import { TopFunctions } from '../top-functions';
 
 type Props = {
-  event: NormalizedEvent<Profiler>
-}
+  event: NormalizedEvent<Profiler>;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const activeTab = ref('')
+const activeTab = ref('');
 
 const tabChange = (selectedTab: { tab: { name: string } }) => {
-  activeTab.value = selectedTab.tab.name
-}
+  activeTab.value = selectedTab.tab.name;
+};
+
 </script>
 
 <template>
   <div class="profiler-page">
     <main class="profiler-page__main">
-      <div ref="info" class="profiler-page__stat">
+      <div
+        ref="info"
+        class="profiler-page__stat"
+      >
         <section class="profiler-page__stat-tabs">
-          <Tabs :options="{ useUrlFragment: false }" @changed="tabChange">
+          <Tabs
+            :options="{ useUrlFragment: false }"
+            @changed="tabChange"
+          >
             <Tab name="Call graph">
               <CallGraph
                 v-if="activeTab === 'Call graph'"

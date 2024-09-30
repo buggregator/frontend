@@ -1,2 +1,1 @@
-export * from "./use-monolog";
-
+export * from './use-monolog';

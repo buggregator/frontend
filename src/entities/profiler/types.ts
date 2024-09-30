@@ -1,7 +1,6 @@
-import type {ElementsDefinition} from "cytoscape";
-import type {StatsBase} from "@/shared/types";
-import type {StatBoardCost} from "@/shared/ui";
-
+import type { ElementsDefinition } from 'cytoscape';
+import type { StatsBase } from '@/shared/types';
+import type { StatBoardCost } from '@/shared/ui';
 
 export interface ProfilerCost {
   d_cpu: number;
@@ -17,52 +16,52 @@ export interface ProfilerCost {
   p_mu: number;
   p_pmu: number;
   p_wt: number;
-  excl_cpu: number,
-  excl_wt: number,
-  excl_pmu: number,
-  excl_mu: number,
-  excl_ct: number,
+  excl_cpu: number;
+  excl_wt: number;
+  excl_pmu: number;
+  excl_mu: number;
+  excl_ct: number;
 }
 
 export interface Profiler {
-  tags: {
-    [key: string]: string | null | number
-  },
-  app_name: string,
-  hostname: string,
-  date: number,
-  peaks: StatsBase,
+  tags: Record<string, string | null | number>;
+  app_name: string;
+  hostname: string;
+  date: number;
+  peaks: StatsBase;
 }
 
 export interface ProfilerTopFunctions {
-  functions: Array<ProfilerCost & { function: string }>,
+  functions: (ProfilerCost & { function: string })[];
   schema: {
-    description: string
-    key: string
-    label: string
-    sortable: boolean
-    values: { key: (keyof ProfilerCost), format: string, type?: 'sub' }[]
-  }[],
-  overall_totals: StatBoardCost
+    description: string;
+    key: string;
+    label: string;
+    sortable: boolean;
+    values: { key: keyof ProfilerCost; format: string; type?: 'sub' }[];
+  }[];
+  overall_totals: StatBoardCost;
 }
 
 export interface ProfilerCallGraph extends ElementsDefinition {
-  toolbar: Array<{
-    description: string
-    label: string
-    metric: (keyof ProfilerCost)[number]
-  }>
+  toolbar: {
+    description: string;
+    label: string;
+    metric: (keyof ProfilerCost)[number];
+  }[];
 }
 
 export interface ProfileFlameChart {
-  children: ProfileFlameChart[],
-  color: string
-  cost: Partial<ProfilerCost>
-  duration: number
-  name: string
-  start: number
-  type: "task" | string
+  children: ProfileFlameChart[];
+  color: string;
+  cost: Partial<ProfilerCost>;
+  duration: number;
+  name: string;
+  start: number;
+  type: 'task' | string;
 }
 
-
-export type CallStackHoverData = { title: string, cost: Partial<ProfilerCost>}
+export interface CallStackHoverData {
+  title: string;
+  cost: Partial<ProfilerCost>;
+}

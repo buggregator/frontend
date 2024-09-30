@@ -1,30 +1,46 @@
 <script lang="ts" setup>
-import { TableBase, TableBaseRow } from '@/shared/ui'
-import type { SentryRequest } from '../../types'
+import { TableBase, TableBaseRow } from '@/shared/ui';
+import type { SentryRequest } from '../../types';
 
 type Props = {
-  request: SentryRequest
-}
+  request: SentryRequest;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 
-const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0] || value : value)
+const normalizeHeaderValue = (value: unknown) =>
+  (Array.isArray(value)
+    ? value[0] || value
+    : value
+  );
+
 </script>
 
 <template>
   <section class="sentry-page-request">
-    <h3 class="sentry-page-request__title">request</h3>
+    <h3 class="sentry-page-request__title">
+      request
+    </h3>
 
     <div class="sentry-page-request__wrapper">
-      <code v-if="request" class="sentry-page-request__url">
-        <strong>{{ request.method || 'GET' }}:</strong>
+      <code
+        v-if="request"
+        class="sentry-page-request__url"
+      >
+        <strong>{{ some || request.method || 'GET' }}:</strong>
         {{ request.url }}
       </code>
 
-      <h3 class="sentry-page-request__title sentry-page-request__title--sub">headers</h3>
+      <h3 class="sentry-page-request__title sentry-page-request__title--sub">
+        headers
+      </h3>
 
       <TableBase v-if="request && request.headers">
-        <TableBaseRow v-for="(value, title) in request.headers" :key="title" :title="String(title)">
+        <TableBaseRow
+          v-for="(value, title) in request.headers"
+          :key="title"
+          :title="String(title)"
+        >
           {{ normalizeHeaderValue(value) }}
         </TableBaseRow>
       </TableBase>
@@ -39,7 +55,9 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 }
 
 .sentry-page-request__wrapper {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-md border border-purple-300 dark:border-gray-400;
+  @apply dark:bg-gray-900 bg-gray-100 border;
+  @apply border-purple-300 dark:border-gray-400;
+  @apply p-3 rounded-md;
 }
 
 .sentry-page-request__title {

@@ -168,4 +168,4 @@ export default `<!doctype html>
     </table>
     </body>
     </html>
-`
+`;

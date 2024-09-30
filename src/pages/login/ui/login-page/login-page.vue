@@ -1,37 +1,52 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
-import { RouteName } from '@/shared/types'
-import { LayoutBase } from '@/widgets/ui'
-import { useProfileStore, useSettingsStore } from '@/shared/stores'
-import { IconSvg } from '@/shared/ui'
+import { useTitle } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+import { LayoutBase } from '@/widgets/ui';
+import { useProfileStore, useSettingsStore } from '@/shared/stores';
+import { RouteName } from '@/shared/types';
+import { IconSvg } from '@/shared/ui';
 
-useTitle('Login | Buggregator')
+useTitle('Login | Buggregator');
 
-const store = useProfileStore()
-const { loginLinkUrl } = storeToRefs(useSettingsStore())
-const router = useRouter()
+const store = useProfileStore();
+const { loginLinkUrl } = storeToRefs(useSettingsStore());
+const router = useRouter();
 
 if (store.isAuthenticated) {
-  router.replace({ name: RouteName.Home })
+  router.replace({ name: RouteName.Home });
 }
 
 const redirect = () => {
-  router.replace({ path: loginLinkUrl.value })
-}
+  router.replace({ path: loginLinkUrl.value });
+};
+
 </script>
 
 <template>
   <LayoutBase class="login-page">
     <div class="login-page__container">
-      <IconSvg class="login-page__logo" name="logo" />
+      <IconSvg
+        class="login-page__logo"
+        name="logo"
+      />
       <div class="login-page__form">
         <div class="login-page__form-left-block">
-          <h1 class="login-page__form-title">Welcome Back</h1>
-          <p class="login-page__form-text">Let's get you signed in.</p>
-          <button class="login-page__form-button" @click="redirect">
-            <IconSvg class="w-6" name="lock" fill="currentcolor" />
+          <h1 class="login-page__form-title">
+            Welcome Back
+          </h1>
+          <p class="login-page__form-text">
+            Let's get you signed in.
+          </p>
+          <button
+            class="login-page__form-button"
+            @click="redirect"
+          >
+            <IconSvg
+              class="w-6"
+              name="lock"
+              fill="currentcolor"
+            />
             Continue to SSO
           </button>
         </div>

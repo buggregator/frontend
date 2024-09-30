@@ -422,12 +422,7 @@
                   "$response = tap($kernel->handle("
                 ],
                 "context_line": "    $request = Request::capture()",
-                "post_context": [
-                  "))->send();",
-                  "",
-                  "$kernel->terminate($request, $response);",
-                  ""
-                ],
+                "post_context": ["))->send();", "", "$kernel->terminate($request, $response);", ""],
                 "vars": {
                   "param0": "/app/public/index.php"
                 }

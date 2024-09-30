@@ -1,17 +1,16 @@
-import { action } from "@storybook/addon-actions";
-import type { Meta, StoryObj } from "@storybook/vue3";
-import type { ComponentProps } from "vue-component-type-helpers";
-import { SortingOrder } from "./constants";
-import SortingWrapper from "./sorting-wrapper.vue";
-
+import { action } from '@storybook/addon-actions';
+import type { Meta, StoryObj } from '@storybook/vue3';
+import type { ComponentProps } from 'vue-component-type-helpers';
+import { SortingOrder } from './constants';
+import SortingWrapper from './sorting-wrapper.vue';
 
 export default {
-  title: "Shared/SortingWrapper",
+  title: 'Shared/SortingWrapper',
   component: SortingWrapper,
   render: (args: ComponentProps<typeof SortingWrapper>) => ({
     components: { SortingWrapper },
     methods: {
-      action
+      action,
     },
     setup() {
       return {
@@ -47,9 +46,9 @@ export default {
           </sorting-wrapper>
         </div>
       </div>`,
-  })
+  }),
 } as Meta<typeof SortingWrapper>;
 
 export const Default: StoryObj<typeof SortingWrapper> = {
-  args: {}
+  args: {},
 };

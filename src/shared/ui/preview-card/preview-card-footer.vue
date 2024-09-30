@@ -1,79 +1,94 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { withDefaults, defineProps, computed } from 'vue'
-import { useSettingsStore } from '../../stores/settings'
-import { IconSvg } from '../icon-svg'
+import { storeToRefs } from 'pinia';
+import {
+  withDefaults, defineProps, computed,
+} from 'vue';
+import { useSettingsStore } from '../../stores/settings';
+import { IconSvg } from '../icon-svg';
 
 // TODO: Move this to a shared file
 const KEY_MAP: { [key: string]: string } = {
-  php_version: 'php',
-  laravel_version: 'laravel',
-  symfony_version: 'symfony',
-  line_number: 'line',
+  environment: 'env',
   hostname: 'host',
-  environment: 'env'
-}
+  laravel_version: 'laravel',
+  line_number: 'line',
+  php_version: 'php',
+  symfony_version: 'symfony',
+};
 
 type Props = {
-  serverName: string
+  serverName: string;
   originConfig: {
-    [key: string]: string
-  } | null
-}
+    [key: string]: string;
+  } | null;
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  serverName: '',
-  originConfig: null
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    serverName: '',
+    originConfig: null,
+  },
+);
 
-const { codeEditor } = storeToRefs(useSettingsStore())
+const { codeEditor } = storeToRefs(useSettingsStore());
 
 const mappedOrigins = computed(() =>
   Object.entries(props.originConfig || {}).reduce(
     (acc, [key, value]) => {
-      const fileName = props.originConfig?.file || ''
+      const fileName = props.originConfig?.file || '';
 
-      if (key === 'name' && fileName.includes(value, fileName.length - value.length)) {
-        return acc
+      if (key === 'name' && fileName.includes(
+        value,
+        fileName.length - value.length,
+      )) {
+        return acc;
       }
 
       if (!value || value === 'undefined') {
-        return acc
+        return acc;
       }
 
-      const mappedKey = KEY_MAP[key] || key
-      acc[mappedKey] = value
+      const mappedKey = KEY_MAP[key] || key;
 
-      return acc
+      acc[mappedKey] = value;
+
+      return acc;
     },
-    {} as { [key: string]: string }
-  )
-)
+    {} as { [key: string]: string },
+  ));
 
 const editorLink = computed(() => {
   if (!props.originConfig) {
-    return ''
+    return '';
   }
 
-  const fileName = mappedOrigins.value.file || ''
-  const line = mappedOrigins.value.line || ''
+  const fileName = mappedOrigins.value.file || '';
+  const line = mappedOrigins.value.line || '';
 
   if (!fileName || fileName === 'unknown') {
-    return ''
+    return '';
   }
 
-  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ''}`
-})
+  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ''}`;
+});
 
-const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line')
+const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line');
+
 </script>
 
 <template>
   <div class="preview-card-footer">
     <div class="preview-card-footer__tags">
       <template v-if="mappedOrigins">
-        <template v-for="(value, key) in mappedOrigins" :key="key">
-          <div v-if="!isEditorLink(String(key))" class="preview-card-footer__tag">
+        <template
+          v-for="(value, key) in mappedOrigins"
+          :key="key"
+        >
+          <div
+            v-if="!isEditorLink(String(key))"
+            class="preview-card-footer__tag"
+          >
             <span class="preview-card-footer__tag-key">{{ key }}:</span>
             <span class="preview-card-footer__tag-value">{{ value }}</span>
           </div>
@@ -91,8 +106,14 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
       </template>
     </div>
 
-    <div v-if="serverName" class="preview-card-footer__host">
-      <IconSvg name="host" class="preview-card-footer__host-icon" />
+    <div
+      v-if="serverName"
+      class="preview-card-footer__host"
+    >
+      <IconSvg
+        name="host"
+        class="preview-card-footer__host-icon"
+      />
       <span class="preview-card-footer__host-name">
         {{ serverName }}
       </span>
@@ -106,7 +127,11 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .preview-card-footer__tag {
-  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap gap-1 leading-none cursor-pointer;
+  @apply hover:bg-gray-200 hover:dark:bg-gray-700;
+  @apply px-2 py-1 gap-1;
+  @apply text-2xs lg:text-xs border border-gray-600;
+  @apply flex flex-wrap;
+  @apply leading-none cursor-pointer rounded;
 }
 
 .preview-card-footer__tag-key {
@@ -118,7 +143,8 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .preview-card-footer__host {
-  @apply inline-flex items-center justify-start gap-1 py-1 text-gray-600 dark:text-gray-300;
+  @apply gap-1 py-1 text-gray-600 dark:text-gray-300;
+  @apply inline-flex items-center justify-start;
 }
 
 .preview-card-footer__host-icon {

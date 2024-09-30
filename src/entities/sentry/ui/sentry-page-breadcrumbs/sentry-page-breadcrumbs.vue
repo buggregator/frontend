@@ -1,20 +1,26 @@
 <script lang="ts" setup>
-import moment from 'moment'
-import { CodeSnippet } from '@/shared/ui'
-import type { SentryBreadcrumb } from '../../types'
+import moment from 'moment';
+import { CodeSnippet } from '@/shared/ui';
+import type { SentryBreadcrumb } from '../../types';
 
 type Props = {
-  breadcrumbs: SentryBreadcrumb[]
-}
+  breadcrumbs: SentryBreadcrumb[];
+};
 
-withDefaults(defineProps<Props>(), {
-  breadcrumbs: () => [] as SentryBreadcrumb[]
-})
+withDefaults(
+  defineProps<Props>(),
+  {
+    breadcrumbs: () => [] as SentryBreadcrumb[],
+  },
+);
 
 const formatDate = (timestamp?: number): string =>
-  timestamp ? moment.unix(timestamp).fromNow() : ''
+  timestamp ? moment.unix(timestamp).fromNow() : '';
 
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase()
+const getClassByLevel = (
+  breadcrumb: SentryBreadcrumb,
+) => breadcrumb.level?.toLowerCase();
+
 </script>
 
 <template>
@@ -22,19 +28,36 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
     <h3 class="sentry-page-breadcrumbs__title">
       breadcrumbs
 
-      <span v-if="breadcrumbs.length > 0" class="sentry-page-breadcrumbs__counter">{{
-        breadcrumbs.length
-      }}</span>
+      <span
+        v-if="breadcrumbs.length > 0"
+        class="sentry-page-breadcrumbs__counter"
+      >{{ breadcrumbs.length }}</span>
     </h3>
     <div class="sentry-page-breadcrumbs__in">
-      <nav style="grid-template-columns: 1fr 100px 200px 17px" class="sentry-page-breadcrumbs__nav">
-        <div class="sentry-page-breadcrumbs__nav-col-title">description</div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">level</div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">time</div>
+      <nav
+        style="grid-template-columns: 1fr 100px 200px 17px"
+        class="sentry-page-breadcrumbs__nav"
+      >
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          description
+        </div>
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          level
+        </div>
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          time
+        </div>
       </nav>
 
-      <div v-if="breadcrumbs" class="sentry-page-breadcrumbs__cols-wr">
-        <div v-for="b in breadcrumbs" :key="b.toString()" class="sentry-page-breadcrumbs__cols">
+      <div
+        v-if="breadcrumbs"
+        class="sentry-page-breadcrumbs__cols-wr"
+      >
+        <div
+          v-for="b in breadcrumbs"
+          :key="b.toString()"
+          class="sentry-page-breadcrumbs__cols"
+        >
           <div class="sentry-page-breadcrumbs__col">
             <p class="sentry-page-breadcrumbs__col-message">
               {{ b.message }}
@@ -49,13 +72,17 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 
             <div class="sentry-page-breadcrumbs__col-details">
               <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">type</div>
+                <div class="sentry-page-breadcrumbs__col-detail-title">
+                  type
+                </div>
                 <div class="sentry-page-breadcrumbs__col-detail-value">
                   {{ b.type }}
                 </div>
               </div>
               <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">category</div>
+                <div class="sentry-page-breadcrumbs__col-detail-title">
+                  category
+                </div>
                 <div class="sentry-page-breadcrumbs__col-detail-value">
                   {{ b.category }}
                 </div>
@@ -63,9 +90,10 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
             </div>
           </div>
           <div class="sentry-page-breadcrumbs__col">
-            <span class="sentry-page-breadcrumbs__col-level-badge" :class="getClassByLevel(b)">{{
-              b.level
-            }}</span>
+            <span
+              class="sentry-page-breadcrumbs__col-level-badge"
+              :class="getClassByLevel(b)"
+            >{{ b.level }}</span>
           </div>
           <div class="sentry-page-breadcrumbs__col">
             {{ formatDate(b.timestamp) }}
@@ -89,16 +117,20 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply rounded-full text-xs px-2 py-1 ml-2;
 }
 
 .sentry-page-breadcrumbs__in {
-  @apply flex flex-col border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
+  @apply border border-purple-300 dark:border-gray-400;
+  @apply flex flex-col rounded overflow-hidden;
   max-height: 600px;
 }
 
 .sentry-page-breadcrumbs__nav {
-  @apply border-b border-purple-300 dark:border-purple-700 grid bg-purple-50 dark:bg-purple-800 text-xs font-bold text-purple-600 dark:text-purple-100 rounded-t;
+  @apply border-purple-300 dark:border-purple-700;
+  @apply bg-purple-50 dark:bg-purple-800 text-purple-600 dark:text-purple-100;
+  @apply grid text-xs font-bold rounded-t border-b;
 }
 
 .sentry-page-breadcrumbs__nav-col-title {
@@ -106,7 +138,8 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__cols-wr {
-  @apply bg-gray-100 dark:bg-gray-800 max-h-full flex-1 overflow-y-scroll divide-y divide-purple-300 dark:divide-purple-600;
+  @apply bg-gray-100 dark:bg-gray-800divide-purple-300 dark:divide-purple-600;
+  @apply max-h-full flex-1 overflow-y-scroll divide-y;
 }
 
 .sentry-page-breadcrumbs__cols {
@@ -127,11 +160,13 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 }
 
 .sentry-page-breadcrumbs__col-details {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 text-2xs my-3 gap-3;
+  @apply flex flex-row flex-wrap items-center text-2xs my-3 gap-3;
+  @apply text-purple-600 dark:text-purple-100;
 }
 
 .sentry-page-breadcrumbs__col-detail {
-  @apply flex border border-purple-300 dark:border-purple-700 rounded items-center;
+  @apply border border-purple-300 dark:border-purple-700;
+  @apply flex rounded items-center;
 }
 
 .sentry-page-breadcrumbs__col-detail-title {

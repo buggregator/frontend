@@ -3,7 +3,4 @@
 import TableBaseRow from './table-base-row.vue';
 import TableBase from './table-base.vue';
 
-export {
-  TableBase,
-  TableBaseRow,
-}
+export { TableBase, TableBaseRow };

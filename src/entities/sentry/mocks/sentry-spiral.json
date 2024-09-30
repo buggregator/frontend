@@ -292,13 +292,7 @@
                 "lineno": 28,
                 "in_app": true,
                 "abs_path": "/root/repos/spiral-apps/filters-bridge/app.php",
-                "pre_context": [
-                  "",
-                  "if ($app === null) {",
-                  "    exit(255);",
-                  "}",
-                  ""
-                ],
+                "pre_context": ["", "if ($app === null) {", "    exit(255);", "}", ""],
                 "context_line": "$code = (int)$app->serve();",
                 "post_context": ["exit($code);", ""]
               },

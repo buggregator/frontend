@@ -1,51 +1,72 @@
 <script lang="ts" setup>
-import moment from 'moment'
-import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import type { Sentry } from '../..//types'
-import { SentryException } from '../sentry-exception'
-import { SentryPageApp } from '../sentry-page-app'
-import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
-import { SentryPageDevice } from '../sentry-page-device'
-import { SentryPageExtra } from '../sentry-page-extra'
-import { SentryPageRequest } from '../sentry-page-request'
-import { SentryPageTags } from '../sentry-page-tags'
+import moment from 'moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import type { Sentry } from '../..//types';
+import { SentryException } from '../sentry-exception';
+import { SentryPageApp } from '../sentry-page-app';
+import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs';
+import { SentryPageDevice } from '../sentry-page-device';
+import { SentryPageExtra } from '../sentry-page-extra';
+import { SentryPageRequest } from '../sentry-page-request';
+import { SentryPageTags } from '../sentry-page-tags';
 
 type Props = {
-  event: NormalizedEvent<Sentry>
-}
+  event: NormalizedEvent<Sentry>;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).toLocaleString())
+const formattedTimestamp = computed(
+  () => moment(props.event.payload.timestamp).toLocaleString(),
+);
 
-const mainException = computed(() => props.event.payload?.exception?.values?.[0])
+const mainException = computed(
+  () => props.event.payload?.exception?.values?.[0],
+);
 
-const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0)
+const exceptionsLength = computed(
+  () => props.event?.payload?.exception?.values?.length || 0,
+);
+
 </script>
 
 <template>
   <div class="sentry-page">
     <main class="sentry-page__main">
-      <header v-if="mainException" class="sentry-page__main-header">
+      <header
+        v-if="mainException"
+        class="sentry-page__main-header"
+      >
         <h1 class="sentry-page__main-exception">
           {{ mainException.type }}
         </h1>
 
-        <pre class="sentry-page__main-exception-message">{{ mainException.value }}</pre>
+        <pre
+          class="sentry-page__main-exception-message"
+        >{{ mainException.value }}</pre>
 
         <p class="sentry-page__main-date">
           {{ formattedTimestamp }}
         </p>
       </header>
 
-      <SentryPageTags class="sentry-page__section" :payload="event.payload" />
+      <SentryPageTags
+        class="sentry-page__section"
+        :payload="event.payload"
+      />
 
-      <section v-if="mainException" class="sentry-page__section">
+      <section
+        v-if="mainException"
+        class="sentry-page__section"
+      >
         <h3 class="sentry-page__section-title">
           exceptions
 
-          <span v-if="exceptionsLength > 0" class="sentry-page__section-title__counter">
+          <span
+            v-if="exceptionsLength > 0"
+            class="sentry-page__section-title__counter"
+          >
             {{ exceptionsLength }}
           </span>
         </h3>
@@ -54,8 +75,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
           <template
             v-if="
               event.payload.exception &&
-              event.payload.exception.values &&
-              event.payload.exception.values.length > 0
+                event.payload.exception.values &&
+                event.payload.exception.values.length > 0
             "
           >
             <SentryException
@@ -72,8 +93,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
       <SentryPageBreadcrumbs
         v-if="
           event.payload.breadcrumbs &&
-          event.payload.breadcrumbs.values &&
-          event.payload.breadcrumbs.values.length > 0
+            event.payload.breadcrumbs.values &&
+            event.payload.breadcrumbs.values.length > 0
         "
         :breadcrumbs="event.payload.breadcrumbs.values"
         class="sentry-page__section"
@@ -122,7 +143,8 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__main-exception {
-  @apply font-bold text-sm sm:text-base md:text-lg lg:text-2xl break-all sm:break-normal mb-3;
+  @apply font-bold break-all sm:break-normal mb-3;
+  @apply text-sm sm:text-base md:text-lg lg:text-2xl;
 }
 
 .sentry-page__main-date {
@@ -145,7 +167,9 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__section-title__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
+  @apply text-purple-600 dark:text-purple-100;
+  @apply bg-purple-100 dark:bg-purple-800;
+  @apply rounded-full text-xs px-2 py-1 ml-2;
 }
 
 .sentry-page__section-exceptions {

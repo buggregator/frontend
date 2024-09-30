@@ -1,27 +1,35 @@
 <script lang="ts" setup>
-import moment from 'moment/moment'
-import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import { TableBase, TableBaseRow, ValueDump } from '@/shared/ui'
-import type { VarDump } from '../../types'
+import moment from 'moment/moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import {
+  TableBase, TableBaseRow, ValueDump,
+} from '@/shared/ui';
+import type { VarDump } from '../../types';
 
 type Props = {
-  event: NormalizedEvent<VarDump>
-}
+  event: NormalizedEvent<VarDump>;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const title = computed(() => {
-  const type = String(props.event.payload.payload.type || 'Unknown type')
+  const type = String(props.event.payload.payload.type || 'Unknown type');
 
-  return type[0].toUpperCase() + type.slice(1)
-})
+  return type[0].toUpperCase() + type.slice(1);
+});
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
+);
+
 </script>
 
 <template>
-  <div ref="main" class="var-dump">
+  <div
+    ref="main"
+    class="var-dump"
+  >
     <main class="var-dump__in">
       <header class="var-dump__header">
         <h2 class="var-dump__header-title">
@@ -33,11 +41,19 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
       </header>
 
       <section class="var-dump__body">
-        <ValueDump :value="event.payload.payload.value" :type="event.payload.payload.type" />
+        <ValueDump
+          :value="event.payload.payload.value"
+          :type="event.payload.payload.type"
+        />
       </section>
 
-      <section v-if="event.payload.context.source" class="var-dump__body">
-        <h3 class="var-dump__body-text">Source</h3>
+      <section
+        v-if="event.payload.context.source"
+        class="var-dump__body"
+      >
+        <h3 class="var-dump__body-text">
+          Source
+        </h3>
         <TableBase class="var-dump__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.context.source"
@@ -49,11 +65,23 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
         </TableBase>
       </section>
 
-      <section v-if="event.payload.context.request" class="var-dump__body">
-        <h3 class="var-dump__body-text">Request</h3>
+      <section
+        v-if="event.payload.context.request"
+        class="var-dump__body"
+      >
+        <h3 class="var-dump__body-text">
+          Request
+        </h3>
+
         <TableBase class="var-dump__body-table">
-          <template v-for="(value, name) in event.payload.context.request" :key="name">
-            <TableBaseRow v-if="name && value" :title="String(name)">
+          <template
+            v-for="(value, name) in event.payload.context.request"
+            :key="name"
+          >
+            <TableBaseRow
+              v-if="name && value"
+              :title="String(name)"
+            >
               {{ value }}
             </TableBaseRow>
           </template>

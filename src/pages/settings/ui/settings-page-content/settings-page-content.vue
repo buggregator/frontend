@@ -1,40 +1,53 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { THEME_MODES, useSettingsStore } from '@/shared/stores'
-import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { useTitle } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+import { THEME_MODES, useSettingsStore } from '@/shared/stores';
+import { BadgeNumber, IconSvg } from '@/shared/ui';
 
-const settingsStore = useSettingsStore()
-const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
-  settingsStore
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore)
+const settingsStore = useSettingsStore();
+const {
+  changeTheme,
+  changeNavbar,
+  changeEventCountsVisibility,
+  changeActiveCodeEditor,
+} = settingsStore;
+const {
+  themeType, isFixedHeader, isVisibleEventCounts, codeEditor,
+} = storeToRefs(settingsStore);
 
-const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK);
 
 // TODO: add throttle
 const changeCodeEditor = (event: Event) => {
-  const editor = (event.target as HTMLInputElement).value
-  changeActiveCodeEditor(editor)
-}
+  const editor = (event.target as HTMLInputElement).value;
 
-useTitle('Settings | Buggregator')
+  changeActiveCodeEditor(editor);
+};
+
+useTitle('Settings | Buggregator');
 </script>
 
 <template>
   <main class="settings-page-content">
-    <div class="settings-page-content__title">Theme: {{ isDarkMode ? 'Dark' : 'Light' }}</div>
+    <div class="settings-page-content__title">
+      Theme: {{ isDarkMode ? 'Dark' : 'Light' }}
+    </div>
 
     <div class="settings-page-content__control">
       <IconSvg
         name="sun"
         class="settings-page-content__control-icon"
-        :class="{ 'settings-page-content__control-icon--active': !isDarkMode }"
+        :class="{
+          'settings-page-content__control-icon--active': !isDarkMode
+        }"
       />
 
       <button
         class="settings-page-content__control-button"
-        :class="{ 'settings-page-content__control-button--active': isDarkMode }"
+        :class="{
+          'settings-page-content__control-button--active': isDarkMode
+        }"
         @click="changeTheme"
       >
         <span class="settings-page-content__control-button-in" />
@@ -43,22 +56,30 @@ useTitle('Settings | Buggregator')
       <IconSvg
         class="settings-page-content__control-icon"
         name="moon"
-        :class="{ 'settings-page-content__control-icon--active': isDarkMode }"
+        :class="{
+          'settings-page-content__control-icon--active': isDarkMode
+        }"
       />
     </div>
 
-    <div class="settings-page-content__title">Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}</div>
+    <div class="settings-page-content__title">
+      Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}
+    </div>
 
     <div class="settings-page-content__control">
       <IconSvg
         name="lock-off"
         class="settings-page-content__control-icon"
-        :class="{ 'settings-page-content__control-icon--active': !isFixedHeader }"
+        :class="{
+          'settings-page-content__control-icon--active': !isFixedHeader
+        }"
       />
 
       <button
         class="settings-page-content__control-button"
-        :class="{ 'settings-page-content__control-button--active': isFixedHeader }"
+        :class="{
+          'settings-page-content__control-button--active': isFixedHeader
+        }"
         @click="changeNavbar"
       >
         <span class="settings-page-content__control-button-in" />
@@ -67,7 +88,9 @@ useTitle('Settings | Buggregator')
       <IconSvg
         class="settings-page-content__control-icon"
         name="lock"
-        :class="{ 'settings-page-content__control-icon--active': isFixedHeader }"
+        :class="{
+          'settings-page-content__control-icon--active': isFixedHeader
+        }"
       />
     </div>
 
@@ -79,7 +102,7 @@ useTitle('Settings | Buggregator')
       <div
         class="settings-page-content__control-icon"
         :class="{
-          'settings-page-content__control-icon--active': !isVisibleEventCounts
+          'settings-page-content__control-icon--active': !isVisibleEventCounts,
         }"
       >
         <IconSvg name="inspector" />
@@ -88,7 +111,7 @@ useTitle('Settings | Buggregator')
       <button
         class="settings-page-content__control-button"
         :class="{
-          'settings-page-content__control-button--active': isVisibleEventCounts
+          'settings-page-content__control-button--active': isVisibleEventCounts,
         }"
         @click="changeEventCountsVisibility"
       >
@@ -98,16 +121,21 @@ useTitle('Settings | Buggregator')
       <div
         class="settings-page-content__control-icon"
         :class="{
-          'settings-page-content__control-icon--active': isVisibleEventCounts
+          'settings-page-content__control-icon--active': isVisibleEventCounts,
         }"
       >
-        <BadgeNumber class="settings-page-content__control-icon-badge" :number="15">
+        <BadgeNumber
+          class="settings-page-content__control-icon-badge"
+          :number="15"
+        >
           <IconSvg name="inspector" />
         </BadgeNumber>
       </div>
     </div>
 
-    <div class="settings-page-content__title">Code Editor Open Link:</div>
+    <div class="settings-page-content__title">
+      Code Editor Open Link:
+    </div>
 
     <div class="settings-page-content__control">
       <div>
@@ -117,12 +145,13 @@ useTitle('Settings | Buggregator')
             type="text"
             :value="codeEditor"
             @change="changeCodeEditor"
-          />
+          >
           &nbsp;://open?file=/App/Modules/Logger.php&line=12
         </label>
 
         <div class="settings-page-content__control-description">
-          Example of link to open files in code editor. You can replace the name editor with a more
+          Example of link to open files in code editor.
+          You can replace the name editor with a more
           preferable one
         </div>
       </div>
@@ -165,7 +194,8 @@ useTitle('Settings | Buggregator')
 }
 
 .settings-page-content__control-button-in {
-  @apply inline-block h-6 w-6 transform rounded-full transition bg-blue-600 translate-x-2;
+  @apply h-6 w-6 bg-blue-600 transform translate-x-2;
+  @apply inline-block rounded-full transition;
 
   .settings-page-content__control-button--active & {
     @apply translate-x-8;

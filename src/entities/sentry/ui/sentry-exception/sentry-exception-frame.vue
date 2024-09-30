@@ -1,30 +1,42 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { IconSvg } from '@/shared/ui'
-import type { SentryFrame } from '../../types'
+import { computed, ref } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type { SentryFrame } from '../../types';
 
 type Props = {
-  frame: SentryFrame
-  isOpen: boolean
-}
+  frame: SentryFrame;
+  isOpen: boolean;
+};
 
-const props = defineProps<Props>()
-const isFrameOpen = ref(props.isOpen)
+const props = defineProps<Props>();
+const isFrameOpen = ref(props.isOpen);
+
+// TODO: remove comment
 
 const hasBody = computed(() =>
-  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
-)
+  Boolean(
+    props.frame.context_line
+    || props.frame.post_context
+    || props.frame.pre_context,
+  ));
 
 const toggleOpen = () => {
   if (hasBody.value) {
-    isFrameOpen.value = !isFrameOpen.value
+    isFrameOpen.value = !isFrameOpen.value;
   }
-}
+};
+
 </script>
 
 <template>
-  <div class="sentry-exception-frame" :class="{ 'sentry-exception-frame--empty': !hasBody }">
-    <div class="sentry-exception-frame__head" @click="toggleOpen">
+  <div
+    class="sentry-exception-frame"
+    :class="{ 'sentry-exception-frame--empty': !hasBody }"
+  >
+    <div
+      class="sentry-exception-frame__head"
+      @click="toggleOpen"
+    >
       <div class="sentry-exception-frame__head-title">
         {{ frame.filename }}
 
@@ -37,13 +49,16 @@ const toggleOpen = () => {
         v-if="frame.pre_context"
         class="sentry-exception-frame__head-title-dd"
         :class="{
-          'sentry-exception-frame__head-title-dd--visible': isFrameOpen
+          'sentry-exception-frame__head-title-dd--visible': isFrameOpen,
         }"
         name="dd"
       />
     </div>
 
-    <div v-if="isFrameOpen && hasBody" class="sentry-exception-frame__body">
+    <div
+      v-if="isFrameOpen && hasBody"
+      class="sentry-exception-frame__body"
+    >
       <template v-if="frame.pre_context">
         <div
           v-for="(line, i) in frame.pre_context"
@@ -54,15 +69,22 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <pre
+            class="sentry-exception-frame__body-line-content"
+          >{{ line }}</pre>
         </div>
       </template>
 
       <div
         v-if="frame.context_line"
-        class="sentry-exception-frame__body-line sentry-exception-frame__body-line--selection"
+        class="
+          sentry-exception-frame__body-line
+          sentry-exception-frame__body-line--selection
+        "
       >
-        <div class="sentry-exception-frame__body-line-position">{{ frame.lineno }}.</div>
+        <div class="sentry-exception-frame__body-line-position">
+          {{ frame.lineno }}.
+        </div>
 
         <pre>{{ frame.context_line }}</pre>
       </div>
@@ -77,7 +99,9 @@ const toggleOpen = () => {
             {{ (frame?.lineno ?? 0) + i + 1 }}.
           </div>
 
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <pre
+            class="sentry-exception-frame__body-line-content"
+          >{{ line }}</pre>
         </div>
       </template>
     </div>
@@ -92,7 +116,8 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__head {
-  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2 justify-between items-start cursor-pointer;
+  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2;
+  @apply justify-between items-start cursor-pointer;
 
   .sentry-exception-frame--empty & {
     @apply cursor-default;

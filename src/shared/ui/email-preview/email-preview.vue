@@ -1,21 +1,25 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { IconSvg } from '../icon-svg'
-import { Device } from './types'
+import { ref } from 'vue';
+import { IconSvg } from '../icon-svg';
+import { Device } from './types';
 
 type Props = {
-  device: Device
-}
+  device: Device;
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  device: Device.Desktop
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    device: Device.Desktop,
+  },
+);
 
-const currentDevice = ref(props.device)
+const currentDevice = ref(props.device);
 
 const selectDevice = (device: Device) => {
-  currentDevice.value = device
-}
+  currentDevice.value = device;
+};
+
 </script>
 
 <template>
@@ -24,29 +28,38 @@ const selectDevice = (device: Device) => {
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Mobile
+          'attachment-preview__btn--active': currentDevice === Device.Mobile,
         }"
         @click="selectDevice(Device.Mobile)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="mobile-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="mobile-device"
+        />
       </button>
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Tablet
+          'attachment-preview__btn--active': currentDevice === Device.Tablet,
         }"
         @click="selectDevice(Device.Tablet)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="tablet-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="tablet-device"
+        />
       </button>
       <button
         class="attachment-preview__btn"
         :class="{
-          'attachment-preview__btn--active': currentDevice === Device.Desktop
+          'attachment-preview__btn--active': currentDevice === Device.Desktop,
         }"
         @click="selectDevice(Device.Desktop)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="desktop-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="desktop-device"
+        />
       </button>
     </div>
     <div
@@ -54,7 +67,7 @@ const selectDevice = (device: Device) => {
       :class="{
         'attachment-preview__device--desktop': currentDevice === Device.Desktop,
         'attachment-preview__device--tablet': currentDevice === Device.Tablet,
-        'attachment-preview__device--mobile': currentDevice === Device.Mobile
+        'attachment-preview__device--mobile': currentDevice === Device.Mobile,
       }"
     >
       <div class="attachment-preview__device-in">

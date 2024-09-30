@@ -1,41 +1,53 @@
 <script lang="ts" setup>
-import highlightPlugin from '@highlightjs/vue-plugin'
-import isString from 'lodash/isString'
-import { ref, computed } from 'vue'
-import { IconSvg } from '../icon-svg'
+import highlightPlugin from '@highlightjs/vue-plugin';
+import isString from 'lodash/isString';
+import { ref, computed } from 'vue';
+import { IconSvg } from '../icon-svg';
 
-const CodeHighlight = highlightPlugin.component
+const CodeHighlight = highlightPlugin.component;
 
 type Props = {
-  code?: string | Record<string, unknown> | Array<unknown> | null
-  language?: string
-}
+  code?: string | Record<string, unknown> | Array<unknown> | null;
+  language?: string;
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  language: 'plaintext',
-  code: ''
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    language: 'plaintext',
+    code: '',
+  },
+);
 
-const isCopied = ref(false)
+const isCopied = ref(false);
 
 const normalizedCode = computed(() =>
-  !isString(props.code) ? JSON.stringify(props.code, null, ' ') : props.code
-)
+  isString(props.code)
+    ? props.code
+    : JSON.stringify(
+      props.code,
+      null,
+      ' ',
+    ));
 
 const copyCode = (): void => {
-  isCopied.value = true
+  isCopied.value = true;
 
   navigator.clipboard
     .writeText(normalizedCode.value)
     .then(() => {
-      setTimeout(() => {
-        isCopied.value = false
-      }, 200)
+      setTimeout(
+        () => {
+          isCopied.value = false;
+        },
+        200,
+      );
     })
     .catch((e) => {
-      console.error(e)
-    })
-}
+      console.error(e);
+    });
+};
+
 </script>
 
 <template>
@@ -46,11 +58,18 @@ const copyCode = (): void => {
       :class="{ 'code-snippet__copy--active': isCopied }"
       @click.stop="copyCode"
     >
-      <IconSvg name="copy" class="code-snippet__copy-icon" />
+      <IconSvg
+        name="copy"
+        class="code-snippet__copy-icon"
+      />
       Copy
     </button>
 
-    <CodeHighlight :language="language" :autodetect="false" :code="normalizedCode" />
+    <CodeHighlight
+      :language="language"
+      :autodetect="false"
+      :code="normalizedCode"
+    />
   </div>
 </template>
 
@@ -60,7 +79,11 @@ const copyCode = (): void => {
 }
 
 .code-snippet__copy {
-  @apply invisible flex rounded-full items-center gap-x-2 absolute top-3 right-3 px-2 bg-gray-800 border text-gray-100 transition-all text-xs font-bold border-gray-600;
+  @apply bg-gray-800 text-gray-100 text-xs font-bold;
+  @apply border border-gray-600;
+  @apply invisible rounded-full transition-all;
+  @apply absolute top-3 right-3 px-2;
+  @apply flex items-center gap-x-2;
 
   &:hover {
     @apply border-gray-200 text-white bg-gray-900;
@@ -72,7 +95,8 @@ const copyCode = (): void => {
 }
 
 .code-snippet__copy--active {
-  @apply transform scale-110 bg-green-500 hover:bg-green-500 transition-colors;
+  @apply scale-110 bg-green-500 hover:bg-green-500;
+  @apply transform transition-colors;
 }
 
 .code-snippet__copy-icon {

@@ -3,7 +3,5 @@ import smtpTextMock from './smtp-text.json';
 import smtpWelcomeMock from './smtp-welcome.json';
 
 export {
-  smtpOrderMock,
-  smtpTextMock,
-  smtpWelcomeMock,
-}
+  smtpOrderMock, smtpTextMock, smtpWelcomeMock,
+};

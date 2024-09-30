@@ -1,67 +1,80 @@
 <script setup lang="ts">
 // TODO: need to create storybook test for this component
-import { ref, watchEffect } from 'vue'
-import { formatDuration } from '@/shared/lib/formats/format-duration'
-import { formatFileSize } from '@/shared/lib/formats/format-file-size'
-import { type EventId } from '@/shared/types'
-import { StatBoard } from '@/shared/ui'
-import { useProfiler } from '../../lib'
-import type { ProfilerTopFunctions } from '../../types'
+import { ref, watchEffect } from 'vue';
+import { formatDuration } from '@/shared/lib/formats/format-duration';
+import { formatFileSize } from '@/shared/lib/formats/format-file-size';
+import { type EventId } from '@/shared/types';
+import { StatBoard } from '@/shared/ui';
+import { useProfiler } from '../../lib';
+import type { ProfilerTopFunctions } from '../../types';
 
 type Props = {
-  id: EventId
-}
+  id: EventId;
+};
 
-const { getTopFunctions } = useProfiler()
-const props = defineProps<Props>()
-const metric = ref('excl_wt') // TODO: use enum value
+const { getTopFunctions } = useProfiler();
+const props = defineProps<Props>();
+// TODO: use enum value
+const metric = ref('excl_wt');
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
   overall_totals: {
     cpu: 0,
-    wt: 0,
+    ct: 0,
     mu: 0,
     pmu: 0,
-    ct: 0
+    wt: 0,
   },
-  schema: []
-})
+  schema: [],
+});
 
 const setMetric = (value: string | undefined) => {
   if (value) {
-    metric.value = value
+    metric.value = value;
   }
-}
+};
 
 const formatValue = (value: number, format: string) => {
   if (format === 'ms') {
-    return formatDuration(value)
+    return formatDuration(value);
   }
 
   if (format === 'percent') {
-    return `${value}%`
+    return `${value}%`;
   }
 
   if (format === 'number') {
-    return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value)
+    return new Intl.NumberFormat(
+      'en-US',
+      { style: 'decimal' },
+    ).format(value);
   }
 
   if (format === 'bytes') {
-    return formatFileSize(value, 3)
+    return formatFileSize(
+      value,
+      3,
+    );
   }
 
-  return value
-}
+  return value;
+};
 
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: metric.value })
-})
+  data.value = await getTopFunctions(
+    props.id,
+    { metric: metric.value },
+  );
+});
 </script>
 
 <template>
   <section class="top-functions__stat-board">
-    <StatBoard v-if="data.overall_totals" :cost="data.overall_totals" />
+    <StatBoard
+      v-if="data.overall_totals"
+      :cost="data.overall_totals"
+    />
   </section>
 
   <div class="top-functions__body">
@@ -82,7 +95,10 @@ watchEffect(async () => {
       </thead>
 
       <tbody>
-        <tr v-for="item in data.functions" :key="item.function">
+        <tr
+          v-for="item in data.functions"
+          :key="item.function"
+        >
           <td
             v-for="col in data.schema"
             :key="col.key"
@@ -129,7 +145,8 @@ td {
 }
 
 td.selected {
-  @apply border-x text-gray-800 dark:text-gray-100 border-gray-400 dark:border-gray-500;
+  @apply border-x border-gray-400 dark:border-gray-500;
+  @apply text-gray-800 dark:text-gray-100;
 }
 
 thead td {

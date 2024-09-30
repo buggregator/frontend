@@ -1,29 +1,34 @@
 <script lang="ts" setup>
-import moment from 'moment/moment'
-import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
-import { TableBase, TableBaseRow } from '@/shared/ui'
-import type { Inspector, InspectorTransaction } from '../../types'
-import { InspectorPageTimeline } from '../inspector-page-timeline'
-import { InspectorStatBoard } from '../inspector-stat-board'
+import moment from 'moment/moment';
+import { computed } from 'vue';
+import type { NormalizedEvent } from '@/shared/types';
+import { TableBase, TableBaseRow } from '@/shared/ui';
+import type { Inspector, InspectorTransaction } from '../../types';
+import { InspectorPageTimeline } from '../inspector-page-timeline';
+import { InspectorStatBoard } from '../inspector-stat-board';
 
 type Props = {
-  event: NormalizedEvent<Inspector>
-}
+  event: NormalizedEvent<Inspector>;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const transaction = computed(() => props.event?.payload[0])
+const transaction = computed(() => props.event?.payload[0]);
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'));
 
 const http = computed(() =>
-  transaction.value ? (transaction.value as InspectorTransaction)?.http : undefined
-)
+  transaction.value
+    ? (transaction.value as InspectorTransaction)?.http
+    : undefined);
+
 </script>
 
 <template>
-  <div ref="main" class="inspector-page">
+  <div
+    ref="main"
+    class="inspector-page"
+  >
     <main class="inspector-page__in">
       <header class="inspector-page__header">
         <h2 class="inspector-page__header-title">
@@ -38,18 +43,30 @@ const http = computed(() =>
       <InspectorPageTimeline :payload="event.payload" />
 
       <section class="inspector-page__body">
-        <h3 class="inspector-page__body-text">Url</h3>
+        <h3 class="inspector-page__body-text">
+          Url
+        </h3>
         <TableBase class="inspector-page__body-table">
-          <TableBaseRow v-for="(value, name) in http?.url" :key="name" :title="String(name)">
+          <TableBaseRow
+            v-for="(value, name) in http?.url"
+            :key="name"
+            :title="String(name)"
+          >
             {{ value }}
           </TableBaseRow>
         </TableBase>
       </section>
 
       <section>
-        <h3 class="inspector-page__body-text">Request</h3>
+        <h3 class="inspector-page__body-text">
+          Request
+        </h3>
         <TableBase class="inspector-page__body-table">
-          <TableBaseRow v-for="(value, name) in http?.request" :key="name" :title="String(name)">
+          <TableBaseRow
+            v-for="(value, name) in http?.request"
+            :key="name"
+            :title="String(name)"
+          >
             <template v-if="typeof value === 'string'">
               {{ value }}
             </template>
@@ -57,7 +74,11 @@ const http = computed(() =>
               {{ value.join(', ') }}
             </template>
             <template v-else-if="!Array.isArray(value)">
-              <TableBaseRow v-for="(v, n) in value" :key="n" :title="String(n)">
+              <TableBaseRow
+                v-for="(v, n) in value"
+                :key="n"
+                :title="String(n)"
+              >
                 {{ v }}
               </TableBaseRow>
             </template>

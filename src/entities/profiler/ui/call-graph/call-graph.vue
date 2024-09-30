@@ -1,80 +1,91 @@
 <script lang="ts" setup>
-import type { ElementsDefinition } from 'cytoscape'
-import { ref, computed, onMounted, watchEffect } from 'vue'
-import { type EventId, GraphTypes } from '@/shared/types'
-import { IconSvg, type StatBoardCost } from '@/shared/ui'
-import { useProfiler } from '../../lib'
-import type { ProfilerCallGraph } from '../../types'
-import { CallStatBoard } from '../call-stat-board'
-import { RenderGraph } from '../render-graph'
+import type { ElementsDefinition } from 'cytoscape';
+import {
+  ref, computed, onMounted, watchEffect,
+} from 'vue';
+import { type EventId, GraphTypes } from '@/shared/types';
+import { IconSvg, type StatBoardCost } from '@/shared/ui';
+import { useProfiler } from '../../lib';
+import type { ProfilerCallGraph } from '../../types';
+import { CallStatBoard } from '../call-stat-board';
+import { RenderGraph } from '../render-graph';
 
 type Props = {
-  id: EventId
-}
+  id: EventId;
+};
 
-const { getCallGraph } = useProfiler()
+const { getCallGraph } = useProfiler();
 
-const props = defineProps<Props>()
-const isFullscreen = ref(false)
-const metric = ref(GraphTypes.WALL_TIME as GraphTypes)
-const threshold = ref(1)
-const percent = ref(10)
+const props = defineProps<Props>();
+const isFullscreen = ref(false);
+const metric = ref(GraphTypes.WALL_TIME as GraphTypes);
+const threshold = ref(1);
+const percent = ref(10);
 
-const isReadyGraph = ref(false)
-const container = ref<HTMLElement>()
+const isReadyGraph = ref(false);
+const container = ref<HTMLElement>();
 
-const elements = ref<ElementsDefinition | undefined>()
-const toolbar = ref<ProfilerCallGraph['toolbar']>([])
+const elements = ref<ElementsDefinition | undefined>();
+const tools = ref<ProfilerCallGraph['toolbar']>([]);
 
-const graphKey = ref('')
+const graphKey = ref('');
 
 const setMetric = (value: string) => {
   if (Object.values(GraphTypes).includes(value as GraphTypes)) {
-    metric.value = value as GraphTypes
+    metric.value = value as GraphTypes;
   } else {
-    metric.value = GraphTypes.WALL_TIME
+    metric.value = GraphTypes.WALL_TIME;
   }
-}
+};
 
 const setThreshold = (event: Event) => {
-  threshold.value = Number((event.target as HTMLInputElement).value || 0)
-}
+  threshold.value = Number((event.target as HTMLInputElement).value || 0);
+};
 
 const setMinPercent = (event: Event) => {
-  percent.value = Number((event.target as HTMLInputElement).value || 0)
-}
+  percent.value = Number((event.target as HTMLInputElement).value || 0);
+};
 
 const toggleFullScreen = () => {
-  isFullscreen.value = !isFullscreen.value
-}
+  isFullscreen.value = !isFullscreen.value;
+};
 
 const graphHeight = computed(() =>
-  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight
-)
+  isFullscreen.value
+    ? window.innerHeight
+    : (container.value as HTMLElement).offsetHeight);
 
 watchEffect(async () => {
-  const { toolbar: tools, ...elems } = await getCallGraph(props.id, {
-    threshold: String(threshold.value),
-    percentage: String(percent.value),
-    metric: String(metric.value)
-  })
+  const { toolbar, ...elems } = await getCallGraph(
+    props.id,
+    {
+      threshold: String(threshold.value),
+      percentage: String(percent.value),
+      metric: String(metric.value),
+    },
+  );
 
-  elements.value = elems
-  toolbar.value = tools
+  elements.value = elems;
+  tools.value = toolbar;
 
-  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`
-})
+  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`;
+});
 
 onMounted(() => {
   // NOTE: need to show graph after parent render
-  isReadyGraph.value = true
-})
+  isReadyGraph.value = true;
+});
 
-const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
+const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'));
+
 </script>
 
 <template>
-  <div ref="container" class="call-graph" :class="{ 'call-graph--fullscreen': isFullscreen }">
+  <div
+    ref="container"
+    class="call-graph"
+    :class="{ 'call-graph--fullscreen': isFullscreen }"
+  >
     <RenderGraph
       v-if="isReadyGraph && graphKey && elements"
       :key="graphKey"
@@ -92,16 +103,22 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
     </RenderGraph>
 
     <div class="call-graph__toolbar">
-      <button title="Full screen" @click="toggleFullScreen">
-        <IconSvg name="fullscreen" class="call-graph__toolbar-icon" />
+      <button
+        title="Full screen"
+        @click="toggleFullScreen"
+      >
+        <IconSvg
+          name="fullscreen"
+          class="call-graph__toolbar-icon"
+        />
       </button>
 
       <button
-        v-for="tool in toolbar"
+        v-for="tool in tools"
         :key="tool.metric"
         class="call-graph__toolbar-action"
         :class="{
-          'call-graph__toolbar-action--active': metric === tool.metric
+          'call-graph__toolbar-action--active': metric === tool.metric,
         }"
         :title="tool.description"
         @click="setMetric(tool.metric)"
@@ -111,7 +128,10 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
     </div>
 
     <div class="call-graph__toolbar call-graph__toolbar--right">
-      <label v-if="metric !== GraphTypes.CALLS" class="call-graph__toolbar-input-wr">
+      <label
+        v-if="metric !== GraphTypes.CALLS"
+        class="call-graph__toolbar-input-wr"
+      >
         Threshold
 
         <input
@@ -122,7 +142,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
           :max="10"
           :step="0.1"
           @input="setThreshold"
-        />
+        >
       </label>
 
       <label class="call-graph__toolbar-input-wr">
@@ -136,7 +156,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
           :max="metric === GraphTypes.CALLS ? 1000 : 100"
           :step="metric === GraphTypes.CALLS ? 10 : 5"
           @input="setMinPercent"
-        />
+        >
       </label>
     </div>
   </div>
@@ -146,7 +166,8 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 @import 'src/assets/mixins';
 
 .call-graph {
-  @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;
+  @apply flex rounded bg-white dark:bg-gray-800;
+  @apply relative min-h-min min-w-min h-ful l-mt-3 pt-3
 }
 
 .call-graph__graph {
@@ -154,7 +175,8 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 }
 
 .call-graph--fullscreen {
-  @apply rounded-none mt-0 top-0 left-0 fixed w-full h-full bg-gray-800 z-[99999];
+  @apply rounded-none w-full h-full bg-gray-800;
+  @apply fixed mt-0 top-0 left-0 z-[99999];
 }
 
 .call-graph__toolbar {
@@ -182,6 +204,7 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 }
 
 .call-graph__toolbar-input {
-  @apply border-gray-600 text-gray-600 w-10 font-bold text-right bg-gray-300 ml-1 py-1 rounded;
+  @apply border-gray-600 text-gray-600 bg-gray-300;
+  @apply w-10 font-bold text-right ml-1 py-1 rounded;
 }
 </style>

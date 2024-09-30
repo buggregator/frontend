@@ -1,50 +1,61 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { computed, watchEffect } from 'vue'
-import { PAGE_TYPES } from '@/shared/constants'
-import { useEvents } from '@/shared/lib/use-events'
-import type { PageEventTypes } from '@/shared/types'
-import { EventCardMapper } from '../event-card-mapper'
-import { PagePlaceholder } from '../page-placeholder'
+import { useTitle } from '@vueuse/core';
+import { computed, watchEffect } from 'vue';
+import { PAGE_TYPES } from '@/shared/constants';
+import { useEvents } from '@/shared/lib/use-events';
+import type { PageEventTypes } from '@/shared/types';
+import { EventCardMapper } from '../event-card-mapper';
+import { PagePlaceholder } from '../page-placeholder';
 
 type Props = {
-  title?: string
-  type: PageEventTypes
-}
+  title?: string;
+  type: PageEventTypes;
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  title: ''
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    title: '',
+  },
+);
 
-const { events, cachedEvents } = useEvents()
+const { events, cachedEvents } = useEvents();
 
-const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
+const isEventsPaused = computed(
+  () => cachedEvents.idsByType.value[props.type]?.length > 0,
+);
 
 const allEvents = computed(() => {
   if (props.type === PAGE_TYPES.ALL_EVENT_TYPES) {
-    return events.items.value
+    return events.items.value;
   }
-  return events.items.value.filter(({ type }) => type === props.type)
-})
+
+  return events.items.value.filter(({ type }) => type === props.type);
+});
 
 const visibleEvents = computed(() => {
   if (!isEventsPaused.value) {
-    return allEvents.value
+    return allEvents.value;
   }
+  // TODO: remove comment
 
   return allEvents.value.filter(({ uuid }) =>
-    cachedEvents.idsByType.value[props.type]?.includes(uuid)
-  )
-})
+    cachedEvents.idsByType.value[props.type]?.includes(uuid));
+});
 
 watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
-})
+  useTitle(
+    `${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`,
+  );
+});
 </script>
 
 <template>
   <div class="layout-preview-events">
-    <main v-if="visibleEvents.length" class="layout-preview-events__events">
+    <main
+      v-if="visibleEvents.length"
+      class="layout-preview-events__events"
+    >
       <EventCardMapper
         v-for="event in visibleEvents"
         :key="event.uuid"
@@ -53,7 +64,10 @@ watchEffect(() => {
       />
     </main>
 
-    <section v-if="!visibleEvents.length" class="layout-preview-events__welcome">
+    <section
+      v-if="!visibleEvents.length"
+      class="layout-preview-events__welcome"
+    >
       <PagePlaceholder class="layout-preview-events__tips" />
     </section>
   </div>
@@ -83,7 +97,9 @@ watchEffect(() => {
 }
 
 .layout-preview-events__btn-stop-events {
-  @apply mr-3 text-xs text-gray-800 dark:text-white rounded-sm hover:opacity-100 transition-all duration-300 opacity-40 relative;
+  @apply mr-3 text-xs rounded-sm transition-all duration-300 relative;
+  @apply text-gray-800 dark:text-white;
+  @apply opacity-40 hover:opacity-100;
 
   &[disabled] {
     @apply hover:opacity-40;
@@ -95,7 +111,9 @@ watchEffect(() => {
 }
 
 .layout-preview-events__btn-stop-events-count {
-  @apply absolute right-0 bottom-0 bg-red-600 text-white w-4 h-4 rounded-full flex justify-center;
+  @apply bg-red-600 text-white w-4 h-4 rounded-full;
+  @apply flex justify-center;
+  @apply absolute right-0 bottom-0;
 
   transform: translate(60%, -60%);
 }

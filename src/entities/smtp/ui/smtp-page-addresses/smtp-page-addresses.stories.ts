@@ -1,11 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from '@storybook/vue3';
 import SmtpPageAddresses from './smtp-page-addresses.vue';
 
 export default {
-  title: "Screens/smtp/SmtpPageAddresses",
+  title: 'Screens/smtp/SmtpPageAddresses',
   component: SmtpPageAddresses,
 } as Meta<typeof SmtpPageAddresses>;
-
 
 export const Default: StoryObj<typeof SmtpPageAddresses> = {
   args: {
@@ -20,7 +19,7 @@ export const Default: StoryObj<typeof SmtpPageAddresses> = {
       },
       {
         email: 'saraConor@example.com',
-      }
+      },
     ],
-  }
+  },
 };

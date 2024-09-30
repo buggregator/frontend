@@ -1,22 +1,30 @@
-import moment from "moment/moment";
-import {type ServerEvent, type NormalizedEvent, EventTypes} from "@/shared/types";
-import type { Profiler } from "../../types";
+import moment from 'moment/moment';
+import {
+  type ServerEvent, type NormalizedEvent, EventTypes,
+} from '@/shared/types';
+import type { Profiler } from '../../types';
 
-export const normalizeProfilerEvent = (event: ServerEvent<Profiler>): NormalizedEvent<Profiler> => {
+export const normalizeProfilerEvent = (
+  event: ServerEvent<Profiler>,
+): NormalizedEvent<Profiler> => {
   const normalizedEvent: NormalizedEvent<Profiler> = {
+    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     id: event.uuid,
-      type: EventTypes.Profiler,
     labels: [EventTypes.Profiler],
-    origin: {name: event.payload.app_name, ...event.payload.tags},
+    origin: {
+      name: event.payload.app_name,
+      ...event.payload.tags,
+    },
+    payload: event.payload,
     serverName: event.payload.hostname,
-      date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
-  }
-
+    type: EventTypes.Profiler,
+  };
 
   if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
+    normalizedEvent.labels.unshift(
+      moment(normalizedEvent.date).format('HH:mm:ss'),
+    );
   }
 
   return normalizedEvent;
-}
+};

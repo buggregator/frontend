@@ -1,60 +1,99 @@
 <script lang="ts" setup>
-import isString from 'lodash/isString'
-import { computed } from 'vue'
-import { type EventType, type NormalizedEvent, RouteName } from '../../types'
-import { IconSvg } from '../icon-svg'
-import { DownloadType } from './types'
+import isString from 'lodash/isString';
+import { computed } from 'vue';
+import {
+  type EventType, EventTypes, type NormalizedEvent, RouteName,
+} from '../../types';
+import { IconSvg } from '../icon-svg';
+import { DownloadType } from './types';
 
 type Props = {
-  eventType: EventType | 'unknown'
-  eventId: NormalizedEvent<unknown>['id']
-  eventUrl: string
-  labels: NormalizedEvent<unknown>['labels']
-  isOpen: boolean
-  isLocked: boolean
-  isVisibleControls: boolean
-}
+  eventType: EventType | 'unknown';
+  eventId: NormalizedEvent<unknown>['id'];
+  eventUrl: string;
+  labels: NormalizedEvent<unknown>['labels'];
+  isOpen: boolean;
+  isLocked: boolean;
+  isVisibleControls: boolean;
+};
 
 type Emits = {
-  delete: [value: boolean]
-  toggleView: [value: boolean]
-  copy: [value: boolean]
-  download: [value: DownloadType]
-  lock: [value: boolean]
-}
+  delete: [value: boolean];
+  toggleView: [value: boolean];
+  copy: [value: boolean];
+  download: [value: DownloadType];
+  lock: [value: boolean];
+};
 
-const props = withDefaults(defineProps<Props>(), {
-  tags: () => [],
-  eventUrl: ''
-})
+const props = withDefaults(
+  defineProps<Props>(),
+  {
+    tags: () => [],
+    eventUrl: '',
+  },
+);
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
 const changeView = () => {
-  emit('toggleView', true)
-}
+  emit(
+    'toggleView',
+    true,
+  );
+};
 
 const deleteEvent = () => {
-  emit('delete', true)
-}
+  emit(
+    'delete',
+    true,
+  );
+};
 
 const copyEvent = () => {
-  emit('copy', true)
-}
+  emit(
+    'copy',
+    true,
+  );
+};
 
 const downloadImageEvent = () => {
-  emit('download', DownloadType.Image)
-}
+  emit(
+    'download',
+    DownloadType.Image,
+  );
+};
 
 const downloadFile = () => {
-  emit('download', DownloadType.File)
-}
+  emit(
+    'download',
+    DownloadType.File,
+  );
+};
 
 const lockEvent = () => {
-  emit('lock', true)
-}
+  emit(
+    'lock',
+    true,
+  );
+};
 
-const isVisibleTags = computed(() => props.labels.length > 0)
+const isVisibleTags = computed(() => props.labels.length > 0);
+
+const getEventModifierMap = {
+  [EventTypes.VarDump]: 'preview-card-header__tag--var-dump',
+  [EventTypes.Smtp]: 'preview-card-header__tag--smtp',
+  [EventTypes.Sentry]: 'preview-card-header__tag--sentry',
+  [EventTypes.Profiler]: 'preview-card-header__tag--profiler',
+  [EventTypes.RayDump]: 'preview-card-header__tag--ray-dump',
+  [EventTypes.Inspector]: 'preview-card-header__tag--inspector',
+  [EventTypes.HttpDump]: 'preview-card-header__tag--http-dump',
+  [EventTypes.Monolog]: 'preview-card-header__tag--monolog',
+};
+
+const eventTypeClasModifier = computed(() => {
+  return getEventModifierMap[props.eventType as unknown as EventTypes] || 'preview-card-header__tag--gray';
+});
+
 </script>
 
 <template>
@@ -71,12 +110,15 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       </a>
 
       <template v-if="isVisibleTags">
-        <template v-for="label in labels" :key="label">
+        <template
+          v-for="label in labels"
+          :key="label"
+        >
           <div
             v-if="isString(label)"
             ref="tags"
             class="preview-card-header__tag"
-            :class="`preview-card-header__tag--${eventType}`"
+            :class="eventTypeClasModifier"
           >
             {{ label }}
           </div>
@@ -85,7 +127,7 @@ const isVisibleTags = computed(() => props.labels.length > 0)
             v-if="!isString(label)"
             ref="tags"
             class="preview-card-header__tag preview-card-header__tag--large"
-            :class="`preview-card-header__tag--${eventType}`"
+            :class="eventTypeClasModifier"
             :title="label.context"
           >
             {{ label.title }}: {{ label.value }}
@@ -95,7 +137,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
 
       <template v-if="eventType">
         <RouterLink
-          :to="{ name: RouteName.EventPage, params: { type: eventType, id: eventId } }"
+          :to="{
+            name: RouteName.EventPage,
+            params: { type: eventType, id: eventId }
+          }"
           class="preview-card-header__open"
           title="Open full event"
         >
@@ -104,54 +149,85 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       </template>
     </div>
 
-    <div v-if="isVisibleControls" class="preview-card-header__buttons">
-      <div v-if="isOpen" class="preview-card-header__buttons-expand">
+    <div
+      v-if="isVisibleControls"
+      class="preview-card-header__buttons"
+    >
+      <div
+        v-if="isOpen"
+        class="preview-card-header__buttons-expand"
+      >
         <button
           class="preview-card-header__button preview-card-header__button--copy"
           title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
-          <IconSvg name="copy" class="preview-card-header__button-icon" />
+          <IconSvg
+            name="copy"
+            class="preview-card-header__button-icon"
+          />
         </button>
 
         <div class="preview-card-header__buttons-expand-list">
           <button
-            class="preview-card-header__button preview-card-header__button--copy"
+            class="preview-card-header__button"
+            :class="['preview-card-header__button--copy']"
             title="Download event as JSON file"
             @click="downloadFile"
           >
-            <IconSvg name="file-download" class="preview-card-header__button-icon" />
+            <IconSvg
+              name="file-download"
+              class="preview-card-header__button-icon"
+            />
           </button>
 
           <button
-            class="preview-card-header__button preview-card-header__button--copy"
+            class="preview-card-header__button"
+            :class="['preview-card-header__button--copy']"
             title="Download event as PNG image"
             @click="downloadImageEvent"
           >
-            <IconSvg name="image-download" class="preview-card-header__button-icon" />
+            <IconSvg
+              name="image-download"
+              class="preview-card-header__button-icon"
+            />
           </button>
         </div>
       </div>
 
       <button
-        class="preview-card-header__button preview-card-header__button--collapse"
+        class="
+          preview-card-header__button
+          preview-card-header__button--collapse
+        "
         :class="{ 'preview-card-header__button--collapse-closed': !isOpen }"
         title="Collapse event"
         @click="changeView"
       >
-        <IconSvg v-if="isOpen" name="minus" class="preview-card-header__button-icon" />
-        <IconSvg v-if="!isOpen" name="plus" class="preview-card-header__button-icon" />
+        <IconSvg
+          v-if="isOpen"
+          name="minus"
+          class="preview-card-header__button-icon"
+        />
+        <IconSvg
+          v-if="!isOpen"
+          name="plus"
+          class="preview-card-header__button-icon"
+        />
       </button>
 
       <button
         class="preview-card-header__button preview-card-header__button--lock"
         title="Lock event. Locked events will not be deleted"
         :class="{
-          'preview-card-header__button--locked': isLocked
+          'preview-card-header__button--locked': isLocked,
         }"
         @click="lockEvent"
       >
-        <IconSvg name="lock" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="lock"
+          class="preview-card-header__button-icon"
+        />
       </button>
 
       <button
@@ -160,25 +236,16 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         :disabled="isLocked"
         @click="deleteEvent"
       >
-        <IconSvg name="times" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="times"
+          class="preview-card-header__button-icon"
+        />
       </button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-$eventTypeColorsMap: (
-  'var-dump' 'red',
-  'smtp' 'orange',
-  'sentry' 'pink',
-  'profiler' 'purple',
-  'ray' 'cyan',
-  'inspector' 'yellow',
-  'http-dump' 'lime',
-  'monolog' 'zinc',
-  'unknown' 'gray'
-);
-
 .preview-card-header__tags {
   @apply flex flex-wrap;
   @apply gap-1 md:gap-3;
@@ -191,30 +258,52 @@ $eventTypeColorsMap: (
   @apply transition-colors;
   @apply px-1 md:px-2;
   @apply font-bold text-2xs lg:text-xs leading-none;
+}
 
-  /* Applied tailwind classes depends on event type
-   Need to keep declaration for tailwind correct work:
-   'var-dump' 'bg-red-50 dark:bg-red-700 text-red-800 dark:text-red-50 dark:border-red-600' 'bg-red-100 dark:bg-red-500',
-   'Smtp' 'bg-orange-50 dark:bg-orange-700 text-orange-800 dark:text-orange-50 dark:border-orange-600' 'bg-orange-100 dark:bg-orange-500',
-   'Sentry' 'bg-pink-50 dark:bg-pink-700 text-pink-800 dark:text-pink-50 dark:border-pink-600' 'bg-pink-100 dark:bg-pink-500',
-   'profiler' 'bg-purple-50 dark:bg-purple-700 text-purple-800 dark:text-purple-50 dark:border-purple-600' 'bg-purple-100 dark:bg-purple-500',
-   'ray' 'bg-cyan-50 dark:bg-cyan-700 text-cyan-800 dark:text-cyan-50 dark:border-cyan-600' 'bg-cyan-100 dark:bg-cyan-500',
-   'inspector' 'bg-yellow-50 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-50 dark:border-yellow-600' 'bg-yellow-100 dark:bg-yellow-500',
-   'monolog' 'bg-zinc-50 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-50 dark:border-zinc-600' 'bg-zinc-100 dark:bg-zinc-500'
-   'http-dump' 'bg-lime-50 dark:bg-lime-700 text-lime-800 dark:text-lime-50 dark:border-lime-600' 'bg-lime-100 dark:bg-lime-500' */
+.preview-card-header__tag--var-dump {
+  @apply bg-red-50 dark:bg-red-700 dark:border-red-600;
+  @apply text-red-800 dark:text-red-50;
+  @apply hover:bg-red-100 hover:dark:bg-red-500;
+}
+.preview-card-header__tag--smtp {
+  @apply bg-orange-50 dark:bg-orange-700 dark:border-orange-600;
+  @apply text-orange-800 dark:text-orange-50;
+  @apply hover:bg-orange-100 hover:dark:bg-orange-500;
+}
+.preview-card-header__tag--sentry {
+  @apply bg-pink-50 dark:bg-pink-700 dark:border-pink-600;
+  @apply text-pink-800 dark:text-pink-50;
+  @apply hover:bg-pink-100 hover:dark:bg-pink-500;
 
-  @each $map in $eventTypeColorsMap {
-    $name: nth($map, 1);
-    $color: nth($map, 2);
+}
+.preview-card-header__tag--profiler {
+  @apply bg-purple-50 dark:bg-purple-700 dark:border-purple-600;
+  @apply text-purple-800 dark:text-purple-50;
+  @apply hover:bg-purple-100 hover:dark:bg-purple-500;
+}
 
-    &--#{$name} {
-      @apply bg-#{$color}-50 dark:bg-#{$color}-700 text-#{$color}-800 dark:text-#{$color}-50 dark:border-#{$color}-600;
+.preview-card-header__tag--ray-dump {
+  @apply bg-cyan-50 dark:bg-cyan-700 dark:border-cyan-600;
+  @apply text-cyan-800 dark:text-cyan-50;
+  @apply hover:bg-cyan-100 hover:dark:bg-cyan-500;
+}
 
-      &:hover {
-        @apply bg-#{$color}-100 dark:bg-#{$color}-500;
-      }
-    }
-  }
+.preview-card-header__tag--inspector {
+  @apply bg-yellow-50 dark:bg-yellow-700 dark:border-yellow-600;
+  @apply text-yellow-800 dark:text-yellow-50;
+  @apply hover:bg-yellow-100 hover:dark:bg-yellow-500;
+}
+
+.preview-card-header__tag--http-dump {
+  @apply bg-lime-50 dark:bg-lime-700 dark:border-lime-600;
+  @apply text-lime-800 dark:text-lime-50;
+  @apply hover:bg-lime-100 hover:dark:bg-lime-500;
+}
+
+.preview-card-header__tag--monolog {
+  @apply bg-zinc-50 dark:bg-zinc-700 dark:border-zinc-600;
+  @apply text-zinc-800 dark:text-zinc-50;
+  @apply hover:bg-zinc-100 hover:dark:bg-zinc-500;
 }
 
 .preview-card-header__tag--large {
@@ -223,8 +312,8 @@ $eventTypeColorsMap: (
 
 .preview-card-header__tag--json {
   @apply bg-blue-600 text-blue-50 border-blue-600;
-
   @apply cursor-help;
+
   &:hover {
     @apply bg-blue-500 dark:bg-blue-500;
   }
@@ -241,7 +330,9 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__buttons-expand {
-  @apply relative left-[2px] flex border-x-2 rounded-3xl border-transparent dark:border-transparent cursor-pointer;
+  @apply relative left-[2px] flex;
+  @apply border-x-2 rounded-3xl cursor-pointer;
+  @apply border-transparent dark:border-transparent;
 
   &:hover {
     @apply bg-gray-200 dark:bg-gray-700;
@@ -262,12 +353,14 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button {
-  @apply w-4 h-4 rounded-full opacity-90 hover:opacity-100 transition-all hover:ring-4 ring-offset-1;
-  @apply text-white bg-gray-300 dark:bg-gray-600 ring-blue-200 dark:ring-blue-800;
+  @apply w-4 h-4 rounded-full opacity-90 transition-all ring-offset-1;
+  @apply text-white bg-gray-300 dark:bg-gray-600;
+  @apply  ring-blue-200 dark:ring-blue-800;
+  @apply hover:opacity-100 hover:ring-4;
 }
 
 .preview-card-header__button--copy {
-  @apply text-gray-800 dark:text-white bg-transparent dark:bg-transparent;
+  @apply text-gray-800 dark:text-white bg-transparent ;
 }
 
 .preview-card-header__button--collapse {
@@ -277,11 +370,14 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--collapse-closed {
-  @apply text-white bg-blue-700 ring-blue-300 dark:bg-blue-700 hover:bg-blue-700;
+  @apply text-white ring-blue-300;
+  @apply bg-blue-700 dark:bg-blue-700 hover:bg-blue-700
 }
 
 .preview-card-header__button--delete {
-  @apply text-white dark:text-white bg-red-700 dark:bg-red-700 ring-red-200 dark:ring-red-800;
+  @apply text-white dark:text-white;
+  @apply bg-red-700 dark:bg-red-700;
+  @apply ring-red-200 dark:ring-red-800;
 
   &:disabled {
     @apply opacity-50 pointer-events-none;
@@ -293,7 +389,10 @@ $eventTypeColorsMap: (
 }
 
 .preview-card-header__button--locked {
-  @apply text-white dark:text-white bg-green-700 dark:bg-green-700 ring-2 ring-green-700 dark:ring-green-700 hover:bg-green-800 dark:hover:bg-green-500;
+  @apply bg-green-700 dark:bg-green-700;
+  @apply hover:bg-green-800 dark:hover:bg-green-500;
+  @apply text-white dark:text-white;
+  @apply ring-2 ring-green-700 dark:ring-green-700;
 }
 
 .preview-card-header__button-icon {

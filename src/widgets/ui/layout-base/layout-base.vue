@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
-import { useEvents } from '@/shared/lib/use-events'
-import { useEventsStore } from '@/shared/stores'
+import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
+import { useEvents } from '@/shared/lib/use-events';
+import { useEventsStore } from '@/shared/stores';
 
-const { activeProjectKey } = storeToRefs(useEventsStore())
-const { events } = useEvents()
+const { activeProjectKey } = storeToRefs(useEventsStore());
+const { events } = useEvents();
 
 watch(
   () => activeProjectKey.value,
   () => {
-    events.getAll()
+    events.getAll();
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -21,14 +21,20 @@ watch(
     class="layout-base"
     :class="{
       'layout-base--no-sidebar': !$slots.sidebar,
-      'layout-base--no-header': !$slots.header
+      'layout-base--no-header': !$slots.header,
     }"
   >
-    <div v-if="$slots.sidebar" class="layout-base__sidebar">
+    <div
+      v-if="$slots.sidebar"
+      class="layout-base__sidebar"
+    >
       <slot name="sidebar" />
     </div>
 
-    <div v-if="$slots.header" class="layout-base__header">
+    <div
+      v-if="$slots.header"
+      class="layout-base__header"
+    >
       <slot name="header" />
     </div>
 
@@ -46,8 +52,10 @@ watch(
 }
 
 .layout-base__sidebar {
-  @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
   @include layout-sidebar;
+  @apply flex-none border-r border-gray-200 dark:border-gray-700 z-50;
+  @apply w-10 md:w-14 lg:w-16 w-full;
+  @apply h-full sticky top-0 h-screen max-h-screen;
 }
 
 .layout-base__header {

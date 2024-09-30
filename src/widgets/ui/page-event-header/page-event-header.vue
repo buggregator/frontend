@@ -1,36 +1,41 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { REST_API_URL } from '@/shared/lib/io'
-import { useEvents } from '@/shared/lib/use-events'
-import { RouteName, type Uuid } from '@/shared/types'
-import { AppHeader } from '@/shared/ui'
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { REST_API_URL } from '@/shared/lib/io';
+import { useEvents } from '@/shared/lib/use-events';
+import { RouteName, type Uuid } from '@/shared/types';
+import { AppHeader } from '@/shared/ui';
 
 type Props = {
-  title: string
-  eventId: Uuid
-}
+  title: string;
+  eventId: Uuid;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const { events } = useEvents()
-const router = useRouter()
+const { events } = useEvents();
+const router = useRouter();
 
 const eventsListLink = computed(() =>
-  router.currentRoute.value.path.replace(`/${props.eventId}`, '')
-)
+  router.currentRoute.value.path.replace(
+    `/${props.eventId}`,
+    '',
+  ));
 const onDelete = () => {
-  events.removeById(props.eventId)
+  events.removeById(props.eventId);
 
-  router.push({ name: RouteName.Home })
-}
+  router.push({ name: RouteName.Home });
+};
 
-const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
+const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
+
 </script>
 
 <template>
   <AppHeader class="page-event-header">
-    <RouterLink :to="{ name: RouteName.Home }"> Home </RouterLink>
+    <RouterLink :to="{ name: RouteName.Home }">
+      Home
+    </RouterLink>
     &nbsp;/&nbsp;
     <RouterLink :to="eventsListLink">
       {{ title }}
@@ -51,7 +56,12 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
         Open JSON
       </a>
 
-      <button class="page-event-header__clear-button" @click="onDelete">Delete event</button>
+      <button
+        class="page-event-header__clear-button"
+        @click="onDelete"
+      >
+        Delete event
+      </button>
     </template>
   </AppHeader>
 </template>

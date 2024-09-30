@@ -1,38 +1,53 @@
 <script lang="ts" setup>
-import moment from 'moment/moment'
-import { computed } from 'vue'
-import type { NormalizedEvent, OneOfValues } from '@/shared/types'
-import { TableBase, TableBaseRow } from '@/shared/ui'
-import { useRay } from '../../lib'
-import { RayEventTypes, type RayDump } from '../../types'
+import moment from 'moment/moment';
+import { computed } from 'vue';
+import type { NormalizedEvent, OneOfValues } from '@/shared/types';
+import { TableBase, TableBaseRow } from '@/shared/ui';
+import { useRay } from '../../lib';
+import { RayEventTypes, type RayDump } from '../../types';
 
 type Props = {
-  event: NormalizedEvent<RayDump>
-}
+  event: NormalizedEvent<RayDump>;
+};
 
-const { COMPONENT_TYPE_MAP } = useRay()
+const { COMPONENT_TYPE_MAP } = useRay();
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const title = computed(() => {
-  const type = String(props.event.payload.payloads[0].type || 'Unknown type')
+  const type = String(
+    props.event.payload.payloads[0].type
+    || 'Unknown type',
+  );
 
-  return type[0].toUpperCase() + type.slice(1)
-})
+  return type[0].toUpperCase() + type.slice(1);
+});
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
+);
 
 const classes = computed(() =>
-  props.event?.meta ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`] : []
-)
+  props.event?.meta
+    ? [`text-${props.event.meta?.size}`, `text-${props.event.meta?.color}-500`]
+    : []);
 
-const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
-  type
-) => COMPONENT_TYPE_MAP[type as RayEventTypes]
+type GetComponents = (
+  type: OneOfValues<RayEventTypes>
+) => OneOfValues<typeof COMPONENT_TYPE_MAP>;
+
+const getComponent: GetComponents = (type) =>
+  COMPONENT_TYPE_MAP[type as RayEventTypes];
+
+const calcPayloadKey = (type: string, line: string = '') => `${type}-${line}`;
+
 </script>
 
 <template>
-  <div ref="main" class="ray">
+  <div
+    ref="main"
+    class="ray"
+  >
     <main class="ray__in">
       <header class="ray__header">
         <h2 class="ray__header-title">
@@ -46,7 +61,7 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
       <section class="ray__body">
         <template
           v-for="payload in event.payload.payloads"
-          :key="`${payload.type}-${payload.origin ? payload.origin.line_number : ''}`"
+          :key="calcPayloadKey(payload.type, payload.origin.line_number)"
         >
           <div v-if="payload.type && getComponent(payload.type)">
             <Component
@@ -59,7 +74,9 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
       </section>
 
       <section class="ray__body">
-        <h3 class="ray__body-text">Origin</h3>
+        <h3 class="ray__body-text">
+          Origin
+        </h3>
         <TableBase class="ray__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.payloads[0].origin"
@@ -72,7 +89,9 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
       </section>
 
       <section class="ray__body">
-        <h3 class="ray__body-text">Meta</h3>
+        <h3 class="ray__body-text">
+          Meta
+        </h3>
         <TableBase class="ray__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.meta"

@@ -1,28 +1,29 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useEvents } from '@/shared/lib/use-events'
-import type { RayContentLock } from '../../types'
+import { ref } from 'vue';
+import { useEvents } from '@/shared/lib/use-events';
+import type { RayContentLock } from '../../types';
 
 type Props = {
-  name: RayContentLock['name']
-}
+  name: RayContentLock['name'];
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const disabled = ref(false)
+const disabled = ref(false);
 
-const { rayExecution } = useEvents()
+const { rayExecution } = useEvents();
 
 const continueExecution = () => {
-  disabled.value = true
+  disabled.value = true;
 
-  rayExecution.continue(props.name)
-}
+  rayExecution.continue(props.name);
+};
 
 const stopExecution = () => {
-  disabled.value = true
-  rayExecution.stop(props.name)
-}
+  disabled.value = true;
+  rayExecution.stop(props.name);
+};
+
 </script>
 
 <template>
@@ -33,7 +34,12 @@ const stopExecution = () => {
       @click="continueExecution"
     >
       <span class="ray-lock__button-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height="100%"
+          viewBox="0 0 20 20"
+        >
           <path
             fill="green"
             fill-rule="evenodd"
@@ -61,7 +67,11 @@ const stopExecution = () => {
 }
 
 .ray-lock__button {
-  @apply px-5 py-2 flex items-center space-x-3 bg-gray-100 dark:bg-gray-800 border dark:border-gray-600 text-sm font-medium hover:bg-gray-50 focus:outline-none disabled:opacity-50; // active:bg-grey-300;
+  @apply bg-gray-100 dark:bg-gray-800 hover:bg-gray-50;
+  @apply focus:outline-none disabled:opacity-50;
+  @apply px-5 py-2 space-x-3 text-sm font-medium ;
+  @apply flex items-center;
+  @apply border dark:border-gray-600;
 }
 
 .ray-lock__button--continue {
@@ -69,7 +79,7 @@ const stopExecution = () => {
 }
 
 .ray-lock__button--stop {
-  @apply border-l-0 rounded-r-full; // active:bg-grey-300;
+  @apply border-l-0 rounded-r-full;
 }
 
 .ray-lock__button-text {

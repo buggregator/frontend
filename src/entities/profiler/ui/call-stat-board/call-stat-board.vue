@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue'
-import { StatBoard, type StatBoardCost, StatBoardSize } from '@/shared/ui'
+import { defineProps } from 'vue';
+import {
+  StatBoard, type StatBoardCost, StatBoardSize,
+} from '@/shared/ui';
 
 type Props = {
-  cost: StatBoardCost
-  title: string
-}
+  cost: StatBoardCost;
+  title: string;
+};
 
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <template>
@@ -16,7 +18,11 @@ defineProps<Props>()
       {{ title }}
     </h4>
 
-    <StatBoard class="call-stat-board__body" :cost="cost" :size="StatBoardSize.Small" />
+    <StatBoard
+      class="call-stat-board__body"
+      :cost="cost"
+      :size="StatBoardSize.Small"
+    />
   </div>
 </template>
 

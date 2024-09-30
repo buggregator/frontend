@@ -1,96 +1,122 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { IconSvg } from '@/shared/ui'
-import type { Sentry, SentryContextRuntime, SentryContexts } from '../../types'
+import { computed, ref } from 'vue';
+import { IconSvg } from '@/shared/ui';
+import type {
+  Sentry, SentryContextRuntime, SentryContexts,
+} from '../../types';
 
 type Props = {
-  payload: Sentry
-}
+  payload: Sentry;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const isModulesOpen = ref(false)
+const isModulesOpen = ref(false);
 
 const contextsRuntime = computed(() => {
-  const { name = '', version = '' } =
-    (props.payload.contexts?.runtime as SentryContextRuntime) || {}
+  const {
+    name = '',
+    version = '',
+  } = (props.payload.contexts?.runtime as SentryContextRuntime) || {};
 
-  return { name, version }
-})
+  return {
+    name,
+    version,
+  };
+});
 
 const contextsOS = computed(() => {
-  const { name = '', version = '' } = (props.payload.contexts?.os as SentryContexts['os']) || {}
+  const {
+    name = '',
+    version = '',
+  } = (props.payload.contexts?.os as SentryContexts['os']) || {};
 
-  return { name, version }
-})
+  return {
+    name,
+    version,
+  };
+});
 
 const boxes = computed(() => [
   {
     title: 'runtime',
     name: contextsRuntime.value.name,
-    version: contextsRuntime.value.version
+    version: contextsRuntime.value.version,
   },
   {
     title: 'os',
     name: contextsOS.value.name,
-    version: contextsOS.value.version
+    version: contextsOS.value.version,
   },
   {
     title: 'sdk',
     name: props.payload.sdk?.name,
-    version: props.payload.sdk?.version
-  }
-])
+    version: props.payload.sdk?.version,
+  },
+]);
 
 const tags = computed(() => [
   {
     name: 'env',
-    value: props.payload.environment
+    value: props.payload.environment,
   },
   {
     name: 'logger',
-    value: props.payload.logger
+    value: props.payload.logger,
   },
   {
     name: 'os',
-    value: `${contextsOS.value.name} ${contextsOS.value.version}`
+    value: `${contextsOS.value.name} ${contextsOS.value.version}`,
   },
   {
     name: 'runtime',
-    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`
+    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`,
   },
   {
     name: 'server name',
-    value: props.payload.server_name
-  }
-])
+    value: props.payload.server_name,
+  },
+]);
 
 const modules = computed(() => {
-  const mods = props.payload.modules || {}
+  const mods = props.payload.modules || {};
 
   return Object.keys(mods).map((name) => ({
     name,
-    version: mods[name]
-  }))
-})
+    version: mods[name],
+  }));
+});
+
 </script>
 
 <template>
   <section class="sentry-page-tags">
     <div class="sentry-page-tags__boxes">
-      <div v-for="box in boxes" :key="box.title" class="sentry-page-tags__box">
+      <div
+        v-for="box in boxes"
+        :key="box.title"
+        class="sentry-page-tags__box"
+      >
         <span class="sentry-page-tags__box-title">{{ box.title }}</span>
         <h4 class="sentry-page-tags__box-name">
           {{ box.name }}
         </h4>
-        <p class="sentry-page-tags__box-value">Version: {{ box.version }}</p>
+        <p class="sentry-page-tags__box-value">
+          Version: {{ box.version }}
+        </p>
       </div>
     </div>
 
     <div class="sentry-page-tags__labels-wrapper">
-      <h3 class="sentry-page-tags__title">Tags</h3>
+      <h3 class="sentry-page-tags__title">
+        Tags
+      </h3>
       <div class="sentry-page-tags__labels">
-        <div v-for="tag in tags" :key="tag.name" class="sentry-page-tags__label">
+        <div
+          v-for="tag in tags"
+          :key="tag.name"
+          class="sentry-page-tags__label"
+        >
           <div class="sentry-page-tags__label-name">
             {{ tag.name }}
           </div>
@@ -100,7 +126,11 @@ const modules = computed(() => {
         </div>
 
         <template v-if="payload.tags">
-          <div v-for="(name, value) in payload.tags" :key="value" class="sentry-page-tags__label">
+          <div
+            v-for="(name, value) in payload.tags"
+            :key="value"
+            class="sentry-page-tags__label"
+          >
             <div class="sentry-page-tags__label-name">
               {{ value }}
             </div>
@@ -115,22 +145,29 @@ const modules = computed(() => {
     <div
       class="sentry-page-tags__labels-wrapper"
       :class="{
-        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen
+        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen,
       }"
     >
-      <h3 class="sentry-page-tags__title" @click="isModulesOpen = !isModulesOpen">
+      <h3
+        class="sentry-page-tags__title"
+        @click="isModulesOpen = !isModulesOpen"
+      >
         Modules
 
         <IconSvg
           class="sentry-page-tags__title-dd"
           :class="{
-            'sentry-page-tags__title-dd--open': isModulesOpen
+            'sentry-page-tags__title-dd--open': isModulesOpen,
           }"
           name="dd"
         />
       </h3>
       <div class="sentry-page-tags__labels">
-        <div v-for="module in modules" :key="module.name" class="sentry-page-tags__label">
+        <div
+          v-for="module in modules"
+          :key="module.name"
+          class="sentry-page-tags__label"
+        >
           <div class="sentry-page-tags__label-name">
             {{ module.name }}
           </div>
@@ -163,7 +200,8 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
+  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md;
+  @apply border border-purple-300 dark:border-gray-400;
 
   & + & {
     @apply mt-5;
@@ -171,7 +209,8 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__labels {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
+  @apply text-purple-600 dark:text-purple-100 gap-3 mt-3;
+  @apply flex flex-row flex-wrap items-center;
 
   .sentry-page-tags__labels-wrapper--partial & {
     @apply max-h-[200px] overflow-y-auto;
@@ -194,7 +233,9 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__box {
-  @apply border border-purple-300 dark:border-gray-400 rounded px-4 pb-2 pt-1 hover:bg-purple-50 dark:hover:bg-purple-600 cursor-pointer mb-3 md:mb-0;
+  @apply rounded cursor-pointer mb-3 md:mb-0 px-4 pb-2 pt-1;
+  @apply border border-purple-300 dark:border-gray-400;
+  @apply hover:bg-purple-50 dark:hover:bg-purple-600;
 }
 
 .sentry-page-tags__box-title {

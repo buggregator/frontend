@@ -1,13 +1,16 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue'
+import { defineProps } from 'vue';
 
 type Props = {
-  title?: string
-}
+  title?: string;
+};
 
-withDefaults(defineProps<Props>(), {
-  title: ''
-})
+withDefaults(
+  defineProps<Props>(),
+  {
+    title: '',
+  },
+);
 </script>
 
 <template>
@@ -25,7 +28,9 @@ withDefaults(defineProps<Props>(), {
 @import 'src/assets/mixins';
 .table-base-row {
   @include text-responsive;
-  @apply md:flex bg-gray-50 dark:bg-gray-800 md:space-y-1 py-1 md:py-2 px-2 md:px-4 items-center sm:divide-x divide-gray-300 dark:divide-gray-700;
+  @apply items-center sm:divide-x;
+  @apply md:flex md:space-y-1 py-1 md:py-2 px-2 md:px-4 ;
+  @apply bg-gray-50 dark:bg-gray-800 divide-gray-300 dark:divide-gray-700;
 }
 
 .table-base-row__name {

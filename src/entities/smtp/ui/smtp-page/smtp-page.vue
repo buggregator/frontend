@@ -1,94 +1,103 @@
 <script lang="ts" setup>
-import moment from 'moment'
-import { computed, onMounted, ref } from 'vue'
-import { Tab, Tabs } from 'vue3-tabs-component'
-import { htmlEncode } from '@/shared/lib/helpers'
-import { useAttachments } from '@/shared/lib/io'
-import type { NormalizedEvent, Attachment } from '@/shared/types'
+import moment from 'moment';
+import {
+  computed, onMounted, ref,
+} from 'vue';
+import { Tab, Tabs } from 'vue3-tabs-component';
+import { htmlEncode } from '@/shared/lib/helpers';
+import { useAttachments } from '@/shared/lib/io';
+import type { NormalizedEvent, Attachment } from '@/shared/types';
 import {
   TableBase,
   TableBaseRow,
   CodeSnippet,
   FileAttachment,
   EmailPreviewDevice,
-  EmailPreview
-} from '@/shared/ui'
-import type { SMTP } from '../../types'
-import { SmtpPageAddresses } from '../smtp-page-addresses'
+  EmailPreview,
+} from '@/shared/ui';
+import type { SMTP } from '../../types';
+import { SmtpPageAddresses } from '../smtp-page-addresses';
 
 type Props = {
-  event: NormalizedEvent<SMTP>
-}
+  event: NormalizedEvent<SMTP>;
+};
 
-const props = defineProps<Props>()
-const attachments = ref<Attachment[]>([])
-const isLoading = ref(false)
+const props = defineProps<Props>();
+const attachments = ref<Attachment[]>([]);
+const isLoading = ref(false);
 
-const { getAttachments, calcDownloadLink } = useAttachments()
+const { getAttachments, calcDownloadLink } = useAttachments();
 
 const htmlSource = computed(() =>
   props.event?.payload?.html
     ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
-    : undefined
-)
+    : undefined);
 
 // TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
-  isLoading.value = true
+  isLoading.value = true;
 
   try {
-    isLoading.value = false
+    isLoading.value = false;
 
     await getAttachments(props.event.id).then((_attachments: Attachment[]) => {
-      attachments.value = _attachments
-    })
+      attachments.value = _attachments;
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 const senders = computed(() => [
   {
     title: 'From',
-    address: props.event.payload.from
+    address: props.event.payload.from,
   },
   {
     title: 'To',
-    address: props.event.payload.to
+    address: props.event.payload.to,
   },
   {
     title: 'CC',
-    address: props.event.payload.cc
+    address: props.event.payload.cc,
   },
   {
     title: 'BCC',
-    address: props.event.payload.bcc
+    address: props.event.payload.bcc,
   },
   {
     title: 'Reply to',
-    address: props.event.payload.reply_to
-  }
-])
+    address: props.event.payload.reply_to,
+  },
+]);
 
 const isHtml = computed(
-  () => props.event.payload?.html !== undefined && props.event.payload?.html !== ''
-)
+  () => props.event.payload?.html !== undefined && props.event.payload?.html !== '',
+);
 
 const isText = computed(
-  () => props.event.payload?.text !== undefined && props.event.payload?.text !== ''
-)
+  () => props.event.payload?.text !== undefined && props.event.payload?.text !== '',
+);
 
-const mail = computed(() => props.event.payload)
+const mail = computed(() => props.event.payload);
 
-const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
+const date = computed(
+  () => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'),
+);
 
 const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
-  calcDownloadLink(props.event.id, attachmentId)
+  calcDownloadLink(
+    props.event.id,
+    attachmentId,
+  );
 
-onMounted(getAttachmentsRequest)
+onMounted(getAttachmentsRequest);
 </script>
 
 <template>
-  <div ref="main" class="smtp-page">
+  <div
+    ref="main"
+    class="smtp-page"
+  >
     <main class="smtp-page__main">
       <header class="smtp-page__header">
         <h2 class="smtp-page__header-title">
@@ -111,7 +120,9 @@ onMounted(getAttachmentsRequest)
               {{ sender.title }}
             </div>
             <div class="smtp-page__sender-address">
-              <template v-if="email.name"> {{ email.name }} [{{ email.email }}] </template>
+              <template v-if="email.name">
+                {{ email.name }} [{{ email.email }}]
+              </template>
               <template v-else>
                 {{ email.email }}
               </template>
@@ -129,38 +140,58 @@ onMounted(getAttachmentsRequest)
             suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
           >
             <EmailPreview :device="EmailPreviewDevice.Tablet">
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="htmlSource" />
             </EmailPreview>
           </Tab>
-          <Tab v-if="isHtml" name="HTML">
-            <CodeSnippet language="html" class="tab-preview-code" :code="event.payload.html" />
+          <Tab
+            v-if="isHtml"
+            name="HTML"
+          >
+            <CodeSnippet
+              language="html"
+              class="tab-preview-code"
+              :code="event.payload.html"
+            />
           </Tab>
-          <Tab v-if="isText" name="Text">
+          <Tab
+            v-if="isText"
+            name="Text"
+          >
             <CodeSnippet
               language="html"
               class="max-w-full tab-preview-code"
               :code="event.payload.text"
             />
           </Tab>
-          <Tab v-if="attachments.length" :name="`Attachments (${attachments.length})`">
+          <Tab
+            v-if="attachments.length"
+            :name="`Attachments (${attachments.length})`"
+          >
             <section class="mb-5">
               <div class="flex gap-x-3">
-                <template v-for="a in attachments" :key="a.uuid">
-                  <FileAttachment
-                    :event-id="event.id"
-                    :attachment="a"
-                    :download-url="calcDownloadUrl(a.uuid)"
-                  />
-                </template>
+                <FileAttachment
+                  v-for="a in attachments"
+                  :key="a.uuid"
+                  :event-id="event.id"
+                  :attachment="a"
+                  :download-url="calcDownloadUrl(a.uuid)"
+                />
               </div>
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet class="tab-preview-code" language="html" :code="event.payload.raw" />
+            <CodeSnippet
+              class="tab-preview-code"
+              language="html"
+              :code="event.payload.raw"
+            />
           </Tab>
           <Tab name="Tech Info">
             <section>
-              <h3 class="mb-3 font-bold">Email Headers</h3>
+              <h3 class="mb-3 font-bold">
+                Email Headers
+              </h3>
               <TableBase>
                 <TableBaseRow title="Id">
                   {{ event.payload.id }}
@@ -174,13 +205,22 @@ onMounted(getAttachmentsRequest)
                 <TableBaseRow title="To">
                   <SmtpPageAddresses :addresses="event.payload.to || []" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.cc?.length" title="Cc">
+                <TableBaseRow
+                  v-if="event.payload.cc?.length"
+                  title="Cc"
+                >
                   <SmtpPageAddresses :addresses="event.payload.cc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.bcc?.length" title="Bcc">
+                <TableBaseRow
+                  v-if="event.payload.bcc?.length"
+                  title="Bcc"
+                >
                   <SmtpPageAddresses :addresses="event.payload.bcc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.reply_to?.length" title="Reply to">
+                <TableBaseRow
+                  v-if="event.payload.reply_to?.length"
+                  title="Reply to"
+                >
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>
