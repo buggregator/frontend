@@ -106,8 +106,8 @@ const exceptionsLength = computed(
       />
 
       <SentryPageExtra
-        v-if="extra"
-        :extra="extra"
+        v-if="event.payload.extra"
+        :extra="event.payload.extra"
         class="sentry-page__section"
       />
     </main>
