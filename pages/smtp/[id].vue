@@ -74,14 +74,12 @@ onMounted(getEvent);
       <div></div>
     </div>
 
-    <div>
-      <SmtpPage
-        v-if="event"
-        :event="event"
-        :attachments="attachments"
-        :html-source="html"
-      />
-    </div>
+    <SmtpPage
+      v-if="event"
+      :event="event"
+      :attachments="attachments"
+      :html-source="html"
+    />
   </NuxtLayout>
 </template>
 
