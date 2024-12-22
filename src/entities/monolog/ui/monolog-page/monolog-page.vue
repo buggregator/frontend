@@ -122,7 +122,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
 }
 
 .monolog__body {
-  @apply py-5;
+  @apply py-5 px-4;
 }
 
 .monolog__body-text {
