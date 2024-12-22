@@ -61,7 +61,7 @@ const toggleView = () => {
 }
 
 .preview-card__snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words;
+  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words p-1 sm:p-2;
 
   & + & {
     @apply border-t-2;
