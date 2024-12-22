@@ -3,9 +3,8 @@ import { FlameChart } from 'flame-chart-js'
 import debounce from 'lodash.debounce'
 import { ref, onMounted, nextTick, onBeforeUnmount, computed } from 'vue'
 import type { EventId } from '@/shared/types'
-import type { StatBoardCost } from '@/shared/ui'
 import { useProfiler } from '../../lib'
-import type { CallStackHoverData } from '../../types'
+import type { CallStackHoverData, StatBoardCost } from '../../types'
 import { CallStatBoard } from '../../ui/call-stat-board'
 
 type Props = {

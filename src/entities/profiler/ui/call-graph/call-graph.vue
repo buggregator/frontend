@@ -2,9 +2,9 @@
 import type { ElementsDefinition } from 'cytoscape'
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { type EventId, GraphTypes } from '@/shared/types'
-import { IconSvg, type StatBoardCost } from '@/shared/ui'
+import { IconSvg } from '@/shared/ui'
 import { useProfiler } from '../../lib'
-import type { ProfilerCallGraph } from '../../types'
+import type { ProfilerCallGraph, StatBoardCost } from '../../types'
 import { CallStatBoard } from '../call-stat-board'
 import { RenderGraph } from '../render-graph'
 
