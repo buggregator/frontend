@@ -63,7 +63,12 @@ const badgeNumber = computed(() =>
 
 <template>
   <AppHeader class="page-header">
-    <RouterLink :to="{ name: RouteName.Home }" :disabled="!title"> Home </RouterLink>
+    <RouterLink
+      :to="{ name: RouteName.Home }"
+      :disabled="!title"
+    >
+      Home
+    </RouterLink>
 
     <template v-if="title">
       <span>&nbsp;/&nbsp;</span>
@@ -80,8 +85,16 @@ const badgeNumber = computed(() =>
         @toggle-update="toggleUpdate"
       />
 
-      <BadgeNumber :number="badgeNumber" :is-visible="isVisibleEventCounts">
-        <button class="page-header__clear-button" @click="clearEvents">Clear events</button>
+      <BadgeNumber
+        :number="badgeNumber"
+        :is-visible="isVisibleEventCounts"
+      >
+        <button
+          class="page-header__clear-button"
+          @click="clearEvents"
+        >
+          Clear events
+        </button>
       </BadgeNumber>
     </template>
   </AppHeader>

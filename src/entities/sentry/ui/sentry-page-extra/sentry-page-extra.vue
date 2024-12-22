@@ -22,7 +22,9 @@ const ddStates = ref(
 
 <template>
   <section class="sentry-page-extra">
-    <h3 class="sentry-page-extra__head">Extra</h3>
+    <h3 class="sentry-page-extra__head">
+      Extra
+    </h3>
 
     <div class="sentry-page-extra__in">
       <div
@@ -33,7 +35,10 @@ const ddStates = ref(
           'sentry-page-extra__wrapper--open': ddStates[key]
         }"
       >
-        <h3 class="sentry-page-extra__title" @click="ddStates[key] = !ddStates[key]">
+        <h3
+          class="sentry-page-extra__title"
+          @click="ddStates[key] = !ddStates[key]"
+        >
           {{ key }}
 
           <IconSvg
@@ -45,8 +50,15 @@ const ddStates = ref(
           />
         </h3>
 
-        <TableBase v-if="value" class="sentry-page-extra__content">
-          <TableBaseRow v-for="(v, t) in value" :key="t" :title="String(t || '')">
+        <TableBase
+          v-if="value"
+          class="sentry-page-extra__content"
+        >
+          <TableBaseRow
+            v-for="(v, t) in value"
+            :key="t"
+            :title="String(t || '')"
+          >
             {{ JSON.stringify(v) }}
           </TableBaseRow>
         </TableBase>

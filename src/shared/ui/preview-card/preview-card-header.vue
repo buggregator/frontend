@@ -71,7 +71,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       </a>
 
       <template v-if="isVisibleTags">
-        <template v-for="label in labels" :key="label">
+        <template
+          v-for="label in labels"
+          :key="label"
+        >
           <div
             v-if="isString(label)"
             ref="tags"
@@ -104,14 +107,23 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       </template>
     </div>
 
-    <div v-if="isVisibleControls" class="preview-card-header__buttons">
-      <div v-if="isOpen" class="preview-card-header__buttons-expand">
+    <div
+      v-if="isVisibleControls"
+      class="preview-card-header__buttons"
+    >
+      <div
+        v-if="isOpen"
+        class="preview-card-header__buttons-expand"
+      >
         <button
           class="preview-card-header__button preview-card-header__button--copy"
           title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
-          <IconSvg name="copy" class="preview-card-header__button-icon" />
+          <IconSvg
+            name="copy"
+            class="preview-card-header__button-icon"
+          />
         </button>
 
         <div class="preview-card-header__buttons-expand-list">
@@ -120,7 +132,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
             title="Download event as JSON file"
             @click="downloadFile"
           >
-            <IconSvg name="file-download" class="preview-card-header__button-icon" />
+            <IconSvg
+              name="file-download"
+              class="preview-card-header__button-icon"
+            />
           </button>
 
           <button
@@ -128,7 +143,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
             title="Download event as PNG image"
             @click="downloadImageEvent"
           >
-            <IconSvg name="image-download" class="preview-card-header__button-icon" />
+            <IconSvg
+              name="image-download"
+              class="preview-card-header__button-icon"
+            />
           </button>
         </div>
       </div>
@@ -139,8 +157,16 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         title="Collapse event"
         @click="changeView"
       >
-        <IconSvg v-if="isOpen" name="minus" class="preview-card-header__button-icon" />
-        <IconSvg v-if="!isOpen" name="plus" class="preview-card-header__button-icon" />
+        <IconSvg
+          v-if="isOpen"
+          name="minus"
+          class="preview-card-header__button-icon"
+        />
+        <IconSvg
+          v-if="!isOpen"
+          name="plus"
+          class="preview-card-header__button-icon"
+        />
       </button>
 
       <button
@@ -151,7 +177,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         }"
         @click="lockEvent"
       >
-        <IconSvg name="lock" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="lock"
+          class="preview-card-header__button-icon"
+        />
       </button>
 
       <button
@@ -160,7 +189,10 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         :disabled="isLocked"
         @click="deleteEvent"
       >
-        <IconSvg name="times" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="times"
+          class="preview-card-header__button-icon"
+        />
       </button>
     </div>
   </div>

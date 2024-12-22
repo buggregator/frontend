@@ -21,10 +21,16 @@ const type = computed(() => (paramsType.value as EventTypes) || ALL_EVENT_TYPES)
     </template>
 
     <template #header>
-      <PageHeader :type="type" :title="title" />
+      <PageHeader
+        :type="type"
+        :title="title"
+      />
     </template>
 
-    <LayoutPreviewEvents :type="type" :title="title" />
+    <LayoutPreviewEvents
+      :type="type"
+      :title="title"
+    />
   </LayoutBase>
 </template>
 

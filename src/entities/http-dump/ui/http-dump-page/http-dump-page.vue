@@ -50,7 +50,10 @@ const hasAttachments = computed(
         <span class="http-dump-page__title-uri">/{{ uri }}</span>
       </h2>
 
-      <section v-if="hasHeaders" class="http-dump-page__section">
+      <section
+        v-if="hasHeaders"
+        class="http-dump-page__section"
+      >
         <h1>Headers</h1>
         <TableBase>
           <TableBaseRow
@@ -63,7 +66,10 @@ const hasAttachments = computed(
         </TableBase>
       </section>
 
-      <section v-if="hasCookies" class="http-dump-page__section">
+      <section
+        v-if="hasCookies"
+        class="http-dump-page__section"
+      >
         <h1>Cookie</h1>
         <TableBase>
           <TableBaseRow
@@ -76,7 +82,10 @@ const hasAttachments = computed(
         </TableBase>
       </section>
 
-      <section v-if="hasQuery" class="http-dump-page__section">
+      <section
+        v-if="hasQuery"
+        class="http-dump-page__section"
+      >
         <h1>Query Parameters</h1>
         <TableBase>
           <TableBaseRow
@@ -89,7 +98,10 @@ const hasAttachments = computed(
         </TableBase>
       </section>
 
-      <section v-if="hasPostData" class="http-dump-page__section">
+      <section
+        v-if="hasPostData"
+        class="http-dump-page__section"
+      >
         <h1>POST Data</h1>
         <TableBase>
           <TableBaseRow
@@ -102,7 +114,10 @@ const hasAttachments = computed(
         </TableBase>
       </section>
 
-      <section v-if="hasAttachments" class="http-dump-page__section">
+      <section
+        v-if="hasAttachments"
+        class="http-dump-page__section"
+      >
         <h1>Attachments ({{ event.payload.request.files?.length }})</h1>
 
         <div class="http-dump-page__attachments">
@@ -116,7 +131,10 @@ const hasAttachments = computed(
         §
       </section>
 
-      <section v-if="hasBody" class="http-dump-page__section">
+      <section
+        v-if="hasBody"
+        class="http-dump-page__section"
+      >
         <h1>Request Body</h1>
         <code class="http-dump-page__section-body">
           {{ event.payload.request.body }}

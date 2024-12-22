@@ -23,7 +23,10 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 </script>
 
 <template>
-  <PreviewCard class="ray-dump-preview" :event="props.event">
+  <PreviewCard
+    class="ray-dump-preview"
+    :event="props.event"
+  >
     <template
       v-for="payload in event.payload.payloads"
       :key="`${payload.type}-${payload.origin ? payload.origin.line_number : ''}`"

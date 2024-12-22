@@ -13,8 +13,15 @@ defineProps<Props>()
 </script>
 
 <template>
-  <PreviewCard class="event-card-fallback" :event="event">
-    <CodeSnippet class="event-card-fallback__snippet" :code="code" language="json" />
+  <PreviewCard
+    class="event-card-fallback"
+    :event="event"
+  >
+    <CodeSnippet
+      class="event-card-fallback__snippet"
+      :code="code"
+      language="json"
+    />
   </PreviewCard>
 </template>
 

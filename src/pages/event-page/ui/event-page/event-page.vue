@@ -53,16 +53,25 @@ onMounted(getEvent)
     </template>
 
     <template #header>
-      <PageEventHeader :title="title" :event-id="eventId" />
+      <PageEventHeader
+        :title="title"
+        :event-id="eventId"
+      />
     </template>
 
-    <div v-if="isLoading && !serverEvent" class="events-list-page__loading">
+    <div
+      v-if="isLoading && !serverEvent"
+      class="events-list-page__loading"
+    >
       <div />
       <div />
       <div />
     </div>
 
-    <EventPageMapper v-if="serverEvent" :event="serverEvent" />
+    <EventPageMapper
+      v-if="serverEvent"
+      :event="serverEvent"
+    />
   </LayoutBase>
 </template>
 

@@ -80,5 +80,8 @@ const normalize = computed(() => componentConfig?.value?.normalize ?? normalizeU
 </script>
 
 <template>
-  <component :is="view" :event="normalize(event)" />
+  <component
+    :is="view"
+    :event="normalize(event)"
+  />
 </template>

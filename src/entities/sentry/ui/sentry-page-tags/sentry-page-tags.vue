@@ -78,19 +78,31 @@ const modules = computed(() => {
 <template>
   <section class="sentry-page-tags">
     <div class="sentry-page-tags__boxes">
-      <div v-for="box in boxes" :key="box.title" class="sentry-page-tags__box">
+      <div
+        v-for="box in boxes"
+        :key="box.title"
+        class="sentry-page-tags__box"
+      >
         <span class="sentry-page-tags__box-title">{{ box.title }}</span>
         <h4 class="sentry-page-tags__box-name">
           {{ box.name }}
         </h4>
-        <p class="sentry-page-tags__box-value">Version: {{ box.version }}</p>
+        <p class="sentry-page-tags__box-value">
+          Version: {{ box.version }}
+        </p>
       </div>
     </div>
 
     <div class="sentry-page-tags__labels-wrapper">
-      <h3 class="sentry-page-tags__title">Tags</h3>
+      <h3 class="sentry-page-tags__title">
+        Tags
+      </h3>
       <div class="sentry-page-tags__labels">
-        <div v-for="tag in tags" :key="tag.name" class="sentry-page-tags__label">
+        <div
+          v-for="tag in tags"
+          :key="tag.name"
+          class="sentry-page-tags__label"
+        >
           <div class="sentry-page-tags__label-name">
             {{ tag.name }}
           </div>
@@ -100,7 +112,11 @@ const modules = computed(() => {
         </div>
 
         <template v-if="payload.tags">
-          <div v-for="(name, value) in payload.tags" :key="value" class="sentry-page-tags__label">
+          <div
+            v-for="(name, value) in payload.tags"
+            :key="value"
+            class="sentry-page-tags__label"
+          >
             <div class="sentry-page-tags__label-name">
               {{ value }}
             </div>
@@ -118,7 +134,10 @@ const modules = computed(() => {
         'sentry-page-tags__labels-wrapper--partial': !isModulesOpen
       }"
     >
-      <h3 class="sentry-page-tags__title" @click="isModulesOpen = !isModulesOpen">
+      <h3
+        class="sentry-page-tags__title"
+        @click="isModulesOpen = !isModulesOpen"
+      >
         Modules
 
         <IconSvg
@@ -130,7 +149,11 @@ const modules = computed(() => {
         />
       </h3>
       <div class="sentry-page-tags__labels">
-        <div v-for="module in modules" :key="module.name" class="sentry-page-tags__label">
+        <div
+          v-for="module in modules"
+          :key="module.name"
+          class="sentry-page-tags__label"
+        >
           <div class="sentry-page-tags__label-name">
             {{ module.name }}
           </div>

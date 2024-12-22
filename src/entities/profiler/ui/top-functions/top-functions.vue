@@ -61,7 +61,10 @@ watchEffect(async () => {
 
 <template>
   <section class="top-functions__stat-board">
-    <StatBoard v-if="data.overall_totals" :cost="data.overall_totals" />
+    <StatBoard
+      v-if="data.overall_totals"
+      :cost="data.overall_totals"
+    />
   </section>
 
   <div class="top-functions__body">
@@ -82,7 +85,10 @@ watchEffect(async () => {
       </thead>
 
       <tbody>
-        <tr v-for="item in data.functions" :key="item.function">
+        <tr
+          v-for="item in data.functions"
+          :key="item.function"
+        >
           <td
             v-for="col in data.schema"
             :key="col.key"

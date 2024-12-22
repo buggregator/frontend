@@ -30,7 +30,9 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 
 <template>
   <AppHeader class="page-event-header">
-    <RouterLink :to="{ name: RouteName.Home }"> Home </RouterLink>
+    <RouterLink :to="{ name: RouteName.Home }">
+      Home
+    </RouterLink>
     &nbsp;/&nbsp;
     <RouterLink :to="eventsListLink">
       {{ title }}
@@ -51,7 +53,12 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
         Open JSON
       </a>
 
-      <button class="page-event-header__clear-button" @click="onDelete">Delete event</button>
+      <button
+        class="page-event-header__clear-button"
+        @click="onDelete"
+      >
+        Delete event
+      </button>
     </template>
   </AppHeader>
 </template>

@@ -72,8 +72,14 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
   <div class="preview-card-footer">
     <div class="preview-card-footer__tags">
       <template v-if="mappedOrigins">
-        <template v-for="(value, key) in mappedOrigins" :key="key">
-          <div v-if="!isEditorLink(String(key))" class="preview-card-footer__tag">
+        <template
+          v-for="(value, key) in mappedOrigins"
+          :key="key"
+        >
+          <div
+            v-if="!isEditorLink(String(key))"
+            class="preview-card-footer__tag"
+          >
             <span class="preview-card-footer__tag-key">{{ key }}:</span>
             <span class="preview-card-footer__tag-value">{{ value }}</span>
           </div>
@@ -91,8 +97,14 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
       </template>
     </div>
 
-    <div v-if="serverName" class="preview-card-footer__host">
-      <IconSvg name="host" class="preview-card-footer__host-icon" />
+    <div
+      v-if="serverName"
+      class="preview-card-footer__host"
+    >
+      <IconSvg
+        name="host"
+        class="preview-card-footer__host-icon"
+      />
       <span class="preview-card-footer__host-name">
         {{ serverName }}
       </span>

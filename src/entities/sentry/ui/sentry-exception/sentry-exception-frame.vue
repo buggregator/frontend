@@ -23,8 +23,14 @@ const toggleOpen = () => {
 </script>
 
 <template>
-  <div class="sentry-exception-frame" :class="{ 'sentry-exception-frame--empty': !hasBody }">
-    <div class="sentry-exception-frame__head" @click="toggleOpen">
+  <div
+    class="sentry-exception-frame"
+    :class="{ 'sentry-exception-frame--empty': !hasBody }"
+  >
+    <div
+      class="sentry-exception-frame__head"
+      @click="toggleOpen"
+    >
       <div class="sentry-exception-frame__head-title">
         {{ frame.filename }}
 
@@ -43,7 +49,10 @@ const toggleOpen = () => {
       />
     </div>
 
-    <div v-if="isFrameOpen && hasBody" class="sentry-exception-frame__body">
+    <div
+      v-if="isFrameOpen && hasBody"
+      class="sentry-exception-frame__body"
+    >
       <template v-if="frame.pre_context">
         <div
           v-for="(line, i) in frame.pre_context"
@@ -62,7 +71,9 @@ const toggleOpen = () => {
         v-if="frame.context_line"
         class="sentry-exception-frame__body-line sentry-exception-frame__body-line--selection"
       >
-        <div class="sentry-exception-frame__body-line-position">{{ frame.lineno }}.</div>
+        <div class="sentry-exception-frame__body-line-position">
+          {{ frame.lineno }}.
+        </div>
 
         <pre>{{ frame.context_line }}</pre>
       </div>

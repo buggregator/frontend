@@ -29,7 +29,10 @@ const toggleView = () => {
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
     <CodeSnippet
       class="preview-card__snippet preview-card__snippet--interactive"
       :code="isFullMessage ? message : shortMessage"
@@ -44,7 +47,11 @@ const toggleView = () => {
       :code="event.payload.context"
     />
 
-    <CodeSnippet class="preview-card__snippet" language="json" :code="event.payload.extra" />
+    <CodeSnippet
+      class="preview-card__snippet"
+      language="json"
+      :code="event.payload.extra"
+    />
   </PreviewCard>
 </template>
 

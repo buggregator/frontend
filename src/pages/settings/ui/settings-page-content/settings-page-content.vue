@@ -23,7 +23,9 @@ useTitle('Settings | Buggregator')
 
 <template>
   <main class="settings-page-content">
-    <div class="settings-page-content__title">Theme: {{ isDarkMode ? 'Dark' : 'Light' }}</div>
+    <div class="settings-page-content__title">
+      Theme: {{ isDarkMode ? 'Dark' : 'Light' }}
+    </div>
 
     <div class="settings-page-content__control">
       <IconSvg
@@ -47,7 +49,9 @@ useTitle('Settings | Buggregator')
       />
     </div>
 
-    <div class="settings-page-content__title">Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}</div>
+    <div class="settings-page-content__title">
+      Fixed Header: {{ isFixedHeader ? 'On' : 'Off' }}
+    </div>
 
     <div class="settings-page-content__control">
       <IconSvg
@@ -101,13 +105,18 @@ useTitle('Settings | Buggregator')
           'settings-page-content__control-icon--active': isVisibleEventCounts
         }"
       >
-        <BadgeNumber class="settings-page-content__control-icon-badge" :number="15">
+        <BadgeNumber
+          class="settings-page-content__control-icon-badge"
+          :number="15"
+        >
           <IconSvg name="inspector" />
         </BadgeNumber>
       </div>
     </div>
 
-    <div class="settings-page-content__title">Code Editor Open Link:</div>
+    <div class="settings-page-content__title">
+      Code Editor Open Link:
+    </div>
 
     <div class="settings-page-content__control">
       <div>
@@ -117,7 +126,7 @@ useTitle('Settings | Buggregator')
             type="text"
             :value="codeEditor"
             @change="changeCodeEditor"
-          />
+          >
           &nbsp;://open?file=/App/Modules/Logger.php&line=12
         </label>
 

@@ -25,13 +25,27 @@ const redirect = () => {
 <template>
   <LayoutBase class="login-page">
     <div class="login-page__container">
-      <IconSvg class="login-page__logo" name="logo" />
+      <IconSvg
+        class="login-page__logo"
+        name="logo"
+      />
       <div class="login-page__form">
         <div class="login-page__form-left-block">
-          <h1 class="login-page__form-title">Welcome Back</h1>
-          <p class="login-page__form-text">Let's get you signed in.</p>
-          <button class="login-page__form-button" @click="redirect">
-            <IconSvg class="w-6" name="lock" fill="currentcolor" />
+          <h1 class="login-page__form-title">
+            Welcome Back
+          </h1>
+          <p class="login-page__form-text">
+            Let's get you signed in.
+          </p>
+          <button
+            class="login-page__form-button"
+            @click="redirect"
+          >
+            <IconSvg
+              class="w-6"
+              name="lock"
+              fill="currentcolor"
+            />
             Continue to SSO
           </button>
         </div>

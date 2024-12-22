@@ -2,7 +2,9 @@
 
 <template>
   <header class="header">
-    <div class="header__title"><slot />&nbsp;</div>
+    <div class="header__title">
+      <slot />&nbsp;
+    </div>
 
     <div class="header__controls">
       <slot name="controls" />

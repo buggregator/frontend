@@ -28,7 +28,10 @@ const selectDevice = (device: Device) => {
         }"
         @click="selectDevice(Device.Mobile)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="mobile-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="mobile-device"
+        />
       </button>
       <button
         class="attachment-preview__btn"
@@ -37,7 +40,10 @@ const selectDevice = (device: Device) => {
         }"
         @click="selectDevice(Device.Tablet)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="tablet-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="tablet-device"
+        />
       </button>
       <button
         class="attachment-preview__btn"
@@ -46,7 +52,10 @@ const selectDevice = (device: Device) => {
         }"
         @click="selectDevice(Device.Desktop)"
       >
-        <IconSvg class="attachment-preview__btn-icon" name="desktop-device" />
+        <IconSvg
+          class="attachment-preview__btn-icon"
+          name="desktop-device"
+        />
       </button>
     </div>
     <div

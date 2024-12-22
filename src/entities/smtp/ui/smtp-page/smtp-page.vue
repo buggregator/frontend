@@ -88,7 +88,10 @@ onMounted(getAttachmentsRequest)
 </script>
 
 <template>
-  <div ref="main" class="smtp-page">
+  <div
+    ref="main"
+    class="smtp-page"
+  >
     <main class="smtp-page__main">
       <header class="smtp-page__header">
         <h2 class="smtp-page__header-title">
@@ -111,7 +114,9 @@ onMounted(getAttachmentsRequest)
               {{ sender.title }}
             </div>
             <div class="smtp-page__sender-address">
-              <template v-if="email.name"> {{ email.name }} [{{ email.email }}] </template>
+              <template v-if="email.name">
+                {{ email.name }} [{{ email.email }}]
+              </template>
               <template v-else>
                 {{ email.email }}
               </template>
@@ -132,20 +137,36 @@ onMounted(getAttachmentsRequest)
               <div v-html="htmlSource" />
             </EmailPreview>
           </Tab>
-          <Tab v-if="isHtml" name="HTML">
-            <CodeSnippet language="html" class="tab-preview-code" :code="event.payload.html" />
+          <Tab
+            v-if="isHtml"
+            name="HTML"
+          >
+            <CodeSnippet
+              language="html"
+              class="tab-preview-code"
+              :code="event.payload.html"
+            />
           </Tab>
-          <Tab v-if="isText" name="Text">
+          <Tab
+            v-if="isText"
+            name="Text"
+          >
             <CodeSnippet
               language="html"
               class="max-w-full tab-preview-code"
               :code="event.payload.text"
             />
           </Tab>
-          <Tab v-if="attachments.length" :name="`Attachments (${attachments.length})`">
+          <Tab
+            v-if="attachments.length"
+            :name="`Attachments (${attachments.length})`"
+          >
             <section class="mb-5">
               <div class="flex gap-x-3">
-                <template v-for="a in attachments" :key="a.uuid">
+                <template
+                  v-for="a in attachments"
+                  :key="a.uuid"
+                >
                   <FileAttachment
                     :event-id="event.id"
                     :attachment="a"
@@ -156,11 +177,17 @@ onMounted(getAttachmentsRequest)
             </section>
           </Tab>
           <Tab name="Raw">
-            <CodeSnippet class="tab-preview-code" language="html" :code="event.payload.raw" />
+            <CodeSnippet
+              class="tab-preview-code"
+              language="html"
+              :code="event.payload.raw"
+            />
           </Tab>
           <Tab name="Tech Info">
             <section>
-              <h3 class="mb-3 font-bold">Email Headers</h3>
+              <h3 class="mb-3 font-bold">
+                Email Headers
+              </h3>
               <TableBase>
                 <TableBaseRow title="Id">
                   {{ event.payload.id }}
@@ -174,13 +201,22 @@ onMounted(getAttachmentsRequest)
                 <TableBaseRow title="To">
                   <SmtpPageAddresses :addresses="event.payload.to || []" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.cc?.length" title="Cc">
+                <TableBaseRow
+                  v-if="event.payload.cc?.length"
+                  title="Cc"
+                >
                   <SmtpPageAddresses :addresses="event.payload.cc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.bcc?.length" title="Bcc">
+                <TableBaseRow
+                  v-if="event.payload.bcc?.length"
+                  title="Bcc"
+                >
                   <SmtpPageAddresses :addresses="event.payload.bcc" />
                 </TableBaseRow>
-                <TableBaseRow v-if="event.payload.reply_to?.length" title="Reply to">
+                <TableBaseRow
+                  v-if="event.payload.reply_to?.length"
+                  title="Reply to"
+                >
                   <SmtpPageAddresses :addresses="event.payload.reply_to" />
                 </TableBaseRow>
               </TableBase>

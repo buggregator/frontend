@@ -23,9 +23,15 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 <template>
   <div class="profiler-page">
     <main class="profiler-page__main">
-      <div ref="info" class="profiler-page__stat">
+      <div
+        ref="info"
+        class="profiler-page__stat"
+      >
         <section class="profiler-page__stat-tabs">
-          <Tabs :options="{ useUrlFragment: false }" @changed="tabChange">
+          <Tabs
+            :options="{ useUrlFragment: false }"
+            @changed="tabChange"
+          >
             <Tab name="Call graph">
               <CallGraph
                 v-if="activeTab === 'Call graph'"

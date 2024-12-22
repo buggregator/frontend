@@ -12,8 +12,15 @@ defineProps<Props>()
 <template>
   <div class="ray-table">
     <TableBase>
-      <TableBaseRow v-for="(value, title) in table.values" :key="title" :title="String(title)">
-        <ValueDump v-if="value" :value="value" />
+      <TableBaseRow
+        v-for="(value, title) in table.values"
+        :key="title"
+        :title="String(title)"
+      >
+        <ValueDump
+          v-if="value"
+          :value="value"
+        />
 
         <span v-if="!value" />
       </TableBaseRow>

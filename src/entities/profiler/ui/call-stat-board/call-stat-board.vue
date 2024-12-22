@@ -16,7 +16,11 @@ defineProps<Props>()
       {{ title }}
     </h4>
 
-    <StatBoard class="call-stat-board__body" :cost="cost" :size="StatBoardSize.Small" />
+    <StatBoard
+      class="call-stat-board__body"
+      :cost="cost"
+      :size="StatBoardSize.Small"
+    />
   </div>
 </template>
 

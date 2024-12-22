@@ -32,7 +32,10 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 </script>
 
 <template>
-  <div ref="main" class="ray">
+  <div
+    ref="main"
+    class="ray"
+  >
     <main class="ray__in">
       <header class="ray__header">
         <h2 class="ray__header-title">
@@ -59,7 +62,9 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
       </section>
 
       <section class="ray__body">
-        <h3 class="ray__body-text">Origin</h3>
+        <h3 class="ray__body-text">
+          Origin
+        </h3>
         <TableBase class="ray__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.payloads[0].origin"
@@ -72,7 +77,9 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
       </section>
 
       <section class="ray__body">
-        <h3 class="ray__body-text">Meta</h3>
+        <h3 class="ray__body-text">
+          Meta
+        </h3>
         <TableBase class="ray__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.meta"

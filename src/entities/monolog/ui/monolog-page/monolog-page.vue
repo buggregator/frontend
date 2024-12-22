@@ -15,16 +15,24 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
 </script>
 
 <template>
-  <div ref="main" class="monolog">
+  <div
+    ref="main"
+    class="monolog"
+  >
     <main class="monolog__in">
       <header class="monolog__header">
-        <h2 class="monolog__header-title">Channel: {{ event.payload.channel }}</h2>
+        <h2 class="monolog__header-title">
+          Channel: {{ event.payload.channel }}
+        </h2>
         <div class="monolog__header-meta">
           <span class="monolog__header-date">{{ date }}</span>
         </div>
       </header>
 
-      <CodeSnippet class="monolog__body" :code="event.payload.message" />
+      <CodeSnippet
+        class="monolog__body"
+        :code="event.payload.message"
+      />
 
       <CodeSnippet
         v-if="event.payload.context"
@@ -42,8 +50,13 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
         />
       </template>
 
-      <section v-if="event.payload.context.source" class="monolog__body">
-        <h3 class="monolog__body-text">Source</h3>
+      <section
+        v-if="event.payload.context.source"
+        class="monolog__body"
+      >
+        <h3 class="monolog__body-text">
+          Source
+        </h3>
         <TableBase class="monolog__body-table">
           <TableBaseRow
             v-for="(value, name) in event.payload.context.source"
@@ -55,11 +68,22 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
         </TableBase>
       </section>
 
-      <section v-if="event.payload.context.request" class="monolog__body">
-        <h3 class="monolog__body-text">Request</h3>
+      <section
+        v-if="event.payload.context.request"
+        class="monolog__body"
+      >
+        <h3 class="monolog__body-text">
+          Request
+        </h3>
         <TableBase class="monolog__body-table">
-          <template v-for="(value, name) in event.payload.context.request" :key="name">
-            <TableBaseRow v-if="name && value" :title="String(name)">
+          <template
+            v-for="(value, name) in event.payload.context.request"
+            :key="name"
+          >
+            <TableBaseRow
+              v-if="name && value"
+              :title="String(name)"
+            >
               {{ value }}
             </TableBaseRow>
           </template>

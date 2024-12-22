@@ -16,8 +16,15 @@ const eventLanguage = computed(() => String(props.event.payload?.payload?.langua
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
-    <ValueDump :value="eventValue" :type="eventType" :language="eventLanguage" />
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
+    <ValueDump
+      :value="eventValue"
+      :type="eventType"
+      :language="eventLanguage"
+    />
   </PreviewCard>
 </template>
 

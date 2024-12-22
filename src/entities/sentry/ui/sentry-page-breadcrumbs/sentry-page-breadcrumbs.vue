@@ -22,19 +22,38 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
     <h3 class="sentry-page-breadcrumbs__title">
       breadcrumbs
 
-      <span v-if="breadcrumbs.length > 0" class="sentry-page-breadcrumbs__counter">{{
+      <span
+        v-if="breadcrumbs.length > 0"
+        class="sentry-page-breadcrumbs__counter"
+      >{{
         breadcrumbs.length
       }}</span>
     </h3>
     <div class="sentry-page-breadcrumbs__in">
-      <nav style="grid-template-columns: 1fr 100px 200px 17px" class="sentry-page-breadcrumbs__nav">
-        <div class="sentry-page-breadcrumbs__nav-col-title">description</div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">level</div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">time</div>
+      <nav
+        style="grid-template-columns: 1fr 100px 200px 17px"
+        class="sentry-page-breadcrumbs__nav"
+      >
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          description
+        </div>
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          level
+        </div>
+        <div class="sentry-page-breadcrumbs__nav-col-title">
+          time
+        </div>
       </nav>
 
-      <div v-if="breadcrumbs" class="sentry-page-breadcrumbs__cols-wr">
-        <div v-for="b in breadcrumbs" :key="b.toString()" class="sentry-page-breadcrumbs__cols">
+      <div
+        v-if="breadcrumbs"
+        class="sentry-page-breadcrumbs__cols-wr"
+      >
+        <div
+          v-for="b in breadcrumbs"
+          :key="b.toString()"
+          class="sentry-page-breadcrumbs__cols"
+        >
           <div class="sentry-page-breadcrumbs__col">
             <p class="sentry-page-breadcrumbs__col-message">
               {{ b.message }}
@@ -49,13 +68,17 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 
             <div class="sentry-page-breadcrumbs__col-details">
               <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">type</div>
+                <div class="sentry-page-breadcrumbs__col-detail-title">
+                  type
+                </div>
                 <div class="sentry-page-breadcrumbs__col-detail-value">
                   {{ b.type }}
                 </div>
               </div>
               <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">category</div>
+                <div class="sentry-page-breadcrumbs__col-detail-title">
+                  category
+                </div>
                 <div class="sentry-page-breadcrumbs__col-detail-value">
                   {{ b.category }}
                 </div>
@@ -63,7 +86,10 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
             </div>
           </div>
           <div class="sentry-page-breadcrumbs__col">
-            <span class="sentry-page-breadcrumbs__col-level-badge" :class="getClassByLevel(b)">{{
+            <span
+              class="sentry-page-breadcrumbs__col-level-badge"
+              :class="getClassByLevel(b)"
+            >{{
               b.level
             }}</span>
           </div>

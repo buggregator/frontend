@@ -34,7 +34,12 @@ const exceptionFrames = computed(() => {
     </header>
 
     <div class="ray-exception__files">
-      <RayFile v-for="(file, i) in exceptionFrames" :key="i" :file="file" :is-open="i !== 0" />
+      <RayFile
+        v-for="(file, i) in exceptionFrames"
+        :key="i"
+        :file="file"
+        :is-open="i !== 0"
+      />
     </div>
   </div>
 </template>

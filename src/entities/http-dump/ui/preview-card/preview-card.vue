@@ -13,7 +13,10 @@ const uri = decodeURI(props.event.payload.request.uri)
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
     <div class="preview-card__content">
       <span class="preview-card__method"> {{ event.payload.request.method }} </span>:
       <span class="preview-card__uri">/{{ uri }}</span>

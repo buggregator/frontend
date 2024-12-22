@@ -26,8 +26,8 @@
       "eslint --fix"
     ],
     "*.{vue,html}": [
-      "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "eslint --fix"
     ],
     "*.json": [
       "prettier --write"
