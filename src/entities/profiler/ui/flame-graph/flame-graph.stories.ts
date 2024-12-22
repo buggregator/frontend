@@ -3,6 +3,7 @@ import type { ComponentProps } from "vue-component-type-helpers";
 import { profilerMock } from  "../../mocks";
 import FlameGraph from './flame-graph.vue';
 
+// TODO: fix storybook view
 
 export default {
   title: "Entities/Profiler/FlameGraph",
