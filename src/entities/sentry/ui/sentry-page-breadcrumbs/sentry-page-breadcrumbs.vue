@@ -106,7 +106,6 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 @use 'src/assets/mixins' as mixins;
 
 .sentry-page-breadcrumbs {
-  @apply py-5 px-4;
 }
 
 .sentry-page-breadcrumbs__title {

@@ -76,7 +76,6 @@ defineProps<Props>()
 @use 'src/assets/mixins' as mixins;
 
 .sentry-page-app {
-  @apply py-5 px-4;
 }
 
 .sentry-page-app__title {
