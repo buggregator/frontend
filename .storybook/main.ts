@@ -22,6 +22,12 @@ const config = {
     }
   },
 
+  core: {
+    builder: {
+      name: '@storybook/builder-vite',
+    },
+  },
+
   env: (config) => {
     const iconComponentFolder = path.resolve(__dirname, '../src/shared/ui/icon-svg/icon-svg-originals');
     const allIconNamesList = !fs.existsSync(iconComponentFolder)
