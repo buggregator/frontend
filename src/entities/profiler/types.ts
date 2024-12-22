@@ -1,6 +1,5 @@
 import type {ElementsDefinition} from "cytoscape";
 import type {StatsBase} from "@/shared/types";
-import type {StatBoardCost} from "@/shared/ui";
 
 
 export interface ProfilerCost {
@@ -66,3 +65,11 @@ export interface ProfileFlameChart {
 
 
 export type CallStackHoverData = { title: string, cost: Partial<ProfilerCost>}
+
+
+export type StatBoardCost = StatsBase & {
+  p_cpu?: number;
+  p_wt?: number;
+  p_mu?: number;
+  p_pmu?: number;
+}

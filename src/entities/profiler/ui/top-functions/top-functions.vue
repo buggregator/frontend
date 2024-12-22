@@ -4,9 +4,9 @@ import { ref, watchEffect } from 'vue'
 import { formatDuration } from '@/shared/lib/formats/format-duration'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import { type EventId } from '@/shared/types'
-import { StatBoard } from '@/shared/ui'
 import { useProfiler } from '../../lib'
 import type { ProfilerTopFunctions } from '../../types'
+import { StatBoard } from '../../ui'
 
 type Props = {
   id: EventId

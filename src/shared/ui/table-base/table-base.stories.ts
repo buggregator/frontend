@@ -44,6 +44,6 @@ export const NoTitles: StoryObj<typeof TableBase> = {
 export const RowOnly: StoryObj<typeof TableBase> = {
   render: () => ({
     components: { TableBase, TableBaseRow },
-    template: `<TableBaseRow title="">This is a row 1</TableBaseRow>`,
+    template: `<TableBase><TableBaseRow title="">This is a row 1</TableBaseRow></TableBase>`,
   }),
 };

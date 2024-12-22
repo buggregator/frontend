@@ -16,7 +16,7 @@ export default {
     setup() {
       return {
         args,
-        SORTING_ORDER: SortingOrder,
+        SortingOrder,
       };
     },
     template: `
@@ -32,7 +32,7 @@ export default {
         <div>
           <sorting-wrapper
             @change-sort="(a) => action('Change Sort')(a)"
-            :sort="SORTING_ORDER.Asc"
+            :sort="SortingOrder.Asc"
           >
             ASC sort
           </sorting-wrapper>
@@ -41,7 +41,7 @@ export default {
         <div>
           <sorting-wrapper
             @change-sort="(a) => action('Change Sort')(a)"
-            :sort="SORTING_ORDER.Desc"
+            :sort="SortingOrder.Desc"
           >
             DESC sort
           </sorting-wrapper>

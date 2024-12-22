@@ -1,55 +1,20 @@
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue'
-import { useFormats } from '../../lib/formats'
-import { StatBoardSize, type StatBoardCost } from './types'
+import { useProfiler } from '../../lib'
+import type { StatBoardCost } from '../../types'
 
-const { formatDuration, formatFileSize } = useFormats()
+const { calcStatItems } = useProfiler()
 
 type Props = {
   cost: StatBoardCost
-  size?: StatBoardSize
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  size: StatBoardSize.Medium
-})
-
-const statItems = computed(() => [
-  {
-    title: 'Calls',
-    value: props.cost.ct || 0,
-    percent: null
-  },
-  {
-    title: 'CPU time',
-    value: formatDuration(props.cost.cpu || 0) || '—',
-    percent: props.cost?.p_cpu
-  },
-  {
-    title: 'Wall time',
-    value: formatDuration(props.cost.wt || 0) || '—',
-    percent: props.cost?.p_wt
-  },
-  {
-    title: 'Memory usage',
-    value: formatFileSize(props.cost.mu || 0, 3) || '—',
-    percent: props.cost?.p_mu
-  },
-  {
-    title: 'Peak memory usage',
-    value: formatFileSize(props.cost.pmu || 0, 3) || '—',
-    percent: props.cost?.p_pmu
-  }
-])
+const props = defineProps<Props>()
+const statItems = computed(() => calcStatItems(props.cost))
 </script>
 
 <template>
-  <section
-    class="stat-board"
-    :class="{
-      'stat-board--small': size === StatBoardSize.Small
-    }"
-  >
+  <section class="stat-board">
     <div
       v-for="item in statItems"
       :key="item.title"
@@ -59,7 +24,7 @@ const statItems = computed(() => [
         {{ item.title }}
 
         <span
-          v-if="item.percent && item.percent > 0"
+          v-if="item.percent && Number(item.percent) > 0"
           class="stat-board__item-name-detail"
         >
           [{{ item.percent }}%]
@@ -89,34 +54,18 @@ const statItems = computed(() => [
   @apply flex flex-row justify-between sm:flex-col sm:justify-start flex-auto;
   @apply w-full sm:w-auto;
   @apply py-2 px-2 sm:py-5 sm:px-5;
-
-  .stat-board--small & {
-    @apply px-4 py-2 sm:py-2 sm:px-2;
-  }
 }
 
 .stat-board__item-name {
   @apply text-2xs text-gray-600 dark:text-gray-300 font-bold uppercase truncate mb-0 sm:mb-1;
-
-  .stat-board--small & {
-    @apply sm:mb-0;
-  }
 }
 
 .stat-board__item-name-detail {
   @apply truncate ml-1 text-2xs;
-
-  .stat-board--small & {
-    @apply ml-0;
-  }
 }
 
 .stat-board__item-value {
   @apply truncate;
   @apply text-2xs sm:text-xs md:text-base;
-
-  .stat-board--small & {
-    @apply md:text-xs;
-  }
 }
 </style>

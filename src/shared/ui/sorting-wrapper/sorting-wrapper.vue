@@ -2,7 +2,7 @@
 import { SortingOrder } from './constants'
 
 type Props = {
-  sort: SortingOrder
+  sort?: SortingOrder
 }
 
 type Emits = {
