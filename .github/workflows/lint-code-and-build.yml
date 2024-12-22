@@ -19,12 +19,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: c-hive/gha-yarn-cache@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - run: yarn install
-    - run: yarn lint
-    - run: yarn test
-    - run: yarn generate
+    - name: Install JS dependencies
+      run: yarn install
+    - name: Lint code style
+      run: yarn lint
+    - name: Run tests
+      run: yarn test
+    - name: Build dist files
+      run: yarn generate
