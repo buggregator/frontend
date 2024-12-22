@@ -6,8 +6,11 @@ import HttpDumpPage from "./http-dump-page.vue";
 const { normalizeHttpDumpEvent } = useHttpDump();
 
 export default {
-  title: "Screens/http-dump/HttpDumpPage",
-  component: HttpDumpPage
+  title: "Entities/HttpDump/HttpDumpPage",
+  component: HttpDumpPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof HttpDumpPage>;
 
 export const Default: StoryObj<typeof HttpDumpPage> = {

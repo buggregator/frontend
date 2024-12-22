@@ -7,7 +7,7 @@ import RayEvent from './ray-event.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayEvent",
+  title: "Entities/Ray/RayEvent",
   component: RayEvent
 } as Meta<typeof RayEvent>;
 

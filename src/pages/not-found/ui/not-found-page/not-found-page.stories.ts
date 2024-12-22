@@ -3,7 +3,10 @@ import NotFoundPage from "./not-found-page.vue";
 
 export default {
   title: "Screens/NotFound/NotFoundPage",
-  component: NotFoundPage
+  component: NotFoundPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof NotFoundPage>;
 
 export const Default: StoryObj<typeof NotFoundPage> = {

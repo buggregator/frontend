@@ -6,7 +6,7 @@ import SentryPageRequest from './sentry-page-request.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Screens/sentry/SentryPageRequest",
+  title: "Entities/Sentry/SentryPageRequest",
   component: SentryPageRequest
 } as Meta<typeof SentryPageRequest>;
 

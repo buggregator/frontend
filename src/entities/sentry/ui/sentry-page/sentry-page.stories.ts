@@ -6,8 +6,11 @@ import SentryPage from './sentry-page.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Screens/sentry/SentryPage",
-  component: SentryPage
+  title: "Entities/Sentry/SentryPage",
+  component: SentryPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof SentryPage>;
 
 

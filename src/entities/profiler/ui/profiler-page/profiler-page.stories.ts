@@ -7,7 +7,10 @@ const { normalizeProfilerEvent } = useProfiler();
 
 export default {
   title: "Entities/Profiler/ProfilerPage",
-  component: ProfilerPage
+  component: ProfilerPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof ProfilerPage>;
 
 export const Default: StoryObj<typeof ProfilerPage> = {

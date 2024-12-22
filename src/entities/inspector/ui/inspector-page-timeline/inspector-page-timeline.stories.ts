@@ -6,8 +6,8 @@ import InspectorPageTimeline from './inspector-page-timeline.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Screens/inspector/InspectorPageTimeline",
-  component: InspectorPageTimeline
+  title: "Entities/Inspector/InspectorPageTimeline",
+  component: InspectorPageTimeline,
 } as Meta<typeof InspectorPageTimeline>;
 
 export const Default: StoryObj<typeof InspectorPageTimeline> = {

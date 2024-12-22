@@ -6,7 +6,7 @@ import SentryPageExtra from './sentry-page-extra.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Screens/sentry/SentryPageExtra",
+  title: "Entities/Sentry/SentryPageExtra",
   component: SentryPageExtra
 } as Meta<typeof SentryPageExtra>;
 

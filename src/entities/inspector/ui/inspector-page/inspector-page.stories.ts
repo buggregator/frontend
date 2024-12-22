@@ -6,8 +6,11 @@ import InspectorPage from './inspector-page.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Screens/inspector/InspectorPage",
-  component: InspectorPage
+  title: "Entities/Inspector/InspectorPage",
+  component: InspectorPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof InspectorPage>;
 
 

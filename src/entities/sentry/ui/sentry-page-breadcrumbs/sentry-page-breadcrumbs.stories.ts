@@ -6,7 +6,7 @@ import SentryPageBreadcrumbs from './sentry-page-breadcrumbs.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Screens/sentry/SentryPageBreadcrumbs",
+  title: "Entities/Sentry/SentryPageBreadcrumbs",
   component: SentryPageBreadcrumbs
 } as Meta<typeof SentryPageBreadcrumbs>;
 

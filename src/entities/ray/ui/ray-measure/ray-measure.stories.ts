@@ -7,7 +7,7 @@ import RayMeasure from './ray-measure.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayMeasure",
+  title: "Entities/Ray/RayMeasure",
   component: RayMeasure
 } as Meta<typeof RayMeasure>;
 

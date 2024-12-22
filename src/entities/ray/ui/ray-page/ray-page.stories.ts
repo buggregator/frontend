@@ -7,7 +7,10 @@ const { normalizeRayEvent } = useRay();
 
 export default {
   title: "Screens/Ray/RayPage",
-  component: RayPage
+  component: RayPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof RayPage>;
 
 

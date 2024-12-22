@@ -7,7 +7,7 @@ import RayTable from './ray-table.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayTable",
+  title: "Entities/Ray/RayTable",
   component: RayTable
 } as Meta<typeof RayTable>;
 

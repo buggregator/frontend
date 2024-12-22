@@ -6,8 +6,11 @@ import SmtpPage from "./smtp-page.vue";
 const { normalizeSmtpEvent } = useSmtp();
 
 export default {
-  title: "Screens/smtp/SmtpPage",
-  component: SmtpPage
+  title: "Entities/SMTP/SmtpPage",
+  component: SmtpPage,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof SmtpPage>;
 
 export const Default: StoryObj<typeof SmtpPage> = {

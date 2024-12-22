@@ -7,7 +7,7 @@ import RayLog from './ray-log.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayLog",
+  title: "Entities/Ray/RayLog",
   component: RayLog
 } as Meta<typeof RayLog>;
 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3";
 import SmtpPageAddresses from './smtp-page-addresses.vue';
 
 export default {
-  title: "Screens/smtp/SmtpPageAddresses",
+  title: "Entities/SMTP/SmtpPageAddresses",
   component: SmtpPageAddresses,
 } as Meta<typeof SmtpPageAddresses>;
 

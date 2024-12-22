@@ -7,7 +7,7 @@ import RayException from './ray-exception.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayException",
+  title: "Entities/Ray/RayException",
   component: RayException
 } as Meta<typeof RayException>;
 

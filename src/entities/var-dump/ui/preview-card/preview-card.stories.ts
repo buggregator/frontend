@@ -15,7 +15,7 @@ import PreviewCard from './preview-card.vue';
 const {normalizeVarDumpEvent} = useVarDump();
 
 export default {
-  title: "Entities/var-dump/PreviewCard",
+  title: "Entities/VarDump/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

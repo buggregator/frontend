@@ -6,8 +6,11 @@ import VarDump from './var-dump-page.vue';
 const { normalizeVarDumpEvent } = useVarDump();
 
 export default {
-  title: "Screens/VarDump/VarDumpPage",
-  component: VarDump
+  title: "Entities/VarDump/VarDumpPage",
+  component: VarDump,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof VarDump>;
 
 

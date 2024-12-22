@@ -6,7 +6,7 @@ import SentryPageTags from './sentry-page-tags.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Screens/sentry/SentryPageTags",
+  title: "Entities/Sentry/SentryPageTags",
   component: SentryPageTags
 } as Meta<typeof SentryPageTags>;
 

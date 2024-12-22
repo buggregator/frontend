@@ -6,8 +6,11 @@ import Monolog from './monolog-page.vue';
 const { normalizeMonologEvent } = useMonolog();
 
 export default {
-  title: "Screens/Monolog/MonologPage",
-  component: Monolog
+  title: "Entities/Monolog/MonologPage",
+  component: Monolog,
+  parameters: {
+    layout: 'fullscreen',
+  }
 } as Meta<typeof Monolog>;
 
 
