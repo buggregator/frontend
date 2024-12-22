@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import isString from 'lodash/isString'
+import isString from 'lodash.isString'
 import { computed, onMounted } from 'vue'
 import { callSfDump } from '../../lib/vendor/sf-dumper'
 import { CodeSnippet } from '../code-snippet'

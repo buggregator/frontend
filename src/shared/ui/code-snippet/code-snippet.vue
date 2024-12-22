@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import highlightPlugin from '@highlightjs/vue-plugin'
-import isString from 'lodash/isString'
+import isString from 'lodash.isString'
 import { ref, computed } from 'vue'
 import { IconSvg } from '../icon-svg'
 
