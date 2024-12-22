@@ -9,7 +9,7 @@
     "plugin:@conarti/feature-sliced/recommended"
   ],
   "ignorePatterns": [
-    "./dist",
+    "dist/",
     "package.json",
     "postcss.config.js",
     "tailwind.config.js",
