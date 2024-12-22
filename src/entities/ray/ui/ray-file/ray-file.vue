@@ -65,7 +65,7 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 .ray-file {
   @apply text-xs cursor-pointer border-b border-purple-200 dark:border-gray-600;
 }
@@ -79,7 +79,7 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 }
 
 .ray-file__title-in {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-light;
 }
 

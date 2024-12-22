@@ -88,7 +88,7 @@ const http = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .inspector-page {
   @apply relative;
@@ -111,7 +111,7 @@ const http = computed(() =>
 }
 
 .inspector-page__header-date {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-sm font-semibold;
 }
 
@@ -120,7 +120,7 @@ const http = computed(() =>
 }
 
 .inspector-page__body-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

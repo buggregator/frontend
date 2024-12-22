@@ -111,10 +111,10 @@ watchEffect(async () => {
 </template>
 
 <style scoped lang="scss">
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .top-functions__body {
-  @include border-style;
+  @include mixins.border-style;
   @apply overflow-auto mb-5 mt-2 rounded-md;
 }
 

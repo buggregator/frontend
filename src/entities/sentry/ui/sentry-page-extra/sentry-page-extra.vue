@@ -68,7 +68,7 @@ const ddStates = ref(
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-extra {
 }
@@ -86,12 +86,12 @@ const ddStates = ref(
 }
 
 .sentry-page-extra__head {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm flex justify-between mb-3;
 }
 
 .sentry-page-extra__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm flex justify-between;
 }
 

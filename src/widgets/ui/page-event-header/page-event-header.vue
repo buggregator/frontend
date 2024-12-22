@@ -64,19 +64,19 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .page-event-header {
   @apply flex justify-between h-full flex-wrap py-1 gap-1;
 }
 
 .page-event-header__button {
-  @include button;
+  @include mixins.button;
   @apply bg-gray-800 hover:bg-gray-700;
 }
 
 .page-event-header__clear-button {
-  @include button;
+  @include mixins.button;
   @apply bg-red-800 hover:bg-red-700;
 }
 </style>

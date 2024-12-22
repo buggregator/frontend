@@ -7,9 +7,9 @@
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 .table-base {
-  @include border-style;
+  @include mixins.border-style;
   @apply bg-gray-100 dark:bg-gray-800 text-sm divide-y;
 }
 </style>

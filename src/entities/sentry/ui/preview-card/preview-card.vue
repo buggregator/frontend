@@ -68,7 +68,7 @@ const exception: Ref<Exception> = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .preview-card {
 }
@@ -82,7 +82,7 @@ const exception: Ref<Exception> = computed(() =>
 }
 
 .preview-card__text {
-  @include code-example();
+  @include mixins.code-example();
   @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60 dark:bg-gray-900 p-3;
 }
 

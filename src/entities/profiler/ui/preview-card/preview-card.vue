@@ -27,8 +27,6 @@ const eventLink = computed(() => `/profiler/${props.event.id}`)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .preview-card {
 }
 

@@ -45,7 +45,7 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 .ray-exception {
   @apply flex flex-col;
 }
@@ -59,12 +59,12 @@ const exceptionFrames = computed(() => {
 }
 
 .ray-exception__title-code {
-  @include code-example();
+  @include mixins.code-example();
   @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 
 .ray-exception__text {
-  @include code-example();
+  @include mixins.code-example();
   @apply mb-2 text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
 }
 
@@ -73,7 +73,7 @@ const exceptionFrames = computed(() => {
 }
 
 .ray__body-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

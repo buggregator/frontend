@@ -95,7 +95,7 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 </template>
 
 <style lang="scss" scoped>
-@import '../../../../assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .ray {
   @apply relative;
@@ -118,7 +118,7 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 }
 
 .ray__header-date {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-sm font-semibold;
 }
 
@@ -127,7 +127,7 @@ const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONE
 }
 
 .ray__body-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

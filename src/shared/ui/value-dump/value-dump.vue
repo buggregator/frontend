@@ -60,14 +60,14 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .value-dump {
   display: block;
 }
 
 .value-dump__html {
-  @include code-example();
+  @include mixins.code-example();
   @apply divide-gray-300 dark:divide-gray-600;
   @apply font-mono break-all text-2xs sm:text-xs md:text-sm lg:text-base;
   @apply p-1 md:p-3 lg:p-4;

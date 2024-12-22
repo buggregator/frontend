@@ -25,8 +25,6 @@ useTitle('Settings | Buggregator')
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .settings-page {
   display: block;
 }

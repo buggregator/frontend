@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { RayContentApplicationLog } from "../../types";
+import type { RayContentApplicationLog } from '../../types'
 
 type Props = {
-  content: RayContentApplicationLog;
-};
+  content: RayContentApplicationLog
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
@@ -13,10 +13,10 @@ defineProps<Props>();
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@use 'src/assets/mixins' as mixins;
 
 .ray-application-log {
-  @include code-example();
+  @include mixins.code-example();
   @apply flex w-full overflow-auto;
 }
 </style>

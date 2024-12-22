@@ -29,8 +29,6 @@ const eventLink = computed(() => `/inspector/${props.event.id}`)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .preview-card {
 }
 

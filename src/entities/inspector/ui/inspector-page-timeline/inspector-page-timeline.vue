@@ -181,14 +181,14 @@ const segmentRows = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .inspector-page-timeline {
   @apply py-5 relative;
 }
 
 .inspector-page-timeline__head-title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 
@@ -209,13 +209,13 @@ const segmentRows = computed(() => {
 }
 
 .inspector-page-timeline__body {
-  @include border-style;
+  @include mixins.border-style;
   @apply bg-gradient-to-r from-gray-300 dark:from-gray-900 from-[1px] to-transparent to-[1px];
   @apply border-l-transparent;
 }
 
 .inspector-page-timeline__body-cells {
-  @include border-style;
+  @include mixins.border-style;
   @apply grid grid-cols-6;
   @apply border-x-0 border-t-0;
   @apply font-bold text-center text-2xs sm:text-xs md:text-sm;

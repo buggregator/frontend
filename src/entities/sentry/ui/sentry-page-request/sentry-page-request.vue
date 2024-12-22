@@ -44,7 +44,7 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-request {
 }
@@ -54,7 +54,7 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 }
 
 .sentry-page-request__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

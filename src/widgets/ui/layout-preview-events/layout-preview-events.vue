@@ -66,14 +66,14 @@ watchEffect(() => {
 </template>
 
 <style lang="scss">
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .layout-preview-events {
   @apply flex flex-col h-full w-full;
 }
 
 .layout-preview-events__events {
-  @include border-style;
+  @include mixins.border-style;
   @apply divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
 }
 
@@ -107,7 +107,7 @@ watchEffect(() => {
 }
 
 .layout-preview-events__clear-button {
-  @include button;
+  @include mixins.button;
   @apply bg-red-800 hover:bg-red-700;
 }
 </style>

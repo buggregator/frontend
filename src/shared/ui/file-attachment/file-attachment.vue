@@ -45,8 +45,6 @@ const size = computed(() => formatFileSize(props.attachment.size || 0))
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .file-attachment {
   @apply border border-gray-300 px-3 py-2 flex items-center;
 

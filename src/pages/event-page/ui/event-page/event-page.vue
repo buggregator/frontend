@@ -76,14 +76,14 @@ onMounted(getEvent)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .events-list-page {
   display: block;
 }
 
 .events-list-page__loading {
-  @include loading;
-  @include layout-body;
+  @include mixins.loading;
+  @include mixins.layout-body;
 }
 </style>

@@ -73,14 +73,14 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-app {
   @apply py-5 px-4;
 }
 
 .sentry-page-app__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 </style>

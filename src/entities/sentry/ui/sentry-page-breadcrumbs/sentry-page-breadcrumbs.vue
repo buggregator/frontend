@@ -103,14 +103,14 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-breadcrumbs {
   @apply py-5 px-4;
 }
 
 .sentry-page-breadcrumbs__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

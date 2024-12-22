@@ -27,8 +27,6 @@ useTitle('404 | Buggregator')
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .error {
   @apply text-gray-600 dark:text-gray-300;
   @apply flex flex-col justify-between items-center text-center p-6 m-auto;

@@ -81,7 +81,7 @@ iframe {
 </style>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .attachment-preview {
   @apply flex-1 flex flex-col items-center h-full;
@@ -154,13 +154,13 @@ iframe {
   transition-property: width !important;
 
   &::after {
-    @include border-style;
+    @include mixins.border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-12 h-12 my-4;
     content: '';
   }
 
   &::before {
-    @include border-style;
+    @include mixins.border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
     content: '';
   }
@@ -170,13 +170,13 @@ iframe {
   @apply justify-center border-2 rounded-3xl px-3;
 
   &::before {
-    @include border-style;
+    @include mixins.border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-3 h-3 my-2;
     content: '';
   }
 
   &::after {
-    @include border-style;
+    @include mixins.border-style;
     @apply bg-gray-100 dark:bg-gray-900 rounded-full block w-8 h-8 my-3;
     content: '';
   }

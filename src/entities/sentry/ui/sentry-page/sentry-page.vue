@@ -119,7 +119,7 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page {
   @apply relative;
@@ -138,12 +138,12 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__main-date {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-xs mt-3;
 }
 
 .sentry-page__main-exception-message {
-  @include code-example();
+  @include mixins.code-example();
   @apply text-sm rounded text-opacity-60;
 }
 
@@ -152,7 +152,7 @@ const exceptionsLength = computed(() => props.event?.payload?.exception?.values?
 }
 
 .sentry-page__section-title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

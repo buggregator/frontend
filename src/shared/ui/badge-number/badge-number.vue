@@ -28,8 +28,6 @@ const isVisibleBadge = computed(() => props.number > 0 && props.isVisible)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .badge-number {
   @apply relative inline-flex;
 }

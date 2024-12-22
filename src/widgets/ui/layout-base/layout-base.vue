@@ -45,7 +45,7 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .layout-base {
   @apply flex min-h-screen items-stretch relative;
@@ -53,11 +53,11 @@ watch(
 
 .layout-base__sidebar {
   @apply w-10 md:w-14 lg:w-16 flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
-  @include layout-sidebar;
+  @include mixins.layout-sidebar;
 }
 
 .layout-base__header {
-  @include layout-head;
+  @include mixins.layout-head;
 
   .layout-base--no-sidebar & {
     @apply left-0;
@@ -65,7 +65,7 @@ watch(
 }
 
 .layout-base__content {
-  @include layout-body;
+  @include mixins.layout-body;
 
   & > div {
     @apply flex flex-col h-full flex-1;

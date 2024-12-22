@@ -86,7 +86,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
 </template>
 
 <style lang="scss" scoped>
-@import '../../../../assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .var-dump {
   @apply relative;
@@ -109,7 +109,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
 }
 
 .var-dump__header-date {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-sm font-semibold;
 }
 
@@ -118,7 +118,7 @@ const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss
 }
 
 .var-dump__body-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

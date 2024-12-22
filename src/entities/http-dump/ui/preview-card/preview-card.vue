@@ -25,8 +25,6 @@ const uri = decodeURI(props.event.payload.request.uri)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .preview-card {
   @apply text-2xs md:text-xs;
 }

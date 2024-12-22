@@ -140,8 +140,6 @@ useTitle('Settings | Buggregator')
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .settings-page-content {
   @apply p-4 grid gap-4 gap-x-10 mr-auto min-w-[50%];
   grid-template-columns: 1fr auto;

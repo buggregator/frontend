@@ -101,14 +101,14 @@ const badgeNumber = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .page-header {
   @apply flex justify-between h-full;
 }
 
 .page-header__clear-button {
-  @include button;
+  @include mixins.button;
   @apply bg-red-800 hover:bg-red-700;
 }
 </style>

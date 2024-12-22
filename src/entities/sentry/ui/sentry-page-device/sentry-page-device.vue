@@ -233,13 +233,13 @@ const formattedBootTime = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-device {
 }
 
 .sentry-page-device__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 </style>

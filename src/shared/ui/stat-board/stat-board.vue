@@ -74,8 +74,6 @@ const statItems = computed(() => [
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .stat-board {
   @apply flex flex-col sm:flex-row justify-between items-start;
   @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;

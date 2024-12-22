@@ -53,7 +53,7 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-exception {
   @apply flex flex-col;
@@ -72,7 +72,7 @@ const exceptionFrames = computed(() => {
 }
 
 .sentry-exception__text {
-  @include code-example();
+  @include mixins.code-example();
   @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 

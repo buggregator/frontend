@@ -40,7 +40,7 @@ const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || n
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .smtp-preview {
 }
@@ -63,7 +63,7 @@ const emailRecipient = computed(() => props?.event?.payload?.to?.[0]?.email || n
 }
 
 .smtp-preview__link-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply flex justify-between;
   @apply text-2xs md:text-xs;
 }

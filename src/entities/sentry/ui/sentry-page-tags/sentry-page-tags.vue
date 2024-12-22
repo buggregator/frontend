@@ -167,13 +167,13 @@ const modules = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-page-tags {
 }
 
 .sentry-page-tags__title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm flex justify-between;
 }
 
@@ -221,7 +221,7 @@ const modules = computed(() => {
 }
 
 .sentry-page-tags__box-title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-xs font-bold;
 }
 

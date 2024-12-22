@@ -156,8 +156,6 @@ const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min ca
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .call-graph {
   @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;
 }

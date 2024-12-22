@@ -96,7 +96,7 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .sentry-exception-frame {
   @apply text-xs border-b border-purple-200 dark:border-gray-600;
@@ -111,7 +111,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__head-title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply break-all font-semibold;
 }
 
@@ -128,7 +128,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__body {
-  @include code-example();
+  @include mixins.code-example();
   @apply overflow-x-scroll;
 }
 
@@ -141,7 +141,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__body-line-position {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply w-12 select-none;
 
   .sentry-exception-frame__body-line--selection & {

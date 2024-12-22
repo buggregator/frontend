@@ -229,7 +229,7 @@ onMounted(getAttachmentsRequest)
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
+@use 'src/assets/mixins' as mixins;
 
 .tab-preview-code {
   @apply max-w-full border dark:border-gray-500 rounded-md overflow-hidden;
@@ -256,7 +256,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-page__header-date {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply text-xs md:text-sm font-semibold;
 }
 

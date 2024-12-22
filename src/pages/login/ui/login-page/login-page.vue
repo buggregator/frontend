@@ -56,8 +56,6 @@ const redirect = () => {
 </template>
 
 <style lang="scss" scoped>
-@import 'src/assets/mixins';
-
 .login-page {
   @apply bg-gray-800;
   @apply h-screen w-screen;
