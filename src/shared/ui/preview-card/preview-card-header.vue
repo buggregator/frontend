@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import isString from 'lodash.isString'
+import isString from 'lodash.isstring'
 import { computed } from 'vue'
 import { type EventType, type NormalizedEvent, RouteName } from '../../types'
 import { IconSvg } from '../icon-svg'
