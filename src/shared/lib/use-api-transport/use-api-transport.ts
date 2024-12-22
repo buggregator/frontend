@@ -34,7 +34,7 @@ export const useApiTransport = () => {
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
-  // todo: move to useCentrifuge
+  // TODO: move to useCentrifuge
   // const checkWSConnectionFail = (onConnectionLost: () => void) => {
   //   if (!getWSConnection()) {
   //     onConnectionLost()
@@ -78,7 +78,7 @@ export const useApiTransport = () => {
     isEventsEmitted = true
   }
 
-  // todo: move to useCentrifuge
+  // TODO: move to useCentrifuge
   // checkWSConnectionFail(async () => {
   //   const events = await getAll();
   //
