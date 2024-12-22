@@ -28,7 +28,7 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
   if (isAuthenticated.value) {
     try {
       await profileStore.getProfile();
-    } catch (e) {
+    } catch (_) {
       throw new RouteAuthAccessError(`Access denied`, to.path)
     }
   }

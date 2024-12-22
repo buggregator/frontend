@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
-import { EventValidationError } from '@/shared/lib/errors/validation-errors'
+import { EventValidationError } from '@/shared/lib/errors'
 import { useEvents } from '@/shared/lib/use-events'
 import { type EventId, type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types'
 
@@ -38,6 +38,7 @@ const getEvent = async () => {
       new EventValidationError('Event not found', eventId)
     }
   } catch (error) {
+    console.error(error)
     await router.push({ name: RouteName.NotFound })
   }
 }

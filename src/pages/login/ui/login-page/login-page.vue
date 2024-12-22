@@ -2,9 +2,9 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { RouteName } from '@/shared/types'
 import { LayoutBase } from '@/widgets/ui'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
+import { RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
 
 useTitle('Login | Buggregator')
