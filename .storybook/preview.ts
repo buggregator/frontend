@@ -5,6 +5,7 @@ import "../src/assets/vendor.css";
 import "./stories.css"
 import 'tailwindcss/tailwind.css'
 import type { Preview } from '@storybook/vue3'
+import {createAppRouter} from "../src/app/router";
 
 const preview: Preview = {
   decorators: [
@@ -61,9 +62,11 @@ const preview: Preview = {
 
 
 const pinia = createPinia();
+const router = createAppRouter();
 
 setup((app) => {
   app.use(pinia)
+  app.use(router)
 })
 
 export default preview;
