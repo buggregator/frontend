@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import type { RayContentLock } from "~/src/entities/ray/types";
+import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
@@ -34,7 +34,7 @@ export const useApiTransport = () => {
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
-  // todo: move to useCentrifuge
+  // TODO: move to useCentrifuge
   // const checkWSConnectionFail = (onConnectionLost: () => void) => {
   //   if (!getWSConnection()) {
   //     onConnectionLost()
@@ -78,7 +78,7 @@ export const useApiTransport = () => {
     isEventsEmitted = true
   }
 
-  // todo: move to useCentrifuge
+  // TODO: move to useCentrifuge
   // checkWSConnectionFail(async () => {
   //   const events = await getAll();
   //

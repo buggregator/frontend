@@ -1,40 +1,40 @@
 <script lang="ts" setup>
-import moment from "moment";
-import { defineProps, computed } from "vue";
-import type { InspectorTransaction } from "../../types";
+import moment from 'moment'
+import { defineProps, computed } from 'vue'
+import type { InspectorTransaction } from '../../types'
 
 type Props = {
-  transaction: InspectorTransaction;
-};
+  transaction: InspectorTransaction
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const processDate = computed(() =>
-  moment(props.transaction.timestamp).toLocaleString()
-);
-const processResult = computed(() =>
-  (props.transaction.result || "success").toUpperCase()
-);
+const processDate = computed(() => moment(props.transaction.timestamp).toLocaleString())
+const processResult = computed(() => (props.transaction.result || 'success').toUpperCase())
 </script>
 
 <template>
   <section class="inspector-stat-board">
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Timestamp</h4>
+      <h4 class="inspector-stat-board__item-name">
+        Timestamp
+      </h4>
       <strong class="inspector-stat-board__item-value">
         {{ processDate }}
       </strong>
     </div>
 
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Duration</h4>
-      <strong class="inspector-stat-board__item-value">
-        {{ transaction.duration }} ms
-      </strong>
+      <h4 class="inspector-stat-board__item-name">
+        Duration
+      </h4>
+      <strong class="inspector-stat-board__item-value"> {{ transaction.duration }} ms </strong>
     </div>
 
     <div class="inspector-stat-board__item">
-      <h4 class="inspector-stat-board__item-name">Result</h4>
+      <h4 class="inspector-stat-board__item-name">
+        Result
+      </h4>
       <span class="inspector-stat-board__item-value">{{ processResult }}</span>
     </div>
   </section>

@@ -1,16 +1,19 @@
 <script lang="ts" setup>
-import { ValueDump } from "~/src/shared/ui";
+import { ValueDump } from '@/shared/ui'
 
 type Props = {
-  log: string | number;
-};
+  log: string | number
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
   <div class="ray-log">
-    <ValueDump v-if="log" :value="String(log)" />
+    <ValueDump
+      v-if="log"
+      :value="String(log)"
+    />
   </div>
 </template>
 

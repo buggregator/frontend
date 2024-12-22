@@ -7,7 +7,7 @@ import RayQuery from './ray-query.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayQuery",
+  title: "Entities/Ray/RayQuery",
   component: RayQuery
 } as Meta<typeof RayQuery>;
 

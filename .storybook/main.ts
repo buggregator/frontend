@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from 'node:path';
-import vue from '@vitejs/plugin-vue'
 import {fileURLToPath} from "url";
 
 //storybook-tailwind-dark-mode
@@ -8,9 +7,6 @@ const config = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
-    "../components/**/*.stories.@(js|jsx|ts|tsx)",
-    "../layouts/**/*.stories.@(js|jsx|ts|tsx)",
-    "../pages/**/*.stories.@(js|jsx|ts|tsx)",
     "../src/**/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
 
@@ -22,7 +18,14 @@ const config = {
 
   framework: {
     name: "@storybook/vue3-vite",
-    options: {}
+    options: {
+    }
+  },
+
+  core: {
+    builder: {
+      name: '@storybook/builder-vite',
+    },
   },
 
   env: (config) => {
@@ -45,14 +48,10 @@ const config = {
   viteFinal: async (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '~/src': fileURLToPath(new URL('../src', import.meta.url)),
+      '@/src': fileURLToPath(new URL('../src', import.meta.url)),
     }
 
-    const { mergeConfig } = await import('vite');
-
-    return mergeConfig(config, {
-      plugins: [vue()],
-    });
+    return config;
   }
 };
 

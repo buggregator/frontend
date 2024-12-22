@@ -1,11 +1,11 @@
 import {createPinia} from 'pinia';
 import { setup } from '@storybook/vue3';
 import "../src/assets/index.css";
-import "../src/assets/vendor";
+import "../src/assets/vendor.css";
 import "./stories.css"
-import SfdumpWrap from "../src/shared/lib/vendor/dumper";
 import 'tailwindcss/tailwind.css'
 import type { Preview } from '@storybook/vue3'
+import {createAppRouter} from "../src/app/router";
 
 const preview: Preview = {
   decorators: [
@@ -62,16 +62,11 @@ const preview: Preview = {
 
 
 const pinia = createPinia();
+const router = createAppRouter();
 
 setup((app) => {
   app.use(pinia)
+  app.use(router)
 })
-
-declare global {
-  interface Window {
-    Sfdump: (id: string) => void;
-  }
-}
-window.Sfdump = SfdumpWrap(window.document)
 
 export default preview;

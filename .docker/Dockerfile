@@ -19,7 +19,7 @@ RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" package.json
 RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" src/static/manifest.json
 
 RUN yarn install --ignore-scripts
-RUN yarn generate
+RUN yarn build
 RUN rm -rf node_modules
 
 LABEL org.opencontainers.image.source=$REPOSITORY

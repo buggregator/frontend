@@ -1,40 +1,46 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { REST_API_URL } from "~/src/shared/lib/io";
-import { useEvents } from "~/src/shared/lib/use-events";
-import type { Uuid } from "~/src/shared/types";
-import { AppHeader } from "~/src/shared/ui";
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { REST_API_URL } from '@/shared/lib/io'
+import { useEvents } from '@/shared/lib/use-events'
+import { RouteName, type Uuid } from '@/shared/types'
+import { AppHeader } from '@/shared/ui'
 
 type Props = {
-  title: string;
-  eventId: Uuid;
-};
+  title: string
+  eventId: Uuid
+}
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const { events } = useEvents();
-const router = useRouter();
+const { events } = useEvents()
+const router = useRouter()
 
 const eventsListLink = computed(() =>
-  router.currentRoute.value.path.replace(`/${props.eventId}`, "")
-);
+  router.currentRoute.value.path.replace(`/${props.eventId}`, '')
+)
 const onDelete = () => {
-  events.removeById(props.eventId);
+  events.removeById(props.eventId)
 
-  router.push("/");
-};
+  router.push({ name: RouteName.Home })
+}
 
-const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
+const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 </script>
 
 <template>
   <AppHeader class="page-event-header">
-    <NuxtLink to="/">Home</NuxtLink>
+    <RouterLink :to="{ name: RouteName.Home }">
+      Home
+    </RouterLink>
     &nbsp;/&nbsp;
-    <NuxtLink :to="eventsListLink">{{ title }}</NuxtLink>
+    <RouterLink :to="eventsListLink">
+      {{ title }}
+    </RouterLink>
     &nbsp;/&nbsp;
-    <NuxtLink :disabled="true">{{ eventId }}</NuxtLink>
+    <div :disabled="true">
+      {{ eventId }}
+    </div>
 
     <template #controls>
       <a
@@ -47,7 +53,10 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
         Open JSON
       </a>
 
-      <button class="page-event-header__clear-button" @click="onDelete">
+      <button
+        class="page-event-header__clear-button"
+        @click="onDelete"
+      >
         Delete event
       </button>
     </template>
@@ -55,19 +64,19 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`);
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@use 'src/assets/mixins' as mixins;
 
 .page-event-header {
   @apply flex justify-between h-full flex-wrap py-1 gap-1;
 }
 
 .page-event-header__button {
-  @include button;
+  @include mixins.button;
   @apply bg-gray-800 hover:bg-gray-700;
 }
 
 .page-event-header__clear-button {
-  @include button;
+  @include mixins.button;
   @apply bg-red-800 hover:bg-red-700;
 }
 </style>

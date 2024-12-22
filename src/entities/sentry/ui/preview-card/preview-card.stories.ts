@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Entities/sentry/PreviewCard",
+  title: "Entities/Sentry/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 export const Spiral: StoryObj<typeof PreviewCard> = {

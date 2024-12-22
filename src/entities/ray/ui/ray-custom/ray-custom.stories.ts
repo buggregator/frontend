@@ -7,7 +7,7 @@ import RayCustom from './ray-custom.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayCustom",
+  title: "Entities/Ray/RayCustom",
   component: RayCustom
 } as Meta<typeof RayCustom>;
 

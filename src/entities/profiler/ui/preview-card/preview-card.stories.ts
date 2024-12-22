@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeProfilerEvent } = useProfiler();
 
 export default {
-  title: "Entities/profiler/PreviewCard",
+  title: "Entities/Profiler/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

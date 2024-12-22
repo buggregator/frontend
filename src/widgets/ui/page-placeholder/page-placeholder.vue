@@ -1,30 +1,33 @@
 <script lang="ts" setup>
-import { IconSvg } from "~/src/shared/ui";
-import PagePlaceholderItem from "./page-placeholder-item.vue";
+import { IconSvg } from '@/shared/ui'
+import PagePlaceholderItem from './page-placeholder-item.vue'
 
 const items = [
   {
-    iconName: "github",
-    title: "Github repository",
-    linkUrl: "https://github.com/buggregator",
+    iconName: 'github',
+    title: 'Github repository',
+    linkUrl: 'https://github.com/buggregator'
   },
   {
-    iconName: "docs",
-    title: "Documentation",
-    linkUrl: "https://docs.buggregator.dev",
+    iconName: 'docs',
+    title: 'Documentation',
+    linkUrl: 'https://docs.buggregator.dev'
   },
   {
-    iconName: "discord",
-    title: "Join our discord",
-    linkUrl: "https://discord.gg/vDsCD3EKUB",
-  },
-];
+    iconName: 'discord',
+    title: 'Join our discord',
+    linkUrl: 'https://discord.gg/vDsCD3EKUB'
+  }
+]
 </script>
 
 <template>
   <div class="page-placeholder">
     <div class="page-placeholder__logo">
-      <IconSvg class="page-placeholder__logo-in" name="logo" />
+      <IconSvg
+        class="page-placeholder__logo-in"
+        name="logo"
+      />
     </div>
     <ul class="page-placeholder__list">
       <PagePlaceholderItem

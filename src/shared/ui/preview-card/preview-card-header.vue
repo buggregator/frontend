@@ -1,66 +1,60 @@
 <script lang="ts" setup>
-import isString from "lodash/isString";
-import { computed } from "vue";
-import { EVENT_TYPES, type EventType, type NormalizedEvent } from "../../types";
-import { IconSvg } from "../icon-svg";
-import { DownloadType } from "./types";
+import isString from 'lodash.isString'
+import { computed } from 'vue'
+import { type EventType, type NormalizedEvent, RouteName } from '../../types'
+import { IconSvg } from '../icon-svg'
+import { DownloadType } from './types'
 
 type Props = {
-  eventType: EventType | "unknown";
-  eventId: NormalizedEvent<unknown>["id"];
-  eventUrl: string;
-  labels: NormalizedEvent<unknown>["labels"];
-  isOpen: boolean;
-  isLocked: boolean;
-  isVisibleControls: boolean;
-};
+  eventType: EventType | 'unknown'
+  eventId: NormalizedEvent<unknown>['id']
+  eventUrl: string
+  labels: NormalizedEvent<unknown>['labels']
+  isOpen: boolean
+  isLocked: boolean
+  isVisibleControls: boolean
+}
 
 type Emits = {
-  delete: [value: boolean];
-  toggleView: [value: boolean];
-  copy: [value: boolean];
-  download: [value: DownloadType];
-  lock: [value: boolean];
-};
+  delete: [value: boolean]
+  toggleView: [value: boolean]
+  copy: [value: boolean]
+  download: [value: DownloadType]
+  lock: [value: boolean]
+}
 
 const props = withDefaults(defineProps<Props>(), {
   tags: () => [],
-  eventUrl: "",
-});
+  eventUrl: ''
+})
 
-const emit = defineEmits<Emits>();
+const emit = defineEmits<Emits>()
 
 const changeView = () => {
-  emit("toggleView", true);
-};
+  emit('toggleView', true)
+}
 
 const deleteEvent = () => {
-  emit("delete", true);
-};
+  emit('delete', true)
+}
 
 const copyEvent = () => {
-  emit("copy", true);
-};
+  emit('copy', true)
+}
 
 const downloadImageEvent = () => {
-  emit("download", DownloadType.Image);
-};
+  emit('download', DownloadType.Image)
+}
 
 const downloadFile = () => {
-  emit("download", DownloadType.File);
-};
+  emit('download', DownloadType.File)
+}
 
 const lockEvent = () => {
-  emit("lock", true);
-};
+  emit('lock', true)
+}
 
-const isVisibleTags = computed(() => props.labels.length > 0);
-
-const newPageLink = computed(() => {
-  if (!Object.values(EVENT_TYPES).includes(props.eventType)) return "";
-
-  return `/${props.eventType}/${props.eventId}`;
-});
+const isVisibleTags = computed(() => props.labels.length > 0)
 </script>
 
 <template>
@@ -77,7 +71,10 @@ const newPageLink = computed(() => {
       </a>
 
       <template v-if="isVisibleTags">
-        <template v-for="label in labels" :key="label.title || label">
+        <template
+          v-for="label in labels"
+          :key="label"
+        >
           <div
             v-if="isString(label)"
             ref="tags"
@@ -99,25 +96,34 @@ const newPageLink = computed(() => {
         </template>
       </template>
 
-      <template v-if="newPageLink">
-        <NuxtLink
-          :to="newPageLink"
+      <template v-if="eventType">
+        <RouterLink
+          :to="{ name: RouteName.EventPage, params: { type: eventType, id: eventId } }"
           class="preview-card-header__open"
           title="Open full event"
         >
           <IconSvg name="window-maximize" />
-        </NuxtLink>
+        </RouterLink>
       </template>
     </div>
 
-    <div v-if="isVisibleControls" class="preview-card-header__buttons">
-      <div v-if="isOpen" class="preview-card-header__buttons-expand">
+    <div
+      v-if="isVisibleControls"
+      class="preview-card-header__buttons"
+    >
+      <div
+        v-if="isOpen"
+        class="preview-card-header__buttons-expand"
+      >
         <button
           class="preview-card-header__button preview-card-header__button--copy"
           title="Copy event as PNG image to clipboard"
           @click="copyEvent"
         >
-          <IconSvg name="copy" class="preview-card-header__button-icon" />
+          <IconSvg
+            name="copy"
+            class="preview-card-header__button-icon"
+          />
         </button>
 
         <div class="preview-card-header__buttons-expand-list">
@@ -167,11 +173,14 @@ const newPageLink = computed(() => {
         class="preview-card-header__button preview-card-header__button--lock"
         title="Lock event. Locked events will not be deleted"
         :class="{
-          'preview-card-header__button--locked': isLocked,
+          'preview-card-header__button--locked': isLocked
         }"
         @click="lockEvent"
       >
-        <IconSvg name="lock" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="lock"
+          class="preview-card-header__button-icon"
+        />
       </button>
 
       <button
@@ -180,7 +189,10 @@ const newPageLink = computed(() => {
         :disabled="isLocked"
         @click="deleteEvent"
       >
-        <IconSvg name="times" class="preview-card-header__button-icon" />
+        <IconSvg
+          name="times"
+          class="preview-card-header__button-icon"
+        />
       </button>
     </div>
   </div>
@@ -188,15 +200,15 @@ const newPageLink = computed(() => {
 
 <style lang="scss" scoped>
 $eventTypeColorsMap: (
-  "var-dump" "red",
-  "smtp" "orange",
-  "sentry" "pink",
-  "profiler" "purple",
-  "ray" "cyan",
-  "inspector" "yellow",
-  "http-dump" "lime",
-  "monolog" "zinc",
-  "unknown" "gray"
+  'var-dump' 'red',
+  'smtp' 'orange',
+  'sentry' 'pink',
+  'profiler' 'purple',
+  'ray' 'cyan',
+  'inspector' 'yellow',
+  'http-dump' 'lime',
+  'monolog' 'zinc',
+  'unknown' 'gray'
 );
 
 .preview-card-header__tags {

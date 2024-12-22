@@ -8,7 +8,7 @@ import RayFile from "./ray-file.vue";
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayFile",
+  title: "Entities/Ray/RayFile",
   component: RayFile,
   render: (args: ComponentProps<typeof RayFile>) => ({
     components: { RayFile },

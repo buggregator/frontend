@@ -1,29 +1,25 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import { IconSvg } from "~/src/shared/ui";
-import type { SentryFrame } from "../../types";
+import { computed, ref } from 'vue'
+import { IconSvg } from '@/shared/ui'
+import type { SentryFrame } from '../../types'
 
 type Props = {
-  frame: SentryFrame;
-  isOpen: boolean;
-};
+  frame: SentryFrame
+  isOpen: boolean
+}
 
-const props = defineProps<Props>();
-const isFrameOpen = ref(props.isOpen);
+const props = defineProps<Props>()
+const isFrameOpen = ref(props.isOpen)
 
 const hasBody = computed(() =>
-  Boolean(
-    props.frame.context_line ||
-      props.frame.post_context ||
-      props.frame.pre_context
-  )
-);
+  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
+)
 
 const toggleOpen = () => {
   if (hasBody.value) {
-    isFrameOpen.value = !isFrameOpen.value;
+    isFrameOpen.value = !isFrameOpen.value
   }
-};
+}
 </script>
 
 <template>
@@ -31,7 +27,10 @@ const toggleOpen = () => {
     class="sentry-exception-frame"
     :class="{ 'sentry-exception-frame--empty': !hasBody }"
   >
-    <div class="sentry-exception-frame__head" @click="toggleOpen">
+    <div
+      class="sentry-exception-frame__head"
+      @click="toggleOpen"
+    >
       <div class="sentry-exception-frame__head-title">
         {{ frame.filename }}
 
@@ -44,13 +43,16 @@ const toggleOpen = () => {
         v-if="frame.pre_context"
         class="sentry-exception-frame__head-title-dd"
         :class="{
-          'sentry-exception-frame__head-title-dd--visible': isFrameOpen,
+          'sentry-exception-frame__head-title-dd--visible': isFrameOpen
         }"
         name="dd"
       />
     </div>
 
-    <div v-if="isFrameOpen && hasBody" class="sentry-exception-frame__body">
+    <div
+      v-if="isFrameOpen && hasBody"
+      class="sentry-exception-frame__body"
+    >
       <template v-if="frame.pre_context">
         <div
           v-for="(line, i) in frame.pre_context"
@@ -58,13 +60,10 @@ const toggleOpen = () => {
           class="sentry-exception-frame__body-line"
         >
           <div class="sentry-exception-frame__body-line-position">
-            {{ frame.lineno - (frame.pre_context.length - i) }}.
+            {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
           </div>
 
-          <pre
-            class="sentry-exception-frame__body-line-content"
-            v-html="line"
-          />
+          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
         </div>
       </template>
 
@@ -76,7 +75,7 @@ const toggleOpen = () => {
           {{ frame.lineno }}.
         </div>
 
-        <pre v-html="frame.context_line" />
+        <pre>{{ frame.context_line }}</pre>
       </div>
 
       <template v-if="frame.post_context">
@@ -86,13 +85,10 @@ const toggleOpen = () => {
           class="sentry-exception-frame__body-line"
         >
           <div class="sentry-exception-frame__body-line-position">
-            {{ frame.lineno + i + 1 }}.
+            {{ (frame?.lineno ?? 0) + i + 1 }}.
           </div>
 
-          <pre
-            class="sentry-exception-frame__body-line-content"
-            v-html="line"
-          />
+          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
         </div>
       </template>
     </div>
@@ -100,7 +96,7 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@use 'src/assets/mixins' as mixins;
 
 .sentry-exception-frame {
   @apply text-xs border-b border-purple-200 dark:border-gray-600;
@@ -115,7 +111,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__head-title {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply break-all font-semibold;
 }
 
@@ -132,7 +128,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__body {
-  @include code-example();
+  @include mixins.code-example();
   @apply overflow-x-scroll;
 }
 
@@ -145,7 +141,7 @@ const toggleOpen = () => {
 }
 
 .sentry-exception-frame__body-line-position {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply w-12 select-none;
 
   .sentry-exception-frame__body-line--selection & {

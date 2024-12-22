@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { TableBase, TableBaseRow, ValueDump } from "~/src/shared/ui";
-import type { RayContentObject } from "../../types";
+import { TableBase, TableBaseRow, ValueDump } from '@/shared/ui'
+import type { RayContentObject } from '../../types'
 
 type Props = {
-  table: RayContentObject;
-};
+  table: RayContentObject
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
@@ -15,9 +15,14 @@ defineProps<Props>();
       <TableBaseRow
         v-for="(value, title) in table.values"
         :key="title"
-        :title="title"
+        :title="String(title)"
       >
-        <ValueDump :value="value" />
+        <ValueDump
+          v-if="value"
+          :value="value"
+        />
+
+        <span v-if="!value" />
       </TableBaseRow>
     </TableBase>
   </div>

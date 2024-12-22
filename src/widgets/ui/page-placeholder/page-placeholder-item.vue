@@ -1,19 +1,26 @@
 <script lang="ts" setup>
-import { IconSvg } from "~/src/shared/ui";
+import { IconSvg } from '@/shared/ui'
 
 type Props = {
-  iconName: string;
-  title: string;
-  linkUrl: string;
-};
+  iconName: string
+  title: string
+  linkUrl: string
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
   <li class="page-placeholder-item">
-    <IconSvg :name="iconName" class="page-placeholder-item__icon" />
-    <a :href="linkUrl" class="page-placeholder-item__link" target="_blank">
+    <IconSvg
+      :name="iconName"
+      class="page-placeholder-item__icon"
+    />
+    <a
+      :href="linkUrl"
+      class="page-placeholder-item__link"
+      target="_blank"
+    >
       {{ title }}
     </a>
   </li>

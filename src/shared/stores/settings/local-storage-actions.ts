@@ -1,8 +1,8 @@
-import {LOCAL_STORAGE_KEYS} from "../../types";
+import {LocalStorageKeys} from "../../types";
 import {THEME_MODES} from "./constants";
 
 export const getStoredActiveTheme = () => {
-  const isStoredTheme = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
+  const isStoredTheme = window?.localStorage.getItem(LocalStorageKeys.Theme);
   const isSystemDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
   if (isStoredTheme) {
@@ -27,7 +27,7 @@ export const getStoredActiveTheme = () => {
 };
 
 export const setStoredActiveTheme = (themeName: string) => {
-  window?.localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, themeName);
+  window?.localStorage.setItem(LocalStorageKeys.Theme, themeName);
 
   if (themeName === THEME_MODES.LIGHT) {
     window?.document?.documentElement?.classList?.remove(THEME_MODES.DARK);
@@ -37,7 +37,7 @@ export const setStoredActiveTheme = (themeName: string) => {
 }
 
 export const getStoredFixedHeader = () => {
-  const storedValue: string = window?.localStorage.getItem(LOCAL_STORAGE_KEYS.NAVBAR) || "true";
+  const storedValue: string = window?.localStorage.getItem(LocalStorageKeys.Navbar) || "true";
 
   const isFixed: boolean = storedValue === "true"
 
@@ -51,7 +51,7 @@ export const getStoredFixedHeader = () => {
 }
 
 export const setStoredFixedHeader = (state: boolean) => {
-  window?.localStorage.setItem(LOCAL_STORAGE_KEYS.NAVBAR, String(state));
+  window?.localStorage.setItem(LocalStorageKeys.Navbar, String(state));
 
   if (state) {
     window?.document?.documentElement?.classList?.add("navbar-fixed");
@@ -61,22 +61,22 @@ export const setStoredFixedHeader = (state: boolean) => {
 }
 
 export const getStoredEventsCountVisibility = (): boolean => {
-  const storageValue = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS) || "true";
+  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.EventCounts) || "true";
 
   return storageValue === "true";
 };
 
 export const setStoredEventsCountVisibility = (state: boolean) => {
-  window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.EVENT_COUNTS, String(state));
+  window?.localStorage?.setItem(LocalStorageKeys.EventCounts, String(state));
 }
 
 
 export const getStoredPrimaryCodeEditor = (): string => {
-  const storedCodeEditor = window?.localStorage?.getItem(LOCAL_STORAGE_KEYS.CODE_EDITOR);
+  const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
 
   return storedCodeEditor || '';
 };
 
 export const setStoredPrimaryCodeEditor = (editor: string) => {
-  window?.localStorage?.setItem(LOCAL_STORAGE_KEYS.CODE_EDITOR, editor);
+  window?.localStorage?.setItem(LocalStorageKeys.CodeEditor, editor);
 }

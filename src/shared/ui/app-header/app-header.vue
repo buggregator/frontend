@@ -2,7 +2,9 @@
 
 <template>
   <header class="header">
-    <div class="header__title"><slot />&nbsp;</div>
+    <div class="header__title">
+      <slot />&nbsp;
+    </div>
 
     <div class="header__controls">
       <slot name="controls" />
@@ -11,7 +13,7 @@
 </template>
 
 <style lang="scss" scoped>
-@import "../../../assets/mixins";
+@use '../../../assets/mixins' as mixins;
 
 .header {
   @apply flex justify-between h-full;
@@ -29,7 +31,7 @@
 }
 
 .header__btn-clear {
-  @include button;
+  @include mixins.button;
   @apply bg-red-800 hover:bg-red-700;
 }
 </style>

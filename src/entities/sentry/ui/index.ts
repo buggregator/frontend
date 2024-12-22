@@ -1,2 +1,2 @@
 export * from './preview-card';
-export * from './sentry-exception';
+export * from './sentry-page';

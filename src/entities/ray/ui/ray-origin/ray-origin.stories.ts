@@ -7,7 +7,7 @@ import RayOrigin from './ray-origin.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayOrigin",
+  title: "Entities/Ray/RayOrigin",
   component: RayOrigin
 } as Meta<typeof RayOrigin>;
 

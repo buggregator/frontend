@@ -1,35 +1,38 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
-import type { NormalizedEvent } from "~/src/shared/types";
-import { PreviewCard, CodeSnippet } from "~/src/shared/ui";
-import type { Monolog } from "../../types";
+import { computed, ref } from 'vue'
+import type { NormalizedEvent } from '@/shared/types'
+import { PreviewCard, CodeSnippet } from '@/shared/ui'
+import type { Monolog } from '../../types'
 
 type Props = {
-  event: NormalizedEvent<Monolog>;
-};
+  event: NormalizedEvent<Monolog>
+}
 
-const props = defineProps<Props>();
-const message = ref(props.event.payload.message);
+const props = defineProps<Props>()
+const message = ref(props.event.payload.message)
 
 const shortMessage = computed(() => {
-  const lines = message.value.split("\n");
+  const lines = message.value.split('\n')
 
   if (lines.length > 10) {
-    return `${lines.slice(0, 8).join("\n")}\n...`;
+    return `${lines.slice(0, 8).join('\n')}\n...`
   }
 
-  return message.value;
-});
+  return message.value
+})
 
-const isFullMessage = ref(message.value.length === shortMessage.value.length);
+const isFullMessage = ref(message.value.length === shortMessage.value.length)
 
 const toggleView = () => {
-  isFullMessage.value = !isFullMessage.value;
-};
+  isFullMessage.value = !isFullMessage.value
+}
 </script>
 
 <template>
-  <PreviewCard class="preview-card" :event="event">
+  <PreviewCard
+    class="preview-card"
+    :event="event"
+  >
     <CodeSnippet
       class="preview-card__snippet preview-card__snippet--interactive"
       :code="isFullMessage ? message : shortMessage"
@@ -58,7 +61,7 @@ const toggleView = () => {
 }
 
 .preview-card__snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words;
+  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words p-1 sm:p-2;
 
   & + & {
     @apply border-t-2;

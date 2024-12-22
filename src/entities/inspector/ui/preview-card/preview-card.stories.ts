@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeInspectorEvent } = useInspector();
 
 export default {
-  title: "Entities/inspector/PreviewCard",
+  title: "Entities/Inspector/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

@@ -1,12 +1,24 @@
 <script lang="ts" setup>
-import type { RayContentException } from "../../types";
-import { RayFile } from "../ray-file";
+import { computed, defineProps, withDefaults } from 'vue'
+import type { RayContentException } from '../../types'
+import { RayFile } from '../ray-file'
+
+const RAY_MAX_EXCEPTION_FRAMES = 10
 
 type Props = {
-  exception: RayContentException;
-};
+  exception: RayContentException
+  maxFrames?: number
+}
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  maxFrames: 0
+})
+
+const exceptionFrames = computed(() => {
+  const frames = props.exception.frames || []
+
+  return frames.slice(0 - RAY_MAX_EXCEPTION_FRAMES).reverse()
+})
 </script>
 
 <template>
@@ -23,17 +35,17 @@ defineProps<Props>();
 
     <div class="ray-exception__files">
       <RayFile
-        v-for="(file, i) in exception.frames"
+        v-for="(file, i) in exceptionFrames"
         :key="i"
         :file="file"
-        :collapsed="i !== 0"
+        :is-open="i !== 0"
       />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import "src/assets/mixins";
+@use 'src/assets/mixins' as mixins;
 .ray-exception {
   @apply flex flex-col;
 }
@@ -47,12 +59,12 @@ defineProps<Props>();
 }
 
 .ray-exception__title-code {
-  @include code-example();
+  @include mixins.code-example();
   @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
 }
 
 .ray-exception__text {
-  @include code-example();
+  @include mixins.code-example();
   @apply mb-2 text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
 }
 
@@ -61,7 +73,7 @@ defineProps<Props>();
 }
 
 .ray__body-text {
-  @include text-muted;
+  @include mixins.text-muted;
   @apply font-bold uppercase text-sm mb-5;
 }
 

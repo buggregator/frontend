@@ -1,150 +1,134 @@
 <script lang="ts" setup>
-import { useFloating } from "@floating-ui/vue";
-import { onClickOutside } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-import { useRoute, useRouter } from "#app"; // eslint-disable-line @conarti/feature-sliced/layers-slices
-import { textToColors } from "~/src/shared/lib/helpers";
-import { useEvents } from "~/src/shared/lib/use-events";
-import {
-  useSettingsStore,
-  useProfileStore,
-  useEventsStore,
-} from "~/src/shared/stores";
-import { useConnectionStore } from "~/src/shared/stores/connections";
-import { BadgeNumber, IconSvg } from "~/src/shared/ui";
-import { version } from "../../../../package.json";
-import { EVENTS_LINKS_MAP, EVENTS_NAV_ORDER } from "./constants";
+import { useFloating } from '@floating-ui/vue'
+import { onClickOutside } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { PAGES_SETTINGS } from '@/shared/constants'
+import { textToColors } from '@/shared/lib/helpers'
+import { useEvents } from '@/shared/lib/use-events'
+import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
+import { useConnectionStore } from '@/shared/stores/connections'
+import { RouteName } from '@/shared/types'
+import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { version } from '../../../../package.json' with { type: 'json' }
+import { EVENTS_NAV_ORDER } from './constants'
 
-const { isConnectedWS } = storeToRefs(useConnectionStore());
-const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore());
-const eventsStore = useEventsStore();
-const { availableProjects, isMultipleProjects, activeProject } =
-  storeToRefs(eventsStore);
+const { isConnectedWS } = storeToRefs(useConnectionStore())
+const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
+const eventsStore = useEventsStore()
+const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
 
-const profileStore = useProfileStore();
-const { profile } = storeToRefs(profileStore);
+const profileStore = useProfileStore()
+const { profile } = storeToRefs(profileStore)
 
-const { getItemsCount } = useEvents();
+const { getItemsCount } = useEvents()
 
-const projectDd = ref<HTMLElement | null>(null);
-const projectMenu = ref<HTMLElement | null>(null);
-const userDd = ref<HTMLElement | null>(null);
-const userMenu = ref<HTMLElement | null>(null);
+const projectDd = ref<HTMLElement | undefined>()
+const projectMenu = ref<HTMLElement | undefined>()
+const userDd = ref<HTMLElement | undefined>()
+const userMenu = ref<HTMLElement | undefined>()
 
-const isVisibleProfile = ref(false);
-const isVisibleProjects = ref(false);
+const isVisibleProfile = ref(false)
+const isVisibleProjects = ref(false)
 
 // TODO: need to check why project is empty on first load
-const isProjectLoading = computed(() => !activeProject.value);
+const isProjectLoading = computed(() => !activeProject.value)
 
 onClickOutside(projectMenu, () => {
-  isVisibleProjects.value = false;
-});
+  isVisibleProjects.value = false
+})
 
 onClickOutside(userMenu, () => {
-  isVisibleProfile.value = false;
-});
+  isVisibleProfile.value = false
+})
 
-const { floatingStyles: projectDdStyles } = useFloating(
-  projectDd,
-  projectMenu,
-  {
-    placement: "right-start",
-  },
-);
+const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
+  placement: 'right-start'
+})
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: "right",
-});
+  placement: 'right'
+})
 
-const connectionStatus = computed(() =>
-  isConnectedWS.value ? "connected" : "disconnected",
-);
+const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'))
 
 const avatar = computed(() => {
-  if (!profile.value) return null;
+  if (!profile.value) return null
 
   if (!profile.value?.avatar) {
-    return null;
+    return null
   }
 
-  if (profile.value.avatar.startsWith("<svg")) {
-    return `data:image/svg+xml;base64,${btoa(
-      profile.value.avatar.replace(/&quot;/g, '"'),
-    )}`;
+  if (profile.value.avatar.startsWith('<svg')) {
+    return `data:image/svg+xml;base64,${btoa(profile.value.avatar.replace(/&quot;/g, '"'))}`
   }
 
-  return profile.value.avatar;
-});
+  return profile.value.avatar
+})
 
 const profileEmail = computed(() => {
-  if (!profile.value) return null;
+  if (!profile.value) return null
 
-  return profile.value.email;
-});
+  return profile.value.email
+})
 
-const connectionText = computed(
-  () => `WS connection is ${connectionStatus.value}`,
-);
+const connectionText = computed(() => `WS connection is ${connectionStatus.value}`)
 
 const toggleProfileDropdown = () => {
-  isVisibleProfile.value = !isVisibleProfile.value;
-};
+  isVisibleProfile.value = !isVisibleProfile.value
+}
 
 const toggleProjects = () => {
-  isVisibleProjects.value = !isVisibleProjects.value;
-};
+  isVisibleProjects.value = !isVisibleProjects.value
+}
 
 const logout = () => {
-  profileStore.removeToken();
-  const router = useRouter();
-  router.push("/login");
-};
+  profileStore.removeToken()
+  const router = useRouter()
+  router.push('/login')
+}
 
-const path = computed(() => useRoute().path);
+const { apiVersion, availableEvents } = storeToRefs(useSettingsStore())
 
-const { apiVersion, availableEvents } = storeToRefs(useSettingsStore());
-
-const clientVersion = ref(
-  !version || version === "0.0.1" ? "@dev" : `v${version}`,
-);
+const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`)
 
 const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/)
-    ? `v${apiVersion.value}`
-    : `@${apiVersion.value}`,
-);
+  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
+)
 
 const setProject = (projectKey: string) => {
-  eventsStore.setActiveProjectKey(projectKey);
+  eventsStore.setActiveProjectKey(projectKey)
 
-  isVisibleProjects.value = false;
-};
+  isVisibleProjects.value = false
+}
 
 const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type)),
-);
+  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
+)
 
-const makeShortTitle = (title: string) => (title || "").substring(0, 2);
+const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input || "").join(", ")})`;
+  `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 </script>
 
 <template>
   <aside class="layout-sidebar">
     <nav class="layout-sidebar__nav">
-      <NuxtLink
-        to="/"
+      <RouterLink
+        :to="{ name: RouteName.Home }"
         title="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
         tabindex="1"
       >
-        <IconSvg class="layout-sidebar__link-icon" name="logo-short" />
-      </NuxtLink>
+        <IconSvg
+          class="layout-sidebar__link-icon"
+          name="logo-short"
+        />
+      </RouterLink>
 
       <template v-if="!isProjectLoading && isMultipleProjects">
-        <hr class="layout-sidebar__sep" />
+        <hr class="layout-sidebar__sep">
 
         <div class="layout-sidebar__projects">
           <button
@@ -157,7 +141,7 @@ const generateRadialGradient = (input: string) =>
               :title="activeProject.name"
               class="layout-sidebar__project"
               :style="{
-                background: generateRadialGradient(activeProject.name),
+                background: generateRadialGradient(activeProject.name)
               }"
             >
               {{ makeShortTitle(activeProject.name) }}
@@ -165,40 +149,55 @@ const generateRadialGradient = (input: string) =>
           </button>
         </div>
 
-        <hr class="layout-sidebar__sep" />
+        <hr class="layout-sidebar__sep">
       </template>
 
       <template v-if="!isMultipleProjects || isProjectLoading">
-        <NuxtLink to="/" title="Events" class="layout-sidebar__link">
-          <IconSvg class="layout-sidebar__link-icon" name="events" />
-        </NuxtLink>
+        <RouterLink
+          :to="{ name: RouteName.Home }"
+          title="Events"
+          class="layout-sidebar__link"
+        >
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="events"
+          />
+        </RouterLink>
       </template>
 
-      <template v-for="type in filteredNavOrder" :key="type">
-        <NuxtLink
-          :to="EVENTS_LINKS_MAP[type].path"
-          :title="EVENTS_LINKS_MAP[type].title"
+      <template
+        v-for="type in filteredNavOrder"
+        :key="type"
+      >
+        <RouterLink
+          :to="{ name: RouteName.EventList, params: { type } }"
+          :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
+          :title="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
-          :class="{
-            'router-link-active': path.includes(EVENTS_LINKS_MAP[type].path),
-          }"
         >
           <BadgeNumber
-            :number="getItemsCount(EVENTS_LINKS_MAP[type].eventType)"
+            :number="getItemsCount(type)"
             class="layout-sidebar__link-badge"
             :is-visible="isVisibleEventCounts"
           >
             <IconSvg
               class="layout-sidebar__link-icon"
-              :name="EVENTS_LINKS_MAP[type].iconName"
+              :name="PAGES_SETTINGS[type].iconName"
             />
           </BadgeNumber>
-        </NuxtLink>
+        </RouterLink>
       </template>
 
-      <NuxtLink to="/settings" title="Settings" class="layout-sidebar__link">
-        <IconSvg class="layout-sidebar__link-icon" name="settings" />
-      </NuxtLink>
+      <RouterLink
+        :to="{ name: RouteName.Settings }"
+        title="Settings"
+        class="layout-sidebar__link"
+      >
+        <IconSvg
+          class="layout-sidebar__link-icon"
+          name="settings"
+        />
+      </RouterLink>
     </nav>
 
     <!--  Need to place projectMenu out of nav because of overflow -->
@@ -214,8 +213,7 @@ const generateRadialGradient = (input: string) =>
         class="layout-sidebar__dropdown-item"
         :title="project.name"
         :class="{
-          'layout-sidebar__dropdown-item--active':
-            activeProject.key === project.key,
+          'layout-sidebar__dropdown-item--active': activeProject.key === project.key
         }"
         tabindex="1"
         @click="setProject(project.key)"
@@ -237,7 +235,11 @@ const generateRadialGradient = (input: string) =>
     </div>
 
     <div>
-      <div v-if="isAuthEnabled" ref="userDd" class="layout-sidebar__dropdown">
+      <div
+        v-if="isAuthEnabled"
+        ref="userDd"
+        class="layout-sidebar__dropdown"
+      >
         <div
           v-if="isVisibleProfile"
           ref="userMenu"
@@ -254,7 +256,10 @@ const generateRadialGradient = (input: string) =>
             class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
             @click="logout"
           >
-            <IconSvg class="layout-sidebar__dropdown-item-icon" name="logout" />
+            <IconSvg
+              class="layout-sidebar__dropdown-item-icon"
+              name="logout"
+            />
             Logout
           </button>
         </div>
@@ -264,7 +269,10 @@ const generateRadialGradient = (input: string) =>
           class="layout-sidebar__dropdown-avatar"
           @click="toggleProfileDropdown"
         >
-          <img :src="avatar" alt="profile" />
+          <img
+            :src="avatar"
+            alt="profile"
+          >
         </div>
       </div>
 
@@ -322,17 +330,16 @@ const generateRadialGradient = (input: string) =>
   @apply px-1.5 py-2 md:px-2 md:py-3;
   @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
 
-  &.router-link-active {
-    @apply bg-blue-700 text-blue-200;
-  }
-
   .layout-sidebar__projects & {
     @apply p-1.5 md:p-2;
   }
 }
 
-.layout-sidebar__link--logo,
-.layout-sidebar__link--logo.router-link-active {
+.layout-sidebar__link--active {
+  @apply bg-blue-700 text-blue-200;
+}
+
+.layout-sidebar__link--logo {
   @apply text-blue-600 bg-transparent hover:text-blue-800  hover:bg-transparent;
   @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200 hover:dark:bg-transparent;
 }

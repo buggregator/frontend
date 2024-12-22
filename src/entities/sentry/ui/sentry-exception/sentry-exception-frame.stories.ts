@@ -6,7 +6,7 @@ import SentryExceptionFrame from './sentry-exception-frame.vue';
 const { normalizeSentryEvent } = useSentry();
 
 export default {
-  title: "Entities/sentry/SentryExceptionFrame",
+  title: "Entities/Sentry/SentryExceptionFrame",
   component: SentryExceptionFrame
 } as Meta<typeof SentryExceptionFrame>;
 

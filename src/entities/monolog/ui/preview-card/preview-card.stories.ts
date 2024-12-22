@@ -6,7 +6,7 @@ import PreviewCard from './preview-card.vue';
 const { normalizeMonologEvent } = useMonolog();
 
 export default {
-  title: "Entities/monolog/PreviewCard",
+  title: "Entities/Monolog/PreviewCard",
   component: PreviewCard
 } as Meta<typeof PreviewCard>;
 

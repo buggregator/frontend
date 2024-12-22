@@ -7,14 +7,14 @@ import RayLock from './ray-lock.vue';
 const { normalizeRayEvent } = useRay();
 
 export default {
-  title: "Entities/ray/RayLock",
+  title: "Entities/Ray/RayLock",
   component: RayLock
 } as Meta<typeof RayLock>;
 
 
 export const Default: StoryObj<typeof RayLock> = {
   args: {
-    content: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)
+    name: (normalizeRayEvent(rayLockMock).payload.payloads[0].content as RayContentLock)?.name
   }
 }
 
