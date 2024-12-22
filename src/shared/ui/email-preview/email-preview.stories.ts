@@ -5,6 +5,7 @@ import { HTMLCode } from '../../mocks'
 import EmailPreview from './email-preview.vue';
 import {Device} from "./types";
 
+// TODO: need to move component out of shared
 export default {
   title: "Shared/EmailPreview",
   component: EmailPreview,

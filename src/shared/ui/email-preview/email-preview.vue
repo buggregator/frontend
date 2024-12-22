@@ -4,7 +4,7 @@ import { IconSvg } from '../icon-svg'
 import { Device } from './types'
 
 type Props = {
-  device: Device
+  device?: Device
 }
 
 const props = withDefaults(defineProps<Props>(), {
