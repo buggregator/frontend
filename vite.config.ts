@@ -4,12 +4,14 @@ import { defineConfig } from 'vite'
 import { analyzer } from 'vite-bundle-analyzer'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+const isDev = () => {
+  return process.env.NODE_ENV === 'dev';
+}
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    analyzer(),
-    vueDevTools(),
+    ...(isDev() ? [analyzer(), vueDevTools()] : []),
   ],
   resolve: {
     alias: {
