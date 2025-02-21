@@ -15,6 +15,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 ENV VITE_APP_MODE=production
 
 RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" package.json
+RUN sed -i "s/\"version\": \".*\"/\"version\": \"${APP_VERSION}\"/" src/assets/static/manifest.json
 
 RUN yarn install --ignore-scripts
 RUN yarn generate
