@@ -62,6 +62,10 @@ const editorLink = computed(() => {
     return ''
   }
 
+  if (codeEditor.value == 'vscode') {
+    return `vscode://file/${fileName}${line ? `:${line}` : ''}`
+  }
+
   return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ''}`
 })
 
