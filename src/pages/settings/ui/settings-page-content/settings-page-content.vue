@@ -3,14 +3,27 @@ import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
-import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { BadgeNumber, IconSvg, SelectControl } from '@/shared/ui'
 
 const settingsStore = useSettingsStore()
-const { changeTheme, changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } =
-  settingsStore
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor } = storeToRefs(settingsStore)
+const {
+  changeTheme,
+  changeNavbar,
+  changeEventCountsVisibility,
+  setAutoDeleteEventsTime,
+  changeActiveCodeEditor
+} = settingsStore
+const { themeType, isFixedHeader, isVisibleEventCounts, autoDeleteEventsTime, codeEditor } =
+  storeToRefs(settingsStore)
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
+
+const deleteEventsAfter = computed<string>({
+  get: () => (autoDeleteEventsTime.value === 'none' ? 'none' : String(autoDeleteEventsTime.value)),
+  set: (val) => {
+    setAutoDeleteEventsTime(val)
+  }
+})
 
 // TODO: add throttle
 const changeCodeEditor = (event: Event) => {
@@ -113,6 +126,21 @@ useTitle('Settings | Buggregator')
         </BadgeNumber>
       </div>
     </div>
+
+    <div class="settings-page-content__title">
+      Delete Events After:
+    </div>
+
+    <SelectControl
+      v-model="deleteEventsAfter"
+      name="delete_events_after"
+      :options="[
+        { value: 'none', text: 'No' },
+        { value: '1', text: '1 min' },
+        { value: '5', text: '5 min' },
+        { value: '10', text: '10 min' }
+      ]"
+    />
 
     <div class="settings-page-content__title">
       Code Editor Open Link:

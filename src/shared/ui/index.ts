@@ -9,4 +9,6 @@ export * from './file-attachment';
 export * from './pause-button';
 export * from './badge-number';
 export * from './app-header';
+export * from './dropdown-menu';
+export * from './select-control';
 

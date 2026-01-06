@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { PAGE_TYPES} from "../../constants";
+import { ensureAutoDeleteWatcher } from "../../lib/use-events/auto-delete-events";
 import {useSettings} from "../../lib/use-settings";
 import {
   type EventId,
@@ -79,6 +80,7 @@ export const useEventsStore = defineStore("eventsStore", {
     async initialize (): Promise<void> {
       const {api: { getProjects }} = useSettings();
       this.initActiveProjectKey();
+      ensureAutoDeleteWatcher();
 
       try {
         const { data } = await getProjects();
