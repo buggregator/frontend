@@ -26,6 +26,8 @@ export const useApiTransport = () => {
   const connectionStore = useConnectionStore()
   const {
     getAll,
+    getPreviewPageByType,
+    getTypeCounts,
     getSingle,
     deleteAll,
     deleteList,
@@ -137,6 +139,8 @@ export const useApiTransport = () => {
 
   return {
     getEventsAll: getAll,
+    getEventsPreviewByTypePage: getPreviewPageByType,
+    getEventsTypeCounts: getTypeCounts,
     getEvent: getSingle,
     deleteEvent,
     deleteEventsAll,

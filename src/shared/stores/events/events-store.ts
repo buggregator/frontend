@@ -8,6 +8,7 @@ import {
   type ServerEvent,
   type PageEventTypes,
   type TProjects,
+  type EventsPreviewMeta,
   EventTypes
 } from '../../types';
 import {useSettingsStore} from "../settings";
@@ -21,6 +22,7 @@ import {
 import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
+type TPreviewPaginationMap = Record<EventTypes, { cursor: string | null; hasMore: boolean }>;
 
 const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.Sentry]: [] as EventId[],
@@ -34,31 +36,47 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
 };
 
+const initialEventCounts: Record<EventTypes, number> = {
+  [EventTypes.VarDump]: 0,
+  [EventTypes.Smtp]: 0,
+  [EventTypes.Sentry]: 0,
+  [EventTypes.Profiler]: 0,
+  [EventTypes.Monolog]: 0,
+  [EventTypes.Inspector]: 0,
+  [EventTypes.HttpDump]: 0,
+  [EventTypes.RayDump]: 0,
+}
+
+const createInitialPreviewPagination = (): TPreviewPaginationMap => ({
+  [EventTypes.VarDump]: { cursor: null, hasMore: false },
+  [EventTypes.Smtp]: { cursor: null, hasMore: false },
+  [EventTypes.Sentry]: { cursor: null, hasMore: false },
+  [EventTypes.Profiler]: { cursor: null, hasMore: false },
+  [EventTypes.Monolog]: { cursor: null, hasMore: false },
+  [EventTypes.Inspector]: { cursor: null, hasMore: false },
+  [EventTypes.HttpDump]: { cursor: null, hasMore: false },
+  [EventTypes.RayDump]: { cursor: null, hasMore: false },
+});
+
 export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     cachedIds: getStoredCachedIds() || initialCachedIds,
     lockedIds: getStoredLockedIds() || [],
+    eventCounts: { ...initialEventCounts },
+    previewPagination: createInitialPreviewPagination(),
     projects: {
       available: [] as TProjects['data'],
       activeKey: undefined as string | undefined,
     }
   }),
   getters: {
-    eventsCounts: ({events}) => (eventType: EventTypes | undefined): number => {
-      // TODO: need to use common mapping with changed ids
-      const counts = {
-        [EventTypes.VarDump]: events.filter(({type}) => type === EventTypes.VarDump).length,
-        [EventTypes.Smtp]: events.filter(({type}) => type === EventTypes.Smtp).length,
-        [EventTypes.Sentry]: events.filter(({type}) => type === EventTypes.Sentry).length,
-        [EventTypes.Profiler]: events.filter(({type}) => type === EventTypes.Profiler).length,
-        [EventTypes.Monolog]: events.filter(({type}) => type === EventTypes.Monolog).length,
-        [EventTypes.Inspector]: events.filter(({type}) => type === EventTypes.Inspector).length,
-        [EventTypes.HttpDump]: events.filter(({type}) => type === EventTypes.HttpDump).length,
-        [EventTypes.RayDump]: events.filter(({type}) => type === EventTypes.RayDump).length
+    eventsCounts: ({ eventCounts }) => (eventType: EventTypes | undefined): number => {
+      if (eventType) {
+        return eventCounts[eventType] ?? 0;
       }
 
-      return eventType && counts[eventType] != null ? counts[eventType] : events.length;
+      return Object.values(eventCounts).reduce((total, count) => total + count, 0);
     },
     cachedIdsTypesList({ cachedIds }) {
       return Object.entries(cachedIds).filter(([_, value]) => value.length > 0).map(([key]) => key as PageEventTypes)
@@ -102,14 +120,20 @@ export const useEventsStore = defineStore("eventsStore", {
       this.syncCachedWithActive(events.map(({ uuid }) => uuid));
       this.initActiveProjectKey();
     },
-    addList(events: ServerEvent<unknown>[]): void {
+    addList(events: ServerEvent<unknown>[], options?: { updateCounts?: boolean }): void {
       const { availableEvents } = useSettingsStore();
+      const shouldUpdateCounts = options?.updateCounts !== false;
+
       events
         .filter((el) => availableEvents.includes(el.type as EventType))
         .forEach((event) => {
         const isExistedEvent: boolean = this.events.some((el): boolean => el.uuid === event.uuid);
         if (!isExistedEvent) {
           this.events.unshift(event)
+
+          if (shouldUpdateCounts) {
+            this.incrementEventCount(event.type as EventTypes)
+          }
 
           if (this.events.length > MAX_EVENTS_COUNT) {
             this.events.pop()
@@ -125,27 +149,60 @@ export const useEventsStore = defineStore("eventsStore", {
         }
       });
     },
+    mergeEvents(events: ServerEvent<unknown>[], options?: { updateCounts?: boolean }): void {
+      const { availableEvents } = useSettingsStore();
+      const shouldUpdateCounts = options?.updateCounts !== false;
+      const filteredEvents = events.filter((el) => availableEvents.includes(el.type as EventType));
+
+      if (!filteredEvents.length) {
+        return;
+      }
+
+      const eventsById = new Map(this.events.map((event) => [event.uuid, event]));
+
+      filteredEvents.forEach((event) => {
+        const isExistedEvent = eventsById.has(event.uuid);
+        eventsById.set(event.uuid, event);
+
+        if (shouldUpdateCounts && !isExistedEvent) {
+          this.incrementEventCount(event.type as EventTypes)
+        }
+      });
+
+      const mergedEvents = Array.from(eventsById.values())
+        .sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0));
+
+      this.events = mergedEvents.slice(0, MAX_EVENTS_COUNT);
+    },
     removeAll() {
       if (this.lockedIds.length) {
         this.events = this.events.filter(({ uuid }) => this.lockedIds.includes(uuid));
 
-        return
+        this.resetEventCounts();
+        return;
       }
 
       this.events.length = 0;
 
       this.removeCachedAll();
+      this.resetEventCounts();
     },
     removeByIds(eventUuids: EventId[]) {
+      const removedEvents = this.events.filter(({ uuid }) =>
+        eventUuids.includes(uuid) && !this.lockedIds.includes(uuid)
+      );
+
       if (this.lockedIds.length) {
         this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid) || this.lockedIds.includes(uuid));
 
-        return
+        removedEvents.forEach((event) => this.decrementEventCount(event.type as EventTypes));
+        return;
       }
 
       this.events = this.events.filter(({ uuid }) => !eventUuids.includes(uuid));
 
       this.removeCachedByIds(eventUuids);
+      removedEvents.forEach((event) => this.decrementEventCount(event.type as EventTypes));
     },
     removeById(eventUuid: EventId) {
       this.removeByIds([eventUuid]);
@@ -156,10 +213,12 @@ export const useEventsStore = defineStore("eventsStore", {
       if (this.lockedIds.length) {
         this.events = this.events.filter(({ type, uuid }) => type !== eventType || this.lockedIds.includes(uuid));
 
-        return
+        this.resetEventCountByType(eventType as EventTypes);
+        return;
       }
 
       this.events = this.events.filter(({ type }) => type !== eventType);
+      this.resetEventCountByType(eventType as EventTypes);
     },
     // cached ids
     addCachedByType(cachedType: PageEventTypes) {
@@ -171,6 +230,17 @@ export const useEventsStore = defineStore("eventsStore", {
           this.cachedIds[cachedType].push(event.uuid);
         });
 
+      setStoredCachedIds(this.cachedIds);
+    },
+    appendCachedIds(cachedType: PageEventTypes, uuids: EventId[]) {
+      if (!uuids.length) {
+        return;
+      }
+
+      const cached = new Set(this.cachedIds[cachedType]);
+      uuids.forEach((uuid) => cached.add(uuid));
+
+      this.cachedIds[cachedType] = Array.from(cached);
       setStoredCachedIds(this.cachedIds);
     },
     removeCachedByType(type: PageEventTypes) {
@@ -208,6 +278,20 @@ export const useEventsStore = defineStore("eventsStore", {
 
       setStoredCachedIds(this.cachedIds);
     },
+    setPreviewPagination(type: EventTypes, meta: EventsPreviewMeta | null) {
+      if (!meta) {
+        this.previewPagination[type] = { cursor: null, hasMore: false };
+        return;
+      }
+
+      this.previewPagination[type] = {
+        cursor: meta.next_cursor ?? null,
+        hasMore: meta.has_more,
+      };
+    },
+    resetPreviewPagination() {
+      this.previewPagination = createInitialPreviewPagination();
+    },
     // locked ids
     removeLockedIds(eventUuid: EventId) {
       this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
@@ -218,6 +302,35 @@ export const useEventsStore = defineStore("eventsStore", {
       this.lockedIds.push(eventUuid);
 
       setStoredLockedIds(this.lockedIds);
+    },
+    setEventCounts(typeCounts: { type: string; count: number }[]) {
+      const nextCounts = { ...initialEventCounts };
+
+      typeCounts.forEach(({ type, count }) => {
+        if (type in nextCounts) {
+          nextCounts[type as EventTypes] = count;
+        }
+      });
+
+      this.eventCounts = nextCounts;
+    },
+    incrementEventCount(type: EventTypes, amount = 1) {
+      if (type in this.eventCounts) {
+        this.eventCounts[type] = Math.max(0, this.eventCounts[type] + amount);
+      }
+    },
+    decrementEventCount(type: EventTypes, amount = 1) {
+      if (type in this.eventCounts) {
+        this.eventCounts[type] = Math.max(0, this.eventCounts[type] - amount);
+      }
+    },
+    resetEventCounts() {
+      this.eventCounts = { ...initialEventCounts };
+    },
+    resetEventCountByType(type: EventTypes) {
+      if (type in this.eventCounts) {
+        this.eventCounts[type] = 0;
+      }
     },
     // projects
     initActiveProjectKey() {
