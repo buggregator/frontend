@@ -70,6 +70,30 @@ export const setStoredEventsCountVisibility = (state: boolean) => {
   window?.localStorage?.setItem(LocalStorageKeys.EventCounts, String(state));
 }
 
+export const getStoredAutoDeleteEventsTime = (): number | 'none' => {
+  const raw = window?.localStorage?.getItem(
+    LocalStorageKeys.AutoDeleteEventsTime,
+  );
+  if (raw === null) {
+    return 'none';
+  }
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? value : 'none';
+};
+
+export const setStoredAutoDeleteEventsTime = (minutes: number | 'none'): void => {
+  if (minutes === 'none') {
+    window?.localStorage?.removeItem(
+      LocalStorageKeys.AutoDeleteEventsTime,
+    );
+    return;
+  }
+
+  window?.localStorage?.setItem(
+    LocalStorageKeys.AutoDeleteEventsTime,
+    String(minutes),
+  );
+};
 
 export const getStoredPrimaryCodeEditor = (): string => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
