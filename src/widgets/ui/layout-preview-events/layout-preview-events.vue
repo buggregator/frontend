@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
-import { computed, watchEffect } from 'vue'
+import { computed, ref, toRef, watchEffect } from 'vue'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import type { PageEventTypes } from '@/shared/types'
+import { type PageEventTypes } from '@/shared/types'
+import { InfiniteScrollTrigger } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
+import { useEventsPagination } from './use-events-pagination'
 
 type Props = {
   title?: string
@@ -17,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { events, cachedEvents } = useEvents()
-
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
 const allEvents = computed(() => {
@@ -37,15 +38,29 @@ const visibleEvents = computed(() => {
   )
 })
 
+const rootEl = ref<HTMLElement | null>(null)
+const listEl = ref<HTMLElement | null>(null)
+
+const { canLoadMore, isLoadingMore, hasScrollableOverflow, loadMore } = useEventsPagination({
+  type: toRef(props, 'type'),
+  events,
+  cachedEvents,
+  listEl
+})
+
 watchEffect(() => {
   useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
 })
 </script>
 
 <template>
-  <div class="layout-preview-events">
+  <div
+    ref="rootEl"
+    class="layout-preview-events"
+  >
     <main
       v-if="visibleEvents.length"
+      ref="listEl"
       class="layout-preview-events__events"
     >
       <EventCardMapper
@@ -62,6 +77,14 @@ watchEffect(() => {
     >
       <PagePlaceholder class="layout-preview-events__tips" />
     </section>
+
+    <InfiniteScrollTrigger
+      v-if="canLoadMore"
+      :disabled="!canLoadMore || !hasScrollableOverflow"
+      :loading="isLoadingMore"
+      class="layout-preview-events__infinite-trigger"
+      @trigger="loadMore"
+    />
   </div>
 </template>
 
@@ -86,6 +109,10 @@ watchEffect(() => {
 .layout-preview-events__welcome {
   @apply flex-1 flex flex-col justify-center items-center;
   @apply bg-gray-50 dark:bg-gray-800 mb-[10vh];
+}
+
+.layout-preview-events__infinite-trigger {
+  @apply h-6 w-full;
 }
 
 .layout-preview-events__btn-stop-events {
