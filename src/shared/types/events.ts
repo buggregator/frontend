@@ -42,3 +42,15 @@ export interface MappedEventsProps<T> {
   view: unknown;
   normalize: (event: ServerEvent<T>) => NormalizedEvent<T>
 }
+
+export type EventTypeCount = {
+  type: EventType;
+  count: number;
+}
+
+export type EventsPreviewMeta = {
+  limit: number;
+  has_more: boolean;
+  next_cursor: string | null;
+  grid: unknown[];
+}

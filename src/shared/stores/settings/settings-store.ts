@@ -7,6 +7,8 @@ import {
   getStoredFixedHeader,
   getStoredActiveTheme,
   setStoredEventsCountVisibility,
+  getStoredAutoDeleteEventsTime,
+  setStoredAutoDeleteEventsTime,
   setStoredFixedHeader,
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
@@ -23,6 +25,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
+    autoDeleteEventsTime: getStoredAutoDeleteEventsTime(),
     availableEvents: [] as EventType[],
   }),
   getters: {
@@ -71,6 +74,19 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;
 
       setStoredEventsCountVisibility(this.isVisibleEventCounts)
+    },
+    setAutoDeleteEventsTime(value: string | number | 'none') {
+      const normalized =
+        value === 'none'
+          ? 'none'
+          : Number(value);
+
+      this.autoDeleteEventsTime =
+        normalized === 'none' || !Number.isFinite(normalized) || normalized <= 0
+          ? 'none'
+          : normalized;
+
+      setStoredAutoDeleteEventsTime(this.autoDeleteEventsTime);
     },
     changeActiveCodeEditor(editor: string) {
       this.codeEditor = editor;

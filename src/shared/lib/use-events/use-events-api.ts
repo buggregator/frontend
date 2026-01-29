@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from 'vue';
 import { useEventsStore } from "../../stores";
-import type { EventId, EventType, ServerEvent } from '../../types';
+import { EventTypes, type EventId, type EventType, type EventsPreviewMeta, type ServerEvent } from '../../types';
 import { useApiTransport } from '../use-api-transport'
 
 
@@ -9,6 +9,10 @@ export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
   getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>
   getAll: () => void
+  loadMoreByType: (
+    type: EventType,
+    cursor?: string | null
+  ) => Promise<{ meta: EventsPreviewMeta | null; data: ServerEvent<unknown>[] }>
   removeAll: () => void
   removeByType: (type: EventType) => void
   removeById: (id: EventId) => void
@@ -26,9 +30,12 @@ export const useEventsApi = (): TUseEventsApi => {
     deleteEventsAll,
     deleteEventsList,
     deleteEventsByType,
-    getEventsAll,
+    getEventsPreviewByTypePage,
+    getEventsTypeCounts,
     getEvent,
   } = useApiTransport();
+
+  const LOADING_PAGE_SIZE = 25;
 
   const removeList = async (uuids: EventId[]) => {
     const res = await deleteEventsList(uuids)
@@ -79,22 +86,63 @@ export const useEventsApi = (): TUseEventsApi => {
   }
 
   const getAll = () => {
-    getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
-      if (eventsList.length) {
-        eventsStore.initializeEvents(eventsList);
-      } else {
-        // NOTE: clear cached events hardly
-        eventsStore.removeAll();
-      }
-    }).catch((e) => {
-      console.error(e);
+    eventsStore.initializeEvents([]);
+    eventsStore.resetPreviewPagination();
+
+    getEventsTypeCounts()
+      .then((typeCounts) => {
+        eventsStore.setEventCounts(typeCounts);
+      })
+      .catch((e) => {
+        console.error(e);
+        eventsStore.resetEventCounts();
+      });
+
+    Object.values(EventTypes).forEach((eventType) => {
+      getEventsPreviewByTypePage(eventType, LOADING_PAGE_SIZE)
+        .then(({ data, meta }) => {
+          if (data.length) {
+            eventsStore.mergeEvents(data, { updateCounts: false });
+          }
+          eventsStore.setPreviewPagination(eventType, meta);
+        })
+        .catch((e) => {
+          console.error(e);
+        })
     })
+  }
+
+  const loadMoreByType = async (eventType: EventType, cursor?: string | null) => {
+    const pagination = eventsStore.previewPagination[eventType as EventTypes];
+    if (!pagination?.hasMore) {
+      return { meta: null, data: [] };
+    }
+
+    const requestCursor = cursor ?? pagination.cursor;
+    const { data, meta } = await getEventsPreviewByTypePage(
+      eventType,
+      LOADING_PAGE_SIZE,
+      requestCursor,
+    );
+
+    if (data.length) {
+      eventsStore.mergeEvents(data, { updateCounts: false });
+
+      if (eventsStore.cachedIds[eventType]?.length) {
+        eventsStore.appendCachedIds(eventType, data.map(({ uuid }) => uuid));
+      }
+    }
+
+    eventsStore.setPreviewPagination(eventType, meta);
+
+    return { meta, data };
   }
 
   return {
     items: events as unknown as Ref<ServerEvent<unknown>[]>,
     getItem: getEvent,
     getAll,
+    loadMoreByType,
     removeAll,
     removeByType,
     removeById,
