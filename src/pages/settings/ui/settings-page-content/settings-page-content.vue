@@ -2,6 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { IDE_SUPPORTED_LIST } from '@/shared/constants'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
 
@@ -121,12 +122,19 @@ useTitle('Settings | Buggregator')
     <div class="settings-page-content__control">
       <div>
         <label class="settings-page-content__control-label">
-          <input
-            class="settings-page-content__control-input"
-            type="text"
+          <select
+            class="settings-page-content__control-select"
             :value="codeEditor"
             @change="changeCodeEditor"
           >
+            <option
+              v-for="ide in IDE_SUPPORTED_LIST"
+              :key="ide"
+              :value="ide"
+            >
+              {{ ide }}
+            </option>
+          </select>
           &nbsp;://open?file=/App/Modules/Logger.php&line=12
         </label>
 
@@ -183,8 +191,8 @@ useTitle('Settings | Buggregator')
   @apply text-xl font-bold items-center flex;
 }
 
-.settings-page-content__control-input {
-  @apply border-gray-600 p-1 rounded w-[140px] bg-gray-200 dark:bg-gray-600;
+.settings-page-content__control-select {
+  @apply border-gray-600 p-1 rounded min-w-[140px] bg-gray-200 dark:bg-gray-600 text-sm;
 }
 
 .settings-page-content__control-description {

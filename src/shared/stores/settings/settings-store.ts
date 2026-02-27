@@ -1,4 +1,5 @@
 import {defineStore} from "pinia";
+import {IDE_SUPPORTED_DEFAULT} from "../../constants";
 import {REST_API_URL} from "../../lib/io/constants";
 import {type EventType, EventTypes, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
@@ -19,7 +20,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     isFetched: false,
     isAuthEnabled: false,
     authLogicUrl: '/login',
-    codeEditor: getStoredPrimaryCodeEditor() || 'phpstorm',
+    codeEditor: getStoredPrimaryCodeEditor() || IDE_SUPPORTED_DEFAULT,
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
