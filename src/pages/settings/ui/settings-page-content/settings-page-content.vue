@@ -2,7 +2,8 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { IDE_SUPPORTED_LIST } from '@/shared/constants'
+import { IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
+import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
 
@@ -116,7 +117,7 @@ useTitle('Settings | Buggregator')
     </div>
 
     <div class="settings-page-content__title">
-      Code Editor Open Link:
+      Favorite Code Editor:
     </div>
 
     <div class="settings-page-content__control">
@@ -128,19 +129,17 @@ useTitle('Settings | Buggregator')
             @change="changeCodeEditor"
           >
             <option
-              v-for="ide in IDE_SUPPORTED_LIST"
-              :key="ide"
-              :value="ide"
+              v-for="(title, key) in IDE_TITLES_TO_KEYS_MAP"
+              :key="key"
+              :value="key"
             >
-              {{ ide }}
+              {{ title }}
             </option>
           </select>
-          &nbsp;://open?file=/App/Modules/Logger.php&line=12
         </label>
 
         <div class="settings-page-content__control-description">
-          Example of link to open files in code editor. You can replace the name editor with a more
-          preferable one
+          Sample editor link: {{ pathToIDEFilePath(codeEditor, '/App/Modules/Logger.php', 12) }}
         </div>
       </div>
     </div>
@@ -188,7 +187,7 @@ useTitle('Settings | Buggregator')
 }
 
 .settings-page-content__control-label {
-  @apply text-xl font-bold items-center flex;
+  @apply text-xl font-bold flex;
 }
 
 .settings-page-content__control-select {
@@ -196,6 +195,6 @@ useTitle('Settings | Buggregator')
 }
 
 .settings-page-content__control-description {
-  @apply text-xs mt-2;
+  @apply text-xs mt-2 flex flex-shrink-0;
 }
 </style>
