@@ -68,30 +68,22 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 <style lang="scss" scoped>
 .profiler-page {
-  @apply relative h-full;
+  @apply relative h-full overflow-hidden;
 }
 
 .profiler-page__main {
-  @apply flex flex-col md:flex-row h-full;
-}
-
-.profiler-page__callstack {
-  @apply w-full md:w-[250px] border-r border-gray-300 dark:border-gray-500;
+  @apply flex flex-col h-full;
 }
 
 .profiler-page__stat {
-  @apply w-full flex flex-col;
-}
-
-.profiler-page__stat-board {
-  @apply bg-gray-200 dark:bg-gray-800;
+  @apply w-full flex flex-col h-full overflow-hidden;
 }
 
 .profiler-page__stat-tabs {
-  @apply bg-gray-200 flex-1 flex flex-col dark:bg-gray-800 dark:text-gray-300;
+  @apply bg-gray-50 dark:bg-gray-800 dark:text-gray-300 flex-1 flex flex-col overflow-hidden;
 }
 
-.profiler-page__stat-tabs .tabs-component-panel {
-  @apply h-full;
+.profiler-page__stat-tabs :deep(.tabs-component-panel) {
+  @apply flex-1 overflow-hidden;
 }
 </style>
