@@ -1,3 +1,4 @@
+import {IDE_KEYS, IDE_KEY_DEFAULT} from "../../constants";
 import {LocalStorageKeys} from "../../types";
 import {THEME_MODES} from "./constants";
 
@@ -71,10 +72,10 @@ export const setStoredEventsCountVisibility = (state: boolean) => {
 }
 
 
-export const getStoredPrimaryCodeEditor = (): string => {
+export const getStoredPrimaryCodeEditor = (): IDE_KEYS => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
 
-  return storedCodeEditor || '';
+  return storedCodeEditor && Object.values(IDE_KEYS).includes(storedCodeEditor as IDE_KEYS) ? storedCodeEditor as IDE_KEYS : IDE_KEY_DEFAULT;
 };
 
 export const setStoredPrimaryCodeEditor = (editor: string) => {

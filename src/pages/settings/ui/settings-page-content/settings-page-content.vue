@@ -2,6 +2,8 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
+import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
 import { BadgeNumber, IconSvg } from '@/shared/ui'
 
@@ -115,24 +117,29 @@ useTitle('Settings | Buggregator')
     </div>
 
     <div class="settings-page-content__title">
-      Code Editor Open Link:
+      Favorite Code Editor:
     </div>
 
     <div class="settings-page-content__control">
       <div>
         <label class="settings-page-content__control-label">
-          <input
-            class="settings-page-content__control-input"
-            type="text"
+          <select
+            class="settings-page-content__control-select"
             :value="codeEditor"
             @change="changeCodeEditor"
           >
-          &nbsp;://open?file=/App/Modules/Logger.php&line=12
+            <option
+              v-for="(title, key) in IDE_TITLES_TO_KEYS_MAP"
+              :key="key"
+              :value="key"
+            >
+              {{ title }}
+            </option>
+          </select>
         </label>
 
         <div class="settings-page-content__control-description">
-          Example of link to open files in code editor. You can replace the name editor with a more
-          preferable one
+          Sample editor link: {{ pathToIDEFilePath(codeEditor, '/App/Modules/Logger.php', 12) }}
         </div>
       </div>
     </div>
@@ -180,14 +187,14 @@ useTitle('Settings | Buggregator')
 }
 
 .settings-page-content__control-label {
-  @apply text-xl font-bold items-center flex;
+  @apply text-xl font-bold flex;
 }
 
-.settings-page-content__control-input {
-  @apply border-gray-600 p-1 rounded w-[140px] bg-gray-200 dark:bg-gray-600;
+.settings-page-content__control-select {
+  @apply border-gray-600 p-1 rounded min-w-[140px] bg-gray-200 dark:bg-gray-600 text-sm;
 }
 
 .settings-page-content__control-description {
-  @apply text-xs mt-2;
+  @apply text-xs mt-2 flex flex-shrink-0;
 }
 </style>

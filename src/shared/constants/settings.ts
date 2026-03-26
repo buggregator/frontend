@@ -1,0 +1,39 @@
+export enum IDE_KEYS {
+  VSCODE = "vscode",
+  CURSOR = "cursor",
+  PHPSTORM = "phpstorm",
+  IDEA = "idea",
+  WEBSTORM = "webstorm",
+  PYCHARM = "pycharm",
+  RIDER = "rider",
+  GOLAND = "goland",
+  CLION = "clion",
+  RUBYMINE = "rubymine",
+  DATAGRIP = "datagrip",
+  FLEET = "fleet",
+  SUBLIME_TEXT = "subl",
+  ATOM = "atom",
+  TEXTMATE = "txmt",
+  NOVA = "nova",
+}
+
+export const IDE_KEY_DEFAULT = IDE_KEYS.VSCODE;
+
+export const IDE_TITLES_TO_KEYS_MAP: Record<string, string> = {
+  [IDE_KEYS.VSCODE]: "VS Code",
+  [IDE_KEYS.CURSOR]: "Cursor",
+  [IDE_KEYS.PHPSTORM]: "JetBrains PhpStorm",
+  [IDE_KEYS.IDEA]: "JetBrains IntelliJ IDEA",
+  [IDE_KEYS.WEBSTORM]: "JetBrains WebStorm",
+  [IDE_KEYS.PYCHARM]: "JetBrains PyCharm",
+  [IDE_KEYS.RIDER]: "JetBrains Rider",
+  [IDE_KEYS.GOLAND]: "JetBrains GoLand",
+  [IDE_KEYS.CLION]: "JetBrains CLion",
+  [IDE_KEYS.RUBYMINE]: "JetBrains RubyMine",
+  [IDE_KEYS.DATAGRIP]: "JetBrains DataGrip",
+  [IDE_KEYS.FLEET]: "JetBrains Fleet",
+  [IDE_KEYS.SUBLIME_TEXT]: "Sublime Text",
+  [IDE_KEYS.ATOM]: "Atom",
+  [IDE_KEYS.TEXTMATE]: "TextMate",
+  [IDE_KEYS.NOVA]: "Nova",
+}
