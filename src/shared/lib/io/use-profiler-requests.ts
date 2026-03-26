@@ -7,7 +7,7 @@ import { REST_API_URL } from "./constants";
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
   getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
-  getFlameChart: (id: EventId) => Promise<ProfileFlameChart[]>
+  getFlameChart: (id: EventId, params?: Record<string, string>) => Promise<ProfileFlameChart[]>
 }
 
 enum ProfilerPartType {
@@ -72,7 +72,7 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
     })
 
 
-  const getFlameChart = (id: EventId) => fetch(getProfilerPartsRestUrl({ id, type: ProfilerPartType.FlameChart }), { headers })
+  const getFlameChart = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.FlameChart }), { headers })
     .then((response) => response.json())
     .then((response) => {
       if (response) {
