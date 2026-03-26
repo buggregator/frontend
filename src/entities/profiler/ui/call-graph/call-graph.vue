@@ -374,7 +374,7 @@ const currentMetricKey = computed(() => {
 
 <style lang="scss" scoped>
 .call-graph {
-  @apply relative flex rounded min-h-min min-w-min h-full bg-white -mt-3 pt-3 dark:bg-gray-800;
+  @apply relative flex h-full bg-gray-50 dark:bg-gray-800 overflow-hidden;
 }
 
 .call-graph__graph {
@@ -390,11 +390,11 @@ const currentMetricKey = computed(() => {
 }
 
 .call-graph__toolbar {
-  @apply absolute top-5 left-5 flex items-center bg-gray-200 dark:bg-gray-700 p-2 rounded gap-x-3 shadow-lg z-10;
+  @apply absolute top-3 left-3 flex items-center backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 p-2 rounded-md gap-x-3 shadow-md border border-gray-200/50 dark:border-gray-600/50 z-10;
 }
 
 .call-graph__toolbar--right {
-  @apply right-5 left-auto py-1;
+  @apply right-3 left-auto py-1;
 }
 
 .call-graph__toolbar-icon {
@@ -435,7 +435,7 @@ const currentMetricKey = computed(() => {
 
 /* Search */
 .call-graph__search {
-  @apply absolute top-16 left-5 z-20 w-80;
+  @apply absolute top-14 left-3 z-20 w-80;
 }
 
 .call-graph__search-input {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// TODO: need to create storybook test for this component
 import { ref, watchEffect } from 'vue'
 import { formatDuration } from '@/shared/lib/formats/format-duration'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
@@ -14,7 +13,7 @@ type Props = {
 
 const { getTopFunctions } = useProfiler()
 const props = defineProps<Props>()
-const metric = ref('excl_wt') // TODO: use enum value
+const metric = ref('excl_wt')
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
@@ -60,98 +59,134 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <section class="top-functions__stat-board">
-    <StatBoard
-      v-if="data.overall_totals"
-      :cost="data.overall_totals"
-    />
-  </section>
+  <div class="top-fn">
+    <!-- Stat board -->
+    <div class="top-fn__stat">
+      <StatBoard
+        v-if="data.overall_totals"
+        :cost="data.overall_totals"
+      />
+    </div>
 
-  <div class="top-functions__body">
-    <table class="top-functions__table">
-      <thead>
-        <tr>
-          <td
-            v-for="col in data.schema"
-            :key="col.key"
-            class="text-left"
-            :class="`col-${col.key} ${metric === col.key ? 'selected' : ''}`"
-            :title="col.description"
-            @click="setMetric(col.sortable ? col.key : undefined)"
-          >
-            {{ col.label }}
-          </td>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr
-          v-for="item in data.functions"
-          :key="item.function"
-        >
-          <td
-            v-for="col in data.schema"
-            :key="col.key"
-            class="text-left"
-            :class="`col-${col.key} ${metric === col.key ? 'selected' : ''}`"
-          >
-            <div
-              v-for="value in col.values"
-              :key="value.key"
-              class="table-value"
-              :class="`value-${value.format}`"
+    <!-- Table -->
+    <div class="top-fn__table-wrap">
+      <table class="top-fn__table">
+        <thead>
+          <tr>
+            <td
+              v-for="col in data.schema"
+              :key="col.key"
+              class="top-fn__th"
+              :class="{
+                'top-fn__th--sortable': col.sortable,
+                'top-fn__th--active': metric === col.key
+              }"
+              :title="col.description"
+              @click="setMetric(col.sortable ? col.key : undefined)"
             >
-              {{ formatValue(item[value.key], value.format) }}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              {{ col.label }}
+            </td>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            v-for="item in data.functions"
+            :key="item.function"
+            class="top-fn__row"
+          >
+            <td
+              v-for="col in data.schema"
+              :key="col.key"
+              class="top-fn__td"
+              :class="{
+                'top-fn__td--active': metric === col.key,
+                'top-fn__td--fn': col.key === 'function'
+              }"
+            >
+              <div
+                v-for="value in col.values"
+                :key="value.key"
+                :class="{
+                  'top-fn__value': true,
+                  'top-fn__value--sub': value.format === 'percent'
+                }"
+              >
+                {{ formatValue(item[value.key], value.format) }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use 'src/assets/mixins' as mixins;
-
-.top-functions__body {
-  @include mixins.border-style;
-  @apply overflow-auto mb-5 mt-2 rounded-md;
+.top-fn {
+  @apply flex flex-col h-full bg-gray-50 dark:bg-gray-800 overflow-hidden;
 }
 
-.top-functions__table {
-  @apply w-full overflow-auto;
+.top-fn__stat {
+  @apply flex-shrink-0 border-b border-gray-200 dark:border-gray-700;
 }
 
-table {
+.top-fn__table-wrap {
+  @apply flex-1 overflow-auto;
+}
+
+.top-fn__table {
   @apply w-full text-xs;
 }
 
-table thead {
-  @apply bg-gray-300 dark:bg-gray-900 text-base;
+/* Header */
+thead {
+  @apply backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 sticky top-0 z-10 border-b border-gray-200/50 dark:border-gray-600/50;
 }
 
-td {
-  @apply px-4;
+.top-fn__th {
+  @apply px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 whitespace-nowrap;
 }
 
-td.selected {
-  @apply border-x text-gray-800 dark:text-gray-100 border-gray-400 dark:border-gray-500;
+.top-fn__th--sortable {
+  @apply cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors;
 }
 
-thead td {
-  @apply font-black py-3 text-gray-500 dark:text-gray-400 cursor-pointer;
-  @apply py-2;
+.top-fn__th--active {
+  @apply text-gray-800 dark:text-gray-100 border-x border-gray-300 dark:border-gray-600 bg-gray-200/50 dark:bg-gray-800/50;
 }
 
-tbody tr {
-  @apply dark:hover:bg-gray-900;
+/* Rows */
+.top-fn__row {
+  @apply hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors;
 
   &:nth-child(odd) {
-    @apply dark:bg-gray-700 bg-gray-100;
+    @apply bg-gray-100 dark:bg-gray-700;
+  }
+
+  &:nth-child(even) {
+    @apply bg-white dark:bg-gray-800;
   }
 }
 
-.table-value.value-percent {
-  @apply text-xs text-gray-500;
+.top-fn__td {
+  @apply px-4 py-1.5 text-left;
+}
+
+.top-fn__td--active {
+  @apply border-x border-gray-200 dark:border-gray-600 bg-gray-100/30 dark:bg-gray-700/20;
+}
+
+.top-fn__td--fn {
+  @apply font-medium text-gray-800 dark:text-gray-200 max-w-[400px] truncate;
+}
+
+/* Values */
+.top-fn__value {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+.top-fn__value--sub {
+  @apply text-[10px] text-gray-400 dark:text-gray-500;
 }
 </style>
