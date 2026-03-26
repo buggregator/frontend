@@ -1,4 +1,3 @@
-import type {ElementsDefinition} from "cytoscape";
 import type {StatsBase} from "@/shared/types";
 
 
@@ -45,12 +44,14 @@ export interface ProfilerTopFunctions {
   overall_totals: StatBoardCost
 }
 
-export interface ProfilerCallGraph extends ElementsDefinition {
+export interface ProfilerCallGraph {
   toolbar: Array<{
     description: string
     label: string
     metric: (keyof ProfilerCost)[number]
   }>
+  nodes: Array<{ data: Record<string, unknown> }>
+  edges: Array<{ data: Record<string, unknown> }>
 }
 
 export interface ProfileFlameChart {

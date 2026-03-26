@@ -26,8 +26,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          if (id.includes('node_modules/cytoscape') || id.includes('node_modules/dagre')) {
-            return '@cytoscape';
+          if (id.includes('node_modules/@vue-flow') || id.includes('node_modules/@dagrejs')) {
+            return '@vue-flow';
           }
 
           if (id.includes('vue')) {
