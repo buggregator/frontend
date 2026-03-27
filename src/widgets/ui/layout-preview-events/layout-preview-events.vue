@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { toBlob } from 'html-to-image'
-import { useKeyboardNav, showToast } from '@/shared/lib/use-keyboard-nav'
+import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
@@ -79,13 +79,20 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   onScreenshot: (id) => {
     const el = document.getElementById(id)
     if (el) {
-      toBlob(el as HTMLElement)
-        .then((blob) => {
-          if (blob) {
-            navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
-              .then(() => showToast('Screenshot copied'))
-          }
-        })
+      screenshotingEventId.value = id
+      // Wait a tick for Vue to hide controls
+      setTimeout(() => {
+        toBlob(el as HTMLElement)
+          .then((blob) => {
+            if (blob) {
+              navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+                .then(() => showToast('Screenshot copied'))
+            }
+          })
+          .finally(() => {
+            screenshotingEventId.value = null
+          })
+      }, 50)
     }
   },
 })

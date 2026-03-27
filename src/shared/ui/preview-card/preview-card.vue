@@ -5,6 +5,7 @@ import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
 import { useEvents } from '../../lib/use-events'
+import { screenshotingEventId } from '../../lib/use-keyboard-nav'
 import type { NormalizedEvent } from '../../types'
 import PreviewCardFooter from './preview-card-footer.vue'
 import PreviewCardHeader from './preview-card-header.vue'
@@ -18,7 +19,10 @@ const props = defineProps<Props>()
 
 const isCollapsed = ref(false)
 const isOptimized = ref(false)
-const isVisibleControls = ref(true)
+const isVisibleControlsLocal = ref(true)
+const isVisibleControls = computed(() =>
+  isVisibleControlsLocal.value && screenshotingEventId.value !== props.event.id
+)
 
 const eventRef = ref(null)
 const isDeleting = ref(false)
@@ -42,7 +46,7 @@ const toggleView = () => {
 }
 
 const changeVisibleControls = (value = true) => {
-  isVisibleControls.value = value
+  isVisibleControlsLocal.value = value
 }
 
 const deleteEvent = () => {

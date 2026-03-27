@@ -9,6 +9,9 @@ export type KeyboardNavCallbacks = {
   onScreenshot?: (id: EventId) => void
 }
 
+// Shared state for screenshot mode — cards hide controls when their id is here
+export const screenshotingEventId = ref<string | null>(null)
+
 // Toast state — shared so any component can display it
 export const toastMessage = ref('')
 let toastTimer: ReturnType<typeof setTimeout> | null = null
