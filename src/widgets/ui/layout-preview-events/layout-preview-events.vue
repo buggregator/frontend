@@ -119,8 +119,15 @@ watchEffect(() => {
 }
 
 .layout-preview-events__event--focused {
-  @apply ring-2 ring-blue-500 ring-inset;
-  @apply bg-blue-50/50 dark:bg-blue-900/10;
+  @apply relative;
+  @apply bg-blue-50/60 dark:bg-blue-500/[0.06];
+  outline: 2px solid theme('colors.blue.500');
+  outline-offset: -2px;
+  z-index: 1;
+
+  .dark & {
+    outline-color: theme('colors.blue.400');
+  }
 }
 
 .layout-preview-events__welcome {
