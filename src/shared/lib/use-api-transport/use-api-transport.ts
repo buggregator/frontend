@@ -4,6 +4,7 @@ import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores"
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
+import { useSettings } from "../use-settings";
 
 let isEventsEmitted = false
 let eventBuffer: ServerEvent<unknown>[] = []
@@ -72,7 +73,19 @@ export const useApiTransport = () => {
       if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
 
-        if (event && event.project === project.value) {
+        if (!event) return
+
+        // Auto-detect new projects and refresh the project list
+        if (event.project && !eventsStore.availableProjects.some((p: { key: string }) => p.key === event.project)) {
+          const { api: { getProjects } } = useSettings()
+          getProjects().then(({ data }) => {
+            if (data) {
+              eventsStore.setAvailableProjects(data)
+            }
+          }).catch(() => {})
+        }
+
+        if (event.project === project.value) {
           eventBuffer.push(event);
 
           if (!flushTimer) {
