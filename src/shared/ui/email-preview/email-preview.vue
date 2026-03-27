@@ -13,9 +13,9 @@ const props = withDefaults(defineProps<Props>(), {
 const currentDevice = ref(props.device)
 
 const devices = [
-  { id: Device.Mobile, label: 'Mobile', width: '375px' },
-  { id: Device.Tablet, label: 'Tablet', width: '768px' },
   { id: Device.Desktop, label: 'Desktop', width: '100%' },
+  { id: Device.Tablet, label: 'Tablet', width: '768px' },
+  { id: Device.Mobile, label: 'Mobile', width: '375px' },
 ]
 </script>
 

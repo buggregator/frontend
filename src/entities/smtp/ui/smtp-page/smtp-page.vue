@@ -273,15 +273,7 @@ onMounted(getAttachmentsRequest)
       <div class="smtp-layout__preview">
         <div class="smtp-preview-card">
           <PageTabs>
-            <!-- Text first (default) -->
-            <PageTab
-              v-if="isText"
-              name="Text"
-            >
-              <pre class="smtp-text-preview">{{ event.payload.text }}</pre>
-            </PageTab>
-
-            <!-- HTML preview -->
+            <!-- HTML preview (default) -->
             <PageTab
               v-if="isHtml"
               name="HTML Preview"
@@ -292,6 +284,14 @@ onMounted(getAttachmentsRequest)
                   v-html="htmlSource"
                 />
               </EmailPreview>
+            </PageTab>
+
+            <!-- Text -->
+            <PageTab
+              v-if="isText"
+              name="Text"
+            >
+              <pre class="smtp-text-preview">{{ event.payload.text }}</pre>
             </PageTab>
 
             <!-- HTML source -->
