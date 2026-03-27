@@ -41,14 +41,15 @@ defineProps<Props>()
     <svg
       v-else-if="name === 'copy'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 460 460"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M426 0H172c-18 0-33 15-33 33v77h30V33c0-2 1-3 3-3h254c2 0 3 1 3 3v254c0 2-1 3-3 3h-75v30h75c18 0 33-15 33-33V33c0-18-15-33-33-33z"
-      />
-      <path
-        d="M288 140H34c-18 0-33 15-33 33v254c0 18 15 33 33 33h254c18 0 33-15 33-33V173c0-18-15-33-33-33zm0 290H34c-2 0-3-1-3-3V173c0-2 1-3 3-3h254c2 0 3 1 3 3v254c0 2-1 3-3 3z"
-      />
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
 
     <svg
@@ -431,11 +432,15 @@ defineProps<Props>()
     <svg
       v-else-if="name === 'times'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 10 10"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M7.8 9.2a1 1 0 1 0 1.4-1.4L6.4 5l2.8-2.8A1 1 0 1 0 7.8.8L5 3.6 2.2.8A1 1 0 1 0 .8 2.2L3.6 5 .8 7.8a1 1 0 1 0 1.4 1.4L5 6.4l2.8 2.8Z"
-      />
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
 
     <svg
@@ -683,14 +688,15 @@ defineProps<Props>()
     </svg>
     <svg
       v-else-if="name === 'collapsed'"
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      height="100%"
-      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M14,11.75a.74.74,0,0,1-.53-.22L8,6.06,2.53,11.53a.75.75,0,0,1-1.06-1.06l6-6a.75.75,0,0,1,1.06,0l6,6a.75.75,0,0,1,0,1.06A.74.74,0,0,1,14,11.75Z"
-      />
+      <polyline points="6 9 12 15 18 9" />
     </svg>
 
     <svg
