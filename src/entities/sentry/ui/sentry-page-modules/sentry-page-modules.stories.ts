@@ -25,3 +25,21 @@ export const Default: StoryObj<typeof SentryPageModules> = {
     },
   }
 };
+
+export const Python: StoryObj<typeof SentryPageModules> = {
+  args: {
+    platform: 'python',
+    modules: {
+      "django": "4.2.11",
+      "redis": "5.0.3",
+      "celery": "5.3.6",
+      "sentry-sdk": "1.44.1",
+      "requests": "2.31.0",
+      "gunicorn": "21.2.0",
+      "psycopg2-binary": "2.9.9",
+      "boto3": "1.34.69",
+      "pillow": "10.3.0",
+      "pydantic": "2.6.4",
+    },
+  }
+};

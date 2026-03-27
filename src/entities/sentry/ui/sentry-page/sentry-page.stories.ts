@@ -6,6 +6,8 @@ import {
   sentryJSMock,
   sentryJSEventMock,
   sentryLaravelMock,
+  sentryPythonMock,
+  sentryPythonLogMock,
   sentrySpiralMock,
 } from '../../mocks';
 import SentryPage from './sentry-page.vue';
@@ -53,5 +55,17 @@ export const PageJS: StoryObj<typeof SentryPage> = {
 export const PageJSMessage: StoryObj<typeof SentryPage> = {
   args: {
     event: normalizeSentryEvent(sentryJSEventMock),
+  }
+};
+
+export const PagePython: StoryObj<typeof SentryPage> = {
+  args: {
+    event: normalizeSentryEvent(sentryPythonMock),
+  }
+};
+
+export const PagePythonLog: StoryObj<typeof SentryPage> = {
+  args: {
+    event: normalizeSentryEvent(sentryPythonLogMock),
   }
 };

@@ -182,13 +182,13 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         v-if="isVisibleControls"
         class="pc-header__action pc-header__action--secondary"
         :class="{ 'pc-header__action--active': isLocked }"
-        :title="isLocked ? 'Unlock event' : 'Lock event'"
-        :aria-label="isLocked ? 'Unlock event' : 'Lock event'"
+        :title="isLocked ? 'Unpin event' : 'Pin event'"
+        :aria-label="isLocked ? 'Unpin event' : 'Pin event'"
         :aria-pressed="isLocked"
         @click="lockEvent"
       >
         <IconSvg
-          :name="isLocked ? 'lock' : 'lock-off'"
+          :name="isLocked ? 'pin' : 'pin-off'"
           class="pc-header__action-icon"
         />
       </button>

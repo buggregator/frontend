@@ -4,6 +4,7 @@ import { IconSvg } from '@/shared/ui'
 
 type Props = {
   modules: Record<string, string>
+  platform?: string
 }
 
 const props = defineProps<Props>()
@@ -23,7 +24,9 @@ const moduleList = computed(() => {
 
 const totalCount = computed(() => Object.keys(props.modules).length)
 
-const clearSearch = () => { search.value = '' }
+const clearSearch = () => {
+  search.value = ''
+}
 
 // Extract vendor/org prefix for grouping visual hint
 const getVendor = (name: string) => {
@@ -36,9 +39,12 @@ const getPackage = (name: string) => {
   return slash > 0 ? name.slice(slash + 1) : name
 }
 
-const getPackagistUrl = (name: string) => {
+const getPackageUrl = (name: string) => {
   if (name.includes('/')) {
     return `https://packagist.org/packages/${name}`
+  }
+  if (props.platform === 'python') {
+    return `https://pypi.org/project/${name}/`
   }
   return null
 }
@@ -91,14 +97,17 @@ const getPackagistUrl = (name: string) => {
         >
           <span class="mod__cell mod__cell--name">
             <a
-              v-if="getPackagistUrl(mod.name)"
-              :href="getPackagistUrl(mod.name)"
+              v-if="getPackageUrl(mod.name)"
+              :href="getPackageUrl(mod.name)"
               target="_blank"
               rel="noopener noreferrer"
               class="mod__link"
             >
               <span class="mod__vendor">{{ getVendor(mod.name) }}/</span>{{ getPackage(mod.name) }}
-              <IconSvg class="mod__link-icon" name="newScreen" />
+              <IconSvg
+                class="mod__link-icon"
+                name="newScreen"
+              />
             </a>
             <span v-else>
               {{ mod.name }}

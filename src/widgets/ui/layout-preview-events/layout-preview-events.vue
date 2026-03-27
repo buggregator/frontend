@@ -15,10 +15,12 @@ import { PagePlaceholder } from '../page-placeholder'
 type Props = {
   title?: string
   type: PageEventTypes
+  favoritesOnly?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: ''
+  title: '',
+  favoritesOnly: false,
 })
 
 const { events, cachedEvents, lockedIds } = useEvents()
@@ -46,12 +48,20 @@ const { searchQuery } = storeToRefs(useEventsStore())
 const debouncedSearch = refDebounced(searchQuery, 150)
 
 const visibleEvents = computed(() => {
-  const query = debouncedSearch.value.toLowerCase().trim()
-  if (!query) {
-    return pauseFilteredEvents.value
+  let result = pauseFilteredEvents.value
+
+  // Favorites mode: show only pinned events (across all types)
+  if (props.favoritesOnly) {
+    const allEvts = events.items.value
+    result = allEvts.filter((e) => lockedIds.items.value.includes(e.uuid))
   }
 
-  return pauseFilteredEvents.value.filter((event) => {
+  const query = debouncedSearch.value.toLowerCase().trim()
+  if (!query) {
+    return result
+  }
+
+  return result.filter((event) => {
     if (event.searchable_text) {
       return event.searchable_text.toLowerCase().includes(query)
     }
@@ -89,7 +99,7 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   },
   onDelete: (id) => {
     if (lockedIds.items.value.includes(id)) {
-      showToast('Event is locked')
+      showToast('Event is pinned')
       return
     }
     events.removeById(id)
@@ -98,10 +108,10 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   onLock: (id) => {
     if (lockedIds.items.value.includes(id)) {
       lockedIds.remove(id)
-      showToast('Event unlocked')
+      showToast('Event unpinned')
     } else {
       lockedIds.add(id)
-      showToast('Event locked')
+      showToast('Event pinned')
     }
   },
   onCopyPayload: (id) => {

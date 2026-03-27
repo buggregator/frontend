@@ -53,6 +53,13 @@ export function useGlobalShortcuts() {
       return
     }
 
+    // f — favorites
+    if (e.key === 'f' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault()
+      router.push({ name: RouteName.Favorites })
+      return
+    }
+
     // 1-8 — navigate to event type
     const num = parseInt(e.key, 10)
     if (num >= 1 && num <= NAV_TYPES.length && !e.ctrlKey && !e.metaKey) {

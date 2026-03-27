@@ -16,7 +16,7 @@ import { EVENTS_NAV_ORDER } from './constants'
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
 const eventsStore = useEventsStore()
-const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
+const { availableProjects, isMultipleProjects, activeProject, lockedIds } = storeToRefs(eventsStore)
 
 const profileStore = useProfileStore()
 const { profile } = storeToRefs(profileStore)
@@ -274,6 +274,31 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
       </template>
 
       <hr class="layout-sidebar__sep">
+
+      <RouterLink
+        :to="{ name: RouteName.Favorites }"
+        title="Favorites"
+        aria-label="Favorites"
+        class="layout-sidebar__link"
+      >
+        <span class="layout-sidebar__link-icon-wrap">
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="pin"
+          />
+          <span
+            v-if="lockedIds.length > 0"
+            class="layout-sidebar__dot layout-sidebar__dot--favorites"
+          />
+        </span>
+        <span class="layout-sidebar__link-label">Favorites</span>
+        <span
+          v-if="isVisibleEventCounts && lockedIds.length > 0"
+          class="layout-sidebar__count"
+        >
+          {{ lockedIds.length > 99 ? '99+' : lockedIds.length }}
+        </span>
+      </RouterLink>
 
       <RouterLink
         :to="{ name: RouteName.Settings }"
@@ -606,6 +631,10 @@ $dotColors: (
   .layout-sidebar__dot--#{$type} {
     @apply bg-#{$color}-500 dark:bg-#{$color}-400;
   }
+}
+
+.layout-sidebar__dot--favorites {
+  @apply bg-amber-500 dark:bg-amber-400;
 }
 
 .layout-sidebar__link--active {

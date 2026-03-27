@@ -8,6 +8,7 @@ const sections = [
     title: 'Navigation',
     shortcuts: [
       { keys: ['0'], desc: 'All events' },
+      { keys: ['f'], desc: 'Favorites' },
       { keys: ['1'], desc: 'Sentry' },
       { keys: ['2'], desc: 'Profiler' },
       { keys: ['3'], desc: 'SMTP' },
@@ -25,7 +26,7 @@ const sections = [
       { keys: ['k', '↑'], desc: 'Previous event' },
       { keys: ['Enter'], desc: 'Open event' },
       { keys: ['x'], desc: 'Delete event' },
-      { keys: ['l'], desc: 'Lock / unlock event' },
+      { keys: ['l'], desc: 'Pin / unpin event' },
       { keys: ['y'], desc: 'Copy payload to clipboard' },
       { keys: ['s'], desc: 'Screenshot to clipboard' },
       { keys: ['Esc'], desc: 'Clear focus' },
