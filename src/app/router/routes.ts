@@ -2,6 +2,7 @@ import {EventPage} from "@/pages/event-page";
 import {EventsListPage} from "@/pages/events-list-page";
 import {LoginPage} from "@/pages/login";
 import {NotFoundPage} from "@/pages/not-found";
+import {ProfilerComparePage} from "@/pages/profiler-compare";
 import {SettingsPage} from "@/pages/settings";
 import {RouteName} from "@/shared/types";
 import {auth, checkType} from "./middlewares";
@@ -21,6 +22,14 @@ export const routes = [
     component: EventsListPage,
     meta: {
       middleware: [auth, checkType]
+    }
+  },
+  {
+    path: '/profiler/compare',
+    name: RouteName.ProfilerCompare,
+    component: ProfilerComparePage,
+    meta: {
+      middleware: [auth]
     }
   },
   {
