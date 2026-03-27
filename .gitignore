@@ -7,7 +7,6 @@ nuxt.d.ts
 .output
 .DS_Store
 package-lock.json
-dist
 .env
 
 

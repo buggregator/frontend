@@ -1,0 +1,11 @@
+{
+  "name": "buggregator/frontend",
+  "description": "Buggregator frontend assets",
+  "type": "library",
+  "license": "BSD-4-Clause",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}
