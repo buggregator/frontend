@@ -80,11 +80,15 @@ const isVisibleTags = computed(() => props.labels.length > 0)
   <div class="pc-header">
     <!-- Left: type badge + labels + time -->
     <div class="pc-header__left">
-      <!-- Type badge with icon -->
+      <!-- Type badge with icon + shape indicator -->
       <div
         class="pc-header__type"
         :class="`pc-header__type--${eventType}`"
       >
+        <span
+          class="pc-header__type-shape"
+          :class="`pc-header__type-shape--${eventType}`"
+        />
         <IconSvg
           v-if="typeConfig"
           class="pc-header__type-icon"
@@ -148,7 +152,7 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         v-if="eventUrl"
         :href="eventUrl"
         target="_blank"
-        class="pc-header__action"
+        class="pc-header__action pc-header__action--secondary"
         title="Open JSON payload"
         aria-label="Open JSON payload"
       >
@@ -158,65 +162,65 @@ const isVisibleTags = computed(() => props.labels.length > 0)
         />
       </a>
 
-      <template v-if="isVisibleControls">
-        <!-- Copy -->
-        <button
-          v-if="isOpen"
-          class="pc-header__action"
-          title="Copy as image"
-          aria-label="Copy event as image"
-          @click="copyEvent"
-        >
-          <IconSvg
-            name="copy"
-            class="pc-header__action-icon"
-          />
-        </button>
+      <!-- Copy (only when expanded + controls visible) -->
+      <button
+        v-if="isOpen && isVisibleControls"
+        class="pc-header__action pc-header__action--secondary"
+        title="Copy as image"
+        aria-label="Copy event as image"
+        @click="copyEvent"
+      >
+        <IconSvg
+          name="copy"
+          class="pc-header__action-icon"
+        />
+      </button>
 
-        <!-- Lock -->
-        <button
-          class="pc-header__action"
-          :class="{ 'pc-header__action--active': isLocked }"
-          :title="isLocked ? 'Unlock event' : 'Lock event'"
-          :aria-label="isLocked ? 'Unlock event' : 'Lock event'"
-          :aria-pressed="isLocked"
-          @click="lockEvent"
-        >
-          <IconSvg
-            :name="isLocked ? 'lock' : 'lock-off'"
-            class="pc-header__action-icon"
-          />
-        </button>
+      <!-- Lock -->
+      <button
+        v-if="isVisibleControls"
+        class="pc-header__action pc-header__action--secondary"
+        :class="{ 'pc-header__action--active': isLocked }"
+        :title="isLocked ? 'Unlock event' : 'Lock event'"
+        :aria-label="isLocked ? 'Unlock event' : 'Lock event'"
+        :aria-pressed="isLocked"
+        @click="lockEvent"
+      >
+        <IconSvg
+          :name="isLocked ? 'lock' : 'lock-off'"
+          class="pc-header__action-icon"
+        />
+      </button>
 
-        <!-- Collapse/Expand -->
-        <button
-          class="pc-header__action"
-          :title="isOpen ? 'Collapse' : 'Expand'"
-          :aria-label="isOpen ? 'Collapse event' : 'Expand event'"
-          :aria-expanded="isOpen"
-          @click="changeView"
-        >
-          <IconSvg
-            name="collapsed"
-            class="pc-header__action-icon pc-header__chevron"
-            :class="{ 'pc-header__chevron--open': isOpen }"
-          />
-        </button>
+      <!-- Collapse/Expand -->
+      <button
+        class="pc-header__action"
+        :title="isOpen ? 'Collapse' : 'Expand'"
+        :aria-label="isOpen ? 'Collapse event' : 'Expand event'"
+        :aria-expanded="isOpen"
+        @click="changeView"
+      >
+        <IconSvg
+          name="collapsed"
+          class="pc-header__action-icon pc-header__chevron"
+          :class="{ 'pc-header__chevron--open': isOpen }"
+        />
+      </button>
 
-        <!-- Delete -->
-        <button
-          class="pc-header__action pc-header__action--danger"
-          title="Delete event"
-          aria-label="Delete event"
-          :disabled="isLocked"
-          @click="deleteEvent"
-        >
-          <IconSvg
-            name="times"
-            class="pc-header__action-icon"
-          />
-        </button>
-      </template>
+      <!-- Delete -->
+      <button
+        v-if="isVisibleControls"
+        class="pc-header__action pc-header__action--danger"
+        title="Delete event"
+        aria-label="Delete event"
+        :disabled="isLocked"
+        @click="deleteEvent"
+      >
+        <IconSvg
+          name="times"
+          class="pc-header__action-icon"
+        />
+      </button>
     </div>
   </div>
 </template>
@@ -265,6 +269,60 @@ $typeColors: (
   }
 }
 
+/* Shape indicators for color-blind accessibility */
+.pc-header__type-shape {
+  @apply flex-shrink-0;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.pc-header__type-shape--sentry {
+  @apply rounded-full; /* circle */
+}
+
+.pc-header__type-shape--profiler {
+  border-radius: 1px;
+  transform: rotate(45deg); /* diamond */
+}
+
+.pc-header__type-shape--smtp {
+  width: 7px;
+  height: 5px;
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%); /* triangle */
+}
+
+.pc-header__type-shape--http-dump {
+  border-radius: 0; /* square */
+}
+
+.pc-header__type-shape--inspector {
+  width: 7px;
+  height: 5px;
+  border-radius: 0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); /* hexagon */
+}
+
+.pc-header__type-shape--var-dump {
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); /* pentagon */
+}
+
+.pc-header__type-shape--monolog {
+  width: 8px;
+  height: 4px;
+  border-radius: 2px; /* pill/bar */
+}
+
+.pc-header__type-shape--ray {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); /* star */
+}
+
+.pc-header__type-shape--unknown {
+  @apply rounded-full;
+}
+
 .pc-header__type-icon {
   @apply w-3 h-3 flex-shrink-0;
 }
@@ -308,6 +366,15 @@ $typeColors: (
 
   &:disabled {
     @apply opacity-30 pointer-events-none;
+  }
+}
+
+/* Secondary actions: hidden on small screens, visible on md+ or parent hover */
+.pc-header__action--secondary {
+  @apply hidden md:flex;
+
+  .preview-card:hover & {
+    @apply flex;
   }
 }
 
