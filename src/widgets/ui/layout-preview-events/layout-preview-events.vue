@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { computed, watchEffect } from 'vue'
+import { useTitle, refDebounced } from '@vueuse/core'
+import { toBlob } from 'html-to-image'
+import { storeToRefs } from 'pinia'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import { toBlob } from 'html-to-image'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
+import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
@@ -30,7 +32,7 @@ const allEvents = computed(() => {
   return events.items.value.filter(({ type }) => type === props.type)
 })
 
-const visibleEvents = computed(() => {
+const pauseFilteredEvents = computed(() => {
   if (!isEventsPaused.value) {
     return allEvents.value
   }
@@ -39,6 +41,39 @@ const visibleEvents = computed(() => {
     cachedEvents.idsByType.value[props.type]?.includes(uuid)
   )
 })
+
+const { searchQuery } = storeToRefs(useEventsStore())
+const debouncedSearch = refDebounced(searchQuery, 150)
+
+const visibleEvents = computed(() => {
+  const query = debouncedSearch.value.toLowerCase().trim()
+  if (!query) {
+    return pauseFilteredEvents.value
+  }
+
+  return pauseFilteredEvents.value.filter((event) => {
+    if (event.searchable_text) {
+      return event.searchable_text.toLowerCase().includes(query)
+    }
+    return JSON.stringify(event.payload).toLowerCase().includes(query)
+  })
+})
+
+const recentEventIds = ref(new Set<string>())
+
+watch(
+  () => events.items.value.length,
+  (newLen, oldLen) => {
+    if (newLen > oldLen) {
+      const newIds = events.items.value.slice(0, newLen - oldLen).map((e) => e.uuid)
+      newIds.forEach((id) => recentEventIds.value.add(id))
+
+      setTimeout(() => {
+        newIds.forEach((id) => recentEventIds.value.delete(id))
+      }, 2000)
+    }
+  }
+)
 
 const router = useRouter()
 const eventUuids = computed(() => visibleEvents.value.map((e) => e.uuid))
@@ -72,7 +107,8 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   onCopyPayload: (id) => {
     const event = visibleEvents.value.find((e) => e.uuid === id)
     if (event) {
-      navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))
+      navigator.clipboard
+        .writeText(JSON.stringify(event.payload, null, 2))
         .then(() => showToast('Payload copied'))
     }
   },
@@ -85,7 +121,8 @@ const { focusedId } = useKeyboardNav(eventUuids, {
         toBlob(el as HTMLElement)
           .then((blob) => {
             if (blob) {
-              navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+              navigator.clipboard
+                .write([new ClipboardItem({ [blob.type]: blob })])
                 .then(() => showToast('Screenshot copied'))
             }
           })
@@ -94,7 +131,7 @@ const { focusedId } = useKeyboardNav(eventUuids, {
           })
       }, 50)
     }
-  },
+  }
 })
 
 watchEffect(() => {
@@ -112,14 +149,16 @@ watchEffect(() => {
       class="layout-preview-events__events"
     >
       <EventCardMapper
-        v-for="(event, index) in visibleEvents"
+        v-for="event in visibleEvents"
         :id="event.uuid"
         :key="event.uuid"
         :event="event"
         role="article"
         class="layout-preview-events__event"
-        :class="{ 'layout-preview-events__event--focused': focusedId === event.uuid }"
-        :style="index < 20 ? { animationDelay: `${index * 30}ms` } : undefined"
+        :class="{
+          'layout-preview-events__event--focused': focusedId === event.uuid,
+          'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
+        }"
       />
     </main>
 
@@ -142,14 +181,17 @@ watchEffect(() => {
 .layout-preview-events__events {
   @include mixins.border-style;
   @apply divide-y divide-gray-200 dark:divide-gray-700;
+  @apply flex-1 overflow-y-auto;
 }
 
 .layout-preview-events__event {
-  animation: event-enter 0.25s ease-out both;
-
   & + & {
     @apply border-b border-gray-200 dark:border-gray-700;
   }
+}
+
+.layout-preview-events__event--animate {
+  animation: event-enter 0.25s ease-out both;
 }
 
 @keyframes event-enter {

@@ -49,21 +49,38 @@ const hasHtml = computed(() => !!props.event?.payload?.html)
         >HTML</span>
       </div>
 
-      <div class="smtp-body__addresses">
+      <div
+        v-if="emailFrom || emailTo"
+        class="smtp-body__flow"
+      >
         <span
           v-if="emailFrom"
-          class="smtp-body__addr"
+          class="smtp-body__pill"
+        >{{ emailFrom }}</span>
+
+        <svg
+          v-if="emailFrom && emailTo"
+          class="smtp-body__arrow"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          <span class="smtp-body__addr-label">From</span>
-          {{ emailFrom }}
-        </span>
+          <line
+            x1="5"
+            y1="12"
+            x2="19"
+            y2="12"
+          />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+
         <span
           v-if="emailTo"
-          class="smtp-body__addr"
-        >
-          <span class="smtp-body__addr-label">To</span>
-          {{ emailTo }}
-        </span>
+          class="smtp-body__pill"
+        >{{ emailTo }}</span>
       </div>
 
       <p
@@ -97,16 +114,20 @@ const hasHtml = computed(() => !!props.event?.payload?.html)
   @apply bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400;
 }
 
-.smtp-body__addresses {
-  @apply flex flex-wrap gap-x-4 gap-y-0.5 text-xs mb-1.5;
+.smtp-body__flow {
+  @apply flex items-center gap-1.5 text-xs mb-1.5 flex-wrap;
 }
 
-.smtp-body__addr {
-  @apply text-gray-600 dark:text-gray-300 font-mono;
+.smtp-body__pill {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full;
+  @apply font-mono text-2xs;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
-.smtp-body__addr-label {
-  @apply text-gray-400 dark:text-gray-500 font-sans mr-1;
+.smtp-body__arrow {
+  @apply w-3.5 h-3.5 flex-shrink-0;
+  @apply text-gray-300 dark:text-gray-600;
 }
 
 .smtp-body__preview {

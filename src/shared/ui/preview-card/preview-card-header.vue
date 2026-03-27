@@ -3,6 +3,7 @@ import isString from 'lodash.isstring'
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { PAGES_SETTINGS } from '../../constants'
 import { type EventType, type NormalizedEvent, RouteName } from '../../types'
+import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
 import { DownloadType } from './types'
 
@@ -107,7 +108,7 @@ const isVisibleTags = computed(() => props.labels.length > 0)
             v-if="isString(label)"
             class="pc-header__label"
           >
-            {{ label }}
+            <HighlightText :text="label" />
           </span>
 
           <span
@@ -115,8 +116,8 @@ const isVisibleTags = computed(() => props.labels.length > 0)
             class="pc-header__label pc-header__label--kv"
             :title="label.context"
           >
-            <span class="pc-header__label-key">{{ label.title }}</span>
-            {{ label.value }}
+            <span class="pc-header__label-key"><HighlightText :text="label.title" /></span>
+            <HighlightText :text="label.value" />
           </span>
         </template>
       </template>
@@ -316,7 +317,18 @@ $typeColors: (
 }
 
 .pc-header__type-shape--ray {
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); /* star */
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  ); /* star */
 }
 
 .pc-header__type-shape--unknown {

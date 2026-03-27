@@ -66,7 +66,7 @@ onMounted(() => {
 
 .value-dump__html {
   @apply font-mono break-all text-xs;
-  @apply bg-gray-100 dark:bg-gray-900;
+  @apply bg-gray-50 dark:bg-gray-900;
   @apply rounded overflow-auto;
   @apply p-3;
 }

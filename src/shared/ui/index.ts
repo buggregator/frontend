@@ -12,3 +12,5 @@ export * from './app-header';
 export * from './event-detail-layout';
 export * from './page-tabs';
 export * from './skeleton-loader';
+export * from './search-bar';
+export * from './highlight-text';

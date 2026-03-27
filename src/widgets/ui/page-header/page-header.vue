@@ -1,11 +1,15 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
+import { useEventsStore } from '@/shared/stores'
 import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
-import { AppHeader, PauseButton, IconSvg } from '@/shared/ui'
+import { AppHeader, PauseButton, IconSvg, SearchBar } from '@/shared/ui'
 
 const { events, cachedEvents } = useEvents()
+const eventsStore = useEventsStore()
+const { searchQuery } = storeToRefs(eventsStore)
 
 type Props = {
   type: PageEventTypes
@@ -75,6 +79,8 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
+      <SearchBar v-model="searchQuery" />
+
       <PauseButton
         :disabled-pause="visibleEvents.length === 0"
         :is-paused="isEventsPaused"
