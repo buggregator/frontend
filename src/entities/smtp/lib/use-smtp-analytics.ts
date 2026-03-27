@@ -311,10 +311,23 @@ export function useSmtpAnalytics(
 
     while ((match = regex.exec(html.value)) !== null) {
       const href = match[1].trim()
-      const rawText = match[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+      const innerHtml = match[2]
+      const hasImage = /<img\s/i.test(innerHtml)
+      const strippedText = innerHtml.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+
+      let text: string
+      if (strippedText) {
+        text = strippedText
+      } else if (hasImage) {
+        const alt = innerHtml.match(/alt=["']([^"']*)["']/i)?.[1]
+        text = alt ? `[image: ${alt}]` : '[image]'
+      } else {
+        text = '(no text)'
+      }
+
       results.push({
         href,
-        text: rawText || '(no text)',
+        text,
         isEmpty: !href,
         isHttp: href.startsWith('http://'),
       })
