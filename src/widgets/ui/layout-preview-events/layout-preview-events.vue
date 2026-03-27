@@ -53,15 +53,20 @@ const { focusedId } = useKeyboardNav(eventUuids, {
     }
   },
   onDelete: (id) => {
-    if (!lockedIds.items.value.includes(id)) {
-      events.removeById(id)
+    if (lockedIds.items.value.includes(id)) {
+      showToast('Event is locked')
+      return
     }
+    events.removeById(id)
+    showToast('Event deleted')
   },
   onLock: (id) => {
     if (lockedIds.items.value.includes(id)) {
       lockedIds.remove(id)
+      showToast('Event unlocked')
     } else {
       lockedIds.add(id)
+      showToast('Event locked')
     }
   },
   onCopyPayload: (id) => {

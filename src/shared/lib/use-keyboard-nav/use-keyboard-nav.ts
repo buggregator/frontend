@@ -19,6 +19,8 @@ export function showToast(message: string, duration = 2000) {
   toastTimer = setTimeout(() => { toastMessage.value = '' }, duration)
 }
 
+const ACTION_KEYS = new Set(['x', 'l', 'y', 's'])
+
 export function useKeyboardNav(
   eventIds: Ref<EventId[]>,
   options: KeyboardNavCallbacks = {}
@@ -55,59 +57,69 @@ export function useKeyboardNav(
     const ids = eventIds.value
     if (ids.length === 0) return
 
+    // Navigation (works without focus)
     switch (e.key) {
       case 'j':
       case 'ArrowDown':
         e.preventDefault()
         updateFocus(focusedIndex.value + 1)
-        break
+        return
       case 'k':
       case 'ArrowUp':
         e.preventDefault()
         updateFocus(focusedIndex.value - 1)
-        break
+        return
       case 'Enter':
         if (focusedId.value && options.onOpen) {
           e.preventDefault()
           options.onOpen(focusedId.value)
         }
-        break
+        return
       case 'Escape':
         focusedIndex.value = -1
         focusedId.value = null
-        break
-      case 'x':
-        if (focusedId.value && options.onDelete) {
-          e.preventDefault()
-          const deletedIndex = focusedIndex.value
-          options.onDelete(focusedId.value)
-          if (ids.length > 1) {
-            const nextIndex = deletedIndex < ids.length - 1 ? deletedIndex : deletedIndex - 1
-            setTimeout(() => updateFocus(nextIndex), 400)
-          } else {
-            focusedIndex.value = -1
-            focusedId.value = null
+        return
+    }
+
+    // Action keys — require focused event
+    if (ACTION_KEYS.has(e.key)) {
+      if (!focusedId.value) {
+        showToast('Press j/k to select an event first')
+        return
+      }
+
+      e.preventDefault()
+
+      switch (e.key) {
+        case 'x':
+          if (options.onDelete) {
+            const deletedIndex = focusedIndex.value
+            options.onDelete(focusedId.value)
+            if (ids.length > 1) {
+              const nextIndex = deletedIndex < ids.length - 1 ? deletedIndex : deletedIndex - 1
+              setTimeout(() => updateFocus(nextIndex), 400)
+            } else {
+              focusedIndex.value = -1
+              focusedId.value = null
+            }
           }
-        }
-        break
-      case 'l':
-        if (focusedId.value && options.onLock) {
-          e.preventDefault()
-          options.onLock(focusedId.value)
-        }
-        break
-      case 'y':
-        if (focusedId.value && options.onCopyPayload) {
-          e.preventDefault()
-          options.onCopyPayload(focusedId.value)
-        }
-        break
-      case 's':
-        if (focusedId.value && options.onScreenshot) {
-          e.preventDefault()
-          options.onScreenshot(focusedId.value)
-        }
-        break
+          break
+        case 'l':
+          if (options.onLock) {
+            options.onLock(focusedId.value)
+          }
+          break
+        case 'y':
+          if (options.onCopyPayload) {
+            options.onCopyPayload(focusedId.value)
+          }
+          break
+        case 's':
+          if (options.onScreenshot) {
+            options.onScreenshot(focusedId.value)
+          }
+          break
+      }
     }
   }
 
