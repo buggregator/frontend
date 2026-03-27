@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import moment from 'moment'
-import { Tab, Tabs } from 'vue3-tabs-component'
 import { computed, ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
-import { EventDetailLayout } from '@/shared/ui'
+import { EventDetailLayout, PageTabs, PageTab } from '@/shared/ui'
 import type { Sentry } from '../../types'
 import { SentryException } from '../sentry-exception'
 import { SentryPageApp } from '../sentry-page-app'
@@ -40,23 +39,27 @@ const isHandled = computed(() => {
 })
 
 // Tab visibility
-const hasException = computed(() =>
-  props.event.payload.exception?.values && props.event.payload.exception.values.length > 0
+const hasException = computed(
+  () => props.event.payload.exception?.values && props.event.payload.exception.values.length > 0
 )
-const hasBreadcrumbs = computed(() =>
-  props.event.payload.breadcrumbs?.values && props.event.payload.breadcrumbs.values.length > 0
+const hasBreadcrumbs = computed(
+  () => props.event.payload.breadcrumbs?.values && props.event.payload.breadcrumbs.values.length > 0
 )
 const hasRequest = computed(() => !!props.event.payload.request)
-const hasModules = computed(() =>
-  props.event.payload.modules && Object.keys(props.event.payload.modules).length > 0
+const hasModules = computed(
+  () => props.event.payload.modules && Object.keys(props.event.payload.modules).length > 0
 )
 const hasExtra = computed(() => !!props.event.payload.extra)
 const hasTraceContext = computed(() => !!props.event.payload.contexts?.trace)
 const hasAppContext = computed(() => !!props.event.payload.contexts?.app)
 const hasDeviceContext = computed(() => !!props.event.payload.contexts?.device)
-const hasContextTab = computed(() =>
-  hasTraceContext.value || hasAppContext.value || hasDeviceContext.value ||
-  props.event.payload.contexts?.runtime || props.event.payload.contexts?.os
+const hasContextTab = computed(
+  () =>
+    hasTraceContext.value ||
+    hasAppContext.value ||
+    hasDeviceContext.value ||
+    props.event.payload.contexts?.runtime ||
+    props.event.payload.contexts?.os
 )
 const hasSdk = computed(() => !!props.event.payload.sdk)
 
@@ -125,11 +128,8 @@ const scrollToException = (idx: number) => {
     </template>
 
     <!-- Tabbed content -->
-    <Tabs
-      :options="{ useUrlFragment: false }"
-      class="sentry-tabs"
-    >
-      <Tab
+    <PageTabs class="sentry-tabs">
+      <PageTab
         v-if="hasException"
         name="Exceptions"
         :suffix="`<span class='tab-badge'>${exceptionsLength}</span>`"
@@ -138,7 +138,11 @@ const scrollToException = (idx: number) => {
           <div class="sentry-exceptions">
             <div
               v-for="(e, idx) in event.payload.exception!.values"
-              :ref="(el) => { if (el) exceptionRefs[idx] = el as HTMLElement }"
+              :ref="
+                (el) => {
+                  if (el) exceptionRefs[idx] = el as HTMLElement
+                }
+              "
               :key="`exception-${e.value}-${e.type}`"
               class="sentry-exceptions__item"
             >
@@ -152,8 +156,18 @@ const scrollToException = (idx: number) => {
                   title="Scroll to next exception"
                   @click="scrollToException(idx + 1)"
                 >
-                  <svg viewBox="0 0 10 6" fill="none" class="sentry-exceptions__dot-arrow">
-                    <path d="M1.5 1L5 4.5L8.5 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    class="sentry-exceptions__dot-arrow"
+                  >
+                    <path
+                      d="M1.5 1L5 4.5L8.5 1"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </svg>
                 </button>
                 <span
@@ -182,9 +196,9 @@ const scrollToException = (idx: number) => {
             </div>
           </div>
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasBreadcrumbs"
         name="Breadcrumbs"
         :suffix="`<span class='tab-badge'>${event.payload.breadcrumbs!.values.length}</span>`"
@@ -192,18 +206,18 @@ const scrollToException = (idx: number) => {
         <div class="sentry-tab-content">
           <SentryPageBreadcrumbs :breadcrumbs="event.payload.breadcrumbs!.values" />
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasRequest"
         name="Request"
       >
         <div class="sentry-tab-content">
           <SentryPageRequest :request="event.payload.request!" />
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasContextTab"
         name="Context"
       >
@@ -225,18 +239,18 @@ const scrollToException = (idx: number) => {
             :device="event.payload.contexts!.device!"
           />
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasSdk"
         name="SDK"
       >
         <div class="sentry-tab-content">
           <SentryPageSdk :sdk="event.payload.sdk!" />
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasModules"
         name="Modules"
         :suffix="`<span class='tab-badge'>${Object.keys(event.payload.modules!).length}</span>`"
@@ -244,17 +258,17 @@ const scrollToException = (idx: number) => {
         <div class="sentry-tab-content">
           <SentryPageModules :modules="event.payload.modules!" />
         </div>
-      </Tab>
+      </PageTab>
 
-      <Tab
+      <PageTab
         v-if="hasExtra"
         name="Extra"
       >
         <div class="sentry-tab-content">
           <SentryPageExtra :extra="event.payload.extra" />
         </div>
-      </Tab>
-    </Tabs>
+      </PageTab>
+    </PageTabs>
   </EventDetailLayout>
 </template>
 
@@ -414,41 +428,5 @@ const scrollToException = (idx: number) => {
   @apply text-2xs font-medium uppercase tracking-wide;
   @apply text-gray-400 dark:text-gray-500;
   @apply mb-1.5 block;
-}
-</style>
-
-<!-- Global style for tab badges (rendered via innerHTML) -->
-<style lang="scss">
-.tab-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  background: theme('colors.gray.200');
-  color: theme('colors.gray.500');
-  vertical-align: top;
-  margin-left: 4px;
-  margin-top: -4px;
-
-  .dark & {
-    background: theme('colors.gray.700');
-    color: theme('colors.gray.400');
-  }
-
-  .is-active & {
-    background: theme('colors.blue.100');
-    color: theme('colors.blue.600');
-
-    .dark & {
-      background: rgba(59, 130, 246, 0.15);
-      color: theme('colors.blue.400');
-    }
-  }
 }
 </style>

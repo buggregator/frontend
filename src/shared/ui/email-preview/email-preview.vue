@@ -124,7 +124,7 @@ iframe {
   }
 
   .attachment-preview__device--tablet & {
-    @apply border;
+    @apply border overflow-hidden;
     height: 1004px;
     width: 768px;
 

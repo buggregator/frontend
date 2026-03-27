@@ -141,8 +141,18 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
       title="Expand sidebar"
       @click="toggleCollapse"
     >
-      <svg class="layout-sidebar__edge-chevron" viewBox="0 0 6 16" fill="none">
-        <path d="M1 1L5 8L1 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg
+        class="layout-sidebar__edge-chevron"
+        viewBox="0 0 6 16"
+        fill="none"
+      >
+        <path
+          d="M1 1L5 8L1 15"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
     </button>
 
@@ -373,7 +383,11 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
       >
         <span
           class="layout-sidebar__connection-dot"
-          :class="isConnectedWS ? 'layout-sidebar__connection-dot--on' : 'layout-sidebar__connection-dot--off'"
+          :class="
+            isConnectedWS
+              ? 'layout-sidebar__connection-dot--on'
+              : 'layout-sidebar__connection-dot--off'
+          "
         />
         <span class="layout-sidebar__connection-label">
           {{ isConnectedWS ? 'Connected' : 'Disconnected' }}
@@ -424,7 +438,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 }
 
 .layout-sidebar__logo-full {
-  @apply h-5 flex-shrink-0;
+  @apply h-6 flex-shrink-0;
   @apply fill-current;
 
   :deep(svg) {
@@ -511,14 +525,9 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 .layout-sidebar__link-icon-wrap {
   @apply relative flex-shrink-0;
   @apply flex items-center justify-center;
-  @apply w-5 h-5;
+  @apply w-8 h-8;
   @apply rounded-lg;
   @apply transition-all duration-100;
-
-  /* Collapsed mode: bigger icon container with rounded hover */
-  .layout-sidebar--collapsed & {
-    @apply w-8 h-8;
-  }
 
   .layout-sidebar--collapsed .layout-sidebar__link:hover & {
     @apply bg-gray-200/70 dark:bg-white/[0.08];
@@ -532,13 +541,8 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 .layout-sidebar__link-icon {
   @apply flex items-center justify-center flex-shrink-0;
   @apply fill-current;
-  @apply w-4 h-4;
+  @apply w-5 h-5;
   @apply transition-all duration-100;
-
-  /* Collapsed mode: bigger icons */
-  .layout-sidebar--collapsed & {
-    @apply w-5 h-5;
-  }
 
   & > svg {
     @apply h-auto;
@@ -546,7 +550,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 }
 
 .layout-sidebar__link-label {
-  @apply hidden text-[13px] font-medium truncate ml-3 flex-1;
+  @apply hidden text-sm font-medium truncate ml-3 flex-1;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply xl:inline;

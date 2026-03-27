@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { Tabs, Tab } from 'vue3-tabs-component'
 import type { NormalizedEvent } from '@/shared/types'
+import { PageTabs, PageTab } from '@/shared/ui'
 import type { Profiler } from '../../types'
 import { CallGraph } from '../call-graph'
 import { FlameGraph } from '../flame-graph'
@@ -28,20 +28,17 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
         class="profiler-page__stat"
       >
         <section class="profiler-page__stat-tabs">
-          <Tabs
-            :options="{ useUrlFragment: false }"
-            @changed="tabChange"
-          >
-            <Tab name="Call graph">
+          <PageTabs @changed="tabChange">
+            <PageTab name="Call graph">
               <CallGraph
                 v-if="activeTab === 'Call graph'"
                 :id="event.id"
                 :key="activeTab"
                 :payload="event.payload"
               />
-            </Tab>
+            </PageTab>
 
-            <Tab name="Flamechart">
+            <PageTab name="Flamechart">
               <FlameGraph
                 v-if="activeTab === 'Flamechart'"
                 :id="event.id"
@@ -49,17 +46,17 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
                 :data-key="activeTab"
                 :payload="event.payload"
               />
-            </Tab>
+            </PageTab>
 
-            <Tab name="Top functions">
+            <PageTab name="Top functions">
               <TopFunctions
                 v-if="activeTab === 'Top functions'"
                 :id="event.id"
                 :key="activeTab"
                 :payload="event.payload"
               />
-            </Tab>
-          </Tabs>
+            </PageTab>
+          </PageTabs>
         </section>
       </div>
     </main>
