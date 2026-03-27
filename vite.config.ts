@@ -36,7 +36,7 @@ export default defineConfig({
             return '@vue-flow';
           }
 
-          if (id.includes('vue')) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/@vue/')) {
             return '@vue';
           }
         },

@@ -5,7 +5,6 @@
 /.cache             export-ignore
 /.husky             export-ignore
 /.storybook         export-ignore
-/public             export-ignore
 /feature-requests   export-ignore
 /docs               export-ignore
 /*.config.*         export-ignore
