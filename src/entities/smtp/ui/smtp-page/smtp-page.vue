@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
-import { Tab, Tabs } from 'vue3-tabs-component'
 import { htmlEncode } from '@/shared/lib/helpers'
 import { useAttachments } from '@/shared/lib/io'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
@@ -11,7 +10,9 @@ import {
   EmailPreviewDevice,
   EmailPreview,
   EventDetailLayout,
-  EventDetailSection
+  EventDetailSection,
+  PageTabs,
+  PageTab
 } from '@/shared/ui'
 import type { SMTP } from '../../types'
 
@@ -24,9 +25,11 @@ const attachments = ref<Attachment[]>([])
 
 const { getAttachments, calcDownloadLink } = useAttachments()
 
+const iframeStyle = '<style>html,body{height:100%;margin:0}</style>'
+
 const htmlSource = computed(() =>
   props.event?.payload?.html
-    ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}" title="Email HTML preview"/>`
+    ? `<iframe srcdoc="${htmlEncode(iframeStyle + props.event?.payload?.html)}" title="Email HTML preview"/>`
     : undefined
 )
 
@@ -98,17 +101,20 @@ onMounted(getAttachmentsRequest)
 
     <!-- Content tabs (outside wrapper, full-width) -->
     <div class="smtp-tabs">
-      <Tabs :options="{ useUrlFragment: false }">
-        <Tab
+      <PageTabs>
+        <PageTab
           v-if="isHtml"
           id="html-preview"
           name="Preview"
         >
           <EmailPreview :device="EmailPreviewDevice.Tablet">
-            <div v-html="htmlSource" />
+            <div
+              class="smtp-preview-frame"
+              v-html="htmlSource"
+            />
           </EmailPreview>
-        </Tab>
-        <Tab
+        </PageTab>
+        <PageTab
           v-if="isHtml"
           name="HTML"
         >
@@ -116,8 +122,8 @@ onMounted(getAttachmentsRequest)
             language="html"
             :code="event.payload.html"
           />
-        </Tab>
-        <Tab
+        </PageTab>
+        <PageTab
           v-if="isText"
           name="Text"
         >
@@ -125,10 +131,11 @@ onMounted(getAttachmentsRequest)
             language="plaintext"
             :code="event.payload.text"
           />
-        </Tab>
-        <Tab
+        </PageTab>
+        <PageTab
           v-if="attachments.length"
-          :name="`Attachments (${attachments.length})`"
+          name="Attachments"
+          :suffix="`<span class='tab-badge'>${attachments.length}</span>`"
         >
           <div class="smtp-attachments">
             <FileAttachment
@@ -139,14 +146,14 @@ onMounted(getAttachmentsRequest)
               :download-url="calcDownloadUrl(a.uuid)"
             />
           </div>
-        </Tab>
-        <Tab name="Raw">
+        </PageTab>
+        <PageTab name="Raw">
           <CodeSnippet
             language="plaintext"
             :code="event.payload.raw"
           />
-        </Tab>
-        <Tab name="Tech Info">
+        </PageTab>
+        <PageTab name="Tech Info">
           <div class="tech-info">
             <!-- Summary boxes -->
             <div class="tech-info__boxes">
@@ -201,13 +208,18 @@ onMounted(getAttachmentsRequest)
               </div>
             </div>
           </div>
-        </Tab>
-      </Tabs>
+        </PageTab>
+      </PageTabs>
     </div>
   </EventDetailLayout>
 </template>
 
 <style lang="scss" scoped>
+/* Preview iframe wrapper */
+.smtp-preview-frame {
+  @apply w-full h-full;
+}
+
 /* Header */
 .smtp-header__subject {
   @apply text-base md:text-lg lg:text-xl font-semibold mb-1;
