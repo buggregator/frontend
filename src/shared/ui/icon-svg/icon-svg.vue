@@ -41,14 +41,15 @@ defineProps<Props>()
     <svg
       v-else-if="name === 'copy'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 460 460"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M426 0H172c-18 0-33 15-33 33v77h30V33c0-2 1-3 3-3h254c2 0 3 1 3 3v254c0 2-1 3-3 3h-75v30h75c18 0 33-15 33-33V33c0-18-15-33-33-33z"
-      />
-      <path
-        d="M288 140H34c-18 0-33 15-33 33v254c0 18 15 33 33 33h254c18 0 33-15 33-33V173c0-18-15-33-33-33zm0 290H34c-2 0-3-1-3-3V173c0-2 1-3 3-3h254c2 0 3 1 3 3v254c0 2-1 3-3 3z"
-      />
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
 
     <svg
@@ -431,11 +432,15 @@ defineProps<Props>()
     <svg
       v-else-if="name === 'times'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 10 10"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M7.8 9.2a1 1 0 1 0 1.4-1.4L6.4 5l2.8-2.8A1 1 0 1 0 7.8.8L5 3.6 2.2.8A1 1 0 1 0 .8 2.2L3.6 5 .8 7.8a1 1 0 1 0 1.4 1.4L5 6.4l2.8 2.8Z"
-      />
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
 
     <svg
@@ -618,43 +623,44 @@ defineProps<Props>()
     <svg
       v-else-if="name === 'mobile-device'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 512.1 512.1"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M128 406c4 0 8-4 8-8V124a8 8 0 0 0-15 0v274c0 4 3 8 7 8zM384 264c-4 0-7 3-7 7v204c0 12-11 22-23 22H158c-12 0-22-10-22-22v-47a8 8 0 0 0-15 0v47c0 20 16 37 37 37h196c21 0 38-17 38-37V271c0-4-4-7-8-7zM354 0H158c-21 0-37 17-37 38v56a8 8 0 0 0 15 0V38c0-13 10-23 22-23h31c8 15 24 25 41 25h52c17 0 33-10 41-25h31c12 0 23 10 23 23v203a8 8 0 0 0 15 0V38c0-21-17-38-38-38zm-72 25h-52c-9 0-17-4-23-10h98c-6 6-14 10-23 10z"
-      />
-      <path d="M287 478a8 8 0 0 0 0-15h-62a8 8 0 0 0 0 15h62z" />
+      <rect x="7" y="2" width="10" height="20" rx="2" />
+      <line x1="10" y1="18" x2="14" y2="18" />
     </svg>
 
     <svg
       v-else-if="name === 'tablet-device'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 512.1 512.1"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M408 0H104C80 0 60 20 60 44v26a8 8 0 0 0 15 0V44c0-16 13-29 29-29h304c16 0 29 13 29 29v424c0 16-13 29-29 29H104c-16 0-29-13-29-29V100a8 8 0 0 0-15 0v368c0 24 20 44 44 44h304c24 0 44-20 44-44V44c0-24-20-44-44-44z"
-      />
-      <path
-        d="M90 61v284a8 8 0 0 0 15 0V69h302v103a8 8 0 0 0 15 0V61c0-4-3-7-7-7H97c-4 0-7 3-7 7zM90 432c0 4 3 8 7 8h318c4 0 7-4 7-8V202a8 8 0 0 0-15 0v223H105v-50a8 8 0 0 0-15 0v57zM233 467a23 23 0 1 0 46-1 23 23 0 0 0-46 1zm31 0a8 8 0 1 1-16 0 8 8 0 0 1 16 0zM288 42a8 8 0 0 0 0-15h-34a8 8 0 0 0 0 15h34z"
-      />
-      <circle
-        cx="225.6"
-        cy="34.3"
-        r="7.5"
-      />
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <circle cx="12" cy="18" r="1" />
     </svg>
 
     <svg
       v-else-if="name === 'desktop-device'"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 510.5 510.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M473 30H148a7 7 0 1 0 0 15h325c12 0 23 10 23 22v265h-50a8 8 0 0 0 0 15h50v31c0 13-11 23-23 23H117a7 7 0 1 0 0 15h70l-14 50h-25a7 7 0 1 0 0 15h215a7 7 0 1 0 0-15h-26l-13-50h149c21 0 38-17 38-38V67c0-20-17-37-38-37zM322 466H189l13-50h106l14 50z"
-      />
-      <path
-        d="M87 401H38c-13 0-23-10-23-23v-31h401a7 7 0 1 0 0-15H15V67c0-12 10-22 23-22h80a7 7 0 1 0 0-15H38C17 30 0 47 0 67v311c0 21 17 38 38 38h49a7 7 0 1 0 0-15z"
-      />
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
     </svg>
 
     <svg
@@ -683,14 +689,15 @@ defineProps<Props>()
     </svg>
     <svg
       v-else-if="name === 'collapsed'"
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      height="100%"
-      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path
-        d="M14,11.75a.74.74,0,0,1-.53-.22L8,6.06,2.53,11.53a.75.75,0,0,1-1.06-1.06l6-6a.75.75,0,0,1,1.06,0l6,6a.75.75,0,0,1,0,1.06A.74.74,0,0,1,14,11.75Z"
-      />
+      <polyline points="6 9 12 15 18 9" />
     </svg>
 
     <svg
@@ -793,47 +800,32 @@ defineProps<Props>()
 
     <svg
       v-else-if="name === 'file-download'"
+      xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width="24"
-      height="24"
-      stroke-width="2"
-      stroke="currentColor"
       fill="none"
+      stroke="currentColor"
+      stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path
-        stroke="none"
-        d="M0 0h24v24H0z"
-        fill="none"
-      />
-      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-      <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-      <path d="M12 17v-6" />
-      <path d="M9.5 14.5l2.5 2.5l2.5 -2.5" />
+      <path d="M7 8l-4 4l4 4" />
+      <path d="M17 8l4 4l-4 4" />
+      <line x1="14" y1="4" x2="10" y2="20" />
     </svg>
 
     <svg
       v-else-if="name === 'window-maximize'"
-      width="24"
-      height="24"
+      xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="icon icon-tabler icons-tabler-outline icon-tabler-window-maximize"
     >
-      <path
-        stroke="none"
-        d="M0 0h24v24H0z"
-        fill="none"
-      />
-      <path d="M3 16m0 1a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1z" />
-      <path d="M4 12v-6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-6" />
-      <path d="M12 8h4v4" />
-      <path d="M16 8l-5 5" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
     </svg>
   </div>
 </template>

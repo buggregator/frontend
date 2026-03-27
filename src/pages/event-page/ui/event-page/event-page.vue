@@ -6,8 +6,10 @@ import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { EventValidationError } from '@/shared/lib/errors'
+import { logger } from '@/shared/lib/logger'
 import { useEvents } from '@/shared/lib/use-events'
 import { type EventId, type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types'
+import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
 
 const { params } = useRoute()
 
@@ -38,7 +40,7 @@ const getEvent = async () => {
       new EventValidationError('Event not found', eventId)
     }
   } catch (error) {
-    console.error(error)
+    logger.ui.error('Failed to load event page', error)
     await router.push({ name: RouteName.NotFound })
   }
 }
@@ -59,14 +61,10 @@ onMounted(getEvent)
       />
     </template>
 
-    <div
+    <SkeletonLoader
       v-if="isLoading && !serverEvent"
-      class="events-list-page__loading"
-    >
-      <div />
-      <div />
-      <div />
-    </div>
+      variant="event-detail"
+    />
 
     <EventPageMapper
       v-if="serverEvent"
@@ -76,14 +74,7 @@ onMounted(getEvent)
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
 .events-list-page {
   display: block;
-}
-
-.events-list-page__loading {
-  @include mixins.loading;
-  @include mixins.layout-body;
 }
 </style>
