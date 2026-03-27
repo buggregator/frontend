@@ -246,6 +246,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
             <span
               v-if="hasEvents(type)"
               class="layout-sidebar__dot"
+              :class="`layout-sidebar__dot--${type}`"
             />
           </span>
           <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
@@ -567,7 +568,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 .layout-sidebar__dot {
   @apply absolute;
   @apply w-[6px] h-[6px] rounded-full;
-  @apply bg-blue-500 dark:bg-blue-400;
+  @apply bg-gray-400;
   top: -1px;
   right: -2px;
   box-shadow: 0 0 0 1.5px theme('colors.gray.100');
@@ -579,6 +580,23 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
   /* Hide dot in expanded mode (count badge is shown instead) */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply xl:hidden;
+  }
+}
+
+$dotColors: (
+  'sentry': 'rose',
+  'profiler': 'violet',
+  'smtp': 'amber',
+  'http-dump': 'green',
+  'inspector': 'yellow',
+  'var-dump': 'orange',
+  'monolog': 'teal',
+  'ray': 'cyan'
+);
+
+@each $type, $color in $dotColors {
+  .layout-sidebar__dot--#{$type} {
+    @apply bg-#{$color}-500 dark:bg-#{$color}-400;
   }
 }
 
