@@ -4,7 +4,8 @@ import { computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import { useKeyboardNav } from '@/shared/lib/use-keyboard-nav'
+import { toBlob } from 'html-to-image'
+import { useKeyboardNav, showToast } from '@/shared/lib/use-keyboard-nav'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
@@ -67,6 +68,19 @@ const { focusedId } = useKeyboardNav(eventUuids, {
     const event = visibleEvents.value.find((e) => e.uuid === id)
     if (event) {
       navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))
+        .then(() => showToast('Payload copied'))
+    }
+  },
+  onScreenshot: (id) => {
+    const el = document.getElementById(id)
+    if (el) {
+      toBlob(el as HTMLElement)
+        .then((blob) => {
+          if (blob) {
+            navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+              .then(() => showToast('Screenshot copied'))
+          }
+        })
     }
   },
 })
@@ -87,6 +101,7 @@ watchEffect(() => {
     >
       <EventCardMapper
         v-for="(event, index) in visibleEvents"
+        :id="event.uuid"
         :key="event.uuid"
         :event="event"
         role="article"

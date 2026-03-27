@@ -1,14 +1,27 @@
 import { ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
 import type { EventId } from '../../types'
 
+export type KeyboardNavCallbacks = {
+  onOpen?: (id: EventId) => void
+  onDelete?: (id: EventId) => void
+  onLock?: (id: EventId) => void
+  onCopyPayload?: (id: EventId) => void
+  onScreenshot?: (id: EventId) => void
+}
+
+// Toast state — shared so any component can display it
+export const toastMessage = ref('')
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+export function showToast(message: string, duration = 2000) {
+  toastMessage.value = message
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMessage.value = '' }, duration)
+}
+
 export function useKeyboardNav(
   eventIds: Ref<EventId[]>,
-  options: {
-    onOpen?: (id: EventId) => void
-    onDelete?: (id: EventId) => void
-    onLock?: (id: EventId) => void
-    onCopyPayload?: (id: EventId) => void
-  } = {}
+  options: KeyboardNavCallbacks = {}
 ) {
   const focusedIndex = ref(-1)
   const focusedId = ref<EventId | null>(null)
@@ -68,7 +81,6 @@ export function useKeyboardNav(
           e.preventDefault()
           const deletedIndex = focusedIndex.value
           options.onDelete(focusedId.value)
-          // Move focus to next event or previous if at end
           if (ids.length > 1) {
             const nextIndex = deletedIndex < ids.length - 1 ? deletedIndex : deletedIndex - 1
             setTimeout(() => updateFocus(nextIndex), 400)
@@ -88,6 +100,12 @@ export function useKeyboardNav(
         if (focusedId.value && options.onCopyPayload) {
           e.preventDefault()
           options.onCopyPayload(focusedId.value)
+        }
+        break
+      case 's':
+        if (focusedId.value && options.onScreenshot) {
+          e.preventDefault()
+          options.onScreenshot(focusedId.value)
         }
         break
     }

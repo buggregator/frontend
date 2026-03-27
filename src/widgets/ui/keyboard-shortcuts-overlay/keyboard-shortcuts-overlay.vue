@@ -27,6 +27,7 @@ const sections = [
       { keys: ['x'], desc: 'Delete event' },
       { keys: ['l'], desc: 'Lock / unlock event' },
       { keys: ['y'], desc: 'Copy payload to clipboard' },
+      { keys: ['s'], desc: 'Screenshot to clipboard' },
       { keys: ['Esc'], desc: 'Clear focus' },
     ]
   },
