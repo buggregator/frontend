@@ -66,6 +66,14 @@ const copyCode = (): void => {
 .code-snippet {
   @apply relative rounded overflow-hidden;
   @apply bg-gray-100 dark:bg-gray-900;
+
+  :deep(pre) {
+    @apply m-0;
+  }
+
+  :deep(code.hljs) {
+    @apply p-4 text-xs leading-relaxed;
+  }
 }
 
 .code-snippet__copy {

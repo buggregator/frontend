@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { profilerEdgesMock } from  "../../mocks";
 import CallStatBoard from './call-stat-board.vue';
 

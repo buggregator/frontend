@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { PAGE_TYPES} from "@/shared/constants";
 import PageHeader from "./page-header.vue";
 

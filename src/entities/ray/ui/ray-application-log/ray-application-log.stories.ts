@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useRay } from "../../lib";
 import { rayLaravelApplicationLogMock } from '../../mocks-laravel';
 import type { RayContentApplicationLog } from '../../types';

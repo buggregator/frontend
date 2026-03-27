@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useProfiler } from "../../lib";
 import { profilerMock } from  "../../mocks";
 import ProfilerPage from './profiler-page.vue';

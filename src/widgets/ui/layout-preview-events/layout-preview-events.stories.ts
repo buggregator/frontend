@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { ALL_EVENT_TYPES } from "@/shared/constants";
 import LayoutPreviewEvents from "./layout-preview-events.vue";
 

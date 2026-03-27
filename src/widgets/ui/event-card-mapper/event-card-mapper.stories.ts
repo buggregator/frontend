@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import type { ComponentProps } from "vue-component-type-helpers";
 import { httpDumpMock } from '@/entities/http-dump/mocks';
 import { inspectorMock } from '@/entities/inspector/mocks';
