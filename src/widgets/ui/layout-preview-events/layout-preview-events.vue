@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: ''
 })
 
-const { events, cachedEvents } = useEvents()
+const { events, cachedEvents, lockedIds } = useEvents()
 
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
@@ -50,7 +50,25 @@ const { focusedId } = useKeyboardNav(eventUuids, {
         params: { type: event.type as string, id: event.uuid }
       })
     }
-  }
+  },
+  onDelete: (id) => {
+    if (!lockedIds.items.value.includes(id)) {
+      events.removeById(id)
+    }
+  },
+  onLock: (id) => {
+    if (lockedIds.items.value.includes(id)) {
+      lockedIds.remove(id)
+    } else {
+      lockedIds.add(id)
+    }
+  },
+  onCopyPayload: (id) => {
+    const event = visibleEvents.value.find((e) => e.uuid === id)
+    if (event) {
+      navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))
+    }
+  },
 })
 
 watchEffect(() => {

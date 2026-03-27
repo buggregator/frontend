@@ -5,6 +5,9 @@ export function useKeyboardNav(
   eventIds: Ref<EventId[]>,
   options: {
     onOpen?: (id: EventId) => void
+    onDelete?: (id: EventId) => void
+    onLock?: (id: EventId) => void
+    onCopyPayload?: (id: EventId) => void
   } = {}
 ) {
   const focusedIndex = ref(-1)
@@ -59,6 +62,33 @@ export function useKeyboardNav(
       case 'Escape':
         focusedIndex.value = -1
         focusedId.value = null
+        break
+      case 'x':
+        if (focusedId.value && options.onDelete) {
+          e.preventDefault()
+          const deletedIndex = focusedIndex.value
+          options.onDelete(focusedId.value)
+          // Move focus to next event or previous if at end
+          if (ids.length > 1) {
+            const nextIndex = deletedIndex < ids.length - 1 ? deletedIndex : deletedIndex - 1
+            setTimeout(() => updateFocus(nextIndex), 400)
+          } else {
+            focusedIndex.value = -1
+            focusedId.value = null
+          }
+        }
+        break
+      case 'l':
+        if (focusedId.value && options.onLock) {
+          e.preventDefault()
+          options.onLock(focusedId.value)
+        }
+        break
+      case 'y':
+        if (focusedId.value && options.onCopyPayload) {
+          e.preventDefault()
+          options.onCopyPayload(focusedId.value)
+        }
         break
     }
   }

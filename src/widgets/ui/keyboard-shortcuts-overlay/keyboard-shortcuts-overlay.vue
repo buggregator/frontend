@@ -24,6 +24,9 @@ const sections = [
       { keys: ['j', '↓'], desc: 'Next event' },
       { keys: ['k', '↑'], desc: 'Previous event' },
       { keys: ['Enter'], desc: 'Open event' },
+      { keys: ['x'], desc: 'Delete event' },
+      { keys: ['l'], desc: 'Lock / unlock event' },
+      { keys: ['y'], desc: 'Copy payload to clipboard' },
       { keys: ['Esc'], desc: 'Clear focus' },
     ]
   },
