@@ -22,7 +22,9 @@ const exceptionValues = computed(() => props.event?.payload?.exception?.values |
 
 const hasException = computed(() => exceptionValues.value.length > 0)
 
-const message = computed(() => props.event.payload?.message || '')
+const message = computed(
+  () => props.event.payload?.message || props.event.payload?.logentry?.message || ''
+)
 
 const exception: Ref<Exception> = computed(() =>
   exceptionValues.value.length > 0

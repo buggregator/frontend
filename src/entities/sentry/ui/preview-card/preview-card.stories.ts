@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSentry } from "../../lib";
-import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentrySpiralMock } from '../../mocks';
+import { sentryMock, sentryJSEventMock, sentryLaravelMock, sentryPythonMock, sentryPythonLogMock, sentrySpiralMock } from '../../mocks';
 import PreviewCard from './preview-card.vue';
 
 const { normalizeSentryEvent } = useSentry();
@@ -30,6 +30,18 @@ export const Event: StoryObj<typeof PreviewCard> = {
 export const JSEvent: StoryObj<typeof PreviewCard> = {
   args: {
     event: normalizeSentryEvent(sentryJSEventMock),
+  }
+};
+
+export const Python: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeSentryEvent(sentryPythonMock),
+  }
+};
+
+export const PythonLog: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeSentryEvent(sentryPythonLogMock),
   }
 };
 

@@ -31,7 +31,10 @@ const platform = computed(() => props.event.payload.platform || 'unknown')
 const level = computed(() => props.event.payload.level || 'error')
 const transaction = computed(() => props.event.payload.transaction)
 const release = computed(() => props.event.payload.release)
-const isMessageEvent = computed(() => !mainException.value && props.event.payload.message)
+const isMessageEvent = computed(
+  () =>
+    !mainException.value && (props.event.payload.message || props.event.payload.logentry?.message)
+)
 
 const isHandled = computed(() => {
   if (!mainException.value?.mechanism) return undefined
@@ -120,7 +123,9 @@ const scrollToException = (idx: number) => {
           <h2 class="sentry-header__type">
             Message
           </h2>
-          <pre class="sentry-header__message">{{ event.payload.message }}</pre>
+          <pre class="sentry-header__message">{{
+            event.payload.message || event.payload.logentry?.message
+          }}</pre>
         </template>
 
         <span class="sentry-header__date">{{ formattedTimestamp }}</span>
@@ -256,7 +261,10 @@ const scrollToException = (idx: number) => {
         :suffix="`<span class='tab-badge'>${Object.keys(event.payload.modules!).length}</span>`"
       >
         <div class="sentry-tab-content">
-          <SentryPageModules :modules="event.payload.modules!" />
+          <SentryPageModules
+            :modules="event.payload.modules!"
+            :platform="platform"
+          />
         </div>
       </PageTab>
 
