@@ -41,6 +41,30 @@ onMounted(async () => {
 
 <template>
   <div class="profile-compare">
+    <div class="profile-compare__legend">
+      <span class="profile-compare__legend-item">
+        Base
+        <RouterLink
+          :to="`/profiler/${baseId}`"
+          class="profile-compare__legend-link"
+          target="_blank"
+        >
+          {{ baseId.substring(0, 8) }}
+        </RouterLink>
+      </span>
+      <span class="profile-compare__legend-vs">vs</span>
+      <span class="profile-compare__legend-item">
+        Compare
+        <RouterLink
+          :to="`/profiler/${compareId}`"
+          class="profile-compare__legend-link"
+          target="_blank"
+        >
+          {{ compareId.substring(0, 8) }}
+        </RouterLink>
+      </span>
+    </div>
+
     <div
       v-if="loading"
       class="profile-compare__loading"
@@ -130,6 +154,29 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .profile-compare {
   @apply p-4 overflow-auto h-full;
+}
+
+.profile-compare__legend {
+  @apply flex items-center gap-3 pb-3 mb-3;
+  @apply border-b border-gray-200 dark:border-gray-700;
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.profile-compare__legend-item {
+  @apply flex items-center gap-1.5;
+}
+
+.profile-compare__legend-link {
+  @apply font-mono text-2xs px-1 py-0.5 rounded;
+  @apply bg-gray-100 dark:bg-gray-700;
+  @apply text-blue-600 dark:text-blue-400;
+  @apply hover:bg-blue-50 dark:hover:bg-blue-500/10;
+  @apply hover:underline;
+  @apply transition-colors;
+}
+
+.profile-compare__legend-vs {
+  @apply text-gray-300 dark:text-gray-600 text-2xs;
 }
 
 .profile-compare__loading,
