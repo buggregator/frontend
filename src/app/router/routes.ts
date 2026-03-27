@@ -32,6 +32,14 @@ export const routes = [
     }
   },
   {
+    path: '/favorites',
+    name: RouteName.Favorites,
+    component: EventsListPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
     path: '/404',
     name: RouteName.NotFound,
     component: NotFoundPage,

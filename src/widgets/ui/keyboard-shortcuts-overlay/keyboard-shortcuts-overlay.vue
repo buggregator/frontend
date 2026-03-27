@@ -8,6 +8,7 @@ const sections = [
     title: 'Navigation',
     shortcuts: [
       { keys: ['0'], desc: 'All events' },
+      { keys: ['f'], desc: 'Favorites' },
       { keys: ['1'], desc: 'Sentry' },
       { keys: ['2'], desc: 'Profiler' },
       { keys: ['3'], desc: 'SMTP' },

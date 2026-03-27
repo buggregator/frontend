@@ -4,5 +4,6 @@ export enum RouteName {
   Home = 'home',
   EventList = 'event-list',
   EventPage = 'event-page',
+  Favorites = 'favorites',
   NotFound = 'not-found',
 }
