@@ -2,12 +2,15 @@
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import { useEvents } from '@/shared/lib/use-events'
+import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
+import { KeyboardShortcutsOverlay } from '../keyboard-shortcuts-overlay'
 
 const { activeProjectKey } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
+const { isShortcutsOverlayOpen } = useGlobalShortcuts()
 
 const isDismissed = ref(false)
 const showBanner = ref(false)
@@ -83,6 +86,11 @@ watch(
     <div class="layout-base__content">
       <slot />
     </div>
+
+    <KeyboardShortcutsOverlay
+      v-if="isShortcutsOverlayOpen"
+      @close="isShortcutsOverlayOpen = false"
+    />
   </div>
 </template>
 
