@@ -1,17 +1,23 @@
 import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vite'
-import { analyzer } from 'vite-bundle-analyzer'
-import vueDevTools from 'vite-plugin-vue-devtools'
+import { defineConfig, type Plugin } from 'vite'
 
 const isDev = () => {
   return process.env.NODE_ENV === 'dev';
 }
+
+const devPlugins = async (): Promise<Plugin[]> => {
+  if (!isDev()) return [];
+  const { analyzer } = await import('vite-bundle-analyzer');
+  const vueDevTools = (await import('vite-plugin-vue-devtools')).default;
+  return [analyzer() as Plugin, vueDevTools() as Plugin];
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    ...(isDev() ? [analyzer(), vueDevTools()] : []),
+    ...await devPlugins(),
   ],
   resolve: {
     alias: {
