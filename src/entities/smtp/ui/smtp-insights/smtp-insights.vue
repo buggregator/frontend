@@ -48,8 +48,8 @@ const issueCount = (findings: SmtpFinding[]): number =>
         <span class="insights__group-title">{{ group.title }}</span>
         <span
           v-if="issueCount(group.findings) > 0"
-          class="insights__group-count"
-          :class="`insights__group-count--${worstSeverity(group.findings)}`"
+          class="insights__group-num"
+          :class="`insights__group-num--${worstSeverity(group.findings)}`"
         >{{ issueCount(group.findings) }}</span>
         <svg
           class="insights__chevron"
@@ -136,35 +136,24 @@ const issueCount = (findings: SmtpFinding[]): number =>
   @apply flex-1 text-left;
 }
 
-.insights__group-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  vertical-align: top;
-  margin-top: -2px;
+.insights__group-num {
+  @apply text-2xs font-normal tabular-nums;
 }
 
-.insights__group-count--warning {
-  @apply bg-amber-100 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400;
+.insights__group-num--warning {
+  @apply text-amber-500 dark:text-amber-400;
 }
 
-.insights__group-count--error {
-  @apply bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400;
+.insights__group-num--error {
+  @apply text-red-500 dark:text-red-400;
 }
 
-.insights__group-count--info {
-  @apply bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400;
+.insights__group-num--info {
+  @apply text-blue-500 dark:text-blue-400;
 }
 
-.insights__group-count--pass {
-  @apply bg-green-100 dark:bg-green-500/15 text-green-600 dark:text-green-400;
+.insights__group-num--pass {
+  @apply text-green-500 dark:text-green-400;
 }
 
 .insights__chevron {

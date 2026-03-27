@@ -242,7 +242,7 @@ onMounted(getAttachmentsRequest)
         >
           <h3 class="smtp-card__title">
             Attachments
-            <span class="smtp-card__count">{{ attachments.length }}</span>
+            <span class="smtp-card__num">{{ attachments.length }}</span>
           </h3>
           <div class="smtp-card__body">
             <FileAttachment
@@ -262,7 +262,7 @@ onMounted(getAttachmentsRequest)
         >
           <h3 class="smtp-card__title">
             Links
-            <span class="smtp-card__count">{{ links.length }}</span>
+            <span class="smtp-card__num">{{ links.length }}</span>
           </h3>
           <div class="smtp-links">
             <div
@@ -485,21 +485,14 @@ onMounted(getAttachmentsRequest)
   @apply flex items-center gap-2;
 }
 
-.smtp-card__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  vertical-align: top;
-  margin-top: -4px;
-  margin-left: 2px;
-  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
+.smtp-card__num {
+  @apply font-normal text-gray-400 dark:text-gray-500;
+  @apply ml-0.5;
+
+  &::before {
+    content: '·';
+    @apply mr-1;
+  }
 }
 
 .smtp-card__body {
