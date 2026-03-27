@@ -3,7 +3,9 @@ import download from 'downloadjs'
 import { toBlob, toPng } from 'html-to-image'
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { REST_API_URL } from '../../lib/io'
+import { logger } from '../../lib/logger'
 import { useEvents } from '../../lib/use-events'
+import { screenshotingEventId } from '../../lib/use-keyboard-nav'
 import type { NormalizedEvent } from '../../types'
 import PreviewCardFooter from './preview-card-footer.vue'
 import PreviewCardHeader from './preview-card-header.vue'
@@ -16,14 +18,18 @@ type Props = {
 const props = defineProps<Props>()
 
 const isCollapsed = ref(false)
-const isLocked = ref(false)
 const isOptimized = ref(false)
-const isVisibleControls = ref(true)
+const isVisibleControlsLocal = ref(true)
+const isVisibleControls = computed(() =>
+  isVisibleControlsLocal.value && screenshotingEventId.value !== props.event.id
+)
 
 const eventRef = ref(null)
 const isDeleting = ref(false)
 const isInit = ref(true)
 const { events, lockedIds } = useEvents()
+
+const isLocked = computed(() => (lockedIds?.items.value || []).includes(props.event.id))
 
 const normalizedOrigin = computed(() => {
   const originEntriesList = Object.entries(props.event.origin || {})
@@ -40,7 +46,7 @@ const toggleView = () => {
 }
 
 const changeVisibleControls = (value = true) => {
-  isVisibleControls.value = value
+  isVisibleControlsLocal.value = value
 }
 
 const deleteEvent = () => {
@@ -52,14 +58,10 @@ const deleteEvent = () => {
 }
 
 const toggleEventLock = () => {
-  if ((lockedIds?.items.value || []).includes(props.event.id)) {
+  if (isLocked.value) {
     lockedIds?.remove(props.event.id)
-
-    isLocked.value = false
   } else {
     lockedIds?.add(props.event.id)
-
-    isLocked.value = true
   }
 }
 
@@ -71,7 +73,7 @@ const downloadImage = () => {
       .then((dataUrl) => {
         download(dataUrl, `${props.event.type}-${props.event.id}.png`)
       })
-      .catch((e) => console.error(e))
+      .catch((e) => logger.ui.error('Operation failed', e))
       .finally(() => {
         changeVisibleControls(true)
       })
@@ -90,7 +92,7 @@ const downloadFile = async () => {
       )
     }
   } catch (e) {
-    console.error(e)
+    logger.ui.error('Failed to download event JSON', e)
   }
 }
 
@@ -113,7 +115,7 @@ const copyCode = () => {
           navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e) => logger.ui.error('Operation failed', e))
       .finally(() => {
         changeVisibleControls(true)
       })
@@ -121,8 +123,6 @@ const copyCode = () => {
 }
 
 onBeforeMount(() => {
-  isLocked.value = lockedIds.items.value.includes(props.event.id)
-
   isInit.value = false
 })
 

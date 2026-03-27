@@ -4,7 +4,8 @@ import { computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import { useKeyboardNav } from '@/shared/lib/use-keyboard-nav'
+import { toBlob } from 'html-to-image'
+import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
@@ -18,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   title: ''
 })
 
-const { events, cachedEvents } = useEvents()
+const { events, cachedEvents, lockedIds } = useEvents()
 
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)
 
@@ -50,7 +51,50 @@ const { focusedId } = useKeyboardNav(eventUuids, {
         params: { type: event.type as string, id: event.uuid }
       })
     }
-  }
+  },
+  onDelete: (id) => {
+    if (lockedIds.items.value.includes(id)) {
+      showToast('Event is locked')
+      return
+    }
+    events.removeById(id)
+    showToast('Event deleted')
+  },
+  onLock: (id) => {
+    if (lockedIds.items.value.includes(id)) {
+      lockedIds.remove(id)
+      showToast('Event unlocked')
+    } else {
+      lockedIds.add(id)
+      showToast('Event locked')
+    }
+  },
+  onCopyPayload: (id) => {
+    const event = visibleEvents.value.find((e) => e.uuid === id)
+    if (event) {
+      navigator.clipboard.writeText(JSON.stringify(event.payload, null, 2))
+        .then(() => showToast('Payload copied'))
+    }
+  },
+  onScreenshot: (id) => {
+    const el = document.getElementById(id)
+    if (el) {
+      screenshotingEventId.value = id
+      // Wait a tick for Vue to hide controls
+      setTimeout(() => {
+        toBlob(el as HTMLElement)
+          .then((blob) => {
+            if (blob) {
+              navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+                .then(() => showToast('Screenshot copied'))
+            }
+          })
+          .finally(() => {
+            screenshotingEventId.value = null
+          })
+      }, 50)
+    }
+  },
 })
 
 watchEffect(() => {
@@ -69,6 +113,7 @@ watchEffect(() => {
     >
       <EventCardMapper
         v-for="(event, index) in visibleEvents"
+        :id="event.uuid"
         :key="event.uuid"
         :event="event"
         role="article"
@@ -119,8 +164,15 @@ watchEffect(() => {
 }
 
 .layout-preview-events__event--focused {
-  @apply ring-2 ring-blue-500 ring-inset;
-  @apply bg-blue-50/50 dark:bg-blue-900/10;
+  @apply relative;
+  @apply bg-blue-50/60 dark:bg-blue-500/[0.06];
+  outline: 2px solid theme('colors.blue.500');
+  outline-offset: -2px;
+  z-index: 1;
+
+  .dark & {
+    outline-color: theme('colors.blue.400');
+  }
 }
 
 .layout-preview-events__welcome {

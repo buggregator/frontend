@@ -2,12 +2,16 @@
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import { useEvents } from '@/shared/lib/use-events'
+import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
+import { toastMessage } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
+import { KeyboardShortcutsOverlay } from '../keyboard-shortcuts-overlay'
 
 const { activeProjectKey } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
+const { isShortcutsOverlayOpen } = useGlobalShortcuts()
 
 const isDismissed = ref(false)
 const showBanner = ref(false)
@@ -83,6 +87,23 @@ watch(
     <div class="layout-base__content">
       <slot />
     </div>
+
+    <KeyboardShortcutsOverlay
+      v-if="isShortcutsOverlayOpen"
+      @close="isShortcutsOverlayOpen = false"
+    />
+
+    <!-- Action toast -->
+    <Teleport to="body">
+      <transition name="toast">
+        <div
+          v-if="toastMessage"
+          class="action-toast"
+        >
+          {{ toastMessage }}
+        </div>
+      </transition>
+    </Teleport>
   </div>
 </template>
 
@@ -148,5 +169,46 @@ watch(
   .layout-base--no-header & {
     @apply pt-0;
   }
+}
+</style>
+
+<style lang="scss">
+.action-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: theme('colors.gray.800');
+  color: theme('colors.gray.100');
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+
+  .dark & {
+    background: theme('colors.gray.200');
+    color: theme('colors.gray.800');
+  }
+}
+
+.toast-enter-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.toast-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
 }
 </style>

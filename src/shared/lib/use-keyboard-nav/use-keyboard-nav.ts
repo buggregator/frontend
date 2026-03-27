@@ -1,11 +1,32 @@
 import { ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
 import type { EventId } from '../../types'
 
+export type KeyboardNavCallbacks = {
+  onOpen?: (id: EventId) => void
+  onDelete?: (id: EventId) => void
+  onLock?: (id: EventId) => void
+  onCopyPayload?: (id: EventId) => void
+  onScreenshot?: (id: EventId) => void
+}
+
+// Shared state for screenshot mode — cards hide controls when their id is here
+export const screenshotingEventId = ref<string | null>(null)
+
+// Toast state — shared so any component can display it
+export const toastMessage = ref('')
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+export function showToast(message: string, duration = 2000) {
+  toastMessage.value = message
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMessage.value = '' }, duration)
+}
+
+const ACTION_KEYS = new Set(['x', 'l', 'y', 's'])
+
 export function useKeyboardNav(
   eventIds: Ref<EventId[]>,
-  options: {
-    onOpen?: (id: EventId) => void
-  } = {}
+  options: KeyboardNavCallbacks = {}
 ) {
   const focusedIndex = ref(-1)
   const focusedId = ref<EventId | null>(null)
@@ -39,27 +60,69 @@ export function useKeyboardNav(
     const ids = eventIds.value
     if (ids.length === 0) return
 
+    // Navigation (works without focus)
     switch (e.key) {
       case 'j':
       case 'ArrowDown':
         e.preventDefault()
         updateFocus(focusedIndex.value + 1)
-        break
+        return
       case 'k':
       case 'ArrowUp':
         e.preventDefault()
         updateFocus(focusedIndex.value - 1)
-        break
+        return
       case 'Enter':
         if (focusedId.value && options.onOpen) {
           e.preventDefault()
           options.onOpen(focusedId.value)
         }
-        break
+        return
       case 'Escape':
         focusedIndex.value = -1
         focusedId.value = null
-        break
+        return
+    }
+
+    // Action keys — require focused event
+    if (ACTION_KEYS.has(e.key)) {
+      if (!focusedId.value) {
+        showToast('Press j/k to select an event first')
+        return
+      }
+
+      e.preventDefault()
+
+      switch (e.key) {
+        case 'x':
+          if (options.onDelete) {
+            const deletedIndex = focusedIndex.value
+            options.onDelete(focusedId.value)
+            if (ids.length > 1) {
+              const nextIndex = deletedIndex < ids.length - 1 ? deletedIndex : deletedIndex - 1
+              setTimeout(() => updateFocus(nextIndex), 400)
+            } else {
+              focusedIndex.value = -1
+              focusedId.value = null
+            }
+          }
+          break
+        case 'l':
+          if (options.onLock) {
+            options.onLock(focusedId.value)
+          }
+          break
+        case 'y':
+          if (options.onCopyPayload) {
+            options.onCopyPayload(focusedId.value)
+          }
+          break
+        case 's':
+          if (options.onScreenshot) {
+            options.onScreenshot(focusedId.value)
+          }
+          break
+      }
     }
   }
 
