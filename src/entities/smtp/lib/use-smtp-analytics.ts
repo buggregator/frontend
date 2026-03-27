@@ -14,6 +14,13 @@ export interface MimeNode {
   children: MimeNode[]
 }
 
+export interface SmtpLink {
+  href: string
+  text: string
+  isEmpty: boolean
+  isHttp: boolean
+}
+
 export interface SmtpMetrics {
   totalSize: number
   htmlSize: number
@@ -295,10 +302,32 @@ export function useSmtpAnalytics(
   const compatibility = computed(() => analyzeCompatibility(html.value, raw.value))
   const security = computed(() => analyzeSecurity(html.value, raw.value))
 
+  const links = computed<SmtpLink[]>(() => {
+    if (!html.value) return []
+
+    const results: SmtpLink[] = []
+    const regex = /<a\s[^>]*href\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi
+    let match: RegExpExecArray | null
+
+    while ((match = regex.exec(html.value)) !== null) {
+      const href = match[1].trim()
+      const rawText = match[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+      results.push({
+        href,
+        text: rawText || '(no text)',
+        isEmpty: !href,
+        isHttp: href.startsWith('http://'),
+      })
+    }
+
+    return results
+  })
+
   return {
     headers,
     mimeTree,
     metrics,
+    links,
     deliverability,
     contentQa,
     compatibility,

@@ -84,7 +84,7 @@ const htmlRef = computed(() => props.event.payload.html || '')
 const textRef = computed(() => props.event.payload.text || '')
 const subjectRef = computed(() => props.event.payload.subject || '')
 
-const { metrics, mimeTree, deliverability, contentQa, compatibility, security } =
+const { metrics, mimeTree, links, deliverability, contentQa, compatibility, security } =
   useSmtpAnalytics(rawRef, htmlRef, textRef, subjectRef)
 
 const insightGroups = computed(() => [
@@ -156,15 +156,21 @@ onMounted(getAttachmentsRequest)
 
     <!-- Quick stats bar -->
     <div class="smtp-stats">
-      <span class="smtp-stats__item">{{ formatSize(metrics.totalSize) }}</span>
+      <span class="smtp-stats__item"><span class="smtp-stats__label">Size</span> {{ formatSize(metrics.totalSize) }}</span>
       <span class="smtp-stats__sep" />
-      <span class="smtp-stats__item">{{ metrics.linkCount }} link{{ metrics.linkCount !== 1 ? 's' : '' }}</span>
+      <span class="smtp-stats__item"><span class="smtp-stats__label">Links</span> {{ metrics.linkCount }}</span>
       <span class="smtp-stats__sep" />
-      <span class="smtp-stats__item">{{ metrics.imageCount }} image{{ metrics.imageCount !== 1 ? 's' : '' }}</span>
+      <span class="smtp-stats__item"><span class="smtp-stats__label">Images</span> {{ metrics.imageCount }}</span>
       <span class="smtp-stats__sep" />
-      <span class="smtp-stats__item">{{ metrics.contentType }}</span>
-      <span class="smtp-stats__sep" />
-      <span class="smtp-stats__item">{{ metrics.charset }}</span>
+      <span class="smtp-stats__item"><span class="smtp-stats__label">Type</span> {{ metrics.contentType }}</span>
+      <span
+        v-if="metrics.charset !== 'unknown'"
+        class="smtp-stats__sep"
+      />
+      <span
+        v-if="metrics.charset !== 'unknown'"
+        class="smtp-stats__item"
+      ><span class="smtp-stats__label">Charset</span> {{ metrics.charset }}</span>
     </div>
 
     <!-- Two-column layout: LEFT = info, RIGHT = preview -->
@@ -246,6 +252,41 @@ onMounted(getAttachmentsRequest)
               :attachment="a"
               :download-url="calcDownloadUrl(a.uuid)"
             />
+          </div>
+        </section>
+
+        <!-- Links -->
+        <section
+          v-if="links.length"
+          class="smtp-card"
+        >
+          <h3 class="smtp-card__title">
+            Links
+            <span class="smtp-card__count">{{ links.length }}</span>
+          </h3>
+          <div class="smtp-links">
+            <div
+              v-for="(link, idx) in links"
+              :key="idx"
+              class="smtp-link"
+              :class="{ 'smtp-link--empty': link.isEmpty }"
+            >
+              <div class="smtp-link__text">
+                {{ link.text }}
+              </div>
+              <a
+                v-if="link.href"
+                :href="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="smtp-link__href"
+                :class="{ 'smtp-link__href--http': link.isHttp }"
+              >{{ link.href }}</a>
+              <span
+                v-else
+                class="smtp-link__href smtp-link__href--empty"
+              >empty href</span>
+            </div>
           </div>
         </section>
 
@@ -373,10 +414,14 @@ onMounted(getAttachmentsRequest)
 /* Quick stats bar */
 .smtp-stats {
   @apply flex flex-wrap items-center gap-2;
-  @apply px-4 py-2 -mx-5 md:-mx-6 lg:-mx-8;
+  @apply px-5 md:px-6 lg:px-8 py-2 -mx-5 md:-mx-6 lg:-mx-8;
   @apply bg-gray-50 dark:bg-gray-900;
   @apply border-b border-gray-200 dark:border-gray-700/50;
   @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
+}
+
+.smtp-stats__label {
+  @apply text-gray-400 dark:text-gray-500 mr-1;
 }
 
 .smtp-stats__sep {
@@ -498,6 +543,36 @@ onMounted(getAttachmentsRequest)
 
 .smtp-info-row__value {
   @apply font-mono break-all;
+}
+
+/* Links */
+.smtp-links {
+  @apply divide-y divide-gray-100 dark:divide-gray-700/50;
+}
+
+.smtp-link {
+  @apply px-4 py-2;
+}
+
+.smtp-link--empty {
+  @apply bg-amber-50/50 dark:bg-amber-500/5;
+}
+
+.smtp-link__text {
+  @apply text-xs font-medium truncate;
+}
+
+.smtp-link__href {
+  @apply text-2xs font-mono truncate block;
+  @apply text-blue-500 dark:text-blue-400 hover:underline;
+}
+
+.smtp-link__href--http {
+  @apply text-amber-600 dark:text-amber-400;
+}
+
+.smtp-link__href--empty {
+  @apply text-red-500 dark:text-red-400 italic;
 }
 
 /* MIME tree */
