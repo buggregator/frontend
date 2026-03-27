@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { NormalizedEvent } from '@/shared/types'
+import { RouteName } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
 import { useProfilerCompare } from '../../lib/use-profiler-compare'
 import type { Profiler } from '../../types'
@@ -11,10 +13,18 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const router = useRouter()
 const eventLink = computed(() => `/profiler/${props.event.id}`)
 
-const { compareBase, isSelecting, selectForCompare } = useProfilerCompare()
+const { compareBase, isSelecting, selectForCompare, reset: resetCompare } = useProfilerCompare()
 const isSelected = computed(() => compareBase.value === props.event.id)
+
+const onCompareClick = () => {
+  selectForCompare(props.event.id)
+  if (compareBase.value && compareBase.value !== props.event.id) {
+    router.push({ name: RouteName.ProfilerCompare })
+  }
+}
 </script>
 
 <template>
@@ -33,9 +43,17 @@ const isSelected = computed(() => compareBase.value === props.event.id)
           'profiler-compare-btn--selected': isSelected,
           'profiler-compare-btn--picking': isSelecting && !isSelected
         }"
-        @click.stop="selectForCompare(event.id)"
+        @click.stop="onCompareClick"
       >
         {{ isSelected ? 'Base selected' : isSelecting ? 'Compare with this' : 'Compare' }}
+      </button>
+
+      <button
+        v-if="isSelecting"
+        class="profiler-compare-btn profiler-compare-btn--reset"
+        @click.stop="resetCompare"
+      >
+        Cancel
       </button>
     </div>
   </PreviewCard>
@@ -68,5 +86,10 @@ const isSelected = computed(() => compareBase.value === props.event.id)
   @apply bg-green-100 dark:bg-green-500/20;
   @apply text-green-600 dark:text-green-400;
   @apply hover:bg-green-200 dark:hover:bg-green-500/30;
+}
+
+.profiler-compare-btn--reset {
+  @apply text-gray-400 dark:text-gray-500;
+  @apply hover:text-red-500 dark:hover:text-red-400;
 }
 </style>
