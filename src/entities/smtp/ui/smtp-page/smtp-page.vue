@@ -486,7 +486,9 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-card__count {
-  @apply text-2xs px-1.5 py-0.5 rounded-full;
+  @apply inline-flex items-center justify-center;
+  @apply text-[10px] font-semibold leading-none;
+  @apply min-w-[18px] h-[18px] px-1 rounded-full;
   @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
 }
 

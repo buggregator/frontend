@@ -137,7 +137,9 @@ const issueCount = (findings: SmtpFinding[]): number =>
 }
 
 .insights__group-count {
-  @apply text-2xs font-semibold px-1.5 py-0.5 rounded-full;
+  @apply inline-flex items-center justify-center;
+  @apply text-[10px] font-semibold leading-none;
+  @apply min-w-[18px] h-[18px] px-1 rounded-full;
 }
 
 .insights__group-count--warning {
