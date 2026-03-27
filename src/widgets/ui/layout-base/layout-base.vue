@@ -10,12 +10,25 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
 
 const isDismissed = ref(false)
+const showBanner = ref(false)
+let disconnectTimer: ReturnType<typeof setTimeout> | null = null
 
 watch(isConnectedWS, (connected) => {
-  if (!connected) {
+  if (connected) {
+    if (disconnectTimer) {
+      clearTimeout(disconnectTimer)
+      disconnectTimer = null
+    }
+    showBanner.value = false
+  } else {
     isDismissed.value = false
+    disconnectTimer = setTimeout(() => {
+      if (!isConnectedWS.value) {
+        showBanner.value = true
+      }
+    }, 3000)
   }
-})
+}, { immediate: true })
 
 watch(
   () => activeProjectKey.value,
@@ -50,7 +63,7 @@ watch(
 
     <transition name="banner">
       <div
-        v-if="!isConnectedWS && !isDismissed && $slots.sidebar"
+        v-if="showBanner && !isDismissed && $slots.sidebar"
         class="layout-base__connection-banner"
       >
         <span>WebSocket disconnected. Events will not stream until connection is restored.</span>
@@ -90,7 +103,7 @@ watch(
 }
 
 .layout-base__connection-banner {
-  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-44 right-0 z-[60];
+  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-48 right-0 z-[60];
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;

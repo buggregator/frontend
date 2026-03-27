@@ -11,7 +11,6 @@ import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stor
 import { useConnectionStore } from '@/shared/stores/connections'
 import { LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
-import { version } from '../../../../package.json' with { type: 'json' }
 import { EVENTS_NAV_ORDER } from './constants'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
@@ -32,8 +31,9 @@ const userMenu = ref<HTMLElement | undefined>()
 const isVisibleProfile = ref(false)
 const isVisibleProjects = ref(false)
 
-// Sidebar collapse state (persisted)
-const isCollapsed = ref(window?.localStorage?.getItem(LocalStorageKeys.SidebarCollapsed) === 'true')
+// Sidebar collapse state (persisted, collapsed by default)
+const storedCollapsed = window?.localStorage?.getItem(LocalStorageKeys.SidebarCollapsed)
+const isCollapsed = ref(storedCollapsed === null ? true : storedCollapsed === 'true')
 
 const applySidebarClass = (collapsed: boolean) => {
   if (collapsed) {
@@ -109,13 +109,7 @@ const logout = () => {
   router.push('/login')
 }
 
-const { apiVersion, availableEvents } = storeToRefs(useSettingsStore())
-
-const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version}`)
-
-const serverVersion = computed(() =>
-  String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
-)
+const { availableEvents } = storeToRefs(useSettingsStore())
 
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey)
@@ -130,6 +124,8 @@ const filteredNavOrder = computed(() =>
 const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
+
+const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.value(type) > 0
 </script>
 
 <template>
@@ -137,23 +133,58 @@ const generateRadialGradient = (input: string) =>
     class="layout-sidebar"
     :class="{ 'layout-sidebar--collapsed': isCollapsed }"
   >
+    <!-- Edge expand handle (visible only when collapsed) -->
+    <button
+      v-if="isCollapsed"
+      class="layout-sidebar__edge-handle"
+      aria-label="Expand sidebar"
+      title="Expand sidebar"
+      @click="toggleCollapse"
+    >
+      <svg class="layout-sidebar__edge-chevron" viewBox="0 0 6 16" fill="none">
+        <path d="M1 1L5 8L1 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <nav class="layout-sidebar__nav">
-      <RouterLink
-        :to="{ name: RouteName.Home }"
-        title="Dashboard"
-        aria-label="Dashboard"
-        class="layout-sidebar__link layout-sidebar__link--logo"
-        tabindex="0"
-      >
-        <IconSvg
-          class="layout-sidebar__link-icon"
-          name="logo-short"
-        />
-      </RouterLink>
+      <!-- Logo + collapse toggle header -->
+      <div class="layout-sidebar__header">
+        <RouterLink
+          :to="{ name: RouteName.Home }"
+          title="Dashboard"
+          aria-label="Dashboard"
+          class="layout-sidebar__logo-link"
+          tabindex="0"
+        >
+          <IconSvg
+            v-if="isCollapsed"
+            class="layout-sidebar__logo-icon"
+            name="logo-short"
+          />
+          <IconSvg
+            v-else
+            class="layout-sidebar__logo-full"
+            name="logo"
+          />
+        </RouterLink>
+
+        <button
+          v-if="!isCollapsed"
+          class="layout-sidebar__toggle-btn"
+          title="Collapse sidebar"
+          aria-label="Collapse sidebar"
+          @click="toggleCollapse"
+        >
+          <IconSvg
+            class="layout-sidebar__toggle-icon"
+            name="sidebar-left"
+          />
+        </button>
+      </div>
+
+      <hr class="layout-sidebar__sep">
 
       <template v-if="!isProjectLoading && isMultipleProjects">
-        <hr class="layout-sidebar__sep">
-
         <div class="layout-sidebar__projects">
           <button
             ref="projectDd"
@@ -186,10 +217,12 @@ const generateRadialGradient = (input: string) =>
           aria-label="All events"
           class="layout-sidebar__link"
         >
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            name="events"
-          />
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              name="events"
+            />
+          </span>
           <span class="layout-sidebar__link-label">Events</span>
         </RouterLink>
       </template>
@@ -205,10 +238,16 @@ const generateRadialGradient = (input: string) =>
           :aria-label="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
         >
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            :name="PAGES_SETTINGS[type].iconName"
-          />
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              :name="PAGES_SETTINGS[type].iconName"
+            />
+            <span
+              v-if="hasEvents(type)"
+              class="layout-sidebar__dot"
+            />
+          </span>
           <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
           <span
             v-if="isVisibleEventCounts && getItemsCount(type) > 0"
@@ -227,10 +266,12 @@ const generateRadialGradient = (input: string) =>
         aria-label="Settings"
         class="layout-sidebar__link"
       >
-        <IconSvg
-          class="layout-sidebar__link-icon"
-          name="settings"
-        />
+        <span class="layout-sidebar__link-icon-wrap">
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="settings"
+          />
+        </span>
         <span class="layout-sidebar__link-label">Settings</span>
       </RouterLink>
     </nav>
@@ -324,52 +365,19 @@ const generateRadialGradient = (input: string) =>
         </div>
       </div>
 
-      <!-- Connection -->
+      <!-- Connection indicator -->
       <div
         class="layout-sidebar__connection"
         :title="connectionText"
       >
-        <IconSvg
-          class="layout-sidebar__connection-icon"
-          :name="connectionStatus"
+        <span
+          class="layout-sidebar__connection-dot"
+          :class="isConnectedWS ? 'layout-sidebar__connection-dot--on' : 'layout-sidebar__connection-dot--off'"
         />
         <span class="layout-sidebar__connection-label">
           {{ isConnectedWS ? 'Connected' : 'Disconnected' }}
         </span>
       </div>
-
-      <!-- Version -->
-      <div class="layout-sidebar__versions">
-        <span
-          v-if="serverVersion"
-          class="layout-sidebar__version"
-          :title="`Api: ${serverVersion}`"
-        >{{ serverVersion }}</span>
-        <span
-          v-if="serverVersion && clientVersion"
-          class="layout-sidebar__version-sep"
-        >/</span>
-        <span
-          v-if="clientVersion"
-          class="layout-sidebar__version"
-          :title="`Client: ${clientVersion}`"
-        >{{ clientVersion }}</span>
-      </div>
-
-      <!-- Collapse toggle -->
-      <button
-        class="layout-sidebar__collapse-btn"
-        :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-        @click="toggleCollapse"
-      >
-        <IconSvg
-          class="layout-sidebar__collapse-icon"
-          :class="{ 'layout-sidebar__collapse-icon--rotated': isCollapsed }"
-          name="collapsed"
-        />
-        <span class="layout-sidebar__collapse-label"> Collapse </span>
-      </button>
     </div>
   </aside>
 </template>
@@ -379,6 +387,7 @@ const generateRadialGradient = (input: string) =>
   @apply bg-gray-100 dark:bg-gray-900;
   @apply flex flex-col justify-between h-full;
   @apply border-r border-gray-200 dark:border-gray-800;
+  @apply relative;
 }
 
 .layout-sidebar__nav {
@@ -393,6 +402,86 @@ const generateRadialGradient = (input: string) =>
   background-color: rgba(128, 128, 128, 0.08);
 }
 
+/* ---- Header (logo + toggle) ---- */
+.layout-sidebar__header {
+  @apply flex items-center justify-center relative;
+  @apply px-3 py-3;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:justify-start xl:px-4;
+  }
+}
+
+.layout-sidebar__logo-link {
+  @apply flex items-center;
+  @apply text-gray-900 dark:text-white;
+}
+
+.layout-sidebar__logo-icon {
+  @apply w-6 h-6 flex-shrink-0;
+  @apply fill-current;
+}
+
+.layout-sidebar__logo-full {
+  @apply h-5 flex-shrink-0;
+  @apply fill-current;
+
+  :deep(svg) {
+    @apply h-full w-auto;
+  }
+}
+
+.layout-sidebar__toggle-btn {
+  @apply hidden;
+  @apply items-center justify-center;
+  @apply w-6 h-6 rounded-md;
+  @apply text-gray-400 dark:text-gray-500;
+  @apply hover:text-gray-600 dark:hover:text-gray-300;
+  @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
+  @apply transition-colors duration-100 cursor-pointer;
+  @apply flex-shrink-0;
+  @apply absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:flex;
+  }
+}
+
+.layout-sidebar__toggle-icon {
+  @apply w-3.5 h-3.5;
+}
+
+/* ---- Edge expand handle (collapsed mode) ---- */
+.layout-sidebar__edge-handle {
+  @apply absolute z-10;
+  @apply flex items-center justify-center;
+  @apply cursor-pointer;
+  @apply rounded-r-md;
+  @apply bg-gray-200/80 dark:bg-gray-700/80;
+  @apply hover:bg-gray-300 dark:hover:bg-gray-600;
+  @apply text-gray-400 dark:text-gray-500;
+  @apply hover:text-gray-600 dark:hover:text-gray-300;
+  @apply opacity-0 transition-all duration-200;
+  width: 12px;
+  height: 32px;
+  top: 50%;
+  right: 0;
+  transform: translate(100%, -50%);
+
+  .layout-sidebar:hover & {
+    @apply opacity-100;
+  }
+}
+
+.layout-sidebar__edge-chevron {
+  width: 6px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 /* ---- Links ---- */
 .layout-sidebar__link {
   @apply relative cursor-pointer;
@@ -400,15 +489,58 @@ const generateRadialGradient = (input: string) =>
   @apply px-3 py-2;
   @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
   @apply transition-colors duration-100;
 
+  /* Expanded mode: full-width highlight */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply xl:justify-start xl:px-4;
+    @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
+  }
+
+  /* Collapsed mode: no full-width highlight, icon-wrap gets it */
+  .layout-sidebar--collapsed & {
+    @apply hover:bg-transparent dark:hover:bg-transparent;
   }
 
   .layout-sidebar__projects & {
     @apply p-2;
+  }
+}
+
+.layout-sidebar__link-icon-wrap {
+  @apply relative flex-shrink-0;
+  @apply flex items-center justify-center;
+  @apply w-5 h-5;
+  @apply rounded-lg;
+  @apply transition-all duration-100;
+
+  /* Collapsed mode: bigger icon container with rounded hover */
+  .layout-sidebar--collapsed & {
+    @apply w-8 h-8;
+  }
+
+  .layout-sidebar--collapsed .layout-sidebar__link:hover & {
+    @apply bg-gray-200/70 dark:bg-white/[0.08];
+  }
+
+  .layout-sidebar--collapsed .layout-sidebar__link--active & {
+    @apply bg-gray-200/80 dark:bg-white/[0.08];
+  }
+}
+
+.layout-sidebar__link-icon {
+  @apply flex items-center justify-center flex-shrink-0;
+  @apply fill-current;
+  @apply w-4 h-4;
+  @apply transition-all duration-100;
+
+  /* Collapsed mode: bigger icons */
+  .layout-sidebar--collapsed & {
+    @apply w-5 h-5;
+  }
+
+  & > svg {
+    @apply h-auto;
   }
 }
 
@@ -431,33 +563,41 @@ const generateRadialGradient = (input: string) =>
   }
 }
 
+/* Colored dot indicator for collapsed mode */
+.layout-sidebar__dot {
+  @apply absolute;
+  @apply w-[6px] h-[6px] rounded-full;
+  @apply bg-blue-500 dark:bg-blue-400;
+  top: -1px;
+  right: -2px;
+  box-shadow: 0 0 0 1.5px theme('colors.gray.100');
+
+  .dark & {
+    box-shadow: 0 0 0 1.5px theme('colors.gray.900');
+  }
+
+  /* Hide dot in expanded mode (count badge is shown instead) */
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:hidden;
+  }
+}
+
 .layout-sidebar__link--active {
   @apply text-gray-900 dark:text-gray-50;
-  @apply bg-gray-200/80 dark:bg-white/[0.08];
+
+  /* Expanded: full-width bg */
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply bg-gray-200/80 dark:bg-white/[0.08];
+  }
+
+  /* Collapsed: no full-width bg (icon-wrap handles it) */
+  .layout-sidebar--collapsed & {
+    @apply bg-transparent dark:bg-transparent;
+  }
 
   .layout-sidebar__count {
     @apply bg-gray-300/80 dark:bg-white/10;
     @apply text-gray-600 dark:text-gray-300;
-  }
-}
-
-.layout-sidebar__link--logo {
-  @apply text-gray-900 dark:text-white bg-transparent;
-  @apply hover:bg-transparent;
-  @apply py-3;
-
-  .layout-sidebar__link-icon {
-    @apply w-7 h-7;
-  }
-}
-
-.layout-sidebar__link-icon {
-  @apply flex items-center justify-center flex-shrink-0;
-  @apply fill-current;
-  @apply w-5 h-5;
-
-  & > svg {
-    @apply h-auto;
   }
 }
 
@@ -545,15 +685,25 @@ const generateRadialGradient = (input: string) =>
   @apply relative cursor-pointer;
 }
 
-/* Connection */
+/* Connection indicator */
 .layout-sidebar__connection {
   @apply flex items-center justify-center gap-2;
   @apply py-2 px-1;
 }
 
-.layout-sidebar__connection-icon {
-  @apply fill-current flex-shrink-0;
-  @apply h-4 w-4;
+.layout-sidebar__connection-dot {
+  @apply w-2 h-2 rounded-full flex-shrink-0;
+  @apply transition-colors duration-300;
+}
+
+.layout-sidebar__connection-dot--on {
+  @apply bg-emerald-500;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.layout-sidebar__connection-dot--off {
+  @apply bg-red-400 dark:bg-red-500;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
 }
 
 .layout-sidebar__connection-label {
@@ -562,55 +712,5 @@ const generateRadialGradient = (input: string) =>
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply xl:inline;
   }
-}
-
-/* Versions */
-.layout-sidebar__versions {
-  @apply whitespace-nowrap text-center leading-none;
-  @apply hidden lg:flex items-center justify-center;
-  @apply text-2xs text-gray-400 dark:text-gray-600;
-  @apply gap-1.5 py-1.5 px-1;
-  border-top: 1px solid rgba(128, 128, 128, 0.08);
-}
-
-.layout-sidebar__version {
-  @apply font-mono;
-}
-
-.layout-sidebar__version-sep {
-  @apply text-gray-300 dark:text-gray-700;
-}
-
-/* ---- Collapse toggle (Figma/JetBrains style) ---- */
-.layout-sidebar__collapse-btn {
-  @apply hidden xl:flex items-center justify-center;
-  @apply w-full py-2;
-  @apply text-gray-400 dark:text-gray-600;
-  @apply hover:text-gray-600 dark:hover:text-gray-400;
-  @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
-  @apply transition-colors duration-100 cursor-pointer;
-  border-top: 1px solid rgba(128, 128, 128, 0.08);
-
-  .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:justify-start xl:px-4;
-  }
-}
-
-.layout-sidebar__collapse-label {
-  @apply hidden text-xs ml-3 text-gray-400 dark:text-gray-600;
-
-  .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:inline;
-  }
-}
-
-.layout-sidebar__collapse-icon {
-  @apply w-4 h-4 flex-shrink-0;
-  transform: rotate(-90deg);
-  transition: transform 0.2s ease;
-}
-
-.layout-sidebar__collapse-icon--rotated {
-  transform: rotate(90deg);
 }
 </style>
