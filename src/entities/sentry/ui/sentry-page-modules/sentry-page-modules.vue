@@ -35,6 +35,13 @@ const getPackage = (name: string) => {
   const slash = name.indexOf('/')
   return slash > 0 ? name.slice(slash + 1) : name
 }
+
+const getPackagistUrl = (name: string) => {
+  if (name.includes('/')) {
+    return `https://packagist.org/packages/${name}`
+  }
+  return null
+}
 </script>
 
 <template>
@@ -83,10 +90,19 @@ const getPackage = (name: string) => {
           class="mod__row"
         >
           <span class="mod__cell mod__cell--name">
-            <span
-              v-if="getVendor(mod.name)"
-              class="mod__vendor"
-            >{{ getVendor(mod.name) }}/</span>{{ getPackage(mod.name) }}
+            <a
+              v-if="getPackagistUrl(mod.name)"
+              :href="getPackagistUrl(mod.name)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mod__link"
+            >
+              <span class="mod__vendor">{{ getVendor(mod.name) }}/</span>{{ getPackage(mod.name) }}
+              <IconSvg class="mod__link-icon" name="newScreen" />
+            </a>
+            <span v-else>
+              {{ mod.name }}
+            </span>
           </span>
           <span class="mod__cell mod__cell--version">{{ mod.version }}</span>
         </div>
@@ -189,6 +205,21 @@ const getPackage = (name: string) => {
 
 .mod__cell--name {
   @apply flex-1 font-medium truncate;
+}
+
+.mod__link {
+  @apply inline-flex items-center gap-1;
+  @apply hover:text-blue-600 dark:hover:text-blue-400 transition-colors;
+}
+
+.mod__link-icon {
+  @apply w-3 h-3 opacity-0 flex-shrink-0;
+  @apply fill-current text-gray-400 dark:text-gray-500;
+  transition: opacity 0.1s;
+
+  .mod__row:hover & {
+    @apply opacity-100;
+  }
 }
 
 .mod__vendor {

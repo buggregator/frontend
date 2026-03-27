@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import moment from 'moment'
 import { Tab, Tabs } from 'vue3-tabs-component'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout } from '@/shared/ui'
 import type { Sentry } from '../../types'
@@ -59,6 +59,15 @@ const hasContextTab = computed(() =>
   props.event.payload.contexts?.runtime || props.event.payload.contexts?.os
 )
 const hasSdk = computed(() => !!props.event.payload.sdk)
+
+const exceptionRefs = ref<HTMLElement[]>([])
+
+const scrollToException = (idx: number) => {
+  const el = exceptionRefs.value[idx]
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
 </script>
 
 <template>
@@ -127,12 +136,50 @@ const hasSdk = computed(() => !!props.event.payload.sdk)
       >
         <div class="sentry-tab-content">
           <div class="sentry-exceptions">
-            <SentryException
-              v-for="e in event.payload.exception!.values"
+            <div
+              v-for="(e, idx) in event.payload.exception!.values"
+              :ref="(el) => { if (el) exceptionRefs[idx] = el as HTMLElement }"
               :key="`exception-${e.value}-${e.type}`"
-              :exception="e"
-              :max-frames="10"
-            />
+              class="sentry-exceptions__item"
+            >
+              <!-- Rail -->
+              <div class="sentry-exceptions__rail">
+                <!-- Dot with arrow (clickable) or plain dot (last) -->
+                <button
+                  v-if="idx < event.payload.exception!.values.length - 1"
+                  class="sentry-exceptions__dot"
+                  :class="{ 'sentry-exceptions__dot--first': idx === 0 }"
+                  title="Scroll to next exception"
+                  @click="scrollToException(idx + 1)"
+                >
+                  <svg viewBox="0 0 10 6" fill="none" class="sentry-exceptions__dot-arrow">
+                    <path d="M1.5 1L5 4.5L8.5 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <span
+                  v-else
+                  class="sentry-exceptions__dot sentry-exceptions__dot--end"
+                />
+
+                <!-- Connecting line to next dot -->
+                <div
+                  v-if="idx < event.payload.exception!.values.length - 1"
+                  class="sentry-exceptions__line"
+                />
+              </div>
+
+              <!-- Exception card -->
+              <div class="sentry-exceptions__card">
+                <span
+                  v-if="idx > 0"
+                  class="sentry-exceptions__caused"
+                >Caused by</span>
+                <SentryException
+                  :exception="e"
+                  :max-frames="10"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </Tab>
@@ -295,7 +342,78 @@ const hasSdk = computed(() => !!props.event.payload.sdk)
 }
 
 .sentry-exceptions {
-  @apply flex flex-col gap-3;
+  @apply flex flex-col;
+}
+
+.sentry-exceptions__item {
+  @apply flex;
+  scroll-margin-top: 80px;
+}
+
+/* Rail: column with dot at top, line filling the rest */
+.sentry-exceptions__rail {
+  @apply flex flex-col items-center flex-shrink-0;
+  width: 28px;
+  margin-right: 12px;
+}
+
+/* Dot: clickable circle with arrow */
+.sentry-exceptions__dot {
+  @apply flex items-center justify-center flex-shrink-0 rounded-full;
+  @apply w-7 h-7;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply text-gray-400 dark:text-gray-500;
+  @apply cursor-pointer transition-all duration-100;
+
+  &:hover {
+    @apply bg-gray-200 dark:bg-gray-700;
+    @apply text-gray-600 dark:text-gray-300;
+    @apply border-gray-300 dark:border-gray-600;
+  }
+}
+
+.sentry-exceptions__dot--first {
+  @apply bg-rose-50 dark:bg-rose-500/10;
+  @apply border-rose-200 dark:border-rose-500/25;
+  @apply text-rose-400 dark:text-rose-400;
+
+  &:hover {
+    @apply bg-rose-100 dark:bg-rose-500/20;
+    @apply text-rose-500 dark:text-rose-300;
+    @apply border-rose-300 dark:border-rose-500/40;
+  }
+}
+
+.sentry-exceptions__dot--end {
+  @apply w-3 h-3 cursor-default;
+  @apply bg-gray-300 dark:bg-gray-600;
+  @apply border-0;
+
+  &:hover {
+    @apply bg-gray-300 dark:bg-gray-600;
+  }
+}
+
+.sentry-exceptions__dot-arrow {
+  @apply w-3 h-3;
+}
+
+/* Vertical line connecting dot to next item's dot */
+.sentry-exceptions__line {
+  @apply flex-1;
+  width: 2px;
+  @apply bg-gray-200 dark:bg-gray-700;
+}
+
+.sentry-exceptions__card {
+  @apply flex-1 min-w-0 pb-5;
+}
+
+.sentry-exceptions__caused {
+  @apply text-2xs font-medium uppercase tracking-wide;
+  @apply text-gray-400 dark:text-gray-500;
+  @apply mb-1.5 block;
 }
 </style>
 
