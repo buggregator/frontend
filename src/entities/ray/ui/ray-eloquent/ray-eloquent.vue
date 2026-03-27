@@ -11,25 +11,26 @@ defineProps<Props>()
 
 <template>
   <div class="ray-eloquent">
-    <h3 class="ray-eloquent__title">
-      Class name:
-      <code class="ray-eloquent__title-in">
-        {{ content.class_name }}
-      </code>
-    </h3>
+    <div class="ray-eloquent__header">
+      <span class="ray-eloquent__label">Class</span>
+      <code class="ray-eloquent__class">{{ content.class_name }}</code>
+    </div>
     <ValueDump :value="content.attributes" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.ray-eloquent {
+.ray-eloquent__header {
+  @apply flex items-center gap-2 px-3 py-2 mb-2 rounded;
+  @apply bg-gray-100 dark:bg-gray-900;
+  @apply text-xs;
 }
 
-.ray-eloquent__title {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800 flex w-full overflow-auto;
+.ray-eloquent__label {
+  @apply text-gray-400 dark:text-gray-500;
 }
 
-.ray-eloquent__title-in {
-  @apply font-semibold ml-1;
+.ray-eloquent__class {
+  @apply font-mono font-semibold text-gray-700 dark:text-gray-200;
 }
 </style>

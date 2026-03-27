@@ -5,6 +5,7 @@ export enum LocalStorageKeys {
   EventCounts = "event_counts",
   CodeEditor = "code_editor",
   Token = "token",
+  SidebarCollapsed = "sidebar_collapsed",
 }
 
 export enum SessionStorageKeys {

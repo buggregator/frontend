@@ -124,7 +124,7 @@ watchEffect(async () => {
 
 <style scoped lang="scss">
 .top-fn {
-  @apply flex flex-col h-full bg-gray-50 dark:bg-gray-800 overflow-hidden;
+  @apply flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden;
 }
 
 .top-fn__stat {

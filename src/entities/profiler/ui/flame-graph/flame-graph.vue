@@ -515,7 +515,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .flame-wrapper {
-  @apply relative flex flex-col h-full bg-gray-50 dark:bg-gray-800 overflow-hidden;
+  @apply relative flex flex-col h-full bg-gray-50 dark:bg-gray-900 overflow-hidden;
 }
 
 /* Toolbar (in flow, above canvas) */

@@ -13,15 +13,15 @@ const props = defineProps<Props>()
 const segmentColor = (color: string): string => {
   switch (color) {
     case 'sqlite':
-      return '#f97316' // orange-500
+      return '#f97316'
     case 'view':
-      return '#3b82f6' // blue-500
+      return '#3b82f6'
     case 'artisan':
-      return '#a855f7' // purple-500
+      return '#a855f7'
     case 'pgsql':
-      return '#22c55e' // green-500
+      return '#22c55e'
     default:
-      return '#64748b' // slate-500
+      return '#64748b'
   }
 }
 
@@ -37,7 +37,6 @@ const layoutCells = computed(() => {
     acc.push(Math.abs(Math.floor(maxWidth - cellWidth * (i + 1))))
 
     if (!i) {
-      // NOTE: add last cell as full size without rounding
       acc.push(maxWidth)
     }
 
@@ -78,91 +77,83 @@ const segmentRows = computed(() => {
 </script>
 
 <template>
-  <section class="inspector-page-timeline">
-    <div class="inspector-page-timeline__head">
-      <h3 class="inspector-page-timeline__head-title">
+  <section class="timeline">
+    <div class="timeline__head">
+      <h3 class="timeline__title">
         Timeline
       </h3>
 
       <div
         v-if="segmentTypes.length > 0"
-        class="inspector-page-timeline__head-tips"
+        class="timeline__legend"
       >
         <div
           v-for="segmentType in segmentTypes"
           :key="segmentType"
-          class="inspector-page-timeline__head-tip"
+          class="timeline__legend-item"
         >
           <div
             :style="{ background: segmentColor(segmentType) }"
-            class="inspector-page-timeline__head-tip-box"
+            class="timeline__legend-dot"
           />
-
-          <span class="inspector-page-timeline__head-tip-label">
-            {{ segmentType }}
-          </span>
+          <span class="timeline__legend-label">{{ segmentType }}</span>
         </div>
       </div>
     </div>
 
     <div
       v-if="segmentRows.length > 0"
-      class="inspector-page-timeline__body"
-      :style="{
-        'background-size': `${(100 / (COLUMNS_NUMBER + 1)).toFixed(2)}% 20%`
-      }"
+      class="timeline__body"
     >
       <div
-        class="inspector-page-timeline__body-cells"
+        class="timeline__grid-header"
         :class="`grid-cols-${COLUMNS_NUMBER + 1}`"
       >
         <div
           v-for="cell in layoutCells"
           :key="cell"
-          class="inspector-page-timeline__body-cell"
+          class="timeline__grid-cell"
         >
           {{ cell }} ms
         </div>
       </div>
 
-      <div class="inspector-page-timeline__segments">
+      <div class="timeline__rows">
         <div
           v-for="segmentRow in segmentRows"
           :key="`${segmentRow.label} - ${segmentRow.duration}`"
-          class="inspector-page-timeline__segment"
+          class="timeline__row"
         >
           <div
-            class="inspector-page-timeline__segment-label"
+            class="timeline__row-label"
             :title="segmentRow.label"
           >
             {{ segmentRow.label }}
           </div>
 
-          <div class="inspector-page-timeline__segment-view">
+          <div class="timeline__row-bar">
             <div
               :style="{ width: segmentRow.marginPercent + '%' }"
-              class="inspector-page-timeline__segment-start"
+              class="timeline__row-offset"
             >
-              <span class="inspector-page-timeline__segment-start-label">
-                {{ segmentRow.start }} ms
-              </span>
+              <span class="timeline__row-start">{{ segmentRow.start }} ms</span>
             </div>
 
             <div
-              class="inspector-page-timeline__segment-time"
+              class="timeline__row-fill"
               :style="{
                 width: segmentRow.widthPercent + '%',
                 background: segmentColor(segmentRow.type)
               }"
             >
-              <span v-if="segmentRow.widthPercent > 20"> {{ segmentRow.duration }} ms </span>
+              <span v-if="segmentRow.widthPercent > 20">{{ segmentRow.duration }} ms</span>
             </div>
 
             <div
-              class="inspector-page-timeline__segment-end"
+              class="timeline__row-end"
               :style="{ color: segmentColor(segmentRow.type) }"
             >
-              <span v-if="segmentRow.widthPercent <= 20"> {{ segmentRow.duration }} ms </span>
+              <span v-if="segmentRow.widthPercent <= 20">{{ segmentRow.duration }} ms</span>
             </div>
           </div>
         </div>
@@ -171,132 +162,119 @@ const segmentRows = computed(() => {
 
     <div
       v-if="segmentRows.length === 0"
-      class="inspector-page-timeline__no-segments"
+      class="timeline__empty"
     >
-      <h3 class="inspector-page-timeline__no-segments-placeholder">
-        No data
-      </h3>
+      <span class="timeline__empty-text">No segments recorded</span>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.inspector-page-timeline {
-  @apply py-5 relative;
+.timeline__head {
+  @apply flex items-center justify-between mb-3;
 }
 
-.inspector-page-timeline__head-title {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm mb-5;
+.timeline__title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
-.inspector-page-timeline__head-tips {
-  @apply flex space-x-7 mb-4;
+.timeline__legend {
+  @apply flex gap-4;
 }
 
-.inspector-page-timeline__head-tip {
-  @apply flex items-center;
+.timeline__legend-item {
+  @apply flex items-center gap-1.5;
 }
 
-.inspector-page-timeline__head-tip-box {
-  @apply w-4 h-4 rounded mr-2;
+.timeline__legend-dot {
+  @apply w-2.5 h-2.5 rounded-sm;
 }
 
-.inspector-page-timeline__head-tip-label {
-  @apply text-xs font-bold;
+.timeline__legend-label {
+  @apply text-2xs font-medium text-gray-600 dark:text-gray-300;
 }
 
-.inspector-page-timeline__body {
-  @include mixins.border-style;
-  @apply bg-gradient-to-r from-gray-300 dark:from-gray-900 from-[1px] to-transparent to-[1px];
-  @apply border-l-transparent;
+/* Body */
+.timeline__body {
+  @apply rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 
-.inspector-page-timeline__body-cells {
-  @include mixins.border-style;
+.timeline__grid-header {
   @apply grid grid-cols-6;
-  @apply border-x-0 border-t-0;
-  @apply font-bold text-center text-2xs sm:text-xs md:text-sm;
+  @apply border-b border-gray-200 dark:border-gray-700;
+  @apply bg-gray-50 dark:bg-gray-900;
+  @apply text-2xs font-mono font-medium text-center text-gray-500 dark:text-gray-400;
 }
 
-.inspector-page-timeline__body-cell {
-  @apply py-2 px-3;
-}
+.timeline__grid-cell {
+  @apply py-2 px-2;
+  @apply border-r border-gray-200/50 dark:border-gray-700/50;
 
-.inspector-page-timeline__segments {
-  @apply block;
-}
-
-.inspector-page-timeline__segment {
-  @apply text-right cursor-pointer;
-}
-
-.inspector-page-timeline__segment-label {
-  @apply text-2xs md:text-xs font-bold whitespace-nowrap px-2 py-1 opacity-20 overflow-auto;
-
-  .inspector-page-timeline__segment:hover & {
-    @apply opacity-100;
+  &:last-child {
+    @apply border-r-0;
   }
 }
 
-.inspector-page-timeline__segment-view {
+.timeline__rows {
+  @apply divide-y divide-gray-100 dark:divide-gray-800;
+}
+
+.timeline__row {
+  @apply cursor-default;
+  @apply hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors;
+}
+
+.timeline__row-label {
+  @apply text-2xs font-medium whitespace-nowrap px-3 py-1;
+  @apply text-gray-400 dark:text-gray-500;
+  @apply overflow-hidden text-ellipsis;
+
+  .timeline__row:hover & {
+    @apply text-gray-700 dark:text-gray-200;
+  }
+}
+
+.timeline__row-bar {
   @apply flex items-center w-full;
-
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(0, 0, 0, 0.08),
-    rgba(0, 0, 0, 0.08) 20px,
-    rgba(0, 0, 0, 0.06) 20px,
-    rgba(0, 0, 0, 0.06) 40px
-  );
-
-  .dark & {
-    background: repeating-linear-gradient(
-      -45deg,
-      rgba(255, 255, 255, 0.05),
-      rgba(255, 255, 255, 0.05) 20px,
-      rgba(255, 255, 255, 0.04) 20px,
-      rgba(255, 255, 255, 0.04) 40px
-    );
-  }
 }
 
-.inspector-page-timeline__segment-start {
-  @apply flex items-center justify-end;
-  @apply h-4 md:h-5 lg:h-6 opacity-20;
+.timeline__row-offset {
+  @apply flex items-center justify-end h-5;
+}
 
-  .inspector-page-timeline__segment:hover & {
+.timeline__row-start {
+  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 mr-2;
+  @apply opacity-0;
+
+  .timeline__row:hover & {
     @apply opacity-100;
   }
 }
 
-.inspector-page-timeline__segment-time {
+.timeline__row-fill {
   @apply flex flex-none relative items-center;
-  @apply h-4 md:h-5 lg:h-6 rounded-sm text-white;
+  @apply h-5 rounded-sm text-white;
   min-width: 0;
 
   span {
-    @apply text-xs font-bold text-right px-1;
+    @apply text-2xs font-mono font-medium text-right px-1;
   }
 }
 
-.inspector-page-timeline__segment-end {
-  @apply flex flex-1 items-center  px-2;
-  @apply h-4 md:h-5 lg:h-6;
-  @apply text-xs font-bold text-left;
+.timeline__row-end {
+  @apply flex flex-1 items-center px-2 h-5;
+  @apply text-2xs font-mono font-medium text-left;
 }
 
-.inspector-page-timeline__segment-start-label {
-  @apply text-2xs font-bold dark:text-gray-200 mr-3;
+.timeline__empty {
+  @apply flex items-center justify-center py-8;
+  @apply rounded border border-gray-200 dark:border-gray-700;
+  @apply bg-gray-50 dark:bg-gray-900;
 }
 
-.inspector-page-timeline__no-segments {
-  @apply flex w-full flex-col items-center mt-5;
-}
-
-.inspector-page-timeline__no-segments-placeholder {
-  @apply text-lg md:text-xl lg:text-3xl mt-5 font-bold text-gray-300;
+.timeline__empty-text {
+  @apply text-sm text-gray-400 dark:text-gray-500;
 }
 </style>

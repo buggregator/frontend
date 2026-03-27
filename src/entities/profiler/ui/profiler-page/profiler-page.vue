@@ -80,7 +80,11 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 }
 
 .profiler-page__stat-tabs {
-  @apply bg-gray-50 dark:bg-gray-800 dark:text-gray-300 flex-1 flex flex-col overflow-hidden;
+  @apply bg-gray-50 dark:bg-gray-900 dark:text-gray-300 flex-1 flex flex-col overflow-hidden;
+
+  :deep(.tabs-component-tabs) {
+    @apply bg-white dark:bg-gray-800 px-4;
+  }
 }
 
 .profiler-page__stat-tabs :deep(.tabs-component-panel) {

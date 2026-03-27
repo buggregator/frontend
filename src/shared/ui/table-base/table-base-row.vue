@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { defineProps } from 'vue'
-
 type Props = {
   title?: string
 }
@@ -11,29 +9,34 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class="table-base-row">
-    <div class="table-base-row__name">
+  <div class="table-row">
+    <div class="table-row__name">
       <span :title="title">{{ title }}</span>
     </div>
-    <div class="table-base-row__value">
+    <div class="table-row__value">
       <slot />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
+.table-row {
+  @apply flex flex-col md:flex-row md:items-center;
+  @apply py-1.5 px-3 text-xs;
+  @apply bg-white dark:bg-gray-800;
 
-.table-base-row {
-  @include mixins.text-responsive;
-  @apply md:flex bg-gray-50 dark:bg-gray-800 md:space-y-1 py-1 md:py-2 px-2 md:px-4 items-center sm:divide-x divide-gray-300 dark:divide-gray-700;
+  &:nth-child(even) {
+    @apply bg-gray-50 dark:bg-gray-800/50;
+  }
 }
 
-.table-base-row__name {
-  @apply font-bold md:w-1/4 sm:pr-4 overflow-hidden text-ellipsis;
+.table-row__name {
+  @apply font-medium text-gray-500 dark:text-gray-400;
+  @apply md:w-1/4 md:pr-3 truncate flex-shrink-0;
+  @apply md:border-r md:border-gray-200 md:dark:border-gray-700;
 }
 
-.table-base-row__value {
-  @apply break-all md:w-3/4 sm:pl-4;
+.table-row__value {
+  @apply break-all md:w-3/4 md:pl-3 font-mono text-gray-700 dark:text-gray-200;
 }
 </style>

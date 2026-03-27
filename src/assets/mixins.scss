@@ -3,16 +3,27 @@
 }
 
 @mixin layout-sidebar {
-  @apply w-10 md:w-14 lg:w-16 fixed h-screen z-50;
+  @apply w-10 md:w-14 lg:w-16 xl:w-44 fixed h-screen z-50;
+  transition: width 0.2s ease;
+
+  html.sidebar-collapsed & {
+    @apply xl:w-16;
+  }
 }
 
 @mixin layout-head {
   @apply justify-between;
-  @apply backdrop-blur-sm bg-gradient-to-b from-white/100 to-white/20 dark:from-gray-800/100 dark:to-gray-800/20;
+  @apply bg-white dark:bg-gray-800;
+  @apply border-b border-gray-200 dark:border-gray-700;
   @apply absolute left-0 right-0 z-50;
   @apply h-9 sm:h-10 md:h-14;
   @apply px-2 md:px-4;
-  @apply left-10 md:left-14 lg:left-16 right-0;
+  @apply left-10 md:left-14 lg:left-16 xl:left-44 right-0;
+  transition: left 0.2s ease;
+
+  html.sidebar-collapsed & {
+    @apply xl:left-16;
+  }
 
   html.navbar-fixed & {
     @apply fixed;
@@ -21,7 +32,12 @@
 
 @mixin layout-body {
   @apply flex flex-col flex-1 pt-10 md:pt-14;
-  @apply absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16 w-full h-full;
+  @apply absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16 xl:pl-44 w-full h-full;
+  transition: padding-left 0.2s ease;
+
+  html.sidebar-collapsed & {
+    @apply xl:pl-16;
+  }
 }
 
 @mixin text-muted {

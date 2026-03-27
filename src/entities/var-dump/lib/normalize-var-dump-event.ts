@@ -7,11 +7,7 @@ export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEv
     id: event.uuid,
     type: EventTypes.VarDump,
     labels: [EventTypes.VarDump],
-    origin: {
-      file: event.payload.context?.source?.file || "",
-      name: event.payload.context?.source?.name || "",
-      line_number: event.payload.context?.source?.line || "",
-    },
+    origin: null,
     serverName: "",
     date: event.timestamp ? new Date(event.timestamp * 1000) : null,
     payload: event.payload

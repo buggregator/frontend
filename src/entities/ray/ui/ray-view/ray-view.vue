@@ -11,26 +11,26 @@ defineProps<Props>()
 
 <template>
   <div class="ray-view">
-    <h3 class="ray-view__title">
-      View:
-      <code class="ray-view__code">
-        {{ view.view_path_relative_to_project_root }}
-      </code>
-    </h3>
+    <div class="ray-view__header">
+      <span class="ray-view__label">View</span>
+      <code class="ray-view__path">{{ view.view_path_relative_to_project_root }}</code>
+    </div>
     <ValueDump :value="view.data" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.ray-view {
-  display: block;
+.ray-view__header {
+  @apply flex items-center gap-2 px-3 py-2 mb-2 rounded;
+  @apply bg-gray-100 dark:bg-gray-900;
+  @apply text-xs;
 }
 
-.ray-view__title {
-  @apply p-3 border border-gray-300 dark:border-gray-600 bg-gray-800;
+.ray-view__label {
+  @apply text-gray-400 dark:text-gray-500;
 }
 
-.ray-view__code {
-  @apply font-semibold;
+.ray-view__path {
+  @apply font-mono font-semibold text-gray-700 dark:text-gray-200;
 }
 </style>

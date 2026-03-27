@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from 'vue'
+import { computed, withDefaults } from 'vue'
 import type { SentryException } from '../../types'
 import SentryExceptionFrame from './sentry-exception-frame.vue'
 
@@ -24,20 +24,19 @@ const exceptionFrames = computed(() => {
 </script>
 
 <template>
-  <div class="sentry-exception">
+  <div class="exception">
     <slot>
-      <header class="sentry-exception__header">
-        <h3 class="sentry-exception__title">
+      <header class="exception__header">
+        <h3 class="exception__title">
           {{ exception.type }}
         </h3>
-
-        <pre class="sentry-exception__text">{{ exception.value }}</pre>
+        <pre class="exception__message">{{ exception.value }}</pre>
       </header>
     </slot>
 
     <div
       v-if="exceptionFrames.length"
-      class="sentry-exception__frames"
+      class="exception__frames"
     >
       <template
         v-for="(frame, index) in exceptionFrames"
@@ -53,30 +52,28 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
+.exception {
+  @apply flex flex-col rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
+}
 
-.sentry-exception {
+.exception__header {
+  @apply bg-gray-50 dark:bg-gray-900 p-3;
+}
+
+.exception__title {
+  @apply mb-2 font-semibold text-sm;
+}
+
+.exception__message {
+  @apply text-xs break-words whitespace-pre-wrap;
+  @apply p-2 rounded font-mono;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+.exception__frames {
   @apply flex flex-col;
-}
-
-.sentry-exception__link {
-  @apply cursor-pointer pb-2 flex-grow;
-}
-
-.sentry-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-500 border-b-0;
-}
-
-.sentry-exception__title {
-  @apply mb-3 font-semibold text-lg;
-}
-
-.sentry-exception__text {
-  @include mixins.code-example();
-  @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
-}
-
-.sentry-exception__frames {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-500 border-t-0 rounded-b-md overflow-hidden;
+  @apply border-t border-gray-200 dark:border-gray-700;
 }
 </style>

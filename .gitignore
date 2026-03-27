@@ -21,3 +21,4 @@ secrets.json
 *.orig
 
 *storybook.log
+feature-requests

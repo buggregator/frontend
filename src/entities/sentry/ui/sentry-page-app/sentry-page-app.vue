@@ -10,60 +10,53 @@ defineProps<Props>()
 </script>
 
 <template>
-  <section class="sentry-page-app">
-    <h3 class="sentry-page-app__title">
-      app
+  <section>
+    <h3 class="section-title">
+      App
     </h3>
 
     <TableBase>
       <TableBaseRow
         v-if="app.type"
-        title="App type"
+        title="Type"
       >
         {{ app.type }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.app_build"
-        title="App Build"
+        title="Build"
       >
         {{ app.app_build }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.app_identifier"
-        title="Build ID"
+        title="Identifier"
       >
         {{ app.app_identifier }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.app_id"
         title="ID"
       >
         {{ app.app_id }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.app_name"
-        title="Build Name"
+        title="Name"
       >
         {{ app.app_name }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.app_version"
         title="Version"
       >
         {{ app.app_version }}
       </TableBaseRow>
-
       <TableBaseRow
         v-if="app.permissions"
         title="Permissions"
       >
         <CodeSnippet
-          class="mt-3"
           language="json"
           :code="app.permissions"
         />
@@ -73,13 +66,8 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.sentry-page-app {
-}
-
-.sentry-page-app__title {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm mb-5;
+.section-title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400 mb-3;
 }
 </style>

@@ -26,140 +26,107 @@ const contextsOS = computed(() => {
 
 const boxes = computed(() => [
   {
-    title: 'runtime',
+    title: 'Runtime',
     name: contextsRuntime.value.name,
     version: contextsRuntime.value.version
   },
   {
-    title: 'os',
+    title: 'OS',
     name: contextsOS.value.name,
     version: contextsOS.value.version
   },
   {
-    title: 'sdk',
+    title: 'SDK',
     name: props.payload.sdk?.name,
     version: props.payload.sdk?.version
   }
 ])
 
 const tags = computed(() => [
-  {
-    name: 'env',
-    value: props.payload.environment
-  },
-  {
-    name: 'logger',
-    value: props.payload.logger
-  },
-  {
-    name: 'os',
-    value: `${contextsOS.value.name} ${contextsOS.value.version}`
-  },
-  {
-    name: 'runtime',
-    value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}`
-  },
-  {
-    name: 'server name',
-    value: props.payload.server_name
-  }
+  { name: 'env', value: props.payload.environment },
+  { name: 'logger', value: props.payload.logger },
+  { name: 'os', value: `${contextsOS.value.name} ${contextsOS.value.version}` },
+  { name: 'runtime', value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}` },
+  { name: 'server', value: props.payload.server_name }
 ])
 
 const modules = computed(() => {
   const mods = props.payload.modules || {}
-
-  return Object.keys(mods).map((name) => ({
-    name,
-    version: mods[name]
-  }))
+  return Object.keys(mods).map((name) => ({ name, version: mods[name] }))
 })
 </script>
 
 <template>
-  <section class="sentry-page-tags">
-    <div class="sentry-page-tags__boxes">
+  <section class="tags-section">
+    <!-- Context boxes -->
+    <div class="tags-section__boxes">
       <div
         v-for="box in boxes"
         :key="box.title"
-        class="sentry-page-tags__box"
+        class="tags-section__box"
       >
-        <span class="sentry-page-tags__box-title">{{ box.title }}</span>
-        <h4 class="sentry-page-tags__box-name">
-          {{ box.name }}
-        </h4>
-        <p class="sentry-page-tags__box-value">
-          Version: {{ box.version }}
-        </p>
+        <span class="tags-section__box-label">{{ box.title }}</span>
+        <span class="tags-section__box-name">{{ box.name }}</span>
+        <span class="tags-section__box-version">{{ box.version }}</span>
       </div>
     </div>
 
-    <div class="sentry-page-tags__labels-wrapper">
-      <h3 class="sentry-page-tags__title">
+    <!-- Tags -->
+    <div class="tags-section__group">
+      <h3 class="tags-section__title">
         Tags
       </h3>
-      <div class="sentry-page-tags__labels">
+      <div class="tags-section__pills">
         <div
           v-for="tag in tags"
           :key="tag.name"
-          class="sentry-page-tags__label"
+          class="tags-section__pill"
         >
-          <div class="sentry-page-tags__label-name">
-            {{ tag.name }}
-          </div>
-          <div class="sentry-page-tags__label-value">
-            {{ tag.value }}
-          </div>
+          <span class="tags-section__pill-key">{{ tag.name }}</span>
+          <span class="tags-section__pill-value">{{ tag.value }}</span>
         </div>
 
         <template v-if="payload.tags">
           <div
             v-for="(name, value) in payload.tags"
             :key="value"
-            class="sentry-page-tags__label"
+            class="tags-section__pill"
           >
-            <div class="sentry-page-tags__label-name">
-              {{ value }}
-            </div>
-            <div class="sentry-page-tags__label-value">
-              {{ name || ' - ' }}
-            </div>
+            <span class="tags-section__pill-key">{{ value }}</span>
+            <span class="tags-section__pill-value">{{ name || '—' }}</span>
           </div>
         </template>
       </div>
     </div>
 
+    <!-- Modules -->
     <div
-      class="sentry-page-tags__labels-wrapper"
-      :class="{
-        'sentry-page-tags__labels-wrapper--partial': !isModulesOpen
-      }"
+      v-if="modules.length"
+      class="tags-section__group"
     >
       <h3
-        class="sentry-page-tags__title"
+        class="tags-section__title tags-section__title--toggle"
         @click="isModulesOpen = !isModulesOpen"
       >
         Modules
-
+        <span class="tags-section__count">{{ modules.length }}</span>
         <IconSvg
-          class="sentry-page-tags__title-dd"
-          :class="{
-            'sentry-page-tags__title-dd--open': isModulesOpen
-          }"
-          name="dd"
+          class="tags-section__chevron"
+          :class="{ 'tags-section__chevron--open': isModulesOpen }"
+          name="collapsed"
         />
       </h3>
-      <div class="sentry-page-tags__labels">
+      <div
+        v-if="isModulesOpen"
+        class="tags-section__pills"
+      >
         <div
-          v-for="module in modules"
-          :key="module.name"
-          class="sentry-page-tags__label"
+          v-for="mod in modules"
+          :key="mod.name"
+          class="tags-section__pill"
         >
-          <div class="sentry-page-tags__label-name">
-            {{ module.name }}
-          </div>
-          <div class="sentry-page-tags__label-value">
-            {{ module.version }}
-          </div>
+          <span class="tags-section__pill-key">{{ mod.name }}</span>
+          <span class="tags-section__pill-value">{{ mod.version }}</span>
         </div>
       </div>
     </div>
@@ -167,69 +134,81 @@ const modules = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.sentry-page-tags {
+/* Context boxes */
+.tags-section__boxes {
+  @apply flex flex-col sm:flex-row gap-2 mb-4;
 }
 
-.sentry-page-tags__title {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm flex justify-between;
+.tags-section__box {
+  @apply flex flex-col flex-1 p-3 rounded;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply bg-gray-50 dark:bg-gray-900;
 }
 
-.sentry-page-tags__title-dd {
-  @apply ml-2 w-5 ml-auto transform rotate-180;
+.tags-section__box-label {
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
 }
 
-.sentry-page-tags__title-dd--open {
-  @apply rotate-0;
+.tags-section__box-name {
+  @apply text-sm font-semibold mt-0.5;
 }
 
-.sentry-page-tags__labels-wrapper {
-  @apply bg-gray-50 dark:bg-gray-900 p-4 rounded-md border border-purple-300 dark:border-gray-400;
+.tags-section__box-version {
+  @apply text-xs font-mono text-gray-500 dark:text-gray-400;
+}
+
+/* Groups */
+.tags-section__group {
+  @apply rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply p-3;
 
   & + & {
-    @apply mt-5;
+    @apply mt-3;
   }
 }
 
-.sentry-page-tags__labels {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 gap-3 mt-3;
-
-  .sentry-page-tags__labels-wrapper--partial & {
-    @apply max-h-[200px] overflow-y-auto;
-  }
+.tags-section__title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply flex items-center gap-2;
 }
 
-.sentry-page-tags__label {
-  @apply flex border border-purple-300 rounded text-xs items-center;
+.tags-section__title--toggle {
+  @apply cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors;
 }
 
-.sentry-page-tags__label-name {
-  @apply px-3 py-1 border-r;
+.tags-section__count {
+  @apply text-2xs px-1.5 py-0.5 rounded-full;
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
 }
 
-.sentry-page-tags__label-value {
-  @apply px-3 py-1 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
-}
-.sentry-page-tags__boxes {
-  @apply flex items-stretch flex-col md:flex-row mb-5 gap-x-4;
+.tags-section__chevron {
+  @apply w-3.5 h-3.5 ml-auto;
+  transition: transform 0.15s ease;
 }
 
-.sentry-page-tags__box {
-  @apply border border-purple-300 dark:border-gray-400 rounded px-4 pb-2 pt-1 hover:bg-purple-50 dark:hover:bg-purple-600 cursor-pointer mb-3 md:mb-0;
+.tags-section__chevron--open {
+  transform: rotate(180deg);
 }
 
-.sentry-page-tags__box-title {
-  @include mixins.text-muted;
-  @apply text-xs font-bold;
+/* Pills */
+.tags-section__pills {
+  @apply flex flex-wrap gap-1.5 mt-2;
 }
 
-.sentry-page-tags__box-name {
-  @apply font-bold;
+.tags-section__pill {
+  @apply inline-flex items-center text-xs rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 
-.sentry-page-tags__box-value {
-  @apply text-sm;
+.tags-section__pill-key {
+  @apply px-2 py-1 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.tags-section__pill-value {
+  @apply px-2 py-1 font-mono font-medium;
+  @apply bg-white dark:bg-gray-900;
 }
 </style>

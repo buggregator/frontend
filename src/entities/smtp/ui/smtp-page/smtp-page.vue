@@ -6,15 +6,14 @@ import { htmlEncode } from '@/shared/lib/helpers'
 import { useAttachments } from '@/shared/lib/io'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
 import {
-  TableBase,
-  TableBaseRow,
   CodeSnippet,
   FileAttachment,
   EmailPreviewDevice,
-  EmailPreview
+  EmailPreview,
+  EventDetailLayout,
+  EventDetailSection
 } from '@/shared/ui'
 import type { SMTP } from '../../types'
-import { SmtpPageAddresses } from '../smtp-page-addresses'
 
 type Props = {
   event: NormalizedEvent<SMTP>
@@ -22,51 +21,30 @@ type Props = {
 
 const props = defineProps<Props>()
 const attachments = ref<Attachment[]>([])
-const isLoading = ref(false)
 
 const { getAttachments, calcDownloadLink } = useAttachments()
 
 const htmlSource = computed(() =>
   props.event?.payload?.html
-    ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}"/>`
+    ? `<iframe srcdoc="${htmlEncode(props.event?.payload?.html)}" title="Email HTML preview"/>`
     : undefined
 )
 
-// TODO: find solution to request attachments in parallel with events
 const getAttachmentsRequest = async () => {
-  isLoading.value = true
-
   try {
-    isLoading.value = false
-
-    await getAttachments(props.event.id).then((_attachments: Attachment[]) => {
-      attachments.value = _attachments
-    })
+    const result = await getAttachments(props.event.id)
+    attachments.value = result
   } catch (error) {
     console.error(error)
   }
 }
+
 const senders = computed(() => [
-  {
-    title: 'From',
-    address: props.event.payload.from
-  },
-  {
-    title: 'To',
-    address: props.event.payload.to
-  },
-  {
-    title: 'CC',
-    address: props.event.payload.cc
-  },
-  {
-    title: 'BCC',
-    address: props.event.payload.bcc
-  },
-  {
-    title: 'Reply to',
-    address: props.event.payload.reply_to
-  }
+  { title: 'From', address: props.event.payload.from },
+  { title: 'To', address: props.event.payload.to },
+  { title: 'CC', address: props.event.payload.cc },
+  { title: 'BCC', address: props.event.payload.bcc },
+  { title: 'Reply to', address: props.event.payload.reply_to }
 ])
 
 const isHtml = computed(
@@ -77,8 +55,6 @@ const isText = computed(
   () => props.event.payload?.text !== undefined && props.event.payload?.text !== ''
 )
 
-const mail = computed(() => props.event.payload)
-
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 
 const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
@@ -88,223 +64,264 @@ onMounted(getAttachmentsRequest)
 </script>
 
 <template>
-  <div
-    ref="main"
-    class="smtp-page"
-  >
-    <main class="smtp-page__main">
-      <header class="smtp-page__header">
-        <h2 class="smtp-page__header-title">
-          {{ mail.subject }}
+  <EventDetailLayout>
+    <template #header>
+      <div class="smtp-header">
+        <h2 class="smtp-header__subject">
+          {{ event.payload.subject }}
         </h2>
-        <div class="smtp-page__header-meta">
-          <span class="smtp-page__header-date">{{ date }}</span>
-        </div>
-      </header>
+        <span class="smtp-header__date">{{ date }}</span>
+      </div>
+    </template>
 
-      <section class="smtp-page__sender">
-        <template v-for="sender in senders">
+    <!-- Addresses -->
+    <EventDetailSection>
+      <div class="smtp-addresses">
+        <template
+          v-for="sender in senders"
+          :key="sender.title"
+        >
           <div
             v-for="email in sender.address"
             :key="`${sender.title}-${email.email}`"
-            class="smtp-page__sender-item"
-            :class="`smtp-page__sender-${sender.title.toLowerCase()}`"
+            class="smtp-addresses__pill"
           >
-            <div class="smtp-page__sender-title">
-              {{ sender.title }}
-            </div>
-            <div class="smtp-page__sender-address">
-              <template v-if="email.name">
-                {{ email.name }} [{{ email.email }}]
-              </template>
-              <template v-else>
-                {{ email.email }}
-              </template>
-            </div>
+            <span class="smtp-addresses__label">{{ sender.title }}</span>
+            <span class="smtp-addresses__value">
+              <template v-if="email.name">{{ email.name }} &lt;{{ email.email }}&gt;</template>
+              <template v-else>{{ email.email }}</template>
+            </span>
           </div>
         </template>
-      </section>
+      </div>
+    </EventDetailSection>
 
-      <section class="smtp-page__body">
-        <Tabs :options="{ useUrlFragment: false }">
-          <Tab
-            v-if="isHtml"
-            id="html-preview"
-            name="Preview"
-            suffix="<span class='smtp-page__body-tab-badge'>HTML</span>"
-          >
-            <EmailPreview :device="EmailPreviewDevice.Tablet">
-              <div v-html="htmlSource" />
-            </EmailPreview>
-          </Tab>
-          <Tab
-            v-if="isHtml"
-            name="HTML"
-          >
-            <CodeSnippet
-              language="html"
-              class="tab-preview-code"
-              :code="event.payload.html"
+    <!-- Content tabs (outside wrapper, full-width) -->
+    <div class="smtp-tabs">
+      <Tabs :options="{ useUrlFragment: false }">
+        <Tab
+          v-if="isHtml"
+          id="html-preview"
+          name="Preview"
+        >
+          <EmailPreview :device="EmailPreviewDevice.Tablet">
+            <div v-html="htmlSource" />
+          </EmailPreview>
+        </Tab>
+        <Tab
+          v-if="isHtml"
+          name="HTML"
+        >
+          <CodeSnippet
+            language="html"
+            :code="event.payload.html"
+          />
+        </Tab>
+        <Tab
+          v-if="isText"
+          name="Text"
+        >
+          <CodeSnippet
+            language="plaintext"
+            :code="event.payload.text"
+          />
+        </Tab>
+        <Tab
+          v-if="attachments.length"
+          :name="`Attachments (${attachments.length})`"
+        >
+          <div class="smtp-attachments">
+            <FileAttachment
+              v-for="a in attachments"
+              :key="a.uuid"
+              :event-id="event.id"
+              :attachment="a"
+              :download-url="calcDownloadUrl(a.uuid)"
             />
-          </Tab>
-          <Tab
-            v-if="isText"
-            name="Text"
-          >
-            <CodeSnippet
-              language="html"
-              class="max-w-full tab-preview-code"
-              :code="event.payload.text"
-            />
-          </Tab>
-          <Tab
-            v-if="attachments.length"
-            :name="`Attachments (${attachments.length})`"
-          >
-            <section class="mb-5">
-              <div class="flex gap-x-3">
+          </div>
+        </Tab>
+        <Tab name="Raw">
+          <CodeSnippet
+            language="plaintext"
+            :code="event.payload.raw"
+          />
+        </Tab>
+        <Tab name="Tech Info">
+          <div class="tech-info">
+            <!-- Summary boxes -->
+            <div class="tech-info__boxes">
+              <div class="tech-info__box">
+                <span class="tech-info__box-label">Message ID</span>
+                <span class="tech-info__box-value">{{ event.payload.id }}</span>
+              </div>
+              <div class="tech-info__box">
+                <span class="tech-info__box-label">Subject</span>
+                <span class="tech-info__box-value">{{ event.payload.subject }}</span>
+              </div>
+              <div
+                v-if="date"
+                class="tech-info__box"
+              >
+                <span class="tech-info__box-label">Date</span>
+                <span class="tech-info__box-value">{{ date }}</span>
+              </div>
+            </div>
+
+            <!-- Address groups -->
+            <div class="tech-info__section">
+              <h4 class="tech-info__section-title">
+                Addresses
+              </h4>
+
+              <div class="tech-info__addr-groups">
                 <template
-                  v-for="a in attachments"
-                  :key="a.uuid"
+                  v-for="sender in senders"
+                  :key="sender.title"
                 >
-                  <FileAttachment
-                    :event-id="event.id"
-                    :attachment="a"
-                    :download-url="calcDownloadUrl(a.uuid)"
-                  />
+                  <div
+                    v-if="sender.address?.length"
+                    class="tech-info__addr-group"
+                  >
+                    <span class="tech-info__addr-label">{{ sender.title }}</span>
+                    <div class="tech-info__addr-list">
+                      <div
+                        v-for="email in sender.address"
+                        :key="email.email"
+                        class="tech-info__addr-item"
+                      >
+                        <span
+                          v-if="email.name"
+                          class="tech-info__addr-name"
+                        >{{ email.name }}</span>
+                        <span class="tech-info__addr-email">{{ email.email }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </template>
               </div>
-            </section>
-          </Tab>
-          <Tab name="Raw">
-            <CodeSnippet
-              class="tab-preview-code"
-              language="html"
-              :code="event.payload.raw"
-            />
-          </Tab>
-          <Tab name="Tech Info">
-            <section>
-              <h3 class="mb-3 font-bold">
-                Email Headers
-              </h3>
-              <TableBase>
-                <TableBaseRow title="Id">
-                  {{ event.payload.id }}
-                </TableBaseRow>
-                <TableBaseRow title="Subject">
-                  {{ event.payload.subject }}
-                </TableBaseRow>
-                <TableBaseRow title="From">
-                  <SmtpPageAddresses :addresses="event.payload.from || []" />
-                </TableBaseRow>
-                <TableBaseRow title="To">
-                  <SmtpPageAddresses :addresses="event.payload.to || []" />
-                </TableBaseRow>
-                <TableBaseRow
-                  v-if="event.payload.cc?.length"
-                  title="Cc"
-                >
-                  <SmtpPageAddresses :addresses="event.payload.cc" />
-                </TableBaseRow>
-                <TableBaseRow
-                  v-if="event.payload.bcc?.length"
-                  title="Bcc"
-                >
-                  <SmtpPageAddresses :addresses="event.payload.bcc" />
-                </TableBaseRow>
-                <TableBaseRow
-                  v-if="event.payload.reply_to?.length"
-                  title="Reply to"
-                >
-                  <SmtpPageAddresses :addresses="event.payload.reply_to" />
-                </TableBaseRow>
-              </TableBase>
-            </section>
-          </Tab>
-        </Tabs>
-      </section>
-    </main>
-  </div>
+            </div>
+          </div>
+        </Tab>
+      </Tabs>
+    </div>
+  </EventDetailLayout>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.tab-preview-code {
-  @apply max-w-full border dark:border-gray-500 rounded-md overflow-hidden;
+/* Header */
+.smtp-header__subject {
+  @apply text-base md:text-lg lg:text-xl font-semibold mb-1;
 }
 
-.smtp-page {
-  @apply relative flex-1 flex flex-col h-full;
+.smtp-header__date {
+  @apply text-xs font-mono text-gray-500 dark:text-gray-400;
 }
 
-.smtp-page__main {
-  @apply flex-1 flex flex-col h-full flex-grow py-5 px-5;
+/* Addresses */
+.smtp-addresses {
+  @apply flex flex-wrap gap-1.5;
 }
 
-.smtp-page__header {
-  @apply flex flex-col md:flex-row justify-between gap-y-2;
+.smtp-addresses__pill {
+  @apply inline-flex items-center text-xs rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 
-.smtp-page__header-meta {
-  @apply flex flex-row items-center gap-x-5 mb-5;
+.smtp-addresses__label {
+  @apply px-2 py-1 text-gray-500 dark:text-gray-400 font-medium;
+  @apply bg-gray-50 dark:bg-gray-800;
 }
 
-.smtp-page__header-title {
-  @apply text-lg lg:text-2xl;
+.smtp-addresses__value {
+  @apply px-2 py-1 font-mono;
+  @apply bg-white dark:bg-gray-900;
 }
 
-.smtp-page__header-date {
-  @include mixins.text-muted;
-  @apply text-xs md:text-sm font-semibold;
-}
+/* Tabs — full-width, outside section wrapper */
+.smtp-tabs {
+  @apply flex-1 flex flex-col overflow-hidden;
+  @apply -mx-5 md:-mx-6 lg:-mx-8;
 
-.smtp-page__sender {
-  @apply text-xs sm:text-sm font-semibold mt-3 flex flex-wrap items-center;
-}
-
-.smtp-page__sender-item {
-  @apply flex border border-purple-300 rounded items-center mr-3 mb-2;
-}
-
-.smtp-page__sender-title {
-  @apply px-2 md:px-3 py-1 border-r font-bold;
-}
-
-.smtp-page__sender-address {
-  @apply px-2 md:px-3 bg-gray-800 py-1 text-white font-semibold rounded-r;
-}
-
-.smtp-page__sender-from .smtp-page__sender-address {
-  @apply bg-blue-800;
-}
-
-.smtp-page__sender-to .smtp-page__sender-address {
-  @apply bg-red-800;
-}
-
-.smtp-page__sender-cc .smtp-page__sender-address {
-  @apply bg-purple-800;
-}
-
-.smtp-page__sender-reply .smtp-page__sender-address {
-  @apply bg-green-800;
-}
-
-.smtp-page__body {
-  @apply flex-1 flex flex-col;
-
-  .tabs-component {
+  :deep(.tabs-component) {
     @apply flex-1 flex flex-col;
   }
 
-  .tabs-component-panel {
-    @apply flex-1 flex flex-col;
+  :deep(.tabs-component-tabs) {
+    @apply px-5 md:px-6 lg:px-8;
+    @apply bg-gray-50 dark:bg-gray-900;
+  }
+
+  :deep(.tabs-component-panels) {
+    @apply mt-0 flex-1;
+  }
+
+  :deep(.tabs-component-panel) {
+    @apply flex-1 flex flex-col px-5 md:px-6 lg:px-8 py-4;
   }
 }
 
-.smtp-page__body-tab-badge {
-  @apply bg-red-800 ml-2 text-2xs px-2 py-1 rounded text-white uppercase;
+/* Attachments */
+.smtp-attachments {
+  @apply flex flex-wrap gap-3;
+}
+
+/* Tech Info */
+.tech-info {
+  @apply flex flex-col gap-5;
+}
+
+.tech-info__boxes {
+  @apply flex flex-col sm:flex-row gap-2;
+}
+
+.tech-info__box {
+  @apply flex flex-col flex-1 p-3 rounded;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-gray-800;
+}
+
+.tech-info__box-label {
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
+}
+
+.tech-info__box-value {
+  @apply text-xs font-mono mt-1 break-all;
+}
+
+.tech-info__section-title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400 mb-3;
+}
+
+.tech-info__addr-groups {
+  @apply flex flex-col gap-3;
+}
+
+.tech-info__addr-group {
+  @apply flex flex-col sm:flex-row sm:items-start gap-2;
+}
+
+.tech-info__addr-label {
+  @apply text-xs font-medium text-gray-500 dark:text-gray-400;
+  @apply sm:w-20 flex-shrink-0 sm:pt-1.5;
+}
+
+.tech-info__addr-list {
+  @apply flex flex-col gap-1 flex-1;
+}
+
+.tech-info__addr-item {
+  @apply flex items-center gap-2 px-3 py-1.5 rounded;
+  @apply bg-gray-50 dark:bg-gray-900;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply text-xs;
+}
+
+.tech-info__addr-name {
+  @apply font-medium;
+}
+
+.tech-info__addr-email {
+  @apply font-mono text-gray-500 dark:text-gray-400;
 }
 </style>

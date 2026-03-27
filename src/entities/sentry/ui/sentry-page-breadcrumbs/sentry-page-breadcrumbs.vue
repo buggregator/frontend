@@ -13,87 +13,75 @@ withDefaults(defineProps<Props>(), {
 
 const formatDate = (timestamp?: number): string =>
   timestamp ? moment.unix(timestamp).fromNow() : ''
-
-const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLowerCase()
 </script>
 
 <template>
-  <section class="sentry-page-breadcrumbs">
-    <h3 class="sentry-page-breadcrumbs__title">
-      breadcrumbs
-
-      <span
-        v-if="breadcrumbs.length > 0"
-        class="sentry-page-breadcrumbs__counter"
-      >{{
-        breadcrumbs.length
-      }}</span>
+  <section class="breadcrumbs">
+    <h3 class="breadcrumbs__title">
+      Breadcrumbs
+      <span class="breadcrumbs__count">{{ breadcrumbs.length }}</span>
     </h3>
-    <div class="sentry-page-breadcrumbs__in">
-      <nav
-        style="grid-template-columns: 1fr 100px 200px 17px"
-        class="sentry-page-breadcrumbs__nav"
-      >
-        <div class="sentry-page-breadcrumbs__nav-col-title">
-          description
-        </div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">
-          level
-        </div>
-        <div class="sentry-page-breadcrumbs__nav-col-title">
-          time
-        </div>
-      </nav>
 
-      <div
-        v-if="breadcrumbs"
-        class="sentry-page-breadcrumbs__cols-wr"
-      >
+    <div class="breadcrumbs__table">
+      <!-- Header -->
+      <div class="breadcrumbs__header">
+        <span class="breadcrumbs__header-cell breadcrumbs__header-cell--desc">Description</span>
+        <span class="breadcrumbs__header-cell breadcrumbs__header-cell--level">Level</span>
+        <span class="breadcrumbs__header-cell breadcrumbs__header-cell--time">Time</span>
+      </div>
+
+      <!-- Rows -->
+      <div class="breadcrumbs__body">
         <div
-          v-for="b in breadcrumbs"
-          :key="b.toString()"
-          class="sentry-page-breadcrumbs__cols"
+          v-for="(b, i) in breadcrumbs"
+          :key="i"
+          class="breadcrumbs__row"
         >
-          <div class="sentry-page-breadcrumbs__col">
-            <p class="sentry-page-breadcrumbs__col-message">
+          <div class="breadcrumbs__cell breadcrumbs__cell--desc">
+            <p
+              v-if="b.message"
+              class="breadcrumbs__message"
+            >
               {{ b.message }}
             </p>
 
             <CodeSnippet
               v-if="b.data"
-              class="sentry-page-breadcrumbs__col-data"
+              class="breadcrumbs__data"
               language="json"
               :code="b.data"
             />
 
-            <div class="sentry-page-breadcrumbs__col-details">
-              <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">
-                  type
-                </div>
-                <div class="sentry-page-breadcrumbs__col-detail-value">
-                  {{ b.type }}
-                </div>
-              </div>
-              <div class="sentry-page-breadcrumbs__col-detail">
-                <div class="sentry-page-breadcrumbs__col-detail-title">
-                  category
-                </div>
-                <div class="sentry-page-breadcrumbs__col-detail-value">
-                  {{ b.category }}
-                </div>
-              </div>
+            <div
+              v-if="b.type || b.category"
+              class="breadcrumbs__details"
+            >
+              <span
+                v-if="b.type"
+                class="breadcrumbs__detail"
+              >
+                <span class="breadcrumbs__detail-key">type</span>
+                <span class="breadcrumbs__detail-val">{{ b.type }}</span>
+              </span>
+              <span
+                v-if="b.category"
+                class="breadcrumbs__detail"
+              >
+                <span class="breadcrumbs__detail-key">category</span>
+                <span class="breadcrumbs__detail-val">{{ b.category }}</span>
+              </span>
             </div>
           </div>
-          <div class="sentry-page-breadcrumbs__col">
+
+          <div class="breadcrumbs__cell breadcrumbs__cell--level">
             <span
-              class="sentry-page-breadcrumbs__col-level-badge"
-              :class="getClassByLevel(b)"
-            >{{
-              b.level
-            }}</span>
+              v-if="b.level"
+              class="breadcrumbs__level"
+              :class="`breadcrumbs__level--${b.level.toLowerCase()}`"
+            >{{ b.level }}</span>
           </div>
-          <div class="sentry-page-breadcrumbs__col">
+
+          <div class="breadcrumbs__cell breadcrumbs__cell--time">
             {{ formatDate(b.timestamp) }}
           </div>
         </div>
@@ -103,87 +91,119 @@ const getClassByLevel = (breadcrumb: SentryBreadcrumb) => breadcrumb.level?.toLo
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.sentry-page-breadcrumbs {
+.breadcrumbs__title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply flex items-center gap-2 mb-3;
 }
 
-.sentry-page-breadcrumbs__title {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm mb-5;
+.breadcrumbs__count {
+  @apply text-2xs px-1.5 py-0.5 rounded-full;
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
 }
 
-.sentry-page-breadcrumbs__counter {
-  @apply bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-100 rounded-full text-xs px-2 py-1 ml-2;
-}
-
-.sentry-page-breadcrumbs__in {
-  @apply flex flex-col border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
+.breadcrumbs__table {
+  @apply rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
   max-height: 600px;
+  @apply flex flex-col;
 }
 
-.sentry-page-breadcrumbs__nav {
-  @apply border-b border-purple-300 dark:border-purple-700 grid bg-purple-50 dark:bg-purple-800 text-xs font-bold text-purple-600 dark:text-purple-100 rounded-t;
+/* Header */
+.breadcrumbs__header {
+  @apply flex text-2xs font-medium uppercase tracking-wide;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply bg-gray-50 dark:bg-gray-900;
+  @apply border-b border-gray-200 dark:border-gray-700;
+  @apply flex-shrink-0;
 }
 
-.sentry-page-breadcrumbs__nav-col-title {
-  @apply p-3 uppercase;
+.breadcrumbs__header-cell {
+  @apply px-3 py-2;
 }
 
-.sentry-page-breadcrumbs__cols-wr {
-  @apply bg-gray-100 dark:bg-gray-800 max-h-full flex-1 overflow-y-scroll divide-y divide-purple-300 dark:divide-purple-600;
+.breadcrumbs__header-cell--desc {
+  @apply flex-1;
 }
 
-.sentry-page-breadcrumbs__cols {
-  @apply grid text-xs;
-  grid-template-columns: 1fr 100px 200px;
+.breadcrumbs__header-cell--level {
+  @apply w-24;
 }
 
-.sentry-page-breadcrumbs__col {
-  @apply p-3;
+.breadcrumbs__header-cell--time {
+  @apply w-32;
 }
 
-.sentry-page-breadcrumbs__col-data {
-  @apply mt-3  rounded-md overflow-hidden;
+/* Body */
+.breadcrumbs__body {
+  @apply overflow-y-auto flex-1;
+  @apply divide-y divide-gray-100 dark:divide-gray-700/50;
 }
 
-.sentry-page-breadcrumbs__col-message {
-  @apply font-bold;
+.breadcrumbs__row {
+  @apply flex text-xs;
+  @apply hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors;
 }
 
-.sentry-page-breadcrumbs__col-details {
-  @apply flex flex-row flex-wrap items-center text-purple-600 dark:text-purple-100 text-2xs my-3 gap-3;
+.breadcrumbs__cell {
+  @apply px-3 py-2;
 }
 
-.sentry-page-breadcrumbs__col-detail {
-  @apply flex border border-purple-300 dark:border-purple-700 rounded items-center;
+.breadcrumbs__cell--desc {
+  @apply flex-1 min-w-0;
 }
 
-.sentry-page-breadcrumbs__col-detail-title {
-  @apply px-2 border-r dark:border-purple-700;
+.breadcrumbs__cell--level {
+  @apply w-24 flex-shrink-0;
 }
 
-.sentry-page-breadcrumbs__col-detail-value {
-  @apply px-2 bg-purple-100 dark:bg-purple-800 rounded-r font-bold;
+.breadcrumbs__cell--time {
+  @apply w-32 flex-shrink-0 font-mono text-gray-400 dark:text-gray-500;
 }
 
-.sentry-page-breadcrumbs__col-level-badge {
-  @apply uppercase text-2xs font-bold rounded-full px-2 py-1;
+.breadcrumbs__message {
+  @apply font-medium;
 }
 
-.sentry-page-breadcrumbs__col-level-badge.debug {
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-100;
+.breadcrumbs__data {
+  @apply mt-1.5 rounded overflow-hidden;
 }
 
-.sentry-page-breadcrumbs__col-level-badge.error {
-  @apply bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-100;
+.breadcrumbs__details {
+  @apply flex flex-wrap gap-1 mt-1.5;
 }
 
-.sentry-page-breadcrumbs__col-level-badge.warning {
-  @apply bg-yellow-100 dark:bg-yellow-800 text-yellow-600 dark:text-yellow-100;
+.breadcrumbs__detail {
+  @apply inline-flex items-center text-2xs rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 
-.sentry-page-breadcrumbs__col-level-badge.info {
-  @apply bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-100;
+.breadcrumbs__detail-key {
+  @apply px-1.5 py-0.5 text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800;
+}
+
+.breadcrumbs__detail-val {
+  @apply px-1.5 py-0.5 font-mono;
+}
+
+/* Level badges */
+.breadcrumbs__level {
+  @apply uppercase text-2xs font-semibold px-1.5 py-0.5 rounded;
+}
+
+.breadcrumbs__level--debug {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+}
+
+.breadcrumbs__level--info {
+  @apply bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400;
+}
+
+.breadcrumbs__level--warning {
+  @apply bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400;
+}
+
+.breadcrumbs__level--error {
+  @apply bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400;
 }
 </style>

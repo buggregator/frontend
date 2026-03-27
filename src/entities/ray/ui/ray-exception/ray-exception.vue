@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineProps, withDefaults } from 'vue'
+import { computed, withDefaults } from 'vue'
 import type { RayContentException } from '../../types'
 import { RayFile } from '../ray-file'
 
@@ -28,9 +28,7 @@ const exceptionFrames = computed(() => {
         {{ exception.class }}
       </h3>
 
-      <div class="ray-exception__title-code">
-        {{ exception.message }}
-      </div>
+      <pre class="ray-exception__message">{{ exception.message }}</pre>
     </header>
 
     <div class="ray-exception__files">
@@ -45,39 +43,28 @@ const exceptionFrames = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
 .ray-exception {
-  @apply flex flex-col;
+  @apply flex flex-col rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 
 .ray-exception__header {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-400 border-b-0;
+  @apply bg-gray-50 dark:bg-gray-900 p-3;
 }
 
 .ray-exception__title {
-  @apply mb-3 font-semibold text-lg;
+  @apply mb-2 font-semibold text-sm;
 }
 
-.ray-exception__title-code {
-  @include mixins.code-example();
-  @apply text-sm break-words whitespace-pre-wrap rounded text-opacity-60;
-}
-
-.ray-exception__text {
-  @include mixins.code-example();
-  @apply mb-2 text-xs break-words whitespace-pre-wrap overflow-auto text-opacity-60;
+.ray-exception__message {
+  @apply text-xs break-words whitespace-pre-wrap;
+  @apply p-2 rounded font-mono;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .ray-exception__files {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 border-t-0 rounded-b-md overflow-hidden;
-}
-
-.ray__body-text {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm mb-5;
-}
-
-.ray__body-table {
-  @apply mt-3;
+  @apply flex flex-col;
+  @apply border-t border-gray-200 dark:border-gray-700;
 }
 </style>

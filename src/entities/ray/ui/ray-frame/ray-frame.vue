@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { useSettingsStore } from '@/shared/stores'
+import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import type { RayFrame } from '../../types'
 
 type Props = {
@@ -9,35 +8,42 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const { buildLink } = useIdeLink()
 
-const { codeEditor } = storeToRefs(useSettingsStore())
-
-const callLink = computed(
-  () =>
-    `${codeEditor}://open?file=${encodeURIComponent(
-      props.frame.file_name
-    )}&line=${props.frame.line_number}`
-)
+const ideLink = computed(() => buildLink(props.frame.file_name, props.frame.line_number))
 </script>
 
 <template>
   <div class="ray-frame">
-    <h3>Called from</h3>
+    <span class="ray-frame__label">Called from</span>
     <a
-      class="ray-frame__name"
-      :href="callLink"
+      v-if="ideLink"
+      class="ray-frame__link"
+      :href="ideLink"
     >
-      <code class="ray-frame__code"> {{ frame.class || 'null' }}:{{ frame.method }} </code>
+      <code class="ray-frame__code">{{ frame.class || 'null' }}:{{ frame.method }}</code>
     </a>
+    <code
+      v-else
+      class="ray-frame__code"
+    >{{ frame.class || 'null' }}:{{ frame.method }}</code>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.ray-frame__name {
-  @apply text-blue-400 dark:text-blue-100 underline;
+.ray-frame {
+  @apply flex items-center gap-2 text-xs;
+}
+
+.ray-frame__label {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+.ray-frame__link {
+  @apply text-blue-500 dark:text-blue-400 hover:underline;
 }
 
 .ray-frame__code {
-  @apply break-all font-semibold;
+  @apply font-mono font-medium break-all;
 }
 </style>

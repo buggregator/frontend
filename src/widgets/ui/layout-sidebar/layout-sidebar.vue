@@ -9,8 +9,8 @@ import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { RouteName } from '@/shared/types'
-import { BadgeNumber, IconSvg } from '@/shared/ui'
+import { LocalStorageKeys, RouteName } from '@/shared/types'
+import { IconSvg } from '@/shared/ui'
 import { version } from '../../../../package.json' with { type: 'json' }
 import { EVENTS_NAV_ORDER } from './constants'
 
@@ -31,6 +31,26 @@ const userMenu = ref<HTMLElement | undefined>()
 
 const isVisibleProfile = ref(false)
 const isVisibleProjects = ref(false)
+
+// Sidebar collapse state (persisted)
+const isCollapsed = ref(window?.localStorage?.getItem(LocalStorageKeys.SidebarCollapsed) === 'true')
+
+const applySidebarClass = (collapsed: boolean) => {
+  if (collapsed) {
+    document?.documentElement?.classList?.add('sidebar-collapsed')
+  } else {
+    document?.documentElement?.classList?.remove('sidebar-collapsed')
+  }
+}
+
+// Apply on init
+applySidebarClass(isCollapsed.value)
+
+const toggleCollapse = () => {
+  isCollapsed.value = !isCollapsed.value
+  window?.localStorage?.setItem(LocalStorageKeys.SidebarCollapsed, String(isCollapsed.value))
+  applySidebarClass(isCollapsed.value)
+}
 
 // TODO: need to check why project is empty on first load
 const isProjectLoading = computed(() => !activeProject.value)
@@ -113,13 +133,17 @@ const generateRadialGradient = (input: string) =>
 </script>
 
 <template>
-  <aside class="layout-sidebar">
+  <aside
+    class="layout-sidebar"
+    :class="{ 'layout-sidebar--collapsed': isCollapsed }"
+  >
     <nav class="layout-sidebar__nav">
       <RouterLink
         :to="{ name: RouteName.Home }"
         title="Dashboard"
+        aria-label="Dashboard"
         class="layout-sidebar__link layout-sidebar__link--logo"
-        tabindex="1"
+        tabindex="0"
       >
         <IconSvg
           class="layout-sidebar__link-icon"
@@ -134,7 +158,10 @@ const generateRadialGradient = (input: string) =>
           <button
             ref="projectDd"
             class="layout-sidebar__dropdown"
-            tabindex="1"
+            tabindex="0"
+            aria-haspopup="true"
+            :aria-expanded="isVisibleProjects"
+            aria-label="Switch project"
             @click="toggleProjects"
           >
             <span
@@ -156,12 +183,14 @@ const generateRadialGradient = (input: string) =>
         <RouterLink
           :to="{ name: RouteName.Home }"
           title="Events"
+          aria-label="All events"
           class="layout-sidebar__link"
         >
           <IconSvg
             class="layout-sidebar__link-icon"
             name="events"
           />
+          <span class="layout-sidebar__link-label">Events</span>
         </RouterLink>
       </template>
 
@@ -173,30 +202,36 @@ const generateRadialGradient = (input: string) =>
           :to="{ name: RouteName.EventList, params: { type } }"
           :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
           :title="PAGES_SETTINGS[type].sidebarTitle"
+          :aria-label="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"
         >
-          <BadgeNumber
-            :number="getItemsCount(type)"
-            class="layout-sidebar__link-badge"
-            :is-visible="isVisibleEventCounts"
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            :name="PAGES_SETTINGS[type].iconName"
+          />
+          <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
+          <span
+            v-if="isVisibleEventCounts && getItemsCount(type) > 0"
+            class="layout-sidebar__count"
           >
-            <IconSvg
-              class="layout-sidebar__link-icon"
-              :name="PAGES_SETTINGS[type].iconName"
-            />
-          </BadgeNumber>
+            {{ getItemsCount(type) > 99 ? '99+' : getItemsCount(type) }}
+          </span>
         </RouterLink>
       </template>
+
+      <hr class="layout-sidebar__sep">
 
       <RouterLink
         :to="{ name: RouteName.Settings }"
         title="Settings"
+        aria-label="Settings"
         class="layout-sidebar__link"
       >
         <IconSvg
           class="layout-sidebar__link-icon"
           name="settings"
         />
+        <span class="layout-sidebar__link-label">Settings</span>
       </RouterLink>
     </nav>
 
@@ -204,6 +239,8 @@ const generateRadialGradient = (input: string) =>
     <div
       v-if="isVisibleProjects"
       ref="projectMenu"
+      role="menu"
+      aria-label="Project list"
       class="layout-sidebar__dropdown-items"
       :style="projectDdStyles"
     >
@@ -211,11 +248,13 @@ const generateRadialGradient = (input: string) =>
         v-for="project in availableProjects"
         :key="project.key"
         class="layout-sidebar__dropdown-item"
+        role="menuitem"
         :title="project.name"
+        :aria-current="activeProject.key === project.key ? 'true' : undefined"
         :class="{
           'layout-sidebar__dropdown-item--active': activeProject.key === project.key
         }"
-        tabindex="1"
+        tabindex="0"
         @click="setProject(project.key)"
       >
         <span
@@ -234,15 +273,17 @@ const generateRadialGradient = (input: string) =>
       </button>
     </div>
 
-    <div>
+    <div class="layout-sidebar__bottom">
       <div
         v-if="isAuthEnabled"
         ref="userDd"
-        class="layout-sidebar__dropdown"
+        class="layout-sidebar__user"
       >
         <div
           v-if="isVisibleProfile"
           ref="userMenu"
+          role="menu"
+          aria-label="User menu"
           class="layout-sidebar__dropdown-items"
           :style="userDdStyles"
         >
@@ -267,7 +308,14 @@ const generateRadialGradient = (input: string) =>
         <div
           v-if="avatar"
           class="layout-sidebar__dropdown-avatar"
+          role="button"
+          tabindex="0"
+          aria-haspopup="true"
+          :aria-expanded="isVisibleProfile"
+          aria-label="User profile menu"
           @click="toggleProfileDropdown"
+          @keydown.enter="toggleProfileDropdown"
+          @keydown.space.prevent="toggleProfileDropdown"
         >
           <img
             :src="avatar"
@@ -276,126 +324,179 @@ const generateRadialGradient = (input: string) =>
         </div>
       </div>
 
-      <div class="layout-sidebar__connection">
+      <!-- Connection -->
+      <div
+        class="layout-sidebar__connection"
+        :title="connectionText"
+      >
         <IconSvg
           class="layout-sidebar__connection-icon"
           :name="connectionStatus"
-          :title="connectionText"
         />
+        <span class="layout-sidebar__connection-label">
+          {{ isConnectedWS ? 'Connected' : 'Disconnected' }}
+        </span>
       </div>
 
+      <!-- Version -->
       <div class="layout-sidebar__versions">
-        <div
+        <span
           v-if="serverVersion"
-          class="layout-sidebar__nav-version"
-          :title="`Api version: ${serverVersion}`"
-        >
-          {{ serverVersion }}
-        </div>
-
-        <div
+          class="layout-sidebar__version"
+          :title="`Api: ${serverVersion}`"
+        >{{ serverVersion }}</span>
+        <span
+          v-if="serverVersion && clientVersion"
+          class="layout-sidebar__version-sep"
+        >/</span>
+        <span
           v-if="clientVersion"
-          class="layout-sidebar__nav-version"
-          :title="`Client version: ${clientVersion}`"
-        >
-          {{ clientVersion }}
-        </div>
+          class="layout-sidebar__version"
+          :title="`Client: ${clientVersion}`"
+        >{{ clientVersion }}</span>
       </div>
+
+      <!-- Collapse toggle -->
+      <button
+        class="layout-sidebar__collapse-btn"
+        :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        @click="toggleCollapse"
+      >
+        <IconSvg
+          class="layout-sidebar__collapse-icon"
+          :class="{ 'layout-sidebar__collapse-icon--rotated': isCollapsed }"
+          name="collapsed"
+        />
+        <span class="layout-sidebar__collapse-label"> Collapse </span>
+      </button>
     </div>
   </aside>
 </template>
 
 <style lang="scss" scoped>
 .layout-sidebar {
-  @apply bg-gray-200 dark:bg-gray-800;
+  @apply bg-gray-100 dark:bg-gray-900;
   @apply flex flex-col justify-between h-full;
+  @apply border-r border-gray-200 dark:border-gray-800;
 }
 
 .layout-sidebar__nav {
-  @apply flex-col flex overflow-auto md:gap-1 lg:gap-1.5;
-  @apply md:p-1 lg:p-1.5;
-  @apply divide-y divide-gray-300 dark:divide-gray-600 md:divide-none;
-  @apply border-b border-gray-300 dark:border-gray-600 md:border-none;
-  @apply overflow-hidden;
+  @apply flex-col flex overflow-auto overflow-hidden;
+  @apply py-1;
 }
 
 .layout-sidebar__sep {
-  @apply bg-gray-300 dark:bg-gray-500 h-0.5;
+  height: 1px;
+  border: none;
+  margin: 4px 0;
+  background-color: rgba(128, 128, 128, 0.08);
 }
 
+/* ---- Links ---- */
 .layout-sidebar__link {
-  @apply relative cursor-pointer flex;
+  @apply relative cursor-pointer;
   @apply flex items-center justify-center w-full;
-  @apply md:rounded-lg;
-  @apply px-1.5 py-2 md:px-2 md:py-3;
-  @apply text-blue-500 hover:text-white hover:bg-gray-700 hover:opacity-100;
+  @apply px-3 py-2;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply hover:text-gray-800 dark:hover:text-gray-200;
+  @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
+  @apply transition-colors duration-100;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:justify-start xl:px-4;
+  }
 
   .layout-sidebar__projects & {
-    @apply p-1.5 md:p-2;
+    @apply p-2;
+  }
+}
+
+.layout-sidebar__link-label {
+  @apply hidden text-[13px] font-medium truncate ml-3 flex-1;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:inline;
+  }
+}
+
+.layout-sidebar__count {
+  @apply hidden text-[10px] font-mono tabular-nums leading-none;
+  @apply min-w-[20px] text-center px-1.5 py-0.5 rounded-full;
+  @apply bg-gray-200/80 dark:bg-white/5;
+  @apply text-gray-400 dark:text-gray-500;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:inline-block;
   }
 }
 
 .layout-sidebar__link--active {
-  @apply bg-blue-700 text-blue-200;
+  @apply text-gray-900 dark:text-gray-50;
+  @apply bg-gray-200/80 dark:bg-white/[0.08];
+
+  .layout-sidebar__count {
+    @apply bg-gray-300/80 dark:bg-white/10;
+    @apply text-gray-600 dark:text-gray-300;
+  }
 }
 
 .layout-sidebar__link--logo {
-  @apply text-blue-600 bg-transparent hover:text-blue-800  hover:bg-transparent;
-  @apply dark:text-blue-500 dark:bg-transparent hover:dark:text-blue-200 hover:dark:bg-transparent;
+  @apply text-gray-900 dark:text-white bg-transparent;
+  @apply hover:bg-transparent;
+  @apply py-3;
+
+  .layout-sidebar__link-icon {
+    @apply w-7 h-7;
+  }
 }
 
 .layout-sidebar__link-icon {
-  @apply flex items-center justify-center;
+  @apply flex items-center justify-center flex-shrink-0;
   @apply fill-current;
-  @apply mx-auto;
-  @apply h-5 md:h-6;
+  @apply w-5 h-5;
 
   & > svg {
     @apply h-auto;
   }
 }
 
+/* ---- Projects ---- */
 .layout-sidebar__projects {
   @apply flex items-center justify-center flex-col;
 }
 
 .layout-sidebar__project {
   @apply text-2xs font-semibold uppercase;
-  @apply h-6 md:h-8 w-7 md:w-8 rounded-lg;
+  @apply h-7 w-7 rounded;
   @apply flex items-center justify-center relative flex-shrink-0;
-  @apply text-white dark:text-black self-start;
+  @apply text-white dark:text-black;
 }
 
-.layout-sidebar__dropdown-item-text {
-  @apply flex flex-col;
-}
-
-.layout-sidebar__dropdown-item-text-key {
-  @apply text-2xs uppercase font-normal -mt-0.5;
-  @apply text-gray-600 dark:text-gray-400;
-}
-
+/* ---- Dropdown ---- */
 .layout-sidebar__dropdown {
-  @apply h-9 sm:h-10 md:h-14;
-  @apply p-3;
+  @apply h-10;
+  @apply p-2;
   @apply flex items-center justify-center;
   @apply relative cursor-pointer;
 }
 
 .layout-sidebar__dropdown-items {
-  @apply divide-y divide-gray-200 dark:divide-gray-600;
+  @apply divide-y divide-gray-100 dark:divide-gray-700;
   @apply rounded-lg shadow-xl;
   @apply min-w-60;
-  @apply border border-gray-300 dark:border-gray-600;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-gray-800;
 }
 
 .layout-sidebar__dropdown-item {
-  @apply px-4 py-3;
+  @apply px-4 py-2.5;
   @apply text-sm;
   @apply cursor-pointer;
   @apply bg-white dark:bg-gray-800;
-  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply flex gap-4 items-center text-left w-full;
+  @apply hover:bg-gray-50 dark:hover:bg-gray-700;
+  @apply flex gap-3 items-center text-left w-full;
+  @apply transition-colors;
 
   &:first-child {
     @apply rounded-t-lg;
@@ -407,12 +508,21 @@ const generateRadialGradient = (input: string) =>
 }
 
 .layout-sidebar__dropdown-item--active {
-  @apply font-semibold;
-  @apply bg-gray-100 dark:bg-gray-700;
+  @apply font-medium;
+  @apply bg-gray-50 dark:bg-gray-700;
 }
 
 .layout-sidebar__dropdown-item-icon {
   @apply h-4 w-4;
+}
+
+.layout-sidebar__dropdown-item-text {
+  @apply flex flex-col;
+}
+
+.layout-sidebar__dropdown-item-text-key {
+  @apply text-2xs uppercase font-normal -mt-0.5;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .layout-sidebar__dropdown-avatar img {
@@ -423,23 +533,84 @@ const generateRadialGradient = (input: string) =>
   @apply cursor-pointer;
 }
 
-.layout-sidebar__connection {
-  @apply h-9 sm:h-10 md:h-14;
-  @apply border-t border-gray-300 dark:border-gray-700;
+/* ---- Bottom section ---- */
+.layout-sidebar__bottom {
+  @apply px-3 py-2;
+  border-top: 1px solid rgba(128, 128, 128, 0.08);
+}
+
+.layout-sidebar__user {
   @apply flex items-center justify-center;
+  @apply p-1 mb-2;
+  @apply relative cursor-pointer;
+}
+
+/* Connection */
+.layout-sidebar__connection {
+  @apply flex items-center justify-center gap-2;
+  @apply py-2 px-1;
 }
 
 .layout-sidebar__connection-icon {
-  @apply fill-current;
-  @apply m-auto;
-  @apply h-4 md:h-5 lg:h-6;
+  @apply fill-current flex-shrink-0;
+  @apply h-4 w-4;
 }
 
+.layout-sidebar__connection-label {
+  @apply hidden text-xs text-gray-500 dark:text-gray-500;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:inline;
+  }
+}
+
+/* Versions */
 .layout-sidebar__versions {
   @apply whitespace-nowrap text-center leading-none;
-  @apply hidden lg:block;
-  @apply text-2xs dark:text-gray-600 text-gray-400;
-  @apply border-t border-gray-300 dark:border-gray-700;
-  @apply p-2;
+  @apply hidden lg:flex items-center justify-center;
+  @apply text-2xs text-gray-400 dark:text-gray-600;
+  @apply gap-1.5 py-1.5 px-1;
+  border-top: 1px solid rgba(128, 128, 128, 0.08);
+}
+
+.layout-sidebar__version {
+  @apply font-mono;
+}
+
+.layout-sidebar__version-sep {
+  @apply text-gray-300 dark:text-gray-700;
+}
+
+/* ---- Collapse toggle (Figma/JetBrains style) ---- */
+.layout-sidebar__collapse-btn {
+  @apply hidden xl:flex items-center justify-center;
+  @apply w-full py-2;
+  @apply text-gray-400 dark:text-gray-600;
+  @apply hover:text-gray-600 dark:hover:text-gray-400;
+  @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
+  @apply transition-colors duration-100 cursor-pointer;
+  border-top: 1px solid rgba(128, 128, 128, 0.08);
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:justify-start xl:px-4;
+  }
+}
+
+.layout-sidebar__collapse-label {
+  @apply hidden text-xs ml-3 text-gray-400 dark:text-gray-600;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply xl:inline;
+  }
+}
+
+.layout-sidebar__collapse-icon {
+  @apply w-4 h-4 flex-shrink-0;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+}
+
+.layout-sidebar__collapse-icon--rotated {
+  transform: rotate(90deg);
 }
 </style>

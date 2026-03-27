@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { TableBase, TableBaseRow, CodeSnippet } from '@/shared/ui'
+import { CodeSnippet } from '@/shared/ui'
 import type { RayContentSQL } from '../../types'
 
 type Props = {
@@ -23,19 +23,38 @@ const formattedSql = computed(() =>
       language="sql"
       :code="formattedSql"
     />
-    <TableBase>
-      <TableBaseRow title="Connection name">
-        {{ content.connection_name }}
-      </TableBaseRow>
-      <TableBaseRow title="Time">
-        {{ content.time }}ms
-      </TableBaseRow>
-    </TableBase>
+
+    <div class="ray-query__meta">
+      <div class="ray-query__item">
+        <span class="ray-query__label">Connection</span>
+        <span class="ray-query__value">{{ content.connection_name }}</span>
+      </div>
+      <div class="ray-query__item">
+        <span class="ray-query__label">Time</span>
+        <span class="ray-query__value">{{ content.time }}ms</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .ray-query {
-  width: 100%;
+  @apply flex flex-col gap-1.5;
+}
+
+.ray-query__meta {
+  @apply flex gap-4 px-1;
+}
+
+.ray-query__item {
+  @apply flex items-center gap-1.5 text-xs;
+}
+
+.ray-query__label {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+.ray-query__value {
+  @apply font-mono text-gray-600 dark:text-gray-300;
 }
 </style>

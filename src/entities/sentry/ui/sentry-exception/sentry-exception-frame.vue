@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import { IconSvg } from '@/shared/ui'
 import type { SentryFrame } from '../../types'
 
@@ -10,6 +11,9 @@ type Props = {
 
 const props = defineProps<Props>()
 const isFrameOpen = ref(props.isOpen)
+const { buildLink } = useIdeLink()
+
+const ideLink = computed(() => buildLink(props.frame.filename, props.frame.lineno))
 
 const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
@@ -24,71 +28,75 @@ const toggleOpen = () => {
 
 <template>
   <div
-    class="sentry-exception-frame"
-    :class="{ 'sentry-exception-frame--empty': !hasBody }"
+    class="frame"
+    :class="{ 'frame--empty': !hasBody }"
   >
     <div
-      class="sentry-exception-frame__head"
+      class="frame__head"
       @click="toggleOpen"
     >
-      <div class="sentry-exception-frame__head-title">
-        {{ frame.filename }}
-
-        <span v-if="frame.function"> in {{ frame.function }} at line </span>
-
-        {{ frame.lineno }}
+      <div class="frame__title">
+        <a
+          v-if="ideLink"
+          :href="ideLink"
+          class="frame__fn frame__fn--link"
+          @click.stop
+        >{{
+          frame.filename
+        }}</a>
+        <span
+          v-else
+          class="frame__fn"
+        >{{ frame.filename }}</span>
+        <span
+          v-if="frame.function"
+          class="frame__meta"
+        >
+          in {{ frame.function }} at line {{ frame.lineno }}
+        </span>
       </div>
 
       <IconSvg
-        v-if="frame.pre_context"
-        class="sentry-exception-frame__head-title-dd"
-        :class="{
-          'sentry-exception-frame__head-title-dd--visible': isFrameOpen
-        }"
-        name="dd"
+        v-if="hasBody"
+        class="frame__chevron"
+        :class="{ 'frame__chevron--open': isFrameOpen }"
+        name="collapsed"
       />
     </div>
 
     <div
       v-if="isFrameOpen && hasBody"
-      class="sentry-exception-frame__body"
+      class="frame__body"
     >
       <template v-if="frame.pre_context">
         <div
           v-for="(line, i) in frame.pre_context"
-          :key="line"
-          class="sentry-exception-frame__body-line"
+          :key="i"
+          class="frame__line"
         >
-          <div class="sentry-exception-frame__body-line-position">
-            {{ (frame?.lineno ?? 0) - (frame.pre_context.length - i) }}.
-          </div>
-
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <span class="frame__line-num">{{
+            (frame?.lineno ?? 0) - (frame.pre_context.length - i)
+          }}</span>
+          <pre class="frame__line-code">{{ line }}</pre>
         </div>
       </template>
 
       <div
         v-if="frame.context_line"
-        class="sentry-exception-frame__body-line sentry-exception-frame__body-line--selection"
+        class="frame__line frame__line--active"
       >
-        <div class="sentry-exception-frame__body-line-position">
-          {{ frame.lineno }}.
-        </div>
-
-        <pre>{{ frame.context_line }}</pre>
+        <span class="frame__line-num">{{ frame.lineno }}</span>
+        <pre class="frame__line-code">{{ frame.context_line }}</pre>
       </div>
 
       <template v-if="frame.post_context">
         <div
           v-for="(line, i) in frame.post_context"
-          :key="line"
-          class="sentry-exception-frame__body-line"
+          :key="i"
+          class="frame__line"
         >
-          <div class="sentry-exception-frame__body-line-position">
-            {{ (frame?.lineno ?? 0) + i + 1 }}.
-          </div>
-
-          <pre class="sentry-exception-frame__body-line-content">{{ line }}</pre>
+          <span class="frame__line-num">{{ (frame?.lineno ?? 0) + i + 1 }}</span>
+          <pre class="frame__line-code">{{ line }}</pre>
         </div>
       </template>
     </div>
@@ -96,60 +104,67 @@ const toggleOpen = () => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
+.frame {
+  @apply text-xs;
+  @apply border-b border-gray-200 dark:border-gray-700;
 
-.sentry-exception-frame {
-  @apply text-xs border-b border-purple-200 dark:border-gray-600;
+  &:last-child {
+    @apply border-b-0;
+  }
 }
 
-.sentry-exception-frame__head {
-  @apply bg-purple-50 dark:bg-gray-800 py-2 px-3 flex space-x-2 justify-between items-start cursor-pointer;
+.frame__head {
+  @apply py-2 px-3 flex justify-between items-start gap-2 cursor-pointer;
+  @apply bg-gray-50 dark:bg-gray-800/50;
+  @apply hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
 
-  .sentry-exception-frame--empty & {
+  .frame--empty & {
     @apply cursor-default;
   }
 }
 
-.sentry-exception-frame__head-title {
-  @include mixins.text-muted;
-  @apply break-all font-semibold;
+.frame__title {
+  @apply flex flex-col gap-0.5;
 }
 
-.sentry-exception-frame__head-title-info {
-  @apply text-gray-400;
+.frame__fn {
+  @apply font-semibold text-gray-800 dark:text-gray-200 break-all;
 }
 
-.sentry-exception-frame__head-title-dd {
-  @apply w-5 h-4 flex justify-center shadow py-1 rounded transform rotate-180;
+.frame__fn--link {
+  @apply text-blue-600 dark:text-blue-400 hover:underline cursor-pointer;
 }
 
-.sentry-exception-frame__head-title-dd--visible {
-  @apply rotate-0;
+.frame__meta {
+  @apply text-gray-400 dark:text-gray-500 text-2xs;
 }
 
-.sentry-exception-frame__body {
-  @include mixins.code-example();
-  @apply overflow-x-scroll;
+.frame__chevron {
+  @apply w-4 h-4 flex-shrink-0 text-gray-400 dark:text-gray-500;
+  transition: transform 0.15s ease;
 }
 
-.sentry-exception-frame__body-line {
-  @apply flex;
+.frame__chevron--open {
+  transform: rotate(180deg);
 }
 
-.sentry-exception-frame__body-line--selection {
-  @apply bg-pink-800 text-white;
+.frame__body {
+  @apply bg-gray-900 p-2 overflow-x-auto font-mono;
 }
 
-.sentry-exception-frame__body-line-position {
-  @include mixins.text-muted;
-  @apply w-12 select-none;
-
-  .sentry-exception-frame__body-line--selection & {
-    @apply text-white;
-  }
+.frame__line {
+  @apply flex text-gray-400;
 }
 
-.sentry-exception-frame__body-line-content {
-  @apply text-gray-100;
+.frame__line--active {
+  @apply bg-blue-900/50 text-gray-100;
+}
+
+.frame__line-num {
+  @apply w-10 text-right pr-3 select-none text-gray-600 flex-shrink-0;
+}
+
+.frame__line-code {
+  @apply flex-1;
 }
 </style>

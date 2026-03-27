@@ -1,37 +1,62 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { THEME_MODES, useSettingsStore } from '../../stores'
+import { IconSvg } from '../icon-svg'
+
+const settingsStore = useSettingsStore()
+const { themeType } = storeToRefs(settingsStore)
+const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
+</script>
 
 <template>
   <header class="header">
-    <div class="header__title">
-      <slot />&nbsp;
-    </div>
+    <nav class="header__nav">
+      <slot />
+    </nav>
 
-    <div class="header__controls">
+    <div class="header__actions">
       <slot name="controls" />
+
+      <button
+        class="header__action-btn"
+        :title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        :aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        @click="settingsStore.changeTheme()"
+      >
+        <IconSvg
+          :name="isDarkMode ? 'sun' : 'moon'"
+          class="header__action-icon"
+        />
+      </button>
     </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
-@use '../../../assets/mixins' as mixins;
-
 .header {
-  @apply flex justify-between h-full;
+  @apply flex items-center justify-between h-full px-1;
 }
 
-.header__title {
-  @apply hidden sm:flex items-center flex-row;
-  @apply text-2xs sm:text-sm md:text-base lg:text-lg;
+.header__nav {
+  @apply hidden sm:flex items-center;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
-.header__controls {
-  @apply flex items-center flex-row;
-  @apply text-right;
-  @apply gap-2 sm:gap-3;
+.header__actions {
+  @apply flex items-center gap-1.5;
 }
 
-.header__btn-clear {
-  @include mixins.button;
-  @apply bg-red-800 hover:bg-red-700;
+.header__action-btn {
+  @apply h-7 w-7 flex items-center justify-center rounded;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-700;
+  @apply hover:text-gray-700 dark:hover:text-gray-200;
+  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
+  @apply transition-colors cursor-pointer;
+}
+
+.header__action-icon {
+  @apply w-4 h-4;
 }
 </style>
