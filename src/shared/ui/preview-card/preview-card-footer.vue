@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { withDefaults, defineProps, computed } from 'vue'
 import { useSettingsStore } from '../../stores/settings'
+import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
 
 // TODO: Move this to a shared file
@@ -87,7 +88,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
             class="pc-footer__tag pc-footer__tag--link"
           >
             <span class="pc-footer__tag-key">{{ key }}</span>
-            <span class="pc-footer__tag-value">{{ value }}</span>
+            <span class="pc-footer__tag-value"><HighlightText :text="String(value)" /></span>
           </a>
 
           <span
@@ -95,7 +96,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
             class="pc-footer__tag"
           >
             <span class="pc-footer__tag-key">{{ key }}</span>
-            <span class="pc-footer__tag-value">{{ value }}</span>
+            <span class="pc-footer__tag-value"><HighlightText :text="String(value)" /></span>
           </span>
         </template>
       </template>
@@ -109,7 +110,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
         name="host"
         class="pc-footer__host-icon"
       />
-      <span class="pc-footer__host-name">{{ serverName }}</span>
+      <span class="pc-footer__host-name"><HighlightText :text="serverName" /></span>
     </div>
   </div>
 </template>

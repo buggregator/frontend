@@ -24,7 +24,8 @@ export interface ServerEvent<T> {
   type: EventType | unknown,
   payload: T,
   project: string | null,
-  timestamp: number // unavailable for some ray dump events
+  timestamp: number, // unavailable for some ray dump events
+  searchable_text?: string,
 }
 
 export interface NormalizedEvent<T> {

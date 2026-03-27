@@ -1,10 +1,14 @@
 import { storeToRefs } from "pinia";
 import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
+import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
 
 let isEventsEmitted = false
+let eventBuffer: ServerEvent<unknown>[] = []
+let flushTimer: ReturnType<typeof setTimeout> | null = null
+const FLUSH_INTERVAL = 500
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
@@ -67,7 +71,17 @@ export const useApiTransport = () => {
         const event = ctx?.data?.data || null
 
         if (event && event.project === project.value) {
-          eventsStore.addList([event]);
+          eventBuffer.push(event);
+
+          if (!flushTimer) {
+            flushTimer = setTimeout(() => {
+              if (eventBuffer.length > 0) {
+                eventsStore.addList(eventBuffer);
+                eventBuffer = [];
+              }
+              flushTimer = null;
+            }, FLUSH_INTERVAL);
+          }
         }
       }
     });

@@ -112,8 +112,8 @@ pre.sf-dump .sf-dump-toolbar {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  padding: 3px 6px;
-  margin-bottom: 4px;
+  padding: 0 6px;
+  margin-bottom: 0;
   background: #141720;
   border: 1px solid #2a2f3a;
   border-radius: 5px;
@@ -121,6 +121,22 @@ pre.sf-dump .sf-dump-toolbar {
   position: sticky;
   top: 0;
   z-index: 20;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.15s ease,
+    padding 0.2s ease,
+    margin-bottom 0.2s ease;
+}
+
+pre.sf-dump:hover .sf-dump-toolbar,
+pre.sf-dump:focus-within .sf-dump-toolbar {
+  max-height: 40px;
+  padding: 3px 6px;
+  margin-bottom: 8px;
+  opacity: 1;
 }
 
 pre.sf-dump .sf-dump-toolbar-group {

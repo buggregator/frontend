@@ -2,6 +2,7 @@
 import highlightPlugin from '@highlightjs/vue-plugin'
 import isString from 'lodash.isstring'
 import { ref, computed } from 'vue'
+import { logger } from '../../lib/logger'
 import { IconSvg } from '../icon-svg'
 
 const CodeHighlight = highlightPlugin.component
@@ -33,7 +34,7 @@ const copyCode = (): void => {
       }, 1500)
     })
     .catch((e) => {
-      console.error(e)
+      logger.ui.error('Failed to copy code to clipboard', e)
     })
 }
 </script>
@@ -65,7 +66,7 @@ const copyCode = (): void => {
 <style lang="scss" scoped>
 .code-snippet {
   @apply relative rounded overflow-hidden;
-  @apply bg-gray-100 dark:bg-gray-900;
+  @apply bg-gray-50 dark:bg-gray-900;
 
   :deep(pre) {
     @apply m-0;
@@ -73,6 +74,7 @@ const copyCode = (): void => {
 
   :deep(code.hljs) {
     @apply p-4 text-xs leading-relaxed;
+    background: inherit !important;
   }
 }
 
