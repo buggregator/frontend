@@ -31,6 +31,49 @@ pre.sf-dump a:hover {
   text-decoration: underline;
 }
 
+/* Toggle icons in tree */
+pre.sf-dump .sf-dump-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  width: 12px;
+  height: 12px;
+  margin-right: 1px;
+  color: #4b5563;
+  transition: color 0.12s;
+}
+
+pre.sf-dump .sf-dump-toggle-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+pre.sf-dump a.sf-dump-toggle:hover .sf-dump-toggle-icon {
+  color: #93c5fd;
+}
+
+/* String toggle SVGs */
+pre.sf-dump .sf-dump-str-toggle svg {
+  display: inline;
+  vertical-align: middle;
+  width: 10px;
+  height: 10px;
+  color: #6b7280;
+}
+
+pre.sf-dump .sf-dump-str-toggle:hover svg {
+  color: #93c5fd;
+}
+
+/* Toolbar SVGs */
+pre.sf-dump .sf-dump-toolbar-btn svg,
+pre.sf-dump .sf-dump-search-nav svg,
+pre.sf-dump .sf-dump-toolbar-info svg {
+  width: 13px;
+  height: 13px;
+  pointer-events: none;
+}
+
 pre.sf-dump img {
   max-width: 50em;
   max-height: 50em;
@@ -58,72 +101,210 @@ pre.sf-dump code {
   background: none;
 }
 
-/* Search */
+/* Hidden utility */
 pre.sf-dump .sf-dump-search-hidden {
   display: none !important;
 }
 
-pre.sf-dump .sf-dump-search-wrapper {
-  font-size: 0;
-  white-space: nowrap;
-  margin-bottom: 8px;
+/* === TOOLBAR === */
+pre.sf-dump .sf-dump-toolbar {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px 6px;
+  margin-bottom: 4px;
+  background: #141720;
+  border: 1px solid #2a2f3a;
+  border-radius: 5px;
+  white-space: nowrap;
   position: sticky;
-  top: 5px;
-  z-index: 5;
+  top: 0;
+  z-index: 20;
 }
 
-pre.sf-dump .sf-dump-search-wrapper > * {
-  vertical-align: top;
-  box-sizing: border-box;
-  height: 24px;
-  font-weight: normal;
-  border-radius: 0;
+pre.sf-dump .sf-dump-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+pre.sf-dump .sf-dump-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  font-size: 9px;
+  font-family: inherit;
+  font-weight: 500;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+pre.sf-dump .sf-dump-toolbar-btn:hover {
+  color: #e5e7eb;
+  background: #262b3a;
+  border-color: #3b4252;
+  text-decoration: none;
+}
+
+pre.sf-dump .sf-dump-toolbar-btn--active {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.12);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+/* Depth buttons */
+pre.sf-dump .sf-dump-toolbar-depth {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  margin-left: 2px;
+  padding-left: 6px;
+  border-left: 1px solid #2a2f3a;
+}
+
+pre.sf-dump .sf-dump-toolbar-depth-label {
+  font-size: 9px;
+  color: #4b5563;
+  margin-right: 1px;
+}
+
+pre.sf-dump .sf-dump-toolbar-btn--depth {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Info button with tooltip */
+pre.sf-dump .sf-dump-toolbar-info {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  color: #4b5563;
+  cursor: default;
+  margin-left: 2px;
+  padding-left: 6px;
+  border-left: 1px solid #2a2f3a;
+}
+
+pre.sf-dump .sf-dump-toolbar-info:hover {
+  color: #9ca3af;
+}
+
+pre.sf-dump .sf-dump-info-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: #1a1d26;
+  border: 1px solid #2a2f3a;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  z-index: 30;
+}
+
+pre.sf-dump .sf-dump-toolbar-info:hover .sf-dump-info-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+pre.sf-dump .sf-dump-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+}
+
+pre.sf-dump .sf-dump-info-key {
+  color: #6b7280;
+}
+
+pre.sf-dump .sf-dump-info-val {
+  color: #d1d5db;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Search in toolbar */
+pre.sf-dump .sf-dump-toolbar-search {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-input {
+  width: 110px;
+  min-width: 60px;
+  height: 22px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: inherit;
+  color: #e5e7eb;
   background: #1a1d24;
-  color: #8b919a;
   border: 1px solid #2a2f38;
-}
-
-pre.sf-dump .sf-dump-search-wrapper > input.sf-dump-search-input {
-  padding: 4px 8px;
-  height: 24px;
-  font-size: 11px;
-  border-right: none;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  color: #e8eaed;
-  min-width: 15px;
-  width: 100%;
-}
-
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next,
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous {
-  background: #22262e;
+  border-radius: 3px 0 0 3px;
   outline: none;
-  border-left: none;
-  font-size: 0;
-  line-height: 0;
+  transition:
+    border-color 0.15s,
+    width 0.2s;
 }
 
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-input:focus {
+  border-color: #3b82f6;
+  width: 180px;
 }
 
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next > svg,
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous > svg {
-  pointer-events: none;
-  width: 12px;
-  height: 12px;
-}
-
-pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-count {
-  display: inline-block;
+pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-count {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
   padding: 0 5px;
-  margin: 0;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  color: #4b5563;
+  background: #1a1d24;
+  border-top: 1px solid #2a2f38;
+  border-bottom: 1px solid #2a2f38;
+  white-space: nowrap;
+}
+
+pre.sf-dump .sf-dump-search-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 8px;
+  color: #4b5563;
+  background: #1e2230;
+  border: 1px solid #2a2f38;
   border-left: none;
-  line-height: 24px;
-  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+pre.sf-dump .sf-dump-search-nav:last-child {
+  border-radius: 0 3px 3px 0;
+}
+
+pre.sf-dump .sf-dump-search-nav:hover {
+  color: #e5e7eb;
+  background: #262b3a;
 }
 
 /* Highlight */

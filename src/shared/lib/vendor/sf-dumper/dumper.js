@@ -1,4 +1,35 @@
 export function SfdumpWrap(doc) {
+  // SVG icons (16x16 viewBox, stroke-based, 1.5px stroke)
+  var svgAttrs =
+    'xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
+  var icons = {
+    chevronRight: '<svg ' + svgAttrs + '><polyline points="9 18 15 12 9 6"/></svg>',
+    chevronDown: '<svg ' + svgAttrs + '><polyline points="6 9 12 15 18 9"/></svg>',
+    expandAll:
+      '<svg ' +
+      svgAttrs +
+      '><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>',
+    collapseAll:
+      '<svg ' +
+      svgAttrs +
+      '><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>',
+    copy:
+      '<svg ' +
+      svgAttrs +
+      '><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    check: '<svg ' + svgAttrs + '><polyline points="20 6 9 17 4 12"/></svg>',
+    info:
+      '<svg ' +
+      svgAttrs +
+      '><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    arrowUp: '<svg ' + svgAttrs + '><polyline points="18 15 12 9 6 15"/></svg>',
+    arrowDown: '<svg ' + svgAttrs + '><polyline points="6 9 12 15 18 9"/></svg>',
+    strExpand:
+      '<svg ' + svgAttrs + ' width="10" height="10"><polyline points="9 18 15 12 9 6"/></svg>',
+    strCollapse:
+      '<svg ' + svgAttrs + ' width="10" height="10"><polyline points="15 18 9 12 15 6"/></svg>'
+  }
+
   let refStyle = doc.createElement('style'),
     rxEsc = /([.*+?^${}()|\[\]\/\\])/g,
     idRx = /\bsf-dump-\d+-ref[012]\w+\b/,
@@ -29,10 +60,10 @@ export function SfdumpWrap(doc) {
       arrow,
       newClass
     if (/\bsf-dump-compact\b/.test(oldClass)) {
-      arrow = '&#9660;'
+      arrow = icons.chevronDown
       newClass = 'sf-dump-expanded'
     } else if (/\bsf-dump-expanded\b/.test(oldClass)) {
-      arrow = '&#9654;'
+      arrow = icons.chevronRight
       newClass = 'sf-dump-compact'
     } else {
       return false
@@ -92,6 +123,22 @@ export function SfdumpWrap(doc) {
     return false
   }
 
+  function expandToDepth(root, maxDepth) {
+    var allSamp = root.querySelectorAll('samp[data-depth]')
+    for (var i = 0; i < allSamp.length; i++) {
+      var samp = allSamp[i]
+      var depth = parseInt(samp.getAttribute('data-depth'), 10)
+      var link = samp.previousSibling
+      if (link && link.tagName === 'A') {
+        if (depth <= maxDepth) {
+          expand(link, false)
+        } else {
+          collapse(link, false)
+        }
+      }
+    }
+  }
+
   function reveal(node) {
     var previous,
       parents = []
@@ -134,6 +181,32 @@ export function SfdumpWrap(doc) {
     })
   }
 
+  // --- Statistics helpers ---
+  function collectStats(root) {
+    var props = root.querySelectorAll('.sf-dump-public, .sf-dump-protected, .sf-dump-private')
+    var keys = root.querySelectorAll('.sf-dump-key')
+    var strs = root.querySelectorAll('.sf-dump-str')
+    var nums = root.querySelectorAll('.sf-dump-num')
+    var consts = root.querySelectorAll('.sf-dump-const')
+    var notes = root.querySelectorAll('.sf-dump-note')
+    var samps = root.querySelectorAll('samp[data-depth]')
+    var maxDepth = 0
+    for (var i = 0; i < samps.length; i++) {
+      var d = parseInt(samps[i].getAttribute('data-depth'), 10)
+      if (d > maxDepth) maxDepth = d
+    }
+    return {
+      properties: props.length,
+      keys: keys.length,
+      strings: strs.length,
+      numbers: nums.length,
+      constants: consts.length,
+      objects: notes.length,
+      maxDepth: maxDepth,
+      totalNodes: props.length + keys.length + strs.length + nums.length + consts.length
+    }
+  }
+
   return function (root, x) {
     root = doc.getElementById(root)
     var indentRx = new RegExp(
@@ -154,6 +227,10 @@ export function SfdumpWrap(doc) {
 
     function a(e, f) {
       addEventListener(root, e, function (e, n) {
+        // Skip events from toolbar/stats/breadcrumb
+        if (e.target.closest && e.target.closest('.sf-dump-toolbar')) {
+          return
+        }
         if ('A' == e.target.tagName) {
           f(e.target, e)
         } else if ('A' == e.target.parentNode.tagName) {
@@ -268,7 +345,9 @@ export function SfdumpWrap(doc) {
         }
         a.title = (a.title ? a.title + '\n[' : '[') + keyHint + '+click] Expand all children'
         a.innerHTML +=
-          elt.className == 'sf-dump-compact' ? '<span>&#9654;</span>' : '<span>&#9660;</span>'
+          elt.className == 'sf-dump-compact'
+            ? '<span class="sf-dump-toggle-icon">' + icons.chevronRight + '</span>'
+            : '<span class="sf-dump-toggle-icon">' + icons.chevronDown + '</span>'
         a.className += ' sf-dump-toggle'
         x = 1
         if ('sf-dump' != elt.parentNode.className) {
@@ -284,9 +363,10 @@ export function SfdumpWrap(doc) {
             elt.appendChild(a)
             s.parentNode.insertBefore(a, s)
             if (/^[@#]/.test(elt.innerHTML)) {
-              elt.innerHTML += ' <span>&#9654;</span>'
+              elt.innerHTML +=
+                ' <span class="sf-dump-toggle-icon">' + icons.chevronRight + '</span>'
             } else {
-              elt.innerHTML = '<span>&#9654;</span>'
+              elt.innerHTML = '<span class="sf-dump-toggle-icon">' + icons.chevronRight + '</span>'
               elt.className = 'sf-dump-ref'
             }
             elt.className += ' sf-dump-toggle'
@@ -299,24 +379,194 @@ export function SfdumpWrap(doc) {
         }
       }
     }
+
+    // === TOOLBAR + SEARCH + STATS ===
     if (doc.evaluate && Array.from && root.children.length > 1) {
       root.setAttribute('tabindex', 0)
+
+      var stats = collectStats(root)
+
+      // --- Build toolbar ---
+      var toolbar = doc.createElement('div')
+      toolbar.className = 'sf-dump-toolbar'
+
+      // Left: action buttons
+      var toolbarLeft = doc.createElement('div')
+      toolbarLeft.className = 'sf-dump-toolbar-group'
+
+      var btnExpandAll = doc.createElement('button')
+      btnExpandAll.type = 'button'
+      btnExpandAll.className = 'sf-dump-toolbar-btn'
+      btnExpandAll.innerHTML = icons.expandAll
+      btnExpandAll.title = 'Expand all'
+
+      var btnCollapseAll = doc.createElement('button')
+      btnCollapseAll.type = 'button'
+      btnCollapseAll.className = 'sf-dump-toolbar-btn'
+      btnCollapseAll.innerHTML = icons.collapseAll
+      btnCollapseAll.title = 'Collapse all'
+
+      var btnCopy = doc.createElement('button')
+      btnCopy.type = 'button'
+      btnCopy.className = 'sf-dump-toolbar-btn'
+      btnCopy.innerHTML = icons.copy
+      btnCopy.title = 'Copy to clipboard'
+
+      // Stats tooltip button
+      var btnInfo = doc.createElement('span')
+      btnInfo.className = 'sf-dump-toolbar-info'
+
+      var statParts = []
+      if (stats.properties > 0) statParts.push('Props: ' + stats.properties)
+      if (stats.keys > 0) statParts.push('Keys: ' + stats.keys)
+      if (stats.strings > 0) statParts.push('Strings: ' + stats.strings)
+      if (stats.numbers > 0) statParts.push('Numbers: ' + stats.numbers)
+      if (stats.objects > 0) statParts.push('Objects: ' + stats.objects)
+      if (stats.maxDepth > 0) statParts.push('Depth: ' + stats.maxDepth)
+      btnInfo.innerHTML = icons.info
+      btnInfo.title = statParts.join(' · ')
+
+      // Build tooltip element for hover
+      var infoTooltip = doc.createElement('div')
+      infoTooltip.className = 'sf-dump-info-tooltip'
+      infoTooltip.innerHTML = statParts
+        .map(function (s) {
+          var pair = s.split(': ')
+          return (
+            '<span class="sf-dump-info-item"><span class="sf-dump-info-key">' +
+            pair[0] +
+            '</span><span class="sf-dump-info-val">' +
+            pair[1] +
+            '</span></span>'
+          )
+        })
+        .join('')
+      btnInfo.appendChild(infoTooltip)
+
+      toolbarLeft.appendChild(btnExpandAll)
+      toolbarLeft.appendChild(btnCollapseAll)
+
+      // Depth buttons
+      if (stats.maxDepth > 1) {
+        var depthGroup = doc.createElement('span')
+        depthGroup.className = 'sf-dump-toolbar-depth'
+
+        var depths = []
+        for (var d = 1; d <= Math.min(stats.maxDepth, 5); d++) depths.push(d)
+        if (stats.maxDepth > 5) depths.push(stats.maxDepth)
+
+        depths.forEach(function (depth) {
+          var btn = doc.createElement('button')
+          btn.type = 'button'
+          btn.className = 'sf-dump-toolbar-btn sf-dump-toolbar-btn--depth'
+          btn.textContent = String(depth)
+          btn.title = 'Expand to depth ' + depth
+          addEventListener(btn, 'click', function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+            collapseAll(root)
+            expandToDepth(root, depth)
+            // highlight active
+            depthGroup.querySelectorAll('.sf-dump-toolbar-btn--depth').forEach(function (b) {
+              b.classList.remove('sf-dump-toolbar-btn--active')
+            })
+            btn.classList.add('sf-dump-toolbar-btn--active')
+          })
+          depthGroup.appendChild(btn)
+        })
+
+        toolbarLeft.appendChild(depthGroup)
+      }
+
+      toolbarLeft.appendChild(btnInfo)
+      toolbarLeft.appendChild(btnCopy)
+
+      // Right: search
+      var toolbarRight = doc.createElement('div')
+      toolbarRight.className = 'sf-dump-toolbar-group sf-dump-toolbar-search'
+
+      var searchInput = doc.createElement('input')
+      searchInput.type = 'text'
+      searchInput.className = 'sf-dump-search-input'
+      searchInput.placeholder = 'Search... (' + keyHint + '+F)'
+
+      var counter = doc.createElement('span')
+      counter.className = 'sf-dump-search-count'
+      counter.textContent = '0 / 0'
+
+      var btnPrev = doc.createElement('button')
+      btnPrev.type = 'button'
+      btnPrev.className = 'sf-dump-search-nav'
+      btnPrev.innerHTML = icons.arrowUp
+      btnPrev.title = 'Previous match (Shift+Enter)'
+
+      var btnNext = doc.createElement('button')
+      btnNext.type = 'button'
+      btnNext.className = 'sf-dump-search-nav'
+      btnNext.innerHTML = icons.arrowDown
+      btnNext.title = 'Next match (Enter)'
+
+      toolbarRight.appendChild(searchInput)
+      toolbarRight.appendChild(counter)
+      toolbarRight.appendChild(btnPrev)
+      toolbarRight.appendChild(btnNext)
+
+      toolbar.appendChild(toolbarLeft)
+      toolbar.appendChild(toolbarRight)
+      root.insertBefore(toolbar, root.firstChild)
+
+      // --- Button handlers ---
+      addEventListener(btnExpandAll, 'click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        var toggles = root.querySelectorAll('a.sf-dump-toggle')
+        for (var ti = 0; ti < toggles.length; ti++) {
+          expand(toggles[ti], false)
+        }
+      })
+
+      addEventListener(btnCollapseAll, 'click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        var toggles = root.querySelectorAll('a.sf-dump-toggle')
+        for (var ti = 0; ti < toggles.length; ti++) {
+          collapse(toggles[ti], false)
+        }
+        // Re-expand first level
+        var firstToggle = root.querySelector('a.sf-dump-toggle')
+        if (firstToggle) expand(firstToggle, false)
+      })
+
+      addEventListener(btnCopy, 'click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        var text = root.innerText || root.textContent || ''
+        // Remove toolbar/breadcrumb text from copied content
+        var toolbarText = toolbar.innerText || ''
+        text = text.replace(toolbarText, '').trim()
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(function () {
+            btnCopy.innerHTML = icons.check
+            setTimeout(function () {
+              btnCopy.innerHTML = icons.copy
+            }, 1500)
+          })
+        }
+      })
+
+      // --- Search logic ---
       var SearchState = function () {
         this.nodes = []
         this.idx = 0
       }
       SearchState.prototype = {
         next: function () {
-          if (this.isEmpty()) {
-            return this.current()
-          }
+          if (this.isEmpty()) return this.current()
           this.idx = this.idx < this.nodes.length - 1 ? this.idx + 1 : 0
           return this.current()
         },
         previous: function () {
-          if (this.isEmpty()) {
-            return this.current()
-          }
+          if (this.isEmpty()) return this.current()
           this.idx = this.idx > 0 ? this.idx - 1 : this.nodes.length - 1
           return this.current()
         },
@@ -324,9 +574,7 @@ export function SfdumpWrap(doc) {
           return 0 === this.count()
         },
         current: function () {
-          if (this.isEmpty()) {
-            return null
-          }
+          if (this.isEmpty()) return null
           return this.nodes[this.idx]
         },
         reset: function () {
@@ -348,31 +596,22 @@ export function SfdumpWrap(doc) {
           if ('scrollIntoView' in currentNode) {
             currentNode.scrollIntoView(true)
             currentRect = currentNode.getBoundingClientRect()
-            searchRect = search.getBoundingClientRect()
+            searchRect = toolbar.getBoundingClientRect()
             if (currentRect.top < searchRect.top + searchRect.height) {
               window.scrollBy(0, -(searchRect.top + searchRect.height + 5))
             }
           }
         }
-        counter.textContent = (state.isEmpty() ? 0 : state.idx + 1) + ' of ' + state.count()
+        counter.textContent = (state.isEmpty() ? 0 : state.idx + 1) + ' / ' + state.count()
       }
 
-      var search = doc.createElement('div')
-      search.className = 'sf-dump-search-wrapper sf-dump-search-hidden'
-      search.innerHTML =
-        ' <input type="text" class="sf-dump-search-input"> <span class="sf-dump-search-count">0 of 0</span> <button type="button" class="sf-dump-search-input-previous" tabindex="-1"> <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1683 1331l-166 165q-19 19-45 19t-45-19L896 965l-531 531q-19 19-45 19t-45-19l-166-165q-19-19-19-45.5t19-45.5l742-741q19-19 45-19t45 19l742 741q19 19 19 45.5t-19 45.5z"/></svg> </button> <button type="button" class="sf-dump-search-input-next" tabindex="-1"> <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1683 808l-742 741q-19 19-45 19t-45-19L109 808q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z"/></svg> </button> '
-      root.insertBefore(search, root.firstChild)
       var state = new SearchState()
-      var searchInput = search.querySelector('.sf-dump-search-input')
-      var counter = search.querySelector('.sf-dump-search-count')
       var searchInputTimer = 0
       var previousSearchQuery = ''
+
       addEventListener(searchInput, 'keyup', function (e) {
-        const searchQuery =
-          e.target.value /* Don't perform anything if the pressed key didn't change the query */
-        if (searchQuery === previousSearchQuery) {
-          return
-        }
+        var searchQuery = e.target.value
+        if (searchQuery === previousSearchQuery) return
         previousSearchQuery = searchQuery
         clearTimeout(searchInputTimer)
         searchInputTimer = setTimeout(function () {
@@ -380,10 +619,10 @@ export function SfdumpWrap(doc) {
           collapseAll(root)
           resetHighlightedNodes(root)
           if ('' === searchQuery) {
-            counter.textContent = '0 of 0'
+            counter.textContent = '0 / 0'
             return
           }
-          const classMatches = [
+          var classMatches = [
             'sf-dump-str',
             'sf-dump-key',
             'sf-dump-public',
@@ -392,7 +631,8 @@ export function SfdumpWrap(doc) {
           ]
             .map(xpathHasClass)
             .join(' or ')
-          const xpathResult = doc.evaluate(
+
+          var xpathResult = doc.evaluate(
             './/span[' +
               classMatches +
               '][contains(translate(child::text(), ' +
@@ -407,46 +647,46 @@ export function SfdumpWrap(doc) {
             XPathResult.ORDERED_NODE_ITERATOR_TYPE,
             null
           )
-
-          let node
+          var node
           while ((node = xpathResult.iterateNext())) state.nodes.push(node)
           showCurrent(state)
-        }, 400)
+        }, 300)
       })
-      Array.from(
-        search.querySelectorAll('.sf-dump-search-input-next, .sf-dump-search-input-previous')
-      ).forEach(function (btn) {
-        addEventListener(btn, 'click', function (e) {
-          e.preventDefault()
-          ;-1 !== e.target.className.indexOf('next') ? state.next() : state.previous()
-          searchInput.focus()
-          collapseAll(root)
-          showCurrent(state)
-        })
+
+      addEventListener(btnPrev, 'click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        state.previous()
+        searchInput.focus()
+        collapseAll(root)
+        showCurrent(state)
       })
+
+      addEventListener(btnNext, 'click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        state.next()
+        searchInput.focus()
+        collapseAll(root)
+        showCurrent(state)
+      })
+
       addEventListener(root, 'keydown', function (e) {
-        var isSearchActive = !/\bsf-dump-search-hidden\b/.test(search.className)
-        if ((114 === e.keyCode && !isSearchActive) || (isCtrlKey(e) && 70 === e.keyCode)) {
-          /* F3 or CMD/CTRL + F */
-          if (70 === e.keyCode && document.activeElement === searchInput) {
-            /* * If CMD/CTRL + F is hit while having focus on search input, * the user probably meant to trigger browser search instead. * Let the browser execute its behavior: */
-            return
-          }
+        if (isCtrlKey(e) && 70 === e.keyCode) {
+          if (document.activeElement === searchInput) return
           e.preventDefault()
-          search.className = search.className.replace(/\bsf-dump-search-hidden\b/, '')
           searchInput.focus()
-        } else if (isSearchActive) {
+          searchInput.select()
+        } else if (document.activeElement === searchInput) {
           if (27 === e.keyCode) {
-            /* ESC key */
-            search.className += ' sf-dump-search-hidden'
             e.preventDefault()
             resetHighlightedNodes(root)
             searchInput.value = ''
-          } else if (
-            (isCtrlKey(e) && 71 === e.keyCode) /* CMD/CTRL + G */ ||
-            13 === e.keyCode /* Enter */ ||
-            114 === e.keyCode /* F3 */
-          ) {
+            searchInput.blur()
+            previousSearchQuery = ''
+            counter.textContent = '0 / 0'
+            state.reset()
+          } else if (13 === e.keyCode || 114 === e.keyCode) {
             e.preventDefault()
             e.shiftKey ? state.previous() : state.next()
             collapseAll(root)
@@ -455,6 +695,7 @@ export function SfdumpWrap(doc) {
         }
       })
     }
+
     if (0 >= options.maxStringLength) {
       return
     }
@@ -476,12 +717,16 @@ export function SfdumpWrap(doc) {
           elt.innerHTML =
             '<span class=sf-dump-str-collapse>' +
             h +
-            '<a class="sf-dump-ref sf-dump-str-toggle" title="Collapse"> &#9664;</a></span>' +
+            '<a class="sf-dump-ref sf-dump-str-toggle" title="Collapse"> ' +
+            icons.strCollapse +
+            '</a></span>' +
             '<span class=sf-dump-str-expand>' +
             elt.innerHTML +
             '<a class="sf-dump-ref sf-dump-str-toggle" title="' +
             x +
-            ' remaining characters"> &#9654;</a></span>'
+            ' remaining characters"> ' +
+            icons.strExpand +
+            '</a></span>'
         }
       }
     } catch (e) {}
