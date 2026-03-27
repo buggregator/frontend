@@ -1,5 +1,5 @@
-import { action } from '@storybook/addon-actions'
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import { action } from 'storybook/actions'
 import { EventTypes} from "../../types";
 import PreviewCardHeader from './preview-card-header.vue';
 

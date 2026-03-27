@@ -73,75 +73,84 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 </script>
 
 <template>
-  <div class="preview-card-footer">
-    <div class="preview-card-footer__tags">
+  <div class="pc-footer">
+    <div class="pc-footer__meta">
       <template v-if="mappedOrigins">
         <template
           v-for="(value, key) in mappedOrigins"
           :key="key"
         >
-          <div
-            v-if="!isEditorLink(String(key))"
-            class="preview-card-footer__tag"
-          >
-            <span class="preview-card-footer__tag-key">{{ key }}:</span>
-            <span class="preview-card-footer__tag-value">{{ value }}</span>
-          </div>
-
           <a
             v-if="isEditorLink(String(key))"
             :href="editorLink"
             target="_blank"
-            class="preview-card-footer__tag"
+            class="pc-footer__tag pc-footer__tag--link"
           >
-            <span class="preview-card-footer__tag-key">{{ key }}:</span>
-            <span class="preview-card-footer__tag-value">{{ value }}</span>
+            <span class="pc-footer__tag-key">{{ key }}</span>
+            <span class="pc-footer__tag-value">{{ value }}</span>
           </a>
+
+          <span
+            v-else
+            class="pc-footer__tag"
+          >
+            <span class="pc-footer__tag-key">{{ key }}</span>
+            <span class="pc-footer__tag-value">{{ value }}</span>
+          </span>
         </template>
       </template>
     </div>
 
     <div
       v-if="serverName"
-      class="preview-card-footer__host"
+      class="pc-footer__host"
     >
       <IconSvg
         name="host"
-        class="preview-card-footer__host-icon"
+        class="pc-footer__host-icon"
       />
-      <span class="preview-card-footer__host-name">
-        {{ serverName }}
-      </span>
+      <span class="pc-footer__host-name">{{ serverName }}</span>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.preview-card-footer__tags {
+.pc-footer {
+  @apply flex items-center justify-between flex-wrap gap-2;
+}
+
+.pc-footer__meta {
   @apply flex flex-wrap items-center gap-1;
 }
 
-.preview-card-footer__tag {
-  @apply hover:bg-gray-200 hover:dark:bg-gray-700 text-2xs lg:text-xs px-2 py-1 border border-gray-600 rounded flex flex-wrap gap-1 leading-none cursor-pointer;
+.pc-footer__tag {
+  @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded;
+  @apply text-2xs;
+  @apply bg-gray-100 dark:bg-gray-600/30;
+  @apply transition-colors;
 }
 
-.preview-card-footer__tag-key {
-  @apply text-gray-500 dark:text-gray-300 font-bold;
+.pc-footer__tag--link {
+  @apply hover:bg-blue-50 dark:hover:bg-blue-500/10 cursor-pointer;
 }
 
-.preview-card-footer__tag-value {
-  @apply text-gray-700 dark:text-gray-100 font-bold;
+.pc-footer__tag-key {
+  @apply text-gray-400 dark:text-gray-500;
 }
 
-.preview-card-footer__host {
-  @apply inline-flex items-center justify-start gap-1 py-1 text-gray-600 dark:text-gray-300;
+.pc-footer__tag-value {
+  @apply font-mono text-gray-600 dark:text-gray-300;
 }
 
-.preview-card-footer__host-icon {
-  @apply w-3 h-3 lg:w-4 lg:h-4;
+.pc-footer__host {
+  @apply inline-flex items-center gap-1 text-gray-400 dark:text-gray-500;
 }
 
-.preview-card-footer__host-name {
-  @apply flex-initial font-bold text-2xs lg:text-xs;
+.pc-footer__host-icon {
+  @apply w-3 h-3;
+}
+
+.pc-footer__host-name {
+  @apply font-mono text-2xs;
 }
 </style>

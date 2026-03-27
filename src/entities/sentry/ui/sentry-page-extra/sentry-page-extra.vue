@@ -21,98 +21,82 @@ const ddStates = ref(
 </script>
 
 <template>
-  <section class="sentry-page-extra">
-    <h3 class="sentry-page-extra__head">
+  <section>
+    <h3 class="section-title">
       Extra
     </h3>
 
-    <div class="sentry-page-extra__in">
+    <div class="extra-groups">
       <div
         v-for="(value, key) in extra"
         :key="key"
-        class="sentry-page-extra__wrapper"
-        :class="{
-          'sentry-page-extra__wrapper--open': ddStates[key]
-        }"
+        class="extra-group"
       >
-        <h3
-          class="sentry-page-extra__title"
+        <button
+          class="extra-group__header"
           @click="ddStates[key] = !ddStates[key]"
         >
-          {{ key }}
-
+          <span class="extra-group__name">{{ key }}</span>
           <IconSvg
-            class="sentry-page-extra__title-dd"
-            :class="{
-              'sentry-page-extra__title-dd--open': ddStates[key]
-            }"
-            name="dd"
+            class="extra-group__chevron"
+            :class="{ 'extra-group__chevron--open': ddStates[key] }"
+            name="collapsed"
           />
-        </h3>
+        </button>
 
-        <TableBase
-          v-if="value"
-          class="sentry-page-extra__content"
+        <div
+          v-if="ddStates[key] && value"
+          class="extra-group__content"
         >
-          <TableBaseRow
-            v-for="(v, t) in value"
-            :key="t"
-            :title="String(t || '')"
-          >
-            {{ JSON.stringify(v) }}
-          </TableBaseRow>
-        </TableBase>
+          <TableBase>
+            <TableBaseRow
+              v-for="(v, t) in value"
+              :key="t"
+              :title="String(t || '')"
+            >
+              {{ JSON.stringify(v) }}
+            </TableBaseRow>
+          </TableBase>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.sentry-page-extra {
+.section-title {
+  @apply text-xs font-mono font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400 mb-3;
 }
 
-.sentry-page-extra__wrapper {
-  @apply dark:bg-gray-900 bg-gray-100 p-3 border border-purple-300 dark:border-gray-400;
-
-  &:first-child {
-    @apply rounded-t-md;
-  }
-
-  &:last-child {
-    @apply rounded-b-md;
-  }
+.extra-groups {
+  @apply rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 
-.sentry-page-extra__head {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm flex justify-between mb-3;
+.extra-group__header {
+  @apply w-full flex items-center justify-between;
+  @apply px-3 py-2.5 text-xs font-medium;
+  @apply bg-gray-50 dark:bg-gray-900;
+  @apply hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+  @apply cursor-pointer;
 }
 
-.sentry-page-extra__title {
-  @include mixins.text-muted;
-  @apply font-bold uppercase text-sm flex justify-between;
+.extra-group__name {
+  @apply font-semibold;
 }
 
-.sentry-page-extra__url {
-  @apply mb-1 text-lg font-medium;
+.extra-group__chevron {
+  @apply w-3.5 h-3.5 text-gray-400 dark:text-gray-500;
+  transition: transform 0.15s ease;
 }
 
-.sentry-page-extra__title-dd {
-  @apply ml-2 w-5 ml-auto transform rotate-180;
+.extra-group__chevron--open {
+  transform: rotate(180deg);
 }
 
-.sentry-page-extra__title-dd--open {
-  @apply rotate-0;
-}
-
-.sentry-page-extra__content {
-  display: none;
-  @apply mt-3;
-
-  .sentry-page-extra__wrapper--open & {
-    display: block;
-  }
+.extra-group__content {
+  @apply p-3;
 }
 </style>

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import type { RayFrame } from "../../types";
-import { RayFile } from "../ray-file";
+import type { RayFrame } from '../../types'
+import { RayFile } from '../ray-file'
 
 type Props = {
-  frames: RayFrame[];
-};
+  frames: RayFrame[]
+}
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
@@ -27,6 +27,7 @@ defineProps<Props>();
 }
 
 .ray-trace__files {
-  @apply flex-col justify-center w-full border border-purple-300 dark:border-gray-400 rounded overflow-hidden;
+  @apply flex flex-col rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 </style>

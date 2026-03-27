@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { HTMLCode, PHPCode } from '../../mocks';
 import {EventTypes} from "../../types";
 import CodeSnippet from "./code-snippet.vue";

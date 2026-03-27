@@ -1,13 +1,65 @@
-@import "vendor.css";
+@import 'vendor.css';
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
+/* ---- Base ---- */
 body {
-  @apply bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-50 p-0;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-0;
+  font-feature-settings:
+    'kern' 1,
+    'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body a:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
-body a[disabled="true"] {
+
+body a[disabled='true'] {
   pointer-events: none;
   text-decoration: none !important;
+}
+
+/* ---- Selection ---- */
+::selection {
+  @apply bg-blue-500/30;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
+}
+
+/* ---- Focus ---- */
+*:focus-visible {
+  outline: 2px solid rgb(59 130 246);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgb(59 130 246);
+  outline-offset: 0;
+  border-radius: 4px;
+}
+
+/* ---- Dark mode dot-grid pattern for content areas ---- */
+.dark .layout-preview-events__welcome {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }

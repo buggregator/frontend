@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useVarDump } from "../../lib";
 import { varDumpObjectMock } from '../../mocks';
 import VarDump from './var-dump-page.vue';

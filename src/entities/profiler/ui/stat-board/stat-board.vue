@@ -25,9 +25,9 @@ const statItems = computed(() => calcStatItems(props.cost))
 
         <span
           v-if="item.percent && Number(item.percent) > 0"
-          class="stat-board__item-name-detail"
+          class="stat-board__item-percent"
         >
-          [{{ item.percent }}%]
+          {{ item.percent }}%
         </span>
       </h4>
 
@@ -40,32 +40,27 @@ const statItems = computed(() => calcStatItems(props.cost))
 
 <style lang="scss" scoped>
 .stat-board {
-  @apply flex flex-col sm:flex-row justify-between items-start;
-  @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-300 dark:divide-gray-500;
-  @apply bg-gray-200 dark:bg-gray-800;
-  @apply p-0 sm:p-4 lg:p-6;
-}
-
-.stat-board--small {
-  @apply p-0 border-t border-t-gray-300 dark:border-t-gray-500;
+  @apply flex flex-col sm:flex-row;
+  @apply divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-gray-700;
+  @apply bg-gray-50 dark:bg-gray-900;
 }
 
 .stat-board__item {
   @apply flex flex-row justify-between sm:flex-col sm:justify-start flex-auto;
   @apply w-full sm:w-auto;
-  @apply py-2 px-2 sm:py-5 sm:px-5;
+  @apply py-2 px-3 sm:py-3 sm:px-4;
 }
 
 .stat-board__item-name {
-  @apply text-2xs text-gray-600 dark:text-gray-300 font-bold uppercase truncate mb-0 sm:mb-1;
+  @apply text-2xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide truncate mb-0 sm:mb-0.5;
 }
 
-.stat-board__item-name-detail {
-  @apply truncate ml-1 text-2xs;
+.stat-board__item-percent {
+  @apply text-gray-400 dark:text-gray-500 ml-1;
 }
 
 .stat-board__item-value {
-  @apply truncate;
-  @apply text-2xs sm:text-xs md:text-base;
+  @apply truncate font-mono;
+  @apply text-xs sm:text-sm;
 }
 </style>

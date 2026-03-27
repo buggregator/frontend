@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSentry } from "../../lib";
 import { sentrySpiralMock } from '../../mocks';
 import SentryExceptionFrame from './sentry-exception-frame.vue';

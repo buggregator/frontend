@@ -7,11 +7,9 @@
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
 .table-base {
-  @include mixins.border-style;
-  @apply bg-gray-100 dark:bg-gray-800 text-sm divide-y;
+  @apply rounded overflow-hidden text-sm;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 </style>
-
-<style lang="scss" scoped></style>

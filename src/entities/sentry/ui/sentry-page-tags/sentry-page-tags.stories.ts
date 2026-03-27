@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSentry } from "../../lib";
 import { sentryLaravelMock, sentrySpiralMock } from '../../mocks';
 import SentryPageTags from './sentry-page-tags.vue';

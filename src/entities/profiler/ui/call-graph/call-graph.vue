@@ -374,7 +374,7 @@ const currentMetricKey = computed(() => {
 
 <style lang="scss" scoped>
 .call-graph {
-  @apply relative flex h-full bg-gray-50 dark:bg-gray-800 overflow-hidden;
+  @apply relative flex h-full bg-gray-50 dark:bg-gray-900 overflow-hidden;
 }
 
 .call-graph__graph {

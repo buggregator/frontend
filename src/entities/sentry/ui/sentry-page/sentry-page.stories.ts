@@ -1,6 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSentry } from "../../lib";
-import { sentryCommonMock, sentryMock, sentryJSMock, sentryJSEventMock } from '../../mocks';
+import {
+  sentryCommonMock,
+  sentryMock,
+  sentryJSMock,
+  sentryJSEventMock,
+  sentryLaravelMock,
+  sentrySpiralMock,
+} from '../../mocks';
 import SentryPage from './sentry-page.vue';
 
 const { normalizeSentryEvent } = useSentry();
@@ -12,7 +19,6 @@ export default {
     layout: 'fullscreen',
   }
 } as Meta<typeof SentryPage>;
-
 
 export const PageCommon: StoryObj<typeof SentryPage> = {
   args: {
@@ -26,15 +32,26 @@ export const PageEvent: StoryObj<typeof SentryPage> = {
   }
 };
 
+export const PageLaravel: StoryObj<typeof SentryPage> = {
+  args: {
+    event: normalizeSentryEvent(sentryLaravelMock),
+  }
+};
+
+export const PageSpiral: StoryObj<typeof SentryPage> = {
+  args: {
+    event: normalizeSentryEvent(sentrySpiralMock),
+  }
+};
+
 export const PageJS: StoryObj<typeof SentryPage> = {
   args: {
     event: normalizeSentryEvent(sentryJSMock),
   }
 };
 
-export const PageJSEvent: StoryObj<typeof SentryPage> = {
+export const PageJSMessage: StoryObj<typeof SentryPage> = {
   args: {
     event: normalizeSentryEvent(sentryJSEventMock),
   }
 };
-

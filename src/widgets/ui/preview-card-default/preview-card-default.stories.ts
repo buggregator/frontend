@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { monologMock } from '@/entities/monolog/mocks'
 import { useEvents } from "@/shared/lib/use-events";
 import PreviewCardDefault from './preview-card-default.vue';

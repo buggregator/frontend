@@ -25,19 +25,19 @@ const toggleUpdate = () => {
 
 <template>
   <button
-    class="pause-button"
-    :class="{ 'pause-button--active': isPaused }"
+    class="pause-btn"
+    :class="{ 'pause-btn--paused': isPaused }"
     :disabled="!isPaused && disabledPause"
     @click="toggleUpdate"
   >
     <IconSvg
       :name="!isPaused ? 'bolt' : 'bolt-slash'"
-      class="pause-button__icon"
+      class="pause-btn__icon"
     />
-    <span>{{ isPaused ? 'Paused' : 'Listening' }}</span>
+    <span class="pause-btn__text">{{ isPaused ? 'Paused' : 'Listening' }}</span>
     <span
       v-if="isPaused && totalNewEventsCount"
-      class="pause-button__count"
+      class="pause-btn__count"
       :title="titleEventsCount"
     >
       {{ totalNewEventsCount }}
@@ -46,40 +46,44 @@ const toggleUpdate = () => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.pause-button {
-  @include mixins.button;
-  @apply flex items-center space-x-1 relative;
-  @apply bg-blue-300 hover:bg-blue-500 text-gray-200;
-  @apply dark:bg-gray-700 dark:hover:bg-blue-800 dark:text-white;
+.pause-btn {
+  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
+  @apply text-xs font-medium;
+  @apply text-green-600 dark:text-green-400;
+  @apply bg-green-50 dark:bg-green-500/10;
+  @apply hover:bg-green-100 dark:hover:bg-green-500/20;
+  @apply transition-colors cursor-pointer;
 
   &[disabled] {
-    @apply bg-gray-400 opacity-50 cursor-not-allowed text-white;
-    @apply dark:bg-gray-700 dark:text-white;
+    @apply opacity-40 cursor-not-allowed;
+    @apply text-gray-500 dark:text-gray-500;
+    @apply bg-gray-100 dark:bg-gray-700;
   }
 }
 
-.pause-button--active {
-  @apply opacity-100 bg-blue-500 dark:bg-blue-800 text-white;
+.pause-btn--paused {
+  @apply text-amber-600 dark:text-amber-400;
+  @apply bg-amber-50 dark:bg-amber-500/10;
+  @apply hover:bg-amber-100 dark:hover:bg-amber-500/20;
 }
 
-.pause-button__icon {
-  @apply w-4 h-4 stroke-white animate-pulse;
+.pause-btn__icon {
+  @apply w-3.5 h-3.5;
+  @apply stroke-current;
 
-  [disabled] > & {
-    @apply animate-none;
+  .pause-btn:not(.pause-btn--paused):not([disabled]) & {
+    @apply animate-pulse;
   }
 }
 
-.pause-button__icon {
-  .pause-button--active & {
-    @apply animate-none;
-  }
+.pause-btn__text {
+  @apply hidden sm:inline;
 }
 
-.pause-button__count {
-  @apply absolute right-1 top-1 bg-red-600 text-white px-1 rounded-full flex justify-center;
-  transform: translate(60%, -60%);
+.pause-btn__count {
+  @apply text-[10px] font-mono leading-none;
+  @apply px-1 py-0.5 rounded-full;
+  @apply bg-amber-200 dark:bg-amber-500/20;
+  @apply text-amber-700 dark:text-amber-300;
 }
 </style>

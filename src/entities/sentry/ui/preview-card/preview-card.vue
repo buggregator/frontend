@@ -38,10 +38,7 @@ const exception: Ref<Exception> = computed(() =>
 </script>
 
 <template>
-  <PreviewCard
-    class="preview-card"
-    :event="event"
-  >
+  <PreviewCard :event="event">
     <SentryException
       v-if="hasException"
       :exception="exception"
@@ -49,44 +46,39 @@ const exception: Ref<Exception> = computed(() =>
     >
       <RouterLink
         :to="eventLink"
-        class="preview-card__link"
+        class="sentry-body__link"
       >
-        <h3 class="preview-card__title">
+        <h3 class="sentry-body__title">
           {{ exception.type }}
         </h3>
 
-        <pre class="preview-card__text">{{ exception.value }}</pre>
+        <pre class="sentry-body__message">{{ exception.value }}</pre>
       </RouterLink>
     </SentryException>
 
     <div v-if="message">
-      <div class="preview-card__content">
-        <pre class="preview-card__text">{{ message }}</pre>
-      </div>
+      <pre class="sentry-body__message">{{ message }}</pre>
     </div>
   </PreviewCard>
 </template>
 
 <style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.preview-card {
+.sentry-body__link {
+  @apply block p-3 rounded overflow-hidden cursor-pointer;
+  @apply bg-gray-50 dark:bg-gray-900;
+  @apply border border-gray-200 dark:border-gray-700;
+  @apply hover:border-gray-300 dark:hover:border-gray-600 transition-colors;
 }
 
-.preview-card__link {
-  @apply cursor-pointer block dark:bg-gray-800 bg-gray-100 p-3 rounded-t-md border border-purple-300 dark:border-gray-500;
+.sentry-body__title {
+  @apply mb-2 font-semibold text-sm;
 }
 
-.preview-card__title {
-  @apply mb-3 font-semibold;
-}
-
-.preview-card__text {
-  @include mixins.code-example();
-  @apply text-sm break-words whitespace-pre-wrap mb-3 overflow-auto text-opacity-60 dark:bg-gray-900 p-3;
-}
-
-.preview-card__frames {
-  @apply border border-purple-200 dark:border-gray-500 flex-col justify-center w-full;
+.sentry-body__message {
+  @apply text-xs break-words whitespace-pre-wrap overflow-auto;
+  @apply p-2 rounded;
+  @apply bg-gray-100 dark:bg-gray-800;
+  @apply text-gray-600 dark:text-gray-300;
+  @apply font-mono;
 }
 </style>

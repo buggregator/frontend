@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import type { ComponentProps } from "vue-component-type-helpers";
 import AppHeader from "./app-header.vue";
 

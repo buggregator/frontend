@@ -14,13 +14,10 @@ const eventLink = computed(() => `/profiler/${props.event.id}`)
 </script>
 
 <template>
-  <PreviewCard
-    class="preview-card"
-    :event="event"
-  >
+  <PreviewCard :event="event">
     <RouterLink
       :to="eventLink"
-      class="preview-card__link"
+      class="profiler-body"
     >
       <StatBoard :cost="event.payload.peaks" />
     </RouterLink>
@@ -28,10 +25,8 @@ const eventLink = computed(() => `/profiler/${props.event.id}`)
 </template>
 
 <style lang="scss" scoped>
-.preview-card {
-}
-
-.preview-card__link {
-  @apply flex-grow rounded-md overflow-hidden mb-2 border dark:border-gray-500;
+.profiler-body {
+  @apply block rounded overflow-hidden;
+  @apply border border-gray-200 dark:border-gray-700;
 }
 </style>

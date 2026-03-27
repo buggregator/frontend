@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSmtp } from "../../lib";
 import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '../../mocks';
 import SmtpPage from "./smtp-page.vue";

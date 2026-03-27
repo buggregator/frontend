@@ -29,46 +29,43 @@ const toggleView = () => {
 </script>
 
 <template>
-  <PreviewCard
-    class="preview-card"
-    :event="event"
-  >
-    <CodeSnippet
-      class="preview-card__snippet preview-card__snippet--interactive"
-      :code="isFullMessage ? message : shortMessage"
-      title="Click to show full message"
-      @click="toggleView"
-    />
+  <PreviewCard :event="event">
+    <div class="monolog-body">
+      <CodeSnippet
+        class="monolog-body__snippet"
+        :class="{ 'monolog-body__snippet--clickable': !isFullMessage }"
+        :code="isFullMessage ? message : shortMessage"
+        title="Click to show full message"
+        @click="toggleView"
+      />
 
-    <CodeSnippet
-      v-if="event.payload.context"
-      class="preview-card__snippet"
-      language="json"
-      :code="event.payload.context"
-    />
+      <CodeSnippet
+        v-if="event.payload.context"
+        class="monolog-body__snippet"
+        language="json"
+        :code="event.payload.context"
+      />
 
-    <CodeSnippet
-      class="preview-card__snippet"
-      language="json"
-      :code="event.payload.extra"
-    />
+      <CodeSnippet
+        v-if="event.payload.extra"
+        class="monolog-body__snippet"
+        language="json"
+        :code="event.payload.extra"
+      />
+    </div>
   </PreviewCard>
 </template>
 
 <style lang="scss" scoped>
-.preview-card {
-  @apply text-xs break-all;
+.monolog-body {
+  @apply flex flex-col gap-1 text-xs;
 }
 
-.preview-card__snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800 border-b-0 mt-0 text-white break-words p-1 sm:p-2;
-
-  & + & {
-    @apply border-t-2;
-  }
+.monolog-body__snippet {
+  @apply break-words;
 }
 
-.preview-card__snippet--interactive {
+.monolog-body__snippet--clickable {
   @apply cursor-pointer;
 }
 </style>

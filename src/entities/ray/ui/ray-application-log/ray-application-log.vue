@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { CodeSnippet } from '@/shared/ui'
 import type { RayContentApplicationLog } from '../../types'
 
 type Props = {
@@ -9,14 +10,5 @@ defineProps<Props>()
 </script>
 
 <template>
-  <pre class="ray-application-log">{{ content.value }}</pre>
+  <CodeSnippet :code="content.value" />
 </template>
-
-<style lang="scss" scoped>
-@use 'src/assets/mixins' as mixins;
-
-.ray-application-log {
-  @include mixins.code-example();
-  @apply flex w-full overflow-auto;
-}
-</style>

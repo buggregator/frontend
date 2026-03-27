@@ -30,7 +30,7 @@ const copyCode = (): void => {
     .then(() => {
       setTimeout(() => {
         isCopied.value = false
-      }, 200)
+      }, 1500)
     })
     .catch((e) => {
       console.error(e)
@@ -44,13 +44,14 @@ const copyCode = (): void => {
       type="button"
       class="code-snippet__copy"
       :class="{ 'code-snippet__copy--active': isCopied }"
+      aria-label="Copy code"
       @click.stop="copyCode"
     >
       <IconSvg
-        name="copy"
+        :name="isCopied ? 'copy' : 'copy'"
         class="code-snippet__copy-icon"
       />
-      Copy
+      <span class="code-snippet__copy-text">{{ isCopied ? 'Copied' : 'Copy' }}</span>
     </button>
 
     <CodeHighlight
@@ -63,26 +64,39 @@ const copyCode = (): void => {
 
 <style lang="scss" scoped>
 .code-snippet {
-  @apply relative bg-gray-200 dark:bg-gray-800;
+  @apply relative rounded overflow-hidden;
+  @apply bg-gray-100 dark:bg-gray-900;
+
+  :deep(pre) {
+    @apply m-0;
+  }
+
+  :deep(code.hljs) {
+    @apply p-4 text-xs leading-relaxed;
+  }
 }
 
 .code-snippet__copy {
-  @apply invisible flex rounded-full items-center gap-x-2 absolute top-3 right-3 px-2 bg-gray-800 border text-gray-100 transition-all text-xs font-bold border-gray-600;
-
-  &:hover {
-    @apply border-gray-200 text-white bg-gray-900;
-  }
+  @apply opacity-0 flex items-center gap-1 absolute top-2 right-2;
+  @apply px-1.5 py-0.5 rounded text-2xs font-medium;
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
+  @apply hover:text-gray-700 dark:hover:text-gray-200;
+  @apply transition-all duration-150;
 
   .code-snippet:hover & {
-    @apply visible;
+    @apply opacity-100;
   }
 }
 
 .code-snippet__copy--active {
-  @apply transform scale-110 bg-green-500 hover:bg-green-500 transition-colors;
+  @apply opacity-100 text-green-600 dark:text-green-400;
 }
 
 .code-snippet__copy-icon {
-  @apply w-2 h-2;
+  @apply w-3 h-3;
+}
+
+.code-snippet__copy-text {
+  @apply hidden sm:inline;
 }
 </style>

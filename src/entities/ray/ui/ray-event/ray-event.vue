@@ -15,10 +15,12 @@ defineProps<Props>()
       v-if="content.class_based_event"
       :value="content.event"
     />
-    <h3 class="ray-event__text">
-      Event:
-      <code class="ray-event__text-in">{{ content.name }}</code>
-    </h3>
+
+    <div class="ray-event__header">
+      <span class="ray-event__label">Event</span>
+      <code class="ray-event__name">{{ content.name }}</code>
+    </div>
+
     <ValueDump
       v-if="content.payload"
       :value="String(content.payload)"
@@ -27,16 +29,17 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-.ray-event {
-  display: block;
+.ray-event__header {
+  @apply flex items-center gap-2 px-3 py-2 my-1 rounded;
+  @apply bg-gray-100 dark:bg-gray-900;
+  @apply text-xs;
 }
 
-.ray-event__text {
-  @apply p-3 border flex w-full overflow-auto;
-  @apply border-gray-300 text-gray-200 bg-gray-800;
+.ray-event__label {
+  @apply text-gray-400 dark:text-gray-500;
 }
 
-.ray-event__text-in {
-  @apply font-semibold ml-1;
+.ray-event__name {
+  @apply font-mono font-semibold text-gray-700 dark:text-gray-200;
 }
 </style>

@@ -3,23 +3,29 @@
 }
 
 .tabs-component-tabs {
-  @apply flex border-b border-gray-300 dark:border-gray-400 divide-gray-300 dark:divide-gray-400 flex-none;
+  @apply flex border-b border-gray-200 dark:border-gray-700/80 flex-none gap-1;
 }
 
 .tabs-component-tab {
-  @apply flex pr-4 text-xs sm:text-sm md:text-base;
+  @apply flex text-xs sm:text-sm md:text-base;
 }
 
 .tabs-component-tab-a {
-  @apply cursor-pointer p-3 text-gray-600 dark:text-gray-400;
+  @apply cursor-pointer px-4 py-2.5 text-gray-500 dark:text-gray-400 rounded-t-md transition-colors;
+
+  &:hover {
+    @apply text-gray-700 dark:text-gray-200 bg-gray-100/50 dark:bg-gray-800/50;
+  }
 }
 
 .tabs-component-tab-a.is-active {
-  @apply border-b border-b-4 border-gray-300 dark:border-gray-400 font-bold text-gray-900 dark:text-gray-200;
+  @apply font-semibold text-gray-900 dark:text-gray-50;
+  @apply border-b-2 border-blue-500 dark:border-blue-400;
+  @apply bg-transparent;
 }
 
 .tabs-component-panels {
-  @apply flex flex-col mt-3 flex-1;
+  @apply flex flex-col flex-1;
 }
 
 .tabs-component-panel {

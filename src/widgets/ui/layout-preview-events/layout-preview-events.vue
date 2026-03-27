@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { computed, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
-import type { PageEventTypes } from '@/shared/types'
+import { useKeyboardNav } from '@/shared/lib/use-keyboard-nav'
+import { type PageEventTypes, RouteName } from '@/shared/types'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
 
@@ -37,6 +39,20 @@ const visibleEvents = computed(() => {
   )
 })
 
+const router = useRouter()
+const eventUuids = computed(() => visibleEvents.value.map((e) => e.uuid))
+const { focusedId } = useKeyboardNav(eventUuids, {
+  onOpen: (id) => {
+    const event = visibleEvents.value.find((e) => e.uuid === id)
+    if (event) {
+      router.push({
+        name: RouteName.EventPage,
+        params: { type: event.type as string, id: event.uuid }
+      })
+    }
+  }
+})
+
 watchEffect(() => {
   useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
 })
@@ -46,13 +62,19 @@ watchEffect(() => {
   <div class="layout-preview-events">
     <main
       v-if="visibleEvents.length"
+      role="feed"
+      :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
+      aria-live="polite"
       class="layout-preview-events__events"
     >
       <EventCardMapper
-        v-for="event in visibleEvents"
+        v-for="(event, index) in visibleEvents"
         :key="event.uuid"
         :event="event"
+        role="article"
         class="layout-preview-events__event"
+        :class="{ 'layout-preview-events__event--focused': focusedId === event.uuid }"
+        :style="index < 20 ? { animationDelay: `${index * 30}ms` } : undefined"
       />
     </main>
 
@@ -74,13 +96,31 @@ watchEffect(() => {
 
 .layout-preview-events__events {
   @include mixins.border-style;
-  @apply divide-y divide-y-2 divide-gray-200 dark:divide-gray-600;
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 
 .layout-preview-events__event {
+  animation: event-enter 0.25s ease-out both;
+
   & + & {
     @apply border-b border-gray-200 dark:border-gray-700;
   }
+}
+
+@keyframes event-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.layout-preview-events__event--focused {
+  @apply ring-2 ring-blue-500 ring-inset;
+  @apply bg-blue-50/50 dark:bg-blue-900/10;
 }
 
 .layout-preview-events__welcome {

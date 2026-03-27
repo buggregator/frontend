@@ -1,5 +1,5 @@
-import { action } from "@storybook/addon-actions";
-import type { Meta, StoryObj } from "@storybook/vue3";
+import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import { action } from "storybook/actions";
 import type { ComponentProps } from "vue-component-type-helpers";
 import { SortingOrder } from "./constants";
 import SortingWrapper from "./sorting-wrapper.vue";
