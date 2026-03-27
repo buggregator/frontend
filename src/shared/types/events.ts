@@ -26,6 +26,7 @@ export interface ServerEvent<T> {
   project: string | null,
   timestamp: number, // unavailable for some ray dump events
   searchable_text?: string,
+  is_pinned?: boolean,
 }
 
 export interface NormalizedEvent<T> {

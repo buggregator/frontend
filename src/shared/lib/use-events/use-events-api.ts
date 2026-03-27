@@ -82,6 +82,12 @@ export const useEventsApi = (): TUseEventsApi => {
     getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
       if (eventsList.length) {
         eventsStore.initializeEvents(eventsList);
+
+        // Sync pinned state from server
+        const pinnedIds = eventsList
+          .filter((e) => e.is_pinned)
+          .map((e) => e.uuid)
+        eventsStore.lockedIds = pinnedIds
       } else {
         // NOTE: clear cached events hardly
         eventsStore.removeAll();

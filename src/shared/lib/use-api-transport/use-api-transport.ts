@@ -4,6 +4,7 @@ import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores"
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
 import { useCentrifuge, useEventsRequests } from "../io";
+import { useSettings } from "../use-settings";
 
 let isEventsEmitted = false
 let eventBuffer: ServerEvent<unknown>[] = []
@@ -35,6 +36,8 @@ export const useApiTransport = () => {
     deleteList,
     deleteSingle,
     deleteByType,
+    pinEvent: pinEventRest,
+    unpinEvent: unpinEventRest,
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
@@ -70,7 +73,19 @@ export const useApiTransport = () => {
       if (ctx.data?.event === 'event.received') {
         const event = ctx?.data?.data || null
 
-        if (event && event.project === project.value) {
+        if (!event) return
+
+        // Auto-detect new projects and refresh the project list
+        if (event.project && !eventsStore.availableProjects.some((p: { key: string }) => p.key === event.project)) {
+          const { api: { getProjects } } = useSettings()
+          getProjects().then(({ data }) => {
+            if (data) {
+              eventsStore.setAvailableProjects(data)
+            }
+          }).catch(() => {})
+        }
+
+        if (event.project === project.value) {
           eventBuffer.push(event);
 
           if (!flushTimer) {
@@ -139,6 +154,20 @@ export const useApiTransport = () => {
     return deleteByType(type);
   }
 
+  const pinEvent = (eventId: EventId) => {
+    if (getWSConnection()) {
+      return centrifuge.rpc(`post:api/event/${eventId}/pin`, createPayload())
+    }
+    return pinEventRest(eventId)
+  }
+
+  const unpinEvent = (eventId: EventId) => {
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/event/${eventId}/pin`, createPayload())
+    }
+    return unpinEventRest(eventId)
+  }
+
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
@@ -157,6 +186,8 @@ export const useApiTransport = () => {
     deleteEventsList,
     deleteEventsByType,
     rayStopExecution,
-    rayContinueExecution
+    rayContinueExecution,
+    pinEvent,
+    unpinEvent,
   }
 }
