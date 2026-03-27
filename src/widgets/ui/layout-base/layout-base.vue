@@ -13,22 +13,26 @@ const isDismissed = ref(false)
 const showBanner = ref(false)
 let disconnectTimer: ReturnType<typeof setTimeout> | null = null
 
-watch(isConnectedWS, (connected) => {
-  if (connected) {
-    if (disconnectTimer) {
-      clearTimeout(disconnectTimer)
-      disconnectTimer = null
-    }
-    showBanner.value = false
-  } else {
-    isDismissed.value = false
-    disconnectTimer = setTimeout(() => {
-      if (!isConnectedWS.value) {
-        showBanner.value = true
+watch(
+  isConnectedWS,
+  (connected) => {
+    if (connected) {
+      if (disconnectTimer) {
+        clearTimeout(disconnectTimer)
+        disconnectTimer = null
       }
-    }, 3000)
-  }
-}, { immediate: true })
+      showBanner.value = false
+    } else {
+      isDismissed.value = false
+      disconnectTimer = setTimeout(() => {
+        if (!isConnectedWS.value) {
+          showBanner.value = true
+        }
+      }, 3000)
+    }
+  },
+  { immediate: true }
+)
 
 watch(
   () => activeProjectKey.value,
@@ -103,7 +107,7 @@ watch(
 }
 
 .layout-base__connection-banner {
-  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-48 right-0 z-[60];
+  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-56 right-0 z-[60];
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;

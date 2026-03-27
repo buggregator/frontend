@@ -27,6 +27,6 @@ export const Expanded: StoryObj<typeof LayoutSidebar> = {
       window.localStorage.setItem("sidebar_collapsed", "false");
       document.documentElement.classList.remove("sidebar-collapsed");
     },
-    template: '<div style="width: 192px; height: 100vh"><LayoutSidebar /></div>',
+    template: '<div style="width: 224px; height: 100vh"><LayoutSidebar /></div>',
   }),
 };

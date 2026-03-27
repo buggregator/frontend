@@ -125,7 +125,7 @@ watchEffect(() => {
 
 .layout-preview-events__welcome {
   @apply flex-1 flex flex-col justify-center items-center;
-  @apply bg-gray-50 dark:bg-gray-800 mb-[10vh];
+  @apply bg-gray-50 dark:bg-gray-800;
 }
 
 .layout-preview-events__btn-stop-events {

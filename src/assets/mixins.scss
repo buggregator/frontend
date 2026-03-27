@@ -3,7 +3,7 @@
 }
 
 @mixin layout-sidebar {
-  @apply w-10 md:w-14 lg:w-16 xl:w-48 fixed h-screen z-50;
+  @apply w-10 md:w-14 lg:w-16 xl:w-56 fixed h-screen z-50;
   transition: width 0.2s ease;
 
   html.sidebar-collapsed & {
@@ -18,7 +18,7 @@
   @apply absolute left-0 right-0 z-50;
   @apply h-9 sm:h-10 md:h-14;
   @apply px-2 md:px-4;
-  @apply left-10 md:left-14 lg:left-16 xl:left-48 right-0;
+  @apply left-10 md:left-14 lg:left-16 xl:left-56 right-0;
   transition: left 0.2s ease;
 
   html.sidebar-collapsed & {
@@ -32,7 +32,7 @@
 
 @mixin layout-body {
   @apply flex flex-col flex-1 pt-10 md:pt-14;
-  @apply absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16 xl:pl-48 w-full h-full;
+  @apply absolute top-0 left-0 pl-10 md:pl-14 lg:pl-16 xl:pl-56 w-full h-full;
   transition: padding-left 0.2s ease;
 
   html.sidebar-collapsed & {
