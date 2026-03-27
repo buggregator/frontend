@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { PageTabs, PageTab } from '@/shared/ui'
+import { useProfilerCompare } from '../../lib/use-profiler-compare'
 import type { Profiler } from '../../types'
 import { CallGraph } from '../call-graph'
 import { FlameGraph } from '../flame-graph'
+import { ProfileCompare } from '../profile-compare'
 import { TopFunctions } from '../top-functions'
 
 type Props = {
@@ -12,6 +14,8 @@ type Props = {
 }
 
 defineProps<Props>()
+
+const { compareBase, compareTarget, isReady, reset: resetCompare } = useProfilerCompare()
 
 const activeTab = ref('')
 
@@ -56,6 +60,30 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
                 :payload="event.payload"
               />
             </PageTab>
+
+            <PageTab
+              v-if="isReady"
+              name="Comparison"
+            >
+              <div
+                v-if="activeTab === 'Comparison'"
+                class="profiler-page__compare"
+              >
+                <div class="profiler-page__compare-header">
+                  <span class="profiler-page__compare-label">Comparing profiles</span>
+                  <button
+                    class="profiler-page__compare-reset"
+                    @click="resetCompare"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <ProfileCompare
+                  :base-id="compareBase!"
+                  :compare-id="compareTarget!"
+                />
+              </div>
+            </PageTab>
           </PageTabs>
         </section>
       </div>
@@ -86,5 +114,25 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 .profiler-page__stat-tabs :deep(.tabs-component-panel) {
   @apply flex-1 overflow-hidden;
+}
+
+.profiler-page__compare {
+  @apply flex flex-col h-full;
+}
+
+.profiler-page__compare-header {
+  @apply flex items-center justify-between px-4 py-2;
+  @apply border-b border-gray-200 dark:border-gray-700;
+}
+
+.profiler-page__compare-label {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.profiler-page__compare-reset {
+  @apply text-2xs px-2 py-0.5 rounded cursor-pointer;
+  @apply text-red-500 hover:text-red-600;
+  @apply hover:bg-red-50 dark:hover:bg-red-500/10;
+  @apply transition-colors;
 }
 </style>

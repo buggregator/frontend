@@ -35,6 +35,8 @@ export const useApiTransport = () => {
     deleteList,
     deleteSingle,
     deleteByType,
+    pinEvent: pinEventRest,
+    unpinEvent: unpinEventRest,
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
@@ -139,6 +141,20 @@ export const useApiTransport = () => {
     return deleteByType(type);
   }
 
+  const pinEvent = (eventId: EventId) => {
+    if (getWSConnection()) {
+      return centrifuge.rpc(`post:api/event/${eventId}/pin`, createPayload())
+    }
+    return pinEventRest(eventId)
+  }
+
+  const unpinEvent = (eventId: EventId) => {
+    if (getWSConnection()) {
+      return centrifuge.rpc(`delete:api/event/${eventId}/pin`, createPayload())
+    }
+    return unpinEventRest(eventId)
+  }
+
   // NOTE: works only with ws
   const rayStopExecution = (hash: RayContentLock["name"]) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
@@ -157,6 +173,8 @@ export const useApiTransport = () => {
     deleteEventsList,
     deleteEventsByType,
     rayStopExecution,
-    rayContinueExecution
+    rayContinueExecution,
+    pinEvent,
+    unpinEvent,
   }
 }

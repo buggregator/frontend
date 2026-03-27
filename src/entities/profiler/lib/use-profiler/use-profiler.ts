@@ -1,7 +1,7 @@
 import {useProfilerRequests} from "@/shared/lib/io/use-profiler-requests";
 import type {ServerEvent, NormalizedEvent, EventId} from '@/shared/types';
 import type {StatBoardCost} from "../../types";
-import type {ProfileFlameChart, Profiler, ProfilerCallGraph, ProfilerTopFunctions} from "../../types";
+import type {ProfileFlameChart, Profiler, ProfilerCallGraph, ProfilerTopFunctions, ProfilerSummary, ProfilerComparison} from "../../types";
 import { calcStatItems } from "./calc-stat-items";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 
@@ -10,16 +10,20 @@ type TUseProfiler = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>
   getCallGraph: (id: EventId, params?: Record<string, string>) => Promise<ProfilerCallGraph>
   getFlameChart: (id: EventId, params?: Record<string, string>) => Promise<ProfileFlameChart[]>
+  getSummary: (id: EventId) => Promise<ProfilerSummary>
+  compareProfiles: (baseId: EventId, compareId: EventId) => Promise<ProfilerComparison>
   calcStatItems: (cost: StatBoardCost) => Array<{ title: string, value: string, percent?: number }>
 }
 
 export const useProfiler: TUseProfiler = () => {
-  const { getTopFunctions, getCallGraph, getFlameChart } = useProfilerRequests();
+  const { getTopFunctions, getCallGraph, getFlameChart, getSummary, compareProfiles } = useProfilerRequests();
 
   return {
     normalizeProfilerEvent,
     getTopFunctions,
     getCallGraph,
     getFlameChart,
+    getSummary,
+    compareProfiles,
     calcStatItems,
 }}

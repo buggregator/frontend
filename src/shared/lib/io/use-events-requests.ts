@@ -10,6 +10,8 @@ type TUseEventsRequests = () => {
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
   deleteByType: (type: EventType) => Promise<void | Response>,
+  pinEvent: (id: EventId) => Promise<void | Response>,
+  unpinEvent: (id: EventId) => Promise<void | Response>,
 }
 
 // TODO: add 403 response handling
@@ -89,6 +91,20 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
+  const pinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
+    method: 'POST',
+    headers,
+  }).catch((err) => {
+    console.error('Pin Error', err)
+  })
+
+  const unpinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
+    method: 'DELETE',
+    headers,
+  }).catch((err) => {
+    console.error('Unpin Error', err)
+  })
+
   return {
     getAll,
     getSingle,
@@ -96,5 +112,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteList,
     deleteSingle,
     deleteByType,
+    pinEvent,
+    unpinEvent,
   }
 }

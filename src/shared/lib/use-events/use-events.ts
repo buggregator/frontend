@@ -43,7 +43,19 @@ export const useEvents: TUseEvents = () => {
   const {
     rayContinueExecution,
     rayStopExecution,
+    pinEvent,
+    unpinEvent,
   } = useApiTransport();
+
+  const addPin = (id: EventId) => {
+    eventsStore.addLockedIds(id)
+    pinEvent(id)
+  }
+
+  const removePin = (id: EventId) => {
+    eventsStore.removeLockedIds(id)
+    unpinEvent(id)
+  }
 
   return {
     normalizeUnknownEvent,
@@ -56,8 +68,8 @@ export const useEvents: TUseEvents = () => {
     },
     lockedIds: {
       items: lockedIds as unknown as Ref<EventId[]>,
-      add: eventsStore.addLockedIds,
-      remove: eventsStore.removeLockedIds,
+      add: addPin,
+      remove: removePin,
     },
     rayExecution: {
       continue: rayContinueExecution,

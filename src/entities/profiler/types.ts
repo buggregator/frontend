@@ -74,3 +74,19 @@ export type StatBoardCost = StatsBase & {
   p_mu?: number;
   p_pmu?: number;
 }
+
+export interface ProfilerSummary {
+  overall_totals: StatBoardCost;
+  slowest_function: { function: string; excl_wt: number; p_excl_wt: number } | null;
+  memory_hotspot: { function: string; excl_mu: number; p_excl_mu: number } | null;
+  most_called: { function: string; ct: number } | null;
+}
+
+export interface ProfilerComparisonFunction {
+  function: string;
+  [key: string]: string | number;
+}
+
+export interface ProfilerComparison {
+  functions: ProfilerComparisonFunction[];
+}
