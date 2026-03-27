@@ -75,6 +75,14 @@ watch(
   }
 )
 
+// Split pinned vs regular
+const pinnedEvents = computed(() =>
+  visibleEvents.value.filter((e) => lockedIds.items.value.includes(e.uuid))
+)
+const regularEvents = computed(() =>
+  visibleEvents.value.filter((e) => !lockedIds.items.value.includes(e.uuid))
+)
+
 const router = useRouter()
 const eventUuids = computed(() => visibleEvents.value.map((e) => e.uuid))
 const { focusedId } = useKeyboardNav(eventUuids, {
@@ -89,7 +97,7 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   },
   onDelete: (id) => {
     if (lockedIds.items.value.includes(id)) {
-      showToast('Event is locked')
+      showToast('Event is pinned')
       return
     }
     events.removeById(id)
@@ -98,10 +106,10 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   onLock: (id) => {
     if (lockedIds.items.value.includes(id)) {
       lockedIds.remove(id)
-      showToast('Event unlocked')
+      showToast('Event unpinned')
     } else {
       lockedIds.add(id)
-      showToast('Event locked')
+      showToast('Event pinned')
     }
   },
   onCopyPayload: (id) => {
@@ -141,15 +149,43 @@ watchEffect(() => {
 
 <template>
   <div class="layout-preview-events">
+    <!-- Pinned events -->
+    <section
+      v-if="pinnedEvents.length"
+      class="layout-preview-events__pinned"
+    >
+      <div class="layout-preview-events__pinned-header">
+        <svg class="layout-preview-events__pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 17v5" /><path d="M9 11V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7" /><path d="M5 15h14l-1.5-4H6.5z" />
+        </svg>
+        Pinned
+        <span class="layout-preview-events__pinned-count">{{ pinnedEvents.length }}</span>
+      </div>
+      <div class="layout-preview-events__pinned-list">
+        <EventCardMapper
+          v-for="event in pinnedEvents"
+          :id="event.uuid"
+          :key="event.uuid"
+          :event="event"
+          role="article"
+          class="layout-preview-events__event"
+          :class="{
+            'layout-preview-events__event--focused': focusedId === event.uuid,
+          }"
+        />
+      </div>
+    </section>
+
+    <!-- Regular events -->
     <main
-      v-if="visibleEvents.length"
+      v-if="regularEvents.length"
       role="feed"
-      :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
+      :aria-label="`${props.title || 'Events'} feed, ${regularEvents.length} items`"
       aria-live="polite"
       class="layout-preview-events__events"
     >
       <EventCardMapper
-        v-for="event in visibleEvents"
+        v-for="event in regularEvents"
         :id="event.uuid"
         :key="event.uuid"
         :event="event"
@@ -176,6 +212,33 @@ watchEffect(() => {
 
 .layout-preview-events {
   @apply flex flex-col h-full w-full;
+}
+
+/* Pinned section */
+.layout-preview-events__pinned {
+  @apply flex-shrink-0;
+  @apply border-b-2 border-amber-200 dark:border-amber-500/20;
+}
+
+.layout-preview-events__pinned-header {
+  @apply flex items-center gap-1.5;
+  @apply px-4 py-1.5;
+  @apply text-2xs font-semibold uppercase tracking-wider;
+  @apply text-amber-600 dark:text-amber-400;
+  @apply bg-amber-50 dark:bg-amber-500/5;
+}
+
+.layout-preview-events__pin-icon {
+  @apply w-3 h-3;
+}
+
+.layout-preview-events__pinned-count {
+  @apply font-normal text-amber-400 dark:text-amber-500;
+  @apply ml-0.5;
+}
+
+.layout-preview-events__pinned-list {
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 
 .layout-preview-events__events {
