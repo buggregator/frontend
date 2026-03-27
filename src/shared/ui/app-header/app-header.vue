@@ -1,12 +1,4 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { THEME_MODES, useSettingsStore } from '../../stores'
-import { IconSvg } from '../icon-svg'
-
-const settingsStore = useSettingsStore()
-const { themeType } = storeToRefs(settingsStore)
-const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 </script>
 
 <template>
@@ -17,18 +9,6 @@ const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
     <div class="header__actions">
       <slot name="controls" />
-
-      <button
-        class="header__action-btn"
-        :title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
-        :aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
-        @click="settingsStore.changeTheme()"
-      >
-        <IconSvg
-          :name="isDarkMode ? 'sun' : 'moon'"
-          class="header__action-icon"
-        />
-      </button>
     </div>
   </header>
 </template>

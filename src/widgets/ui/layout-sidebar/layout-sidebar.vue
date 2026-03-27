@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useFloating } from '@floating-ui/vue'
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside, useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -34,6 +34,10 @@ const isVisibleProjects = ref(false)
 // Sidebar collapse state (persisted, collapsed by default)
 const storedCollapsed = window?.localStorage?.getItem(LocalStorageKeys.SidebarCollapsed)
 const isCollapsed = ref(storedCollapsed === null ? true : storedCollapsed === 'true')
+
+// Below xl breakpoint = always visually collapsed (same rules as manual collapse)
+const isBelowXl = useMediaQuery('(max-width: 1279px)')
+const isVisuallyCollapsed = computed(() => isCollapsed.value || isBelowXl.value)
 
 const applySidebarClass = (collapsed: boolean) => {
   if (collapsed) {
@@ -131,11 +135,11 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 <template>
   <aside
     class="layout-sidebar"
-    :class="{ 'layout-sidebar--collapsed': isCollapsed }"
+    :class="{ 'layout-sidebar--collapsed': isVisuallyCollapsed }"
   >
     <!-- Edge expand handle (visible only when collapsed) -->
     <button
-      v-if="isCollapsed"
+      v-if="isVisuallyCollapsed"
       class="layout-sidebar__edge-handle"
       aria-label="Expand sidebar"
       title="Expand sidebar"
@@ -167,7 +171,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
           tabindex="0"
         >
           <IconSvg
-            v-if="isCollapsed"
+            v-if="isVisuallyCollapsed"
             class="layout-sidebar__logo-icon"
             name="logo-short"
           />
@@ -179,7 +183,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
         </RouterLink>
 
         <button
-          v-if="!isCollapsed"
+          v-if="!isVisuallyCollapsed"
           class="layout-sidebar__toggle-btn"
           title="Collapse sidebar"
           aria-label="Collapse sidebar"
@@ -423,7 +427,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
   @apply px-3 py-3;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:justify-start xl:px-4;
+    @apply justify-start px-4;
   }
 }
 
@@ -461,7 +465,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
   transform: translateY(-50%);
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:flex;
+    @apply flex;
   }
 }
 
@@ -508,7 +512,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 
   /* Expanded mode: full-width highlight */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:justify-start xl:px-4;
+    @apply justify-start px-4;
     @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
   }
 
@@ -553,7 +557,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
   @apply hidden text-sm font-medium truncate ml-3 flex-1;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:inline;
+    @apply inline;
   }
 }
 
@@ -564,7 +568,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
   @apply text-gray-400 dark:text-gray-500;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:inline-block;
+    @apply inline-block;
   }
 }
 
@@ -583,7 +587,7 @@ const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.
 
   /* Hide dot in expanded mode (count badge is shown instead) */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:hidden;
+    @apply hidden;
   }
 }
 
@@ -732,7 +736,7 @@ $dotColors: (
   @apply hidden text-xs text-gray-500 dark:text-gray-500;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply xl:inline;
+    @apply inline;
   }
 }
 </style>
