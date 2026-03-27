@@ -166,18 +166,18 @@ const issueCount = (findings: SmtpFinding[]): number =>
 }
 
 .insights__findings {
-  @apply px-4 pb-3;
-  @apply flex flex-col gap-1.5;
+  @apply divide-y divide-gray-100 dark:divide-gray-700/30;
 }
 
 .insights__finding {
-  @apply flex gap-2 items-start;
+  @apply flex gap-2.5 items-start;
+  @apply px-4 py-2;
 }
 
 .insights__finding-icon {
   @apply w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0;
   @apply text-[9px] font-bold leading-none;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .insights__finding-icon--pass {
