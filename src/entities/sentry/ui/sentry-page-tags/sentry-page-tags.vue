@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { IconSvg } from '@/shared/ui'
+import { computed } from 'vue'
 import type { Sentry, SentryContextRuntime, SentryContexts } from '../../types'
 
 type Props = {
@@ -8,8 +7,6 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-
-const isModulesOpen = ref(false)
 
 const contextsRuntime = computed(() => {
   const { name = '', version = '' } =
@@ -50,10 +47,6 @@ const tags = computed(() => [
   { name: 'server', value: props.payload.server_name }
 ])
 
-const modules = computed(() => {
-  const mods = props.payload.modules || {}
-  return Object.keys(mods).map((name) => ({ name, version: mods[name] }))
-})
 </script>
 
 <template>
@@ -99,37 +92,6 @@ const modules = computed(() => {
       </div>
     </div>
 
-    <!-- Modules -->
-    <div
-      v-if="modules.length"
-      class="tags-section__group"
-    >
-      <h3
-        class="tags-section__title tags-section__title--toggle"
-        @click="isModulesOpen = !isModulesOpen"
-      >
-        Modules
-        <span class="tags-section__count">{{ modules.length }}</span>
-        <IconSvg
-          class="tags-section__chevron"
-          :class="{ 'tags-section__chevron--open': isModulesOpen }"
-          name="collapsed"
-        />
-      </h3>
-      <div
-        v-if="isModulesOpen"
-        class="tags-section__pills"
-      >
-        <div
-          v-for="mod in modules"
-          :key="mod.name"
-          class="tags-section__pill"
-        >
-          <span class="tags-section__pill-key">{{ mod.name }}</span>
-          <span class="tags-section__pill-value">{{ mod.version }}</span>
-        </div>
-      </div>
-    </div>
   </section>
 </template>
 
@@ -174,23 +136,6 @@ const modules = computed(() => {
   @apply flex items-center gap-2;
 }
 
-.tags-section__title--toggle {
-  @apply cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors;
-}
-
-.tags-section__count {
-  @apply text-2xs px-1.5 py-0.5 rounded-full;
-  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
-}
-
-.tags-section__chevron {
-  @apply w-3.5 h-3.5 ml-auto;
-  transition: transform 0.15s ease;
-}
-
-.tags-section__chevron--open {
-  transform: rotate(180deg);
-}
 
 /* Pills */
 .tags-section__pills {

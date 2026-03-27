@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import { IconSvg } from '@/shared/ui'
 import type { SentryFrame } from '../../types'
@@ -7,6 +7,12 @@ import type { SentryFrame } from '../../types'
 type Props = {
   frame: SentryFrame
   isOpen: boolean
+}
+
+type CodeSegment = {
+  text: string
+  varName?: string
+  varValue?: string
 }
 
 const props = defineProps<Props>()
@@ -19,8 +25,120 @@ const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
 )
 
+const hasVars = computed(() =>
+  props.frame.vars && Object.keys(props.frame.vars).length > 0
+)
+
+// Floating tooltip state
+const tooltip = reactive({
+  visible: false,
+  content: '',
+  x: 0,
+  y: 0,
+})
+
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+const showTooltip = (event: MouseEvent, value: string) => {
+  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  const rect = (event.target as HTMLElement).getBoundingClientRect()
+  tooltip.x = rect.left
+  tooltip.y = rect.top - 4
+  tooltip.content = value
+  tooltip.visible = true
+}
+
+const hideTooltip = () => {
+  hideTimer = setTimeout(() => { tooltip.visible = false }, 100)
+}
+
+const tooltipMouseEnter = () => {
+  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+}
+
+const tooltipMouseLeave = () => {
+  tooltip.visible = false
+}
+
+const formatVarValue = (value: unknown): string => {
+  if (value === null) return 'null'
+  if (value === undefined) return 'undefined'
+  if (typeof value === 'string') return value.length > 300 ? value.slice(0, 300) + '…' : value
+  if (typeof value === 'object') {
+    try {
+      const json = JSON.stringify(value, null, 2)
+      return json.length > 500 ? json.slice(0, 500) + '…' : json
+    } catch {
+      return String(value)
+    }
+  }
+  return String(value)
+}
+
+// Build a regex that matches any variable name from vars
+const varPattern = computed(() => {
+  if (!props.frame.vars) return null
+  const keys = Object.keys(props.frame.vars)
+  if (keys.length === 0) return null
+
+  const escaped = keys
+    .sort((a, b) => b.length - a.length)
+    .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+
+  return new RegExp(`(\\$(?:${escaped.join('|')})|(?:${escaped.join('|')}))(?=\\b|[^\\w])`, 'g')
+})
+
+const parseCodeLine = (line: string): CodeSegment[] => {
+  if (!hasVars.value || !varPattern.value || !line) {
+    return [{ text: line || '' }]
+  }
+
+  const segments: CodeSegment[] = []
+  const regex = new RegExp(varPattern.value.source, varPattern.value.flags)
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(line)) !== null) {
+    const matchedText = match[0]
+    const lookupKey = matchedText.startsWith('$') ? matchedText.slice(1) : matchedText
+    const vars = props.frame.vars!
+
+    const varValue = vars[lookupKey] !== undefined
+      ? vars[lookupKey]
+      : vars[matchedText] !== undefined
+        ? vars[matchedText]
+        : undefined
+
+    if (varValue === undefined) {
+      continue
+    }
+
+    if (match.index > lastIndex) {
+      segments.push({ text: line.slice(lastIndex, match.index) })
+    }
+
+    segments.push({
+      text: matchedText,
+      varName: matchedText,
+      varValue: formatVarValue(varValue),
+    })
+
+    lastIndex = match.index + matchedText.length
+  }
+
+  if (lastIndex < line.length) {
+    segments.push({ text: line.slice(lastIndex) })
+  }
+
+  if (segments.length === 0) {
+    return [{ text: line }]
+  }
+
+  return segments
+}
+
 const toggleOpen = () => {
-  if (hasBody.value) {
+  if (hasBody.value || hasVars.value) {
     isFrameOpen.value = !isFrameOpen.value
   }
 }
@@ -29,7 +147,7 @@ const toggleOpen = () => {
 <template>
   <div
     class="frame"
-    :class="{ 'frame--empty': !hasBody }"
+    :class="{ 'frame--empty': !hasBody && !hasVars }"
   >
     <div
       class="frame__head"
@@ -52,16 +170,23 @@ const toggleOpen = () => {
           v-if="frame.function"
           class="frame__meta"
         >
-          in {{ frame.function }} at line {{ frame.lineno }}
+          in {{ frame.function }} at line {{ frame.lineno }}{{ frame.colno ? ':' + frame.colno : '' }}
         </span>
       </div>
 
-      <IconSvg
-        v-if="hasBody"
-        class="frame__chevron"
-        :class="{ 'frame__chevron--open': isFrameOpen }"
-        name="collapsed"
-      />
+      <div class="frame__head-right">
+        <span
+          v-if="hasVars"
+          class="frame__vars-hint"
+        >{{ Object.keys(frame.vars!).length }} vars</span>
+
+        <IconSvg
+          v-if="hasBody || hasVars"
+          class="frame__chevron"
+          :class="{ 'frame__chevron--open': isFrameOpen }"
+          name="collapsed"
+        />
+      </div>
     </div>
 
     <div
@@ -77,7 +202,15 @@ const toggleOpen = () => {
           <span class="frame__line-num">{{
             (frame?.lineno ?? 0) - (frame.pre_context.length - i)
           }}</span>
-          <pre class="frame__line-code">{{ line }}</pre>
+          <pre class="frame__line-code"><template
+              v-for="(seg, si) in parseCodeLine(line)"
+              :key="si"
+            ><span
+                v-if="seg.varName"
+                class="frame__line-var"
+                @mouseenter="showTooltip($event, seg.varValue!)"
+                @mouseleave="hideTooltip"
+              >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
         </div>
       </template>
 
@@ -86,7 +219,15 @@ const toggleOpen = () => {
         class="frame__line frame__line--active"
       >
         <span class="frame__line-num">{{ frame.lineno }}</span>
-        <pre class="frame__line-code">{{ frame.context_line }}</pre>
+        <pre class="frame__line-code"><template
+            v-for="(seg, si) in parseCodeLine(frame.context_line)"
+            :key="si"
+          ><span
+              v-if="seg.varName"
+              class="frame__line-var"
+              @mouseenter="showTooltip($event, seg.varValue!)"
+              @mouseleave="hideTooltip"
+            >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
       </div>
 
       <template v-if="frame.post_context">
@@ -96,10 +237,31 @@ const toggleOpen = () => {
           class="frame__line"
         >
           <span class="frame__line-num">{{ (frame?.lineno ?? 0) + i + 1 }}</span>
-          <pre class="frame__line-code">{{ line }}</pre>
+          <pre class="frame__line-code"><template
+              v-for="(seg, si) in parseCodeLine(line)"
+              :key="si"
+            ><span
+                v-if="seg.varName"
+                class="frame__line-var"
+                @mouseenter="showTooltip($event, seg.varValue!)"
+                @mouseleave="hideTooltip"
+              >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
         </div>
       </template>
     </div>
+
+    <!-- Fixed-position tooltip (teleported outside overflow) -->
+    <Teleport to="body">
+      <div
+        v-if="tooltip.visible"
+        class="frame-tooltip"
+        :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
+        @mouseenter="tooltipMouseEnter"
+        @mouseleave="tooltipMouseLeave"
+      >
+        <pre class="frame-tooltip__content">{{ tooltip.content }}</pre>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -123,6 +285,10 @@ const toggleOpen = () => {
   }
 }
 
+.frame__head-right {
+  @apply flex items-center gap-2 flex-shrink-0;
+}
+
 .frame__title {
   @apply flex flex-col gap-0.5;
 }
@@ -139,8 +305,12 @@ const toggleOpen = () => {
   @apply text-gray-400 dark:text-gray-500 text-2xs;
 }
 
+.frame__vars-hint {
+  @apply text-2xs font-mono text-gray-400 dark:text-gray-500;
+}
+
 .frame__chevron {
-  @apply w-4 h-4 flex-shrink-0 text-gray-400 dark:text-gray-500;
+  @apply w-3.5 h-3.5 flex-shrink-0 text-gray-400 dark:text-gray-500;
   transition: transform 0.15s ease;
 }
 
@@ -166,5 +336,43 @@ const toggleOpen = () => {
 
 .frame__line-code {
   @apply flex-1;
+}
+
+/* Inline variable highlight */
+.frame__line-var {
+  @apply cursor-default;
+  @apply text-amber-300;
+  border-bottom: 1px dashed rgba(251, 191, 36, 0.4);
+
+  &:hover {
+    @apply bg-amber-500/20;
+  }
+}
+</style>
+
+<!-- Global styles for teleported tooltip -->
+<style lang="scss">
+.frame-tooltip {
+  position: fixed;
+  z-index: 9999;
+  transform: translateY(-100%);
+  min-width: 180px;
+  max-width: 420px;
+  max-height: 280px;
+  overflow: auto;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid theme('colors.gray.600');
+  background: theme('colors.gray.800');
+  pointer-events: auto;
+}
+
+.frame-tooltip__content {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: theme('colors.gray.200');
 }
 </style>
