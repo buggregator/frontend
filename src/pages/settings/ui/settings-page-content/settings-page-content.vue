@@ -14,13 +14,15 @@ const {
   changeNavbar,
   changeEventCountsVisibility,
   changeActiveCodeEditor,
-  setCustomFilePathMapping
+  setCustomFilePathMapping,
+  changeIsisActiveFilePathMapping
 } = settingsStore
 const {
   themeType,
   isFixedHeader,
   isVisibleEventCounts,
   customFilePathMapping,
+  isActiveFilePathMapping,
   codeEditor,
   apiVersion
 } = storeToRefs(settingsStore)
@@ -55,10 +57,8 @@ const serverVersion = computed(() =>
   String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
 )
 
-const isActiveCustomMapping = ref(customFilePathMapping.value.length > 0)
-
 const changeActiveCustomMapping = () => {
-  isActiveCustomMapping.value = !isActiveCustomMapping.value
+  changeIsisActiveFilePathMapping(!isActiveFilePathMapping.value)
 }
 
 const newFilePathMapping = ref<FilePathMapping>({ source_path: '', target_path: '' })
@@ -70,10 +70,7 @@ const setTargetPath = (event: Event) => {
   newFilePathMapping.value.target_path = (event.target as HTMLInputElement).value
 }
 
-// const localFilePathMapping = ref(customFilePathMapping.value);
-
 const clearMapping = (index: number) => {
-  // localFilePathMapping.value.splice(index, 1);
   setCustomFilePathMapping(customFilePathMapping.value.filter((_, i) => i !== index))
 }
 
@@ -85,7 +82,6 @@ const isVisibleSaveButton = computed(
 
 const saveMapping = () => {
   if (isVisibleSaveButton.value) {
-    // localFilePathMapping.value.push({ ...newFilePathMapping.value });
     setCustomFilePathMapping([...customFilePathMapping.value, { ...newFilePathMapping.value }])
     newFilePathMapping.value = { source_path: '', target_path: '' }
   }
@@ -231,9 +227,9 @@ useTitle('Settings | Buggregator')
           </div>
           <button
             class="s-toggle"
-            :class="{ 's-toggle--active': isActiveCustomMapping }"
+            :class="{ 's-toggle--active': isActiveFilePathMapping }"
             role="switch"
-            :aria-checked="isActiveCustomMapping"
+            :aria-checked="isActiveFilePathMapping"
             aria-label="Enable custom file path mapping"
             @click="changeActiveCustomMapping"
           >
@@ -242,7 +238,7 @@ useTitle('Settings | Buggregator')
         </div>
 
         <div
-          v-if="isActiveCustomMapping"
+          v-if="isActiveFilePathMapping"
           class="s-row s-row--multiline"
         >
           <div

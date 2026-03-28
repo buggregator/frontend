@@ -7,6 +7,7 @@ export enum LocalStorageKeys {
   Token = "token",
   SidebarCollapsed = "sidebar_collapsed",
   CustomFilePathMapping = "custom_file_path_mapping",
+  IsActiveCustomFilePathMapping = "is_active_custom_file_path_mapping",
 }
 
 export enum SessionStorageKeys {

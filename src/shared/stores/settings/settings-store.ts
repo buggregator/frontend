@@ -12,6 +12,7 @@ import {
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
   setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
+  setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -25,6 +26,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     availableEvents: [] as EventType[],
+    isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
     customFilePathMapping: getStoredCustomFilePathMapping() || [],
   }),
   getters: {
@@ -83,6 +85,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.customFilePathMapping = mapping;
 
       setStoredCustomFilePathMapping(mapping)
+    },
+    changeIsisActiveFilePathMapping(state: boolean) {
+      this.isActiveFilePathMapping = state;
+
+      setStoredIsActiveCustomFilePathMapping(state);
     }
   },
 });

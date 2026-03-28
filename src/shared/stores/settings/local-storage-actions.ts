@@ -100,3 +100,13 @@ export const getStoredCustomFilePathMapping = (): { source_path: string, target_
 
   return [];
 }
+
+export const setStoredIsActiveCustomFilePathMapping = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.IsActiveCustomFilePathMapping, String(state));
+}
+
+export const getStoredIsActiveCustomFilePathMapping = (): boolean => {
+  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.IsActiveCustomFilePathMapping) || "true";
+
+  return storageValue === "true";
+}
