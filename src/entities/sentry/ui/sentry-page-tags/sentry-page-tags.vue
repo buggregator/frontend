@@ -46,7 +46,6 @@ const tags = computed(() => [
   { name: 'runtime', value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}` },
   { name: 'server', value: props.payload.server_name }
 ])
-
 </script>
 
 <template>
@@ -91,7 +90,6 @@ const tags = computed(() => [
         </template>
       </div>
     </div>
-
   </section>
 </template>
 
@@ -135,7 +133,6 @@ const tags = computed(() => [
   @apply text-gray-500 dark:text-gray-400;
   @apply flex items-center gap-2;
 }
-
 
 /* Pills */
 .tags-section__pills {

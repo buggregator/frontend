@@ -16,7 +16,7 @@ const sections = [
       { keys: ['5'], desc: 'Inspector' },
       { keys: ['6'], desc: 'VarDump' },
       { keys: ['7'], desc: 'Monolog' },
-      { keys: ['8'], desc: 'Ray' },
+      { keys: ['8'], desc: 'Ray' }
     ]
   },
   {
@@ -29,15 +29,13 @@ const sections = [
       { keys: ['l'], desc: 'Pin / unpin event' },
       { keys: ['y'], desc: 'Copy payload to clipboard' },
       { keys: ['s'], desc: 'Screenshot to clipboard' },
-      { keys: ['Esc'], desc: 'Clear focus' },
+      { keys: ['Esc'], desc: 'Clear focus' }
     ]
   },
   {
     title: 'General',
-    shortcuts: [
-      { keys: ['?'], desc: 'Toggle this overlay' },
-    ]
-  },
+    shortcuts: [{ keys: ['?'], desc: 'Toggle this overlay' }]
+  }
 ]
 </script>
 
@@ -45,6 +43,7 @@ const sections = [
   <Teleport to="body">
     <Transition name="shortcuts-overlay">
       <div
+        v-if="true"
         class="shortcuts-backdrop"
         @click.self="$emit('close')"
         @keydown.escape="$emit('close')"
@@ -82,7 +81,9 @@ const sections = [
                       v-for="key in shortcut.keys"
                       :key="key"
                       class="shortcuts-row__kbd"
-                    >{{ key }}</kbd>
+                    >{{
+                      key
+                    }}</kbd>
                   </span>
                   <span class="shortcuts-row__desc">{{ shortcut.desc }}</span>
                 </div>

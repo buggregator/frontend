@@ -234,7 +234,7 @@ function analyzeCompatibility(html: string, raw: string): SmtpFinding[] {
   return findings
 }
 
-function analyzeSecurity(html: string, raw: string): SmtpFinding[] {
+function analyzeSecurity(html: string): SmtpFinding[] {
   const findings: SmtpFinding[] = []
 
   if (!html) return [{ severity: 'pass', title: 'No HTML to analyze' }]
@@ -300,7 +300,7 @@ export function useSmtpAnalytics(
   const deliverability = computed(() => analyzeDeliverability(raw.value, html.value, text.value, subject.value))
   const contentQa = computed(() => analyzeContentQa(html.value, text.value))
   const compatibility = computed(() => analyzeCompatibility(html.value, raw.value))
-  const security = computed(() => analyzeSecurity(html.value, raw.value))
+  const security = computed(() => analyzeSecurity(html.value))
 
   const links = computed<SmtpLink[]>(() => {
     if (!html.value) return []
