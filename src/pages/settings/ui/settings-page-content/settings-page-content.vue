@@ -222,11 +222,11 @@ useTitle('Settings | Buggregator')
         <div class="s-row">
           <div class="s-row__info">
             <div class="s-row__label">
-              Enable Custom mapping
+              Enable Custom File Path Mapping
             </div>
             <div class="s-row__desc">
-              Automatically map file paths in events to your project structure, allowing you to open
-              files that are outside of your project root or have different path prefixes.
+              Map event file paths to your local project structure automatically, making it possible
+              to open files outside your project root or with different path prefixes.
             </div>
           </div>
           <button
