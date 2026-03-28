@@ -15,7 +15,7 @@ const {
   changeEventCountsVisibility,
   changeActiveCodeEditor,
   setCustomFilePathMapping,
-  changeIsisActiveFilePathMapping
+  changeIsActiveFilePathMapping
 } = settingsStore
 const {
   themeType,
@@ -58,7 +58,7 @@ const serverVersion = computed(() =>
 )
 
 const changeActiveCustomMapping = () => {
-  changeIsisActiveFilePathMapping(!isActiveFilePathMapping.value)
+  changeIsActiveFilePathMapping(!isActiveFilePathMapping.value)
 }
 
 const newFilePathMapping = ref<FilePathMapping>({ source_path: '', target_path: '' })

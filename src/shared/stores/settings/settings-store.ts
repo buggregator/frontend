@@ -86,7 +86,7 @@ export const useSettingsStore = defineStore("settingsStore", {
 
       setStoredCustomFilePathMapping(mapping)
     },
-    changeIsisActiveFilePathMapping(state: boolean) {
+    changeIsActiveFilePathMapping(state: boolean) {
       this.isActiveFilePathMapping = state;
 
       setStoredIsActiveCustomFilePathMapping(state);
