@@ -234,7 +234,7 @@ useTitle('Settings | Buggregator')
             :class="{ 's-toggle--active': isActiveCustomMapping }"
             role="switch"
             :aria-checked="isActiveCustomMapping"
-            aria-label="Show event counts in sidebar"
+            aria-label="Enable custom file path mapping"
             @click="changeActiveCustomMapping"
           >
             <span class="s-toggle__knob" />
