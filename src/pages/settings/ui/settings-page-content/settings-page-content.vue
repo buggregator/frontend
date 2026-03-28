@@ -5,13 +5,27 @@ import { computed, ref } from 'vue'
 import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
+import type { FilePathMapping } from '@/shared/types'
 import { EventDetailLayout, EventDetailSection, IconSvg } from '@/shared/ui'
 import { version } from '../../../../../package.json' with { type: 'json' }
 
 const settingsStore = useSettingsStore()
-const { changeNavbar, changeEventCountsVisibility, changeActiveCodeEditor } = settingsStore
-const { themeType, isFixedHeader, isVisibleEventCounts, codeEditor, apiVersion } =
-  storeToRefs(settingsStore)
+const {
+  changeNavbar,
+  changeEventCountsVisibility,
+  changeActiveCodeEditor,
+  setCustomFilePathMapping,
+  changeIsActiveFilePathMapping
+} = settingsStore
+const {
+  themeType,
+  isFixedHeader,
+  isVisibleEventCounts,
+  customFilePathMapping,
+  isActiveFilePathMapping,
+  codeEditor,
+  apiVersion
+} = storeToRefs(settingsStore)
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
@@ -42,6 +56,40 @@ const clientVersion = ref(!version || version === '0.0.1' ? '@dev' : `v${version
 const serverVersion = computed(() =>
   String(apiVersion.value).match(/^[0-9.]+.*$/) ? `v${apiVersion.value}` : `@${apiVersion.value}`
 )
+
+const changeActiveCustomMapping = () => {
+  changeIsActiveFilePathMapping(!isActiveFilePathMapping.value)
+}
+
+const newFilePathMapping = ref<FilePathMapping>({ source_path: '', target_path: '' })
+
+const setSourcePath = (event: Event) => {
+  newFilePathMapping.value.source_path = (event.target as HTMLInputElement).value
+}
+const setTargetPath = (event: Event) => {
+  newFilePathMapping.value.target_path = (event.target as HTMLInputElement).value
+}
+
+const clearMapping = (index: number) => {
+  setCustomFilePathMapping(customFilePathMapping.value.filter((_, i) => i !== index))
+}
+
+const isVisibleSaveButton = computed(
+  () =>
+    newFilePathMapping.value.source_path.trim() !== '' &&
+    newFilePathMapping.value.target_path.trim() !== ''
+)
+
+const saveMapping = () => {
+  if (isVisibleSaveButton.value) {
+    const trimmedMapping: FilePathMapping = {
+      source_path: newFilePathMapping.value.source_path.trim(),
+      target_path: newFilePathMapping.value.target_path.trim()
+    }
+    setCustomFilePathMapping([...customFilePathMapping.value, trimmedMapping])
+    newFilePathMapping.value = { source_path: '', target_path: '' }
+  }
+}
 
 useTitle('Settings | Buggregator')
 </script>
@@ -170,6 +218,99 @@ useTitle('Settings | Buggregator')
             {{ pathToIDEFilePath(codeEditor, '/App/Modules/Logger.php', 12) }}
           </code>
         </div>
+
+        <div class="s-row">
+          <div class="s-row__info">
+            <div class="s-row__label">
+              Enable Custom File Path Mapping
+            </div>
+            <div class="s-row__desc">
+              Map event file paths to your local project structure automatically, making it possible
+              to open files outside your project root or with different path prefixes.
+            </div>
+          </div>
+          <button
+            class="s-toggle"
+            :class="{ 's-toggle--active': isActiveFilePathMapping }"
+            role="switch"
+            :aria-checked="isActiveFilePathMapping"
+            aria-label="Enable custom file path mapping"
+            @click="changeActiveCustomMapping"
+          >
+            <span class="s-toggle__knob" />
+          </button>
+        </div>
+
+        <div
+          v-if="isActiveFilePathMapping"
+          class="s-row s-row--multiline"
+        >
+          <div
+            v-for="(pathMap, index) in customFilePathMapping"
+            :key="index"
+            class="s-row__info s-row__info--mapping"
+          >
+            <div class="s-row__label">
+              <span class="s-row__hint">Source</span>
+
+              {{ pathMap.source_path }}
+            </div>
+
+            <div class="s-row__label">
+              <span class="s-row__hint">Target</span>
+
+              {{ pathMap.target_path }}
+            </div>
+
+            <button
+              class="s-row__action"
+              title="Remove mapping"
+              aria-label="Remove mapping"
+              @click="clearMapping(index)"
+            >
+              <IconSvg
+                name="minus"
+                class="s-row__action-icon"
+              />
+              <span class="action-btn__text sr-only">Clear</span>
+            </button>
+          </div>
+
+          <div class="s-row__info s-row__info--mapping">
+            <label class="s-row__label">
+              <span class="s-row__hint">Source</span>
+
+              <input
+                class="s-row__input"
+                :value="newFilePathMapping.source_path"
+                @input="setSourcePath"
+              >
+            </label>
+
+            <label class="s-row__label">
+              <span class="s-row__hint">Target</span>
+              <input
+                class="s-row__input"
+                :value="newFilePathMapping.target_path"
+                @input="setTargetPath"
+              >
+            </label>
+
+            <button
+              class="s-row__action"
+              title="Save mapping"
+              aria-label="Save mapping"
+              :disabled="!isVisibleSaveButton"
+              @click="saveMapping"
+            >
+              <IconSvg
+                name="plus"
+                class="s-row__action-icon"
+              />
+              <span class="action-btn__text sr-only">Save</span>
+            </button>
+          </div>
+        </div>
       </div>
     </EventDetailSection>
 
@@ -242,6 +383,10 @@ useTitle('Settings | Buggregator')
   @apply bg-white dark:bg-gray-800;
 }
 
+.s-row--multiline {
+  @apply flex-col items-start gap-3;
+}
+
 .s-row--compact {
   @apply py-2;
 }
@@ -250,8 +395,38 @@ useTitle('Settings | Buggregator')
   @apply flex-1 mr-4;
 }
 
+.s-row__info--mapping {
+  @apply flex flex-row gap-2 mr-0 min-w-full items-start;
+}
+
 .s-row__label {
-  @apply text-sm font-medium;
+  @apply text-sm font-medium w-full;
+}
+
+.s-row__input {
+  @apply text-sm font-medium h-7;
+  @apply bg-transparent text-xs flex-1 w-full;
+  @apply text-gray-800 dark:text-gray-200;
+  @apply placeholder-gray-400 dark:placeholder-gray-500;
+  @apply border border-gray-300 dark:border-gray-600 rounded px-2 py-1;
+}
+
+.s-row__action {
+  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
+  @apply text-xs font-medium;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-700;
+  @apply hover:text-gray-700 dark:hover:text-gray-200;
+  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
+  @apply transition-colors cursor-pointer mt-auto;
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+.s-row__action-icon {
+  @apply w-3 h-3;
 }
 
 .s-row__desc {

@@ -35,6 +35,7 @@ onMounted(() => document.addEventListener('keydown', onKeydown))
 onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 </script>
 
+<!--TODO: move svg to icon component-->
 <template>
   <div class="search-bar">
     <svg

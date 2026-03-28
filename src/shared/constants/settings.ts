@@ -15,11 +15,12 @@ export enum IDE_KEYS {
   ATOM = "atom",
   TEXTMATE = "txmt",
   NOVA = "nova",
+  ZED = "zed",
 }
 
 export const IDE_KEY_DEFAULT = IDE_KEYS.VSCODE;
 
-export const IDE_TITLES_TO_KEYS_MAP: Record<string, string> = {
+export const IDE_TITLES_TO_KEYS_MAP: Record<IDE_KEYS, string> = {
   [IDE_KEYS.VSCODE]: "VS Code",
   [IDE_KEYS.CURSOR]: "Cursor",
   [IDE_KEYS.PHPSTORM]: "JetBrains PhpStorm",
@@ -36,4 +37,5 @@ export const IDE_TITLES_TO_KEYS_MAP: Record<string, string> = {
   [IDE_KEYS.ATOM]: "Atom",
   [IDE_KEYS.TEXTMATE]: "TextMate",
   [IDE_KEYS.NOVA]: "Nova",
+  [IDE_KEYS.ZED]: "Zed",
 }

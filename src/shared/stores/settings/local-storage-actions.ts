@@ -81,3 +81,32 @@ export const getStoredPrimaryCodeEditor = (): IDE_KEYS => {
 export const setStoredPrimaryCodeEditor = (editor: string) => {
   window?.localStorage?.setItem(LocalStorageKeys.CodeEditor, editor);
 }
+
+export const setStoredCustomFilePathMapping = (mapping: { source_path: string, target_path: string }[]) => {
+  window?.localStorage?.setItem(LocalStorageKeys.CustomFilePathMapping, JSON.stringify(mapping));
+}
+
+export const getStoredCustomFilePathMapping = (): { source_path: string, target_path: string }[] => {
+  const storedMapping = window?.localStorage?.getItem(LocalStorageKeys.CustomFilePathMapping);
+
+  if (storedMapping) {
+    try {
+      return JSON.parse(storedMapping);
+    } catch (e) {
+      console.error("Failed to parse custom file path mapping from local storage", e);
+      return [];
+    }
+  }
+
+  return [];
+}
+
+export const setStoredIsActiveCustomFilePathMapping = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.IsActiveCustomFilePathMapping, String(state));
+}
+
+export const getStoredIsActiveCustomFilePathMapping = (): boolean => {
+  const storageValue = window?.localStorage?.getItem(LocalStorageKeys.IsActiveCustomFilePathMapping) || "false";
+
+  return storageValue === "true";
+}

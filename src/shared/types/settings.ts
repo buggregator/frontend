@@ -25,3 +25,8 @@ export type TProjects = {
     is_default: boolean,
   }[]
 }
+
+export type FilePathMapping = {
+  source_path: string,
+  target_path: string,
+}

@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {IDE_KEY_DEFAULT, IDE_KEYS} from "../../constants";
 import {REST_API_URL} from "../../lib/io/constants";
-import {type EventType, EventTypes, type TSettings} from "../../types";
+import {type EventType, EventTypes, type FilePathMapping, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -11,7 +11,8 @@ import {
   setStoredFixedHeader,
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
-  setStoredPrimaryCodeEditor,
+  setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
+  setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -25,6 +26,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     availableEvents: [] as EventType[],
+    isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
+    customFilePathMapping: getStoredCustomFilePathMapping() || [],
   }),
   getters: {
     loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
@@ -77,6 +80,16 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.codeEditor = editor;
 
       setStoredPrimaryCodeEditor(editor);
+    },
+    setCustomFilePathMapping(mapping: FilePathMapping[]) {
+      this.customFilePathMapping = mapping;
+
+      setStoredCustomFilePathMapping(mapping)
+    },
+    changeIsActiveFilePathMapping(state: boolean) {
+      this.isActiveFilePathMapping = state;
+
+      setStoredIsActiveCustomFilePathMapping(state);
     }
   },
 });

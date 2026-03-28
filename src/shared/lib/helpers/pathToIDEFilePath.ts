@@ -19,6 +19,10 @@ export function pathToIDEFilePath(ide: IDE_KEYS, source: string, line?: number):
     return `${IDE_KEYS.VSCODE}://file${source}${ln ? `:${ln}:1` : ""}`;
   }
 
+  if (ide === IDE_KEYS.ZED) {
+    return `${IDE_KEYS.ZED}://file${source}${ln ? `:${ln}:1` : ""}`;
+  }
+
   if (ide === IDE_KEYS.CURSOR) {
     return `${IDE_KEYS.CURSOR}://file${source}${ln ? `:${ln}` : ""}`;
   }
