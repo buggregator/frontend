@@ -82,7 +82,11 @@ const isVisibleSaveButton = computed(
 
 const saveMapping = () => {
   if (isVisibleSaveButton.value) {
-    setCustomFilePathMapping([...customFilePathMapping.value, { ...newFilePathMapping.value }])
+    const trimmedMapping: FilePathMapping = {
+      source_path: newFilePathMapping.value.source_path.trim(),
+      target_path: newFilePathMapping.value.target_path.trim()
+    }
+    setCustomFilePathMapping([...customFilePathMapping.value, trimmedMapping])
     newFilePathMapping.value = { source_path: '', target_path: '' }
   }
 }
