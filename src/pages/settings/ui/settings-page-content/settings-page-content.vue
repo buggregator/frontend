@@ -243,7 +243,7 @@ useTitle('Settings | Buggregator')
         >
           <div
             v-for="(pathMap, index) in customFilePathMapping"
-            :key="`${pathMap.source_path}=>${pathMap.target_path}`"
+            :key="index"
             class="s-row__info s-row__info--mapping"
           >
             <div class="s-row__label">
