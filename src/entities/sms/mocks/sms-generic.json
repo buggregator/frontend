@@ -1,0 +1,12 @@
+{
+  "uuid": "01234567-0000-0000-0000-000000000003",
+  "type": "sms",
+  "timestamp": 1700000120,
+  "project": null,
+  "payload": {
+    "from": "+1555000111",
+    "to": "+1555000222",
+    "message": "Reminder: Your appointment is scheduled for tomorrow at 10:00 AM. Reply CONFIRM to confirm or CANCEL to reschedule.",
+    "gateway": "generic"
+  }
+}

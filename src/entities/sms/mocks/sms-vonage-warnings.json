@@ -1,0 +1,13 @@
+{
+  "uuid": "01234567-0000-0000-0000-000000000011",
+  "type": "sms",
+  "timestamp": 1700000360,
+  "project": null,
+  "payload": {
+    "from": "+31612345678",
+    "to": "+31698765432",
+    "message": "This message is missing auth credentials.",
+    "gateway": "vonage",
+    "warnings": ["api_key", "api_secret"]
+  }
+}

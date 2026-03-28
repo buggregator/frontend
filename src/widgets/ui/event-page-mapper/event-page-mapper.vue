@@ -6,6 +6,7 @@ import { useMonolog, MonologPage } from '@/entities/monolog'
 import { useProfiler, ProfilerPage } from '@/entities/profiler'
 import { useRay, RayPage } from '@/entities/ray'
 import { useSentry, SentryPage } from '@/entities/sentry'
+import { useSms, SmsPage } from '@/entities/sms'
 import { useSmtp, SmtpPage } from '@/entities/smtp'
 import { useVarDump, VarDumpPage } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
@@ -17,6 +18,7 @@ const { normalizeProfilerEvent } = useProfiler()
 const { normalizeVarDumpEvent } = useVarDump()
 const { normalizeMonologEvent } = useMonolog()
 const { normalizeSentryEvent } = useSentry()
+const { normalizeSmsEvent } = useSms()
 const { normalizeSmtpEvent } = useSmtp()
 const { normalizeInspectorEvent } = useInspector()
 const { normalizeHttpDumpEvent } = useHttpDump()
@@ -60,6 +62,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.HttpDump]: {
     view: HttpDumpPage,
     normalize: normalizeHttpDumpEvent
+  },
+  [EventTypes.Sms]: {
+    view: SmsPage,
+    normalize: normalizeSmsEvent
   }
 } as Record<EventTypes, MappedEventsProps<unknown>>
 

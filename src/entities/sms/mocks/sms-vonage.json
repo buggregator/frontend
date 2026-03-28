@@ -1,0 +1,12 @@
+{
+  "uuid": "01234567-0000-0000-0000-000000000002",
+  "type": "sms",
+  "timestamp": 1700000060,
+  "project": null,
+  "payload": {
+    "from": "+31612345678",
+    "to": "+31698765432",
+    "message": "Your login code is 829103. Do not share it with anyone.",
+    "gateway": "vonage"
+  }
+}

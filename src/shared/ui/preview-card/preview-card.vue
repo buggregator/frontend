@@ -188,16 +188,18 @@ onMounted(() => {
    Tailwind safelist comment for JIT:
    'border-l-rose-500' 'border-l-violet-500' 'border-l-amber-500'
    'border-l-green-500' 'border-l-yellow-500' 'border-l-orange-500'
-   'border-l-teal-500' 'border-l-cyan-500' */
+   'border-l-teal-500' 'border-l-cyan-500' 'border-l-fuchsia-500'
+   'border-l-lime-500' 'border-l-sky-500' */
 $typeStripeMap: (
   'sentry': 'rose',
   'profiler': 'violet',
   'smtp': 'amber',
   'http-dump': 'green',
-  'inspector': 'yellow',
-  'var-dump': 'orange',
+  'inspector': 'lime',
+  'var-dump': 'sky',
   'monolog': 'teal',
-  'ray': 'cyan'
+  'ray': 'cyan',
+  'sms': 'fuchsia'
 );
 
 .preview-card {

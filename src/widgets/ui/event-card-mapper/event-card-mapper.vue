@@ -6,6 +6,7 @@ import { useMonolog, PreviewCard as PreviewMonolog } from '@/entities/monolog'
 import { useProfiler, PreviewCard as PreviewProfiler } from '@/entities/profiler'
 import { useRay, PreviewCard as PreviewRay } from '@/entities/ray'
 import { useSentry, PreviewCard as PreviewSentry } from '@/entities/sentry'
+import { useSms, PreviewCard as PreviewSms } from '@/entities/sms'
 import { useSmtp, PreviewCard as PreviewSMTP } from '@/entities/smtp'
 import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
@@ -23,6 +24,7 @@ const { normalizeProfilerEvent } = useProfiler()
 const { normalizeVarDumpEvent } = useVarDump()
 const { normalizeMonologEvent } = useMonolog()
 const { normalizeSentryEvent } = useSentry()
+const { normalizeSmsEvent } = useSms()
 const { normalizeSmtpEvent } = useSmtp()
 const { normalizeInspectorEvent } = useInspector()
 const { normalizeHttpDumpEvent } = useHttpDump()
@@ -66,6 +68,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.HttpDump]: {
     view: PreviewHttpDump,
     normalize: normalizeHttpDumpEvent
+  },
+  [EventTypes.Sms]: {
+    view: PreviewSms,
+    normalize: normalizeSmsEvent
   },
   unknown: {
     view: PreviewCardDefault,

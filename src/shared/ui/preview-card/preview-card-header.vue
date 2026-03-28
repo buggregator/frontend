@@ -231,18 +231,20 @@ const isVisibleTags = computed(() => props.labels.length > 0)
    Tailwind safelist:
    'text-rose-500 bg-rose-500/10' 'text-violet-500 bg-violet-500/10'
    'text-amber-500 bg-amber-500/10' 'text-green-500 bg-green-500/10'
-   'text-yellow-500 bg-yellow-500/10' 'text-red-500 bg-red-500/10'
+   'text-lime-500 bg-lime-500/10' 'text-sky-500 bg-sky-500/10'
    'text-teal-500 bg-teal-500/10' 'text-cyan-500 bg-cyan-500/10'
+   'text-fuchsia-500 bg-fuchsia-500/10'
    'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10' */
 $typeColors: (
   'sentry': 'rose',
   'profiler': 'violet',
   'smtp': 'amber',
   'http-dump': 'green',
-  'inspector': 'yellow',
-  'var-dump': 'orange',
+  'inspector': 'lime',
+  'var-dump': 'sky',
   'monolog': 'teal',
   'ray': 'cyan',
+  'sms': 'fuchsia',
   'unknown': 'gray'
 );
 
