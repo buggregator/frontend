@@ -10,7 +10,7 @@ export function useIdeLink() {
     if (!file || file === 'unknown') return null
     try {
       if (isActiveFilePathMapping.value && customFilePathMapping.value.length) {
-        const mapping = customFilePathMapping.value
+        const mapping = [...customFilePathMapping.value]
           // Select longest matching source_path first to ensure the most specific mapping is applied
           .sort((a, b) => b.source_path.length - a.source_path.length)
           .find(({ source_path }) => file.startsWith(source_path))
