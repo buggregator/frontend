@@ -19,7 +19,7 @@ const props = defineProps<Props>()
 const isFrameOpen = ref(props.isOpen)
 const { buildLink } = useIdeLink()
 
-const ideLink = computed(() => buildLink(props.frame.filename, props.frame.lineno))
+const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
 
 const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)

@@ -9,7 +9,7 @@ import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { LocalStorageKeys, RouteName } from '@/shared/types'
+import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
 import { EVENTS_NAV_ORDER } from './constants'
 
@@ -129,7 +129,7 @@ const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 
-const hasEvents = (type: string) => isVisibleEventCounts.value && getItemsCount.value(type) > 0
+const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCount.value(type) > 0
 </script>
 
 <template>

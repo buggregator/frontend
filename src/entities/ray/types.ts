@@ -55,7 +55,8 @@ export interface RayContentArray {
 export interface RayContentObject {
   values: {
     [key: string]: string
-  }
+  },
+  label?: string
 }
 
 export interface RayContentException {

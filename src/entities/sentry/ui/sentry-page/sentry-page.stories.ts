@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
+import type { ServerEvent } from "@/shared/types";
 import { useSentry } from "../../lib";
 import {
   sentryCommonMock,
@@ -10,6 +11,7 @@ import {
   sentryPythonLogMock,
   sentrySpiralMock,
 } from '../../mocks';
+import type {Sentry} from "../../types";
 import SentryPage from './sentry-page.vue';
 
 const { normalizeSentryEvent } = useSentry();
@@ -60,12 +62,12 @@ export const PageJSMessage: StoryObj<typeof SentryPage> = {
 
 export const PagePython: StoryObj<typeof SentryPage> = {
   args: {
-    event: normalizeSentryEvent(sentryPythonMock),
+    event: normalizeSentryEvent(sentryPythonMock as unknown as ServerEvent<Sentry>), // TODO: fix ServerEvent<Sentry>
   }
 };
 
 export const PagePythonLog: StoryObj<typeof SentryPage> = {
   args: {
-    event: normalizeSentryEvent(sentryPythonLogMock),
+    event: normalizeSentryEvent(sentryPythonLogMock as unknown as ServerEvent<Sentry>), // TODO: fix ServerEvent<Sentry>
   }
 };

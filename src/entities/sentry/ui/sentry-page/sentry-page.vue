@@ -230,7 +230,7 @@ const scrollToException = (idx: number) => {
           <SentryPageTags :payload="event.payload" />
 
           <SentryPageTrace
-            v-if="hasTraceContext"
+            v-if="hasTraceContext && event.payload.contexts!.trace"
             :trace="event.payload.contexts!.trace"
           />
 

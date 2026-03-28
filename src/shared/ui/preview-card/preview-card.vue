@@ -20,8 +20,8 @@ const props = defineProps<Props>()
 const isCollapsed = ref(false)
 const isOptimized = ref(false)
 const isVisibleControlsLocal = ref(true)
-const isVisibleControls = computed(() =>
-  isVisibleControlsLocal.value && screenshotingEventId.value !== props.event.id
+const isVisibleControls = computed(
+  () => isVisibleControlsLocal.value && screenshotingEventId.value !== props.event.id
 )
 
 const eventRef = ref(null)
@@ -73,7 +73,7 @@ const downloadImage = () => {
       .then((dataUrl) => {
         download(dataUrl, `${props.event.type}-${props.event.id}.png`)
       })
-      .catch((e) => logger.ui.error('Operation failed', e))
+      .catch((e) => logger(['UI: Operation failed', e]))
       .finally(() => {
         changeVisibleControls(true)
       })
@@ -92,7 +92,7 @@ const downloadFile = async () => {
       )
     }
   } catch (e) {
-    logger.ui.error('Failed to download event JSON', e)
+    logger(['UI: Failed to download event JSON', e])
   }
 }
 
@@ -115,7 +115,7 @@ const copyCode = () => {
           navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
         }
       })
-      .catch((e) => logger.ui.error('Operation failed', e))
+      .catch((e) => logger(['UI: Operation failed', e]))
       .finally(() => {
         changeVisibleControls(true)
       })

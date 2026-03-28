@@ -40,7 +40,7 @@ const getEvent = async () => {
       new EventValidationError('Event not found', eventId)
     }
   } catch (error) {
-    logger.ui.error('Failed to load event page', error)
+    logger(['UI: Failed to load event page', error])
     await router.push({ name: RouteName.NotFound })
   }
 }

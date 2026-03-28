@@ -40,17 +40,19 @@ const getAttachmentsRequest = async () => {
     const result = await getAttachments(props.event.id)
     attachments.value = result
   } catch (error) {
-    logger.ui.error('Failed to fetch attachments', error)
+    logger(['UI: Failed to fetch attachments', error])
   }
 }
 
-const addressGroups = computed(() => [
-  { title: 'From', addresses: props.event.payload.from },
-  { title: 'To', addresses: props.event.payload.to },
-  { title: 'CC', addresses: props.event.payload.cc },
-  { title: 'BCC', addresses: props.event.payload.bcc },
-  { title: 'Reply to', addresses: props.event.payload.reply_to }
-].filter((g) => g.addresses && g.addresses.length > 0))
+const addressGroups = computed(() =>
+  [
+    { title: 'From', addresses: props.event.payload.from },
+    { title: 'To', addresses: props.event.payload.to },
+    { title: 'CC', addresses: props.event.payload.cc },
+    { title: 'BCC', addresses: props.event.payload.bcc },
+    { title: 'Reply to', addresses: props.event.payload.reply_to }
+  ].filter((g) => g.addresses && g.addresses.length > 0)
+)
 
 const fromSummary = computed(() => {
   const from = props.event.payload.from?.[0]
@@ -91,7 +93,7 @@ const insightGroups = computed(() => [
   { title: 'Deliverability', findings: deliverability.value },
   { title: 'Content QA', findings: contentQa.value },
   { title: 'Compatibility', findings: compatibility.value },
-  { title: 'Security', findings: security.value },
+  { title: 'Security', findings: security.value }
 ])
 
 const formatSize = (bytes: number) => {
@@ -225,7 +227,9 @@ onMounted(getAttachmentsRequest)
             <div class="smtp-info-row">
               <span class="smtp-info-row__label">Format</span>
               <span class="smtp-info-row__value">
-                {{ isHtml && isText ? 'Multipart (HTML + Text)' : isHtml ? 'HTML only' : 'Plain text' }}
+                {{
+                  isHtml && isText ? 'Multipart (HTML + Text)' : isHtml ? 'HTML only' : 'Plain text'
+                }}
               </span>
             </div>
             <div class="smtp-info-row">

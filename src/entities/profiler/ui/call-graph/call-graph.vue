@@ -163,8 +163,8 @@ const currentMetricKey = computed(() => {
   const map: Record<string, string> = {
     [GraphTypes.CPU]: 'cpu',
     [GraphTypes.WALL_TIME]: 'wt',
-    [GraphTypes.MEMORY_USAGE]: 'mu',
-    [GraphTypes.PEAK_MEMORY_USAGE]: 'pmu',
+    [GraphTypes.MEMORY]: 'mu',
+    [GraphTypes.MEMORY_CHANGE]: 'pmu',
     [GraphTypes.CALLS]: 'ct'
   }
   return map[metric.value] || 'wt'

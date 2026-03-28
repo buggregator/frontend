@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {IDE_KEY_DEFAULT} from "../../constants";
+import {IDE_KEY_DEFAULT, IDE_KEYS} from "../../constants";
 import {REST_API_URL} from "../../lib/io/constants";
 import {type EventType, EventTypes, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
@@ -73,7 +73,7 @@ export const useSettingsStore = defineStore("settingsStore", {
 
       setStoredEventsCountVisibility(this.isVisibleEventCounts)
     },
-    changeActiveCodeEditor(editor: string) {
+    changeActiveCodeEditor(editor: IDE_KEYS) {
       this.codeEditor = editor;
 
       setStoredPrimaryCodeEditor(editor);
