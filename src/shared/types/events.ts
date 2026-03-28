@@ -10,6 +10,7 @@ export enum EventTypes {
   Inspector = "inspector",
   HttpDump = "http-dump",
   RayDump = "ray",
+  Sms = "sms",
 }
 
 // TODO: add T prefix to all types

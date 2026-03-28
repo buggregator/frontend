@@ -1,0 +1,12 @@
+{
+  "uuid": "01234567-0000-0000-0000-000000000001",
+  "type": "sms",
+  "timestamp": 1700000000,
+  "project": null,
+  "payload": {
+    "from": "+1234567890",
+    "to": "+0987654321",
+    "message": "Your verification code is 4892. Valid for 10 minutes.",
+    "gateway": "twilio"
+  }
+}

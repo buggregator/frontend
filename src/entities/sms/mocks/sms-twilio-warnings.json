@@ -1,0 +1,13 @@
+{
+  "uuid": "01234567-0000-0000-0000-000000000010",
+  "type": "sms",
+  "timestamp": 1700000300,
+  "project": null,
+  "payload": {
+    "from": "+1234567890",
+    "to": "+0987654321",
+    "message": "",
+    "gateway": "twilio",
+    "warnings": ["MessageSid", "Body"]
+  }
+}

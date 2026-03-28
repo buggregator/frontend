@@ -5,6 +5,7 @@ import { inspectorMock } from '@/entities/inspector/mocks';
 import { monologMock } from '@/entities/monolog/mocks';
 import { profilerMock } from  "@/entities/profiler/mocks";
 import { sentrySpiralMock } from '@/entities/sentry/mocks';
+import { smsTwilioMock, smsTwilioWarningsMock } from '@/entities/sms/mocks';
 import { smtpWelcomeMock } from '@/entities/smtp/mocks';
 import { varDumpObjectMock } from "@/entities/var-dump/mocks";
 import EventCardMapper from "./event-card-mapper.vue";
@@ -62,10 +63,24 @@ export const HttpDump: StoryObj<typeof EventCardMapper> = {
   }
 };
 
+export const Sms: StoryObj<typeof EventCardMapper> = {
+  args: {
+    event: smsTwilioMock,
+  }
+};
+
+export const SmsWithWarnings: StoryObj<typeof EventCardMapper> = {
+  args: {
+    event: smsTwilioWarningsMock,
+  }
+};
+
 const eventsList = [
   monologMock,
   sentrySpiralMock,
   smtpWelcomeMock,
+  smsTwilioMock,
+  smsTwilioWarningsMock,
   varDumpObjectMock,
   profilerMock,
   inspectorMock,

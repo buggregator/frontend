@@ -61,5 +61,11 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     sidebarTitle: 'Ray dump logs',
     iconName: 'ray',
     eventType: EventTypes.RayDump,
+  },
+  [PAGE_TYPES.Sms]: {
+    title: 'SMS',
+    sidebarTitle: 'SMS messages',
+    iconName: 'sms',
+    eventType: EventTypes.Sms,
   }
 }
