@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
-import { IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
+import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
 import { EventDetailLayout, EventDetailSection, IconSvg } from '@/shared/ui'
@@ -33,7 +33,7 @@ const activeThemeOption = computed(() => {
 })
 
 const changeCodeEditor = (event: Event) => {
-  const editor = (event.target as HTMLInputElement).value
+  const editor = (event.target as HTMLInputElement).value as IDE_KEYS
   changeActiveCodeEditor(editor)
 }
 

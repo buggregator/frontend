@@ -98,7 +98,7 @@ const getPackageUrl = (name: string) => {
           <span class="mod__cell mod__cell--name">
             <a
               v-if="getPackageUrl(mod.name)"
-              :href="getPackageUrl(mod.name)"
+              :href="getPackageUrl(mod.name) as string"
               target="_blank"
               rel="noopener noreferrer"
               class="mod__link"

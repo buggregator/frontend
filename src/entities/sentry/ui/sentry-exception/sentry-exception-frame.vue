@@ -19,28 +19,29 @@ const props = defineProps<Props>()
 const isFrameOpen = ref(props.isOpen)
 const { buildLink } = useIdeLink()
 
-const ideLink = computed(() => buildLink(props.frame.filename, props.frame.lineno))
+const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
 
 const hasBody = computed(() =>
   Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
 )
 
-const hasVars = computed(() =>
-  props.frame.vars && Object.keys(props.frame.vars).length > 0
-)
+const hasVars = computed(() => props.frame.vars && Object.keys(props.frame.vars).length > 0)
 
 // Floating tooltip state
 const tooltip = reactive({
   visible: false,
   content: '',
   x: 0,
-  y: 0,
+  y: 0
 })
 
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 
 const showTooltip = (event: MouseEvent, value: string) => {
-  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
   const rect = (event.target as HTMLElement).getBoundingClientRect()
   tooltip.x = rect.left
   tooltip.y = rect.top - 4
@@ -49,11 +50,16 @@ const showTooltip = (event: MouseEvent, value: string) => {
 }
 
 const hideTooltip = () => {
-  hideTimer = setTimeout(() => { tooltip.visible = false }, 100)
+  hideTimer = setTimeout(() => {
+    tooltip.visible = false
+  }, 100)
 }
 
 const tooltipMouseEnter = () => {
-  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
 }
 
 const tooltipMouseLeave = () => {
@@ -103,11 +109,12 @@ const parseCodeLine = (line: string): CodeSegment[] => {
     const lookupKey = matchedText.startsWith('$') ? matchedText.slice(1) : matchedText
     const vars = props.frame.vars!
 
-    const varValue = vars[lookupKey] !== undefined
-      ? vars[lookupKey]
-      : vars[matchedText] !== undefined
-        ? vars[matchedText]
-        : undefined
+    const varValue =
+      vars[lookupKey] !== undefined
+        ? vars[lookupKey]
+        : vars[matchedText] !== undefined
+          ? vars[matchedText]
+          : undefined
 
     if (varValue === undefined) {
       continue
@@ -120,7 +127,7 @@ const parseCodeLine = (line: string): CodeSegment[] => {
     segments.push({
       text: matchedText,
       varName: matchedText,
-      varValue: formatVarValue(varValue),
+      varValue: formatVarValue(varValue)
     })
 
     lastIndex = match.index + matchedText.length
@@ -170,7 +177,8 @@ const toggleOpen = () => {
           v-if="frame.function"
           class="frame__meta"
         >
-          in {{ frame.function }} at line {{ frame.lineno }}{{ frame.colno ? ':' + frame.colno : '' }}
+          in {{ frame.function }} at line {{ frame.lineno
+          }}{{ frame.colno ? ':' + frame.colno : '' }}
         </span>
       </div>
 
@@ -210,7 +218,7 @@ const toggleOpen = () => {
                 class="frame__line-var"
                 @mouseenter="showTooltip($event, seg.varValue!)"
                 @mouseleave="hideTooltip"
-              >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
+          >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
         </div>
       </template>
 
@@ -227,7 +235,7 @@ const toggleOpen = () => {
               class="frame__line-var"
               @mouseenter="showTooltip($event, seg.varValue!)"
               @mouseleave="hideTooltip"
-            >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
+        >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
       </div>
 
       <template v-if="frame.post_context">
@@ -245,7 +253,7 @@ const toggleOpen = () => {
                 class="frame__line-var"
                 @mouseenter="showTooltip($event, seg.varValue!)"
                 @mouseleave="hideTooltip"
-              >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
+          >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
         </div>
       </template>
     </div>

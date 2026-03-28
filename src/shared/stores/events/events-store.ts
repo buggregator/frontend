@@ -73,7 +73,7 @@ export const useEventsStore = defineStore("eventsStore", {
     rebuildCountsMap() {
       this.countsMap.clear();
       for (const event of this.events) {
-        this.countsMap.set(event.type, (this.countsMap.get(event.type) ?? 0) + 1);
+        this.countsMap.set(event.type as EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
       }
     },
     async initialize (): Promise<void> {
@@ -86,7 +86,7 @@ export const useEventsStore = defineStore("eventsStore", {
           this.setAvailableProjects(data);
         }
       } catch (e) {
-        logger.store.error('Failed to fetch projects', e);
+        logger(['Store: Failed to fetch projects', e]);
       }
     },
     // events
@@ -111,12 +111,12 @@ export const useEventsStore = defineStore("eventsStore", {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
           existingIds.add(event.uuid);
-          this.countsMap.set(event.type, (this.countsMap.get(event.type) ?? 0) + 1);
+          this.countsMap.set(event.type as  EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
 
           if (this.events.length > MAX_EVENTS_COUNT) {
             const removed = this.events.pop()!;
-            const count = this.countsMap.get(removed.type) ?? 1;
-            this.countsMap.set(removed.type, count - 1);
+            const count = this.countsMap.get(removed.type as EventType) ?? 1;
+            this.countsMap.set(removed.type as EventType, count - 1);
           }
         } else {
           this.events = this.events.map((el) => el.uuid === event.uuid ? event : el);

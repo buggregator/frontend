@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { VueFlow, useVueFlow, type NodeMouseEvent } from '@vue-flow/core'
+import { VueFlow, useVueFlow, MarkerType, type NodeMouseEvent } from '@vue-flow/core'
 import { ref, computed, watch } from 'vue'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
@@ -39,7 +39,7 @@ const activeStatBoard = ref<CallStackHoverData>()
 const tooltipPosition = ref<{ top: string; left: string }>()
 const tooltip = ref<HTMLElement>()
 
-const { setCenter, getNode } = useVueFlow({ id: 'call-graph' })
+const { setCenter, findNode } = useVueFlow({ id: 'call-graph' })
 
 // --- Path finding utilities ---
 
@@ -169,7 +169,7 @@ function searchAndZoom(query: string) {
 
   selectNode(found.id)
 
-  const node = getNode(found.id)
+  const node = findNode(found.id)
   if (node) {
     setCenter(
       node.position.x + (node.dimensions?.width || 180) / 2,
@@ -264,8 +264,8 @@ function updateStyles() {
             opacity: hasHighlight ? 0.08 : 1
           },
       markerEnd: isHighlighted
-        ? { type: 'arrowclosed' as const, color: '#60a5fa', width: 5, height: 5 }
-        : { type: 'arrowclosed' as const, color: e.data?.color || '#666', width: 5, height: 5 },
+        ? { type: MarkerType.ArrowClosed, color: '#60a5fa', width: 5, height: 5 }
+        : { type: MarkerType.ArrowClosed, color: e.data?.color || '#666', width: 5, height: 5 },
       label: isHighlighted ? e.data?.label || '' : e.label,
       labelStyle: isHighlighted
         ? { fill: '#93bbfc', fontWeight: 600, fontSize: '9px', transform: 'translateX(20px)' }
@@ -287,8 +287,8 @@ function onNodeMouseEnter({ node, event }: NodeMouseEvent) {
   const rect = (event.target as HTMLElement).closest('.vue-flow')?.getBoundingClientRect()
   if (!rect) return
 
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+  const x = (event as MouseEvent)?.clientX ? (event as MouseEvent).clientX - rect.left : 0
+  const y = (event as MouseEvent)?.clientY ? (event as MouseEvent).clientY - rect.top : 0
   const tooltipEl = tooltip.value
   const tw = tooltipEl?.clientWidth || 500
   const th = tooltipEl?.clientHeight || 100

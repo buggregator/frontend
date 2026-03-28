@@ -42,11 +42,6 @@ export type SentryContexts = Omit<SentryTypes.Contexts, 'device' | 'app'> & {
   app?: SentryContextApp;
 }
 
-export interface SentryLogEntry {
-  message?: string
-  params?: unknown[]
-}
-
 export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' | 'breadcrumbs' | 'level' | 'contexts'> {
   platform?: string,
   contexts?: SentryContexts,
@@ -58,7 +53,6 @@ export interface Sentry extends Omit<SentryTypes.Event, 'request' | 'exception' 
     values: SentryBreadcrumb[]
   },
   level?: SentryLevel,
-  logentry?: SentryLogEntry,
   modules?: {
     [key: string]: string
   }

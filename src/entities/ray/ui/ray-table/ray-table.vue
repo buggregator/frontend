@@ -9,7 +9,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const entries = computed(() => Object.entries(props.table.values || {}))
-const label = computed(() => props.table.label || '')
+const label = computed(() => props.table.label ?? '')
 </script>
 
 <template>

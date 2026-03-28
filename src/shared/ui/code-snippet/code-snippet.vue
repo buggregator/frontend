@@ -34,7 +34,7 @@ const copyCode = (): void => {
       }, 1500)
     })
     .catch((e) => {
-      logger.ui.error('Failed to copy code to clipboard', e)
+      logger(['UI: Failed to copy code to clipboard', e])
     })
 }
 </script>

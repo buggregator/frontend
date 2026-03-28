@@ -1,5 +1,6 @@
 import Dagre from '@dagrejs/dagre'
 import type { Node, Edge } from '@vue-flow/core'
+import { MarkerType } from '@vue-flow/core'
 import type { ProfilerCallGraph } from '../../types'
 
 export type CallGraphNodeData = {
@@ -72,7 +73,7 @@ export function mapToVueFlow(serverData: ProfilerCallGraph): {
         color: String(d.color || '#666'),
       },
       style: { stroke: String(d.color || '#666') },
-      markerEnd: { type: 'arrowclosed' as const, color: String(d.color || '#666'), width: 5, height: 5 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: String(d.color || '#666'), width: 5, height: 5 },
       label: String(d.label || ''),
       labelStyle: { fontSize: '8px', fill: '#999', transform: 'translateX(20px)' },
       labelBgStyle: { fill: 'transparent' },
