@@ -21,3 +21,4 @@ secrets.json
 
 *storybook.log
 feature-requests
+/dist
