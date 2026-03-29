@@ -20,6 +20,8 @@ export type Uuid = string;
 
 export type EventType = OneOfValues<typeof EventTypes>;
 
+export type LabelColor = 'gray' | 'blue' | 'cyan' | 'amber' | 'red' | 'orange' | 'green' | 'violet';
+
 export interface ServerEvent<T> {
   uuid: EventId,
   type: EventType | unknown,
@@ -33,7 +35,7 @@ export interface ServerEvent<T> {
 export interface NormalizedEvent<T> {
   id: EventId,
   type: EventType | 'unknown',
-  labels: (string | { title: string, value: string, context: string })[],
+  labels: (string | { title: string, value: string, context: string } | { text: string, color: LabelColor })[],
   origin: object | null,
   serverName: string,
   date: Date | null,
