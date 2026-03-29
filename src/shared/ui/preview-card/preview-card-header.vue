@@ -75,6 +75,12 @@ const copyEvent = () => emit('copy', true)
 const lockEvent = () => emit('lock', true)
 
 const isVisibleTags = computed(() => props.labels.length > 0)
+
+const isColoredLabel = (label: unknown): label is { text: string; color: string } =>
+  typeof label === 'object' && label !== null && 'text' in label && 'color' in label
+
+const isKvLabel = (label: unknown): label is { title: string; value: string; context: string } =>
+  typeof label === 'object' && label !== null && 'title' in label && 'value' in label
 </script>
 
 <template>
@@ -101,8 +107,8 @@ const isVisibleTags = computed(() => props.labels.length > 0)
       <!-- Labels -->
       <template v-if="isVisibleTags">
         <template
-          v-for="label in labels"
-          :key="label"
+          v-for="(label, idx) in labels"
+          :key="idx"
         >
           <span
             v-if="isString(label)"
@@ -112,7 +118,15 @@ const isVisibleTags = computed(() => props.labels.length > 0)
           </span>
 
           <span
-            v-if="!isString(label)"
+            v-else-if="isColoredLabel(label)"
+            class="pc-header__label"
+            :class="`pc-header__label--${label.color}`"
+          >
+            <HighlightText :text="label.text" />
+          </span>
+
+          <span
+            v-else-if="isKvLabel(label)"
             class="pc-header__label pc-header__label--kv"
             :title="label.context"
           >
@@ -350,6 +364,76 @@ $typeColors: (
   @apply inline-flex items-center px-1.5 py-0.5 rounded;
   @apply text-2xs font-medium;
   @apply bg-gray-100 dark:bg-gray-600/50 text-gray-600 dark:text-gray-300;
+}
+
+/* Colored label variants
+   Tailwind safelist:
+   'text-gray-500 dark:text-gray-400'
+   'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
+   'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10'
+   'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
+   'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
+   'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10'
+   'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
+   'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10' */
+
+$labelColors: (
+  'gray': (
+    'text': 'gray-500',
+    'text-dark': 'gray-400',
+    'bg': 'gray-100',
+    'bg-dark': 'gray-600/50'
+  ),
+  'blue': (
+    'text': 'blue-600',
+    'text-dark': 'blue-400',
+    'bg': 'blue-50',
+    'bg-dark': 'blue-500/10'
+  ),
+  'cyan': (
+    'text': 'cyan-600',
+    'text-dark': 'cyan-400',
+    'bg': 'cyan-50',
+    'bg-dark': 'cyan-500/10'
+  ),
+  'amber': (
+    'text': 'amber-600',
+    'text-dark': 'amber-400',
+    'bg': 'amber-50',
+    'bg-dark': 'amber-500/10'
+  ),
+  'red': (
+    'text': 'red-600',
+    'text-dark': 'red-400',
+    'bg': 'red-50',
+    'bg-dark': 'red-500/10'
+  ),
+  'orange': (
+    'text': 'orange-600',
+    'text-dark': 'orange-400',
+    'bg': 'orange-50',
+    'bg-dark': 'orange-500/10'
+  ),
+  'green': (
+    'text': 'green-600',
+    'text-dark': 'green-400',
+    'bg': 'green-50',
+    'bg-dark': 'green-500/10'
+  ),
+  'violet': (
+    'text': 'violet-600',
+    'text-dark': 'violet-400',
+    'bg': 'violet-50',
+    'bg-dark': 'violet-500/10'
+  )
+);
+
+@each $color, $tokens in $labelColors {
+  .pc-header__label--#{$color} {
+    @apply text-#{map-get($tokens, 'text')} dark:text-#{map-get($tokens, 'text-dark')};
+    @apply bg-#{map-get($tokens, 'bg')} dark:bg-#{map-get($tokens, 'bg-dark')};
+    @apply font-semibold;
+  }
 }
 
 .pc-header__label--kv {

@@ -5,3 +5,14 @@ export {
   monologMock,
   monologExtendedMock,
 }
+
+export {
+  monologDebugMock,
+  monologInfoMock,
+  monologNoticeMock,
+  monologWarningMock,
+  monologErrorMock,
+  monologCriticalMock,
+  monologAlertMock,
+  monologEmergencyMock,
+} from './monolog-levels'
