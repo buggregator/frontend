@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { NormalizedEvent } from '@/shared/types'
+import { useAttachments } from '@/shared/lib/io'
+import type { NormalizedEvent, Attachment } from '@/shared/types'
 import {
   TableBase,
   TableBaseRow,
@@ -16,6 +17,11 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const { calcDownloadLink } = useAttachments('http-dump')
+
+const calcDownloadUrl = (attachmentId: Attachment['uuid']) =>
+  calcDownloadLink(props.event.id, attachmentId)
 
 const uri = computed(() => decodeURI(props.event.payload?.request?.uri))
 
@@ -214,6 +220,7 @@ const rawHttp = computed(() => {
           :key="file.uuid"
           :event-id="event.id"
           :attachment="file"
+          :download-url="calcDownloadUrl(file.uuid)"
         />
       </div>
     </EventDetailSection>
