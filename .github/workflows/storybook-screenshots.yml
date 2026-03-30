@@ -1,0 +1,131 @@
+name: Storybook Screenshots
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Build Storybook
+        run: npx storybook build -o storybook-static
+
+      - name: Take screenshots of changed components
+        run: |
+          npx http-server storybook-static --port 6006 --silent &
+          sleep 3
+          node .storybook/screenshots/take-screenshots.mjs \
+            http://localhost:6006 \
+            ./screenshots \
+            origin/${{ github.base_ref }}
+
+      - name: Push screenshots to external repo
+        id: push-screenshots
+        env:
+          SCREENSHOTS_TOKEN: ${{ secrets.GHCR_PASSWORD }}
+        run: |
+          MANIFEST="./screenshots/manifest.json"
+          if [ ! -f "$MANIFEST" ] || [ "$(cat $MANIFEST)" = "[]" ]; then
+            echo "has_screenshots=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has_screenshots=true" >> "$GITHUB_OUTPUT"
+
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BRANCH="frontend/pr-${PR_NUMBER}"
+          REPO_URL="https://x-access-token:${SCREENSHOTS_TOKEN}@github.com/buggregator/screenshots.git"
+
+          cd screenshots
+
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add *.png manifest.json
+          git commit -m "Screenshots for frontend PR #${PR_NUMBER}"
+          git push "$REPO_URL" "$BRANCH" --force
+
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on PR with inline screenshots
+        if: steps.push-screenshots.outputs.has_screenshots == 'true'
+        uses: actions/github-script@v7
+        env:
+          SCREENSHOT_BRANCH: ${{ steps.push-screenshots.outputs.branch }}
+        with:
+          script: |
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('./screenshots/manifest.json', 'utf8'));
+            const branch = process.env.SCREENSHOT_BRANCH;
+            const baseUrl = `https://raw.githubusercontent.com/buggregator/screenshots/${branch}`;
+
+            let body = `## 📸 Storybook Screenshots\n\n`;
+            body += `Screenshots for **${manifest.length}** changed component${manifest.length > 1 ? 's' : ''} in this PR.\n\n`;
+
+            // Group by title
+            const groups = {};
+            for (const entry of manifest) {
+              if (!groups[entry.title]) groups[entry.title] = [];
+              groups[entry.title].push(entry);
+            }
+
+            for (const [title, entries] of Object.entries(groups)) {
+              body += `### ${title}\n\n`;
+              for (const entry of entries) {
+                const imgUrl = `${baseUrl}/${entry.filename}`;
+                body += `**${entry.name}**\n\n`;
+                body += `![${entry.label}](${imgUrl})\n\n`;
+              }
+            }
+
+            body += `---\n*Auto-generated from Storybook stories of changed \`.vue\` files*`;
+
+            // Upsert comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '## 📸 Storybook Screenshots';
+            const existing = comments.find(c => c.body && c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

@@ -20,5 +20,7 @@ secrets.json
 *.orig
 
 *storybook.log
+storybook-static
+/screenshots
 feature-requests
 /dist

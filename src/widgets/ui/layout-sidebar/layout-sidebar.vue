@@ -2,7 +2,7 @@
 import { useFloating } from '@floating-ui/vue'
 import { onClickOutside, useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
@@ -49,6 +49,11 @@ const applySidebarClass = (collapsed: boolean) => {
 
 // Apply on init
 applySidebarClass(isCollapsed.value)
+
+// Clean up global class when component is destroyed (e.g. Storybook story switch)
+onUnmounted(() => {
+  document?.documentElement?.classList?.remove('sidebar-collapsed')
+})
 
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
