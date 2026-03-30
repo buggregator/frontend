@@ -241,6 +241,7 @@ const isKvLabel = (label: unknown): label is { title: string; value: string; con
 </template>
 
 <style lang="scss" scoped>
+@use 'sass:map';
 /* Type color map
    Tailwind safelist:
    'text-rose-500 bg-rose-500/10' 'text-violet-500 bg-violet-500/10'
@@ -430,8 +431,8 @@ $labelColors: (
 
 @each $color, $tokens in $labelColors {
   .pc-header__label--#{$color} {
-    @apply text-#{map-get($tokens, 'text')} dark:text-#{map-get($tokens, 'text-dark')};
-    @apply bg-#{map-get($tokens, 'bg')} dark:bg-#{map-get($tokens, 'bg-dark')};
+    @apply text-#{map.get($tokens, 'text')} dark:text-#{map.get($tokens, 'text-dark')};
+    @apply bg-#{map.get($tokens, 'bg')} dark:bg-#{map.get($tokens, 'bg-dark')};
     @apply font-semibold;
   }
 }

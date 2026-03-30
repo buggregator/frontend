@@ -51,6 +51,16 @@ const config = {
       '@/src': fileURLToPath(new URL('../src', import.meta.url)),
     }
 
+    config.css = {
+      ...config.css,
+      preprocessorOptions: {
+        scss: {
+          api: 'modern',
+          loadPaths: [fileURLToPath(new URL('..', import.meta.url))],
+        },
+      },
+    }
+
     return config;
   }
 };
