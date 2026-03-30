@@ -33,6 +33,13 @@ const preview: Preview = {
         }
       }
 
+      // In Storybook iframe, sidebar is not position:fixed — it's a flex child.
+      // sidebar-collapsed/navbar-fixed classes add left offsets meant for fixed sidebar,
+      // causing double-shifting. Force sidebar expanded and non-fixed header in Storybook.
+      html?.classList.remove('sidebar-collapsed', 'navbar-fixed')
+      window?.localStorage?.setItem('sidebar_collapsed', 'false')
+      window?.localStorage?.setItem('navbar', 'false')
+
       return { template: '<story/>' };
     }
   ],

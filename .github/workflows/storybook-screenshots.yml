@@ -1,0 +1,122 @@
+name: Storybook Screenshots
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Build Storybook
+        run: npx storybook build -o storybook-static
+
+      - name: Take screenshots of changed components
+        run: |
+          npx http-server storybook-static --port 6006 --silent &
+          sleep 3
+          node .storybook/screenshots/take-screenshots.mjs \
+            http://localhost:6006 \
+            ./screenshots \
+            origin/${{ github.base_ref }}
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-screenshots
+          path: screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment on PR with screenshots
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const manifestPath = './screenshots/manifest.json';
+            if (!fs.existsSync(manifestPath)) {
+              console.log('No manifest found, skipping');
+              return;
+            }
+
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            if (manifest.length === 0) {
+              console.log('No screenshots captured (no changed stories), skipping comment');
+              return;
+            }
+
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const artifactUrl = `${runUrl}#artifacts`;
+
+            let body = `## 📸 Storybook Screenshots\n\n`;
+            body += `Captured **${manifest.length}** screenshot${manifest.length > 1 ? 's' : ''} for components changed in this PR.\n\n`;
+            body += `📦 **[Download screenshots](${artifactUrl})** — see \`storybook-screenshots\` artifact\n\n`;
+
+            // Group by title
+            const groups = {};
+            for (const entry of manifest) {
+              if (!groups[entry.title]) groups[entry.title] = [];
+              groups[entry.title].push(entry);
+            }
+
+            for (const [title, entries] of Object.entries(groups)) {
+              body += `### ${title}\n`;
+              for (const entry of entries) {
+                body += `- \`${entry.name}\` — \`${entry.filename}\`\n`;
+              }
+              body += '\n';
+            }
+
+            body += `\n> 💡 Screenshots are taken from Storybook stories of changed \`.vue\` files. Download the artifact to view PNGs.`;
+
+            // Upsert comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '## 📸 Storybook Screenshots';
+            const existing = comments.find(c => c.body && c.body.startsWith(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
