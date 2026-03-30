@@ -20,6 +20,7 @@ import raySizeMock from './ray-size.json';
 import rayTableMock from './ray-table.json';
 import rayTextMock from './ray-text.json';
 import rayTraceMock from './ray-trace.json';
+import rayZeroMock from './ray-zero.json';
 
 export {
   rayCallerMock,
@@ -43,5 +44,6 @@ export {
   rayTextMock,
   rayTraceMock,
   rayBooleanTrueMock,
-  rayBooleanFalseMock
+  rayBooleanFalseMock,
+  rayZeroMock
 }

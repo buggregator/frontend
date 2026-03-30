@@ -1,0 +1,35 @@
+{
+  "uuid": "de0bb1cd-37c0-4308-8892-73d12ed0156b",
+  "type": "ray",
+  "payload": {
+    "uuid": "de0bb1cd-37c0-4308-8892-73d12ed0156b",
+    "payloads": [
+      {
+        "type": "log",
+        "content": {
+          "meta": [
+            {
+              "clipboard_data": "0"
+            }
+          ],
+          "values": [0]
+        },
+        "origin": {
+          "file": "/var/www/html/vendor/psy/psysh/src/ExecutionLoopClosure.php(55) : eval()'d code",
+          "hostname": "08978575e73e",
+          "line_number": 1
+        }
+      }
+    ],
+    "meta": {
+      "laravel_ray_package_version": "1.43.5.0",
+      "laravel_version": "12.49.0",
+      "php_version": "8.2.30",
+      "php_version_id": 80230,
+      "project_name": "local",
+      "ray_package_version": "1.45.0.0"
+    }
+  },
+  "timestamp": 1770786863.1094,
+  "project": null
+}
