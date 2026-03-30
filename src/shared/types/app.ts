@@ -6,5 +6,6 @@ export enum RouteName {
   EventPage = 'event-page',
   Favorites = 'favorites',
   ProfilerCompare = 'profiler-compare',
+  Metrics = 'metrics',
   NotFound = 'not-found',
 }

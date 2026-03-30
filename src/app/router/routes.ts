@@ -1,6 +1,7 @@
 import {EventPage} from "@/pages/event-page";
 import {EventsListPage} from "@/pages/events-list-page";
 import {LoginPage} from "@/pages/login";
+import {MetricsPage} from "@/pages/metrics";
 import {NotFoundPage} from "@/pages/not-found";
 import {ProfilerComparePage} from "@/pages/profiler-compare";
 import {SettingsPage} from "@/pages/settings";
@@ -12,6 +13,14 @@ export const routes = [
     path: '/',
     name: RouteName.Home,
     component: EventsListPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
+    path: '/metrics',
+    name: RouteName.Metrics,
+    component: MetricsPage,
     meta: {
       middleware: [auth]
     }
