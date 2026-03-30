@@ -24,6 +24,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+        loadPaths: [fileURLToPath(new URL('.', import.meta.url))],
+      },
+    },
+  },
   server: {
     host: 'localhost',
     port: 3000
