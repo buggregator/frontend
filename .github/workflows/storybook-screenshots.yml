@@ -45,7 +45,7 @@ jobs:
       - name: Push screenshots to external repo
         id: push-screenshots
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCREENSHOTS_TOKEN: ${{ secrets.GHCR_PASSWORD }}
         run: |
           MANIFEST="./screenshots/manifest.json"
           if [ ! -f "$MANIFEST" ] || [ "$(cat $MANIFEST)" = "[]" ]; then
@@ -57,7 +57,7 @@ jobs:
 
           PR_NUMBER=${{ github.event.pull_request.number }}
           BRANCH="frontend/pr-${PR_NUMBER}"
-          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/buggregator/screenshots.git"
+          REPO_URL="https://x-access-token:${SCREENSHOTS_TOKEN}@github.com/buggregator/screenshots.git"
 
           cd screenshots
 
