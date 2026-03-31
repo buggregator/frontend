@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { CodeSnippet } from '@/shared/ui'
+import { CodeSnippet, ValueDump } from '@/shared/ui'
 
 type Props = {
   log: string | number
@@ -10,6 +10,7 @@ const props = defineProps<Props>()
 
 const isEmpty = computed(() => props.log === '')
 const isVisible = computed(() => props.log !== undefined && props.log !== null)
+const isSfDump = computed(() => typeof props.log === 'string' && props.log.includes('sf-dump'))
 </script>
 
 <template>
@@ -18,6 +19,10 @@ const isVisible = computed(() => props.log !== undefined && props.log !== null)
       v-if="isEmpty"
       class="ray-log-empty"
     >empty string</span>
+    <ValueDump
+      v-else-if="isSfDump"
+      :value="String(log)"
+    />
     <CodeSnippet
       v-else
       :code="String(log)"

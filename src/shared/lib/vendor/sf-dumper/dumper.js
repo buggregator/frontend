@@ -231,10 +231,15 @@ export function SfdumpWrap(doc) {
         if (e.target.closest && e.target.closest('.sf-dump-toolbar')) {
           return
         }
-        if ('A' == e.target.tagName) {
-          f(e.target, e)
-        } else if ('A' == e.target.parentNode.tagName) {
-          f(e.target.parentNode, e)
+
+        // Find the closest <A> ancestor (handles clicks on deeply nested SVG arrows)
+        var anchor = e.target.closest ? e.target.closest('a') : null
+        if (!anchor && e.target.tagName === 'A') anchor = e.target
+        if (!anchor && e.target.parentNode && e.target.parentNode.tagName === 'A')
+          anchor = e.target.parentNode
+
+        if (anchor) {
+          f(anchor, e)
         } else {
           n = /\bsf-dump-ellipsis\b/.test(e.target.className) ? e.target.parentNode : e.target
           if ((n = n.nextElementSibling) && 'A' == n.tagName) {
@@ -380,42 +385,11 @@ export function SfdumpWrap(doc) {
       }
     }
 
-    // === TOOLBAR + SEARCH + STATS ===
+    // === CONTEXT MENU + SEARCH BAR (Ctrl+F) ===
     if (doc.evaluate && Array.from && root.children.length > 1) {
       root.setAttribute('tabindex', 0)
 
       var stats = collectStats(root)
-
-      // --- Build toolbar ---
-      var toolbar = doc.createElement('div')
-      toolbar.className = 'sf-dump-toolbar'
-
-      // Left: action buttons
-      var toolbarLeft = doc.createElement('div')
-      toolbarLeft.className = 'sf-dump-toolbar-group'
-
-      var btnExpandAll = doc.createElement('button')
-      btnExpandAll.type = 'button'
-      btnExpandAll.className = 'sf-dump-toolbar-btn'
-      btnExpandAll.innerHTML = icons.expandAll
-      btnExpandAll.title = 'Expand all'
-
-      var btnCollapseAll = doc.createElement('button')
-      btnCollapseAll.type = 'button'
-      btnCollapseAll.className = 'sf-dump-toolbar-btn'
-      btnCollapseAll.innerHTML = icons.collapseAll
-      btnCollapseAll.title = 'Collapse all'
-
-      var btnCopy = doc.createElement('button')
-      btnCopy.type = 'button'
-      btnCopy.className = 'sf-dump-toolbar-btn'
-      btnCopy.innerHTML = icons.copy
-      btnCopy.title = 'Copy to clipboard'
-
-      // Stats tooltip button
-      var btnInfo = doc.createElement('span')
-      btnInfo.className = 'sf-dump-toolbar-info'
-
       var statParts = []
       if (stats.properties > 0) statParts.push('Props: ' + stats.properties)
       if (stats.keys > 0) statParts.push('Keys: ' + stats.keys)
@@ -423,72 +397,16 @@ export function SfdumpWrap(doc) {
       if (stats.numbers > 0) statParts.push('Numbers: ' + stats.numbers)
       if (stats.objects > 0) statParts.push('Objects: ' + stats.objects)
       if (stats.maxDepth > 0) statParts.push('Depth: ' + stats.maxDepth)
-      btnInfo.innerHTML = icons.info
-      btnInfo.title = statParts.join(' · ')
 
-      // Build tooltip element for hover
-      var infoTooltip = doc.createElement('div')
-      infoTooltip.className = 'sf-dump-info-tooltip'
-      infoTooltip.innerHTML = statParts
-        .map(function (s) {
-          var pair = s.split(': ')
-          return (
-            '<span class="sf-dump-info-item"><span class="sf-dump-info-key">' +
-            pair[0] +
-            '</span><span class="sf-dump-info-val">' +
-            pair[1] +
-            '</span></span>'
-          )
-        })
-        .join('')
-      btnInfo.appendChild(infoTooltip)
-
-      toolbarLeft.appendChild(btnExpandAll)
-      toolbarLeft.appendChild(btnCollapseAll)
-
-      // Depth buttons
-      if (stats.maxDepth > 1) {
-        var depthGroup = doc.createElement('span')
-        depthGroup.className = 'sf-dump-toolbar-depth'
-
-        var depths = []
-        for (var d = 1; d <= Math.min(stats.maxDepth, 5); d++) depths.push(d)
-        if (stats.maxDepth > 5) depths.push(stats.maxDepth)
-
-        depths.forEach(function (depth) {
-          var btn = doc.createElement('button')
-          btn.type = 'button'
-          btn.className = 'sf-dump-toolbar-btn sf-dump-toolbar-btn--depth'
-          btn.textContent = String(depth)
-          btn.title = 'Expand to depth ' + depth
-          addEventListener(btn, 'click', function (e) {
-            e.preventDefault()
-            e.stopPropagation()
-            collapseAll(root)
-            expandToDepth(root, depth)
-            // highlight active
-            depthGroup.querySelectorAll('.sf-dump-toolbar-btn--depth').forEach(function (b) {
-              b.classList.remove('sf-dump-toolbar-btn--active')
-            })
-            btn.classList.add('sf-dump-toolbar-btn--active')
-          })
-          depthGroup.appendChild(btn)
-        })
-
-        toolbarLeft.appendChild(depthGroup)
-      }
-
-      toolbarLeft.appendChild(btnInfo)
-      toolbarLeft.appendChild(btnCopy)
-
-      // Right: search
-      var toolbarRight = doc.createElement('div')
-      toolbarRight.className = 'sf-dump-toolbar-group sf-dump-toolbar-search'
+      // --- Search bar (hidden until Ctrl+F) ---
+      var searchBar = doc.createElement('div')
+      searchBar.className = 'sf-dump-search-bar'
+      searchBar.style.display = 'none'
 
       var searchInput = doc.createElement('input')
       searchInput.type = 'text'
       searchInput.className = 'sf-dump-search-input'
-      searchInput.placeholder = 'Search... (' + keyHint + '+F)'
+      searchInput.placeholder = 'Search... (Esc to close)'
 
       var counter = doc.createElement('span')
       counter.className = 'sf-dump-search-count'
@@ -498,59 +416,140 @@ export function SfdumpWrap(doc) {
       btnPrev.type = 'button'
       btnPrev.className = 'sf-dump-search-nav'
       btnPrev.innerHTML = icons.arrowUp
-      btnPrev.title = 'Previous match (Shift+Enter)'
+      btnPrev.title = 'Previous (Shift+Enter)'
 
       var btnNext = doc.createElement('button')
       btnNext.type = 'button'
       btnNext.className = 'sf-dump-search-nav'
       btnNext.innerHTML = icons.arrowDown
-      btnNext.title = 'Next match (Enter)'
+      btnNext.title = 'Next (Enter)'
 
-      toolbarRight.appendChild(searchInput)
-      toolbarRight.appendChild(counter)
-      toolbarRight.appendChild(btnPrev)
-      toolbarRight.appendChild(btnNext)
+      searchBar.appendChild(searchInput)
+      searchBar.appendChild(counter)
+      searchBar.appendChild(btnPrev)
+      searchBar.appendChild(btnNext)
+      root.insertBefore(searchBar, root.firstChild)
 
-      toolbar.appendChild(toolbarLeft)
-      toolbar.appendChild(toolbarRight)
-      root.insertBefore(toolbar, root.firstChild)
+      function showSearch() {
+        searchBar.style.display = ''
+        searchInput.focus()
+        searchInput.select()
+      }
+      function hideSearch() {
+        searchBar.style.display = 'none'
+        resetHighlightedNodes(root)
+        searchInput.value = ''
+        searchInput.blur()
+        previousSearchQuery = ''
+        counter.textContent = '0 / 0'
+        state.reset()
+      }
 
-      // --- Button handlers ---
-      addEventListener(btnExpandAll, 'click', function (e) {
+      // --- Context menu ---
+      var ctxMenu = doc.createElement('div')
+      ctxMenu.className = 'sf-dump-ctx-menu'
+      ctxMenu.style.display = 'none'
+
+      var menuHtml =
+        '<button class="sf-dump-ctx-item" data-action="expand-all">' +
+        icons.expandAll +
+        ' Expand all</button>' +
+        '<button class="sf-dump-ctx-item" data-action="collapse-all">' +
+        icons.collapseAll +
+        ' Collapse all</button>'
+
+      // Depth buttons
+      if (stats.maxDepth > 1) {
+        menuHtml +=
+          '<div class="sf-dump-ctx-sep"></div><div class="sf-dump-ctx-label">Expand to depth</div><div class="sf-dump-ctx-depths">'
+        var depths = []
+        for (var d = 1; d <= Math.min(stats.maxDepth, 5); d++) depths.push(d)
+        if (stats.maxDepth > 5) depths.push(stats.maxDepth)
+        depths.forEach(function (depth) {
+          menuHtml +=
+            '<button class="sf-dump-ctx-depth" data-depth="' + depth + '">' + depth + '</button>'
+        })
+        menuHtml += '</div>'
+      }
+
+      menuHtml +=
+        '<div class="sf-dump-ctx-sep"></div>' +
+        '<button class="sf-dump-ctx-item" data-action="search">' +
+        icons.info +
+        ' Search (' +
+        keyHint +
+        '+F)</button>' +
+        '<button class="sf-dump-ctx-item" data-action="copy">' +
+        icons.copy +
+        ' Copy</button>'
+
+      // Stats line
+      if (statParts.length > 0) {
+        menuHtml +=
+          '<div class="sf-dump-ctx-sep"></div><div class="sf-dump-ctx-stats">' +
+          statParts.join(' · ') +
+          '</div>'
+      }
+
+      ctxMenu.innerHTML = menuHtml
+      doc.body.appendChild(ctxMenu)
+
+      function hideCtxMenu() {
+        ctxMenu.style.display = 'none'
+      }
+
+      addEventListener(root, 'contextmenu', function (e) {
+        if (e.target.closest && e.target.closest('.sf-dump-search-bar')) return
+        if (e.target.tagName === 'INPUT') return
+
         e.preventDefault()
-        e.stopPropagation()
-        var toggles = root.querySelectorAll('a.sf-dump-toggle')
-        for (var ti = 0; ti < toggles.length; ti++) {
-          expand(toggles[ti], false)
-        }
+        ctxMenu.style.display = ''
+        ctxMenu.style.left = e.pageX + 'px'
+        ctxMenu.style.top = e.pageY + 'px'
+
+        requestAnimationFrame(function () {
+          var rect = ctxMenu.getBoundingClientRect()
+          if (rect.right > window.innerWidth) {
+            ctxMenu.style.left = e.pageX - rect.width + 'px'
+          }
+          if (rect.bottom > window.innerHeight) {
+            ctxMenu.style.top = e.pageY - rect.height + 'px'
+          }
+        })
       })
 
-      addEventListener(btnCollapseAll, 'click', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        var toggles = root.querySelectorAll('a.sf-dump-toggle')
-        for (var ti = 0; ti < toggles.length; ti++) {
-          collapse(toggles[ti], false)
-        }
-        // Re-expand first level
-        var firstToggle = root.querySelector('a.sf-dump-toggle')
-        if (firstToggle) expand(firstToggle, false)
+      addEventListener(doc, 'click', hideCtxMenu)
+      addEventListener(doc, 'contextmenu', function (e) {
+        if (!root.contains(e.target)) hideCtxMenu()
       })
+      addEventListener(window, 'scroll', hideCtxMenu)
 
-      addEventListener(btnCopy, 'click', function (e) {
+      addEventListener(ctxMenu, 'click', function (e) {
+        var btn = e.target.closest ? e.target.closest('[data-action], [data-depth]') : e.target
+        if (!btn) return
         e.preventDefault()
         e.stopPropagation()
-        var text = root.innerText || root.textContent || ''
-        // Remove toolbar/breadcrumb text from copied content
-        var toolbarText = toolbar.innerText || ''
-        text = text.replace(toolbarText, '').trim()
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(function () {
-            btnCopy.innerHTML = icons.check
-            setTimeout(function () {
-              btnCopy.innerHTML = icons.copy
-            }, 1500)
-          })
+        hideCtxMenu()
+
+        var action = btn.getAttribute('data-action')
+        var depth = btn.getAttribute('data-depth')
+
+        if (action === 'expand-all') {
+          var allToggles = root.querySelectorAll('a.sf-dump-toggle')
+          for (var ti = 0; ti < allToggles.length; ti++) expand(allToggles[ti], false)
+        } else if (action === 'collapse-all') {
+          var allToggles2 = root.querySelectorAll('a.sf-dump-toggle')
+          for (var ti2 = 0; ti2 < allToggles2.length; ti2++) collapse(allToggles2[ti2], false)
+          var first = root.querySelector('a.sf-dump-toggle')
+          if (first) expand(first, false)
+        } else if (action === 'search') {
+          showSearch()
+        } else if (action === 'copy') {
+          var text = root.innerText || root.textContent || ''
+          if (navigator.clipboard) navigator.clipboard.writeText(text.trim())
+        } else if (depth) {
+          collapseAll(root)
+          expandToDepth(root, parseInt(depth, 10))
         }
       })
 
@@ -587,18 +586,16 @@ export function SfdumpWrap(doc) {
       }
 
       function showCurrent(state) {
-        var currentNode = state.current(),
-          currentRect,
-          searchRect
+        var currentNode = state.current()
         if (currentNode) {
           reveal(currentNode)
           highlight(root, currentNode, state.nodes)
           if ('scrollIntoView' in currentNode) {
             currentNode.scrollIntoView(true)
-            currentRect = currentNode.getBoundingClientRect()
-            searchRect = toolbar.getBoundingClientRect()
-            if (currentRect.top < searchRect.top + searchRect.height) {
-              window.scrollBy(0, -(searchRect.top + searchRect.height + 5))
+            var currentRect = currentNode.getBoundingClientRect()
+            var barRect = searchBar.getBoundingClientRect()
+            if (currentRect.top < barRect.bottom + 5) {
+              window.scrollBy(0, -(barRect.height + 10))
             }
           }
         }
@@ -661,7 +658,6 @@ export function SfdumpWrap(doc) {
         collapseAll(root)
         showCurrent(state)
       })
-
       addEventListener(btnNext, 'click', function (e) {
         e.preventDefault()
         e.stopPropagation()
@@ -672,20 +668,17 @@ export function SfdumpWrap(doc) {
       })
 
       addEventListener(root, 'keydown', function (e) {
+        // Ctrl+F → show search bar
         if (isCtrlKey(e) && 70 === e.keyCode) {
           if (document.activeElement === searchInput) return
           e.preventDefault()
-          searchInput.focus()
-          searchInput.select()
+          showSearch()
         } else if (document.activeElement === searchInput) {
+          // Esc → close search bar
           if (27 === e.keyCode) {
             e.preventDefault()
-            resetHighlightedNodes(root)
-            searchInput.value = ''
-            searchInput.blur()
-            previousSearchQuery = ''
-            counter.textContent = '0 / 0'
-            state.reset()
+            hideSearch()
+            // Enter / Shift+Enter → next/prev match
           } else if (13 === e.keyCode || 114 === e.keyCode) {
             e.preventDefault()
             e.shiftKey ? state.previous() : state.next()
