@@ -50,9 +50,13 @@ const applySidebarClass = (collapsed: boolean) => {
 // Apply on init
 applySidebarClass(isCollapsed.value)
 
-// Clean up global class when component is destroyed (e.g. Storybook story switch)
+// Clean up global class only in Storybook (prevents class leak between stories).
+// In production, sidebar is always present so cleanup during route navigation
+// would cause a width flash (class removed before new sidebar re-adds it).
 onUnmounted(() => {
-  document?.documentElement?.classList?.remove('sidebar-collapsed')
+  if (import.meta.env.STORYBOOK) {
+    document?.documentElement?.classList?.remove('sidebar-collapsed')
+  }
 })
 
 const toggleCollapse = () => {
