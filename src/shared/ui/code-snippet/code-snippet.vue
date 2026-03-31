@@ -2,6 +2,7 @@
 import highlightPlugin from '@highlightjs/vue-plugin'
 import isString from 'lodash.isstring'
 import { ref, computed } from 'vue'
+import { copyTextToClipboard } from '../../lib/clipboard'
 import { logger } from '../../lib/logger'
 import { IconSvg } from '../icon-svg'
 
@@ -26,8 +27,7 @@ const normalizedCode = computed(() =>
 const copyCode = (): void => {
   isCopied.value = true
 
-  navigator.clipboard
-    .writeText(normalizedCode.value)
+  copyTextToClipboard(normalizedCode.value)
     .then(() => {
       setTimeout(() => {
         isCopied.value = false

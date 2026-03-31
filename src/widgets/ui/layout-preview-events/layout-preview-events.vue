@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
+import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
@@ -20,7 +21,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
-  favoritesOnly: false,
+  favoritesOnly: false
 })
 
 const { events, cachedEvents, lockedIds } = useEvents()
@@ -117,9 +118,9 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   onCopyPayload: (id) => {
     const event = visibleEvents.value.find((e) => e.uuid === id)
     if (event) {
-      navigator.clipboard
-        .writeText(JSON.stringify(event.payload, null, 2))
-        .then(() => showToast('Payload copied'))
+      copyTextToClipboard(JSON.stringify(event.payload, null, 2)).then(() =>
+        showToast('Payload copied')
+      )
     }
   },
   onScreenshot: (id) => {
@@ -131,9 +132,7 @@ const { focusedId } = useKeyboardNav(eventUuids, {
         toBlob(el as HTMLElement)
           .then((blob) => {
             if (blob) {
-              navigator.clipboard
-                .write([new ClipboardItem({ [blob.type]: blob })])
-                .then(() => showToast('Screenshot copied'))
+              copyBlobToClipboard(blob).then(() => showToast('Screenshot copied'))
             }
           })
           .finally(() => {

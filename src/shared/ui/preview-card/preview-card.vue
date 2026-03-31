@@ -2,6 +2,7 @@
 import download from 'downloadjs'
 import { toBlob, toPng } from 'html-to-image'
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
+import { copyBlobToClipboard } from '../../lib/clipboard'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
 import { useEvents } from '../../lib/use-events'
@@ -112,7 +113,7 @@ const copyCode = () => {
     toBlob(eventRef.value as HTMLElement)
       .then((blob) => {
         if (blob) {
-          navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+          copyBlobToClipboard(blob)
         }
       })
       .catch((e) => logger(['UI: Operation failed', e]))

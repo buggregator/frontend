@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { useProfiler } from '../../lib'
 import type { ProfilerSummary } from '../../types'
 
@@ -29,7 +30,7 @@ const toggle = () => {
 const copied = ref('')
 
 const selectFunction = (fn: string) => {
-  navigator.clipboard.writeText(fn).then(() => {
+  copyTextToClipboard(fn).then(() => {
     copied.value = fn
     setTimeout(() => {
       copied.value = ''
