@@ -1,3 +1,4 @@
+import type { RouteLocation } from 'vue-router'
 import {EventPage} from "@/pages/event-page";
 import {EventsListPage} from "@/pages/events-list-page";
 import {LoginPage} from "@/pages/login";
@@ -52,7 +53,7 @@ export const routes = [
       { path: 'traces', name: RouteName.SentryTraces, component: SentryTracesPage },
       { path: 'traces/:traceId', name: RouteName.SentryTraceDetail, component: SentryTraceDetailPage },
       { path: 'logs', name: RouteName.SentryLogs, component: SentryLogsPage },
-      { path: ':id', redirect: to => `/sentry/event/${to.params.id}` },
+      { path: ':id', redirect: (to: RouteLocation) => `/sentry/event/${to.params.id}` },
     ]
   },
   {

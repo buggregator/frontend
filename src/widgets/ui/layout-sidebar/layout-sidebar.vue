@@ -142,29 +142,6 @@ const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCou
     class="layout-sidebar"
     :class="{ 'layout-sidebar--collapsed': isVisuallyCollapsed }"
   >
-    <!-- Edge expand handle (visible only when collapsed) -->
-    <button
-      v-if="isVisuallyCollapsed"
-      class="layout-sidebar__edge-handle"
-      aria-label="Expand sidebar"
-      title="Expand sidebar"
-      @click="toggleCollapse"
-    >
-      <svg
-        class="layout-sidebar__edge-chevron"
-        viewBox="0 0 6 16"
-        fill="none"
-      >
-        <path
-          d="M1 1L5 8L1 15"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
-
     <nav class="layout-sidebar__nav">
       <!-- Logo + collapse toggle header -->
       <div class="layout-sidebar__header">
@@ -418,6 +395,23 @@ const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCou
         </div>
       </div>
 
+      <!-- Expand button (collapsed mode) -->
+      <template v-if="isVisuallyCollapsed">
+        <button
+          class="layout-sidebar__expand-btn"
+          title="Expand sidebar"
+          aria-label="Expand sidebar"
+          @click="toggleCollapse"
+        >
+          <IconSvg
+            class="layout-sidebar__toggle-icon"
+            name="sidebar-left"
+          />
+        </button>
+
+        <hr class="layout-sidebar__sep layout-sidebar__sep--full">
+      </template>
+
       <!-- Connection indicator -->
       <div
         class="layout-sidebar__connection"
@@ -491,7 +485,7 @@ const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCou
 .layout-sidebar__toggle-btn {
   @apply hidden;
   @apply items-center justify-center;
-  @apply w-6 h-6 rounded-md;
+  @apply w-9 h-9 rounded-md;
   @apply text-gray-400 dark:text-gray-500;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
@@ -508,35 +502,17 @@ const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCou
 }
 
 .layout-sidebar__toggle-icon {
-  @apply w-3.5 h-3.5;
+  @apply w-5 h-5;
 }
 
-/* ---- Edge expand handle (collapsed mode) ---- */
-.layout-sidebar__edge-handle {
-  @apply absolute z-10;
+/* ---- Expand button (collapsed mode, in bottom section) ---- */
+.layout-sidebar__expand-btn {
   @apply flex items-center justify-center;
-  @apply cursor-pointer;
-  @apply rounded-r-md;
-  @apply bg-gray-200/80 dark:bg-gray-700/80;
-  @apply hover:bg-gray-300 dark:hover:bg-gray-600;
+  @apply w-9 h-9 mx-auto rounded-md;
   @apply text-gray-400 dark:text-gray-500;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
-  @apply opacity-0 transition-all duration-200;
-  width: 12px;
-  height: 32px;
-  top: 50%;
-  right: 0;
-  transform: translate(100%, -50%);
-
-  .layout-sidebar:hover & {
-    @apply opacity-100;
-  }
-}
-
-.layout-sidebar__edge-chevron {
-  width: 6px;
-  height: 14px;
-  flex-shrink: 0;
+  @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
+  @apply transition-colors duration-100 cursor-pointer;
 }
 
 /* ---- Links ---- */
@@ -745,6 +721,12 @@ $dotColors: (
 .layout-sidebar__bottom {
   @apply px-3 py-2;
   border-top: 1px solid rgba(128, 128, 128, 0.08);
+}
+
+.layout-sidebar__sep--full {
+  margin-left: -12px;
+  margin-right: -12px;
+  width: calc(100% + 24px);
 }
 
 .layout-sidebar__user {
