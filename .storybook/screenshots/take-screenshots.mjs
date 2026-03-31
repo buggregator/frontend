@@ -149,7 +149,13 @@ async function main() {
       await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 })
       await page.waitForTimeout(1500)
 
-      await page.screenshot({ path: filepath, fullPage: true, clip: { x: 0, y: 0, width: 1920, height: 1080 } })
+      // Screenshot just the story content, not the full viewport
+      const root = await page.$('#storybook-root')
+      if (root) {
+        await root.screenshot({ path: filepath })
+      } else {
+        await page.screenshot({ path: filepath, fullPage: true })
+      }
 
       const label = `${story.title} / ${story.name}`
       console.log(`  ✓ ${label}`)
