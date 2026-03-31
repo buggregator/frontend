@@ -546,7 +546,22 @@ export function SfdumpWrap(doc) {
           showSearch()
         } else if (action === 'copy') {
           var text = root.innerText || root.textContent || ''
-          if (navigator.clipboard) navigator.clipboard.writeText(text.trim())
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text.trim())
+          } else {
+            var textarea = document.createElement('textarea')
+            textarea.value = text.trim()
+            textarea.style.position = 'fixed'
+            textarea.style.opacity = '0'
+            document.body.appendChild(textarea)
+            textarea.select()
+            try {
+              document.execCommand('copy')
+            } catch (e) {
+              /* noop */
+            }
+            document.body.removeChild(textarea)
+          }
         } else if (depth) {
           collapseAll(root)
           expandToDepth(root, parseInt(depth, 10))

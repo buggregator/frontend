@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard, IconSvg } from '@/shared/ui'
 import type { HttpDump } from '../../types'
@@ -78,7 +79,7 @@ const buildCurl = (): string => {
 
 const copyCurl = () => {
   isCopied.value = true
-  navigator.clipboard.writeText(buildCurl()).catch(console.error)
+  copyTextToClipboard(buildCurl()).catch(console.error)
   setTimeout(() => {
     isCopied.value = false
   }, 1500)
