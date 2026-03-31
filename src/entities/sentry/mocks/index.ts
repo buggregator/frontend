@@ -17,3 +17,15 @@ export {
   sentryPythonLogMock,
   sentrySpiralMock,
 }
+
+export {
+  mockCounts,
+  mockExceptionGroups,
+  mockExceptionItems,
+  mockPreviewSpans,
+  mockTraces,
+  mockSpans,
+  mockTraceDetail,
+  mockLogs,
+  mockServiceMap,
+} from './sentry-v2-mocks'

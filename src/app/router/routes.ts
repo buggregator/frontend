@@ -4,6 +4,13 @@ import {LoginPage} from "@/pages/login";
 import {MetricsPage} from "@/pages/metrics";
 import {NotFoundPage} from "@/pages/not-found";
 import {ProfilerComparePage} from "@/pages/profiler-compare";
+import {
+  SentryLayoutPage,
+  SentryExceptionsPage,
+  SentryTracesPage,
+  SentryLogsPage,
+  SentryTraceDetailPage,
+} from "@/pages/sentry";
 import {SettingsPage} from "@/pages/settings";
 import {RouteName} from "@/shared/types";
 import {auth, checkType} from "./middlewares";
@@ -24,6 +31,29 @@ export const routes = [
     meta: {
       middleware: [auth]
     }
+  },
+  {
+    path: '/sentry/event/:id',
+    name: RouteName.SentryExceptionDetail,
+    component: EventPage,
+    meta: {
+      middleware: [auth]
+    },
+  },
+  {
+    path: '/sentry',
+    component: SentryLayoutPage,
+    meta: {
+      middleware: [auth]
+    },
+    children: [
+      { path: '', redirect: '/sentry/exceptions' },
+      { path: 'exceptions', name: RouteName.SentryExceptions, component: SentryExceptionsPage },
+      { path: 'traces', name: RouteName.SentryTraces, component: SentryTracesPage },
+      { path: 'traces/:traceId', name: RouteName.SentryTraceDetail, component: SentryTraceDetailPage },
+      { path: 'logs', name: RouteName.SentryLogs, component: SentryLogsPage },
+      { path: ':id', redirect: to => `/sentry/event/${to.params.id}` },
+    ]
   },
   {
     path: '/:type',

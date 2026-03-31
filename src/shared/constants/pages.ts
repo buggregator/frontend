@@ -67,5 +67,17 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     sidebarTitle: 'SMS messages',
     iconName: 'sms',
     eventType: EventTypes.Sms,
+  },
+  [PAGE_TYPES.SentryTrace]: {
+    title: 'Sentry Traces',
+    sidebarTitle: 'Sentry traces',
+    iconName: 'sentry',
+    eventType: EventTypes.SentryTrace,
+  },
+  [PAGE_TYPES.SentryLog]: {
+    title: 'Sentry Logs',
+    sidebarTitle: 'Sentry logs',
+    iconName: 'sentry',
+    eventType: EventTypes.SentryLog,
   }
 }

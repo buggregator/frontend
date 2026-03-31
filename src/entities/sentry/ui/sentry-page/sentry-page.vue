@@ -13,7 +13,7 @@ import { SentryPageModules } from '../sentry-page-modules'
 import { SentryPageRequest } from '../sentry-page-request'
 import { SentryPageSdk } from '../sentry-page-sdk'
 import { SentryPageTags } from '../sentry-page-tags'
-import { SentryPageTrace } from '../sentry-page-trace'
+import { TraceContextBlock } from '../trace-context-block'
 
 type Props = {
   event: NormalizedEvent<Sentry>
@@ -229,9 +229,16 @@ const scrollToException = (idx: number) => {
         <div class="sentry-tab-content sentry-tab-content--sections">
           <SentryPageTags :payload="event.payload" />
 
-          <SentryPageTrace
-            v-if="hasTraceContext && event.payload.contexts!.trace"
-            :trace="event.payload.contexts!.trace"
+          <TraceContextBlock
+            v-if="hasTraceContext && event.payload.contexts?.trace"
+            :trace-summary="{
+              trace_id: String(event.payload.contexts!.trace!.trace_id || ''),
+              transaction_name: String(event.payload.transaction || ''),
+              op: String(event.payload.contexts!.trace!.op || ''),
+              duration_ms: 0,
+              span_count: 0,
+              preview_spans: []
+            }"
           />
 
           <SentryPageApp

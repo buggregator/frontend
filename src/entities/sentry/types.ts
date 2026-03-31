@@ -1,5 +1,26 @@
 import * as SentryTypes from '@sentry/types'
 
+// Re-export v2 types for structured Sentry data
+export type {
+  SentryErrorGroup,
+  SentryExceptionItem,
+  SentryTraceSummary,
+  SentrySpanPreview,
+  SentryTrace,
+  SentrySpan,
+  SentryTraceDetail,
+  SentryRelatedError,
+  SentryLog,
+  SentryServiceMapNode,
+  SentryServiceMapEdge,
+  SentryServiceMap,
+  SentryCounts,
+  SentryExceptionDetail,
+  SentryExceptionEntry,
+  SentryBreadcrumbEntry,
+  PaginatedResponse,
+} from './types-v2'
+
 export type SentryFrame = SentryTypes.StackFrame
 
 export type SentryException = Omit<SentryTypes.Exception, 'mechanism'> & {

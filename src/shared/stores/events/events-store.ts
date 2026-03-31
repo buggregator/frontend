@@ -32,6 +32,8 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.VarDump]: [] as EventId[],
   [PAGE_TYPES.HttpDump]: [] as EventId[],
   [PAGE_TYPES.Monolog]: [] as EventId[],
+  [PAGE_TYPES.SentryTrace]: [] as EventId[],
+  [PAGE_TYPES.SentryLog]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
 };
 

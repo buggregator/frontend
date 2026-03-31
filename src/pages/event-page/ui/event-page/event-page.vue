@@ -34,14 +34,15 @@ const getEvent = async () => {
 
   try {
     serverEvent.value = (await getItem(eventId)) as unknown as ServerEvent<unknown>
-    isLoading.value = false
 
     if (!serverEvent.value) {
-      new EventValidationError('Event not found', eventId)
+      throw new EventValidationError('Event not found', eventId)
     }
   } catch (error) {
     logger(['UI: Failed to load event page', error])
-    await router.push({ name: RouteName.NotFound })
+    await router.replace({ name: RouteName.NotFound })
+  } finally {
+    isLoading.value = false
   }
 }
 
