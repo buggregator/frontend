@@ -73,6 +73,14 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
     view: PreviewSms,
     normalize: normalizeSmsEvent
   },
+  [EventTypes.SentryTrace]: {
+    view: PreviewSentry,
+    normalize: normalizeSentryEvent
+  },
+  [EventTypes.SentryLog]: {
+    view: PreviewSentry,
+    normalize: normalizeSentryEvent
+  },
   unknown: {
     view: PreviewCardDefault,
     normalize: normalizeUnknownEvent

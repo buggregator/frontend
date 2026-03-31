@@ -251,8 +251,16 @@ const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCou
         :key="type"
       >
         <RouterLink
-          :to="{ name: RouteName.EventList, params: { type } }"
-          :class="{ 'layout-sidebar__link--active': $route.params.type === type }"
+          :to="
+            type === 'sentry'
+              ? '/sentry/exceptions'
+              : { name: RouteName.EventList, params: { type } }
+          "
+          :class="{
+            'layout-sidebar__link--active':
+              $route.params.type === type ||
+              (type === 'sentry' && $route.path.startsWith('/sentry'))
+          }"
           :title="PAGES_SETTINGS[type].sidebarTitle"
           :aria-label="PAGES_SETTINGS[type].sidebarTitle"
           class="layout-sidebar__link"

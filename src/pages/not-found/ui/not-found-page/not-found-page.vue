@@ -1,10 +1,18 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
 
 useTitle('404 | Buggregator')
+
+const router = useRouter()
+const canGoBack = ref(window.history.length > 1)
+
+const goBack = () => {
+  router.back()
+}
 
 const ready = ref(false)
 onMounted(() => {
@@ -55,7 +63,30 @@ onMounted(() => {
           Maybe it's a bug. Maybe it's a feature we haven't invented.
         </p>
 
+        <button
+          v-if="canGoBack"
+          class="nf__btn"
+          :class="{ 'is-visible': ready }"
+          @click="goBack"
+        >
+          <span class="nf__btn-inner">
+            <svg
+              class="nf__btn-icon"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Go back
+          </span>
+        </button>
+
         <RouterLink
+          v-else
           :to="{ name: RouteName.Home }"
           class="nf__btn"
           :class="{ 'is-visible': ready }"

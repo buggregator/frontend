@@ -65,10 +65,8 @@ pre.sf-dump .sf-dump-str-toggle:hover svg {
   color: #93c5fd;
 }
 
-/* Toolbar SVGs */
-pre.sf-dump .sf-dump-toolbar-btn svg,
-pre.sf-dump .sf-dump-search-nav svg,
-pre.sf-dump .sf-dump-toolbar-info svg {
+/* Search bar & nav SVGs */
+pre.sf-dump .sf-dump-search-nav svg {
   width: 13px;
   height: 13px;
   pointer-events: none;
@@ -106,14 +104,13 @@ pre.sf-dump .sf-dump-search-hidden {
   display: none !important;
 }
 
-/* === TOOLBAR === */
-pre.sf-dump .sf-dump-toolbar {
+/* === SEARCH BAR (shown via Ctrl+F) === */
+pre.sf-dump .sf-dump-search-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 0 6px;
-  margin-bottom: 0;
+  gap: 0;
+  padding: 3px 6px;
+  margin-bottom: 8px;
   background: #141720;
   border: 1px solid #2a2f3a;
   border-radius: 5px;
@@ -121,151 +118,98 @@ pre.sf-dump .sf-dump-toolbar {
   position: sticky;
   top: 0;
   z-index: 20;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition:
-    max-height 0.2s ease,
-    opacity 0.15s ease,
-    padding 0.2s ease,
-    margin-bottom 0.2s ease;
 }
 
-pre.sf-dump:hover .sf-dump-toolbar,
-pre.sf-dump:focus-within .sf-dump-toolbar {
-  max-height: 40px;
-  padding: 3px 6px;
-  margin-bottom: 8px;
-  opacity: 1;
+/* === CONTEXT MENU === */
+.sf-dump-ctx-menu {
+  position: absolute;
+  z-index: 9999;
+  min-width: 180px;
+  padding: 4px;
+  background: #1a1e2a;
+  border: 1px solid #2a2f3a;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
 }
 
-pre.sf-dump .sf-dump-toolbar-group {
+.sf-dump-ctx-item {
   display: flex;
   align-items: center;
-  gap: 2px;
-}
-
-pre.sf-dump .sf-dump-toolbar-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  width: 22px;
-  height: 22px;
-  font-size: 9px;
-  font-family: inherit;
-  font-weight: 500;
-  color: #6b7280;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 10px;
+  color: #9ca3af;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 3px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.12s;
+  font: inherit;
+  text-align: left;
   white-space: nowrap;
 }
 
-pre.sf-dump .sf-dump-toolbar-btn:hover {
+.sf-dump-ctx-item:hover {
+  color: #e5e7eb;
+  background: #262b3a;
+}
+
+.sf-dump-ctx-item svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.sf-dump-ctx-sep {
+  height: 1px;
+  margin: 3px 6px;
+  background: #2a2f3a;
+}
+
+.sf-dump-ctx-label {
+  padding: 4px 10px 2px;
+  color: #4b5563;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sf-dump-ctx-depths {
+  display: flex;
+  gap: 2px;
+  padding: 2px 8px 4px;
+}
+
+.sf-dump-ctx-depth {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid #2a2f3a;
+  border-radius: 3px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.sf-dump-ctx-depth:hover {
   color: #e5e7eb;
   background: #262b3a;
   border-color: #3b4252;
-  text-decoration: none;
 }
 
-pre.sf-dump .sf-dump-toolbar-btn--active {
-  color: #60a5fa;
-  background: rgba(96, 165, 250, 0.12);
-  border-color: rgba(96, 165, 250, 0.3);
-}
-
-/* Depth buttons */
-pre.sf-dump .sf-dump-toolbar-depth {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  margin-left: 2px;
-  padding-left: 6px;
-  border-left: 1px solid #2a2f3a;
-}
-
-pre.sf-dump .sf-dump-toolbar-depth-label {
-  font-size: 9px;
-  color: #4b5563;
-  margin-right: 1px;
-}
-
-pre.sf-dump .sf-dump-toolbar-btn--depth {
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Info button with tooltip */
-pre.sf-dump .sf-dump-toolbar-info {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  font-size: 12px;
-  color: #4b5563;
-  cursor: default;
-  margin-left: 2px;
-  padding-left: 6px;
-  border-left: 1px solid #2a2f3a;
-}
-
-pre.sf-dump .sf-dump-toolbar-info:hover {
-  color: #9ca3af;
-}
-
-pre.sf-dump .sf-dump-info-tooltip {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 4px;
-  padding: 6px 10px;
-  background: #1a1d26;
-  border: 1px solid #2a2f3a;
-  border-radius: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  white-space: nowrap;
-  z-index: 30;
-}
-
-pre.sf-dump .sf-dump-toolbar-info:hover .sf-dump-info-tooltip {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-pre.sf-dump .sf-dump-info-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 10px;
-}
-
-pre.sf-dump .sf-dump-info-key {
-  color: #6b7280;
-}
-
-pre.sf-dump .sf-dump-info-val {
-  color: #d1d5db;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Search in toolbar */
-pre.sf-dump .sf-dump-toolbar-search {
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-input {
-  width: 110px;
-  min-width: 60px;
+/* Search bar inputs */
+pre.sf-dump .sf-dump-search-bar .sf-dump-search-input {
+  flex: 1;
+  min-width: 80px;
   height: 22px;
   padding: 2px 6px;
   font-size: 11px;
@@ -275,17 +219,14 @@ pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-input {
   border: 1px solid #2a2f38;
   border-radius: 3px 0 0 3px;
   outline: none;
-  transition:
-    border-color 0.15s,
-    width 0.2s;
+  transition: border-color 0.15s;
 }
 
-pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-input:focus {
+pre.sf-dump .sf-dump-search-bar .sf-dump-search-input:focus {
   border-color: #3b82f6;
-  width: 180px;
 }
 
-pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-count {
+pre.sf-dump .sf-dump-search-bar .sf-dump-search-count {
   display: inline-flex;
   align-items: center;
   height: 22px;
@@ -297,6 +238,13 @@ pre.sf-dump .sf-dump-toolbar-search .sf-dump-search-count {
   border-top: 1px solid #2a2f38;
   border-bottom: 1px solid #2a2f38;
   white-space: nowrap;
+}
+
+/* Context menu stats */
+.sf-dump-ctx-stats {
+  padding: 4px 10px;
+  color: #4b5563;
+  font-size: 9px;
 }
 
 pre.sf-dump .sf-dump-search-nav {

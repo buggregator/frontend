@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isValueString = computed(() => isString(props.value) && props.type === 'string')
 const isValueCode = computed(() => isString(props.value) && props.type === 'code')
+const isValueBoolean = computed(() => props.type === 'boolean')
 
 const dumpId = String(props.value).match(/(sf-dump-[0-9]+)/i)?.[0] || null
 const dumpBody = computed(() => {
@@ -52,7 +53,14 @@ onMounted(() => {
       :code="String(dumpBody)"
     />
     <div
-      v-if="!isValueString && !isValueCode"
+      v-else-if="isValueBoolean"
+      class="value-dump__boolean"
+      :class="dumpBody === 'true' ? 'value-dump__boolean--true' : 'value-dump__boolean--false'"
+    >
+      {{ dumpBody }}
+    </div>
+    <div
+      v-else
       class="value-dump__html"
       v-html="baseSanitizedHtml"
     />
@@ -69,5 +77,20 @@ onMounted(() => {
   @apply bg-gray-50 dark:bg-gray-900;
   @apply rounded overflow-auto;
   @apply p-3;
+}
+
+.value-dump__boolean {
+  @apply font-mono font-semibold text-xs;
+  @apply rounded p-3;
+}
+
+.value-dump__boolean--true {
+  @apply text-green-600 dark:text-green-400;
+  @apply bg-green-50 dark:bg-green-500/10;
+}
+
+.value-dump__boolean--false {
+  @apply text-red-600 dark:text-red-400;
+  @apply bg-red-50 dark:bg-red-500/10;
 }
 </style>

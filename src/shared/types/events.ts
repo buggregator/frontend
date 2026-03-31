@@ -11,6 +11,8 @@ export enum EventTypes {
   HttpDump = "http-dump",
   RayDump = "ray",
   Sms = "sms",
+  SentryTrace = "sentry-trace",
+  SentryLog = "sentry-log",
 }
 
 // TODO: add T prefix to all types

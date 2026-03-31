@@ -8,4 +8,9 @@ export enum RouteName {
   ProfilerCompare = 'profiler-compare',
   Metrics = 'metrics',
   NotFound = 'not-found',
+  SentryExceptions = 'sentry-exceptions',
+  SentryExceptionDetail = 'sentry-exception-detail',
+  SentryTraces = 'sentry-traces',
+  SentryTraceDetail = 'sentry-trace-detail',
+  SentryLogs = 'sentry-logs',
 }

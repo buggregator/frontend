@@ -10,13 +10,15 @@ import { SentryException } from '../sentry-exception'
 type Props = {
   event: NormalizedEvent<Sentry>
   maxFrames?: number
+  occurrenceCount?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  maxFrames: 3
+  maxFrames: 3,
+  occurrenceCount: 0
 })
 
-const eventLink = computed(() => `/sentry/${props.event.id}`)
+const eventLink = computed(() => `/sentry/event/${props.event.id}`)
 
 const exceptionValues = computed(() => props.event?.payload?.exception?.values || [])
 
@@ -37,34 +39,67 @@ const exception: Ref<Exception> = computed(() =>
         }
       }
 )
+
+const showBadge = computed(() => props.occurrenceCount > 1)
 </script>
 
 <template>
   <PreviewCard :event="event">
-    <SentryException
-      v-if="hasException"
-      :exception="exception"
-      :max-frames="maxFrames"
-    >
-      <RouterLink
-        :to="eventLink"
-        class="sentry-body__link"
+    <div class="sentry-body__wrapper">
+      <SentryException
+        v-if="hasException"
+        :exception="exception"
+        :max-frames="maxFrames"
       >
-        <h3 class="sentry-body__title">
-          {{ exception.type }}
-        </h3>
+        <RouterLink
+          :to="eventLink"
+          class="sentry-body__link"
+        >
+          <h3 class="sentry-body__title">
+            {{ exception.type }}
+          </h3>
 
-        <pre class="sentry-body__message">{{ exception.value }}</pre>
-      </RouterLink>
-    </SentryException>
+          <pre class="sentry-body__message">{{ exception.value }}</pre>
+        </RouterLink>
+      </SentryException>
 
-    <div v-if="message">
-      <pre class="sentry-body__message">{{ message }}</pre>
+      <div v-else-if="message">
+        <RouterLink
+          :to="eventLink"
+          class="sentry-body__link"
+        >
+          <pre class="sentry-body__message">{{ message }}</pre>
+        </RouterLink>
+      </div>
+
+      <div v-else>
+        <RouterLink
+          :to="eventLink"
+          class="sentry-body__link"
+        >
+          <h3 class="sentry-body__title">
+            {{ exception.type }}
+          </h3>
+          <pre class="sentry-body__message">{{ exception.value }}</pre>
+        </RouterLink>
+      </div>
+
+      <div
+        v-if="showBadge"
+        class="sentry-body__count-badge"
+      >
+        <span class="sentry-body__count-num">{{ occurrenceCount }}</span>
+        <span class="sentry-body__count-lbl">today</span>
+      </div>
     </div>
   </PreviewCard>
 </template>
 
 <style lang="scss" scoped>
+.sentry-body__wrapper {
+  @apply relative;
+}
+
 .sentry-body__link {
   @apply block p-3 rounded overflow-hidden cursor-pointer;
   @apply bg-gray-50 dark:bg-gray-900;
@@ -82,5 +117,22 @@ const exception: Ref<Exception> = computed(() =>
   @apply bg-gray-100 dark:bg-gray-800;
   @apply text-gray-600 dark:text-gray-300;
   @apply font-mono;
+}
+
+.sentry-body__count-badge {
+  @apply absolute top-2 right-2;
+  @apply flex flex-col items-center justify-center;
+  @apply w-10 h-10 rounded-full;
+  @apply bg-rose-100 dark:bg-rose-900/40;
+  @apply border border-rose-300 dark:border-rose-700;
+  @apply text-rose-700 dark:text-rose-300;
+}
+
+.sentry-body__count-num {
+  @apply text-xs font-bold leading-none;
+}
+
+.sentry-body__count-lbl {
+  @apply text-[9px] leading-none mt-0.5 opacity-70;
 }
 </style>

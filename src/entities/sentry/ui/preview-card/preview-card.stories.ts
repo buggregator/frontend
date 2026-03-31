@@ -47,3 +47,10 @@ export const PythonLog: StoryObj<typeof PreviewCard> = {
   }
 };
 
+export const WithOccurrenceBadge: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeSentryEvent(sentryLaravelMock),
+    occurrenceCount: 184,
+  }
+};
+
