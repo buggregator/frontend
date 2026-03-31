@@ -2,6 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import { useSentryTraces } from '@/entities/sentry/lib'
+import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { ServiceMap } from '@/entities/sentry/ui/service-map'
@@ -22,6 +23,10 @@ watch(viewMode, (val) => {
 })
 
 onMounted(() => {
+  fetchList()
+})
+
+onSentryEvent(() => {
   fetchList()
 })
 </script>

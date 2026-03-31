@@ -16,9 +16,14 @@ const props = defineProps<Props>()
 const { events } = useEvents()
 const router = useRouter()
 
-const eventsListLink = computed(() =>
-  router.currentRoute.value.path.replace(`/${props.eventId}`, '')
-)
+const eventsListLink = computed(() => {
+  const path = router.currentRoute.value.path
+  // For /sentry/event/:id, link back to /sentry/exceptions
+  if (path.startsWith('/sentry/event/')) {
+    return '/sentry/exceptions'
+  }
+  return path.replace(`/${props.eventId}`, '')
+})
 const onDelete = () => {
   events.removeById(props.eventId)
   router.push({ name: RouteName.Home })

@@ -12,22 +12,30 @@ import { type EventId, type PageEventTypes, type ServerEvent, RouteName } from '
 import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
 
 const { params } = useRoute()
-
-const paramsType = computed(() => (params?.type || undefined) as PageEventTypes | undefined)
-const pageName = computed(() => (paramsType?.value ? PAGES_SETTINGS[paramsType.value]?.title : ''))
-
-const title = computed(() => (paramsType?.value ? PAGES_SETTINGS[paramsType.value]?.title : ''))
-
 const router = useRouter()
 const eventId = params.id as EventId
-
-useTitle(`${pageName.value} > ${eventId} | Buggregator`)
 
 const {
   events: { getItem }
 } = useEvents()
 const isLoading = ref(false)
 const serverEvent = ref<ServerEvent<unknown> | null>(null)
+
+const paramsType = computed(() => (params?.type || undefined) as PageEventTypes | undefined)
+
+// Determine the event type: from route params, or from the loaded event's type.
+const resolvedType = computed(() => {
+  if (paramsType.value) return paramsType.value
+  if (serverEvent.value?.type) return serverEvent.value.type as PageEventTypes
+  return undefined
+})
+
+const title = computed(
+  () => (resolvedType.value ? PAGES_SETTINGS[resolvedType.value]?.title : '') || ''
+)
+const pageName = title
+
+useTitle(`${pageName.value} > ${eventId} | Buggregator`)
 
 const getEvent = async () => {
   isLoading.value = true

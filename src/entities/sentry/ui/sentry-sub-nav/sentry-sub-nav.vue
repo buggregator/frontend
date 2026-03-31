@@ -1,10 +1,15 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { useSentryCounts } from '../../lib'
+import { onSentryEvent } from '../../lib/use-sentry-events-bus'
 
 const { counts, fetchCounts } = useSentryCounts()
 
 onMounted(() => {
+  fetchCounts()
+})
+
+onSentryEvent(() => {
   fetchCounts()
 })
 </script>

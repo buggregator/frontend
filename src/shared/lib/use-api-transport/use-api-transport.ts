@@ -3,7 +3,7 @@ import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
-import { useCentrifuge, useEventsRequests } from "../io";
+import { REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
 import { useSettings } from "../use-settings";
 
 let isEventsEmitted = false
@@ -122,7 +122,14 @@ export const useApiTransport = () => {
     return deleteSingle(eventId);
   }
 
+  const clearSentryTables = () => {
+    const headers = { 'X-Auth-Token': token.value }
+    fetch(`${REST_API_URL}/api/sentry/all`, { method: 'DELETE', headers }).catch(() => {})
+  }
+
   const deleteEventsAll = () => {
+    clearSentryTables()
+
     if (getWSConnection()) {
       return centrifuge.rpc(`delete:api/events`, createPayload())
     }
@@ -147,6 +154,10 @@ export const useApiTransport = () => {
   }
 
   const deleteEventsByType = (type: EventType) => {
+    if (type === 'sentry') {
+      clearSentryTables()
+    }
+
     if (getWSConnection()) {
       return centrifuge.rpc(`delete:api/events`, createPayload())
     }

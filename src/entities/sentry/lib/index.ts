@@ -4,3 +4,4 @@ export * from "./use-sentry-exceptions";
 export * from "./use-sentry-traces";
 export * from "./use-sentry-logs";
 export * from "./use-sentry-counts";
+export * from "./use-sentry-events-bus";

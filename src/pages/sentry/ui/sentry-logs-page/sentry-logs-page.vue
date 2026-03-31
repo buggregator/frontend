@@ -2,6 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { onMounted } from 'vue'
 import { useSentryLogs } from '@/entities/sentry/lib'
+import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryLogsList } from '@/entities/sentry/ui/sentry-logs-list'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
@@ -11,6 +12,10 @@ useTitle('Sentry Logs | Buggregator')
 const { logs, loading, total, fetchList } = useSentryLogs()
 
 onMounted(() => {
+  fetchList()
+})
+
+onSentryEvent(() => {
   fetchList()
 })
 </script>

@@ -3,6 +3,7 @@ import { useTitle } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import { LayoutPreviewEvents } from '@/widgets/ui'
 import { useSentryExceptions } from '@/entities/sentry/lib'
+import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryExceptionGroupCard } from '@/entities/sentry/ui/sentry-exception-group-card'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
@@ -38,6 +39,10 @@ watch(grouped, () => {
 })
 
 onMounted(() => {
+  if (grouped.value) fetchList()
+})
+
+onSentryEvent(() => {
   if (grouped.value) fetchList()
 })
 </script>
