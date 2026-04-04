@@ -69,13 +69,13 @@ const formParams = computed(() => {
           v-if="bodyViewRef?.isJson"
           :modes="['raw', 'pretty', 'tree']"
           :active="bodyViewRef.viewMode"
-          @update:active="bodyViewRef.viewMode = $event"
+          @update:active="bodyViewRef.viewMode = $event as typeof bodyViewRef.viewMode"
         />
         <HttpBodyViewToggle
           v-if="bodyViewRef?.isHtml"
           :modes="['preview', 'source']"
           :active="bodyViewRef.htmlMode"
-          @update:active="bodyViewRef.htmlMode = $event"
+          @update:active="bodyViewRef.htmlMode = $event as typeof bodyViewRef.htmlMode"
         />
       </template>
 
