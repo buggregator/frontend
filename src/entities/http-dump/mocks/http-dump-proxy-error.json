@@ -1,0 +1,27 @@
+{
+  "uuid": "c3d4e5f6-789a-4cde-bf01-333333333333",
+  "type": "http-dump",
+  "payload": {
+    "received_at": "2026-04-04 12:02:30",
+    "host": "api.unreachable-service.example:443",
+    "proxy": true,
+    "duration_ms": 5002,
+    "error": "dial tcp: lookup api.unreachable-service.example: no such host",
+    "request": {
+      "method": "POST",
+      "uri": "/v1/webhook",
+      "headers": {
+        "User-Agent": ["GuzzleHttp/7"],
+        "Content-Type": ["application/json"],
+        "Authorization": ["Bearer sk_test_FAKE_KEY_FOR_MOCK_DATA_ONLY"]
+      },
+      "body": "{\"event\":\"order.created\",\"data\":{\"order_id\":1234,\"amount\":49.99}}",
+      "query": {},
+      "post": {},
+      "cookies": {},
+      "files": []
+    }
+  },
+  "timestamp": 1743764550,
+  "project": null
+}

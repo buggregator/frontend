@@ -1,0 +1,33 @@
+{
+  "uuid": "d4e5f6a7-89ab-4def-c012-444444444444",
+  "type": "http-dump",
+  "payload": {
+    "received_at": "2026-04-04 12:03:45",
+    "host": "httpbin.org:443",
+    "proxy": true,
+    "duration_ms": 215,
+    "request": {
+      "method": "GET",
+      "uri": "/xml",
+      "headers": {
+        "User-Agent": ["GuzzleHttp/7"],
+        "Accept": ["application/xml"]
+      },
+      "body": "",
+      "query": {},
+      "post": {},
+      "cookies": {},
+      "files": []
+    },
+    "response": {
+      "status_code": 200,
+      "headers": {
+        "Content-Type": ["application/xml"],
+        "Content-Length": ["522"]
+      },
+      "body": "<?xml version='1.0' encoding='us-ascii'?>\n<slideshow\n    title=\"Sample Slide Show\"\n    date=\"Date of publication\"\n    author=\"Yours Truly\">\n  <slide type=\"all\">\n    <title>Wake up to WonderWidgets!</title>\n  </slide>\n  <slide type=\"all\">\n    <title>Overview</title>\n    <item>Why <em>WonderWidgets</em> are great</item>\n    <item/>\n    <item>Who <em>buys</em> WonderWidgets</item>\n  </slide>\n</slideshow>"
+    }
+  },
+  "timestamp": 1743764625,
+  "project": null
+}

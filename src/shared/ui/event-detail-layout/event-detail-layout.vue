@@ -46,7 +46,7 @@ const formattedDate = computed(() =>
 
 <style lang="scss" scoped>
 .event-detail {
-  @apply relative flex flex-col h-full;
+  @apply relative flex flex-col;
 }
 
 .event-detail__header {

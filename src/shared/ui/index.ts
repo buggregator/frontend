@@ -14,3 +14,4 @@ export * from './page-tabs';
 export * from './skeleton-loader';
 export * from './search-bar';
 export * from './highlight-text';
+export * from './json-tree-view';

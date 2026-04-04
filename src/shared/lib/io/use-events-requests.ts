@@ -12,6 +12,7 @@ type TUseEventsRequests = () => {
   deleteByType: (type: EventType) => Promise<void | Response>,
   pinEvent: (id: EventId) => Promise<void | Response>,
   unpinEvent: (id: EventId) => Promise<void | Response>,
+  replayHttpDump: (id: EventId) => Promise<void | Response>,
 }
 
 // TODO: add 403 response handling
@@ -110,6 +111,14 @@ export const useEventsRequests: TUseEventsRequests = () => {
     console.error('Unpin Error', err)
   })
 
+  const replayHttpDump = (id: EventId): Promise<void | Response> =>
+    fetch(`${REST_API_URL}/api/http-dump/${id}/replay`, {
+      method: 'POST',
+      headers,
+    }).catch((err) => {
+      console.error('Replay Error', err)
+    })
+
   return {
     getAll,
     getSingle,
@@ -119,5 +128,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     deleteByType,
     pinEvent,
     unpinEvent,
+    replayHttpDump,
   }
 }

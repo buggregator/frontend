@@ -15,18 +15,24 @@ withDefaults(defineProps<Props>(), {
     v-if="$slots.default"
     class="event-section"
   >
-    <h3
-      v-if="title"
-      class="event-section__title"
+    <div
+      v-if="title || $slots.actions"
+      class="event-section__header"
     >
-      {{ title }}
-      <span
-        v-if="count > 0"
-        class="event-section__count"
+      <h3
+        v-if="title"
+        class="event-section__title"
       >
-        {{ count }}
-      </span>
-    </h3>
+        {{ title }}
+        <span
+          v-if="count > 0"
+          class="event-section__count"
+        >
+          {{ count }}
+        </span>
+      </h3>
+      <slot name="actions" />
+    </div>
     <div class="event-section__content">
       <slot />
     </div>
@@ -34,10 +40,13 @@ withDefaults(defineProps<Props>(), {
 </template>
 
 <style lang="scss" scoped>
+.event-section__header {
+  @apply flex items-center justify-between gap-2 mb-3;
+}
+
 .event-section__title {
   @apply text-xs font-mono font-semibold uppercase tracking-wider;
   @apply text-gray-500 dark:text-gray-400;
-  @apply mb-3;
 }
 
 .event-section__count {

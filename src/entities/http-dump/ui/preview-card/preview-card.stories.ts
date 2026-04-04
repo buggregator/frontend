@@ -1,6 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useHttpDump } from "../../lib";
-import { httpDumpMock } from '../../mocks';
+import {
+  httpDumpMock,
+  httpDumpProxyJsonMock,
+  httpDumpProxyHtmlMock,
+  httpDumpProxyErrorMock,
+  httpDumpProxy4xxMock,
+} from '../../mocks';
 import PreviewCard from './preview-card.vue';
 
 const { normalizeHttpDumpEvent } = useHttpDump();
@@ -16,3 +22,26 @@ export const Default: StoryObj<typeof PreviewCard> = {
   }
 }
 
+export const ProxyJson: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpProxyJsonMock),
+  }
+}
+
+export const ProxyHtml: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpProxyHtmlMock),
+  }
+}
+
+export const ProxyError: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpProxyErrorMock),
+  }
+}
+
+export const Proxy4xx: StoryObj<typeof PreviewCard> = {
+  args: {
+    event: normalizeHttpDumpEvent(httpDumpProxy4xxMock),
+  }
+}
