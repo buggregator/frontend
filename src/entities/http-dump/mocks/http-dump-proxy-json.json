@@ -1,0 +1,36 @@
+{
+  "uuid": "a1b2c3d4-5678-4abc-9def-111111111111",
+  "type": "http-dump",
+  "payload": {
+    "received_at": "2026-04-04 12:00:00",
+    "host": "jsonplaceholder.typicode.com:443",
+    "proxy": true,
+    "duration_ms": 342,
+    "request": {
+      "method": "POST",
+      "uri": "/posts",
+      "headers": {
+        "User-Agent": ["GuzzleHttp/7"],
+        "Content-Type": ["application/json"],
+        "Accept": ["application/json"]
+      },
+      "body": "{\"title\":\"Buggregator proxy test\",\"body\":\"Testing the HTTP proxy capture\",\"userId\":1}",
+      "query": {},
+      "post": {},
+      "cookies": {},
+      "files": []
+    },
+    "response": {
+      "status_code": 201,
+      "headers": {
+        "Content-Type": ["application/json; charset=utf-8"],
+        "X-Powered-By": ["Express"],
+        "Cache-Control": ["no-cache"],
+        "Content-Length": ["121"]
+      },
+      "body": "{\n  \"title\": \"Buggregator proxy test\",\n  \"body\": \"Testing the HTTP proxy capture\",\n  \"userId\": 1,\n  \"id\": 101\n}"
+    }
+  },
+  "timestamp": 1743764400,
+  "project": null
+}

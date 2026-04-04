@@ -1,0 +1,34 @@
+{
+  "uuid": "f6a7b8c9-abcd-4f01-e234-666666666666",
+  "type": "http-dump",
+  "payload": {
+    "received_at": "2026-04-04 12:05:10",
+    "host": "api.stripe.com:443",
+    "proxy": true,
+    "duration_ms": 156,
+    "request": {
+      "method": "POST",
+      "uri": "/v1/charges",
+      "headers": {
+        "User-Agent": ["GuzzleHttp/7"],
+        "Content-Type": ["application/x-www-form-urlencoded"],
+        "Authorization": ["Bearer sk_test_FAKE_KEY_FOR_MOCK_DATA_ONLY"]
+      },
+      "body": "amount=2000&currency=usd&source=tok_invalid",
+      "query": {},
+      "post": {},
+      "cookies": {},
+      "files": []
+    },
+    "response": {
+      "status_code": 402,
+      "headers": {
+        "Content-Type": ["application/json"],
+        "Request-Id": ["req_abc123"]
+      },
+      "body": "{\n  \"error\": {\n    \"code\": \"card_declined\",\n    \"doc_url\": \"https://stripe.com/docs/error-codes/card-declined\",\n    \"message\": \"Your card was declined.\",\n    \"param\": \"source\",\n    \"type\": \"card_error\"\n  }\n}"
+    }
+  },
+  "timestamp": 1743764710,
+  "project": null
+}

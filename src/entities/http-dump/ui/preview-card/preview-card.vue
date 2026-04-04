@@ -11,9 +11,30 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const uri = computed(() => decodeURI(props.event.payload.request.uri))
+const isProxy = computed(() => !!props.event.payload.proxy)
 const eventLink = computed(() => `/http-dump/${props.event.id}`)
 const method = computed(() => props.event.payload.request.method)
+
+const uri = computed(() => {
+  const rawUri = decodeURI(props.event.payload.request.uri)
+  if (isProxy.value) {
+    const host = props.event.payload.host
+    return `${host}${rawUri}`
+  }
+  return rawUri
+})
+
+const statusCode = computed(() => props.event.payload.response?.status_code)
+const statusColor = computed(() => {
+  const code = statusCode.value
+  if (!code) return ''
+  if (code >= 500) return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
+  if (code >= 400) return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
+  if (code >= 300) return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
+  return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
+})
+
+const durationMs = computed(() => props.event.payload.duration_ms)
 
 const methodColor = computed(() => {
   const m = method.value?.toUpperCase()
@@ -112,12 +133,29 @@ const copyCurl = () => {
           class="http-body__method"
           :class="methodColor"
         >{{ method }}</span>
+        <span
+          v-if="statusCode"
+          class="http-body__method"
+          :class="statusColor"
+        >{{
+          statusCode
+        }}</span>
         <span class="http-body__uri">{{ uri }}</span>
       </div>
 
       <div class="http-body__meta">
         <span
-          v-if="host"
+          v-if="isProxy"
+          class="http-body__tag http-body__tag--proxy"
+        >proxy</span>
+
+        <span
+          v-if="durationMs != null"
+          class="http-body__tag"
+        >{{ durationMs }}ms</span>
+
+        <span
+          v-if="!isProxy && host"
           class="http-body__tag"
         >{{ host }}</span>
 
@@ -195,5 +233,9 @@ const copyCurl = () => {
   @apply inline-flex items-center px-1.5 py-0.5 rounded;
   @apply text-2xs font-mono;
   @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+}
+
+.http-body__tag--proxy {
+  @apply bg-violet-100 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400;
 }
 </style>

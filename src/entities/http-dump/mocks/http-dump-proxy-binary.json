@@ -1,0 +1,33 @@
+{
+  "uuid": "e5f6a7b8-9abc-4ef0-d123-555555555555",
+  "type": "http-dump",
+  "payload": {
+    "received_at": "2026-04-04 12:04:00",
+    "host": "httpbin.org:443",
+    "proxy": true,
+    "duration_ms": 890,
+    "request": {
+      "method": "GET",
+      "uri": "/image/png",
+      "headers": {
+        "User-Agent": ["GuzzleHttp/7"],
+        "Accept": ["image/png"]
+      },
+      "body": "",
+      "query": {},
+      "post": {},
+      "cookies": {},
+      "files": []
+    },
+    "response": {
+      "status_code": 200,
+      "headers": {
+        "Content-Type": ["image/png"],
+        "Content-Length": ["8090"]
+      },
+      "body": "[binary data, 8090 bytes]"
+    }
+  },
+  "timestamp": 1743764640,
+  "project": null
+}
