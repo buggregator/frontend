@@ -67,6 +67,7 @@ const copyCode = (): void => {
 .code-snippet {
   @apply relative rounded overflow-hidden;
   @apply bg-gray-50 dark:bg-gray-900;
+  @apply border border-gray-200 dark:border-gray-700;
 
   :deep(pre) {
     @apply m-0;

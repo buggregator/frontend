@@ -157,9 +157,10 @@ watch(
 
 .layout-base__content {
   @include mixins.layout-body;
+  @apply overflow-y-auto;
 
   & > div {
-    @apply flex flex-col h-full flex-1;
+    @apply flex flex-col min-h-full flex-1;
   }
 
   .layout-base--no-sidebar & {
@@ -195,11 +196,15 @@ watch(
 }
 
 .toast-enter-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
 }
 
 .toast-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .toast-enter-from {

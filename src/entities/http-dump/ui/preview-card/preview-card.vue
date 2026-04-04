@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { ref, toRef } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard, IconSvg } from '@/shared/ui'
+import { useHttpDumpEvent } from '../../lib'
 import type { HttpDump } from '../../types'
 
 type Props = {
@@ -11,96 +12,31 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const isProxy = computed(() => !!props.event.payload.proxy)
-const eventLink = computed(() => `/http-dump/${props.event.id}`)
-const method = computed(() => props.event.payload.request.method)
+const {
+  isProxy,
+  method,
+  uri,
+  host,
+  contentType,
+  statusCode,
+  durationMs,
+  methodColor,
+  statusColor,
+  borderStatusClass,
+  queryCount,
+  headerCount,
+  hasBody,
+  bodySize,
+  curlCommand
+} = useHttpDumpEvent(toRef(props, 'event'))
 
-const uri = computed(() => {
-  const rawUri = decodeURI(props.event.payload.request.uri)
-  if (isProxy.value) {
-    const host = props.event.payload.host
-    return `${host}${rawUri}`
-  }
-  return rawUri
-})
-
-const statusCode = computed(() => props.event.payload.response?.status_code)
-const statusColor = computed(() => {
-  const code = statusCode.value
-  if (!code) return ''
-  if (code >= 500) return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
-  if (code >= 400) return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
-  if (code >= 300) return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
-  return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
-})
-
-const durationMs = computed(() => props.event.payload.duration_ms)
-
-const methodColor = computed(() => {
-  const m = method.value?.toUpperCase()
-  if (m === 'GET') return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
-  if (m === 'POST') return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
-  if (m === 'PUT' || m === 'PATCH')
-    return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
-  if (m === 'DELETE') return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
-  return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-500/10'
-})
-
-const host = computed(() => {
-  const h = props.event.payload.request.headers?.host
-  if (!h) return null
-  return Array.isArray(h) ? h[0] : h
-})
-
-const contentType = computed(() => {
-  const ct =
-    props.event.payload.request.headers?.['content-type'] ||
-    props.event.payload.request.headers?.['Content-Type']
-  if (!ct) return null
-  const val = Array.isArray(ct) ? ct[0] : ct
-  return val?.split(';')[0]?.trim() || null
-})
-
-const queryCount = computed(() => Object.keys(props.event.payload.request.query || {}).length)
-const headerCount = computed(() => Object.keys(props.event.payload.request.headers || {}).length)
-const hasBody = computed(() => (props.event.payload.request.body?.length || 0) > 0)
-
-const bodySize = computed(() => {
-  const len = props.event.payload.request.body?.length || 0
-  if (!len) return null
-  if (len < 1024) return `${len} B`
-  return `${(len / 1024).toFixed(1)} KB`
-})
+const eventLink = `/http-dump/${props.event.id}`
 
 const isCopied = ref(false)
 
-const buildCurl = (): string => {
-  const req = props.event.payload.request
-  let curl = `curl -X ${req.method}`
-
-  if (host.value) {
-    curl += ` '${host.value}${req.uri}'`
-  } else {
-    curl += ` '${req.uri}'`
-  }
-
-  const headers = req.headers || {}
-  for (const [key, val] of Object.entries(headers)) {
-    if (key.toLowerCase() === 'host') continue
-    const v = Array.isArray(val) ? val[0] : val
-    curl += ` \\\n  -H '${key}: ${v}'`
-  }
-
-  if (req.body) {
-    curl += ` \\\n  -d '${req.body.replace(/'/g, "'\\''")}'`
-  }
-
-  return curl
-}
-
 const copyCurl = () => {
   isCopied.value = true
-  copyTextToClipboard(buildCurl()).catch(console.error)
+  copyTextToClipboard(curlCommand.value).catch(console.error)
   setTimeout(() => {
     isCopied.value = false
   }, 1500)
@@ -112,6 +48,7 @@ const copyCurl = () => {
     <RouterLink
       :to="eventLink"
       class="http-body"
+      :class="borderStatusClass"
     >
       <!-- Copy cURL button (top-right, hover reveal) -->
       <button
@@ -140,7 +77,10 @@ const copyCurl = () => {
         >{{
           statusCode
         }}</span>
-        <span class="http-body__uri">{{ uri }}</span>
+        <span
+          class="http-body__uri"
+          :title="uri"
+        >{{ uri }}</span>
       </div>
 
       <div class="http-body__meta">
@@ -184,7 +124,7 @@ const copyCurl = () => {
 .http-body {
   @apply relative block p-3 rounded cursor-pointer;
   @apply bg-gray-50 dark:bg-gray-900;
-  @apply border border-gray-200 dark:border-gray-700;
+  @apply border border-l-[3px] border-gray-200 dark:border-gray-700;
   @apply hover:border-gray-300 dark:hover:border-gray-600 transition-colors;
 }
 
@@ -214,7 +154,7 @@ const copyCurl = () => {
 }
 
 .http-body__row {
-  @apply flex items-baseline gap-2 font-mono text-xs mb-2;
+  @apply flex items-baseline gap-2 font-mono text-xs mb-2 min-w-0;
 }
 
 .http-body__method {
@@ -222,7 +162,8 @@ const copyCurl = () => {
 }
 
 .http-body__uri {
-  @apply text-gray-700 dark:text-gray-200 break-all;
+  @apply text-gray-700 dark:text-gray-200 truncate;
+  min-width: 0;
 }
 
 .http-body__meta {

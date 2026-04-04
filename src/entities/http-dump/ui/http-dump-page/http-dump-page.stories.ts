@@ -19,7 +19,10 @@ export default {
   component: HttpDumpPage,
   parameters: {
     layout: 'fullscreen',
-  }
+  },
+  args: {
+    useUrlFragment: false,
+  },
 } as Meta<typeof HttpDumpPage>;
 
 export const Default: StoryObj<typeof HttpDumpPage> = {
