@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { withDefaults, defineProps, computed } from 'vue'
+import { withDefaults, defineProps, computed, type ComputedRef } from 'vue'
 import { useIdeLink } from '../../lib/helpers/use-ide-link'
 import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { buildLink } = useIdeLink()
 
-const mappedOrigins = computed(() =>
+const mappedOrigins: ComputedRef<Record<string, string>> = computed(() =>
   Object.entries(props.originConfig || {}).reduce(
     (acc, [key, value]) => {
       const fileName = props.originConfig?.file || ''
@@ -50,21 +50,21 @@ const mappedOrigins = computed(() =>
   )
 )
 
-const editorLink = computed(() => {
+const editorLink: ComputedRef<string | undefined> = computed(() => {
   if (!props.originConfig) {
-    return null
+    return undefined
   }
 
   const fileName = mappedOrigins.value.file || ''
   const lineStr = mappedOrigins.value.line || ''
 
   if (!fileName || fileName === 'unknown') {
-    return null
+    return undefined
   }
 
   const line = lineStr ? parseInt(lineStr, 10) : undefined
 
-  return buildLink(fileName, line)
+  return buildLink(fileName, line) || undefined
 })
 
 const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line')
@@ -80,7 +80,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
         >
           <a
             v-if="isEditorLink(String(key))"
-            :href="editorLink || undefined"
+            :href="editorLink"
             target="_blank"
             class="pc-footer__tag pc-footer__tag--link"
           >
