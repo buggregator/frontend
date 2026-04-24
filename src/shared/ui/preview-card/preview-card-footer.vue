@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { withDefaults, defineProps, computed } from 'vue'
-import { useSettingsStore } from '../../stores/settings'
+import { withDefaults, defineProps, computed, type ComputedRef } from 'vue'
+import { useIdeLink } from '../../lib/helpers/use-ide-link'
 import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
 
@@ -27,9 +26,9 @@ const props = withDefaults(defineProps<Props>(), {
   originConfig: null
 })
 
-const { codeEditor } = storeToRefs(useSettingsStore())
+const { buildLink } = useIdeLink()
 
-const mappedOrigins = computed(() =>
+const mappedOrigins: ComputedRef<Record<string, string>> = computed(() =>
   Object.entries(props.originConfig || {}).reduce(
     (acc, [key, value]) => {
       const fileName = props.originConfig?.file || ''
@@ -51,23 +50,21 @@ const mappedOrigins = computed(() =>
   )
 )
 
-const editorLink = computed(() => {
+const editorLink: ComputedRef<string | undefined> = computed(() => {
   if (!props.originConfig) {
-    return ''
+    return undefined
   }
 
   const fileName = mappedOrigins.value.file || ''
-  const line = mappedOrigins.value.line || ''
+  const lineStr = mappedOrigins.value.line || ''
 
   if (!fileName || fileName === 'unknown') {
-    return ''
+    return undefined
   }
 
-  if (codeEditor.value == 'vscode') {
-    return `vscode://file/${fileName}${line ? `:${line}` : ''}`
-  }
+  const line = lineStr ? parseInt(lineStr, 10) : undefined
 
-  return `${codeEditor.value}://open?file=${fileName}${line ? `&line=${line}` : ''}`
+  return buildLink(fileName, line) || undefined
 })
 
 const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || key === 'line')
