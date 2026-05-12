@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import { RouteName } from '@/shared/types'
 import type { SentryTraceSummary } from '../../types'
 import { MiniWaterfall } from '../mini-waterfall'
@@ -7,9 +8,19 @@ type Props = {
   traceSummary: SentryTraceSummary | null
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const shortId = (id: string) => (id ? id.substring(0, 12) + '...' : '')
+
+// The "View full trace" page only exists when a Sentry transaction was
+// captured alongside the error. For plain error events we just have the
+// trace_id in `contexts.trace` — clicking through would 404 against
+// /api/sentry/traces/{traceId}.
+const hasFullTrace = computed(() => {
+  const s = props.traceSummary
+  if (!s) return false
+  return (s.span_count ?? 0) > 0 || (s.preview_spans?.length ?? 0) > 0
+})
 </script>
 
 <template>
@@ -48,6 +59,7 @@ const shortId = (id: string) => (id ? id.substring(0, 12) + '...' : '')
     />
 
     <RouterLink
+      v-if="hasFullTrace"
       :to="{ name: RouteName.SentryTraceDetail, params: { traceId: traceSummary.trace_id } }"
       class="trace-ctx__link"
     >

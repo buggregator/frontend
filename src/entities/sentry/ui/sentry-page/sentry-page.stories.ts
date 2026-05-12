@@ -71,3 +71,55 @@ export const PagePythonLog: StoryObj<typeof SentryPage> = {
     event: normalizeSentryEvent(sentryPythonLogMock as unknown as ServerEvent<Sentry>), // TODO: fix ServerEvent<Sentry>
   }
 };
+
+// A minimal Sentry SDK v4 payload: an error event with contexts.trace.trace_id
+// but no transaction was captured, and no runtime/os/sdk/logger metadata.
+// Before the fixes this rendered:
+//   - "View full trace →" link that 404'd
+//   - empty Runtime / OS / SDK context boxes
+//   - timestamp in year 1970 (moment treated seconds as ms)
+export const PageMinimalErrorNoTrace: StoryObj<typeof SentryPage> = {
+  args: {
+    event: normalizeSentryEvent({
+      uuid: 'mini-1',
+      type: 'sentry',
+      project: null,
+      timestamp: 1774960590,
+      payload: {
+        event_id: 'mini-1',
+        timestamp: 1774960590.323397,
+        platform: 'php',
+        level: 'error',
+        environment: 'staging',
+        transaction: 'POST /api/orders',
+        contexts: {
+          trace: {
+            trace_id: 'aabbccdd11223344eeff00112233',
+            span_id: 'spanid01',
+          },
+        },
+        exception: {
+          values: [
+            {
+              type: 'RuntimeException',
+              value: 'Order processing failed',
+              stacktrace: {
+                frames: [
+                  {
+                    filename: 'app/Orders/Processor.php',
+                    function: 'process',
+                    lineno: 42,
+                    in_app: true,
+                    context_line: '    $this->charge($order);',
+                    pre_context: ['public function process(Order $order)', '{'],
+                    post_context: ['    $order->markPaid();', '}'],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    } as unknown as ServerEvent<Sentry>),
+  }
+};

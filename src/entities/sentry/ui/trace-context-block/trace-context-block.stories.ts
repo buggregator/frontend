@@ -33,6 +33,21 @@ export const NoSpans: StoryObj<typeof TraceContextBlock> = {
   },
 };
 
+// Error event with a trace_id but no captured transaction. The "View full
+// trace" link must be hidden because /sentry/traces/{traceId} would 404.
+export const ErrorOnlyNoTransaction: StoryObj<typeof TraceContextBlock> = {
+  args: {
+    traceSummary: {
+      trace_id: 'aabbccdd11223344eeff00112233',
+      transaction_name: '',
+      op: '',
+      duration_ms: 0,
+      span_count: 0,
+      preview_spans: [],
+    },
+  },
+};
+
 export const Null: StoryObj<typeof TraceContextBlock> = {
   args: {
     traceSummary: null,

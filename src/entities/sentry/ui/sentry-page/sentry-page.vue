@@ -21,7 +21,12 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const formattedTimestamp = computed(() => moment(props.event.payload.timestamp).toLocaleString())
+const formattedTimestamp = computed(() => {
+  const ts = props.event.payload.timestamp
+  if (typeof ts === 'number') return moment.unix(ts).toLocaleString()
+  if (ts) return moment(ts).toLocaleString()
+  return ''
+})
 
 const mainException = computed(() => props.event.payload?.exception?.values?.[0])
 const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0)
