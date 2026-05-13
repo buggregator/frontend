@@ -138,7 +138,10 @@ const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 
-const hasEvents = (type: EventType) => isVisibleEventCounts.value && getItemsCount.value(type) > 0
+// The colored dot is the at-a-glance indicator that events of this type
+// exist. The numeric count badge (gated by isVisibleEventCounts) is separate
+// — turning counts off should not also hide the indicator.
+const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
 </script>
 
 <template>

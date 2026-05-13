@@ -21,37 +21,46 @@ const contextsOS = computed(() => {
   return { name, version }
 })
 
-const boxes = computed(() => [
-  {
-    title: 'Runtime',
-    name: contextsRuntime.value.name,
-    version: contextsRuntime.value.version
-  },
-  {
-    title: 'OS',
-    name: contextsOS.value.name,
-    version: contextsOS.value.version
-  },
-  {
-    title: 'SDK',
-    name: props.payload.sdk?.name,
-    version: props.payload.sdk?.version
-  }
-])
+const boxes = computed(() =>
+  [
+    {
+      title: 'Runtime',
+      name: contextsRuntime.value.name,
+      version: contextsRuntime.value.version
+    },
+    {
+      title: 'OS',
+      name: contextsOS.value.name,
+      version: contextsOS.value.version
+    },
+    {
+      title: 'SDK',
+      name: props.payload.sdk?.name ?? '',
+      version: props.payload.sdk?.version ?? ''
+    }
+  ].filter((b) => b.name || b.version)
+)
 
-const tags = computed(() => [
-  { name: 'env', value: props.payload.environment },
-  { name: 'logger', value: props.payload.logger },
-  { name: 'os', value: `${contextsOS.value.name} ${contextsOS.value.version}` },
-  { name: 'runtime', value: `${contextsRuntime.value.name} ${contextsRuntime.value.version}` },
-  { name: 'server', value: props.payload.server_name }
-])
+const tags = computed(() => {
+  const os = `${contextsOS.value.name} ${contextsOS.value.version}`.trim()
+  const runtime = `${contextsRuntime.value.name} ${contextsRuntime.value.version}`.trim()
+  return [
+    { name: 'env', value: props.payload.environment },
+    { name: 'logger', value: props.payload.logger },
+    { name: 'os', value: os },
+    { name: 'runtime', value: runtime },
+    { name: 'server', value: props.payload.server_name }
+  ].filter((t) => t.value)
+})
 </script>
 
 <template>
   <section class="tags-section">
     <!-- Context boxes -->
-    <div class="tags-section__boxes">
+    <div
+      v-if="boxes.length"
+      class="tags-section__boxes"
+    >
       <div
         v-for="box in boxes"
         :key="box.title"
@@ -59,7 +68,10 @@ const tags = computed(() => [
       >
         <span class="tags-section__box-label">{{ box.title }}</span>
         <span class="tags-section__box-name">{{ box.name }}</span>
-        <span class="tags-section__box-version">{{ box.version }}</span>
+        <span
+          v-if="box.version"
+          class="tags-section__box-version"
+        >{{ box.version }}</span>
       </div>
     </div>
 

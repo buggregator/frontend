@@ -21,11 +21,25 @@ const { buildLink } = useIdeLink()
 
 const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
 
-const hasBody = computed(() =>
-  Boolean(props.frame.context_line || props.frame.post_context || props.frame.pre_context)
-)
+const hasBody = computed(() => {
+  const f = props.frame
+  return Boolean(
+    f.context_line ||
+      (Array.isArray(f.post_context) && f.post_context.length > 0) ||
+      (Array.isArray(f.pre_context) && f.pre_context.length > 0)
+  )
+})
 
 const hasVars = computed(() => props.frame.vars && Object.keys(props.frame.vars).length > 0)
+
+const varEntries = computed(() =>
+  props.frame.vars
+    ? Object.entries(props.frame.vars).map(([name, value]) => ({
+        name,
+        value: formatVarValue(value)
+      }))
+    : []
+)
 
 // Floating tooltip state
 const tooltip = reactive({
@@ -198,7 +212,7 @@ const toggleOpen = () => {
     </div>
 
     <div
-      v-if="isFrameOpen && hasBody"
+      v-if="isFrameOpen && (hasBody || hasVars)"
       class="frame__body"
     >
       <template v-if="frame.pre_context">
@@ -256,6 +270,25 @@ const toggleOpen = () => {
           >{{ seg.text }}</span><template v-else>{{ seg.text }}</template></template></pre>
         </div>
       </template>
+
+      <!-- Vars fallback: shown when the frame has no source context lines.
+           When source IS available, vars are highlighted inline above. -->
+      <dl
+        v-if="hasVars && !hasBody"
+        class="frame__vars"
+      >
+        <template
+          v-for="entry in varEntries"
+          :key="entry.name"
+        >
+          <dt class="frame__var-name">
+            {{ entry.name }}
+          </dt>
+          <dd class="frame__var-value">
+            <pre>{{ entry.value }}</pre>
+          </dd>
+        </template>
+      </dl>
     </div>
 
     <!-- Fixed-position tooltip (teleported outside overflow) -->
@@ -355,6 +388,20 @@ const toggleOpen = () => {
   &:hover {
     @apply bg-amber-500/20;
   }
+}
+
+/* Vars fallback list (shown when frame has no source context) */
+.frame__vars {
+  @apply grid gap-x-3 gap-y-1 p-2 text-gray-200;
+  grid-template-columns: max-content 1fr;
+}
+
+.frame__var-name {
+  @apply text-amber-300 font-mono text-2xs self-start whitespace-nowrap;
+}
+
+.frame__var-value pre {
+  @apply text-2xs whitespace-pre-wrap break-words;
 }
 </style>
 
