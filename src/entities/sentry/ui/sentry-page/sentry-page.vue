@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import moment from 'moment'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout, PageTabs, PageTab } from '@/shared/ui'
-import type { Sentry } from '../../types'
+import { useSentryRequests } from '../../lib/use-sentry-requests'
+import type { Sentry, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
 import { SentryPageApp } from '../sentry-page-app'
 import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
@@ -79,6 +80,86 @@ const scrollToException = (idx: number) => {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
+
+// Trace summary for the "Trace context" block.
+//
+// The canonical event payload carries `contexts.trace.trace_id` but no
+// information about whether a transaction was captured for that trace. We
+// probe /api/sentry/traces/{traceId} on mount: when it returns we get real
+// span counts/durations and the "View full trace" link can render; when it
+// 404s we keep a minimal synthetic summary and the link stays hidden (the
+// detail page would 404 anyway).
+const traceId = computed(() => {
+  const id = props.event.payload.contexts?.trace?.trace_id
+  return typeof id === 'string' ? id : ''
+})
+
+const traceOp = computed(() => {
+  const op = props.event.payload.contexts?.trace?.op
+  return typeof op === 'string' ? op : ''
+})
+
+// SentrySpanPreview narrows peer_type to a fixed set of categories. Map
+// anything else from the API response to null so the type checker is happy.
+const normalizePeerType = (
+  v: string | null | undefined
+): 'db' | 'http' | 'cache' | 'queue' | null => {
+  if (v === 'db' || v === 'http' || v === 'cache' || v === 'queue') return v
+  return null
+}
+
+const buildSyntheticSummary = (): SentryTraceSummary => ({
+  trace_id: traceId.value,
+  transaction_name: props.event.payload.transaction ?? '',
+  op: traceOp.value,
+  duration_ms: 0,
+  span_count: 0,
+  preview_spans: []
+})
+
+const traceSummary = ref<SentryTraceSummary | null>(null)
+const { getTraceDetail } = useSentryRequests()
+
+const loadTraceSummary = async (id: string) => {
+  if (!id) {
+    traceSummary.value = null
+    return
+  }
+  // Default to the synthetic summary so the block still shows the trace id
+  // even if the probe fails.
+  traceSummary.value = buildSyntheticSummary()
+  try {
+    const detail = await getTraceDetail(id)
+    const spans = detail.spans ?? []
+    traceSummary.value = {
+      trace_id: detail.trace_id,
+      transaction_name:
+        detail.transaction?.transaction_name ?? props.event.payload.transaction ?? '',
+      op: detail.transaction?.op ?? traceOp.value,
+      duration_ms: detail.transaction?.duration_ms ?? 0,
+      span_count: spans.length,
+      preview_spans: spans.slice(0, 5).map((s) => ({
+        span_id: s.span_id,
+        op: s.op ?? '',
+        description: s.description ?? '',
+        start_offset_ms: s.start_offset_ms ?? 0,
+        duration_ms: s.duration_ms ?? 0,
+        peer_type: normalizePeerType(s.peer_type),
+        is_error: s.is_error ?? false
+      }))
+    }
+  } catch {
+    // 404 / network error → synthetic summary already in place, link hidden.
+  }
+}
+
+watch(
+  traceId,
+  (id) => {
+    loadTraceSummary(id)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -235,15 +316,8 @@ const scrollToException = (idx: number) => {
           <SentryPageTags :payload="event.payload" />
 
           <TraceContextBlock
-            v-if="hasTraceContext && event.payload.contexts?.trace"
-            :trace-summary="{
-              trace_id: String(event.payload.contexts!.trace!.trace_id || ''),
-              transaction_name: String(event.payload.transaction || ''),
-              op: String(event.payload.contexts!.trace!.op || ''),
-              duration_ms: 0,
-              span_count: 0,
-              preview_spans: []
-            }"
+            v-if="hasTraceContext && traceSummary"
+            :trace-summary="traceSummary"
           />
 
           <SentryPageApp
