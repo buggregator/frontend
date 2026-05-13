@@ -15,7 +15,11 @@ export const useAttachments: TUseAttachments = (module: EventModule = 'smtp') =>
 
   const headers = {"X-Auth-Token": token.value }
 
-  const calcDownloadLink = (id: EventId, attachmentId?: string): string => `${REST_API_URL}/api/${module}/${id}/attachments${attachmentId ? `/${attachmentId}` : ''}`
+  // The server namespaces attachment endpoints under `/api/{module}/attachments/...`
+  // (literal `attachments` segment first) to avoid colliding with module routes
+  // like `/api/smtp/message/{uuid}/raw`. See server: internal/server/http/attachments.go.
+  const calcDownloadLink = (id: EventId, attachmentId?: string): string =>
+    `${REST_API_URL}/api/${module}/attachments/${id}${attachmentId ? `/${attachmentId}` : ''}`
 
   const getAttachments = (id: EventId) => fetch(calcDownloadLink(id), { headers })
     .then((response) => response.json())
