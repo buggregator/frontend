@@ -281,7 +281,7 @@ watch(
                 >Caused by</span>
                 <SentryException
                   :exception="e"
-                  :max-frames="10"
+                  :max-frames="250"
                 />
               </div>
             </div>
