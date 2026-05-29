@@ -12,11 +12,12 @@ const sections = [
       { keys: ['1'], desc: 'Sentry' },
       { keys: ['2'], desc: 'Profiler' },
       { keys: ['3'], desc: 'SMTP' },
-      { keys: ['4'], desc: 'HTTP Dump' },
-      { keys: ['5'], desc: 'Inspector' },
-      { keys: ['6'], desc: 'VarDump' },
-      { keys: ['7'], desc: 'Monolog' },
-      { keys: ['8'], desc: 'Ray' }
+      { keys: ['4'], desc: 'SMS' },
+      { keys: ['5'], desc: 'HTTP Dump' },
+      { keys: ['6'], desc: 'Inspector' },
+      { keys: ['7'], desc: 'VarDump' },
+      { keys: ['8'], desc: 'Monolog' },
+      { keys: ['9'], desc: 'Ray' }
     ]
   },
   {
