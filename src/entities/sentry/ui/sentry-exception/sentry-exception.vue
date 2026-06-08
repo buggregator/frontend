@@ -21,6 +21,20 @@ const exceptionFrames = computed(() => {
 
   return frames.slice().reverse()
 })
+
+// Open the most relevant frame by default: the first one carrying source code,
+// then the first application frame, then the top frame. JS stacktraces often put
+// a library/anonymous frame on top, so opening index 0 would show no code.
+const openFrameIndex = computed(() => {
+  const frames = exceptionFrames.value
+  const withCode = frames.findIndex(
+    (f) => f.context_line || f.pre_context?.length || f.post_context?.length
+  )
+  if (withCode !== -1) return withCode
+
+  const inApp = frames.findIndex((f) => f.in_app)
+  return inApp !== -1 ? inApp : 0
+})
 </script>
 
 <template>
@@ -58,7 +72,7 @@ const exceptionFrames = computed(() => {
       >
         <SentryExceptionFrame
           :frame="frame"
-          :is-open="index === 0"
+          :is-open="index === openFrameIndex"
         />
       </template>
     </div>

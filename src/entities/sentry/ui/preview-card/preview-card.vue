@@ -4,6 +4,7 @@ import type { Ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
+import { resolveExceptionValues } from '../../lib'
 import type { Sentry, SentryException as Exception } from '../../types'
 import { SentryException } from '../sentry-exception'
 
@@ -20,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const eventLink = computed(() => `/sentry/event/${props.event.id}`)
 
-const exceptionValues = computed(() => props.event?.payload?.exception?.values || [])
+const exceptionValues = computed(() => resolveExceptionValues(props.event?.payload))
 
 const hasException = computed(() => exceptionValues.value.length > 0)
 
