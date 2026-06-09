@@ -21,6 +21,18 @@ const { buildLink } = useIdeLink()
 
 const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
 
+// Sentry's node/RewriteFrames integration normalizes server paths to the
+// `app://` scheme with an empty authority, which renders as a confusing
+// "app:///+page.server.js". Show the clean app-relative path instead. URLs and
+// node: builtins are left as-is.
+const displayFilename = computed(() => {
+  const f = props.frame.filename
+  if (!f) return 'unknown'
+  const appScheme = f.match(/^app:\/\/+(.*)$/)
+  if (appScheme) return appScheme[1]
+  return f
+})
+
 const hasBody = computed(() => {
   const f = props.frame
   return Boolean(
@@ -181,12 +193,12 @@ const toggleOpen = () => {
           class="frame__fn frame__fn--link"
           @click.stop
         >{{
-          frame.filename
+          displayFilename
         }}</a>
         <span
           v-else
           class="frame__fn"
-        >{{ frame.filename }}</span>
+        >{{ displayFilename }}</span>
         <span
           v-if="frame.function"
           class="frame__meta"

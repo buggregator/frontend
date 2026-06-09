@@ -3,6 +3,7 @@ import moment from 'moment'
 import { computed, ref, watch } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout, PageTabs, PageTab } from '@/shared/ui'
+import { resolveExceptionValues } from '../../lib/resolve-exceptions'
 import { useSentryRequests } from '../../lib/use-sentry-requests'
 import type { Sentry, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
@@ -29,8 +30,9 @@ const formattedTimestamp = computed(() => {
   return ''
 })
 
-const mainException = computed(() => props.event.payload?.exception?.values?.[0])
-const exceptionsLength = computed(() => props.event?.payload?.exception?.values?.length || 0)
+const exceptionValues = computed(() => resolveExceptionValues(props.event.payload))
+const mainException = computed(() => exceptionValues.value[0])
+const exceptionsLength = computed(() => exceptionValues.value.length)
 
 // Header helpers
 const platform = computed(() => props.event.payload.platform || 'unknown')
@@ -48,9 +50,7 @@ const isHandled = computed(() => {
 })
 
 // Tab visibility
-const hasException = computed(
-  () => props.event.payload.exception?.values && props.event.payload.exception.values.length > 0
-)
+const hasException = computed(() => exceptionValues.value.length > 0)
 const hasBreadcrumbs = computed(
   () => props.event.payload.breadcrumbs?.values && props.event.payload.breadcrumbs.values.length > 0
 )
@@ -228,7 +228,7 @@ watch(
         <div class="sentry-tab-content">
           <div class="sentry-exceptions">
             <div
-              v-for="(e, idx) in event.payload.exception!.values"
+              v-for="(e, idx) in exceptionValues"
               :ref="
                 (el) => {
                   if (el) exceptionRefs[idx] = el as HTMLElement
@@ -241,7 +241,7 @@ watch(
               <div class="sentry-exceptions__rail">
                 <!-- Dot with arrow (clickable) or plain dot (last) -->
                 <button
-                  v-if="idx < event.payload.exception!.values.length - 1"
+                  v-if="idx < exceptionValues.length - 1"
                   class="sentry-exceptions__dot"
                   :class="{ 'sentry-exceptions__dot--first': idx === 0 }"
                   title="Scroll to next exception"
@@ -268,7 +268,7 @@ watch(
 
                 <!-- Connecting line to next dot -->
                 <div
-                  v-if="idx < event.payload.exception!.values.length - 1"
+                  v-if="idx < exceptionValues.length - 1"
                   class="sentry-exceptions__line"
                 />
               </div>
