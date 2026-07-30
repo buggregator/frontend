@@ -616,6 +616,7 @@ $dotColors: (
   'sentry': 'rose',
   'profiler': 'violet',
   'smtp': 'amber',
+  'sms': 'indigo',
   'http-dump': 'green',
   'inspector': 'yellow',
   'var-dump': 'orange',

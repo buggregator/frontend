@@ -574,6 +574,16 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'sms'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M19,1H5A5.006,5.006,0,0,0,0,6V23l5-5H19a5.006,5.006,0,0,0,5-5V6A5.006,5.006,0,0,0,19,1ZM22,13a3,3,0,0,1-3,3H4.17L2,18.17V6A3,3,0,0,1,5,3H19a3,3,0,0,1,3,3ZM6,9H8v2H6Zm5,0h2v2H11Zm5,0h2v2H16Z"
+      />
+    </svg>
+
+    <svg
       v-else-if="name === 'settings'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"

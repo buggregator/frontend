@@ -7,6 +7,7 @@ const NAV_TYPES: EventTypes[] = [
   EventTypes.Sentry,
   EventTypes.Profiler,
   EventTypes.Smtp,
+  EventTypes.Sms,
   EventTypes.HttpDump,
   EventTypes.Inspector,
   EventTypes.VarDump,
