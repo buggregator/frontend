@@ -74,6 +74,7 @@ const copyCode = (): void => {
   }
 
   :deep(code.hljs) {
+    @apply text-gray-700 dark:text-gray-300;
     @apply p-4 text-xs leading-relaxed;
     background: inherit !important;
   }
