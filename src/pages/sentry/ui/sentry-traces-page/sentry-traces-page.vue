@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 import { useSentryTraces } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
@@ -7,6 +8,7 @@ import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { ServiceMap } from '@/entities/sentry/ui/service-map'
 import { TracePreviewCard } from '@/entities/sentry/ui/trace-preview-card'
+import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Traces | Buggregator')
 
@@ -20,6 +22,14 @@ const viewMode = ref<'list' | 'map'>(
 
 watch(viewMode, (val) => {
   window?.localStorage?.setItem(STORAGE_KEY, val)
+})
+
+// The project and the period are mixed into the request in use-sentry-requests;
+// neither triggers reactivity on its own, so refetch the list explicitly.
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
+
+watch([activeProjectKey, period], () => {
+  fetchList()
 })
 
 onMounted(() => {

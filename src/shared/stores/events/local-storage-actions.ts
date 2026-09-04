@@ -1,4 +1,4 @@
-import {type EventId, SessionStorageKeys} from "../../types";
+import {type EventId, LocalStorageKeys, SessionStorageKeys} from "../../types";
 import type {TEventsCachedIdsMap} from "./types";
 
 const { sessionStorage } = window;
@@ -45,4 +45,13 @@ export const setStoredProject = (project: string | null) => {
   } else {
     removeStoredProject()
   }
+}
+
+// The period lives in localStorage rather than sessionStorage (where the
+// project is kept): the chosen window is a user habit, not tab state.
+export const getStoredPeriod = (): string | null =>
+  window?.localStorage?.getItem(LocalStorageKeys.Period) || null;
+
+export const setStoredPeriod = (period: string) => {
+  window?.localStorage?.setItem(LocalStorageKeys.Period, period);
 }

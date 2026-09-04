@@ -20,11 +20,23 @@ type TUseEventsRequests = () => {
 export const useEventsRequests: TUseEventsRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const { activeProjectKey: project } = storeToRefs(useEventsStore())
+  const { activeProjectKey: project, period } = storeToRefs(useEventsStore())
 
   const headers = {"X-Auth-Token": token.value }
   const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`
-  const getEventsPreviewRestUrl = (): string => `${REST_API_URL}/api/events/preview${project.value ? `?project=${project.value}` : ''}`
+  // The period goes to the server as ?window=. Without it the backend returns
+  // the whole project, which is tens of megabytes of JSON per project click.
+  const getEventsPreviewRestUrl = (): string => {
+    const params = new URLSearchParams()
+    if (project.value) {
+      params.set('project', project.value)
+    }
+    if (period.value) {
+      params.set('window', period.value)
+    }
+    const qs = params.toString()
+    return `${REST_API_URL}/api/events/preview${qs ? `?${qs}` : ''}`
+  }
 
   const getAll = () => fetch(getEventsPreviewRestUrl(), { headers })
     .then((response) => response.json())

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 import { LayoutPreviewEvents } from '@/widgets/ui'
 import { useSentryExceptions } from '@/entities/sentry/lib'
@@ -7,13 +8,14 @@ import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryExceptionGroupCard } from '@/entities/sentry/ui/sentry-exception-group-card'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import { useEventsStore } from '@/shared/stores'
 import { EventTypes } from '@/shared/types'
 
 useTitle('Sentry Exceptions | Buggregator')
 
 const STORAGE_KEY = 'sentry_exceptions_view_mode'
 
-const { grouped, groupedItems, loading, total, filters, fetchList } = useSentryExceptions()
+const { grouped, groupedItems, loading, total, page, filters, fetchList } = useSentryExceptions()
 
 // Restore view mode preference from localStorage.
 const storedMode = window?.localStorage?.getItem(STORAGE_KEY)
@@ -35,6 +37,15 @@ watch(selectedLevel, (val) => {
 })
 
 watch(grouped, () => {
+  if (grouped.value) fetchList()
+})
+
+// Refetch on a project or period change: both are mixed into the request in
+// use-sentry-requests, but neither triggers reactivity on its own.
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
+
+watch([activeProjectKey, period], () => {
+  page.value = 1
   if (grouped.value) fetchList()
 })
 

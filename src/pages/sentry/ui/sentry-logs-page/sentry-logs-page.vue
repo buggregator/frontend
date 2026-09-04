@@ -1,15 +1,25 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
-import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted, watch } from 'vue'
 import { useSentryLogs } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryLogsList } from '@/entities/sentry/ui/sentry-logs-list'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Logs | Buggregator')
 
 const { logs, loading, total, fetchList } = useSentryLogs()
+
+// The project and the period are mixed into the request in use-sentry-requests;
+// neither triggers reactivity on its own, so refetch the list explicitly.
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
+
+watch([activeProjectKey, period], () => {
+  fetchList()
+})
 
 onMounted(() => {
   fetchList()

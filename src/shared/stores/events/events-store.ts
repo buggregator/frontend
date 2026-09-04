@@ -16,11 +16,28 @@ import {
   setStoredCachedIds,
   setStoredLockedIds,
   getStoredCachedIds,
-  setStoredProject, removeStoredProject, getStoredProject
+  setStoredProject, removeStoredProject, getStoredProject,
+  getStoredPeriod, setStoredPeriod
 } from "./local-storage-actions";
 import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
+
+// Selectable periods. The value is passed to the API as-is: "24h", "7d", "all".
+export const PERIOD_OPTIONS = [
+  { value: '1h', label: 'Last hour' },
+  { value: '3h', label: 'Last 3 hours' },
+  { value: '6h', label: 'Last 6 hours' },
+  { value: '12h', label: 'Last 12 hours' },
+  { value: '24h', label: 'Last 24 hours' },
+  { value: '7d', label: 'Last 7 days' },
+  { value: '30d', label: 'Last 30 days' },
+  { value: 'all', label: 'All time' },
+] as const;
+
+// A day by default: wide enough for a quiet instance to look unchanged, narrow
+// enough that a busy project does not load its entire history on first paint.
+export const DEFAULT_PERIOD = '24h';
 
 const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.Sentry]: [] as EventId[],
@@ -47,7 +64,11 @@ export const useEventsStore = defineStore("eventsStore", {
     projects: {
       available: [] as TProjects['data'],
       activeKey: undefined as string | undefined,
-    }
+    },
+    // Selected period. Sent to the API as ?window=<period> to bound lists by
+    // time: without it the server returns everything stored for the project,
+    // which on a busy instance is tens of megabytes per request.
+    period: getStoredPeriod() || DEFAULT_PERIOD
   }),
   getters: {
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
@@ -254,6 +275,11 @@ export const useEventsStore = defineStore("eventsStore", {
       this.projects.activeKey = undefined;
 
       removeStoredProject();
+    },
+    setPeriod(period: string) {
+      this.period = period;
+
+      setStoredPeriod(period);
     }
   },
 });
