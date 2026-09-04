@@ -9,7 +9,7 @@ import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 
 useTitle('Sentry Logs | Buggregator')
 
-const { logs, loading, total, page, filters, fetchList } = useSentryLogs()
+const { logs, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
 
 // A chip stands for the levels SDKs send for it
 const levelsOfChip: Record<string, string | null> = {
@@ -40,7 +40,7 @@ onSentryEvent(() => {
     <SentrySubNav />
 
     <SentryEmptyState
-      v-if="!loading && logs.length === 0 && activeLevel === 'all'"
+      v-if="!isInitialLoading && logs.length === 0 && activeLevel === 'all'"
       type="logs"
     />
 
@@ -48,11 +48,11 @@ onSentryEvent(() => {
       v-else
       v-model:level="activeLevel"
       :logs="logs"
-      :loading="loading"
+      :loading="isInitialLoading"
     />
 
     <div
-      v-if="!loading && total > 0"
+      v-if="!isInitialLoading && total > 0"
       class="sentry-logs-page__footer"
     >
       {{ total }} log{{ total !== 1 ? 's' : '' }}
