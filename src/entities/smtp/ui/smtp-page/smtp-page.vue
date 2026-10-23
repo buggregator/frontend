@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
-import { htmlEncode } from '@/shared/lib/helpers'
 import { useAttachments } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
 import {
   CodeSnippet,
   FileAttachment,
+  EmailHtmlFrame,
   EmailPreviewDevice,
   EmailPreview,
   EventDetailLayout,
@@ -26,14 +26,6 @@ const props = defineProps<Props>()
 const attachments = ref<Attachment[]>([])
 
 const { getAttachments, calcDownloadLink } = useAttachments()
-
-const iframeStyle = '<style>html,body{height:100%;margin:0}</style>'
-
-const htmlSource = computed(() =>
-  props.event?.payload?.html
-    ? `<iframe srcdoc="${htmlEncode(iframeStyle + props.event?.payload?.html)}" title="Email HTML preview"/>`
-    : undefined
-)
 
 const getAttachmentsRequest = async () => {
   try {
@@ -324,10 +316,9 @@ onMounted(getAttachmentsRequest)
               name="HTML Preview"
             >
               <EmailPreview :device="EmailPreviewDevice.Desktop">
-                <div
-                  class="smtp-preview-frame"
-                  v-html="htmlSource"
-                />
+                <div class="smtp-preview-frame">
+                  <EmailHtmlFrame :html="event.payload.html" />
+                </div>
               </EmailPreview>
             </PageTab>
 
