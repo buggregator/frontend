@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { defineProps, ref } from 'vue'
 import { IconSvg, TableBase, TableBaseRow } from '@/shared/ui'
+import { EmailHtmlFrame } from '@/shared/ui/email-html-frame'
 import { EmailPreviewDevice, EmailPreview } from '@/shared/ui/email-preview'
 import type { RayContentMail, RayUser } from '../../types'
 
@@ -82,7 +83,7 @@ const getValuesField = (values: RayUser[]) => {
         v-if="!collapsed"
         :device="EmailPreviewDevice.Tablet"
       >
-        <div v-html="content.html" />
+        <EmailHtmlFrame :html="content.html" />
       </EmailPreview>
     </div>
   </div>
