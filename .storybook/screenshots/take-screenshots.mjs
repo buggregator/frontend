@@ -16,10 +16,10 @@
  *   base-branch   = origin/master
  */
 
-import { chromium } from 'playwright'
+import { execSync } from 'node:child_process'
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { join, dirname, basename } from 'node:path'
-import { execSync } from 'node:child_process'
+import { chromium } from 'playwright'
 
 const STORYBOOK_URL = process.argv[2] || 'http://localhost:6006'
 const OUTPUT_DIR = process.argv[3] || './screenshots'

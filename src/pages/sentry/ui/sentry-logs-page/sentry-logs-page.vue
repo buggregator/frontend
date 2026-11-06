@@ -2,11 +2,13 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
-import { useSentryLogs } from '@/entities/sentry/lib'
-import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
-import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
-import { SentryLogsList } from '@/entities/sentry/ui/sentry-logs-list'
-import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import {
+  useSentryLogs,
+  onSentryEvent,
+  SentryEmptyState,
+  SentryLogsList,
+  SentrySubNav
+} from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
 
