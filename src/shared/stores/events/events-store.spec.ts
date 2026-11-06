@@ -114,4 +114,70 @@ describe('eventsStore', () => {
       expect(store.cachedIds[PAGE_TYPES.Smtp]).toEqual(['b'])
     })
   })
+
+  // Review of #308: a list reply was applied whole, whatever its age.
+  describe('list loads', () => {
+    it('applies the latest reply and ignores an older one', () => {
+      const store = useEventsStore()
+      store.setActiveProjectKey('p1')
+      const old = store.startListLoad()
+      const latest = store.startListLoad()
+
+      expect(store.applyListLoad(latest, [event('new', 'smtp')])).toBe(true)
+      expect(store.applyListLoad(old, [event('old', 'smtp')])).toBe(false)
+      expect(ids(store.events)).toEqual(['new'])
+    })
+
+    it('ignores a reply for a project or period left meanwhile', () => {
+      const store = useEventsStore()
+      store.setActiveProjectKey('p1')
+      const load = store.startListLoad()
+      store.setActiveProjectKey('p2')
+
+      expect(store.applyListLoad(load, [event('a', 'smtp')])).toBe(false)
+
+      const second = store.startListLoad()
+      store.setPeriod('1h')
+      expect(store.applyListLoad(second, [event('a', 'smtp')])).toBe(false)
+      expect(store.events).toEqual([])
+    })
+
+    it('keeps an event that arrived live while the request ran', () => {
+      const store = useEventsStore()
+      store.setActiveProjectKey('p1')
+      const load = store.startListLoad()
+      store.addList([event('live', 'smtp')])
+
+      store.applyListLoad(load, [event('a', 'smtp')])
+
+      expect(ids(store.events)).toEqual(['live', 'a'])
+    })
+
+    it('keeps a delete and a pin made while the request ran', () => {
+      const store = useEventsStore()
+      store.setActiveProjectKey('p1')
+      store.addList([event('a', 'smtp'), event('b', 'smtp'), event('c', 'smtp')])
+      const load = store.startListLoad()
+      store.removeByIds(['a'])
+      store.addLockedIds('b')
+
+      store.applyListLoad(load, [event('a', 'smtp'), event('b', 'smtp'), event('c', 'smtp', { is_pinned: true })])
+
+      expect(ids(store.events).sort()).toEqual(['b', 'c'])
+      expect(store.lockedIds.sort()).toEqual(['b', 'c'])
+    })
+
+    it('keeps an unpin made while the request ran', () => {
+      const store = useEventsStore()
+      store.setActiveProjectKey('p1')
+      store.addList([event('a', 'smtp')])
+      store.addLockedIds('a')
+      const load = store.startListLoad()
+      store.removeLockedIds('a')
+
+      store.applyListLoad(load, [event('a', 'smtp', { is_pinned: true })])
+
+      expect(store.lockedIds).toEqual([])
+    })
+  })
 })

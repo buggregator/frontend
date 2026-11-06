@@ -11,11 +11,20 @@ const { token } = storeToRefs(useProfileStore())
 // The auth middleware of the first navigation loads the stored token; asking
 // for the projects before it ends sends no token (401 with auth on). A login
 // changes the token: the projects are asked for again.
+// The watcher is made in setup, so it ends with the component.
+let isRouterReady = false
+
+watch(token, (value) => {
+  if (isRouterReady && value) {
+    initialize()
+  }
+})
+
 useRouter()
   .isReady()
   .then(() => {
+    isRouterReady = true
     initialize()
-    watch(token, (value) => value && initialize())
   })
 
 let stopAppBadge = () => {}

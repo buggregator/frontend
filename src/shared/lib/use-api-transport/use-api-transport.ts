@@ -78,7 +78,16 @@ export const useApiTransport = () => {
       },
       addEvents: (events) => eventsStore.addList(events),
       dropEvents: (uuids) => eventsStore.dropByIds(uuids),
-      resync: () => getAll().then((events) => eventsStore.syncFromServer(events)),
+      resync: async () => {
+        const load = eventsStore.startListLoad()
+
+        try {
+          eventsStore.applyListLoad(load, await getAll())
+        } catch (e) {
+          eventsStore.failListLoad(load)
+          throw e
+        }
+      },
     })
   }
 
@@ -92,33 +101,43 @@ export const useApiTransport = () => {
 
   // Traces, logs and metrics of the current project; pinned errors stay.
   // Without `project` the server wipes every project's Sentry tables.
-  const clearSentryTables = () => {
+  // Resolves true when the server cleared them.
+  const clearSentryTables = (): Promise<boolean> => {
     const headers = { 'X-Auth-Token': token.value }
     const params = new URLSearchParams({
       ...(project.value ? { project: project.value } : {}),
       keep_pinned: '1',
     })
-    fetch(`${REST_API_URL}/api/sentry/all?${params}`, { method: 'DELETE', headers })
+    return fetch(`${REST_API_URL}/api/sentry/all?${params}`, { method: 'DELETE', headers })
       .then((response) => {
         if (!response.ok) {
           console.error('Sentry clear failed', response.status)
         }
+        return response.ok
       })
-      .catch((e) => console.error('Sentry clear failed', e))
+      .catch((e) => {
+        console.error('Sentry clear failed', e)
+        return false
+      })
+  }
+
+  // A clear counts only when both parts did: the events and, for Sentry, its
+  // own tables. Both run together; a failed part makes the answer undefined.
+  const withSentryClear = async (clearSentry: boolean, request: () => Promise<unknown>) => {
+    const [sentryOk, result] = await Promise.all([
+      clearSentry ? clearSentryTables() : Promise.resolve(true),
+      request(),
+    ])
+
+    return sentryOk ? result : undefined
   }
 
   const keepPinnedPayload = ({ keepPinned = false }: DeleteOptions = {}) =>
     (keepPinned ? { keep_pinned: true } : undefined)
 
-  const deleteEventsAll = (options?: DeleteOptions) => {
-    clearSentryTables()
-
-    if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload(keepPinnedPayload(options)))
-    }
-
-    return deleteAll(options);
-  }
+  const deleteEventsAll = (options?: DeleteOptions) => withSentryClear(true, () => (getWSConnection()
+    ? centrifuge.rpc(`delete:api/events`, createPayload(keepPinnedPayload(options)))
+    : deleteAll(options)))
 
   const deleteEventsList = (uuids: EventId[]) => {
     if (!uuids.length) {
@@ -136,17 +155,9 @@ export const useApiTransport = () => {
     return deleteList(uuids);
   }
 
-  const deleteEventsByType = (type: EventType, options?: DeleteOptions) => {
-    if (type === 'sentry') {
-      clearSentryTables()
-    }
-
-    if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload({ type, ...keepPinnedPayload(options) }))
-    }
-
-    return deleteByType(type, options);
-  }
+  const deleteEventsByType = (type: EventType, options?: DeleteOptions) => withSentryClear(type === 'sentry', () => (getWSConnection()
+    ? centrifuge.rpc(`delete:api/events`, createPayload({ type, ...keepPinnedPayload(options) }))
+    : deleteByType(type, options)))
 
   const pinEvent = (eventId: EventId) => {
     if (getWSConnection()) {

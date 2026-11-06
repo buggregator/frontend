@@ -98,13 +98,18 @@ export const useEventsApi = (): TUseEventsApi => {
     return ok
   }
 
-  const getAll = () => getEventsAll()
-    .then((eventsList: ServerEvent<unknown>[]) => {
-      eventsStore.syncFromServer(eventsList)
-    })
-    .catch((e) => {
+  // Only the newest reply lands, for the project and period it was asked
+  // for, merged with what changed here meanwhile (see eventsStore).
+  const getAll = async () => {
+    const load = eventsStore.startListLoad()
+
+    try {
+      eventsStore.applyListLoad(load, await getEventsAll())
+    } catch (e) {
+      eventsStore.failListLoad(load)
       console.error(e);
-    })
+    }
+  }
 
   return {
     items: events as unknown as Ref<ServerEvent<unknown>[]>,

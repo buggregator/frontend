@@ -2,6 +2,7 @@ import type { ClientEvents, PublicationContext } from 'centrifuge'
 import type { EventId, ServerEvent } from '../../types'
 
 type Emitter = {
+  state: string
   on<E extends keyof ClientEvents>(event: E, listener: ClientEvents[E]): unknown
   removeListener<E extends keyof ClientEvents>(event: E, listener: ClientEvents[E]): unknown
 }
@@ -88,13 +89,15 @@ export const startEventsStream = (options: EventsStreamOptions) => {
     }
   }
 
+  // A connect after a drop, or after polling because the socket was not up
+  // at start: events stored meanwhile were never pushed.
   const onConnected = () => {
     setConnected(true)
-    stopPolling()
 
-    if (wasConnected) {
+    if (wasConnected || pollTimer) {
       scheduleResync()
     }
+    stopPolling()
     wasConnected = true
   }
 
@@ -131,8 +134,11 @@ export const startEventsStream = (options: EventsStreamOptions) => {
       return
     }
 
+    // No payload: the channel says which project was cleared.
     if (name === 'events.cleared') {
-      scheduleResync()
+      if (!ctx.channel || ctx.channel === `events.project.${getProject()}`) {
+        scheduleResync()
+      }
     }
   }
 
@@ -141,6 +147,12 @@ export const startEventsStream = (options: EventsStreamOptions) => {
   centrifuge.on('disconnected', onDisconnected)
   centrifuge.on('message', onMessage)
   centrifuge.on('publication', onPublication)
+
+  // centrifuge emits "connecting" inside connect(), before these listeners
+  // exist, and a failed retry emits nothing new: read the state once.
+  if (centrifuge.state !== 'connected') {
+    onDisconnected()
+  }
 
   return () => {
     centrifuge.removeListener('connected', onConnected)

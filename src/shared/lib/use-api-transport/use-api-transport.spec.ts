@@ -8,7 +8,7 @@ const rpc = vi.fn(() => Promise.resolve({ data: { status: true } }))
 
 vi.mock('../io', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../io')>()),
-  useCentrifuge: () => ({ centrifuge: { on: vi.fn(), rpc } }),
+  useCentrifuge: () => ({ centrifuge: { state: 'connected', on: vi.fn(), removeListener: vi.fn(), rpc } }),
 }))
 
 describe('useApiTransport: delete over WebSocket', () => {
@@ -75,5 +75,20 @@ describe('useApiTransport: delete over WebSocket', () => {
       'delete:api/events',
       expect.not.objectContaining({ type: expect.anything() }),
     )
+  })
+
+  // Review of #308: Clear said ok even when the Sentry tables stayed.
+  it('fails Clear when the Sentry tables could not be cleared', async () => {
+    rpc.mockResolvedValueOnce({ data: { code: 200, data: { status: true } } } as never)
+    fetchMock.mockResolvedValueOnce(new Response('{}', { status: 500 }))
+
+    expect(await useApiTransport().deleteEventsAll({ keepPinned: true })).toBeUndefined()
+  })
+
+  it('passes the events answer through when the Sentry tables were cleared', async () => {
+    const answer = { data: { code: 200, data: { status: true } } }
+    rpc.mockResolvedValueOnce(answer as never)
+
+    expect(await useApiTransport().deleteEventsAll({ keepPinned: true })).toBe(answer)
   })
 })

@@ -3,6 +3,8 @@ import type { ServerEvent } from '../../types'
 import { startEventsStream } from './events-stream'
 
 class FakeCentrifuge {
+  state = 'connected'
+
   listeners = new Map<string, Set<(ctx?: unknown) => void>>()
 
   on(event: string, listener: (ctx?: unknown) => void) {
@@ -18,8 +20,8 @@ class FakeCentrifuge {
     this.listeners.get(event)?.forEach((listener) => listener(ctx))
   }
 
-  publish(event: string, data: unknown) {
-    this.emit('publication', { data: { event, data } })
+  publish(event: string, data: unknown, channel = 'events.project.p1') {
+    this.emit('publication', { channel, data: { event, data } })
   }
 
   count() {
@@ -86,6 +88,13 @@ describe('startEventsStream', () => {
     expect(dropEvents).toHaveBeenCalledWith(['a'])
   })
 
+  it('ignores a clear of another project', () => {
+    centrifuge.publish('events.cleared', null, 'events.project.p2')
+    vi.advanceTimersByTime(300)
+
+    expect(resync).not.toHaveBeenCalled()
+  })
+
   it('fetches the list again once after a burst of clears', () => {
     centrifuge.publish('events.cleared', null)
     centrifuge.publish('events.cleared', null)
@@ -113,7 +122,9 @@ describe('startEventsStream', () => {
     vi.advanceTimersByTime(20000)
     expect(resync).toHaveBeenCalledTimes(2)
 
+    // One fetch for what came during the drop, then no more polling.
     centrifuge.emit('connected')
+    vi.advanceTimersByTime(300)
     resync.mockClear()
     vi.advanceTimersByTime(20000)
     expect(resync).not.toHaveBeenCalled()
@@ -131,5 +142,42 @@ describe('startEventsStream', () => {
   it('removes every listener on stop', () => {
     stop()
     expect(centrifuge.count()).toBe(0)
+  })
+
+  // Review of #308: centrifuge emits "connecting" inside connect(), before the
+  // stream listens, and failed retries emit nothing new.
+  describe('started while the socket is not up', () => {
+    let late: FakeCentrifuge
+    let stopLate: () => void
+
+    beforeEach(() => {
+      stop()
+      late = new FakeCentrifuge()
+      late.state = 'connecting'
+      stopLate = startEventsStream({
+        centrifuge: late as never,
+        getProject: () => project,
+        setConnected,
+        addEvents,
+        dropEvents,
+        resync,
+      })
+    })
+
+    afterEach(() => stopLate())
+
+    it('marks the socket down and polls', () => {
+      expect(setConnected).toHaveBeenLastCalledWith(false)
+
+      vi.advanceTimersByTime(10000)
+      expect(resync).toHaveBeenCalledTimes(1)
+    })
+
+    it('fetches the list again on the first connect', () => {
+      late.emit('connected')
+      vi.advanceTimersByTime(300)
+
+      expect(resync).toHaveBeenCalledTimes(1)
+    })
   })
 })

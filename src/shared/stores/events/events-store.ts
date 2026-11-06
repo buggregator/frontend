@@ -23,6 +23,17 @@ import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
 
+// A list request in flight, and what changed here since it started: its reply
+// is older than these changes and must not undo them.
+type TListLoad = {
+  seq: number
+  project: string | undefined
+  period: string
+  added: EventId[]
+  removed: EventId[]
+  pins: Record<EventId, boolean>
+}
+
 // Selectable periods. The value is passed to the API as-is: "24h", "7d", "all".
 export const PERIOD_OPTIONS = [
   { value: '1h', label: 'Last hour' },
@@ -70,7 +81,9 @@ export const useEventsStore = defineStore("eventsStore", {
     // Selected period. Sent to the API as ?window=<period> to bound lists by
     // time: without it the server returns everything stored for the project,
     // which on a busy instance is tens of megabytes per request.
-    period: getStoredPeriod() || DEFAULT_PERIOD
+    period: getStoredPeriod() || DEFAULT_PERIOD,
+    listLoadSeq: 0,
+    listLoad: null as TListLoad | null,
   }),
   getters: {
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
@@ -137,6 +150,7 @@ export const useEventsStore = defineStore("eventsStore", {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
           existingIds.add(event.uuid);
+          this.listLoad?.added.push(event.uuid);
           this.countsMap.set(event.type as  EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
 
           if (this.events.length > MAX_EVENTS_COUNT) {
@@ -153,6 +167,7 @@ export const useEventsStore = defineStore("eventsStore", {
     // the pause: the paused snapshot no longer exists.
     removeAll() {
       const lockedSet = new Set(this.lockedIds);
+      this.listLoad?.removed.push(...this.events.filter(({ uuid }) => !lockedSet.has(uuid)).map(({ uuid }) => uuid));
       this.events = this.events.filter(({ uuid }) => lockedSet.has(uuid));
       this.rebuildCountsMap();
 
@@ -161,6 +176,7 @@ export const useEventsStore = defineStore("eventsStore", {
     removeByIds(eventUuids: EventId[]) {
       const lockedSet = new Set(this.lockedIds);
       const removed = new Set(eventUuids.filter((uuid) => !lockedSet.has(uuid)));
+      this.listLoad?.removed.push(...removed);
 
       this.events = this.events.filter(({ uuid }) => !removed.has(uuid));
       this.rebuildCountsMap();
@@ -184,6 +200,7 @@ export const useEventsStore = defineStore("eventsStore", {
       const dropped = new Set(eventUuids);
 
       if (this.lockedIds.some((uuid) => dropped.has(uuid))) {
+        dropped.forEach((uuid) => this.recordPin(uuid, false));
         this.lockedIds = this.lockedIds.filter((uuid) => !dropped.has(uuid));
         setStoredLockedIds(this.lockedIds);
       }
@@ -192,8 +209,11 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // The server's list is the truth: after a load, a reconnect or a clear
     // made elsewhere. Pins come from the server too.
-    syncFromServer(events: ServerEvent<unknown>[]) {
-      this.lockedIds = events.filter((e) => e.is_pinned).map((e) => e.uuid);
+    syncFromServer(
+      events: ServerEvent<unknown>[],
+      lockedIds: EventId[] = events.filter((e) => e.is_pinned).map((e) => e.uuid),
+    ) {
+      this.lockedIds = lockedIds;
       setStoredLockedIds(this.lockedIds);
 
       if (!events.length) {
@@ -205,6 +225,62 @@ export const useEventsStore = defineStore("eventsStore", {
       }
 
       this.initializeEvents(events);
+    },
+    // list loads: only the newest reply lands, for the project and period it
+    // was asked for, and on top of what changed here meanwhile.
+    startListLoad(): number {
+      this.listLoadSeq += 1;
+      this.listLoad = {
+        seq: this.listLoadSeq,
+        project: this.projects.activeKey,
+        period: this.period,
+        added: [],
+        removed: [],
+        pins: {},
+      };
+
+      return this.listLoadSeq;
+    },
+    // false: an older or outdated reply, nothing changed.
+    applyListLoad(seq: number, events: ServerEvent<unknown>[]): boolean {
+      const load = this.listLoad;
+
+      if (!load || load.seq !== seq) {
+        return false;
+      }
+      this.listLoad = null;
+
+      if (load.project !== this.projects.activeKey || load.period !== this.period) {
+        return false;
+      }
+
+      const removed = new Set(load.removed);
+      const base = events.filter(({ uuid }) => !removed.has(uuid));
+      const baseIds = new Set(base.map(({ uuid }) => uuid));
+      const added = new Set(load.added);
+      const live = this.events.filter(({ uuid }) => added.has(uuid) && !baseIds.has(uuid));
+      const merged = [...live, ...base];
+
+      const locked = new Set(merged.filter((e) => e.is_pinned).map(({ uuid }) => uuid));
+      Object.entries(load.pins).forEach(([uuid, pinned]) => (pinned ? locked.add(uuid) : locked.delete(uuid)));
+
+      this.syncFromServer(merged, [...locked]);
+
+      return true;
+    },
+    // true when the failed request was the newest one (its error counts).
+    failListLoad(seq: number): boolean {
+      if (this.listLoad?.seq !== seq) {
+        return false;
+      }
+      this.listLoad = null;
+
+      return true;
+    },
+    recordPin(uuid: EventId, pinned: boolean) {
+      if (this.listLoad) {
+        this.listLoad.pins[uuid] = pinned;
+      }
     },
     // cached ids
     addCachedByType(cachedType: PageEventTypes) {
@@ -257,12 +333,16 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // locked ids
     removeLockedIds(eventUuid: EventId) {
+      this.recordPin(eventUuid, false);
       this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
 
       setStoredLockedIds(this.lockedIds);
     },
     addLockedIds(eventUuid: EventId) {
-      this.lockedIds.push(eventUuid);
+      this.recordPin(eventUuid, true);
+      if (!this.lockedIds.includes(eventUuid)) {
+        this.lockedIds.push(eventUuid);
+      }
 
       setStoredLockedIds(this.lockedIds);
     },
