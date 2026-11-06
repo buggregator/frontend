@@ -270,6 +270,22 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
         </RouterLink>
       </template>
 
+      <RouterLink
+        :to="{ name: RouteName.MockServer }"
+        title="Mock server"
+        aria-label="Mock server"
+        class="layout-sidebar__link"
+      >
+        <span class="layout-sidebar__link-icon-wrap">
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="mock-server"
+          />
+        </span>
+        <span class="layout-sidebar__link-label">Mock server</span>
+        <span class="layout-sidebar__new">new</span>
+      </RouterLink>
+
       <hr class="layout-sidebar__sep">
 
       <RouterLink
@@ -579,6 +595,15 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply inline;
+  }
+}
+
+.layout-sidebar__new {
+  @apply hidden ml-auto px-1.5 py-0.5 rounded-full text-[10px] leading-none font-medium;
+  @apply bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply inline-block;
   }
 }
 
