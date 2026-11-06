@@ -8,4 +8,5 @@ export * from './trace-waterfall';
 export * from './trace-context-block';
 export * from './service-map';
 export * from './sentry-logs-list';
+export * from './sentry-metrics-list';
 export * from './sentry-empty-state';

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 type Props = {
-  type: 'exceptions' | 'traces' | 'logs'
+  type: 'exceptions' | 'traces' | 'logs' | 'metrics'
 }
 
 const props = defineProps<Props>()
@@ -29,6 +29,13 @@ const content = computed(() => {
         description: 'Sentry logs (distinct from Monolog) require enable_logs in your SDK.',
         snippet: `# PHP SDK >= 4.10\n'enable_logs' => true,\n\n# JavaScript SDK\nSentry.init({\n  _experiments: { enableLogs: true }\n})`,
         docsUrl: 'https://develop.sentry.dev/sdk/telemetry/logs/'
+      }
+    case 'metrics':
+      return {
+        title: 'No Sentry metrics yet',
+        description: 'Counters, gauges and distributions recorded with the Sentry metrics API appear here.',
+        snippet: `# PHP SDK\n\\Sentry\\traceMetrics()->count('orders.created', 1);\n\n# JavaScript SDK\nSentry.metrics.count('orders.created', 1)`,
+        docsUrl: ''
       }
     default:
       return {

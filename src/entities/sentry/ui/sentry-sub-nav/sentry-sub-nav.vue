@@ -57,6 +57,18 @@ onSentryEvent(() => {
       Logs
       <span class="sentry-sub-nav__badge">{{ counts.logs }}</span>
     </RouterLink>
+
+    <RouterLink
+      v-show="counts.metrics > 0"
+      to="/sentry/metrics"
+      class="sentry-sub-nav__tab"
+      :class="{ 'sentry-sub-nav__tab--hidden': counts.metrics === 0 }"
+      active-class="sentry-sub-nav__tab--active"
+      role="tab"
+    >
+      Metrics
+      <span class="sentry-sub-nav__badge">{{ counts.metrics }}</span>
+    </RouterLink>
   </nav>
 </template>
 

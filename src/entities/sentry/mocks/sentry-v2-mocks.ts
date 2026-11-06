@@ -6,6 +6,7 @@ import type {
   SentrySpan,
   SentrySpanPreview,
   SentryLog,
+  SentryMetric,
   SentryServiceMap,
   SentryCounts,
 } from '../types-v2'
@@ -14,6 +15,7 @@ export const mockCounts: SentryCounts = {
   exceptions: 199,
   traces: 42,
   logs: 320,
+  metrics: 57,
 }
 
 export const mockExceptionGroups: SentryErrorGroup[] = [
@@ -207,3 +209,10 @@ export const mockServiceMap: SentryServiceMap = {
   ],
   window_minutes: 60,
 }
+
+export const mockMetrics: SentryMetric[] = [
+  { id: 'metric-1', name: 'order.status', type: 'gauge', value: 12, unit: '', trace_id: '53c16245360049e1a0cd3041dede1ec7', span_id: '9ada5f708f96d465', metric_ts: '2025-03-30T14:25:00.120Z', attributes: { status: { type: 'string', value: 'qa' }, 'sentry.environment': { type: 'string', value: 'local' } } },
+  { id: 'metric-2', name: 'http.client.duration', type: 'distribution', value: 41.7, unit: 'millisecond', trace_id: 'aabbccdd11223344', span_id: 'http1', metric_ts: '2025-03-30T14:23:44.210Z', attributes: { 'server.address': { type: 'string', value: 'api' }, 'http.request.method': { type: 'string', value: 'GET' }, 'http.response.status_code': { type: 'integer', value: 200 } } },
+  { id: 'metric-3', name: 'order.transition', type: 'counter', value: 1, unit: '', trace_id: 'aabbccdd11223344', span_id: 'root', metric_ts: '2025-03-30T14:23:44.180Z', attributes: { transition: { type: 'string', value: 'to_cutting' }, result: { type: 'string', value: 'applied' } } },
+  { id: 'metric-4', name: 'messenger.message.duration', type: 'distribution', value: 1250, unit: 'millisecond', trace_id: '', span_id: '', metric_ts: '2025-03-30T14:20:02.300Z', attributes: { 'messaging.message.type': { type: 'string', value: 'GenerateFoamJob' }, result: { type: 'string', value: 'retried' } } },
+]

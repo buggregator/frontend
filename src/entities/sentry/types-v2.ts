@@ -106,6 +106,25 @@ export interface SentryLog {
   trace_exists?: boolean
 }
 
+export type SentryMetricType = 'counter' | 'gauge' | 'distribution'
+
+export interface SentryMetricAttribute {
+  type: string
+  value: unknown
+}
+
+export interface SentryMetric {
+  id: string
+  name: string
+  type: SentryMetricType | string
+  value: number
+  unit: string
+  trace_id: string
+  span_id: string
+  metric_ts: string
+  attributes: Record<string, SentryMetricAttribute | unknown> | null
+}
+
 export interface SentryServiceMapNode {
   id: string
   label: string
@@ -133,6 +152,7 @@ export interface SentryCounts {
   exceptions: number
   traces: number
   logs: number
+  metrics: number
 }
 
 export interface SentryExceptionDetail {

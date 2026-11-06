@@ -9,6 +9,7 @@ import type {
   SentryTrace,
   SentryTraceDetail,
   SentryLog,
+  SentryMetric,
   SentryServiceMap,
   SentryCounts,
 } from '../types'
@@ -53,6 +54,11 @@ export const useSentryRequests = () => {
     return fetchJSON<PaginatedResponse<SentryLog>>(`${BASE}/logs${qs ? `?${qs}` : ''}`)
   }
 
+  const getMetrics = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(params).toString()
+    return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
+  }
+
   const getServiceMap = (windowMinutes?: number) => {
     const qs = windowMinutes ? `?window=${windowMinutes}` : ''
     return fetchJSON<SentryServiceMap>(`${BASE}/service-map${qs}`)
@@ -68,6 +74,7 @@ export const useSentryRequests = () => {
     getTraces,
     getTraceDetail,
     getLogs,
+    getMetrics,
     getServiceMap,
     getCounts,
   }
