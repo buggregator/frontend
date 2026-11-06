@@ -8,6 +8,7 @@ export enum RouteName {
   ProfilerCompare = 'profiler-compare',
   Metrics = 'metrics',
   MockServer = 'mock-server',
+  Xdebug = 'xdebug',
   NotFound = 'not-found',
   SentryExceptions = 'sentry-exceptions',
   SentryExceptionDetail = 'sentry-exception-detail',

@@ -4,6 +4,7 @@ import { onClickOutside, useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useXdebugEnabled } from '@/entities/xdebug'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
@@ -22,6 +23,7 @@ const profileStore = useProfileStore()
 const { profile } = storeToRefs(profileStore)
 
 const { getItemsCount } = useEvents()
+const xdebugEnabled = useXdebugEnabled()
 
 const projectDd = ref<HTMLElement | undefined>()
 const projectMenu = ref<HTMLElement | undefined>()
@@ -283,6 +285,23 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
           />
         </span>
         <span class="layout-sidebar__link-label">Mock server</span>
+        <span class="layout-sidebar__new">new</span>
+      </RouterLink>
+
+      <RouterLink
+        v-if="xdebugEnabled"
+        :to="{ name: RouteName.Xdebug }"
+        title="Xdebug"
+        aria-label="Xdebug"
+        class="layout-sidebar__link"
+      >
+        <span class="layout-sidebar__link-icon-wrap">
+          <IconSvg
+            class="layout-sidebar__link-icon"
+            name="bug"
+          />
+        </span>
+        <span class="layout-sidebar__link-label">Xdebug</span>
         <span class="layout-sidebar__new">new</span>
       </RouterLink>
 

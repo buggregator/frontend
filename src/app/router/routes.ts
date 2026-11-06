@@ -14,6 +14,7 @@ const NotFoundPage = () => import('@/pages/not-found').then((m) => m.NotFoundPag
 const ProfilerComparePage = () =>
   import('@/pages/profiler-compare').then((m) => m.ProfilerComparePage)
 const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
+const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
 const sentryPages = () => import('@/pages/sentry')
 const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
 const SentryExceptionsPage = () => sentryPages().then((m) => m.SentryExceptionsPage)
@@ -67,6 +68,14 @@ export const routes = [
     path: '/mock-server',
     name: RouteName.MockServer,
     component: MockServerPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
+    path: '/xdebug',
+    name: RouteName.Xdebug,
+    component: XdebugPage,
     meta: {
       middleware: [auth]
     }
