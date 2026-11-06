@@ -1,7 +1,7 @@
 <script lang="ts" setup generic="T">
 import download from 'downloadjs'
 import { toBlob, toPng } from 'html-to-image'
-import { ref, computed, onBeforeMount, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { copyBlobToClipboard } from '../../lib/clipboard'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
@@ -26,8 +26,10 @@ const isVisibleControls = computed(
 )
 
 const eventRef = ref(null)
+// A card is open from its first frame (no grow-in on mount): the feed mounts
+// cards as they scroll into view, and a grow-in made them start at 0 px. New
+// events get the feed's own entry animation; deleting still collapses.
 const isDeleting = ref(false)
-const isInit = ref(true)
 const { events, lockedIds } = useEvents()
 
 const isLocked = computed(() => (lockedIds?.items.value || []).includes(props.event.id))
@@ -127,16 +129,6 @@ const copyCode = () => {
       })
   }
 }
-
-onBeforeMount(() => {
-  isInit.value = false
-})
-
-onMounted(() => {
-  setTimeout(() => {
-    isInit.value = true
-  }, 200)
-})
 </script>
 
 <template>
@@ -147,7 +139,7 @@ onMounted(() => {
     :class="[
       `preview-card--type-${event.type}`,
       {
-        'preview-card--initialized': isInit && !isDeleting,
+        'preview-card--initialized': !isDeleting,
         'preview-card--deleting': isDeleting
       }
     ]"
