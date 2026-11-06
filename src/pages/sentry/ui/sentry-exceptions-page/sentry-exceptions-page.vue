@@ -160,6 +160,7 @@ onSentryEvent(() => {
     <LayoutPreviewEvents
       v-else
       :type="EventTypes.Sentry"
+      title="Sentry Exceptions"
     />
   </div>
 </template>

@@ -35,9 +35,8 @@ const resolvedType = computed(() => {
 const title = computed(
   () => (resolvedType.value ? PAGES_SETTINGS[resolvedType.value]?.title : '') || ''
 )
-const pageName = title
-
-useTitle(`${pageName.value} > ${eventId} | Buggregator`)
+// The type of /event/:id is known only after the event loads.
+useTitle(computed(() => `${title.value || 'Event'} > ${eventId} | Buggregator`))
 
 // A missing event and a failed load are different answers: the first is
 // final (deleted, cleared, a wrong link), the second can be tried again.

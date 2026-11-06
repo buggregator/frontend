@@ -3,7 +3,7 @@ import moment from 'moment'
 import { computed, ref, watch } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout, PageTabs, PageTab } from '@/shared/ui'
-import { resolveExceptionValues } from '../../lib/resolve-exceptions'
+import { resolveExceptionValues, sentryMessageText } from '../../lib/resolve-exceptions'
 import { useSentryRequests } from '../../lib/use-sentry-requests'
 import type { Sentry, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
@@ -25,8 +25,8 @@ const props = defineProps<Props>()
 
 const formattedTimestamp = computed(() => {
   const ts = props.event.payload.timestamp
-  if (typeof ts === 'number') return moment.unix(ts).toLocaleString()
-  if (ts) return moment(ts).toLocaleString()
+  if (typeof ts === 'number') return moment.unix(ts).format('DD.MM.YYYY HH:mm:ss')
+  if (ts) return moment(ts).format('DD.MM.YYYY HH:mm:ss')
   return ''
 })
 
@@ -39,10 +39,8 @@ const platform = computed(() => props.event.payload.platform || 'unknown')
 const level = computed(() => props.event.payload.level || 'error')
 const transaction = computed(() => props.event.payload.transaction)
 const release = computed(() => props.event.payload.release)
-const isMessageEvent = computed(
-  () =>
-    !mainException.value && (props.event.payload.message || props.event.payload.logentry?.message)
-)
+const messageText = computed(() => sentryMessageText(props.event.payload))
+const isMessageEvent = computed(() => !mainException.value && !!messageText.value)
 
 const isHandled = computed(() => {
   if (!mainException.value?.mechanism) return undefined
@@ -209,9 +207,7 @@ watch(
           <h2 class="sentry-header__type">
             Message
           </h2>
-          <pre class="sentry-header__message">{{
-            event.payload.message || event.payload.logentry?.message
-          }}</pre>
+          <pre class="sentry-header__message">{{ messageText }}</pre>
         </template>
 
         <span class="sentry-header__date">{{ formattedTimestamp }}</span>

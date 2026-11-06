@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
-import { resolveExceptionValues } from '../../lib'
+import { resolveExceptionValues, sentryMessageText } from '../../lib'
 import type { Sentry, SentryException as Exception } from '../../types'
 import { SentryException } from '../sentry-exception'
 
@@ -25,9 +25,7 @@ const exceptionValues = computed(() => resolveExceptionValues(props.event?.paylo
 
 const hasException = computed(() => exceptionValues.value.length > 0)
 
-const message = computed(
-  () => props.event.payload?.message || props.event.payload?.logentry?.message || ''
-)
+const message = computed(() => sentryMessageText(props.event.payload))
 
 const exception: Ref<Exception> = computed(() =>
   exceptionValues.value.length > 0

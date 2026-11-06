@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, reactive } from 'vue'
+import { computed, ref, reactive, useId } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import { IconSvg } from '@/shared/ui'
 import type { SentryFrame } from '../../types'
@@ -170,6 +170,13 @@ const parseCodeLine = (line: string): CodeSegment[] => {
   return segments
 }
 
+const bodyId = useId()
+const toggleLabel = computed(() => {
+  const name = displayFilename.value.split('/').pop() || displayFilename.value
+  const verb = isFrameOpen.value ? 'Hide' : 'Show'
+  return `${verb} code of ${name}${props.frame.lineno ? ` at line ${props.frame.lineno}` : ''}`
+})
+
 const toggleOpen = () => {
   if (hasBody.value || hasVars.value) {
     isFrameOpen.value = !isFrameOpen.value
@@ -214,17 +221,27 @@ const toggleOpen = () => {
           class="frame__vars-hint"
         >{{ Object.keys(frame.vars!).length }} vars</span>
 
-        <IconSvg
+        <button
           v-if="hasBody || hasVars"
-          class="frame__chevron"
-          :class="{ 'frame__chevron--open': isFrameOpen }"
-          name="collapsed"
-        />
+          type="button"
+          class="frame__toggle"
+          :aria-expanded="isFrameOpen"
+          :aria-controls="bodyId"
+          :aria-label="toggleLabel"
+          @click.stop="toggleOpen"
+        >
+          <IconSvg
+            class="frame__chevron"
+            :class="{ 'frame__chevron--open': isFrameOpen }"
+            name="collapsed"
+          />
+        </button>
       </div>
     </div>
 
     <div
       v-if="isFrameOpen && (hasBody || hasVars)"
+      :id="bodyId"
       class="frame__body"
     >
       <template v-if="frame.pre_context">
@@ -336,6 +353,11 @@ const toggleOpen = () => {
   .frame--empty & {
     @apply cursor-default;
   }
+}
+
+.frame__toggle {
+  @apply flex items-center justify-center w-6 h-6 -m-1 rounded;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
 }
 
 .frame__head-right {

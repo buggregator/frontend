@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { ALL_EVENT_TYPES } from '@/shared/constants'
@@ -24,6 +24,8 @@ const router = createRouter({
   history: createMemoryHistory(),
   routes: [{ path: '/', name: 'home', component: { template: '<div/>' } }],
 })
+
+enableAutoUnmount(afterEach)
 
 const event = (uuid: string) => ({ uuid, type: 'smtp', payload: {}, searchable_text: 'hello' })
 
@@ -124,5 +126,32 @@ describe('LayoutPreviewEvents: empty, loading and error views', () => {
     await flushPromises()
 
     expect(note()).toBe('2 new events')
+  })
+})
+
+describe('LayoutPreviewEvents: tab title', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+    items.value = []
+    pinned.value = []
+  })
+
+  // Audit 5.16: the Sentry timeline mode wrote «Events: N» over the page title
+  // and left it there after switching back to the grouped view.
+  it('names the page, follows the count and gives the title back on unmount', async () => {
+    document.title = 'Sentry Exceptions | Buggregator'
+    items.value = [event('a')]
+    useEventsStore().setListState('ready')
+
+    const wrapper = await render({ title: 'Sentry Exceptions' })
+    expect(document.title).toBe('Sentry Exceptions: 1 | Buggregator')
+
+    items.value = [event('a'), event('b')]
+    await flushPromises()
+    expect(document.title).toBe('Sentry Exceptions: 2 | Buggregator')
+
+    wrapper.unmount()
+    expect(document.title).toBe('Sentry Exceptions | Buggregator')
   })
 })

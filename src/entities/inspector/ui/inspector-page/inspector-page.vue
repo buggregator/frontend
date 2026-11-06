@@ -64,7 +64,7 @@ const resultColor = computed(() => {
           class="insp-box"
         >
           <span class="insp-box__label">Memory Peak</span>
-          <span class="insp-box__value">{{ (transaction.memory_peak / 1024 / 1024).toFixed(2) }} MB</span>
+          <span class="insp-box__value">{{ Number(transaction.memory_peak).toFixed(2) }} MB</span>
         </div>
         <div class="insp-box">
           <span class="insp-box__label">Type</span>
