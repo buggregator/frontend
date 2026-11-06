@@ -254,7 +254,7 @@ onMounted(async () => {
 }
 
 .pc__legend-vs {
-  @apply text-gray-300 dark:text-gray-400 text-2xs;
+  @apply text-gray-500 dark:text-gray-400 text-2xs;
 }
 
 .pc__legend-hint {
@@ -262,7 +262,7 @@ onMounted(async () => {
 }
 
 .pc__legend-sep {
-  @apply text-gray-300 dark:text-gray-400 mx-1;
+  @apply text-gray-500 dark:text-gray-400 mx-1;
 }
 
 /* ---- Status ---- */
@@ -345,7 +345,7 @@ onMounted(async () => {
 }
 
 .pc__arrow {
-  @apply text-gray-300 dark:text-gray-400 mx-1;
+  @apply text-gray-500 dark:text-gray-400 mx-1;
 }
 
 .pc__val-compare {

@@ -20,7 +20,7 @@ const statItems = computed(() => calcStatItems(props.cost))
       :key="item.title"
       class="stat-board__item"
     >
-      <h4 class="stat-board__item-name">
+      <div class="stat-board__item-name">
         {{ item.title }}
 
         <span
@@ -29,7 +29,7 @@ const statItems = computed(() => calcStatItems(props.cost))
         >
           {{ item.percent }}%
         </span>
-      </h4>
+      </div>
 
       <strong class="stat-board__item-value">
         {{ item.value }}

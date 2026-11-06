@@ -22,7 +22,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 <template>
   <div class="profiler-page">
-    <main class="profiler-page__main">
+    <div class="profiler-page__main">
       <div
         ref="info"
         class="profiler-page__stat"
@@ -59,7 +59,7 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
           </PageTabs>
         </section>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 

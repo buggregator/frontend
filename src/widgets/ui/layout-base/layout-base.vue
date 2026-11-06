@@ -8,6 +8,13 @@ import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { KeyboardShortcutsOverlay } from '../keyboard-shortcuts-overlay'
 
+type Props = {
+  // The page's h1. Pages with a visible h1 of their own leave it out.
+  heading?: string
+}
+
+const props = withDefaults(defineProps<Props>(), { heading: '' })
+
 const { activeProjectKey, period } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
@@ -62,6 +69,11 @@ watch(
       'layout-base--no-header': !$slots.header
     }"
   >
+    <a
+      href="#main-content"
+      class="layout-base__skip"
+    >Skip to content</a>
+
     <div
       v-if="$slots.sidebar"
       class="layout-base__sidebar"
@@ -83,33 +95,52 @@ watch(
       >
         <span>WebSocket disconnected. Events will not stream until connection is restored.</span>
         <button
+          type="button"
           class="layout-base__connection-banner-close"
+          aria-label="Dismiss"
           @click="isDismissed = true"
         >
-          &times;
+          <span aria-hidden="true">&times;</span>
         </button>
       </div>
     </transition>
 
-    <div class="layout-base__content">
+    <main
+      id="main-content"
+      class="layout-base__content"
+      tabindex="-1"
+    >
+      <h1
+        v-if="props.heading"
+        class="sr-only"
+      >
+        {{ props.heading }}
+      </h1>
       <slot />
-    </div>
+    </main>
 
     <KeyboardShortcutsOverlay
       v-if="isShortcutsOverlayOpen"
       @close="isShortcutsOverlayOpen = false"
     />
 
-    <!-- Action toast -->
+    <!-- Action toast. The live region stays in the DOM, so a screen reader
+         hears each new message («Event deleted»). -->
     <Teleport to="body">
-      <transition name="toast">
-        <div
-          v-if="toastMessage"
-          class="action-toast"
-        >
-          {{ toastMessage }}
-        </div>
-      </transition>
+      <div
+        role="status"
+        aria-live="polite"
+        class="action-toast-region"
+      >
+        <transition name="toast">
+          <div
+            v-if="toastMessage"
+            class="action-toast"
+          >
+            {{ toastMessage }}
+          </div>
+        </transition>
+      </div>
     </Teleport>
   </div>
 </template>
@@ -119,6 +150,20 @@ watch(
 
 .layout-base {
   @apply flex min-h-screen items-stretch relative;
+}
+
+.layout-base__skip {
+  @apply sr-only;
+
+  &:focus {
+    @apply not-sr-only fixed top-2 left-2 z-[100] px-3 py-2 rounded-md;
+    @apply bg-blue-600 text-white text-sm font-medium;
+    @apply outline-none ring-2 ring-blue-300;
+  }
+}
+
+.layout-base__content:focus {
+  outline: none;
 }
 
 .layout-base__sidebar {

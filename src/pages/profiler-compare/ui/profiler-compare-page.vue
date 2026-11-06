@@ -23,7 +23,7 @@ if (!isReady.value) {
 </script>
 
 <template>
-  <LayoutBase>
+  <LayoutBase heading="Profile comparison">
     <template #sidebar>
       <LayoutSidebar />
     </template>

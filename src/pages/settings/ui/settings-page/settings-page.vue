@@ -9,7 +9,10 @@ useTitle('Settings | Buggregator')
 </script>
 
 <template>
-  <LayoutBase class="settings-page">
+  <LayoutBase
+    class="settings-page"
+    heading="Settings"
+  >
     <template #sidebar>
       <LayoutSidebar />
     </template>

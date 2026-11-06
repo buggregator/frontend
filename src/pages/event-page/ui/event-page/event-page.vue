@@ -68,7 +68,10 @@ onMounted(getEvent)
 </script>
 
 <template>
-  <LayoutBase class="events-list-page">
+  <LayoutBase
+    class="events-list-page"
+    :heading="`${title || 'Event'} event`"
+  >
     <template #sidebar>
       <LayoutSidebar />
     </template>

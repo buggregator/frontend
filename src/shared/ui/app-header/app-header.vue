@@ -3,7 +3,10 @@
 
 <template>
   <header class="header">
-    <nav class="header__nav">
+    <nav
+      class="header__nav"
+      aria-label="Breadcrumb"
+    >
       <slot />
     </nav>
 

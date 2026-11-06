@@ -212,7 +212,7 @@ const clearSearch = () => {
       {{ newEventsNote }}
     </p>
 
-    <main
+    <div
       v-if="visibleEvents.length"
       ref="scroller"
       role="feed"
@@ -231,6 +231,7 @@ const clearSearch = () => {
           role="article"
           :aria-posinset="position"
           :aria-setsize="visibleEvents.length"
+          tabindex="-1"
           data-virtual-item
           class="layout-preview-events__event"
           :class="{
@@ -240,7 +241,7 @@ const clearSearch = () => {
           }"
         />
       </div>
-    </main>
+    </div>
 
     <template v-else-if="listState !== 'error'">
       <SkeletonLoader
@@ -310,6 +311,11 @@ const clearSearch = () => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.layout-preview-events__event:focus:not(.layout-preview-events__event--focused) {
+  /* focus without a j/k selection (a click) needs no ring */
+  outline: none;
 }
 
 .layout-preview-events__event--focused {

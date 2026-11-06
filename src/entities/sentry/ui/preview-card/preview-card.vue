@@ -54,9 +54,9 @@ const showBadge = computed(() => props.occurrenceCount > 1)
           :to="eventLink"
           class="sentry-body__link"
         >
-          <h3 class="sentry-body__title">
+          <h2 class="sentry-body__title">
             {{ exception.type }}
-          </h3>
+          </h2>
 
           <pre class="sentry-body__message">{{ exception.value }}</pre>
         </RouterLink>
@@ -76,9 +76,9 @@ const showBadge = computed(() => props.occurrenceCount > 1)
           :to="eventLink"
           class="sentry-body__link"
         >
-          <h3 class="sentry-body__title">
+          <h2 class="sentry-body__title">
             {{ exception.type }}
-          </h3>
+          </h2>
           <pre class="sentry-body__message">{{ exception.value }}</pre>
         </RouterLink>
       </div>

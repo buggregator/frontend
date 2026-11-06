@@ -110,4 +110,45 @@ describe('useKeyboardNav', () => {
     expect(scrollToId).toHaveBeenNthCalledWith(2, 'b')
     wrapper.unmount()
   })
+
+  // Audit 5.6: j/k only painted the card; keyboard focus and the screen reader stayed put.
+  it('moves keyboard focus to the selected card once it is in view', async () => {
+    for (const id of ['a', 'b']) {
+      const card = document.createElement('article')
+      card.id = id
+      card.tabIndex = -1
+      document.body.appendChild(card)
+    }
+    let scrolled = (): void => {}
+    const scrollToId = vi.fn(() => new Promise<void>((r) => { scrolled = r }))
+    const { wrapper } = setup({ scrollToId })
+
+    press('j')
+    expect(document.activeElement?.id).not.toBe('a')
+    scrolled()
+    await vi.runAllTimersAsync()
+    expect(document.activeElement?.id).toBe('a')
+
+    press('j')
+    scrolled()
+    await vi.runAllTimersAsync()
+    expect(document.activeElement?.id).toBe('b')
+    wrapper.unmount()
+  })
+
+  // x behind the shortcuts dialog deleted the selected event.
+  it('ignores its keys while a modal dialog is open', () => {
+    const scrollToId = vi.fn()
+    const { wrapper, onDelete } = setup({ scrollToId })
+    press('j')
+    const dialog = document.createElement('div')
+    dialog.setAttribute('aria-modal', 'true')
+    document.body.appendChild(dialog)
+
+    press('j')
+    press('x')
+    expect(scrollToId).toHaveBeenCalledTimes(1)
+    expect(onDelete).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
 })
