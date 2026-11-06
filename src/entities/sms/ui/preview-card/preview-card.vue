@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { previewText } from '@/shared/lib/formats'
 import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard } from '@/shared/ui'
+import { AddressFlow, PreviewCard } from '@/shared/ui'
 import type { SmsPayload } from '../../types'
 
 type Props = {
@@ -12,11 +13,7 @@ const props = defineProps<Props>()
 
 const eventLink = computed(() => `/sms/${props.event.id}`)
 
-const textPreview = computed(() => {
-  const t = props.event.payload.message || ''
-  const trimmed = t.replace(/\s+/g, ' ').trim()
-  return trimmed.length > 120 ? `${trimmed.substring(0, 120)}...` : trimmed
-})
+const textPreview = computed(() => previewText(props.event.payload.message))
 
 const GATEWAY_COLORS: Record<string, string> = {
   twilio: 'sms-body__badge--twilio',
@@ -42,36 +39,10 @@ const hasWarnings = computed(
       class="sms-body"
     >
       <div class="sms-body__header">
-        <div class="sms-body__flow">
-          <span
-            v-if="event.payload.from"
-            class="sms-body__pill"
-          >{{ event.payload.from }}</span>
-
-          <svg
-            v-if="event.payload.from && event.payload.to"
-            class="sms-body__arrow"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line
-              x1="5"
-              y1="12"
-              x2="19"
-              y2="12"
-            />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-
-          <span
-            v-if="event.payload.to"
-            class="sms-body__pill"
-          >{{ event.payload.to }}</span>
-        </div>
+        <AddressFlow
+          :from="event.payload.from"
+          :to="event.payload.to"
+        />
 
         <div class="sms-body__badges">
           <span
@@ -124,22 +95,6 @@ const hasWarnings = computed(
   @apply flex items-start justify-between gap-2 mb-1.5;
 }
 
-.sms-body__flow {
-  @apply flex items-center gap-1.5 text-xs flex-wrap;
-}
-
-.sms-body__pill {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full;
-  @apply font-mono text-2xs;
-  @apply bg-gray-100 dark:bg-gray-800;
-  @apply text-gray-600 dark:text-gray-300;
-}
-
-.sms-body__arrow {
-  @apply w-3.5 h-3.5 flex-shrink-0;
-  @apply text-gray-300 dark:text-gray-400;
-}
-
 .sms-body__badge {
   @apply text-2xs font-mono font-medium px-1.5 py-0.5 rounded flex-shrink-0;
 }
@@ -165,7 +120,8 @@ const hasWarnings = computed(
 }
 
 .sms-body__badges {
-  @apply flex gap-1.5 flex-shrink-0;
+  // Stays on the right also when there is no from/to row.
+  @apply flex gap-1.5 flex-shrink-0 ml-auto;
 }
 
 .sms-body__badge--warning {

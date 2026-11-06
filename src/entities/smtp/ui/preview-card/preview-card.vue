@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { previewText } from '@/shared/lib/formats'
 import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard } from '@/shared/ui'
+import { AddressFlow, PreviewCard } from '@/shared/ui'
 import type { SMTP } from '../../types'
 
 type Props = {
@@ -23,12 +24,7 @@ const emailTo = computed(() => {
   return to.name ? `${to.name} <${to.email}>` : to.email
 })
 
-const textPreview = computed(() => {
-  const text = props.event?.payload?.text || ''
-  if (!text) return null
-  const trimmed = text.replace(/\s+/g, ' ').trim()
-  return trimmed.length > 120 ? `${trimmed.substring(0, 120)}...` : trimmed
-})
+const textPreview = computed(() => previewText(props.event?.payload?.text))
 
 const hasHtml = computed(() => !!props.event?.payload?.html)
 </script>
@@ -49,39 +45,11 @@ const hasHtml = computed(() => !!props.event?.payload?.html)
         >HTML</span>
       </div>
 
-      <div
-        v-if="emailFrom || emailTo"
+      <AddressFlow
         class="smtp-body__flow"
-      >
-        <span
-          v-if="emailFrom"
-          class="smtp-body__pill"
-        >{{ emailFrom }}</span>
-
-        <svg
-          v-if="emailFrom && emailTo"
-          class="smtp-body__arrow"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line
-            x1="5"
-            y1="12"
-            x2="19"
-            y2="12"
-          />
-          <polyline points="12 5 19 12 12 19" />
-        </svg>
-
-        <span
-          v-if="emailTo"
-          class="smtp-body__pill"
-        >{{ emailTo }}</span>
-      </div>
+        :from="emailFrom"
+        :to="emailTo"
+      />
 
       <p
         v-if="textPreview"
@@ -115,19 +83,7 @@ const hasHtml = computed(() => !!props.event?.payload?.html)
 }
 
 .smtp-body__flow {
-  @apply flex items-center gap-1.5 text-xs mb-1.5 flex-wrap;
-}
-
-.smtp-body__pill {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full;
-  @apply font-mono text-2xs;
-  @apply bg-gray-100 dark:bg-gray-800;
-  @apply text-gray-600 dark:text-gray-300;
-}
-
-.smtp-body__arrow {
-  @apply w-3.5 h-3.5 flex-shrink-0;
-  @apply text-gray-300 dark:text-gray-400;
+  @apply mb-1.5;
 }
 
 .smtp-body__preview {
