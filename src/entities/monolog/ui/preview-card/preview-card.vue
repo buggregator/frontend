@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard, CodeSnippet } from '@/shared/ui'
+import { hasEntries } from '../../lib'
 import type { Monolog } from '../../types'
 
 type Props = {
@@ -34,12 +35,7 @@ const hasContext = computed(() => {
   return keys.length > 0
 })
 
-const hasExtra = computed(() => {
-  const extra = props.event.payload.extra
-  if (!extra) return false
-  if (Array.isArray(extra)) return extra.length > 0
-  return Object.keys(extra).length > 0
-})
+const hasExtra = computed(() => hasEntries(props.event.payload.extra))
 </script>
 
 <template>
