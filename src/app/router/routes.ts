@@ -1,23 +1,27 @@
 import type { RouteLocation } from 'vue-router'
-import {EventPage} from "@/pages/event-page";
 import {EventsListPage} from "@/pages/events-list-page";
-import {LoginPage} from "@/pages/login";
-import {MetricsPage} from "@/pages/metrics";
-import {MockServerPage} from "@/pages/mock-server";
-import {NotFoundPage} from "@/pages/not-found";
-import {ProfilerComparePage} from "@/pages/profiler-compare";
-import {
-  SentryLayoutPage,
-  SentryExceptionsPage,
-  SentryTracesPage,
-  SentryLogsPage,
-  SentryMetricsPage,
-  SentryTraceDetailPage,
-} from "@/pages/sentry";
-import {SettingsPage} from "@/pages/settings";
-import {XdebugPage} from "@/pages/xdebug";
 import {RouteName} from "@/shared/types";
 import {auth, checkType} from "./middlewares";
+
+// The feed is the first screen, so it stays in the main chunk. Every other
+// page loads on first visit: Sentry, the profiler and vue-flow are not needed
+// to show the feed.
+const EventPage = () => import('@/pages/event-page').then((m) => m.EventPage)
+const LoginPage = () => import('@/pages/login').then((m) => m.LoginPage)
+const MetricsPage = () => import('@/pages/metrics').then((m) => m.MetricsPage)
+const MockServerPage = () => import('@/pages/mock-server').then((m) => m.MockServerPage)
+const NotFoundPage = () => import('@/pages/not-found').then((m) => m.NotFoundPage)
+const ProfilerComparePage = () =>
+  import('@/pages/profiler-compare').then((m) => m.ProfilerComparePage)
+const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
+const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
+const sentryPages = () => import('@/pages/sentry')
+const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
+const SentryExceptionsPage = () => sentryPages().then((m) => m.SentryExceptionsPage)
+const SentryTracesPage = () => sentryPages().then((m) => m.SentryTracesPage)
+const SentryTraceDetailPage = () => sentryPages().then((m) => m.SentryTraceDetailPage)
+const SentryLogsPage = () => sentryPages().then((m) => m.SentryLogsPage)
+const SentryMetricsPage = () => sentryPages().then((m) => m.SentryMetricsPage)
 
 export const routes = [
   {

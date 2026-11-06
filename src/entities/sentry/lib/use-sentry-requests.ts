@@ -42,7 +42,7 @@ export const useSentryRequests = () => {
   const fetchJSON = async <T>(url: string): Promise<T> => {
     const res = await fetch(url, { headers: headers() })
     if (!res.ok) {
-      throw new Error(`Request failed: ${res.status} ${res.statusText}`)
+      throw Object.assign(new Error(`Request failed: ${res.status} ${res.statusText}`), { status: res.status })
     }
     return res.json()
   }

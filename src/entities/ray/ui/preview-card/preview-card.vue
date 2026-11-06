@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { NormalizedEvent, OneOfValues } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
+import { rayColorClass } from '../../lib/ray-color'
 import { COMPONENT_TYPE_MAP } from '../../lib/use-ray/config'
 import type { RayDump } from '../../types'
 import { RayEventTypes } from '../../types'
@@ -13,10 +14,7 @@ type Props = {
 const props = defineProps<Props>()
 
 // Only apply color from meta, cap font size to text-sm max in preview cards
-const classes = computed(() => {
-  const color = props.event?.meta?.color
-  return [color && color !== 'gray' ? `text-${color}-500` : ''].filter(Boolean)
-})
+const classes = computed(() => rayColorClass(props.event?.meta?.color))
 
 const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
   type

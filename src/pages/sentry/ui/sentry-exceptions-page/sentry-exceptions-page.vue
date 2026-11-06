@@ -10,13 +10,23 @@ import { SentryExceptionGroupCard } from '@/entities/sentry/ui/sentry-exception-
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { useEventsStore } from '@/shared/stores'
 import { EventTypes } from '@/shared/types'
+import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Exceptions | Buggregator')
 
 const STORAGE_KEY = 'sentry_exceptions_view_mode'
 
-const { grouped, groupedItems, hasLoaded, isInitialLoading, total, page, filters, fetchList } =
-  useSentryExceptions()
+const {
+  grouped,
+  groupedItems,
+  hasLoaded,
+  error,
+  isInitialLoading,
+  total,
+  page,
+  filters,
+  fetchList
+} = useSentryExceptions()
 
 // Restore view mode preference from localStorage.
 const storedMode = window?.localStorage?.getItem(STORAGE_KEY)
@@ -115,6 +125,15 @@ onSentryEvent(() => {
       >
         Loading...
       </div>
+
+      <StatusPanel
+        v-else-if="error"
+        tone="error"
+        title="Could not load exceptions"
+        :text="error"
+        action-label="Try again"
+        @action="fetchList"
+      />
 
       <template v-else-if="groupedItems.length > 0">
         <SentryExceptionGroupCard

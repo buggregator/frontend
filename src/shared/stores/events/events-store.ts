@@ -23,6 +23,17 @@ import type {TEventsCachedIdsMap} from "./types";
 
 const MAX_EVENTS_COUNT = 500;
 
+// A list request in flight, and what changed here since it started: its reply
+// is older than these changes and must not undo them.
+type TListLoad = {
+  seq: number
+  project: string | undefined
+  period: string
+  added: EventId[]
+  removed: EventId[]
+  pins: Record<EventId, boolean>
+}
+
 // Selectable periods. The value is passed to the API as-is: "24h", "7d", "all".
 export const PERIOD_OPTIONS = [
   { value: '1h', label: 'Last hour' },
@@ -39,7 +50,9 @@ export const PERIOD_OPTIONS = [
 // unless the person narrows the period themselves.
 export const DEFAULT_PERIOD = 'all';
 
-const initialCachedIds: TEventsCachedIdsMap = {
+// A fresh map every time: pausing pushes into these arrays, so a shared
+// object would bring old ids back after every reset.
+const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.Sentry]: [] as EventId[],
   [PAGE_TYPES.Inspector]: [] as EventId[],
   [PAGE_TYPES.Profiler]: [] as EventId[],
@@ -52,14 +65,14 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.SentryTrace]: [] as EventId[],
   [PAGE_TYPES.SentryLog]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
-};
+});
 
 export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
     countsMap: new Map<string, number>() as Map<string, number>,
-    cachedIds: getStoredCachedIds() || initialCachedIds,
+    cachedIds: getStoredCachedIds() || createInitialCachedIds(),
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],
@@ -68,7 +81,13 @@ export const useEventsStore = defineStore("eventsStore", {
     // Selected period. Sent to the API as ?window=<period> to bound lists by
     // time: without it the server returns everything stored for the project,
     // which on a busy instance is tens of megabytes per request.
-    period: getStoredPeriod() || DEFAULT_PERIOD
+    period: getStoredPeriod() || DEFAULT_PERIOD,
+    listLoadSeq: 0,
+    listLoad: null as TListLoad | null,
+    // The feed's load from the server: the page shows loading and error
+    // states from it instead of the "waiting for events" welcome.
+    listState: 'idle' as 'idle' | 'loading' | 'ready' | 'error',
+    listError: '' as string,
   }),
   getters: {
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
@@ -135,6 +154,7 @@ export const useEventsStore = defineStore("eventsStore", {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
           existingIds.add(event.uuid);
+          this.listLoad?.added.push(event.uuid);
           this.countsMap.set(event.type as  EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
 
           if (this.events.length > MAX_EVENTS_COUNT) {
@@ -147,50 +167,124 @@ export const useEventsStore = defineStore("eventsStore", {
         }
       });
     },
+    // Clear keeps pinned events (the server keeps them too) and always ends
+    // the pause: the paused snapshot no longer exists.
     removeAll() {
-      if (this.lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => this.lockedIds.includes(uuid));
-        this.rebuildCountsMap();
-
-        return
-      }
-
-      this.events.length = 0;
-      this.countsMap.clear();
+      const lockedSet = new Set(this.lockedIds);
+      this.listLoad?.removed.push(...this.events.filter(({ uuid }) => !lockedSet.has(uuid)).map(({ uuid }) => uuid));
+      this.events = this.events.filter(({ uuid }) => lockedSet.has(uuid));
+      this.rebuildCountsMap();
 
       this.removeCachedAll();
     },
     removeByIds(eventUuids: EventId[]) {
-      const uuidSet = new Set(eventUuids);
+      const lockedSet = new Set(this.lockedIds);
+      const removed = new Set(eventUuids.filter((uuid) => !lockedSet.has(uuid)));
+      this.listLoad?.removed.push(...removed);
 
-      if (this.lockedIds.length) {
-        const lockedSet = new Set(this.lockedIds);
-        this.events = this.events.filter(({ uuid }) => !uuidSet.has(uuid) || lockedSet.has(uuid));
-        this.rebuildCountsMap();
-
-        return
-      }
-
-      this.events = this.events.filter(({ uuid }) => !uuidSet.has(uuid));
+      this.events = this.events.filter(({ uuid }) => !removed.has(uuid));
       this.rebuildCountsMap();
 
-      this.removeCachedByIds(eventUuids);
+      this.removeCachedByIds([...removed]);
     },
     removeById(eventUuid: EventId) {
       this.removeByIds([eventUuid]);
-
-      this.removeCachedById(eventUuid);
     },
     removeByType(eventType: EventType) {
-      if (this.lockedIds.length) {
-        this.events = this.events.filter(({ type, uuid }) => type !== eventType || this.lockedIds.includes(uuid));
-        this.rebuildCountsMap();
+      const lockedSet = new Set(this.lockedIds);
+      const removed = this.events
+        .filter(({ type, uuid }) => type === eventType && !lockedSet.has(uuid))
+        .map(({ uuid }) => uuid);
 
-        return
+      this.removeByIds(removed);
+    },
+    // The server deleted these events (in this tab or another one): they go
+    // whether pinned or not.
+    dropByIds(eventUuids: EventId[]) {
+      const dropped = new Set(eventUuids);
+
+      if (this.lockedIds.some((uuid) => dropped.has(uuid))) {
+        dropped.forEach((uuid) => this.recordPin(uuid, false));
+        this.lockedIds = this.lockedIds.filter((uuid) => !dropped.has(uuid));
+        setStoredLockedIds(this.lockedIds);
       }
 
-      this.events = this.events.filter(({ type }) => type !== eventType);
-      this.countsMap.set(eventType, 0);
+      this.removeByIds(eventUuids);
+    },
+    // The server's list is the truth: after a load, a reconnect or a clear
+    // made elsewhere. Pins come from the server too.
+    syncFromServer(
+      events: ServerEvent<unknown>[],
+      lockedIds: EventId[] = events.filter((e) => e.is_pinned).map((e) => e.uuid),
+    ) {
+      this.lockedIds = lockedIds;
+      setStoredLockedIds(this.lockedIds);
+
+      if (!events.length) {
+        this.events = [];
+        this.countsMap.clear();
+        this.removeCachedAll();
+
+        return;
+      }
+
+      this.initializeEvents(events);
+    },
+    // list loads: only the newest reply lands, for the project and period it
+    // was asked for, and on top of what changed here meanwhile.
+    startListLoad(): number {
+      this.listLoadSeq += 1;
+      this.listLoad = {
+        seq: this.listLoadSeq,
+        project: this.projects.activeKey,
+        period: this.period,
+        added: [],
+        removed: [],
+        pins: {},
+      };
+
+      return this.listLoadSeq;
+    },
+    // false: an older or outdated reply, nothing changed.
+    applyListLoad(seq: number, events: ServerEvent<unknown>[]): boolean {
+      const load = this.listLoad;
+
+      if (!load || load.seq !== seq) {
+        return false;
+      }
+      this.listLoad = null;
+
+      if (load.project !== this.projects.activeKey || load.period !== this.period) {
+        return false;
+      }
+
+      const removed = new Set(load.removed);
+      const base = events.filter(({ uuid }) => !removed.has(uuid));
+      const baseIds = new Set(base.map(({ uuid }) => uuid));
+      const added = new Set(load.added);
+      const live = this.events.filter(({ uuid }) => added.has(uuid) && !baseIds.has(uuid));
+      const merged = [...live, ...base];
+
+      const locked = new Set(merged.filter((e) => e.is_pinned).map(({ uuid }) => uuid));
+      Object.entries(load.pins).forEach(([uuid, pinned]) => (pinned ? locked.add(uuid) : locked.delete(uuid)));
+
+      this.syncFromServer(merged, [...locked]);
+
+      return true;
+    },
+    // true when the failed request was the newest one (its error counts).
+    failListLoad(seq: number): boolean {
+      if (this.listLoad?.seq !== seq) {
+        return false;
+      }
+      this.listLoad = null;
+
+      return true;
+    },
+    recordPin(uuid: EventId, pinned: boolean) {
+      if (this.listLoad) {
+        this.listLoad.pins[uuid] = pinned;
+      }
     },
     // cached ids
     addCachedByType(cachedType: PageEventTypes) {
@@ -199,7 +293,9 @@ export const useEventsStore = defineStore("eventsStore", {
           type === cachedType || cachedType === PAGE_TYPES.ALL_EVENT_TYPES
         )
         .forEach((event) => {
-          this.cachedIds[cachedType].push(event.uuid);
+          if (!this.cachedIds[cachedType].includes(event.uuid)) {
+            this.cachedIds[cachedType].push(event.uuid);
+          }
         });
 
       setStoredCachedIds(this.cachedIds);
@@ -221,7 +317,7 @@ export const useEventsStore = defineStore("eventsStore", {
       this.removeCachedByIds([eventUuid]);
     },
     removeCachedAll() {
-      this.cachedIds = initialCachedIds;
+      this.cachedIds = createInitialCachedIds();
       setStoredCachedIds(this.cachedIds);
     },
     syncCachedWithActive(activeIds: EventId[]) {
@@ -241,12 +337,16 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // locked ids
     removeLockedIds(eventUuid: EventId) {
+      this.recordPin(eventUuid, false);
       this.lockedIds = this.lockedIds.filter((id) => id !== eventUuid);
 
       setStoredLockedIds(this.lockedIds);
     },
     addLockedIds(eventUuid: EventId) {
-      this.lockedIds.push(eventUuid);
+      this.recordPin(eventUuid, true);
+      if (!this.lockedIds.includes(eventUuid)) {
+        this.lockedIds.push(eventUuid);
+      }
 
       setStoredLockedIds(this.lockedIds);
     },
@@ -275,6 +375,10 @@ export const useEventsStore = defineStore("eventsStore", {
       this.projects.activeKey = undefined;
 
       removeStoredProject();
+    },
+    setListState(state: 'idle' | 'loading' | 'ready' | 'error', error = '') {
+      this.listState = state;
+      this.listError = error;
     },
     setPeriod(period: string) {
       this.period = period;

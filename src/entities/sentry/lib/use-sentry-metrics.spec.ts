@@ -47,10 +47,12 @@ describe('useSentryMetrics', () => {
   })
 
   it('counts a failed first load as loaded, so a retry does not blank the page', async () => {
-    getMetrics.mockRejectedValueOnce(new Error('500'))
-    const { fetchList, hasLoaded } = useSentryMetrics()
+    getMetrics.mockRejectedValueOnce(Object.assign(new Error('Request failed'), { status: 500 }))
+    const { fetchList, hasLoaded, error } = useSentryMetrics()
 
-    await expect(fetchList()).rejects.toThrow('500')
+    // The failure is kept for the page to show (audit 5.3), not thrown.
+    await expect(fetchList()).resolves.toBeUndefined()
     expect(hasLoaded.value).toBe(true)
+    expect(error.value).toBe('The server answered 500.')
   })
 })

@@ -53,8 +53,13 @@ const changeVisibleControls = (value = true) => {
 const deleteEvent = () => {
   isDeleting.value = true
 
-  setTimeout(() => {
-    events?.removeById(props.event.id)
+  // The card fades out first; a refused delete brings it back.
+  setTimeout(async () => {
+    const ok = await events?.removeById(props.event.id)
+
+    if (ok === false) {
+      isDeleting.value = false
+    }
   }, 350)
 }
 

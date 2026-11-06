@@ -2,17 +2,39 @@ import { storeToRefs } from "pinia";
 import type { Ref } from 'vue';
 import { useEventsStore } from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
+import { describeLoadError, isRequestOk } from '../io/request-result';
 import { useApiTransport } from '../use-api-transport'
+import { showToast } from '../use-keyboard-nav';
 
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
   getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>
-  getAll: () => void
-  removeAll: () => void
-  removeByType: (type: EventType) => void
-  removeById: (id: EventId) => void
-  removeList: (uuids: EventId[]) => Promise<void>
+  getAll: () => Promise<void>
+  removeAll: () => Promise<boolean>
+  removeByType: (type: EventType) => Promise<boolean>
+  removeById: (id: EventId) => Promise<boolean>
+  removeList: (uuids: EventId[]) => Promise<boolean>
+}
+
+// A write that fails leaves the list as it is and says so: the list must show
+// what the server holds, not what the click hoped for.
+const settle = async (request: () => Promise<unknown>, failure: string): Promise<boolean> => {
+  let result: unknown
+
+  try {
+    result = await request()
+  } catch (e) {
+    console.error(e)
+  }
+
+  const ok = isRequestOk(result)
+
+  if (!ok) {
+    showToast(failure, 4000)
+  }
+
+  return ok
 }
 
 export const useEventsApi = (): TUseEventsApi => {
@@ -31,11 +53,20 @@ export const useEventsApi = (): TUseEventsApi => {
   } = useApiTransport();
 
   const removeList = async (uuids: EventId[]) => {
-    const res = await deleteEventsList(uuids)
+    if (!uuids.length) {
+      return true
+    }
 
-    if (res) {
+    const ok = await settle(
+      () => deleteEventsList(uuids),
+      uuids.length === 1 ? 'Could not delete the event' : 'Could not delete the events',
+    )
+
+    if (ok) {
       eventsStore.removeByIds(uuids);
     }
+
+    return ok
   }
 
   // The server keeps every pinned event itself (keep_pinned), so Clear also
@@ -43,42 +74,47 @@ export const useEventsApi = (): TUseEventsApi => {
   // another tab or on events not loaded here are unknown to this store.
   // The store keeps the pinned ones it knows locally.
   const removeAll = async () => {
-    const res = await deleteEventsAll({ keepPinned: true })
+    const ok = await settle(() => deleteEventsAll({ keepPinned: true }), 'Could not clear the events')
 
-    if (res) {
+    if (ok) {
       eventsStore.removeAll()
     }
+
+    return ok
   }
 
-  const removeById = async (eventId: EventId) => {
-    await removeList([eventId])
-  }
+  const removeById = (eventId: EventId) => removeList([eventId])
 
   const removeByType = async (eventType: EventType) => {
-    const res = await deleteEventsByType(eventType, { keepPinned: true })
+    const ok = await settle(
+      () => deleteEventsByType(eventType, { keepPinned: true }),
+      'Could not clear the events',
+    )
 
-    if (res) {
+    if (ok) {
       eventsStore.removeByType(eventType);
     }
+
+    return ok
   }
 
-  const getAll = () => {
-    getEventsAll().then((eventsList: ServerEvent<unknown>[]) => {
-      if (eventsList.length) {
-        eventsStore.initializeEvents(eventsList);
+  // Only the newest reply lands, for the project and period it was asked
+  // for, merged with what changed here meanwhile (see eventsStore). The
+  // sequence is the store's, shared by every page and the live stream.
+  const getAll = async () => {
+    const load = eventsStore.startListLoad()
+    eventsStore.setListState('loading')
 
-        // Sync pinned state from server
-        const pinnedIds = eventsList
-          .filter((e) => e.is_pinned)
-          .map((e) => e.uuid)
-        eventsStore.lockedIds = pinnedIds
-      } else {
-        // NOTE: clear cached events hardly
-        eventsStore.removeAll();
+    try {
+      if (eventsStore.applyListLoad(load, await getEventsAll())) {
+        eventsStore.setListState('ready')
       }
-    }).catch((e) => {
-      console.error(e);
-    })
+    } catch (e) {
+      console.error(e)
+      if (eventsStore.failListLoad(load)) {
+        eventsStore.setListState('error', describeLoadError(e))
+      }
+    }
   }
 
   return {

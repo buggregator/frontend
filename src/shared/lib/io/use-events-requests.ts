@@ -3,6 +3,13 @@ import {useEventsStore, useProfileStore} from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
+export class EventsLoadError extends Error {
+  constructor(public readonly status: number, message = `The server answered ${status}`) {
+    super(message)
+    this.name = 'EventsLoadError'
+  }
+}
+
 // keepPinned: the server keeps every pinned event (buggregator/server #365).
 export type DeleteOptions = { keepPinned?: boolean }
 
@@ -18,14 +25,15 @@ type TUseEventsRequests = () => {
   replayHttpDump: (id: EventId) => Promise<void | Response>,
 }
 
-// TODO: add 403 response handling
 
 export const useEventsRequests: TUseEventsRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
   const { activeProjectKey: project, period } = storeToRefs(useEventsStore())
 
-  const headers = {"X-Auth-Token": token.value }
+  // Read at request time: the token is loaded (or changed by a login) after
+  // this composable was created.
+  const headers = () => ({ "X-Auth-Token": token.value })
   const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`
   // The period goes to the server as ?window=. Without it the backend returns
   // the whole project, which is tens of megabytes of JSON per project click.
@@ -42,41 +50,39 @@ export const useEventsRequests: TUseEventsRequests = () => {
   }
   const getEventsRestUrl = (): string => `${REST_API_URL}/api/events`
 
-  const getAll = () => fetch(getEventsPreviewRestUrl(), { headers })
-    .then((response) => response.json())
-    .then((response) => {
-      if (response?.data) {
-        return response.data as ServerEvent<unknown>[]
-      }
-
-      if (response?.code === 403) {
-        console.error('Forbidden')
-        return [];
-      }
-
-      console.error('Fetch Error')
-
-      return [];
-    })
-    .then((events: ServerEvent<unknown>[]) => events)
-
-  const getSingle = (id: EventId) => fetch(getEventRestUrl(id), {headers})
-    .then((response) => {
+  // A failed load throws: an empty list would read as "no events" and wipe
+  // what the page shows.
+  const getAll = () => fetch(getEventsPreviewRestUrl(), { headers: headers() })
+    .then(async (response) => {
       if (!response.ok) {
-        return null;
+        throw new EventsLoadError(response.status)
       }
-      return response.json();
+
+      const body = await response.json()
+
+      if (!Array.isArray(body?.data)) {
+        throw new EventsLoadError(response.status, 'Unexpected answer from the server')
+      }
+
+      return body.data as ServerEvent<unknown>[]
     })
-    .then((response) => {
-      if (response) {
-        return response as ServerEvent<EventType>
+
+  // null: the server has no such event (deleted, cleared, a wrong link).
+  // Any other failure throws, so the page can tell the two apart.
+  const getSingle = (id: EventId) => fetch(getEventRestUrl(id), { headers: headers() })
+    .then(async (response) => {
+      if (response.status === 404) {
+        return null
       }
-      return null;
+      if (!response.ok) {
+        throw new EventsLoadError(response.status)
+      }
+      return (await response.json()) as ServerEvent<EventType>
     })
 
   const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {
     method: 'DELETE',
-    headers,
+    headers: headers(),
     ...(project.value ? { body: JSON.stringify({project: project.value }) } : null)
   })
     .catch((err) => {
@@ -87,7 +93,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
   // what to clear (no `type` and no `uuids`: every event of the project).
   const deleteEvents = (body: { type?: EventType, uuids?: EventId[], keep_pinned?: boolean }) => fetch(getEventsRestUrl(), {
     method: 'DELETE',
-    headers: { ...headers, 'Content-Type': 'application/json' },
+    headers: { ...headers(), 'Content-Type': 'application/json' },
     body: JSON.stringify({
       ...body,
       ...(project.value ? { project: project.value } : null),
@@ -107,14 +113,14 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   const pinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
     method: 'POST',
-    headers,
+    headers: headers(),
   }).catch((err) => {
     console.error('Pin Error', err)
   })
 
   const unpinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
     method: 'DELETE',
-    headers,
+    headers: headers(),
   }).catch((err) => {
     console.error('Unpin Error', err)
   })
@@ -122,7 +128,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const replayHttpDump = (id: EventId): Promise<void | Response> =>
     fetch(`${REST_API_URL}/api/http-dump/${id}/replay`, {
       method: 'POST',
-      headers,
+      headers: headers(),
     }).catch((err) => {
       console.error('Replay Error', err)
     })

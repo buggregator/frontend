@@ -1,4 +1,5 @@
 import { computed, ref, reactive } from 'vue'
+import { describeLoadError } from '@/shared/lib/io'
 import type { SentryExceptionItem, SentryErrorGroup, SentryExceptionDetail } from '../types'
 import { useSentryRequests } from './use-sentry-requests'
 
@@ -10,6 +11,8 @@ export const useSentryExceptions = () => {
   const groupedItems = ref<SentryErrorGroup[]>([])
   const loading = ref(false)
   const hasLoaded = ref(false)
+  // Why the last load failed; the page shows it instead of the empty state.
+  const error = ref('')
   // A first load and a background refresh are different things. The
   // "Loading..." placeholder is only shown while there is nothing to show: on a
   // WebSocket-driven refresh the list stays in place, otherwise the UI flickers
@@ -41,6 +44,9 @@ export const useSentryExceptions = () => {
         items.value = res.data
         total.value = res.meta.total
       }
+      error.value = ''
+    } catch (e) {
+      error.value = describeLoadError(e)
     } finally {
       loading.value = false
       hasLoaded.value = true
@@ -57,6 +63,7 @@ export const useSentryExceptions = () => {
     groupedItems,
     loading,
     hasLoaded,
+    error,
     isInitialLoading,
     total,
     page,

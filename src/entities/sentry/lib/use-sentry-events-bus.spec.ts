@@ -56,6 +56,18 @@ describe('onSentryEvent', () => {
     expect(cb).toHaveBeenCalledTimes(3)
   })
 
+  // Audit 1.5: a delete or a clear made elsewhere left Sentry lists stale.
+  it('notifies after a delete or a clear, once per burst', () => {
+    const cb = vi.fn()
+    onSentryEvent(cb)
+
+    publish({ data: { event: 'event.deleted', data: { uuid: 'a', project: 'default' } } })
+    publish({ data: { event: 'events.cleared', data: null } })
+    vi.advanceTimersByTime(1000)
+
+    expect(cb).toHaveBeenCalledTimes(1)
+  })
+
   it('ignores events of other types', () => {
     const cb = vi.fn()
     onSentryEvent(cb)

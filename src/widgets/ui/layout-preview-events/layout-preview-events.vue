@@ -10,6 +10,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
+import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
 
@@ -45,7 +46,7 @@ const pauseFilteredEvents = computed(() => {
   )
 })
 
-const { searchQuery } = storeToRefs(useEventsStore())
+const { searchQuery, listState, listError } = storeToRefs(useEventsStore())
 const debouncedSearch = refDebounced(searchQuery, 150)
 
 const visibleEvents = computed(() => {
@@ -103,16 +104,13 @@ const { focusedId } = useKeyboardNav(eventUuids, {
       showToast('Event is pinned')
       return
     }
-    events.removeById(id)
-    showToast('Event deleted')
+    events.removeById(id).then((ok) => ok && showToast('Event deleted'))
   },
   onLock: (id) => {
     if (lockedIds.items.value.includes(id)) {
-      lockedIds.remove(id)
-      showToast('Event unpinned')
+      lockedIds.remove(id).then((ok) => ok && showToast('Event unpinned'))
     } else {
-      lockedIds.add(id)
-      showToast('Event pinned')
+      lockedIds.add(id).then((ok) => ok && showToast('Event pinned'))
     }
   },
   onCopyPayload: (id) => {
@@ -143,13 +141,50 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   }
 })
 
-watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
+// Favorites count the pinned events, not the whole feed.
+// The same number as the page header: every pinned event, search or not.
+const titleCount = computed(() => {
+  if (!props.favoritesOnly) {
+    return allEvents.value.length
+  }
+  const pinnedIds = new Set(lockedIds.items.value)
+  return events.items.value.filter(({ uuid }) => pinnedIds.has(uuid)).length
 })
+
+watchEffect(() => {
+  useTitle(`${props.title || 'Events'}: ${titleCount.value} | Buggregator`)
+})
+
+// What the page shows when the feed has no card to show. A failed or running
+// load is not "waiting for events", and an empty search or empty favorites
+// say so instead of the SDK setup welcome.
+// A search is checked before Favorites: pinned events that do not match the
+// search are still favorites.
+const emptyView = computed(() => {
+  if (listState.value === 'loading' && !events.items.value.length) return 'loading'
+  if (debouncedSearch.value.trim()) return 'no-match'
+  if (props.favoritesOnly) return 'no-favorites'
+  return 'welcome'
+})
+
+const clearSearch = () => {
+  searchQuery.value = ''
+}
 </script>
 
 <template>
   <div class="layout-preview-events">
+    <!-- Above the cards: live events keep coming after a failed load. -->
+    <StatusPanel
+      v-if="listState === 'error'"
+      tone="error"
+      :compact="visibleEvents.length > 0"
+      title="Could not load events"
+      :text="listError"
+      action-label="Try again"
+      @action="events.getAll()"
+    />
+
     <main
       v-if="visibleEvents.length"
       role="feed"
@@ -171,12 +206,33 @@ watchEffect(() => {
       />
     </main>
 
-    <section
-      v-if="!visibleEvents.length"
-      class="layout-preview-events__welcome"
-    >
-      <PagePlaceholder class="layout-preview-events__tips" />
-    </section>
+    <template v-else-if="listState !== 'error'">
+      <SkeletonLoader
+        v-if="emptyView === 'loading'"
+        variant="card"
+        aria-label="Loading events"
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-favorites'"
+        title="No favorites yet"
+        text="Pin an event to keep it here. Pinned events also survive Clear."
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-match'"
+        :title="`No events match “${debouncedSearch.trim()}”`"
+        action-label="Clear search"
+        @action="clearSearch"
+      />
+
+      <section
+        v-else
+        class="layout-preview-events__welcome"
+      >
+        <PagePlaceholder class="layout-preview-events__tips" />
+      </section>
+    </template>
   </div>
 </template>
 

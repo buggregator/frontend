@@ -24,13 +24,15 @@ const eventsListLink = computed(() => {
   }
   return path.replace(`/${props.eventId}`, '')
 })
-const onDelete = () => {
+const onDelete = async () => {
   if (!window.confirm('Delete this event? This cannot be undone.')) {
     return
   }
 
-  events.removeById(props.eventId)
-  router.push(eventsListLink.value)
+  // Stay on the event when the server refused: it still exists.
+  if (await events.removeById(props.eventId)) {
+    router.push(eventsListLink.value)
+  }
 }
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)

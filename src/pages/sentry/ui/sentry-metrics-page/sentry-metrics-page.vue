@@ -8,10 +8,12 @@ import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryMetricsList } from '@/entities/sentry/ui/sentry-metrics-list'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { useEventsStore } from '@/shared/stores'
+import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Metrics | Buggregator')
 
-const { metrics, hasLoaded, isInitialLoading, total, page, filters, fetchList } = useSentryMetrics()
+const { metrics, hasLoaded, error, isInitialLoading, total, page, filters, fetchList } =
+  useSentryMetrics()
 
 const activeType = ref('all')
 const search = ref('')
@@ -51,8 +53,19 @@ onSentryEvent(() => {
   <div class="sentry-metrics-page">
     <SentrySubNav />
 
+    <StatusPanel
+      v-if="error"
+      tone="error"
+      title="Could not load metrics"
+      :text="error"
+      action-label="Try again"
+      @action="fetchList"
+    />
+
+    <!-- The list and its filters stay under an error: a retry may need
+         another filter. -->
     <SentryEmptyState
-      v-if="!isInitialLoading && metrics.length === 0 && !hasFilter"
+      v-if="!error && !isInitialLoading && metrics.length === 0 && !hasFilter"
       type="metrics"
     />
 
