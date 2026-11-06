@@ -46,6 +46,15 @@ describe('useEventsRequests: REST delete', () => {
     })
   })
 
+  it('deleteAll and deleteByType pass keep_pinned', async () => {
+    await useEventsRequests().deleteByType(EventTypes.Smtp, { keepPinned: true })
+    expect(lastCall().body).toEqual({ type: 'smtp', project: 'default', keep_pinned: true })
+
+    fetchMock.mockClear()
+    await useEventsRequests().deleteAll({ keepPinned: true })
+    expect(lastCall().body).toEqual({ project: 'default', keep_pinned: true })
+  })
+
   it('deleteList sends the uuids and the project to DELETE /api/events', async () => {
     await useEventsRequests().deleteList(['a', 'b'])
 

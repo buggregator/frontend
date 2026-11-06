@@ -5,9 +5,9 @@ import { useSentryRequests } from './use-sentry-requests'
 
 const page = { data: [], meta: { total: 0, page: 1, limit: 50 } }
 
-// Server facts (buggregator/server #352): every Sentry list takes the period
-// (`window`), but only exceptions are stored with a project — traces, logs and
-// metrics have no project column, so `project` is not sent there.
+// Server facts: every Sentry list takes the period (`window`) and, since
+// buggregator/server #365/#366, the project too — traces, logs, metrics, the
+// service map and the tab counts are stored per project.
 describe('useSentryRequests: scope', () => {
   const fetchMock = vi.fn(() => Promise.resolve(new Response(JSON.stringify(page))))
 
@@ -34,14 +34,25 @@ describe('useSentryRequests: scope', () => {
     expect(query()).toMatchObject({ project: 'shop', window: '7d', grouped: 'true' })
   })
 
-  it.each(['getTraces', 'getLogs', 'getMetrics'] as const)('%s takes the period but not the project', async (fn) => {
+  it.each(['getTraces', 'getLogs', 'getMetrics'] as const)('%s takes the project and the period', async (fn) => {
     await useSentryRequests()[fn]({ page: '1' })
-    expect(query()).toMatchObject({ window: '7d', page: '1' })
+    expect(query()).toMatchObject({ project: 'shop', window: '7d', page: '1' })
+  })
+
+  it('scopes the service map by project and keeps its window', async () => {
+    await useSentryRequests().getServiceMap(15)
+    expect(query()).toEqual({ project: 'shop', window: '15' })
+  })
+
+  // A trace can span several projects, and with ?project the server answers 404
+  // when the trace has no transaction in that project (e.g. an error's trace
+  // started elsewhere). The trace detail always shows the whole trace.
+  it('loads a trace detail without the project', async () => {
+    await useSentryRequests().getTraceDetail('abc')
     expect(query()).not.toHaveProperty('project')
   })
 
-  // The tab badges label the lists: the server counts exceptions per project
-  // and every type per period, so /counts takes both.
+  // The tab badges label the lists, so /counts takes the same scope.
   it('counts by project and period', async () => {
     await useSentryRequests().getCounts()
     expect(query()).toMatchObject({ project: 'shop', window: '7d' })
