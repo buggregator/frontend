@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import type { SentryLog } from '../../types'
 import SentryLogRow from './sentry-log-row.vue'
 
@@ -8,25 +7,18 @@ type Props = {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false
 })
 
+// The filter is applied by the server: the list shows one page of the matches
+const activeLevel = defineModel<string>('level', { default: 'all' })
+
 const levels = ['all', 'debug', 'info', 'warn', 'error', 'fatal'] as const
-const activeLevel = ref<string>('all')
 
 const setLevel = (lvl: string) => {
   activeLevel.value = lvl
 }
-
-const filteredLogs = computed(() => {
-  if (activeLevel.value === 'all') return props.logs
-  return props.logs.filter((l) => {
-    if (activeLevel.value === 'warn') return l.level === 'warn' || l.level === 'warning'
-    if (activeLevel.value === 'error') return l.level === 'error' || l.level === 'fatal'
-    return l.level === activeLevel.value
-  })
-})
 
 const chipClass = (lvl: string) => {
   if (activeLevel.value !== lvl) return ''
@@ -53,7 +45,7 @@ const chipClass = (lvl: string) => {
 
     <div class="logs-list__rows">
       <SentryLogRow
-        v-for="log in filteredLogs"
+        v-for="log in logs"
         :key="log.id"
         :log="log"
       />
@@ -66,7 +58,7 @@ const chipClass = (lvl: string) => {
       </div>
 
       <div
-        v-if="!loading && filteredLogs.length === 0"
+        v-if="!loading && logs.length === 0"
         class="logs-list__status"
       >
         No logs match the selected filter.

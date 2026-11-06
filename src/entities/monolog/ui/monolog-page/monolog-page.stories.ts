@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useMonolog } from "../../lib";
 import {
   monologMock,
+  monologWithExtraMock,
+  monologExtendedMock,
   monologDebugMock,
   monologInfoMock,
   monologNoticeMock,
@@ -74,5 +76,17 @@ export const Alert: StoryObj<typeof Monolog> = {
 export const Emergency: StoryObj<typeof Monolog> = {
   args: {
     event: normalizeMonologEvent(monologEmergencyMock),
+  }
+}
+
+export const WithExtra: StoryObj<typeof Monolog> = {
+  args: {
+    event: normalizeMonologEvent(monologWithExtraMock),
+  }
+}
+
+export const Extended: StoryObj<typeof Monolog> = {
+  args: {
+    event: normalizeMonologEvent(monologExtendedMock),
   }
 }

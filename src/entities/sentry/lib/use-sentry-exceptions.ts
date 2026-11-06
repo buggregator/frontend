@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import type { SentryExceptionItem, SentryErrorGroup, SentryExceptionDetail } from '../types'
 import { useSentryRequests } from './use-sentry-requests'
 
@@ -9,6 +9,12 @@ export const useSentryExceptions = () => {
   const items = ref<SentryExceptionItem[]>([])
   const groupedItems = ref<SentryErrorGroup[]>([])
   const loading = ref(false)
+  const hasLoaded = ref(false)
+  // A first load and a background refresh are different things. The
+  // "Loading..." placeholder is only shown while there is nothing to show: on a
+  // WebSocket-driven refresh the list stays in place, otherwise the UI flickers
+  // on every incoming event.
+  const isInitialLoading = computed(() => loading.value && !hasLoaded.value)
   const total = ref(0)
   const page = ref(1)
   const filters = reactive<{ level: string | null; handled: string | null }>({
@@ -37,6 +43,7 @@ export const useSentryExceptions = () => {
       }
     } finally {
       loading.value = false
+      hasLoaded.value = true
     }
   }
 
@@ -49,6 +56,8 @@ export const useSentryExceptions = () => {
     items,
     groupedItems,
     loading,
+    hasLoaded,
+    isInitialLoading,
     total,
     page,
     filters,

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useSentryLogs } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
@@ -11,7 +11,22 @@ import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Logs | Buggregator')
 
-const { logs, loading, total, fetchList } = useSentryLogs()
+const { logs, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
+
+// A chip stands for the levels SDKs send for it
+const levelsOfChip: Record<string, string | null> = {
+  all: null,
+  warn: 'warn,warning',
+  error: 'error,fatal',
+}
+
+const activeLevel = ref('all')
+
+watch(activeLevel, (level) => {
+  filters.level = level in levelsOfChip ? levelsOfChip[level] : level
+  page.value = 1
+  fetchList()
+})
 
 // The project and the period are mixed into the request in use-sentry-requests;
 // neither triggers reactivity on its own, so refetch the list explicitly.
@@ -35,18 +50,19 @@ onSentryEvent(() => {
     <SentrySubNav />
 
     <SentryEmptyState
-      v-if="!loading && logs.length === 0"
+      v-if="!isInitialLoading && logs.length === 0 && activeLevel === 'all'"
       type="logs"
     />
 
     <SentryLogsList
       v-else
+      v-model:level="activeLevel"
       :logs="logs"
-      :loading="loading"
+      :loading="isInitialLoading"
     />
 
     <div
-      v-if="!loading && total > 0"
+      v-if="!isInitialLoading && total > 0"
       class="sentry-logs-page__footer"
     >
       {{ total }} log{{ total !== 1 ? 's' : '' }}

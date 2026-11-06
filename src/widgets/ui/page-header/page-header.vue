@@ -7,7 +7,7 @@ import { useEventsStore } from '@/shared/stores'
 import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
 
-const { events, cachedEvents } = useEvents()
+const { events, cachedEvents, lockedIds } = useEvents()
 const eventsStore = useEventsStore()
 const { searchQuery } = storeToRefs(eventsStore)
 
@@ -18,7 +18,20 @@ type Props = {
 
 const props = defineProps<Props>()
 
+// Clear cannot be undone, so it always asks first. No count: the server holds
+// more events than the browser has loaded, and pinned ones are kept.
+const clearMessage = computed(() => {
+  const what = props.type === ALL_EVENT_TYPES ? 'events' : `${props.title} events`
+  const pinned = lockedIds.items.value.length > 0 ? ' Pinned events stay.' : ''
+
+  return `Delete all ${what} in this project? This cannot be undone.${pinned}`
+})
+
 const clearEvents = () => {
+  if (!window.confirm(clearMessage.value)) {
+    return undefined
+  }
+
   if (props.type === ALL_EVENT_TYPES) {
     return events.removeAll()
   }

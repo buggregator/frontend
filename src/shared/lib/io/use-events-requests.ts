@@ -37,6 +37,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     const qs = params.toString()
     return `${REST_API_URL}/api/events/preview${qs ? `?${qs}` : ''}`
   }
+  const getEventsRestUrl = (): string => `${REST_API_URL}/api/events`
 
   const getAll = () => fetch(getEventsPreviewRestUrl(), { headers })
     .then((response) => response.json())
@@ -79,35 +80,25 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => fetch(getEventsPreviewRestUrl(), {
+  // The server clears events only through `DELETE /api/events`; the body says
+  // what to clear (no `type` and no `uuids`: every event of the project).
+  const deleteEvents = (body: { type?: EventType, uuids?: EventId[] }) => fetch(getEventsRestUrl(), {
     method: 'DELETE',
-    headers,
-    ...(project.value ? { body: JSON.stringify({project: project.value}) } : null)
-  })
-    .catch((err) => {
-      console.error('Fetch Error', err)
-    })
-
-  const deleteList = (uuids: EventId[]) => fetch(getEventsPreviewRestUrl(), {
-    method: 'DELETE',
-    headers,
-    body: JSON.stringify({uuids})
-  })
-    .catch((err) => {
-      console.error('Fetch Error', err)
-    })
-
-  const deleteByType = (type: EventType) => fetch(getEventsPreviewRestUrl(), {
-    method: 'DELETE',
-    headers,
+    headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      type,
+      ...body,
       ...(project.value ? { project: project.value } : null),
     })
   })
     .catch((err) => {
       console.error('Fetch Error', err)
     })
+
+  const deleteAll = () => deleteEvents({})
+
+  const deleteList = (uuids: EventId[]) => deleteEvents({ uuids })
+
+  const deleteByType = (type: EventType) => deleteEvents({ type })
 
   const pinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
     method: 'POST',

@@ -27,5 +27,6 @@ export {
   mockSpans,
   mockTraceDetail,
   mockLogs,
+  mockMetrics,
   mockServiceMap,
 } from './sentry-v2-mocks'

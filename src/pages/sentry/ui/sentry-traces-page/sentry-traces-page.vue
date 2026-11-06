@@ -14,7 +14,7 @@ useTitle('Sentry Traces | Buggregator')
 
 const STORAGE_KEY = 'sentry_traces_view_mode'
 
-const { traces, loading, total, fetchList } = useSentryTraces()
+const { traces, isInitialLoading, total, fetchList } = useSentryTraces()
 
 const viewMode = ref<'list' | 'map'>(
   (window?.localStorage?.getItem(STORAGE_KEY) as 'list' | 'map') || 'list'
@@ -69,7 +69,7 @@ onSentryEvent(() => {
       class="sentry-traces-page__list"
     >
       <div
-        v-if="loading"
+        v-if="isInitialLoading"
         class="sentry-traces-page__loading"
       >
         Loading...
@@ -89,7 +89,7 @@ onSentryEvent(() => {
       />
 
       <div
-        v-if="!loading && total > 0"
+        v-if="!isInitialLoading && total > 0"
         class="sentry-traces-page__footer"
       >
         {{ total }} trace{{ total !== 1 ? 's' : '' }}

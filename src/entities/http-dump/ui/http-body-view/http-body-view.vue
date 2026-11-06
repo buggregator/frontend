@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, toRef } from 'vue'
 import { CodeSnippet } from '@/shared/ui'
+import { EMAIL_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
 import { JsonTreeView, useJsonTree } from '@/shared/ui/json-tree-view'
 
 type Props = {
@@ -31,13 +32,21 @@ const prettyJson = computed(() => {
 
 const isHtml = computed(() => props.language === 'html')
 
+// The captured body never runs in the app's origin: the new tab only holds a
+// sandboxed frame with it, and the wrapper page itself has no script.
 const openHtmlPreview = () => {
   if (!props.body) return
-  const win = window.open('about:blank')
-  if (win) {
-    win.document.write(props.body)
-    win.document.close()
-  }
+  const frame = document.createElement('iframe')
+  frame.setAttribute('sandbox', EMAIL_FRAME_SANDBOX)
+  frame.setAttribute('srcdoc', props.body)
+  frame.setAttribute('style', 'border:0;width:100%;height:100%;display:block')
+  const page =
+    '<!doctype html><meta charset="utf-8"><title>HTTP body preview</title>' +
+    '<style>html,body{height:100%;margin:0}</style>' +
+    frame.outerHTML
+  const url = URL.createObjectURL(new Blob([page], { type: 'text/html' }))
+  window.open(url, '_blank', 'noopener')
+  setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
 defineExpose({ viewMode, htmlMode, isJson, isHtml })

@@ -15,7 +15,7 @@ useTitle('Sentry Exceptions | Buggregator')
 
 const STORAGE_KEY = 'sentry_exceptions_view_mode'
 
-const { grouped, groupedItems, loading, total, page, filters, fetchList } = useSentryExceptions()
+const { grouped, groupedItems, isInitialLoading, total, page, filters, fetchList } = useSentryExceptions()
 
 // Restore view mode preference from localStorage.
 const storedMode = window?.localStorage?.getItem(STORAGE_KEY)
@@ -104,8 +104,11 @@ onSentryEvent(() => {
       v-if="grouped"
       class="sentry-exceptions-page__list"
     >
+      <!-- The placeholder is for the first load only: on a WebSocket-driven
+           refresh the list stays in place, otherwise the UI flickers on every
+           incoming event. -->
       <div
-        v-if="loading"
+        v-if="isInitialLoading"
         class="sentry-exceptions-page__loading"
       >
         Loading...
@@ -125,7 +128,7 @@ onSentryEvent(() => {
       />
 
       <div
-        v-if="!loading && total > 0"
+        v-if="!isInitialLoading && total > 0"
         class="sentry-exceptions-page__footer"
       >
         {{ total }} group{{ total !== 1 ? 's' : '' }}

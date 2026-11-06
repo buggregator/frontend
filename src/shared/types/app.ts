@@ -13,4 +13,5 @@ export enum RouteName {
   SentryTraces = 'sentry-traces',
   SentryTraceDetail = 'sentry-trace-detail',
   SentryLogs = 'sentry-logs',
+  SentryMetrics = 'sentry-metrics',
 }

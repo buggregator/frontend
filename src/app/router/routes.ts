@@ -10,6 +10,7 @@ import {
   SentryExceptionsPage,
   SentryTracesPage,
   SentryLogsPage,
+  SentryMetricsPage,
   SentryTraceDetailPage,
 } from "@/pages/sentry";
 import {SettingsPage} from "@/pages/settings";
@@ -53,6 +54,7 @@ export const routes = [
       { path: 'traces', name: RouteName.SentryTraces, component: SentryTracesPage },
       { path: 'traces/:traceId', name: RouteName.SentryTraceDetail, component: SentryTraceDetailPage },
       { path: 'logs', name: RouteName.SentryLogs, component: SentryLogsPage },
+      { path: 'metrics', name: RouteName.SentryMetrics, component: SentryMetricsPage },
       { path: ':id', redirect: (to: RouteLocation) => `/sentry/event/${to.params.id}` },
     ]
   },

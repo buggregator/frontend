@@ -25,8 +25,12 @@ const eventsListLink = computed(() => {
   return path.replace(`/${props.eventId}`, '')
 })
 const onDelete = () => {
+  if (!window.confirm('Delete this event? This cannot be undone.')) {
+    return
+  }
+
   events.removeById(props.eventId)
-  router.push({ name: RouteName.Home })
+  router.push(eventsListLink.value)
 }
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
