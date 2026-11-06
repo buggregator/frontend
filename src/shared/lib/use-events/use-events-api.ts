@@ -9,7 +9,7 @@ import { showToast } from '../use-keyboard-nav';
 
 export type TUseEventsApi = {
   items: Ref<ServerEvent<unknown>[]>
-  getItem: (id: EventId) => Promise<ServerEvent<EventType> | null>
+  getItem: (id: EventId) => Promise<ServerEvent<unknown> | null>
   getAll: () => Promise<void>
   removeAll: () => Promise<boolean>
   removeByType: (type: EventType) => Promise<boolean>
@@ -118,7 +118,7 @@ export const useEventsApi = (): TUseEventsApi => {
   }
 
   return {
-    items: events as unknown as Ref<ServerEvent<unknown>[]>,
+    items: events,
     getItem: getEvent,
     getAll,
     removeAll,

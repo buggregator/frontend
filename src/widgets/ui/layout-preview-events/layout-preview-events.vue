@@ -114,7 +114,7 @@ const { focusedId } = useKeyboardNav(eventUuids, {
     if (event) {
       router.push({
         name: RouteName.EventPage,
-        params: { type: event.type as string, id: event.uuid }
+        params: { type: event.type, id: event.uuid }
       })
     }
   },

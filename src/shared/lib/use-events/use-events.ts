@@ -101,7 +101,7 @@ export const useEvents: TUseEvents = () => {
       runUpdatesByType: eventsStore.removeCachedByType,
     },
     lockedIds: {
-      items: lockedIds as unknown as Ref<EventId[]>,
+      items: lockedIds,
       add: addPin,
       remove: removePin,
     },

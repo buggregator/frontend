@@ -4,7 +4,7 @@ import { computed } from 'vue'
 import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
-import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
+import { type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
 
 const { events, cachedEvents, lockedIds } = useEvents()
@@ -37,7 +37,7 @@ const clearEvents = () => {
     return events.removeAll()
   }
 
-  return events.removeByType(props.type as unknown as EventType)
+  return events.removeByType(props.type)
 }
 
 const isEventsPaused = computed(() => cachedEvents.idsByType.value[props.type]?.length > 0)

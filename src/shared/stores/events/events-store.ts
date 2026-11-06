@@ -8,7 +8,8 @@ import {
   type ServerEvent,
   type PageEventTypes,
   type TProjects,
-  EventTypes
+  EventTypes,
+  isEventType
 } from '../../types';
 import {useSettingsStore} from "../settings";
 import {
@@ -71,7 +72,7 @@ export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
-    countsMap: new Map<string, number>() as Map<string, number>,
+    countsMap: new Map<string, number>(),
     cachedIds: getStoredCachedIds() || createInitialCachedIds(),
     lockedIds: getStoredLockedIds() || [],
     projects: {
@@ -116,7 +117,7 @@ export const useEventsStore = defineStore("eventsStore", {
     rebuildCountsMap() {
       this.countsMap.clear();
       for (const event of this.events) {
-        this.countsMap.set(event.type as EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
+        this.countsMap.set(event.type, (this.countsMap.get(event.type) ?? 0) + 1);
       }
     },
     async initialize (): Promise<void> {
@@ -137,7 +138,7 @@ export const useEventsStore = defineStore("eventsStore", {
       const { availableEvents } = useSettingsStore();
 
       this.events = events
-        .filter((el) => availableEvents.includes(el.type as EventType))
+        .filter((el) => isEventType(el.type) && availableEvents.includes(el.type))
         .slice(0, MAX_EVENTS_COUNT);
 
       this.rebuildCountsMap();
@@ -149,18 +150,18 @@ export const useEventsStore = defineStore("eventsStore", {
       const existingIds = new Set(this.events.map(e => e.uuid));
 
       events
-        .filter((el) => availableEvents.includes(el.type as EventType))
+        .filter((el) => isEventType(el.type) && availableEvents.includes(el.type))
         .forEach((event) => {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
           existingIds.add(event.uuid);
           this.listLoad?.added.push(event.uuid);
-          this.countsMap.set(event.type as  EventType, (this.countsMap.get(event.type as EventType) ?? 0) + 1);
+          this.countsMap.set(event.type, (this.countsMap.get(event.type) ?? 0) + 1);
 
           if (this.events.length > MAX_EVENTS_COUNT) {
             const removed = this.events.pop()!;
-            const count = this.countsMap.get(removed.type as EventType) ?? 1;
-            this.countsMap.set(removed.type as EventType, count - 1);
+            const count = this.countsMap.get(removed.type) ?? 1;
+            this.countsMap.set(removed.type, count - 1);
           }
         } else {
           this.events = this.events.map((el) => el.uuid === event.uuid ? event : el);
