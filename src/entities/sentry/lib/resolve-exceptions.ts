@@ -4,7 +4,9 @@ type Stacktrace = { frames?: SentryFrame[] }
 
 const hasFrames = (st?: Stacktrace): boolean => Boolean(st?.frames && st.frames.length > 0)
 
-const messageText = (payload?: Sentry): string => {
+// The text of a message event: `message` is a string in the store API and
+// {formatted, message, params} in envelopes; older SDKs send `logentry`.
+export const sentryMessageText = (payload?: Sentry): string => {
   const message = payload?.message as unknown
   if (typeof message === 'string') return message
   if (message && typeof message === 'object') {
@@ -36,7 +38,7 @@ export const resolveExceptionValues = (payload?: Sentry): SentryException[] => {
 
   const stacktrace = topLevelStacktrace(payload)
   if (stacktrace) {
-    return [{ type: 'Message', value: messageText(payload), stacktrace } as SentryException]
+    return [{ type: 'Message', value: sentryMessageText(payload), stacktrace } as SentryException]
   }
   return []
 }

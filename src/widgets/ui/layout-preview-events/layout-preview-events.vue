@@ -2,7 +2,7 @@
 import { useTitle, refDebounced } from '@vueuse/core'
 import { toBlob } from 'html-to-image'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
@@ -172,9 +172,8 @@ const titleCount = computed(() => {
   return events.items.value.filter(({ uuid }) => pinnedIds.has(uuid)).length
 })
 
-watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${titleCount.value} | Buggregator`)
-})
+// One title source; it gives the page's own title back on unmount.
+useTitle(computed(() => `${props.title || 'Events'}: ${titleCount.value} | Buggregator`))
 
 // What the page shows when the feed has no card to show. A failed or running
 // load is not "waiting for events", and an empty search or empty favorites

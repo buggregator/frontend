@@ -42,9 +42,10 @@ const { events, lockedIds } = useEvents()
 const isLocked = computed(() => (lockedIds?.items.value || []).includes(props.event.id))
 
 const normalizedOrigin = computed(() => {
+  // Filter before String(): String(null) is «null», which then shows as a value.
   const originEntriesList = Object.entries(props.event.origin || {})
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
     .map(([key, value]) => [key, String(value)])
-    .filter(([_, value]) => Boolean(value))
 
   return originEntriesList.length > 0 ? Object.fromEntries(originEntriesList) : null
 })

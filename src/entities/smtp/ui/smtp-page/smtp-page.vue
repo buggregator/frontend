@@ -208,7 +208,10 @@ onMounted(getAttachmentsRequest)
             Message Info
           </h3>
           <div class="smtp-info-rows">
-            <div class="smtp-info-row">
+            <div
+              v-if="event.payload.id"
+              class="smtp-info-row"
+            >
               <span class="smtp-info-row__label">Message ID</span>
               <span class="smtp-info-row__value">{{ event.payload.id }}</span>
             </div>

@@ -1,65 +1,28 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import { REST_API_URL } from '@/shared/lib/io/constants'
 import { useProfileStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
-import { AppHeader } from '@/shared/ui'
+import { AppHeader, StatusPanel } from '@/shared/ui'
+import { useMetrics } from '../../lib'
 
 useTitle('Metrics | Buggregator')
 
 const { token } = storeToRefs(useProfileStore())
 
-interface MetricsData {
-  events: {
-    received: Record<string, number>
-    stored: Record<string, number>
-    errors: number
-  }
-  connections: {
-    websocket: number
-    tcp: Record<string, number>
-  }
-  http: {
-    requests_total: number
-  }
-  webhooks: {
-    sent: number
-    failed: number
-  }
-}
-
-const emptyMetrics: MetricsData = {
-  events: { received: {}, stored: {}, errors: 0 },
-  connections: { websocket: 0, tcp: {} },
-  http: { requests_total: 0 },
-  webhooks: { sent: 0, failed: 0 }
-}
-
-const metrics = ref<MetricsData>({ ...emptyMetrics })
-const loading = ref(true)
+const { state, metrics, error, stale, load } = useMetrics(() =>
+  fetch(`${REST_API_URL}/api/metrics`, { headers: { 'X-Auth-Token': token.value } })
+)
 let refreshInterval: ReturnType<typeof setInterval> | null = null
 
-async function fetchMetrics() {
-  try {
-    const res = await fetch(`${REST_API_URL}/api/metrics`, {
-      headers: { 'X-Auth-Token': token.value }
-    })
-    if (res.ok) {
-      metrics.value = await res.json()
-    }
-  } catch {
-    // silently use current/empty metrics
-  } finally {
-    loading.value = false
-  }
-}
-
 onMounted(() => {
-  fetchMetrics()
-  refreshInterval = setInterval(fetchMetrics, 5000)
+  load()
+  refreshInterval = setInterval(() => {
+    if (state.value !== 'off') load()
+  }, 5000)
 })
 
 onUnmounted(() => {
@@ -108,14 +71,42 @@ function formatEventType(type: string): string {
     <div class="metrics-page__content">
       <!-- Loading -->
       <div
-        v-if="loading"
+        v-if="state === 'loading'"
         class="metrics-page__status"
+        role="status"
       >
         <div class="metrics-page__spinner" />
         <span>Loading metrics...</span>
       </div>
 
+      <StatusPanel
+        v-else-if="state === 'off'"
+        title="Metrics are off"
+      >
+        <p class="metrics-page__hint">
+          Set <code>metrics.enabled: true</code> in <code>buggregator.yaml</code>
+          or <code>METRICS_ENABLED=true</code>, and restart the server.
+        </p>
+      </StatusPanel>
+
+      <StatusPanel
+        v-else-if="state === 'error' || !metrics"
+        tone="error"
+        title="Could not load metrics"
+        :text="error"
+        action-label="Try again"
+        @action="load"
+      />
+
       <template v-else>
+        <p
+          v-if="stale"
+          class="metrics-page__stale"
+          role="status"
+        >
+          Could not refresh ({{ error }}). These are the last numbers received.
+        </p>
+
         <!-- Top-level stat cards -->
         <div class="metrics-grid">
           <div class="stat-card stat-card--blue">
@@ -311,6 +302,18 @@ function formatEventType(type: string): string {
 }
 
 /* ── Status / Loading ─────────────────────────────────────── */
+.metrics-page__hint {
+  @apply text-sm text-gray-600 dark:text-gray-300;
+
+  code {
+    @apply px-1 rounded bg-gray-100 dark:bg-gray-800 font-mono text-xs;
+  }
+}
+
+.metrics-page__stale {
+  @apply mb-4 text-sm text-amber-800 dark:text-amber-300;
+}
+
 .metrics-page__status {
   @apply flex items-center justify-center gap-3 py-20;
   @apply text-sm text-gray-500 dark:text-gray-400;

@@ -60,11 +60,7 @@ const emit = defineEmits<{ action: [] }>()
   @apply text-base font-semibold text-gray-900 dark:text-gray-100;
 }
 
-.status-panel--error .status-panel--compact {
-  @apply py-4;
-}
-
-.status-panel__title {
+.status-panel--error .status-panel__title {
   @apply text-red-700 dark:text-red-400;
 }
 

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
+import PreviewCardFooter from './preview-card-footer.vue'
 import PreviewCard from './preview-card.vue'
 
 vi.mock('../../lib/use-events', () => ({
@@ -35,5 +36,14 @@ describe('PreviewCard', () => {
     expect(again.find('.body').exists()).toBe(false)
     await again.get('.toggle').trigger('click')
     expect(again.find('.body').exists()).toBe(true)
+  })
+
+  // Audit 5.12: a Sentry message without an environment showed «env null».
+  it('passes no empty origin value to the footer', () => {
+    const wrapper = mount(PreviewCard, {
+      props: { event: { ...event, origin: { environment: null, logger: undefined, release: '', host: 'web-1' } } } as never,
+      global: { stubs: { PreviewCardHeader: true, PreviewCardFooter: true } },
+    })
+    expect(wrapper.findComponent(PreviewCardFooter).props('originConfig')).toEqual({ host: 'web-1' })
   })
 })

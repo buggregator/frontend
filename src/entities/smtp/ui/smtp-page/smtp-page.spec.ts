@@ -49,4 +49,14 @@ describe('SmtpPage: HTML preview', () => {
 
     wrapper.unmount()
   })
+
+  // Audit 5.18: an email without a Message-ID showed an empty «Message ID» row.
+  it('hides the Message ID row when the email has none', () => {
+    const event = normalizeSmtpEvent({ ...smtpWelcomeMock, payload: { ...smtpWelcomeMock.payload, id: '' } })
+    const wrapper = mount(SmtpPage, { props: { event } })
+    expect(wrapper.text()).not.toContain('Message ID')
+
+    const withId = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) } })
+    expect(withId.text()).toContain('Message ID')
+  })
 })
