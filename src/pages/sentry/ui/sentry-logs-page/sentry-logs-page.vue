@@ -47,7 +47,7 @@ onMounted(() => {
 
 onSentryEvent(() => {
   fetchList()
-})
+}, ['log'])
 </script>
 
 <template>

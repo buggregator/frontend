@@ -46,7 +46,7 @@ onMounted(() => {
 
 onSentryEvent(() => {
   fetchList()
-})
+}, ['metric'])
 </script>
 
 <template>
