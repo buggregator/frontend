@@ -48,11 +48,15 @@ describe('useEventsApi: Clear with pinned events', () => {
     expect(useEventsStore().events.map(({ uuid }) => uuid).sort()).toEqual(['a', 'c'])
   })
 
-  it('asks for no keep_pinned when nothing is pinned', async () => {
+  // A pin made in another tab, or on an event this browser has not loaded,
+  // is not in this store; the server must keep it anyway.
+  it('asks the server to keep pinned events even when this store knows no pins', async () => {
     useEventsStore().removeLockedIds('a')
 
     await useEventsApi().removeAll()
+    await useEventsApi().removeByType(EventTypes.Smtp)
 
-    expect(transport.deleteEventsAll).toHaveBeenCalledWith({ keepPinned: false })
+    expect(transport.deleteEventsAll).toHaveBeenCalledWith({ keepPinned: true })
+    expect(transport.deleteEventsByType).toHaveBeenCalledWith('smtp', { keepPinned: true })
   })
 })
