@@ -67,7 +67,7 @@ onMounted(() => {
 
 onSentryEvent(() => {
   if (grouped.value) fetchList()
-})
+}, ['error'])
 </script>
 
 <template>

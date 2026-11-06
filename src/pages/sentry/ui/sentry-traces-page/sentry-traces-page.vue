@@ -41,7 +41,7 @@ onMounted(() => {
 
 onSentryEvent(() => {
   fetchList()
-})
+}, ['trace'])
 </script>
 
 <template>

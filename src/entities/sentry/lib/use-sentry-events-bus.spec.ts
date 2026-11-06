@@ -16,9 +16,11 @@ vi.mock('@/shared/lib/io', () => ({
 vi.mock('vue', () => ({ onUnmounted: () => {} }))
 
 const sentryEvent = () => publish({ data: { event: 'event.received', data: { type: 'sentry' } } })
+const stored = (...kinds: string[]) =>
+  publish({ data: { event: 'sentry.stored', data: { project: 'default', kinds } } })
 
 describe('onSentryEvent', () => {
-  let onSentryEvent: (cb: () => void) => void
+  let onSentryEvent: typeof import('./use-sentry-events-bus').onSentryEvent
 
   beforeEach(async () => {
     vi.useFakeTimers()
@@ -76,5 +78,67 @@ describe('onSentryEvent', () => {
     vi.advanceTimersByTime(20000)
 
     expect(cb).not.toHaveBeenCalled()
+  })
+
+  it('notifies only the listeners of the kinds that were stored', () => {
+    const onLog = vi.fn()
+    const onMetric = vi.fn()
+    const onAny = vi.fn()
+    onSentryEvent(onLog, ['log'])
+    onSentryEvent(onMetric, ['metric'])
+    onSentryEvent(onAny)
+
+    stored('metric')
+    vi.advanceTimersByTime(1000)
+
+    expect(onMetric).toHaveBeenCalledTimes(1)
+    expect(onAny).toHaveBeenCalledTimes(1)
+    expect(onLog).not.toHaveBeenCalled()
+  })
+
+  it('collects the kinds of a burst and notifies each listener once', () => {
+    const onLog = vi.fn()
+    const onError = vi.fn()
+    onSentryEvent(onLog, ['log'])
+    onSentryEvent(onError, ['error'])
+
+    stored('log')
+    sentryEvent()
+    stored('log', 'trace')
+    vi.advanceTimersByTime(1000)
+
+    expect(onLog).toHaveBeenCalledTimes(1)
+    expect(onError).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not notify an error listener for stored rows', () => {
+    const onError = vi.fn()
+    onSentryEvent(onError, ['error'])
+
+    stored('log', 'metric', 'trace')
+    vi.advanceTimersByTime(20000)
+
+    expect(onError).not.toHaveBeenCalled()
+  })
+
+  it('ignores a stored notice without known kinds', () => {
+    const cb = vi.fn()
+    onSentryEvent(cb)
+
+    stored('profile')
+    publish({ data: { event: 'sentry.stored', data: { project: 'default' } } })
+    vi.advanceTimersByTime(20000)
+
+    expect(cb).not.toHaveBeenCalled()
+  })
+
+  it('notifies every listener after a delete, whatever its kinds', () => {
+    const onLog = vi.fn()
+    onSentryEvent(onLog, ['log'])
+
+    publish({ data: { event: 'event.deleted', data: { uuid: 'a', project: 'default' } } })
+    vi.advanceTimersByTime(1000)
+
+    expect(onLog).toHaveBeenCalledTimes(1)
   })
 })
