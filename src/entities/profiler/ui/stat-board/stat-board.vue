@@ -56,7 +56,7 @@ const statItems = computed(() => calcStatItems(props.cost))
 }
 
 .stat-board__item-percent {
-  @apply text-gray-400 dark:text-gray-500 ml-1;
+  @apply text-gray-500 dark:text-gray-400 ml-1;
 }
 
 .stat-board__item-value {

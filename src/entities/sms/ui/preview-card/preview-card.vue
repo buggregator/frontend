@@ -137,7 +137,7 @@ const hasWarnings = computed(
 
 .sms-body__arrow {
   @apply w-3.5 h-3.5 flex-shrink-0;
-  @apply text-gray-300 dark:text-gray-600;
+  @apply text-gray-300 dark:text-gray-400;
 }
 
 .sms-body__badge {
@@ -173,7 +173,7 @@ const hasWarnings = computed(
 }
 
 .sms-body__preview {
-  @apply text-xs text-gray-400 dark:text-gray-500 leading-relaxed line-clamp-2;
+  @apply text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2;
 }
 
 .sms-body__warnings {

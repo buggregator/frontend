@@ -36,7 +36,7 @@ const ideLink = computed(() => buildLink(props.frame.file_name, props.frame.line
 }
 
 .ray-frame__label {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .ray-frame__link {

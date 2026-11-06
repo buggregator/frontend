@@ -465,7 +465,7 @@ useTitle('Settings | Buggregator')
 }
 
 .s-row__hint {
-  @apply text-xs text-gray-400 dark:text-gray-500 mr-2;
+  @apply text-xs text-gray-500 dark:text-gray-400 mr-2;
 }
 
 .s-row__code {
@@ -501,7 +501,7 @@ useTitle('Settings | Buggregator')
 
 .s-segmented__opt {
   @apply px-3 py-1.5 text-xs font-medium rounded-md;
-  @apply text-gray-600 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-300;
   @apply transition-all duration-150 cursor-pointer;
   @apply flex items-center gap-1.5;
 
@@ -539,7 +539,7 @@ useTitle('Settings | Buggregator')
 }
 
 .s-about-box__label {
-  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400;
 }
 
 .s-about-box__value {

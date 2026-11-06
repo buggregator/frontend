@@ -92,7 +92,7 @@ onSentryEvent(() => {
 }
 
 .sentry-metrics-page__footer {
-  @apply text-center py-3 text-xs text-gray-400;
+  @apply text-center py-3 text-xs text-gray-500 dark:text-gray-400;
   @apply border-t border-gray-100 dark:border-gray-800;
 }
 </style>

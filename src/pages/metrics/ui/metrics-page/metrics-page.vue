@@ -372,7 +372,7 @@ function formatEventType(type: string): string {
 
 .stat-card__sub {
   @apply text-xs mt-1;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 /* ── Sections ─────────────────────────────────────────────── */
@@ -394,7 +394,7 @@ function formatEventType(type: string): string {
 }
 
 .metrics-section__empty {
-  @apply text-sm text-gray-400 dark:text-gray-500;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
 /* ── Events table ─────────────────────────────────────────── */
@@ -407,7 +407,7 @@ function formatEventType(type: string): string {
 
   th {
     @apply text-left text-xs font-medium uppercase tracking-wider px-5 py-2;
-    @apply text-gray-400 dark:text-gray-500;
+    @apply text-gray-500 dark:text-gray-400;
     @apply border-b border-gray-100 dark:border-gray-700;
   }
 
@@ -441,7 +441,7 @@ function formatEventType(type: string): string {
 }
 
 .metrics-table__empty td {
-  @apply text-center text-gray-400 dark:text-gray-500 py-8;
+  @apply text-center text-gray-500 dark:text-gray-400 py-8;
 }
 
 /* ── Connection items ─────────────────────────────────────── */
@@ -485,7 +485,7 @@ function formatEventType(type: string): string {
 /* ── Auto-refresh indicator ───────────────────────────────── */
 .metrics-page__refresh {
   @apply flex items-center justify-center gap-2 py-4;
-  @apply text-xs text-gray-400 dark:text-gray-500;
+  @apply text-xs text-gray-500 dark:text-gray-400;
 }
 
 .metrics-page__refresh-dot {

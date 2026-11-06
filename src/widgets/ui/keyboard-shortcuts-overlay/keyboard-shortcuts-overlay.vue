@@ -136,7 +136,7 @@ const sections = [
 
 .shortcuts-modal__close {
   @apply w-7 h-7 flex items-center justify-center rounded;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:bg-gray-100 dark:hover:bg-gray-700;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply cursor-pointer transition-colors;
@@ -152,7 +152,7 @@ const sections = [
 
 .shortcuts-section__title {
   @apply text-2xs font-semibold uppercase tracking-wider;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply mb-2;
 }
 

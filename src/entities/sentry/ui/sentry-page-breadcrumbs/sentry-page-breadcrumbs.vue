@@ -194,7 +194,7 @@ const formatDate = (timestamp?: number): string =>
 
 .breadcrumbs__count {
   @apply text-2xs px-1.5 py-0.5 rounded-full;
-  @apply bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300;
 }
 
 .breadcrumbs__nav {
@@ -202,12 +202,12 @@ const formatDate = (timestamp?: number): string =>
 }
 
 .breadcrumbs__nav-position {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 mr-1;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 mr-1;
 }
 
 .breadcrumbs__nav-btn {
   @apply w-6 h-6 flex items-center justify-center rounded text-2xs;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
   @apply bg-gray-100 dark:bg-gray-800;
   @apply hover:bg-gray-200 dark:hover:bg-gray-700;
   @apply disabled:opacity-30 disabled:cursor-not-allowed;
@@ -275,7 +275,7 @@ const formatDate = (timestamp?: number): string =>
 }
 
 .breadcrumbs__cell--time {
-  @apply w-32 flex-shrink-0 font-mono text-gray-400 dark:text-gray-500;
+  @apply w-32 flex-shrink-0 font-mono text-gray-500 dark:text-gray-400;
 }
 
 .breadcrumbs__message {
@@ -296,7 +296,7 @@ const formatDate = (timestamp?: number): string =>
 }
 
 .breadcrumbs__detail-key {
-  @apply px-1.5 py-0.5 text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800;
+  @apply px-1.5 py-0.5 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800;
 }
 
 .breadcrumbs__detail-val {
@@ -309,7 +309,7 @@ const formatDate = (timestamp?: number): string =>
 }
 
 .breadcrumbs__level--debug {
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400;
 }
 
 .breadcrumbs__level--info {
@@ -317,10 +317,10 @@ const formatDate = (timestamp?: number): string =>
 }
 
 .breadcrumbs__level--warning {
-  @apply bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400;
+  @apply bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400;
 }
 
 .breadcrumbs__level--error {
-  @apply bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400;
+  @apply bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400;
 }
 </style>

@@ -84,7 +84,7 @@ const typeName = computed(() => {
 }
 
 .vd-body__source {
-  @apply font-mono text-gray-400 dark:text-gray-500;
+  @apply font-mono text-gray-500 dark:text-gray-400;
 }
 
 .vd-body__source--link {

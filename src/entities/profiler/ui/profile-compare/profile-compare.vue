@@ -254,7 +254,7 @@ onMounted(async () => {
 }
 
 .pc__legend-vs {
-  @apply text-gray-300 dark:text-gray-600 text-2xs;
+  @apply text-gray-300 dark:text-gray-400 text-2xs;
 }
 
 .pc__legend-hint {
@@ -262,12 +262,12 @@ onMounted(async () => {
 }
 
 .pc__legend-sep {
-  @apply text-gray-300 dark:text-gray-600 mx-1;
+  @apply text-gray-300 dark:text-gray-400 mx-1;
 }
 
 /* ---- Status ---- */
 .pc__status {
-  @apply text-sm text-gray-400 dark:text-gray-500 text-center py-12;
+  @apply text-sm text-gray-500 dark:text-gray-400 text-center py-12;
 }
 
 /* ---- Scrollable table ---- */
@@ -284,7 +284,7 @@ onMounted(async () => {
 /* ---- Header ---- */
 .pc__th {
   @apply text-left px-3 py-2 font-semibold text-2xs uppercase tracking-wider;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply border-b-2 border-gray-200 dark:border-gray-700;
   @apply sticky top-0 z-10;
   @apply bg-gray-50 dark:bg-gray-900;
@@ -341,11 +341,11 @@ onMounted(async () => {
 
 /* ---- Value parts ---- */
 .pc__val-base {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .pc__arrow {
-  @apply text-gray-300 dark:text-gray-600 mx-1;
+  @apply text-gray-300 dark:text-gray-400 mx-1;
 }
 
 .pc__val-compare {

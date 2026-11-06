@@ -118,7 +118,7 @@ const tags = computed(() => {
 }
 
 .tags-section__box-label {
-  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400;
 }
 
 .tags-section__box-name {

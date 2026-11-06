@@ -96,7 +96,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 
 .search-bar__icon {
   @apply w-3.5 h-3.5 flex-shrink-0;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .search-bar__input {
@@ -108,7 +108,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 .search-bar__shortcut {
   @apply text-2xs px-1 rounded leading-none;
   @apply bg-gray-200 dark:bg-gray-600;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-600 dark:text-gray-400;
   @apply font-mono;
   padding-top: 1px;
   padding-bottom: 1px;
@@ -117,7 +117,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 
 .search-bar__clear {
   @apply flex-shrink-0 cursor-pointer;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply transition-colors;
 }

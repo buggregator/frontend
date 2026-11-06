@@ -159,7 +159,7 @@ const label = computed(() => props.event.payload.payload.label)
 }
 
 .vd-box__label {
-  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400;
 }
 
 .vd-box__value {

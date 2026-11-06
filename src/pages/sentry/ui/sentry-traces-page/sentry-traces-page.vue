@@ -150,9 +150,9 @@ onSentryEvent(() => {
 }
 .sentry-traces-page__loading,
 .sentry-traces-page__empty {
-  @apply flex items-center justify-center py-12 text-sm text-gray-400;
+  @apply flex items-center justify-center py-12 text-sm text-gray-500 dark:text-gray-400;
 }
 .sentry-traces-page__footer {
-  @apply text-center py-3 text-xs text-gray-400 border-t border-gray-200 dark:border-gray-700;
+  @apply text-center py-3 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700;
 }
 </style>

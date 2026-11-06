@@ -32,6 +32,6 @@ const isSfDump = computed(() => typeof props.log === 'string' && props.log.inclu
 
 <style lang="scss" scoped>
 .ray-log-empty {
-  @apply text-xs italic text-gray-400 dark:text-gray-500;
+  @apply text-xs italic text-gray-500 dark:text-gray-400;
 }
 </style>

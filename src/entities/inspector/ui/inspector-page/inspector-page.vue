@@ -21,19 +21,19 @@ const fullUrl = computed(() => http.value?.url?.full || http.value?.url?.path ||
 
 const methodColor = computed(() => {
   const m = method.value?.toUpperCase()
-  if (m === 'GET') return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
-  if (m === 'POST') return 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
+  if (m === 'GET') return 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
+  if (m === 'POST') return 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
   if (m === 'PUT' || m === 'PATCH')
-    return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
-  if (m === 'DELETE') return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
+    return 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
+  if (m === 'DELETE') return 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
   return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-500/10'
 })
 
 const resultColor = computed(() => {
   const r = (transaction.value?.result || 'success').toLowerCase()
-  if (r === 'success' || r === '200') return 'text-green-600 dark:text-green-400'
-  if (r.startsWith('4') || r === 'error') return 'text-red-600 dark:text-red-400'
-  if (r.startsWith('5')) return 'text-red-600 dark:text-red-400'
+  if (r === 'success' || r === '200') return 'text-green-700 dark:text-green-400'
+  if (r.startsWith('4') || r === 'error') return 'text-red-700 dark:text-red-400'
+  if (r.startsWith('5')) return 'text-red-700 dark:text-red-400'
   return 'text-gray-600 dark:text-gray-300'
 })
 </script>
@@ -181,7 +181,7 @@ const resultColor = computed(() => {
 }
 
 .insp-box__label {
-  @apply text-2xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400;
 }
 
 .insp-box__value {

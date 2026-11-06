@@ -655,7 +655,7 @@ xdebug.client_port={{ port(config.addr) }}</pre>
 }
 
 .xdebug-page__empty-ico {
-  @apply w-8 h-8 text-gray-400 dark:text-gray-500;
+  @apply w-8 h-8 text-gray-500 dark:text-gray-400;
 }
 
 .xdebug-page__pre {

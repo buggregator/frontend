@@ -179,7 +179,7 @@ const hasWarnings = computed(
 }
 
 .sms-page__arrow {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .sms-page__to {
@@ -191,7 +191,7 @@ const hasWarnings = computed(
 }
 
 .sms-page__relative {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 /* Layout */
@@ -235,7 +235,7 @@ const hasWarnings = computed(
 }
 
 .sms-info-row__label {
-  @apply font-medium text-gray-400 dark:text-gray-500;
+  @apply font-medium text-gray-500 dark:text-gray-400;
   @apply w-24 flex-shrink-0;
 }
 

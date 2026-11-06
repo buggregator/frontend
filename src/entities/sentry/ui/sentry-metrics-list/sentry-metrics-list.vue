@@ -101,6 +101,6 @@ const types = ['all', 'counter', 'gauge', 'distribution'] as const
 }
 
 .metrics-list__status {
-  @apply flex items-center justify-center py-8 text-xs text-gray-400 dark:text-gray-500;
+  @apply flex items-center justify-center py-8 text-xs text-gray-500 dark:text-gray-400;
 }
 </style>

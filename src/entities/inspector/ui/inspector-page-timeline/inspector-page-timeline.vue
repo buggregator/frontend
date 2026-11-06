@@ -290,7 +290,7 @@ const hoveredIndex = ref<number | null>(null)
 
 .timeline__ruler-label {
   @apply absolute left-1.5 top-1/2 -translate-y-1/2;
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
   @apply whitespace-nowrap;
 }
 
@@ -373,7 +373,7 @@ const hoveredIndex = ref<number | null>(null)
 
 .timeline__tip-stats {
   @apply flex gap-3;
-  @apply text-2xs text-gray-400 dark:text-gray-500;
+  @apply text-2xs text-gray-500 dark:text-gray-400;
 
   b {
     @apply font-medium text-gray-600 dark:text-gray-300 ml-0.5;
@@ -385,6 +385,6 @@ const hoveredIndex = ref<number | null>(null)
   @apply flex items-center justify-center py-8;
   @apply rounded border border-gray-200 dark:border-gray-700;
   @apply bg-gray-50 dark:bg-gray-900;
-  @apply text-sm text-gray-400 dark:text-gray-500;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 </style>

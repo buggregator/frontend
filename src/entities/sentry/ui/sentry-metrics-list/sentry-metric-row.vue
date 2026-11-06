@@ -156,7 +156,7 @@ const ownAttributes = computed(() => attributes.value.filter((a) => !a.key.start
 }
 
 .metric-type--other {
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
   @apply bg-gray-100 dark:bg-gray-600/50;
 }
 
@@ -181,7 +181,7 @@ const ownAttributes = computed(() => attributes.value.filter((a) => !a.key.start
 }
 
 .metric-row__time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 flex-shrink-0;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 flex-shrink-0;
 }
 
 .metric-row__trace-link {

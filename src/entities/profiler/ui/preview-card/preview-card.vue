@@ -72,7 +72,7 @@ const onCompareClick = () => {
 .profiler-compare-btn {
   @apply text-2xs px-2 py-0.5 rounded cursor-pointer;
   @apply bg-gray-100 dark:bg-gray-700;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-300;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply transition-colors;
 }
@@ -89,7 +89,7 @@ const onCompareClick = () => {
 }
 
 .profiler-compare-btn--reset {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-red-500 dark:hover:text-red-400;
 }
 </style>

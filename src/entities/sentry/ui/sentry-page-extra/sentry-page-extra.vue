@@ -88,7 +88,7 @@ const ddStates = ref(
 }
 
 .extra-group__chevron {
-  @apply w-3.5 h-3.5 text-gray-400 dark:text-gray-500;
+  @apply w-3.5 h-3.5 text-gray-500 dark:text-gray-400;
   transition: transform 0.15s ease;
 }
 

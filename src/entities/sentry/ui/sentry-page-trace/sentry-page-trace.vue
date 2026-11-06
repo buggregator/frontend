@@ -77,10 +77,10 @@ defineProps<Props>()
 }
 
 .trace-status--error {
-  @apply bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400;
+  @apply bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400;
 }
 
 .trace-status--ok {
-  @apply bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400;
+  @apply bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400;
 }
 </style>

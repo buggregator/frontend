@@ -115,7 +115,7 @@ const ServiceNode = defineComponent({
 .service-map__loading,
 .service-map__empty {
   @apply flex items-center justify-center h-full;
-  @apply text-sm text-gray-400;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
 .service-map__flow {

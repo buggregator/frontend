@@ -393,7 +393,7 @@ watch(
 }
 
 .sentry-header__badge--debug {
-  @apply bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300;
 }
 
 .sentry-header__badge--platform {
@@ -410,7 +410,7 @@ watch(
 
 .sentry-header__meta {
   @apply text-2xs font-mono px-2 py-0.5 rounded;
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400;
 }
 
 .sentry-header__type {
@@ -467,7 +467,7 @@ watch(
   @apply w-7 h-7;
   @apply bg-gray-100 dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply cursor-pointer transition-all duration-100;
 
   &:hover {
@@ -516,7 +516,7 @@ watch(
 
 .sentry-exceptions__caused {
   @apply text-2xs font-medium uppercase tracking-wide;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply mb-1.5 block;
 }
 </style>

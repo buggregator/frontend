@@ -106,17 +106,17 @@ const openFrameIndex = computed(() => {
 
 .exception__mechanism-type {
   @apply text-2xs font-mono px-1.5 py-0.5 rounded;
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400;
 }
 
 .exception__mechanism-handled--yes {
   @apply text-2xs font-semibold px-1.5 py-0.5 rounded;
-  @apply bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400;
+  @apply bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400;
 }
 
 .exception__mechanism-handled--no {
   @apply text-2xs font-semibold px-1.5 py-0.5 rounded;
-  @apply bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400;
+  @apply bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400;
 }
 
 .exception__frames {

@@ -473,7 +473,7 @@ const currentMetricKey = computed(() => {
 }
 
 .call-graph__sidebar-close {
-  @apply text-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 leading-none px-1;
+  @apply text-xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 leading-none px-1;
 }
 
 .call-graph__sidebar-body {

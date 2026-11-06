@@ -121,7 +121,7 @@ const formatAttrValue = (val: unknown): string => {
 }
 
 .log-level--debug {
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
   @apply bg-gray-100 dark:bg-gray-600/50;
 }
 
@@ -146,7 +146,7 @@ const formatAttrValue = (val: unknown): string => {
 }
 
 .log-row__time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 flex-shrink-0;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 flex-shrink-0;
 }
 
 .log-row__trace-link {
