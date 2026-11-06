@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite serve",
     "preview": "vite preview",
-    "build:prod": "NODE_ENV=prod vite build --minify",
+    "build:prod": "NODE_ENV=production vite build --minify",
     "build:dev": "NODE_ENV=dev vite build",
     "generate": "run-p typecheck \"build:prod\"",
     "postinstall": "yarn prepare",
