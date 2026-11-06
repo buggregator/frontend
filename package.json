@@ -82,7 +82,7 @@
     "vite-plugin-vue-devtools": "^7.6.8",
     "vitest": "^1.6.0",
     "vue-eslint-parser": "^9.1.0",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^3.3.14"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",
