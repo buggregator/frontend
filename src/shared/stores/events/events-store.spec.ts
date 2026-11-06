@@ -75,6 +75,19 @@ describe('eventsStore', () => {
 
   // Audit 1.4 and 1.5: the server's list is the truth after a reconnect or a
   // clear made elsewhere.
+  // Review of #320: a newer server can list a type this UI does not know; the
+  // feed keeps such events and shows them with the default card.
+  describe('a type the server lists but the UI does not know', () => {
+    it('is kept by addList and initializeEvents', () => {
+      useSettingsStore().availableEvents = [...Object.values(EventTypes), 'future-type']
+      const store = useEventsStore()
+      store.initializeEvents([event('a', 'future-type')])
+      expect(ids(store.events)).toEqual(['a'])
+      store.addList([event('b', 'future-type'), event('c', 'not-listed')])
+      expect(ids(store.events)).toEqual(['b', 'a'])
+    })
+  })
+
   describe('syncFromServer', () => {
     it('replaces the list and takes pins from the server', () => {
       const store = useEventsStore()

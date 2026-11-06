@@ -8,8 +8,7 @@ import {
   type ServerEvent,
   type PageEventTypes,
   type TProjects,
-  EventTypes,
-  isEventType
+  EventTypes
 } from '../../types';
 import {useSettingsStore} from "../settings";
 import {
@@ -138,7 +137,7 @@ export const useEventsStore = defineStore("eventsStore", {
       const { availableEvents } = useSettingsStore();
 
       this.events = events
-        .filter((el) => isEventType(el.type) && availableEvents.includes(el.type))
+        .filter((el) => availableEvents.includes(el.type))
         .slice(0, MAX_EVENTS_COUNT);
 
       this.rebuildCountsMap();
@@ -150,7 +149,7 @@ export const useEventsStore = defineStore("eventsStore", {
       const existingIds = new Set(this.events.map(e => e.uuid));
 
       events
-        .filter((el) => isEventType(el.type) && availableEvents.includes(el.type))
+        .filter((el) => availableEvents.includes(el.type))
         .forEach((event) => {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
