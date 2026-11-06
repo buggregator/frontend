@@ -12,6 +12,7 @@ export type TUseEventsApi = {
   removeAll: () => void
   removeByType: (type: EventType) => void
   removeById: (id: EventId) => void
+  removeList: (uuids: EventId[]) => Promise<void>
 }
 
 export const useEventsApi = (): TUseEventsApi => {
@@ -104,5 +105,6 @@ export const useEventsApi = (): TUseEventsApi => {
     removeAll,
     removeByType,
     removeById,
+    removeList,
   }
 }

@@ -584,6 +584,19 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'mock-server'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      class="fill-current"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M5 2a3 3 0 0 0-3 3v3a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3H5Zm0 2h14a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm0 9a3 3 0 0 0-3 3v3a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-3a3 3 0 0 0-3-3H5Zm0 2h14a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Zm1.5-8.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0Zm0 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM11 6.5a1 1 0 0 1 1-1h5a1 1 0 1 1 0 2h-5a1 1 0 0 1-1-1Zm0 11a1 1 0 0 1 1-1h5a1 1 0 1 1 0 2h-5a1 1 0 0 1-1-1Z"
+      />
+    </svg>
+
+    <svg
       v-else-if="name === 'settings'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"

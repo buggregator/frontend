@@ -3,6 +3,7 @@ import {EventPage} from "@/pages/event-page";
 import {EventsListPage} from "@/pages/events-list-page";
 import {LoginPage} from "@/pages/login";
 import {MetricsPage} from "@/pages/metrics";
+import {MockServerPage} from "@/pages/mock-server";
 import {NotFoundPage} from "@/pages/not-found";
 import {ProfilerComparePage} from "@/pages/profiler-compare";
 import {
@@ -57,6 +58,14 @@ export const routes = [
       { path: 'metrics', name: RouteName.SentryMetrics, component: SentryMetricsPage },
       { path: ':id', redirect: (to: RouteLocation) => `/sentry/event/${to.params.id}` },
     ]
+  },
+  {
+    path: '/mock-server',
+    name: RouteName.MockServer,
+    component: MockServerPage,
+    meta: {
+      middleware: [auth]
+    }
   },
   {
     path: '/:type',
