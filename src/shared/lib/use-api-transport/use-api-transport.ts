@@ -4,6 +4,7 @@ import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores"
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
 import { REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
+import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
 
 let isEventsEmitted = false
@@ -29,6 +30,7 @@ export const useApiTransport = () => {
   const {centrifuge} = useCentrifuge()
   const eventsStore = useEventsStore()
   const connectionStore = useConnectionStore()
+  const appBadge = useAppBadge()
   const {
     getAll,
     getSingle,
@@ -86,6 +88,7 @@ export const useApiTransport = () => {
         }
 
         if (event.project === project.value) {
+          appBadge.onEventsReceived();
           eventBuffer.push(event);
 
           if (!flushTimer) {
