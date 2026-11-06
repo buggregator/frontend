@@ -19,7 +19,7 @@ withDefaults(defineProps<Props>(), {
       v-if="title || $slots.actions"
       class="event-section__header"
     >
-      <h3
+      <h2
         v-if="title"
         class="event-section__title"
       >
@@ -30,7 +30,7 @@ withDefaults(defineProps<Props>(), {
         >
           {{ count }}
         </span>
-      </h3>
+      </h2>
       <slot name="actions" />
     </div>
     <div class="event-section__content">

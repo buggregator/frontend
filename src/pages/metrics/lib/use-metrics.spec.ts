@@ -57,4 +57,17 @@ describe('useMetrics', () => {
     expect(m.stale.value).toBe(true)
     expect(m.metrics.value?.http.requests_total).toBe(7)
   })
+
+  // Review of #314: the 5 s refresh and «Try again» could run two requests at once.
+  it('runs one request at a time', async () => {
+    let release = (_: Response) => {}
+    const fetcher = vi.fn(() => new Promise<Response>((r) => { release = r }))
+    const m = useMetrics(fetcher)
+    const first = m.load()
+    const second = m.load()
+    expect(fetcher).toHaveBeenCalledTimes(1)
+    release(json(sample))
+    await Promise.all([first, second])
+    expect(m.state.value).toBe('ready')
+  })
 })

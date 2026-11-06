@@ -2,7 +2,7 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
 import { useSettingsStore } from '../../stores'
 import type { EventId } from '../../types'
-import { hasCommandModifier, isControlFocused, isTextFieldFocused } from './keyboard-guards'
+import { hasCommandModifier, isControlFocused, isModalOpen, isTextFieldFocused } from './keyboard-guards'
 
 export type KeyboardNavCallbacks = {
   onOpen?: (id: EventId) => void
@@ -11,8 +11,8 @@ export type KeyboardNavCallbacks = {
   onCopyPayload?: (id: EventId) => void
   onScreenshot?: (id: EventId) => void
   // Brings the focused event into view. Default: scroll its element, which a
-  // virtual list may not have rendered.
-  scrollToId?: (id: EventId) => void
+  // virtual list may not have rendered. Keyboard focus moves to the card after it.
+  scrollToId?: (id: EventId) => void | Promise<void>
 }
 
 // Shared state for screenshot mode — cards hide controls when their id is here
@@ -38,13 +38,17 @@ export function useKeyboardNav(
   const focusedId = ref<EventId | null>(null)
   const { isSingleKeyShortcutsEnabled } = storeToRefs(useSettingsStore())
 
-  const scrollToFocused = () => {
-    if (!focusedId.value) return
+  // The selection is also keyboard focus, so a screen reader reads the card.
+  // A virtual list renders the card only once it is scrolled to.
+  const scrollToFocused = async () => {
+    const id = focusedId.value
+    if (!id) return
     if (options.scrollToId) {
-      options.scrollToId(focusedId.value)
-      return
+      await options.scrollToId(id)
+    } else {
+      document.getElementById(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     }
-    document.getElementById(focusedId.value)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (focusedId.value === id) document.getElementById(id)?.focus({ preventScroll: true })
   }
 
   const updateFocus = (index: number) => {
@@ -58,7 +62,7 @@ export function useKeyboardNav(
 
   const handleKeydown = (e: KeyboardEvent) => {
     if (!isSingleKeyShortcutsEnabled.value) return
-    if (hasCommandModifier(e) || isTextFieldFocused()) return
+    if (hasCommandModifier(e) || isTextFieldFocused() || isModalOpen()) return
 
     const ids = eventIds.value
     if (ids.length === 0) return

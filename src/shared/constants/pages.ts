@@ -16,7 +16,7 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
   },
   [PAGE_TYPES.Sentry]: {
     title: 'Sentry',
-    sidebarTitle: 'Sentry logs',
+    sidebarTitle: 'Sentry',
     iconName: 'sentry',
     eventType: EventTypes.Sentry,
   },

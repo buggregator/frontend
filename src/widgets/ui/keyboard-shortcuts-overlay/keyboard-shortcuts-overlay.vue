@@ -1,7 +1,14 @@
 <script lang="ts" setup>
-defineEmits<{
+import { ref, useId } from 'vue'
+import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
+
+const emit = defineEmits<{
   close: []
 }>()
+
+const modal = ref<HTMLElement | null>(null)
+const titleId = useId()
+useDialogFocus(modal, () => emit('close'))
 
 const sections = [
   {
@@ -47,18 +54,28 @@ const sections = [
         v-if="true"
         class="shortcuts-backdrop"
         @click.self="$emit('close')"
-        @keydown.escape="$emit('close')"
       >
-        <div class="shortcuts-modal">
+        <div
+          ref="modal"
+          class="shortcuts-modal"
+          role="dialog"
+          aria-modal="true"
+          :aria-labelledby="titleId"
+        >
           <div class="shortcuts-modal__header">
-            <h2 class="shortcuts-modal__title">
+            <h2
+              :id="titleId"
+              class="shortcuts-modal__title"
+            >
               Keyboard Shortcuts
             </h2>
             <button
+              type="button"
               class="shortcuts-modal__close"
+              aria-label="Close"
               @click="$emit('close')"
             >
-              <span>&times;</span>
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
 
@@ -141,6 +158,7 @@ const sections = [
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply cursor-pointer transition-colors;
   @apply text-lg leading-none;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
 }
 
 .shortcuts-modal__body {

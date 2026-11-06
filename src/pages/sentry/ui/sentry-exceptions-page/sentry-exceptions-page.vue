@@ -96,6 +96,7 @@ onSentryEvent(() => {
         <select
           v-model="selectedLevel"
           class="sentry-exceptions-page__select"
+          aria-label="Level"
         >
           <option value="">
             All levels

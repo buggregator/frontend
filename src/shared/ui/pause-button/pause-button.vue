@@ -18,6 +18,14 @@ const props = defineProps<Props>()
 
 const titleEventsCount = computed(() => pluralize('new event', props.totalNewEventsCount, true))
 
+// Starts with the visible word (WCAG 2.5.3), then says what a press does.
+// Below sm the word is hidden, so this is the only name the button has.
+const label = computed(() =>
+  props.isPaused
+    ? `Paused${props.totalNewEventsCount ? `, ${titleEventsCount.value}` : ''}. Resume live updates`
+    : 'Listening. Pause live updates'
+)
+
 const toggleUpdate = () => {
   emit('toggleUpdate', true)
 }
@@ -27,7 +35,9 @@ const toggleUpdate = () => {
   <button
     class="pause-btn"
     :class="{ 'pause-btn--paused': isPaused }"
+    type="button"
     :disabled="!isPaused && disabledPause"
+    :aria-label="label"
     @click="toggleUpdate"
   >
     <IconSvg

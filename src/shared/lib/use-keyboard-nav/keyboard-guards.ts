@@ -18,3 +18,6 @@ export const isControlFocused = (): boolean => {
   if (!active) return false
   return CONTROLS.has(active.tagName.toLowerCase()) || active.getAttribute('role') === 'button'
 }
+
+// A modal dialog (aria-modal) is open: keys belong to it, not to the page behind.
+export const isModalOpen = (): boolean => document.querySelector('[aria-modal="true"]') !== null

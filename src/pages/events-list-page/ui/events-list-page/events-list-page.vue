@@ -20,7 +20,10 @@ const type = computed(() => (paramsType.value as EventTypes) || ALL_EVENT_TYPES)
 </script>
 
 <template>
-  <LayoutBase class="events-list-page">
+  <LayoutBase
+    class="events-list-page"
+    :heading="title || 'All events'"
+  >
     <template #sidebar>
       <LayoutSidebar />
     </template>

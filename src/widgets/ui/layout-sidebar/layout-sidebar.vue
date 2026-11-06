@@ -13,6 +13,7 @@ import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
 import { EVENTS_NAV_ORDER } from './constants'
+import { navLinkLabel } from './nav-label'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
@@ -144,6 +145,8 @@ const generateRadialGradient = (input: string) =>
 // exist. The numeric count badge (gated by isVisibleEventCounts) is separate
 // — turning counts off should not also hide the indicator.
 const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
+const linkLabel = (type: EventType) =>
+  navLinkLabel(PAGES_SETTINGS[type].sidebarTitle, getItemsCount.value(type))
 </script>
 
 <template>
@@ -151,13 +154,16 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
     class="layout-sidebar"
     :class="{ 'layout-sidebar--collapsed': isVisuallyCollapsed }"
   >
-    <nav class="layout-sidebar__nav">
+    <nav
+      class="layout-sidebar__nav"
+      aria-label="Main"
+    >
       <!-- Logo + collapse toggle header -->
       <div class="layout-sidebar__header">
         <RouterLink
           :to="{ name: RouteName.Home }"
-          title="Dashboard"
-          aria-label="Dashboard"
+          title="Home"
+          aria-label="Home"
           class="layout-sidebar__logo-link"
           tabindex="0"
         >
@@ -248,7 +254,7 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
               (type === 'sentry' && $route.path.startsWith('/sentry'))
           }"
           :title="PAGES_SETTINGS[type].sidebarTitle"
-          :aria-label="PAGES_SETTINGS[type].sidebarTitle"
+          :aria-label="linkLabel(type)"
           class="layout-sidebar__link"
         >
           <span class="layout-sidebar__link-icon-wrap">

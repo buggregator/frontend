@@ -40,9 +40,9 @@ const hasHtml = computed(() => !!props.event?.payload?.html)
       class="smtp-body"
     >
       <div class="smtp-body__header">
-        <h3 class="smtp-body__subject">
+        <h2 class="smtp-body__subject">
           {{ event.payload.subject }}
-        </h3>
+        </h2>
         <span
           v-if="hasHtml"
           class="smtp-body__badge"

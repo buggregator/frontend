@@ -7,7 +7,11 @@ defineProps<Props>()
 </script>
 
 <template>
-  <div class="icon-svg">
+  <!-- Decorative: the control around an icon carries the name. -->
+  <div
+    class="icon-svg"
+    aria-hidden="true"
+  >
     <svg
       v-if="name === 'bolt'"
       xmlns="http://www.w3.org/2000/svg"

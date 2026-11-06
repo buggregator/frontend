@@ -76,9 +76,9 @@ const content = computed(() => {
         </svg>
       </div>
 
-      <h3 class="sentry-empty__title">
+      <h2 class="sentry-empty__title">
         {{ content.title }}
-      </h3>
+      </h2>
       <p class="sentry-empty__desc">
         {{ content.description }}
       </p>

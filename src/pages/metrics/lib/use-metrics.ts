@@ -41,7 +41,16 @@ export const useMetrics = (fetcher: Fetcher) => {
     }
   }
 
-  const load = async () => {
+  // One request at a time: the refresh timer and «Try again» share it.
+  let inFlight: Promise<void> | null = null
+  const load = () => {
+    inFlight ??= request().finally(() => {
+      inFlight = null
+    })
+    return inFlight
+  }
+
+  const request = async () => {
     let res: Response
     try {
       res = await fetcher()

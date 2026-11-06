@@ -50,7 +50,10 @@ function formatEventType(type: string): string {
 </script>
 
 <template>
-  <LayoutBase class="metrics-page">
+  <LayoutBase
+    class="metrics-page"
+    heading="Metrics"
+  >
     <template #sidebar>
       <LayoutSidebar />
     </template>
