@@ -13,6 +13,7 @@ import {
   getStoredPrimaryCodeEditor,
   setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
+  getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
 } from "./local-storage-actions";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -25,6 +26,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
+    isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
     availableEvents: [] as EventType[],
     isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
     customFilePathMapping: getStoredCustomFilePathMapping() || [],
@@ -70,6 +72,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isFixedHeader = !this.isFixedHeader;
 
       setStoredFixedHeader(this.isFixedHeader)
+    },
+    changeSingleKeyShortcuts() {
+      this.isSingleKeyShortcutsEnabled = !this.isSingleKeyShortcutsEnabled;
+
+      setStoredSingleKeyShortcuts(this.isSingleKeyShortcutsEnabled)
     },
     changeEventCountsVisibility() {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;

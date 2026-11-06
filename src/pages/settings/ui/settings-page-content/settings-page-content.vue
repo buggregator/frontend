@@ -13,6 +13,7 @@ const settingsStore = useSettingsStore()
 const {
   changeNavbar,
   changeEventCountsVisibility,
+  changeSingleKeyShortcuts,
   changeActiveCodeEditor,
   setCustomFilePathMapping,
   changeIsActiveFilePathMapping
@@ -21,6 +22,7 @@ const {
   themeType,
   isFixedHeader,
   isVisibleEventCounts,
+  isSingleKeyShortcutsEnabled,
   customFilePathMapping,
   isActiveFilePathMapping,
   codeEditor,
@@ -177,6 +179,33 @@ useTitle('Settings | Buggregator')
             :aria-checked="isVisibleEventCounts"
             aria-label="Show event counts in sidebar"
             @click="changeEventCountsVisibility"
+          >
+            <span class="s-toggle__knob" />
+          </button>
+        </div>
+      </div>
+    </EventDetailSection>
+
+    <!-- Keyboard -->
+    <EventDetailSection title="Keyboard">
+      <div class="s-card">
+        <div class="s-row">
+          <div class="s-row__info">
+            <div class="s-row__label">
+              Single-key shortcuts
+            </div>
+            <div class="s-row__desc">
+              Keys without Ctrl, Alt or Cmd: j/k to move, x to delete, 0–9 to switch pages, ? for
+              the list. Turn off if they get in the way of typing or a screen reader
+            </div>
+          </div>
+          <button
+            class="s-toggle"
+            :class="{ 's-toggle--active': isSingleKeyShortcutsEnabled }"
+            role="switch"
+            :aria-checked="isSingleKeyShortcutsEnabled"
+            aria-label="Single-key shortcuts"
+            @click="changeSingleKeyShortcuts"
           >
             <span class="s-toggle__knob" />
           </button>

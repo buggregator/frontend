@@ -1,5 +1,8 @@
+import { storeToRefs } from 'pinia'
 import { ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
+import { useSettingsStore } from '../../stores'
 import type { EventId } from '../../types'
+import { hasCommandModifier, isControlFocused, isTextFieldFocused } from './keyboard-guards'
 
 export type KeyboardNavCallbacks = {
   onOpen?: (id: EventId) => void
@@ -30,13 +33,7 @@ export function useKeyboardNav(
 ) {
   const focusedIndex = ref(-1)
   const focusedId = ref<EventId | null>(null)
-
-  const isInputFocused = () => {
-    const active = document.activeElement
-    if (!active) return false
-    const tag = active.tagName.toLowerCase()
-    return tag === 'input' || tag === 'textarea' || tag === 'select' || (active as HTMLElement).isContentEditable
-  }
+  const { isSingleKeyShortcutsEnabled } = storeToRefs(useSettingsStore())
 
   const scrollToFocused = () => {
     if (focusedId.value) {
@@ -55,7 +52,8 @@ export function useKeyboardNav(
   }
 
   const handleKeydown = (e: KeyboardEvent) => {
-    if (isInputFocused()) return
+    if (!isSingleKeyShortcutsEnabled.value) return
+    if (hasCommandModifier(e) || isTextFieldFocused()) return
 
     const ids = eventIds.value
     if (ids.length === 0) return
@@ -73,7 +71,7 @@ export function useKeyboardNav(
         updateFocus(focusedIndex.value - 1)
         return
       case 'Enter':
-        if (focusedId.value && options.onOpen) {
+        if (focusedId.value && options.onOpen && !isControlFocused()) {
           e.preventDefault()
           options.onOpen(focusedId.value)
         }

@@ -9,6 +9,7 @@ export enum LocalStorageKeys {
   CustomFilePathMapping = "custom_file_path_mapping",
   IsActiveCustomFilePathMapping = "is_active_custom_file_path_mapping",
   Period = "period",
+  SingleKeyShortcuts = "single_key_shortcuts",
 }
 
 export enum SessionStorageKeys {

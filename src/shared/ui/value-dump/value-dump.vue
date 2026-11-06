@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import isString from 'lodash.isstring'
 import { computed, onMounted } from 'vue'
+import { sanitizeHtml } from '../../lib/helpers'
 import { callSfDump } from '../../lib/vendor/sf-dumper'
 import { CodeSnippet } from '../code-snippet'
 
@@ -32,11 +33,7 @@ const dumpBody = computed(() => {
   return props.value
 })
 
-const baseSanitizedHtml = computed(() => {
-  return String(props.value)
-    .replace(/<script.*<\/script>/g, '')
-    .replace(/<style.*<\/style>/g, '')
-})
+const baseSanitizedHtml = computed(() => sanitizeHtml(String(props.value)))
 
 onMounted(() => {
   if (dumpId) {
@@ -59,6 +56,7 @@ onMounted(() => {
     >
       {{ dumpBody }}
     </div>
+    <!-- sanitised by sanitizeHtml (DOMPurify) -->
     <div
       v-else
       class="value-dump__html"
