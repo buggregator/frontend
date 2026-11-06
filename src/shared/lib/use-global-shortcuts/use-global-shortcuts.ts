@@ -1,7 +1,9 @@
+import { storeToRefs } from 'pinia'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '../../stores'
 import { RouteName, EventTypes } from '../../types'
+import { hasCommandModifier, isTextFieldFocused } from '../use-keyboard-nav'
 
 const NAV_TYPES: EventTypes[] = [
   EventTypes.Sentry,
@@ -20,23 +22,9 @@ export const isShortcutsOverlayOpen = ref(false)
 export function useGlobalShortcuts() {
   const router = useRouter()
   const settingsStore = useSettingsStore()
-
-  const isInputFocused = () => {
-    const active = document.activeElement
-    if (!active) return false
-    const tag = active.tagName.toLowerCase()
-    return tag === 'input' || tag === 'textarea' || tag === 'select' || (active as HTMLElement).isContentEditable
-  }
+  const { isSingleKeyShortcutsEnabled } = storeToRefs(settingsStore)
 
   const handleKeydown = (e: KeyboardEvent) => {
-    // ? always works (toggle overlay)
-    if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
-      if (isInputFocused() && !isShortcutsOverlayOpen.value) return
-      e.preventDefault()
-      isShortcutsOverlayOpen.value = !isShortcutsOverlayOpen.value
-      return
-    }
-
     // Escape closes overlay
     if (e.key === 'Escape' && isShortcutsOverlayOpen.value) {
       e.preventDefault()
@@ -44,18 +32,29 @@ export function useGlobalShortcuts() {
       return
     }
 
+    // Every shortcut below is a single key (WCAG 2.1.4: it can be turned off)
+    if (!isSingleKeyShortcutsEnabled.value || hasCommandModifier(e)) return
+
+    // ? toggles the overlay
+    if (e.key === '?') {
+      if (isTextFieldFocused() && !isShortcutsOverlayOpen.value) return
+      e.preventDefault()
+      isShortcutsOverlayOpen.value = !isShortcutsOverlayOpen.value
+      return
+    }
+
     // All other shortcuts: skip if input focused or overlay open
-    if (isInputFocused() || isShortcutsOverlayOpen.value) return
+    if (isTextFieldFocused() || isShortcutsOverlayOpen.value) return
 
     // 0 — go to all events (home)
-    if (e.key === '0' && !e.ctrlKey && !e.metaKey) {
+    if (e.key === '0') {
       e.preventDefault()
       router.push({ name: RouteName.Home })
       return
     }
 
     // f — favorites
-    if (e.key === 'f' && !e.ctrlKey && !e.metaKey) {
+    if (e.key === 'f') {
       e.preventDefault()
       router.push({ name: RouteName.Favorites })
       return
@@ -63,7 +62,7 @@ export function useGlobalShortcuts() {
 
     // 1-8 — navigate to event type
     const num = parseInt(e.key, 10)
-    if (num >= 1 && num <= NAV_TYPES.length && !e.ctrlKey && !e.metaKey) {
+    if (num >= 1 && num <= NAV_TYPES.length) {
       const type = NAV_TYPES[num - 1]
       const available = settingsStore.availableEvents
       if (available.includes(type)) {

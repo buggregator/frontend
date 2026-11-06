@@ -72,6 +72,14 @@ export const setStoredEventsCountVisibility = (state: boolean) => {
 }
 
 
+// On unless the person turned them off.
+export const getStoredSingleKeyShortcuts = (): boolean =>
+  window?.localStorage?.getItem(LocalStorageKeys.SingleKeyShortcuts) !== "false";
+
+export const setStoredSingleKeyShortcuts = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.SingleKeyShortcuts, String(state));
+}
+
 export const getStoredPrimaryCodeEditor = (): IDE_KEYS => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
 
