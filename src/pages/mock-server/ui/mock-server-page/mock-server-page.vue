@@ -219,8 +219,10 @@ const clearRequests = async () => {
   )
     return
   await runAction(async () => {
-    await events.removeList(uuids)
-    traffic.forget(uuids)
+    // A refused delete keeps the requests: the server still has them.
+    if (await events.removeList(uuids)) {
+      traffic.forget(uuids)
+    }
     showTraffic()
   })
 }

@@ -103,16 +103,13 @@ const { focusedId } = useKeyboardNav(eventUuids, {
       showToast('Event is pinned')
       return
     }
-    events.removeById(id)
-    showToast('Event deleted')
+    events.removeById(id).then((ok) => ok && showToast('Event deleted'))
   },
   onLock: (id) => {
     if (lockedIds.items.value.includes(id)) {
-      lockedIds.remove(id)
-      showToast('Event unpinned')
+      lockedIds.remove(id).then((ok) => ok && showToast('Event unpinned'))
     } else {
-      lockedIds.add(id)
-      showToast('Event pinned')
+      lockedIds.add(id).then((ok) => ok && showToast('Event pinned'))
     }
   },
   onCopyPayload: (id) => {
