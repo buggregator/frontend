@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {IDE_KEY_DEFAULT, IDE_KEYS} from "../../constants";
 import {REST_API_URL} from "../../lib/io/constants";
+import {describeLoadError} from "../../lib/io/request-result";
 import {type EventType, EventTypes, type FilePathMapping, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
@@ -20,6 +21,9 @@ export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     apiVersion: '',
     isFetched: false,
+    // Why the settings could not be loaded; the app shows it instead of a
+    // blank page (audit 1.9).
+    fetchError: '',
     isAuthEnabled: false,
     authLogicUrl: '/login',
     codeEditor: getStoredPrimaryCodeEditor() || IDE_KEY_DEFAULT,
@@ -35,21 +39,29 @@ export const useSettingsStore = defineStore("settingsStore", {
     loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
   },
   actions: {
-    async fetchSettings() {
+    async fetchSettings(): Promise<TSettings | null> {
       // TODO: need to remove fetch out of the store
-      const settings: TSettings = await fetch(`${REST_API_URL}/api/settings`)
-        .then((response) => response.json())
-        .catch((e) => {
-          console.error(e);
+      let settings: TSettings | null = null
+      this.fetchError = ''
 
-          return null
-        });
+      try {
+        const response = await fetch(`${REST_API_URL}/api/settings`)
 
-      if (settings.version) {
+        if (!response.ok) {
+          throw Object.assign(new Error(response.statusText), { status: response.status })
+        }
+
+        settings = await response.json()
+      } catch (e) {
+        console.error(e);
+        this.fetchError = describeLoadError(e)
+      }
+
+      if (settings?.version) {
         this.apiVersion = settings.version
       }
 
-      if (settings.auth) {
+      if (settings?.auth) {
         this.isAuthEnabled = settings.auth.enabled;
         this.authLogicUrl = settings.auth.login_url;
       }
@@ -57,7 +69,7 @@ export const useSettingsStore = defineStore("settingsStore", {
       // TODO: meed to move to the events store
       this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
 
-      this.isFetched = true
+      this.isFetched = !!settings
 
       return settings
     },

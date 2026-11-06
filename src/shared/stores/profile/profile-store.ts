@@ -19,34 +19,32 @@ export const useProfileStore = defineStore("profileStore", {
       this.token = token;
       setStoredToken(token);
     },
-    async getProfile(): Promise<TProfile> {
+    // undefined when there is no profile: a refused token (it is dropped) or
+    // no answer. Never an Error object in the store (audit 1.9).
+    async getProfile(): Promise<TProfile | undefined> {
       // TODO: need to remove fetch out of the store
-      const profile = await fetch(`${REST_API_URL}/api/me`, {
-        headers: {"X-Auth-Token": this.token || ""}
-      })
-        .then((response) => {
-          if (!response.ok && response.status === 403) {
-            this.removeToken();
+      let profile: TProfile | undefined
 
-            // TODO: add toast to show error
-            console.error('Auth Error', response.status, response.statusText)
-
-            return new Error('Auth Error')
-          }
-
-          return response.json()
+      try {
+        const response = await fetch(`${REST_API_URL}/api/me`, {
+          headers: {"X-Auth-Token": this.token || ""}
         })
-        .catch((e) => {
-          console.error(e);
 
-          return null
-        });
+        if (response.status === 401 || response.status === 403) {
+          this.removeToken();
+          console.error('Auth Error', response.status, response.statusText)
+        } else if (response.ok) {
+          profile = await response.json()
+        }
+      } catch (e) {
+        console.error(e);
+      }
 
       this.setProfile(profile)
 
       return profile
     },
-    setProfile(profile: TProfile): void {
+    setProfile(profile: TProfile | undefined): void {
       this.profile = profile;
     },
     getStoredToken(): string {

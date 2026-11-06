@@ -101,3 +101,26 @@ describe('useEventsRequests: getAll', () => {
     expect(init.headers).toEqual({ 'X-Auth-Token': 'late-token' })
   })
 })
+
+// Audit 5.13: every failure became the joke 404 page.
+describe('useEventsRequests: getSingle', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('returns null when the server has no such event', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"error":"event not found"}', { status: 404 }))))
+
+    expect(await useEventsRequests().getSingle('a')).toBeNull()
+  })
+
+  it('throws with the status on a server error', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{}', { status: 500 }))))
+
+    await expect(useEventsRequests().getSingle('a')).rejects.toMatchObject({ status: 500 })
+  })
+})

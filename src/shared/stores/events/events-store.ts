@@ -84,6 +84,10 @@ export const useEventsStore = defineStore("eventsStore", {
     period: getStoredPeriod() || DEFAULT_PERIOD,
     listLoadSeq: 0,
     listLoad: null as TListLoad | null,
+    // The feed's load from the server: the page shows loading and error
+    // states from it instead of the "waiting for events" welcome.
+    listState: 'idle' as 'idle' | 'loading' | 'ready' | 'error',
+    listError: '' as string,
   }),
   getters: {
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
@@ -371,6 +375,10 @@ export const useEventsStore = defineStore("eventsStore", {
       this.projects.activeKey = undefined;
 
       removeStoredProject();
+    },
+    setListState(state: 'idle' | 'loading' | 'ready' | 'error', error = '') {
+      this.listState = state;
+      this.listError = error;
     },
     setPeriod(period: string) {
       this.period = period;

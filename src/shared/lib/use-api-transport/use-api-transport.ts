@@ -3,7 +3,7 @@ import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
-import { type DeleteOptions, REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
+import { type DeleteOptions, REST_API_URL, describeLoadError, useCentrifuge, useEventsRequests } from "../io";
 import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
 import { startEventsStream } from "./events-stream";
@@ -78,13 +78,18 @@ export const useApiTransport = () => {
       },
       addEvents: (events) => eventsStore.addList(events),
       dropEvents: (uuids) => eventsStore.dropByIds(uuids),
+      // A poll or a resync also tells the page whether the list is current.
       resync: async () => {
         const load = eventsStore.startListLoad()
 
         try {
-          eventsStore.applyListLoad(load, await getAll())
+          if (eventsStore.applyListLoad(load, await getAll())) {
+            eventsStore.setListState('ready')
+          }
         } catch (e) {
-          eventsStore.failListLoad(load)
+          if (eventsStore.failListLoad(load)) {
+            eventsStore.setListState('error', describeLoadError(e))
+          }
           throw e
         }
       },

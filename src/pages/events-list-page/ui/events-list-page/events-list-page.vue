@@ -29,6 +29,7 @@ const type = computed(() => (paramsType.value as EventTypes) || ALL_EVENT_TYPES)
       <PageHeader
         :type="type"
         :title="title"
+        :favorites-only="isFavorites"
       />
     </template>
 

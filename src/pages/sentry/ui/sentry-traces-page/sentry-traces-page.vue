@@ -9,12 +9,13 @@ import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { ServiceMap } from '@/entities/sentry/ui/service-map'
 import { TracePreviewCard } from '@/entities/sentry/ui/trace-preview-card'
 import { useEventsStore } from '@/shared/stores'
+import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Traces | Buggregator')
 
 const STORAGE_KEY = 'sentry_traces_view_mode'
 
-const { traces, hasLoaded, isInitialLoading, total, fetchList } = useSentryTraces()
+const { traces, hasLoaded, error, isInitialLoading, total, fetchList } = useSentryTraces()
 
 const viewMode = ref<'list' | 'map'>(
   (window?.localStorage?.getItem(STORAGE_KEY) as 'list' | 'map') || 'list'
@@ -76,6 +77,15 @@ onSentryEvent(() => {
       >
         Loading...
       </div>
+
+      <StatusPanel
+        v-else-if="error"
+        tone="error"
+        title="Could not load traces"
+        :text="error"
+        action-label="Try again"
+        @action="fetchList"
+      />
 
       <template v-else-if="traces.length > 0">
         <TracePreviewCard
