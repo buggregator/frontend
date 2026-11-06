@@ -54,7 +54,11 @@ const openFrameIndex = computed(() => {
           <span
             v-if="exception.mechanism.handled !== undefined"
             class="exception__mechanism-handled"
-            :class="exception.mechanism.handled ? 'exception__mechanism-handled--yes' : 'exception__mechanism-handled--no'"
+            :class="
+              exception.mechanism.handled
+                ? 'exception__mechanism-handled--yes'
+                : 'exception__mechanism-handled--no'
+            "
           >
             {{ exception.mechanism.handled ? 'Handled' : 'Unhandled' }}
           </span>
@@ -68,7 +72,7 @@ const openFrameIndex = computed(() => {
     >
       <template
         v-for="(frame, index) in exceptionFrames"
-        :key="frame.context_line + frame.filename"
+        :key="`${index}:${frame.filename ?? ''}:${frame.context_line ?? ''}`"
       >
         <SentryExceptionFrame
           :frame="frame"
