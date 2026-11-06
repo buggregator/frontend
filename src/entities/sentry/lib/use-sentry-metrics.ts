@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import type { SentryMetric } from '../types'
 import { useSentryRequests } from './use-sentry-requests'
 
@@ -7,6 +7,12 @@ export const useSentryMetrics = () => {
 
   const metrics = ref<SentryMetric[]>([])
   const loading = ref(false)
+  const hasLoaded = ref(false)
+  // A first load and a background refresh are different things. The
+  // "Loading..." placeholder is only shown while there is nothing to show: on a
+  // WebSocket-driven refresh the list stays in place, otherwise the UI flickers
+  // on every incoming event.
+  const isInitialLoading = computed(() => loading.value && !hasLoaded.value)
   const total = ref(0)
   const page = ref(1)
   const filters = reactive<{
@@ -38,13 +44,18 @@ export const useSentryMetrics = () => {
       metrics.value = res.data
       total.value = res.meta.total
     } finally {
-      if (request === lastRequest) loading.value = false
+      if (request === lastRequest) {
+        loading.value = false
+        hasLoaded.value = true
+      }
     }
   }
 
   return {
     metrics,
     loading,
+    hasLoaded,
+    isInitialLoading,
     total,
     page,
     filters,
