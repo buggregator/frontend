@@ -12,10 +12,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version-file: .nvmrc
           cache: 'yarn'
 
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn generate
 
       - name: Get release tag
