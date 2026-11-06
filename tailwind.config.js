@@ -2,6 +2,15 @@
 import defaultColors from 'tailwindcss/colors.js'
 import defaultTheme from 'tailwindcss/defaultTheme.js'
 
+// Tailwind 3 still exports the colors renamed in 2.2/3.0 as getters that warn
+// on every read; spreading them all logged five warnings per build.
+const RENAMED_COLORS = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
+const currentColors = Object.fromEntries(
+  Object.keys(defaultColors)
+    .filter((name) => !RENAMED_COLORS.includes(name))
+    .map((name) => [name, defaultColors[name]])
+)
+
 export default {
   darkMode: 'class',
   content: [
@@ -9,11 +18,6 @@ export default {
     './src/**/*.{js,vue,ts}',
     './src/**/*.stories.{js,vue,ts}',
     './src/app.vue'
-  ],
-  safelist: [
-    {
-      pattern: /^text-/
-    }
   ],
   variants: {
     extend: {
@@ -66,7 +70,7 @@ export default {
       ...defaultTheme.fontWeight
     },
     colors: {
-      ...defaultColors,
+      ...currentColors,
       transparent: 'transparent',
       current: 'currentColor',
       purple: defaultColors.indigo,

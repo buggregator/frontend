@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { NormalizedEvent, OneOfValues } from '@/shared/types'
 import { TableBase, TableBaseRow, EventDetailLayout, EventDetailSection } from '@/shared/ui'
 import { useRay } from '../../lib'
+import { rayColorClass } from '../../lib/ray-color'
 import { RayEventTypes, type RayDump } from '../../types'
 
 type Props = {
@@ -18,11 +19,7 @@ const title = computed(() => {
   return type[0].toUpperCase() + type.slice(1)
 })
 
-const classes = computed(() => {
-  if (!props.event?.meta) return []
-  const color = props.event.meta.color
-  return [color && color !== 'gray' ? `text-${color}-500` : ''].filter(Boolean)
-})
+const classes = computed(() => rayColorClass(props.event?.meta?.color))
 
 const getComponent: (type: RayEventTypes | string) => OneOfValues<typeof COMPONENT_TYPE_MAP> = (
   type
