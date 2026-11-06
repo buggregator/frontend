@@ -33,12 +33,12 @@ const settle = async () => {
   for (let i = 0; i < 4; i++) await nextTick()
 }
 
-const setup = async (initial: string[]) => {
+const setup = async (initial: string[], overscan = 0) => {
   const keys = ref(initial)
   let api!: ReturnType<typeof useVirtualFeed>
   const Host = defineComponent({
     setup() {
-      api = useVirtualFeed(keys, { overscan: 0, estimate: ITEM, firstPage: 2 })
+      api = useVirtualFeed(keys, { overscan, estimate: ITEM, firstPage: 2 })
       return () =>
         h('div', { ref: api.scroller, class: 'scroller' }, [
           h(
@@ -57,20 +57,37 @@ const setup = async (initial: string[]) => {
   // the scroller gets its height from the first ResizeObserver report
   Object.defineProperty(scroller, 'clientHeight', { configurable: true, value: VIEWPORT })
 
-  // every rendered item and the scroller report their sizes
-  const measureAll = async () => {
-    const sizes = new Map<Element, number>([[scroller, VIEWPORT]])
-    scroller.querySelectorAll('[data-virtual-item]').forEach((el) => sizes.set(el, ITEM))
-    observers.at(-1)!.fire(sizes)
-    await settle()
+  // every rendered item and the scroller report their sizes; `height` picks
+  // an item's height by its key (default: the estimate)
+  const measureAll = async (height: (key: string) => number = () => ITEM) => {
+    for (let round = 0; round < 5; round++) {
+      const sizes = new Map<Element, number>([[scroller, VIEWPORT]])
+      scroller.querySelectorAll('[data-virtual-item]').forEach((el) => sizes.set(el, height(el.id)))
+      observers.at(-1)!.fire(sizes)
+      await settle()
+    }
   }
+  // where a rendered item's top is on screen
+  const screenTop = (key: string) => offsetOf(key) - scroller.scrollTop
   const scrollTo = async (top: number) => {
     scroller.scrollTop = top
     scroller.dispatchEvent(new Event('scroll'))
     await settle()
   }
   const rendered = () => [...scroller.querySelectorAll('[data-virtual-item]')].map((el) => el.id)
-  return { wrapper, keys, api: () => api, scroller, measureAll, scrollTo, rendered }
+  let heightOf: (key: string) => number = () => ITEM
+  // the item's top inside the list as rendered: the top padding plus the
+  // rendered items before it
+  const offsetOf = (key: string) => {
+    let top = api.padTop.value
+    for (const k of rendered()) {
+      if (k === key) return top
+      top += heightOf(k)
+    }
+    return NaN
+  }
+  const setHeights = (fn: (key: string) => number) => (heightOf = fn)
+  return { wrapper, keys, api: () => api, scroller, measureAll, scrollTo, rendered, screenTop, setHeights }
 }
 
 const ids = (n: number, prefix = 'e') => Array.from({ length: n }, (_, i) => `${prefix}${i}`)
@@ -141,5 +158,57 @@ describe('useVirtualFeed', () => {
     // e50 spans 5000..5100: its bottom lines up with the bottom of the screen
     expect(scroller.scrollTop).toBe(5100 - VIEWPORT)
     expect(rendered()).toContain('e50')
+  })
+
+  // Review of #313: an anchor whose card left the list went stale, and live
+  // events then pushed the view down on every batch.
+  it('hands the anchor to the next card when the anchor card is deleted', async () => {
+    const { keys, measureAll, scrollTo, screenTop } = await setup(ids(100))
+    await measureAll()
+    await scrollTo(520) // e5 is the first card on screen, 20 px of it above
+    const e6 = screenTop('e6')
+
+    keys.value = keys.value.filter((k) => k !== 'e5')
+    await settle()
+    keys.value = ['new0', 'new1', ...keys.value]
+    await measureAll()
+
+    expect(screenTop('e6')).toBe(e6)
+  })
+
+  // A measured height that differs from the estimate moves the cards below
+  // it; the card on screen stays put.
+  it('keeps the card on screen while cards above it are measured', async () => {
+    const { keys, measureAll, scrollTo, screenTop, setHeights, rendered } = await setup(ids(100))
+    const height = (k: string) => (k.startsWith('new') ? 250 : Number(k.slice(1)) % 2 ? 60 : 140)
+    setHeights(height)
+    await measureAll(height)
+    await scrollTo(1000)
+    const firstOnScreen = rendered().find((k) => screenTop(k) + height(k) > 0)!
+    const before = screenTop(firstOnScreen)
+
+    // three new cards arrive, rendered first at the estimate, then measured
+    keys.value = ['new0', 'new1', 'new2', ...keys.value]
+    await measureAll(height)
+
+    // scrollTop is whole pixels, the average height is not
+    expect(screenTop(firstOnScreen)).toBeCloseTo(before, 0)
+  })
+
+  // A card above the screen grows (rendered in the overscan, then measured
+  // again): the card on screen stays put.
+  it('keeps the card on screen when a card above it grows', async () => {
+    const { measureAll, scrollTo, screenTop, setHeights, rendered } = await setup(ids(100), 200)
+    await measureAll()
+    await scrollTo(1050)
+    await measureAll()
+    expect(rendered()).toContain('e9')
+    const before = screenTop('e10')
+
+    const grown = (k: string) => (k === 'e9' ? 400 : ITEM)
+    setHeights(grown)
+    await measureAll(grown)
+
+    expect(screenTop('e10')).toBeCloseTo(before, 0)
   })
 })
