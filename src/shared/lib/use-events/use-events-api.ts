@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia";
 import type { Ref } from 'vue';
 import { useEventsStore } from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
-import { isRequestOk } from '../io/request-result';
+import { describeLoadError, isRequestOk } from '../io/request-result';
 import { useApiTransport } from '../use-api-transport'
 import { showToast } from '../use-keyboard-nav';
 
@@ -99,15 +99,21 @@ export const useEventsApi = (): TUseEventsApi => {
   }
 
   // Only the newest reply lands, for the project and period it was asked
-  // for, merged with what changed here meanwhile (see eventsStore).
+  // for, merged with what changed here meanwhile (see eventsStore). The
+  // sequence is the store's, shared by every page and the live stream.
   const getAll = async () => {
     const load = eventsStore.startListLoad()
+    eventsStore.setListState('loading')
 
     try {
-      eventsStore.applyListLoad(load, await getEventsAll())
+      if (eventsStore.applyListLoad(load, await getEventsAll())) {
+        eventsStore.setListState('ready')
+      }
     } catch (e) {
-      eventsStore.failListLoad(load)
-      console.error(e);
+      console.error(e)
+      if (eventsStore.failListLoad(load)) {
+        eventsStore.setListState('error', describeLoadError(e))
+      }
     }
   }
 

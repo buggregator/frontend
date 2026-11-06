@@ -67,18 +67,17 @@ export const useEventsRequests: TUseEventsRequests = () => {
       return body.data as ServerEvent<unknown>[]
     })
 
+  // null: the server has no such event (deleted, cleared, a wrong link).
+  // Any other failure throws, so the page can tell the two apart.
   const getSingle = (id: EventId) => fetch(getEventRestUrl(id), { headers: headers() })
-    .then((response) => {
+    .then(async (response) => {
+      if (response.status === 404) {
+        return null
+      }
       if (!response.ok) {
-        return null;
+        throw new EventsLoadError(response.status)
       }
-      return response.json();
-    })
-    .then((response) => {
-      if (response) {
-        return response as ServerEvent<EventType>
-      }
-      return null;
+      return (await response.json()) as ServerEvent<EventType>
     })
 
   const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {

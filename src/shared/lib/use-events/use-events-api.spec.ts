@@ -106,3 +106,52 @@ describe('useEventsApi: the server refuses', () => {
     expect(ids()).toEqual(['b'])
   })
 })
+
+// Audit 5.3: a 500 or a slow load looked like "waiting for events".
+describe('useEventsApi: list load state', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+    Object.values(transport).forEach((fn) => fn.mockReset())
+    useSettingsStore().availableEvents = Object.values(EventTypes)
+  })
+
+  it('is loading while the request runs, then ready', async () => {
+    let resolve: (events: ServerEvent<unknown>[]) => void = () => {}
+    transport.getEventsAll.mockReturnValueOnce(new Promise((r) => { resolve = r }))
+
+    const loading = useEventsApi().getAll()
+    expect(useEventsStore().listState).toBe('loading')
+
+    resolve([event('a', 'smtp')])
+    await loading
+    expect(useEventsStore().listState).toBe('ready')
+    expect(useEventsStore().events).toHaveLength(1)
+  })
+
+  it('keeps the events and reports the error when the load fails', async () => {
+    useEventsStore().addList([event('a', 'smtp')])
+    transport.getEventsAll.mockRejectedValueOnce({ status: 500 })
+
+    await useEventsApi().getAll()
+
+    expect(useEventsStore().listState).toBe('error')
+    expect(useEventsStore().listError).toBe('The server answered 500.')
+    expect(useEventsStore().events).toHaveLength(1)
+  })
+
+  it('lets only the latest of two loads land', async () => {
+    let resolveOld: (events: ServerEvent<unknown>[]) => void = () => {}
+    transport.getEventsAll
+      .mockReturnValueOnce(new Promise((r) => { resolveOld = r }))
+      .mockResolvedValueOnce([event('new', 'smtp')])
+
+    const api = useEventsApi()
+    const old = api.getAll()
+    await api.getAll()
+    resolveOld([event('old', 'smtp')])
+    await old
+
+    expect(useEventsStore().events.map(({ uuid }) => uuid)).toEqual(['new'])
+  })
+})

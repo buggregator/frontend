@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isRequestOk } from './request-result'
+import { describeLoadError, isRequestOk } from './request-result'
 
 // A write goes either over the WebSocket RPC bridge or over REST. The bridge
 // wraps the HTTP answer as { data: { code, data } } and resolves even for a
@@ -26,5 +26,19 @@ describe('isRequestOk', () => {
   it('rejects nothing at all (a network error caught on the way)', () => {
     expect(isRequestOk(undefined)).toBe(false)
     expect(isRequestOk(null)).toBe(false)
+  })
+})
+
+describe('describeLoadError', () => {
+  it('names the status of an error answer', () => {
+    expect(describeLoadError({ status: 500 })).toBe('The server answered 500.')
+  })
+
+  it('asks to sign in on 401 and 403', () => {
+    expect(describeLoadError({ status: 403 })).toBe('Access denied. Sign in again.')
+  })
+
+  it('says the server cannot be reached on a network error', () => {
+    expect(describeLoadError(new TypeError('Failed to fetch'))).toBe('The server cannot be reached.')
   })
 })

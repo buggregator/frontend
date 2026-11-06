@@ -14,9 +14,10 @@ const { searchQuery } = storeToRefs(eventsStore)
 type Props = {
   type: PageEventTypes
   title: string
+  favoritesOnly?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { favoritesOnly: false })
 
 // Clear cannot be undone, so it always asks first. No count: the server holds
 // more events than the browser has loaded, and pinned ones are kept.
@@ -58,6 +59,15 @@ const visibleEvents = computed(() => {
   )
 })
 
+// Favorites count the pinned events only (audit 5.4: it showed the whole feed).
+const shownCount = computed(() => {
+  if (!props.favoritesOnly) {
+    return allEvents.value.length
+  }
+  const pinned = new Set(lockedIds.items.value)
+  return events.items.value.filter(({ uuid }) => pinned.has(uuid)).length
+})
+
 const hiddenEventsCount = computed(() => allEvents.value.length - visibleEvents.value.length)
 
 const toggleUpdate = () => {
@@ -85,10 +95,10 @@ const toggleUpdate = () => {
     </template>
 
     <span
-      v-if="allEvents.length > 0"
+      v-if="shownCount > 0"
       class="nav__count"
     >
-      {{ allEvents.length }}
+      {{ shownCount }}
     </span>
 
     <template #controls>

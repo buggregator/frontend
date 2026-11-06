@@ -8,16 +8,18 @@ import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryLogsList } from '@/entities/sentry/ui/sentry-logs-list'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { useEventsStore } from '@/shared/stores'
+import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Logs | Buggregator')
 
-const { logs, hasLoaded, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
+const { logs, hasLoaded, error, isInitialLoading, total, page, filters, fetchList } =
+  useSentryLogs()
 
 // A chip stands for the levels SDKs send for it
 const levelsOfChip: Record<string, string | null> = {
   all: null,
   warn: 'warn,warning',
-  error: 'error,fatal',
+  error: 'error,fatal'
 }
 
 const activeLevel = ref('all')
@@ -52,8 +54,17 @@ onSentryEvent(() => {
   <div class="sentry-logs-page">
     <SentrySubNav />
 
+    <StatusPanel
+      v-if="error"
+      tone="error"
+      title="Could not load logs"
+      :text="error"
+      action-label="Try again"
+      @action="fetchList"
+    />
+
     <SentryEmptyState
-      v-if="!isInitialLoading && logs.length === 0 && activeLevel === 'all'"
+      v-else-if="!isInitialLoading && logs.length === 0 && activeLevel === 'all'"
       type="logs"
     />
 

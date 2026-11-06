@@ -10,6 +10,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
+import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { PagePlaceholder } from '../page-placeholder'
 
@@ -45,7 +46,7 @@ const pauseFilteredEvents = computed(() => {
   )
 })
 
-const { searchQuery } = storeToRefs(useEventsStore())
+const { searchQuery, listState, listError } = storeToRefs(useEventsStore())
 const debouncedSearch = refDebounced(searchQuery, 150)
 
 const visibleEvents = computed(() => {
@@ -140,15 +141,35 @@ const { focusedId } = useKeyboardNav(eventUuids, {
   }
 })
 
+// Favorites count the pinned events, not the whole feed.
+const titleCount = computed(() =>
+  props.favoritesOnly ? visibleEvents.value.length : allEvents.value.length
+)
+
 watchEffect(() => {
-  useTitle(`${props.title || 'Events'}: ${allEvents.value.length} | Buggregator`)
+  useTitle(`${props.title || 'Events'}: ${titleCount.value} | Buggregator`)
 })
+
+// What the page shows when the feed has no card to show. A failed or running
+// load is not "waiting for events", and an empty search or empty favorites
+// say so instead of the SDK setup welcome.
+const emptyView = computed(() => {
+  if (listState.value === 'error') return 'error'
+  if (listState.value === 'loading' && !events.items.value.length) return 'loading'
+  if (props.favoritesOnly) return 'no-favorites'
+  if (debouncedSearch.value.trim()) return 'no-match'
+  return 'welcome'
+})
+
+const clearSearch = () => {
+  searchQuery.value = ''
+}
 </script>
 
 <template>
   <div class="layout-preview-events">
     <main
-      v-if="visibleEvents.length"
+      v-if="visibleEvents.length && emptyView !== 'error'"
       role="feed"
       :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
       aria-live="polite"
@@ -168,12 +189,42 @@ watchEffect(() => {
       />
     </main>
 
-    <section
-      v-if="!visibleEvents.length"
-      class="layout-preview-events__welcome"
-    >
-      <PagePlaceholder class="layout-preview-events__tips" />
-    </section>
+    <StatusPanel
+      v-if="emptyView === 'error'"
+      tone="error"
+      title="Could not load events"
+      :text="listError"
+      action-label="Try again"
+      @action="events.getAll()"
+    />
+
+    <template v-else-if="!visibleEvents.length">
+      <SkeletonLoader
+        v-if="emptyView === 'loading'"
+        variant="card"
+        aria-label="Loading events"
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-favorites'"
+        title="No favorites yet"
+        text="Pin an event to keep it here. Pinned events also survive Clear."
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-match'"
+        :title="`No events match “${debouncedSearch.trim()}”`"
+        action-label="Clear search"
+        @action="clearSearch"
+      />
+
+      <section
+        v-else
+        class="layout-preview-events__welcome"
+      >
+        <PagePlaceholder class="layout-preview-events__tips" />
+      </section>
+    </template>
   </div>
 </template>
 
