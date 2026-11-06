@@ -83,8 +83,10 @@ export const useSentryRequests = () => {
     return fetchJSON<SentryServiceMap>(`${BASE}/service-map${qs}`)
   }
 
+  // The badges label the lists: the server applies `project` to the
+  // exceptions count only, the period to every count.
   const getCounts = () => {
-    const qs = new URLSearchParams(withScope()).toString()
+    const qs = new URLSearchParams(withScope({}, { project: true })).toString()
     return fetchJSON<SentryCounts>(`${BASE}/counts${qs ? `?${qs}` : ''}`)
   }
 

@@ -40,6 +40,13 @@ describe('useSentryRequests: scope', () => {
     expect(query()).not.toHaveProperty('project')
   })
 
+  // The tab badges label the lists: the server counts exceptions per project
+  // and every type per period, so /counts takes both.
+  it('counts by project and period', async () => {
+    await useSentryRequests().getCounts()
+    expect(query()).toMatchObject({ project: 'shop', window: '7d' })
+  })
+
   it('keeps an explicit time range over the period', async () => {
     await useSentryRequests().getMetrics({ from: '2026-11-01' })
     expect(query()).not.toHaveProperty('window')

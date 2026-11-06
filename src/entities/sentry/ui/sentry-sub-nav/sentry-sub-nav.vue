@@ -1,11 +1,19 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted, watch } from 'vue'
+import { useEventsStore } from '@/shared/stores'
 import { useSentryCounts } from '../../lib'
 import { onSentryEvent } from '../../lib/use-sentry-events-bus'
 
 const { counts, fetchCounts } = useSentryCounts()
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
 
 onMounted(() => {
+  fetchCounts()
+})
+
+// The badges follow the same project and period as the lists they label.
+watch([activeProjectKey, period], () => {
   fetchCounts()
 })
 
