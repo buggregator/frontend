@@ -142,9 +142,14 @@ const { focusedId } = useKeyboardNav(eventUuids, {
 })
 
 // Favorites count the pinned events, not the whole feed.
-const titleCount = computed(() =>
-  props.favoritesOnly ? visibleEvents.value.length : allEvents.value.length
-)
+// The same number as the page header: every pinned event, search or not.
+const titleCount = computed(() => {
+  if (!props.favoritesOnly) {
+    return allEvents.value.length
+  }
+  const pinnedIds = new Set(lockedIds.items.value)
+  return events.items.value.filter(({ uuid }) => pinnedIds.has(uuid)).length
+})
 
 watchEffect(() => {
   useTitle(`${props.title || 'Events'}: ${titleCount.value} | Buggregator`)
@@ -153,11 +158,12 @@ watchEffect(() => {
 // What the page shows when the feed has no card to show. A failed or running
 // load is not "waiting for events", and an empty search or empty favorites
 // say so instead of the SDK setup welcome.
+// A search is checked before Favorites: pinned events that do not match the
+// search are still favorites.
 const emptyView = computed(() => {
-  if (listState.value === 'error') return 'error'
   if (listState.value === 'loading' && !events.items.value.length) return 'loading'
-  if (props.favoritesOnly) return 'no-favorites'
   if (debouncedSearch.value.trim()) return 'no-match'
+  if (props.favoritesOnly) return 'no-favorites'
   return 'welcome'
 })
 
@@ -168,8 +174,19 @@ const clearSearch = () => {
 
 <template>
   <div class="layout-preview-events">
+    <!-- Above the cards: live events keep coming after a failed load. -->
+    <StatusPanel
+      v-if="listState === 'error'"
+      tone="error"
+      :compact="visibleEvents.length > 0"
+      title="Could not load events"
+      :text="listError"
+      action-label="Try again"
+      @action="events.getAll()"
+    />
+
     <main
-      v-if="visibleEvents.length && emptyView !== 'error'"
+      v-if="visibleEvents.length"
       role="feed"
       :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
       aria-live="polite"
@@ -189,16 +206,7 @@ const clearSearch = () => {
       />
     </main>
 
-    <StatusPanel
-      v-if="emptyView === 'error'"
-      tone="error"
-      title="Could not load events"
-      :text="listError"
-      action-label="Try again"
-      @action="events.getAll()"
-    />
-
-    <template v-else-if="!visibleEvents.length">
+    <template v-else-if="listState !== 'error'">
       <SkeletonLoader
         v-if="emptyView === 'loading'"
         variant="card"

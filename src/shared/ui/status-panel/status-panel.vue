@@ -6,6 +6,8 @@ type Props = {
   title: string
   text?: string
   actionLabel?: string
+  // Over other content (a list that is still shown): less room.
+  compact?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,7 +22,7 @@ const emit = defineEmits<{ action: [] }>()
 <template>
   <section
     class="status-panel"
-    :class="`status-panel--${props.tone}`"
+    :class="[`status-panel--${props.tone}`, { 'status-panel--compact': props.compact }]"
     :role="props.tone === 'error' ? 'alert' : undefined"
   >
     <h2 class="status-panel__title">
@@ -50,11 +52,19 @@ const emit = defineEmits<{ action: [] }>()
   @apply px-4 py-16 mx-auto max-w-md;
 }
 
+.status-panel--compact {
+  @apply py-4;
+}
+
 .status-panel__title {
   @apply text-base font-semibold text-gray-900 dark:text-gray-100;
 }
 
-.status-panel--error .status-panel__title {
+.status-panel--error .status-panel--compact {
+  @apply py-4;
+}
+
+.status-panel__title {
   @apply text-red-700 dark:text-red-400;
 }
 

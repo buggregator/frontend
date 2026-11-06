@@ -62,8 +62,10 @@ onSentryEvent(() => {
       @action="fetchList"
     />
 
+    <!-- The list and its filters stay under an error: a retry may need
+         another filter. -->
     <SentryEmptyState
-      v-else-if="!isInitialLoading && metrics.length === 0 && !hasFilter"
+      v-if="!error && !isInitialLoading && metrics.length === 0 && !hasFilter"
       type="metrics"
     />
 
