@@ -1,4 +1,4 @@
-import moment from "moment/moment";
+import { normalizeEvent } from "@/shared/lib/normalize-event";
 import {type ServerEvent, type NormalizedEvent, type Attachment, EventTypes} from "@/shared/types";
 import type {HttpDump, HttpDumpServer} from "../../types";
 
@@ -13,12 +13,12 @@ export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>): Norm
     : uri;
 
   const normalizedEvent: NormalizedEvent<HttpDump> = {
-    id: event.uuid,
-    type: EventTypes.HttpDump,
-    labels: [EventTypes.HttpDump],
-    origin: {uri: fullUrl},
-    serverName: host,
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
+    ...normalizeEvent(event, {
+      type: EventTypes.HttpDump,
+      labels: [EventTypes.HttpDump],
+      origin: {uri: fullUrl},
+      serverName: host,
+    }),
     payload: {
       ...event.payload,
       request: {
@@ -46,10 +46,6 @@ export const normalizeHttpDumpEvent = (event: ServerEvent<HttpDumpServer>): Norm
 
   if (event.payload.duration_ms != null) {
     normalizedEvent.labels.push(`${event.payload.duration_ms}ms`);
-  }
-
-  if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
   }
 
   return normalizedEvent;

@@ -1,21 +1,9 @@
-import moment from "moment/moment";
-import {type ServerEvent, type NormalizedEvent, EventTypes} from "@/shared/types";
+import { normalizeEvent } from "@/shared/lib/normalize-event";
+import { type ServerEvent, type NormalizedEvent, EventTypes } from "@/shared/types";
 import type { VarDump } from "../types";
 
 export const normalizeVarDumpEvent = (event: ServerEvent<VarDump>): NormalizedEvent<VarDump> => {
-  const normalizedEvent: NormalizedEvent<VarDump> = {
-    id: event.uuid,
-    type: EventTypes.VarDump,
-    labels: [EventTypes.VarDump],
-    origin: null,
-    serverName: "",
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
-  }
-
-  if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
-  }
+  const normalizedEvent = normalizeEvent(event, { type: EventTypes.VarDump, labels: [EventTypes.VarDump] })
 
   if (event.payload?.payload?.label) {
     normalizedEvent.labels.push(`label: ${event.payload.payload.label}`);

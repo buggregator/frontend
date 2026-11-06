@@ -1,4 +1,4 @@
-import moment from "moment/moment";
+import { normalizeEvent } from "@/shared/lib/normalize-event";
 import type { ServerEvent, NormalizedEvent } from "@/shared/types";
 import { EventTypes } from "@/shared/types";
 import type { Sentry } from "../types";
@@ -12,9 +12,8 @@ const pickSet = (values: Record<string, unknown>): Record<string, string> =>
 const kindLabel = (payload?: Sentry): string =>
   !payload?.exception?.values?.length && sentryMessageText(payload) ? 'message' : 'exception'
 
-export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent<Sentry> => {
-  const normalizedEvent: NormalizedEvent<Sentry> = {
-    id: event.uuid,
+export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEvent<Sentry> =>
+  normalizeEvent(event, {
     type: EventTypes.Sentry,
     labels: [EventTypes.Sentry, kindLabel(event.payload)],
     origin: pickSet({
@@ -23,13 +22,4 @@ export const normalizeSentryEvent = (event: ServerEvent<Sentry>): NormalizedEven
       release: event.payload?.release,
     }),
     serverName: event.payload?.server_name || '',
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload,
-  }
-
-  if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
-  }
-
-  return normalizedEvent;
-}
+  })
