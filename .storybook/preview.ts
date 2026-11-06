@@ -1,9 +1,9 @@
 import 'highlight.js/lib/common';
-import {createPinia} from 'pinia';
 import { setup } from '@storybook/vue3-vite';
+import type { Preview } from '@storybook/vue3-vite'
+import {createPinia} from 'pinia';
 import "../src/assets/index.css";
 import "./stories.css"
-import type { Preview } from '@storybook/vue3-vite'
 import {createAppRouter} from "../src/app/router";
 
 const preview: Preview = {

@@ -15,8 +15,8 @@ const KEY_MAP: { [key: string]: string } = {
 }
 
 type Props = {
-  serverName: string
-  originConfig: {
+  serverName?: string
+  originConfig?: {
     [key: string]: string
   } | null
 }

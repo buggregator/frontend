@@ -2,11 +2,13 @@
 import { useTitle, watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useSentryMetrics } from '@/entities/sentry/lib'
-import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
-import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
-import { SentryMetricsList } from '@/entities/sentry/ui/sentry-metrics-list'
-import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import {
+  useSentryMetrics,
+  onSentryEvent,
+  SentryEmptyState,
+  SentryMetricsList,
+  SentrySubNav
+} from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
 

@@ -17,8 +17,8 @@ vi.mock('@/entities/sentry/lib', () => ({
     filters: { level: null },
     fetchList: vi.fn(),
   }),
+  onSentryEvent: vi.fn(),
 }))
-vi.mock('@/entities/sentry/lib/use-sentry-events-bus', () => ({ onSentryEvent: vi.fn() }))
 
 const memoryStorage = () => {
   const items = new Map<string, string>()

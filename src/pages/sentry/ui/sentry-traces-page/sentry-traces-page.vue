@@ -2,12 +2,14 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
-import { useSentryTraces } from '@/entities/sentry/lib'
-import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
-import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
-import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
-import { ServiceMap } from '@/entities/sentry/ui/service-map'
-import { TracePreviewCard } from '@/entities/sentry/ui/trace-preview-card'
+import {
+  useSentryTraces,
+  onSentryEvent,
+  SentryEmptyState,
+  SentrySubNav,
+  ServiceMap,
+  TracePreviewCard
+} from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
 

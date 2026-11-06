@@ -5,7 +5,7 @@ import { CodeSnippet } from '@/shared/ui'
 import type { SentryBreadcrumb } from '../../types'
 
 type Props = {
-  breadcrumbs: SentryBreadcrumb[]
+  breadcrumbs?: SentryBreadcrumb[]
 }
 
 const props = withDefaults(defineProps<Props>(), {

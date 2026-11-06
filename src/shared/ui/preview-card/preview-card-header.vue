@@ -10,9 +10,9 @@ import { DownloadType } from './types'
 type Props = {
   eventType: EventType | 'unknown'
   eventId: NormalizedEvent<unknown>['id']
-  eventUrl: string
+  eventUrl?: string
   labels: NormalizedEvent<unknown>['labels']
-  eventDate: Date | null
+  eventDate?: Date | null
   isOpen: boolean
   isLocked: boolean
   isVisibleControls: boolean

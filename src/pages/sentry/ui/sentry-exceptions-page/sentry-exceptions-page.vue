@@ -3,11 +3,13 @@ import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 import { LayoutPreviewEvents } from '@/widgets/ui'
-import { useSentryExceptions } from '@/entities/sentry/lib'
-import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
-import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
-import { SentryExceptionGroupCard } from '@/entities/sentry/ui/sentry-exception-group-card'
-import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import {
+  useSentryExceptions,
+  onSentryEvent,
+  SentryEmptyState,
+  SentryExceptionGroupCard,
+  SentrySubNav
+} from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { EventTypes } from '@/shared/types'
 import { StatusPanel } from '@/shared/ui'
