@@ -1,0 +1,16 @@
+{
+  "uuid": "f89402ab-58e1-405e-8ce2-2d3c8130c3bc",
+  "type": "monolog",
+  "payload": {
+    "channel": "app",
+    "context": { "timezone_header": "Asia\\/Dubai" },
+    "datetime": "2026-08-09T07:19:53.642569-04:00",
+    "extra": { "uid": "uid: 156865" },
+    "level": 300,
+    "level_name": "WARNING",
+    "message": "Invalid timezone header Asia\\/Dubai"
+  },
+  "timestamp": 1786274393.642713,
+  "project": "default",
+  "is_pinned": false
+}

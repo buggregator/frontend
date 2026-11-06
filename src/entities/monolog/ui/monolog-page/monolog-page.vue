@@ -8,6 +8,7 @@ import {
   EventDetailLayout,
   EventDetailSection
 } from '@/shared/ui'
+import { hasEntries } from '../../lib'
 import { MonologLevel } from '../../types'
 import type { Monolog } from '../../types'
 
@@ -16,6 +17,8 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const hasExtra = computed(() => hasEntries(props.event.payload.extra))
 
 const levelBadgeClass = computed(() => {
   const level = props.event.payload.level
@@ -65,15 +68,15 @@ const levelBadgeClass = computed(() => {
       />
     </EventDetailSection>
 
-    <template v-if="event.payload.extra && event.payload.extra.length">
-      <EventDetailSection
-        v-for="(field, key) in event.payload.extra"
-        :key="key"
-        title="Extra"
-      >
-        <CodeSnippet :code="{ [key]: String(field) }" />
-      </EventDetailSection>
-    </template>
+    <EventDetailSection
+      v-if="hasExtra"
+      title="Extra"
+    >
+      <CodeSnippet
+        language="json"
+        :code="event.payload.extra"
+      />
+    </EventDetailSection>
 
     <EventDetailSection
       v-if="event.payload.context.source"
