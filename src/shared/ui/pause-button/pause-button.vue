@@ -49,20 +49,20 @@ const toggleUpdate = () => {
 .pause-btn {
   @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
   @apply text-xs font-medium;
-  @apply text-green-600 dark:text-green-400;
+  @apply text-green-700 dark:text-green-400;
   @apply bg-green-50 dark:bg-green-500/10;
   @apply hover:bg-green-100 dark:hover:bg-green-500/20;
   @apply transition-colors cursor-pointer;
 
   &[disabled] {
     @apply opacity-40 cursor-not-allowed;
-    @apply text-gray-500 dark:text-gray-500;
+    @apply text-gray-600 dark:text-gray-300;
     @apply bg-gray-100 dark:bg-gray-700;
   }
 }
 
 .pause-btn--paused {
-  @apply text-amber-600 dark:text-amber-400;
+  @apply text-amber-700 dark:text-amber-400;
   @apply bg-amber-50 dark:bg-amber-500/10;
   @apply hover:bg-amber-100 dark:hover:bg-amber-500/20;
 }

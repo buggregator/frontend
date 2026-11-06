@@ -299,7 +299,7 @@ const truncate = (text: string, max: number) => {
 }
 
 .trace-wf__expand-icon {
-  @apply w-2.5 h-2.5 flex-shrink-0 text-gray-400 dark:text-gray-500;
+  @apply w-2.5 h-2.5 flex-shrink-0 text-gray-500 dark:text-gray-400;
   transition: transform 0.15s ease;
 }
 
@@ -314,26 +314,26 @@ const truncate = (text: string, max: number) => {
 }
 
 .wf-op--db {
-  @apply text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10;
+  @apply text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10;
 }
 .wf-op--http {
   @apply text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10;
 }
 .wf-op--cache {
-  @apply text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10;
+  @apply text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10;
 }
 .wf-op--queue {
   @apply text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-600/50;
 }
 .wf-op--server {
-  @apply text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10;
+  @apply text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10;
 }
 .wf-op--default {
-  @apply text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10;
+  @apply text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10;
 }
 
 .trace-wf__desc {
-  @apply text-gray-400 dark:text-gray-500 truncate font-mono text-2xs;
+  @apply text-gray-500 dark:text-gray-400 truncate font-mono text-2xs;
 }
 
 .trace-wf__track {
@@ -402,6 +402,6 @@ const truncate = (text: string, max: number) => {
 }
 
 .trace-wf__empty {
-  @apply py-8 text-center text-gray-400 dark:text-gray-500;
+  @apply py-8 text-center text-gray-500 dark:text-gray-400;
 }
 </style>

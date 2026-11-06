@@ -374,7 +374,7 @@ onMounted(getAttachmentsRequest)
 
 .smtp-header__badge {
   @apply text-2xs font-semibold uppercase px-2 py-0.5 rounded;
-  @apply bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300;
 }
 
 .smtp-header__badge--html {
@@ -394,7 +394,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-header__arrow {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .smtp-header__to {
@@ -406,7 +406,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-header__relative {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 /* Quick stats bar */
@@ -419,7 +419,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-stats__label {
-  @apply text-gray-400 dark:text-gray-500 mr-1;
+  @apply text-gray-500 dark:text-gray-400 mr-1;
 }
 
 .smtp-stats__sep {
@@ -484,7 +484,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-card__num {
-  @apply font-normal text-gray-400 dark:text-gray-500;
+  @apply font-normal text-gray-500 dark:text-gray-400;
   @apply ml-0.5;
 
   &::before {
@@ -509,7 +509,7 @@ onMounted(getAttachmentsRequest)
 
 .smtp-addr-group__label {
   @apply text-2xs font-medium uppercase tracking-wide;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply sm:w-16 sm:pt-0.5 flex-shrink-0;
 }
 
@@ -540,7 +540,7 @@ onMounted(getAttachmentsRequest)
 }
 
 .smtp-info-row__label {
-  @apply font-medium text-gray-400 dark:text-gray-500;
+  @apply font-medium text-gray-500 dark:text-gray-400;
   @apply w-24 flex-shrink-0;
 }
 

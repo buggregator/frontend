@@ -56,7 +56,7 @@ const changeSortOrder = () => {
 }
 
 .sorting-wrapper__markers {
-  @apply flex items-center h-full flex-col text-gray-400 dark:text-gray-600 gap-y-1 ml-1;
+  @apply flex items-center h-full flex-col text-gray-500 dark:text-gray-400 gap-y-1 ml-1;
 }
 
 .sorting-wrapper__marker {

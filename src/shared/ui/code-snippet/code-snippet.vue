@@ -83,6 +83,61 @@ const copyCode = (): void => {
   }
 }
 
+/* highlight.js ships one theme (github-dark); on the light snippet its token
+   colors fall to 1.9-3:1. These are GitHub Light's token colors (4.6:1 and up on gray-50). */
+:global(html:not(.dark) .code-snippet .hljs-keyword),
+:global(html:not(.dark) .code-snippet .hljs-doctag),
+:global(html:not(.dark) .code-snippet .hljs-meta .hljs-keyword),
+:global(html:not(.dark) .code-snippet .hljs-template-tag),
+:global(html:not(.dark) .code-snippet .hljs-template-variable),
+:global(html:not(.dark) .code-snippet .hljs-type),
+:global(html:not(.dark) .code-snippet .hljs-variable.language_) {
+  color: #cf222e;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-title),
+:global(html:not(.dark) .code-snippet .hljs-title.class_),
+:global(html:not(.dark) .code-snippet .hljs-title.function_) {
+  color: #8250df;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-attr),
+:global(html:not(.dark) .code-snippet .hljs-attribute),
+:global(html:not(.dark) .code-snippet .hljs-literal),
+:global(html:not(.dark) .code-snippet .hljs-meta),
+:global(html:not(.dark) .code-snippet .hljs-number),
+:global(html:not(.dark) .code-snippet .hljs-operator),
+:global(html:not(.dark) .code-snippet .hljs-variable),
+:global(html:not(.dark) .code-snippet .hljs-selector-attr),
+:global(html:not(.dark) .code-snippet .hljs-selector-class),
+:global(html:not(.dark) .code-snippet .hljs-selector-id) {
+  color: #0550ae;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-regexp),
+:global(html:not(.dark) .code-snippet .hljs-string),
+:global(html:not(.dark) .code-snippet .hljs-meta .hljs-string) {
+  color: #0a3069;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-built_in),
+:global(html:not(.dark) .code-snippet .hljs-symbol) {
+  color: #953800;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-comment),
+:global(html:not(.dark) .code-snippet .hljs-code),
+:global(html:not(.dark) .code-snippet .hljs-formula) {
+  color: #57606a;
+}
+
+:global(html:not(.dark) .code-snippet .hljs-name),
+:global(html:not(.dark) .code-snippet .hljs-quote),
+:global(html:not(.dark) .code-snippet .hljs-selector-tag),
+:global(html:not(.dark) .code-snippet .hljs-selector-pseudo) {
+  color: #116329;
+}
+
 .code-snippet__copy {
   @apply opacity-0 flex items-center gap-1 absolute top-2 right-2;
   @apply px-1.5 py-0.5 rounded text-2xs font-medium;
@@ -96,7 +151,7 @@ const copyCode = (): void => {
 }
 
 .code-snippet__copy--active {
-  @apply opacity-100 text-green-600 dark:text-green-400;
+  @apply opacity-100 text-green-700 dark:text-green-400;
 }
 
 .code-snippet__copy-icon {

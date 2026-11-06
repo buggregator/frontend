@@ -155,7 +155,7 @@ const isHandled = computed(() => props.group.handled)
 }
 
 .exc-group__label--debug {
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
   @apply bg-gray-100 dark:bg-gray-600/50;
 }
 
@@ -182,7 +182,7 @@ const isHandled = computed(() => props.group.handled)
 }
 
 .exc-group__time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 whitespace-nowrap ml-auto;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap ml-auto;
 }
 
 .exc-group__body {
@@ -213,7 +213,7 @@ const isHandled = computed(() => props.group.handled)
 }
 
 .exc-group__meta-key {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .exc-group__meta-mono {

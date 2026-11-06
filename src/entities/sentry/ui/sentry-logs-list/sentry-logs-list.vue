@@ -92,11 +92,11 @@ const chipClass = (lvl: string) => {
 }
 
 .logs-list__chip--error {
-  @apply bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400;
+  @apply bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400;
 }
 
 .logs-list__chip--warning {
-  @apply bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400;
+  @apply bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400;
 }
 
 .logs-list__chip--info {
@@ -108,6 +108,6 @@ const chipClass = (lvl: string) => {
 }
 
 .logs-list__status {
-  @apply flex items-center justify-center py-8 text-xs text-gray-400 dark:text-gray-500;
+  @apply flex items-center justify-center py-8 text-xs text-gray-500 dark:text-gray-400;
 }
 </style>

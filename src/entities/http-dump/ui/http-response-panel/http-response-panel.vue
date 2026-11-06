@@ -122,7 +122,7 @@ const bodyViewRef = ref<InstanceType<typeof HttpBodyView> | null>(null)
 .http-tag {
   @apply inline-flex items-center px-1.5 py-0.5 rounded;
   @apply text-2xs font-mono;
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400;
 }
 
 .http-response-binary {

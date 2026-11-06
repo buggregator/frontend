@@ -156,7 +156,7 @@ onMounted(async () => {
 }
 
 .trace-detail__loading {
-  @apply flex items-center justify-center py-12 text-sm text-gray-400;
+  @apply flex items-center justify-center py-12 text-sm text-gray-500 dark:text-gray-400;
 }
 
 .trace-detail__header {
@@ -197,7 +197,7 @@ onMounted(async () => {
 }
 
 .trace-detail__trace-id {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 ml-auto;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 ml-auto;
 }
 
 .trace-detail__tabs {
@@ -244,7 +244,7 @@ onMounted(async () => {
 }
 
 .trace-detail__error-time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
 }
 
 .trace-detail__logs-info {

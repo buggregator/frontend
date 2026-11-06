@@ -592,7 +592,7 @@ onBeforeUnmount(() => {
 }
 
 .flame-sidebar__close {
-  @apply text-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 leading-none px-1;
+  @apply text-xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 leading-none px-1;
 }
 
 .flame-sidebar__body {
@@ -641,7 +641,7 @@ onBeforeUnmount(() => {
 }
 
 .flame-sandwich__entry-count {
-  @apply text-[10px] text-gray-400;
+  @apply text-[10px] text-gray-500 dark:text-gray-400;
 }
 
 /* Transitions */

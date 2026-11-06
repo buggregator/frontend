@@ -133,7 +133,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .pc-footer__tag-key {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-600 dark:text-gray-400;
 }
 
 .pc-footer__tag-value {
@@ -141,7 +141,7 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
 }
 
 .pc-footer__host {
-  @apply inline-flex items-center gap-1 text-gray-400 dark:text-gray-500;
+  @apply inline-flex items-center gap-1 text-gray-500 dark:text-gray-400;
 }
 
 .pc-footer__host-icon {

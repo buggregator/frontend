@@ -249,7 +249,7 @@ const isKvLabel = (label: unknown): label is { title: string; value: string; con
    'text-lime-500 bg-lime-500/10' 'text-sky-500 bg-sky-500/10'
    'text-teal-500 bg-teal-500/10' 'text-cyan-500 bg-cyan-500/10'
    'text-fuchsia-500 bg-fuchsia-500/10'
-   'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10' */
+   'text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10' */
 $typeColors: (
   'sentry': 'rose',
   'profiler': 'violet',
@@ -281,7 +281,7 @@ $typeColors: (
 
   @each $type, $color in $typeColors {
     &--#{$type} {
-      @apply text-#{$color}-600 dark:text-#{$color}-400;
+      @apply text-#{$color}-700 dark:text-#{$color}-400;
       @apply bg-#{$color}-50 dark:bg-#{$color}-500/10;
     }
   }
@@ -371,58 +371,58 @@ $typeColors: (
    Tailwind safelist:
    'text-gray-500 dark:text-gray-400'
    'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10'
-   'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10'
-   'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
-   'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
-   'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10'
-   'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
-   'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10' */
+   'text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10'
+   'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10'
+   'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10'
+   'text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10'
+   'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-500/10'
+   'text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10' */
 
 $labelColors: (
   'gray': (
-    'text': 'gray-500',
+    'text': 'gray-600',
     'text-dark': 'gray-400',
     'bg': 'gray-100',
     'bg-dark': 'gray-600/50'
   ),
   'blue': (
-    'text': 'blue-600',
+    'text': 'blue-700',
     'text-dark': 'blue-400',
     'bg': 'blue-50',
     'bg-dark': 'blue-500/10'
   ),
   'cyan': (
-    'text': 'cyan-600',
+    'text': 'cyan-700',
     'text-dark': 'cyan-400',
     'bg': 'cyan-50',
     'bg-dark': 'cyan-500/10'
   ),
   'amber': (
-    'text': 'amber-600',
+    'text': 'amber-700',
     'text-dark': 'amber-400',
     'bg': 'amber-50',
     'bg-dark': 'amber-500/10'
   ),
   'red': (
-    'text': 'red-600',
+    'text': 'red-700',
     'text-dark': 'red-400',
     'bg': 'red-50',
     'bg-dark': 'red-500/10'
   ),
   'orange': (
-    'text': 'orange-600',
+    'text': 'orange-700',
     'text-dark': 'orange-400',
     'bg': 'orange-50',
     'bg-dark': 'orange-500/10'
   ),
   'green': (
-    'text': 'green-600',
+    'text': 'green-700',
     'text-dark': 'green-400',
     'bg': 'green-50',
     'bg-dark': 'green-500/10'
   ),
   'violet': (
-    'text': 'violet-600',
+    'text': 'violet-700',
     'text-dark': 'violet-400',
     'bg': 'violet-50',
     'bg-dark': 'violet-500/10'
@@ -442,12 +442,12 @@ $labelColors: (
 }
 
 .pc-header__label-key {
-  @apply text-gray-400 dark:text-gray-500 mr-1;
+  @apply text-gray-500 dark:text-gray-400 mr-1;
 }
 
 /* Timestamp */
 .pc-header__time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 whitespace-nowrap;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap;
 }
 
 /* ---- Right side: actions ---- */
@@ -457,7 +457,7 @@ $labelColors: (
 
 .pc-header__action {
   @apply w-6 h-6 flex items-center justify-center rounded;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-100 dark:hover:bg-gray-600;
   @apply transition-colors duration-100;

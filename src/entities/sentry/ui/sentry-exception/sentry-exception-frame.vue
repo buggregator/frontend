@@ -377,15 +377,15 @@ const toggleOpen = () => {
 }
 
 .frame__meta {
-  @apply text-gray-400 dark:text-gray-500 text-2xs;
+  @apply text-gray-500 dark:text-gray-400 text-2xs;
 }
 
 .frame__vars-hint {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
 }
 
 .frame__chevron {
-  @apply w-3.5 h-3.5 flex-shrink-0 text-gray-400 dark:text-gray-500;
+  @apply w-3.5 h-3.5 flex-shrink-0 text-gray-500 dark:text-gray-400;
   transition: transform 0.15s ease;
 }
 
@@ -398,7 +398,8 @@ const toggleOpen = () => {
 }
 
 .frame__line {
-  @apply flex text-gray-400;
+  /* the code block is gray-900 in both themes */
+  @apply flex text-gray-300;
 }
 
 .frame__line--active {
@@ -406,7 +407,7 @@ const toggleOpen = () => {
 }
 
 .frame__line-num {
-  @apply w-10 text-right pr-3 select-none text-gray-600 flex-shrink-0;
+  @apply w-10 text-right pr-3 select-none text-gray-400 flex-shrink-0;
 }
 
 .frame__line-code {

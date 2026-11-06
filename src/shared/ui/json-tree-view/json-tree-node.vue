@@ -177,7 +177,7 @@ const copyPath = () => {
 
 .json-node__toggle {
   @apply w-4 h-4 flex items-center justify-center cursor-pointer flex-shrink-0;
-  @apply text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300;
+  @apply text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300;
   font-size: 8px;
 }
 
@@ -210,12 +210,12 @@ const copyPath = () => {
 }
 
 .json-node__collapsed {
-  @apply text-gray-400 dark:text-gray-500 cursor-pointer;
+  @apply text-gray-500 dark:text-gray-400 cursor-pointer;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
 }
 
 .json-node__value--null {
-  @apply text-gray-400 dark:text-gray-500 italic;
+  @apply text-gray-500 dark:text-gray-400 italic;
 }
 
 .json-node__value--boolean {
@@ -232,7 +232,7 @@ const copyPath = () => {
 }
 
 .json-node__expand-str {
-  @apply text-2xs text-gray-400 dark:text-gray-500 ml-1 cursor-pointer;
+  @apply text-2xs text-gray-500 dark:text-gray-400 ml-1 cursor-pointer;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
 }
 

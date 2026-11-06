@@ -97,11 +97,11 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 }
 
 .ray-file__meta {
-  @apply text-gray-400 dark:text-gray-500 text-2xs;
+  @apply text-gray-500 dark:text-gray-400 text-2xs;
 }
 
 .ray-file__path {
-  @apply text-gray-400 dark:text-gray-500 text-2xs break-all;
+  @apply text-gray-500 dark:text-gray-400 text-2xs break-all;
 }
 
 .ray-file__path--link {
@@ -109,7 +109,7 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 }
 
 .ray-file__chevron {
-  @apply w-4 h-4 flex-shrink-0 text-gray-400 dark:text-gray-500;
+  @apply w-4 h-4 flex-shrink-0 text-gray-500 dark:text-gray-400;
   transition: transform 0.15s ease;
 }
 
@@ -122,7 +122,7 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
 }
 
 .ray-file__line {
-  @apply flex text-gray-400;
+  @apply flex text-gray-500 dark:text-gray-400;
 }
 
 .ray-file__line--active {

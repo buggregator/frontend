@@ -216,16 +216,16 @@ onSentryEvent(() => {
 
 .sentry-exceptions-page__loading {
   @apply flex items-center justify-center py-12;
-  @apply text-sm text-gray-400;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
 .sentry-exceptions-page__empty {
   @apply flex items-center justify-center py-12;
-  @apply text-sm text-gray-400;
+  @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
 .sentry-exceptions-page__footer {
-  @apply text-center py-3 text-xs text-gray-400;
+  @apply text-center py-3 text-xs text-gray-500 dark:text-gray-400;
   @apply border-t border-gray-200 dark:border-gray-700;
 }
 </style>

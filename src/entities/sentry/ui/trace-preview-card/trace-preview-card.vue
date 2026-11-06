@@ -136,7 +136,7 @@ const navigateToDetail = () => {
 }
 
 .trace-card__time {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 whitespace-nowrap ml-auto;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap ml-auto;
 }
 
 .trace-card__name {
@@ -156,7 +156,7 @@ const navigateToDetail = () => {
 }
 
 .trace-card__meta {
-  @apply text-2xs text-gray-400 dark:text-gray-500;
+  @apply text-2xs text-gray-500 dark:text-gray-400;
 }
 
 .trace-card__meta--mono {

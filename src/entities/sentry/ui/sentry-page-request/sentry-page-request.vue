@@ -49,7 +49,7 @@ const normalizeHeaderValue = (value: unknown) => (Array.isArray(value) ? value[0
 
 .section-subtitle {
   @apply text-2xs font-medium uppercase tracking-wide;
-  @apply text-gray-400 dark:text-gray-500 mt-4 mb-2;
+  @apply text-gray-500 dark:text-gray-400 mt-4 mb-2;
 }
 
 .request-url {

@@ -88,6 +88,6 @@ const truncate = (text: string, max: number) => {
 }
 
 .mini-wf__dur {
-  @apply text-[10px] text-gray-400 dark:text-gray-500 font-mono w-12 text-right flex-shrink-0;
+  @apply text-[10px] text-gray-500 dark:text-gray-400 font-mono w-12 text-right flex-shrink-0;
 }
 </style>

@@ -157,7 +157,7 @@ const issueCount = (findings: SmtpFinding[]): number =>
 }
 
 .insights__chevron {
-  @apply w-3.5 h-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0;
+  @apply w-3.5 h-3.5 text-gray-500 dark:text-gray-400 flex-shrink-0;
   transition: transform 0.15s ease;
 }
 

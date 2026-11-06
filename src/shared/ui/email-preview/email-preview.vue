@@ -163,7 +163,7 @@ iframe {
   @apply flex items-center gap-1.5;
   @apply px-2.5 py-1.5 rounded-md;
   @apply text-xs font-medium;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-100 dark:hover:bg-gray-800;
   @apply transition-all duration-100 cursor-pointer;
@@ -188,7 +188,7 @@ iframe {
 }
 
 .ep__size-hint {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
 }
 
 /* Viewport */

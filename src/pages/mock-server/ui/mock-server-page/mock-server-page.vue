@@ -935,7 +935,7 @@ onBeforeUnmount(() => {
 }
 
 .mock-page__btn--primary {
-  @apply bg-blue-600 border-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500;
+  @apply bg-blue-600 border-blue-600 text-white dark:text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500;
 
   &[aria-busy='true'] {
     cursor: progress;

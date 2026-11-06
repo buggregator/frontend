@@ -110,7 +110,7 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 .placeholder__status {
   @apply flex items-center gap-2 px-3 py-1.5 rounded-full;
   @apply bg-gray-100 dark:bg-gray-800;
-  @apply text-xs text-gray-500 dark:text-gray-400;
+  @apply text-xs text-gray-600 dark:text-gray-400;
 }
 
 .placeholder__status--connected {
@@ -148,7 +148,7 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 }
 
 .placeholder__hint-text {
-  @apply text-xs text-gray-400 dark:text-gray-500 leading-relaxed;
+  @apply text-xs text-gray-500 dark:text-gray-400 leading-relaxed;
 }
 
 /* Cards */
@@ -167,7 +167,7 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 
 .placeholder__card-icon {
   @apply w-5 h-5 flex-shrink-0;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .placeholder__card-info {
@@ -179,6 +179,6 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 }
 
 .placeholder__card-desc {
-  @apply text-xs text-gray-400 dark:text-gray-500;
+  @apply text-xs text-gray-500 dark:text-gray-400;
 }
 </style>

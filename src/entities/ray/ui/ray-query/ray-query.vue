@@ -51,7 +51,7 @@ const formattedSql = computed(() =>
 }
 
 .ray-query__label {
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .ray-query__value {

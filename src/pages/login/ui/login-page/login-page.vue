@@ -466,14 +466,14 @@ onMounted(() => {
   }
 
   span {
-    @apply text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap;
+    @apply text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap;
   }
 }
 
 /* ── Hint ─────────────────────────────────────────────────── */
 .login-form__hint {
   @apply text-xs text-center leading-relaxed;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   max-width: 280px;
 }
 

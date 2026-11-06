@@ -121,7 +121,7 @@ const content = computed(() => {
 }
 
 .sentry-empty__svg {
-  @apply w-12 h-12 text-gray-300 dark:text-gray-600;
+  @apply w-12 h-12 text-gray-300 dark:text-gray-400;
 }
 
 .sentry-empty__title {

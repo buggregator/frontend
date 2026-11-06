@@ -87,7 +87,7 @@ const copyRow = () => {
 
 .table-row__copy {
   @apply opacity-0 flex-shrink-0 p-0.5 rounded cursor-pointer;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply transition-opacity duration-150;
 

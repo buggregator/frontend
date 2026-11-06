@@ -236,7 +236,7 @@ onUnmounted(() => {
 
 .ps-card__label {
   @apply text-2xs uppercase tracking-wider font-semibold;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .ps-card__fn {
@@ -259,6 +259,6 @@ onUnmounted(() => {
 }
 
 .ps-card__pct {
-  @apply text-gray-400 dark:text-gray-500 font-normal;
+  @apply text-gray-500 dark:text-gray-400 font-normal;
 }
 </style>

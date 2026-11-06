@@ -170,7 +170,7 @@ const copyUrl = () => {
 .http-dump-header__action {
   @apply flex items-center gap-1 px-2 py-1 rounded;
   @apply text-2xs font-medium cursor-pointer;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
   @apply bg-gray-100 dark:bg-gray-800;
   @apply hover:text-gray-700 dark:hover:text-gray-200;
   @apply transition-colors duration-150;
@@ -183,7 +183,7 @@ const copyUrl = () => {
 .http-dump-header__tag {
   @apply inline-flex items-center px-1.5 py-0.5 rounded;
   @apply text-2xs font-mono;
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400;
 }
 
 .http-dump-header__tag--proxy {

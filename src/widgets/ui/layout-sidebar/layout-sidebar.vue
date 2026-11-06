@@ -528,7 +528,7 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
   @apply hidden;
   @apply items-center justify-center;
   @apply w-9 h-9 rounded-md;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
   @apply transition-colors duration-100 cursor-pointer;
@@ -551,7 +551,7 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
 .layout-sidebar__expand-btn {
   @apply flex items-center justify-center;
   @apply w-9 h-9 mx-auto rounded-md;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
   @apply transition-colors duration-100 cursor-pointer;
@@ -630,7 +630,7 @@ const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
   @apply hidden text-[10px] font-mono tabular-nums leading-none;
   @apply min-w-[20px] text-center px-1.5 py-0.5 rounded-full;
   @apply bg-gray-200/80 dark:bg-white/5;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply inline-block;
@@ -809,7 +809,7 @@ $dotColors: (
 }
 
 .layout-sidebar__connection-label {
-  @apply hidden text-xs text-gray-500 dark:text-gray-500;
+  @apply hidden text-xs text-gray-500 dark:text-gray-400;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply inline;

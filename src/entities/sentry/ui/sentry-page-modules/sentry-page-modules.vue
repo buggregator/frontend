@@ -139,7 +139,7 @@ const getPackageUrl = (name: string) => {
 
 .mod__search-icon {
   @apply absolute left-2.5 top-1/2 -translate-y-1/2;
-  @apply w-3.5 h-3.5 text-gray-400 dark:text-gray-500;
+  @apply w-3.5 h-3.5 text-gray-500 dark:text-gray-400;
   @apply fill-current;
   pointer-events: none;
 }
@@ -157,7 +157,7 @@ const getPackageUrl = (name: string) => {
 .mod__search-clear {
   @apply absolute right-2 top-1/2 -translate-y-1/2;
   @apply w-5 h-5 flex items-center justify-center rounded-full;
-  @apply text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300;
+  @apply text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300;
   @apply hover:bg-gray-100 dark:hover:bg-gray-800;
   @apply cursor-pointer transition-colors;
 }
@@ -167,7 +167,7 @@ const getPackageUrl = (name: string) => {
 }
 
 .mod__result-count {
-  @apply text-2xs font-mono text-gray-400 dark:text-gray-500 flex-shrink-0;
+  @apply text-2xs font-mono text-gray-500 dark:text-gray-400 flex-shrink-0;
 }
 
 /* Table */
@@ -180,7 +180,7 @@ const getPackageUrl = (name: string) => {
 
 .mod__table-head {
   @apply flex text-2xs font-medium uppercase tracking-wide;
-  @apply text-gray-400 dark:text-gray-500;
+  @apply text-gray-500 dark:text-gray-400;
   @apply bg-gray-50 dark:bg-gray-900;
   @apply border-b border-gray-200 dark:border-gray-700;
   @apply flex-shrink-0;
@@ -223,7 +223,7 @@ const getPackageUrl = (name: string) => {
 
 .mod__link-icon {
   @apply w-3 h-3 opacity-0 flex-shrink-0;
-  @apply fill-current text-gray-400 dark:text-gray-500;
+  @apply fill-current text-gray-500 dark:text-gray-400;
   transition: opacity 0.1s;
 
   .mod__row:hover & {
@@ -232,7 +232,7 @@ const getPackageUrl = (name: string) => {
 }
 
 .mod__vendor {
-  @apply text-gray-400 dark:text-gray-500 font-normal;
+  @apply text-gray-500 dark:text-gray-400 font-normal;
 }
 
 .mod__cell--version {
@@ -240,6 +240,6 @@ const getPackageUrl = (name: string) => {
 }
 
 .mod__empty {
-  @apply px-3 py-6 text-center text-xs text-gray-400 dark:text-gray-500 italic;
+  @apply px-3 py-6 text-center text-xs text-gray-500 dark:text-gray-400 italic;
 }
 </style>

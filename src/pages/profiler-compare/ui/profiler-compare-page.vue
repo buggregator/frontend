@@ -92,7 +92,7 @@ if (!isReady.value) {
 .action-btn {
   @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
   @apply text-xs font-medium;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-300;
   @apply bg-gray-100 dark:bg-gray-700;
   @apply hover:text-gray-700 dark:hover:text-gray-200;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;

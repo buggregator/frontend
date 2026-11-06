@@ -54,7 +54,7 @@ const size = computed(() => formatFileSize(props.attachment.size || 0))
 .file-attachment__icon {
   @apply flex-shrink-0 w-8 h-8 flex items-center justify-center rounded;
   @apply bg-gray-200 dark:bg-gray-700;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .file-attachment__icon-svg {
@@ -78,6 +78,6 @@ const size = computed(() => formatFileSize(props.attachment.size || 0))
 }
 
 .file-attachment__mime {
-  @apply text-2xs text-gray-400 dark:text-gray-500;
+  @apply text-2xs text-gray-500 dark:text-gray-400;
 }
 </style>

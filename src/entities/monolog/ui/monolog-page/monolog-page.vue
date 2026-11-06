@@ -132,7 +132,7 @@ const levelBadgeClass = computed(() => {
 }
 
 .level-badge--debug {
-  @apply text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-600/50;
+  @apply text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-600/50;
 }
 
 .level-badge--info {
@@ -140,15 +140,15 @@ const levelBadgeClass = computed(() => {
 }
 
 .level-badge--notice {
-  @apply text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10;
+  @apply text-cyan-700 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10;
 }
 
 .level-badge--warning {
-  @apply text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10;
+  @apply text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10;
 }
 
 .level-badge--error {
-  @apply text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10;
+  @apply text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10;
 }
 
 .level-badge--critical {
@@ -156,7 +156,7 @@ const levelBadgeClass = computed(() => {
 }
 
 .level-badge--alert {
-  @apply text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10;
+  @apply text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10;
 }
 
 .level-badge--emergency {
