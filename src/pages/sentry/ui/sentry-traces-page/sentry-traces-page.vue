@@ -14,7 +14,7 @@ useTitle('Sentry Traces | Buggregator')
 
 const STORAGE_KEY = 'sentry_traces_view_mode'
 
-const { traces, isInitialLoading, total, fetchList } = useSentryTraces()
+const { traces, hasLoaded, isInitialLoading, total, fetchList } = useSentryTraces()
 
 const viewMode = ref<'list' | 'map'>(
   (window?.localStorage?.getItem(STORAGE_KEY) as 'list' | 'map') || 'list'
@@ -24,11 +24,13 @@ watch(viewMode, (val) => {
   window?.localStorage?.setItem(STORAGE_KEY, val)
 })
 
-// The project and the period are mixed into the request in use-sentry-requests;
-// neither triggers reactivity on its own, so refetch the list explicitly.
-const { activeProjectKey, period } = storeToRefs(useEventsStore())
+// The period is mixed into the request in use-sentry-requests and does not
+// trigger reactivity on its own, so refetch the list explicitly. The project
+// is not: the server keeps no project for traces, logs and metrics.
+const { period } = storeToRefs(useEventsStore())
 
-watch([activeProjectKey, period], () => {
+watch(period, () => {
+  hasLoaded.value = false // a filter change is a user action: show the loading state
   fetchList()
 })
 

@@ -35,9 +35,9 @@ export const PERIOD_OPTIONS = [
   { value: 'all', label: 'All time' },
 ] as const;
 
-// A day by default: wide enough for a quiet instance to look unchanged, narrow
-// enough that a busy project does not load its entire history on first paint.
-export const DEFAULT_PERIOD = '24h';
+// All time by default: a debugger must not hide older events after a reload
+// unless the person narrows the period themselves.
+export const DEFAULT_PERIOD = 'all';
 
 const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.Sentry]: [] as EventId[],

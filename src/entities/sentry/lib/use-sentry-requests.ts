@@ -21,15 +21,16 @@ export const useSentryRequests = () => {
   const { activeProjectKey, period } = storeToRefs(useEventsStore())
   const headers = () => ({ 'X-Auth-Token': token.value })
 
-  // The project and the period are mixed into every sentry request.
-  //
-  // Neither was sent before, so the project picked in the sidebar had no effect
-  // on the exceptions list: the grouped view always showed every project at once
-  // (in the access log the request is just "exceptions?page=1&grouped=true",
-  // with no parameters at all).
-  const withScope = (params: Record<string, string> = {}): Record<string, string> => {
+  // The period goes into every sentry list request; the project only where the
+  // server stores it. On the server (buggregator/server #352) only exceptions
+  // have a project: traces, logs and metrics have no project column, so a
+  // `project` there would be ignored and only pretend to filter.
+  const withScope = (
+    params: Record<string, string> = {},
+    { project = false }: { project?: boolean } = {}
+  ): Record<string, string> => {
     const scoped = { ...params }
-    if (activeProjectKey.value && !scoped.project) {
+    if (project && activeProjectKey.value && !scoped.project) {
       scoped.project = activeProjectKey.value
     }
     if (period.value && !scoped.window && !scoped.from && !scoped.to) {
@@ -47,12 +48,12 @@ export const useSentryRequests = () => {
   }
 
   const getExceptions = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(withScope(params)).toString()
+    const qs = new URLSearchParams(withScope(params, { project: true })).toString()
     return fetchJSON<PaginatedResponse<SentryExceptionItem>>(`${BASE}/exceptions${qs ? `?${qs}` : ''}`)
   }
 
   const getExceptionsGrouped = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams({ ...withScope(params), grouped: 'true' }).toString()
+    const qs = new URLSearchParams({ ...withScope(params, { project: true }), grouped: 'true' }).toString()
     return fetchJSON<PaginatedResponse<SentryErrorGroup>>(`${BASE}/exceptions?${qs}`)
   }
 
@@ -73,7 +74,7 @@ export const useSentryRequests = () => {
   }
 
   const getMetrics = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(params).toString()
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
   }
 

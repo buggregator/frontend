@@ -15,7 +15,8 @@ useTitle('Sentry Exceptions | Buggregator')
 
 const STORAGE_KEY = 'sentry_exceptions_view_mode'
 
-const { grouped, groupedItems, isInitialLoading, total, page, filters, fetchList } = useSentryExceptions()
+const { grouped, groupedItems, hasLoaded, isInitialLoading, total, page, filters, fetchList } =
+  useSentryExceptions()
 
 // Restore view mode preference from localStorage.
 const storedMode = window?.localStorage?.getItem(STORAGE_KEY)
@@ -46,6 +47,7 @@ const { activeProjectKey, period } = storeToRefs(useEventsStore())
 
 watch([activeProjectKey, period], () => {
   page.value = 1
+  hasLoaded.value = false // a filter change is a user action: show the loading state
   if (grouped.value) fetchList()
 })
 

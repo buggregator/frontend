@@ -11,7 +11,7 @@ import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Logs | Buggregator')
 
-const { logs, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
+const { logs, hasLoaded, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
 
 // A chip stands for the levels SDKs send for it
 const levelsOfChip: Record<string, string | null> = {
@@ -28,11 +28,14 @@ watch(activeLevel, (level) => {
   fetchList()
 })
 
-// The project and the period are mixed into the request in use-sentry-requests;
-// neither triggers reactivity on its own, so refetch the list explicitly.
-const { activeProjectKey, period } = storeToRefs(useEventsStore())
+// The period is mixed into the request in use-sentry-requests and does not
+// trigger reactivity on its own, so refetch the list explicitly. The project
+// is not: the server keeps no project for traces, logs and metrics.
+const { period } = storeToRefs(useEventsStore())
 
-watch([activeProjectKey, period], () => {
+watch(period, () => {
+  page.value = 1
+  hasLoaded.value = false // a filter change is a user action: show the loading state
   fetchList()
 })
 
