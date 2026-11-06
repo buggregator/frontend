@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
-import { onMounted } from 'vue'
+import { useTitle, watchDebounced } from '@vueuse/core'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useSentryMetrics } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
@@ -9,7 +9,21 @@ import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 
 useTitle('Sentry Metrics | Buggregator')
 
-const { metrics, loading, total, fetchList } = useSentryMetrics()
+const { metrics, loading, total, page, filters, fetchList } = useSentryMetrics()
+
+const activeType = ref('all')
+const search = ref('')
+const hasFilter = computed(() => activeType.value !== 'all' || search.value.trim() !== '')
+
+const applyFilters = () => {
+  filters.type = activeType.value === 'all' ? null : activeType.value
+  filters.search = search.value.trim() || null
+  page.value = 1
+  fetchList()
+}
+
+watch(activeType, applyFilters)
+watchDebounced(search, applyFilters, { debounce: 300 })
 
 onMounted(() => {
   fetchList()
@@ -25,12 +39,14 @@ onSentryEvent(() => {
     <SentrySubNav />
 
     <SentryEmptyState
-      v-if="!loading && metrics.length === 0"
+      v-if="!loading && metrics.length === 0 && !hasFilter"
       type="metrics"
     />
 
     <SentryMetricsList
       v-else
+      v-model:type="activeType"
+      v-model:search="search"
       :metrics="metrics"
       :loading="loading"
     />
