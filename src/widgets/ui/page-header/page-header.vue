@@ -18,7 +18,20 @@ type Props = {
 
 const props = defineProps<Props>()
 
+// Clear cannot be undone, so it always asks first and says what goes.
+const clearMessage = computed(() => {
+  const count = allEvents.value.length
+  const what = props.type === ALL_EVENT_TYPES ? 'events' : `${props.title} events`
+  const scope = count > 0 ? `all ${count} ${what}` : `all ${what}`
+
+  return `Delete ${scope}? This cannot be undone.`
+})
+
 const clearEvents = () => {
+  if (!window.confirm(clearMessage.value)) {
+    return undefined
+  }
+
   if (props.type === ALL_EVENT_TYPES) {
     return events.removeAll()
   }
