@@ -1,13 +1,14 @@
 <script lang="ts" setup generic="T">
 import download from 'downloadjs'
 import { toBlob, toPng } from 'html-to-image'
-import { ref, computed, onBeforeMount, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { copyBlobToClipboard } from '../../lib/clipboard'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
 import { useEvents } from '../../lib/use-events'
 import { screenshotingEventId } from '../../lib/use-keyboard-nav'
 import type { NormalizedEvent } from '../../types'
+import { collapsedCardIds } from './collapsed-cards'
 import PreviewCardFooter from './preview-card-footer.vue'
 import PreviewCardHeader from './preview-card-header.vue'
 import { DownloadType } from './types'
@@ -18,7 +19,13 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const isCollapsed = ref(false)
+const isCollapsed = computed({
+  get: () => collapsedCardIds.value.has(props.event.id),
+  set: (collapsed: boolean) => {
+    if (collapsed) collapsedCardIds.value.add(props.event.id)
+    else collapsedCardIds.value.delete(props.event.id)
+  }
+})
 const isOptimized = ref(false)
 const isVisibleControlsLocal = ref(true)
 const isVisibleControls = computed(
@@ -26,8 +33,10 @@ const isVisibleControls = computed(
 )
 
 const eventRef = ref(null)
+// A card is open from its first frame (no grow-in on mount): the feed mounts
+// cards as they scroll into view, and a grow-in made them start at 0 px. New
+// events get the feed's own entry animation; deleting still collapses.
 const isDeleting = ref(false)
-const isInit = ref(true)
 const { events, lockedIds } = useEvents()
 
 const isLocked = computed(() => (lockedIds?.items.value || []).includes(props.event.id))
@@ -127,16 +136,6 @@ const copyCode = () => {
       })
   }
 }
-
-onBeforeMount(() => {
-  isInit.value = false
-})
-
-onMounted(() => {
-  setTimeout(() => {
-    isInit.value = true
-  }, 200)
-})
 </script>
 
 <template>
@@ -147,7 +146,7 @@ onMounted(() => {
     :class="[
       `preview-card--type-${event.type}`,
       {
-        'preview-card--initialized': isInit && !isDeleting,
+        'preview-card--initialized': !isDeleting,
         'preview-card--deleting': isDeleting
       }
     ]"

@@ -3,7 +3,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import { useSettingsStore } from '../../stores'
-import { useKeyboardNav } from './use-keyboard-nav'
+import { type KeyboardNavCallbacks, useKeyboardNav } from './use-keyboard-nav'
 
 // Node 25+ has a global `localStorage` without a working `getItem`.
 const memoryStorage = () => {
@@ -19,13 +19,13 @@ const memoryStorage = () => {
 const press = (key: string, init: KeyboardEventInit = {}, target: EventTarget = document) =>
   target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }))
 
-const setup = () => {
+const setup = (options: KeyboardNavCallbacks = {}, ids = ['a', 'b']) => {
   const onDelete = vi.fn()
   const onOpen = vi.fn()
   const onScreenshot = vi.fn()
   const Host = defineComponent({
     setup() {
-      useKeyboardNav(ref(['a', 'b']), { onDelete, onOpen, onScreenshot })
+      useKeyboardNav(ref(ids), { onDelete, onOpen, onScreenshot, ...options })
       return () => h('button', { id: 'btn' }, 'Copy')
     },
   })
@@ -96,6 +96,18 @@ describe('useKeyboardNav', () => {
     press('Enter', {}, button)
 
     expect(onOpen).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('brings the selected event into view through scrollToId when given', () => {
+    const scrollToId = vi.fn()
+    const { wrapper } = setup({ scrollToId }, ['a', 'b', 'c'])
+
+    press('j')
+    press('j')
+
+    expect(scrollToId).toHaveBeenNthCalledWith(1, 'a')
+    expect(scrollToId).toHaveBeenNthCalledWith(2, 'b')
     wrapper.unmount()
   })
 })

@@ -10,6 +10,9 @@ export type KeyboardNavCallbacks = {
   onLock?: (id: EventId) => void
   onCopyPayload?: (id: EventId) => void
   onScreenshot?: (id: EventId) => void
+  // Brings the focused event into view. Default: scroll its element, which a
+  // virtual list may not have rendered.
+  scrollToId?: (id: EventId) => void
 }
 
 // Shared state for screenshot mode — cards hide controls when their id is here
@@ -36,10 +39,12 @@ export function useKeyboardNav(
   const { isSingleKeyShortcutsEnabled } = storeToRefs(useSettingsStore())
 
   const scrollToFocused = () => {
-    if (focusedId.value) {
-      const el = document.getElementById(focusedId.value)
-      el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (!focusedId.value) return
+    if (options.scrollToId) {
+      options.scrollToId(focusedId.value)
+      return
     }
+    document.getElementById(focusedId.value)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }
 
   const updateFocus = (index: number) => {

@@ -8,6 +8,7 @@ import { PAGE_TYPES } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
+import { useVirtualFeed } from '@/shared/lib/use-virtual-feed'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
@@ -72,6 +73,9 @@ const visibleEvents = computed(() => {
 })
 
 const recentEventIds = ref(new Set<string>())
+// Said by screen readers instead of the feed itself being a live region: the
+// virtual feed mounts cards while scrolling, which would be read out too.
+const newEventsNote = ref('')
 
 watch(
   () => events.items.value.length,
@@ -79,6 +83,10 @@ watch(
     if (newLen > oldLen) {
       const newIds = events.items.value.slice(0, newLen - oldLen).map((e) => e.uuid)
       newIds.forEach((id) => recentEventIds.value.add(id))
+      // the first list load is not news
+      if (oldLen > 0 || newIds.length === 1) {
+        newEventsNote.value = `${newIds.length} new ${newIds.length === 1 ? 'event' : 'events'}`
+      }
 
       setTimeout(() => {
         newIds.forEach((id) => recentEventIds.value.delete(id))
@@ -89,7 +97,18 @@ watch(
 
 const router = useRouter()
 const eventUuids = computed(() => visibleEvents.value.map((e) => e.uuid))
+
+// Only the cards near the screen are in the DOM (audit 2.3: 500 cards made
+// ~37 000 nodes and a 1 s first render).
+const { scroller, range, padTop, padBottom, scrollToKey } = useVirtualFeed(eventUuids)
+const renderedEvents = computed(() =>
+  visibleEvents.value
+    .slice(range.value.start, range.value.end)
+    .map((event, i) => ({ event, position: range.value.start + i + 1 }))
+)
+
 const { focusedId } = useKeyboardNav(eventUuids, {
+  scrollToId: scrollToKey,
   onOpen: (id) => {
     const event = visibleEvents.value.find((e) => e.uuid === id)
     if (event) {
@@ -121,7 +140,9 @@ const { focusedId } = useKeyboardNav(eventUuids, {
       )
     }
   },
-  onScreenshot: (id) => {
+  onScreenshot: async (id) => {
+    // the focused card may be off screen, so not rendered
+    await scrollToKey(id, 'auto')
     const el = document.getElementById(id)
     if (el) {
       screenshotingEventId.value = id
@@ -185,25 +206,41 @@ const clearSearch = () => {
       @action="events.getAll()"
     />
 
+    <p
+      class="sr-only"
+      aria-live="polite"
+    >
+      {{ newEventsNote }}
+    </p>
+
     <main
       v-if="visibleEvents.length"
+      ref="scroller"
       role="feed"
       :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
-      aria-live="polite"
       class="layout-preview-events__events"
     >
-      <EventCardMapper
-        v-for="event in visibleEvents"
-        :id="event.uuid"
-        :key="event.uuid"
-        :event="event"
-        role="article"
-        class="layout-preview-events__event"
-        :class="{
-          'layout-preview-events__event--focused': focusedId === event.uuid,
-          'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
-        }"
-      />
+      <div
+        class="layout-preview-events__list"
+        :style="{ paddingTop: `${padTop}px`, paddingBottom: `${padBottom}px` }"
+      >
+        <EventCardMapper
+          v-for="{ event, position } in renderedEvents"
+          :id="event.uuid"
+          :key="event.uuid"
+          :event="event"
+          role="article"
+          :aria-posinset="position"
+          :aria-setsize="visibleEvents.length"
+          data-virtual-item
+          class="layout-preview-events__event"
+          :class="{
+            'layout-preview-events__event--last': position === visibleEvents.length,
+            'layout-preview-events__event--focused': focusedId === event.uuid,
+            'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
+          }"
+        />
+      </div>
     </main>
 
     <template v-else-if="listState !== 'error'">
@@ -245,14 +282,20 @@ const clearSearch = () => {
 
 .layout-preview-events__events {
   @include mixins.border-style;
-  @apply divide-y divide-gray-200 dark:divide-gray-700;
   @apply flex-1 overflow-y-auto;
+  // useVirtualFeed keeps the first visible card in place itself.
+  overflow-anchor: none;
 }
 
+// Every card has the same bottom border, whichever card is rendered first, so
+// a card keeps its measured height when the rendered range moves.
 .layout-preview-events__event {
-  & + & {
-    @apply border-b border-gray-200 dark:border-gray-700;
-  }
+  @apply border-b border-gray-200 dark:border-gray-700;
+}
+
+// The frame of the feed draws the last line.
+.layout-preview-events__event--last {
+  @apply border-b-0;
 }
 
 .layout-preview-events__event--animate {
