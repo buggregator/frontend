@@ -8,6 +8,7 @@ export enum LocalStorageKeys {
   SidebarCollapsed = "sidebar_collapsed",
   CustomFilePathMapping = "custom_file_path_mapping",
   IsActiveCustomFilePathMapping = "is_active_custom_file_path_mapping",
+  SingleKeyShortcuts = "single_key_shortcuts",
 }
 
 export enum SessionStorageKeys {
