@@ -111,4 +111,18 @@ describe('LayoutPreviewEvents: empty, loading and error views', () => {
     expect(cards[0].attributes('aria-setsize')).toBe('200')
     expect(wrapper.get('[role="feed"]').attributes('aria-label')).toContain('200 items')
   })
+
+  it('announces new events in a live region, not the first list load', async () => {
+    items.value = [event('a'), event('b')]
+    useEventsStore().setListState('ready')
+    const wrapper = await render()
+    const note = () => wrapper.get('[aria-live="polite"]').text()
+    expect(note()).toBe('')
+    expect(wrapper.get('[role="feed"]').attributes('aria-live')).toBeUndefined()
+
+    items.value = [event('c'), event('d'), ...items.value]
+    await flushPromises()
+
+    expect(note()).toBe('2 new events')
+  })
 })

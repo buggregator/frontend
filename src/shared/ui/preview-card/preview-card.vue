@@ -8,6 +8,7 @@ import { logger } from '../../lib/logger'
 import { useEvents } from '../../lib/use-events'
 import { screenshotingEventId } from '../../lib/use-keyboard-nav'
 import type { NormalizedEvent } from '../../types'
+import { collapsedCardIds } from './collapsed-cards'
 import PreviewCardFooter from './preview-card-footer.vue'
 import PreviewCardHeader from './preview-card-header.vue'
 import { DownloadType } from './types'
@@ -18,7 +19,13 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const isCollapsed = ref(false)
+const isCollapsed = computed({
+  get: () => collapsedCardIds.value.has(props.event.id),
+  set: (collapsed: boolean) => {
+    if (collapsed) collapsedCardIds.value.add(props.event.id)
+    else collapsedCardIds.value.delete(props.event.id)
+  }
+})
 const isOptimized = ref(false)
 const isVisibleControlsLocal = ref(true)
 const isVisibleControls = computed(

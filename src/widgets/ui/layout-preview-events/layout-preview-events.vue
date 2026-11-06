@@ -73,6 +73,9 @@ const visibleEvents = computed(() => {
 })
 
 const recentEventIds = ref(new Set<string>())
+// Said by screen readers instead of the feed itself being a live region: the
+// virtual feed mounts cards while scrolling, which would be read out too.
+const newEventsNote = ref('')
 
 watch(
   () => events.items.value.length,
@@ -80,6 +83,10 @@ watch(
     if (newLen > oldLen) {
       const newIds = events.items.value.slice(0, newLen - oldLen).map((e) => e.uuid)
       newIds.forEach((id) => recentEventIds.value.add(id))
+      // the first list load is not news
+      if (oldLen > 0 || newIds.length === 1) {
+        newEventsNote.value = `${newIds.length} new ${newIds.length === 1 ? 'event' : 'events'}`
+      }
 
       setTimeout(() => {
         newIds.forEach((id) => recentEventIds.value.delete(id))
@@ -133,7 +140,9 @@ const { focusedId } = useKeyboardNav(eventUuids, {
       )
     }
   },
-  onScreenshot: (id) => {
+  onScreenshot: async (id) => {
+    // the focused card may be off screen, so not rendered
+    await scrollToKey(id, 'auto')
     const el = document.getElementById(id)
     if (el) {
       screenshotingEventId.value = id
@@ -197,12 +206,18 @@ const clearSearch = () => {
       @action="events.getAll()"
     />
 
+    <p
+      class="sr-only"
+      aria-live="polite"
+    >
+      {{ newEventsNote }}
+    </p>
+
     <main
       v-if="visibleEvents.length"
       ref="scroller"
       role="feed"
       :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
-      aria-live="polite"
       class="layout-preview-events__events"
     >
       <div
@@ -220,6 +235,7 @@ const clearSearch = () => {
           data-virtual-item
           class="layout-preview-events__event"
           :class="{
+            'layout-preview-events__event--last': position === visibleEvents.length,
             'layout-preview-events__event--focused': focusedId === event.uuid,
             'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
           }"
@@ -271,14 +287,15 @@ const clearSearch = () => {
   overflow-anchor: none;
 }
 
-.layout-preview-events__list {
-  @apply divide-y divide-gray-200 dark:divide-gray-700;
+// Every card has the same bottom border, whichever card is rendered first, so
+// a card keeps its measured height when the rendered range moves.
+.layout-preview-events__event {
+  @apply border-b border-gray-200 dark:border-gray-700;
 }
 
-.layout-preview-events__event {
-  & + & {
-    @apply border-b border-gray-200 dark:border-gray-700;
-  }
+// The frame of the feed draws the last line.
+.layout-preview-events__event--last {
+  @apply border-b-0;
 }
 
 .layout-preview-events__event--animate {
