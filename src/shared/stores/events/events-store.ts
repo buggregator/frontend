@@ -39,7 +39,9 @@ export const PERIOD_OPTIONS = [
 // unless the person narrows the period themselves.
 export const DEFAULT_PERIOD = 'all';
 
-const initialCachedIds: TEventsCachedIdsMap = {
+// A fresh map every time: pausing pushes into these arrays, so a shared
+// object would bring old ids back after every reset.
+const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.Sentry]: [] as EventId[],
   [PAGE_TYPES.Inspector]: [] as EventId[],
   [PAGE_TYPES.Profiler]: [] as EventId[],
@@ -52,14 +54,14 @@ const initialCachedIds: TEventsCachedIdsMap = {
   [PAGE_TYPES.SentryTrace]: [] as EventId[],
   [PAGE_TYPES.SentryLog]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
-};
+});
 
 export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
     countsMap: new Map<string, number>() as Map<string, number>,
-    cachedIds: getStoredCachedIds() || initialCachedIds,
+    cachedIds: getStoredCachedIds() || createInitialCachedIds(),
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],
@@ -147,50 +149,62 @@ export const useEventsStore = defineStore("eventsStore", {
         }
       });
     },
+    // Clear keeps pinned events (the server keeps them too) and always ends
+    // the pause: the paused snapshot no longer exists.
     removeAll() {
-      if (this.lockedIds.length) {
-        this.events = this.events.filter(({ uuid }) => this.lockedIds.includes(uuid));
-        this.rebuildCountsMap();
-
-        return
-      }
-
-      this.events.length = 0;
-      this.countsMap.clear();
+      const lockedSet = new Set(this.lockedIds);
+      this.events = this.events.filter(({ uuid }) => lockedSet.has(uuid));
+      this.rebuildCountsMap();
 
       this.removeCachedAll();
     },
     removeByIds(eventUuids: EventId[]) {
-      const uuidSet = new Set(eventUuids);
+      const lockedSet = new Set(this.lockedIds);
+      const removed = new Set(eventUuids.filter((uuid) => !lockedSet.has(uuid)));
 
-      if (this.lockedIds.length) {
-        const lockedSet = new Set(this.lockedIds);
-        this.events = this.events.filter(({ uuid }) => !uuidSet.has(uuid) || lockedSet.has(uuid));
-        this.rebuildCountsMap();
-
-        return
-      }
-
-      this.events = this.events.filter(({ uuid }) => !uuidSet.has(uuid));
+      this.events = this.events.filter(({ uuid }) => !removed.has(uuid));
       this.rebuildCountsMap();
 
-      this.removeCachedByIds(eventUuids);
+      this.removeCachedByIds([...removed]);
     },
     removeById(eventUuid: EventId) {
       this.removeByIds([eventUuid]);
-
-      this.removeCachedById(eventUuid);
     },
     removeByType(eventType: EventType) {
-      if (this.lockedIds.length) {
-        this.events = this.events.filter(({ type, uuid }) => type !== eventType || this.lockedIds.includes(uuid));
-        this.rebuildCountsMap();
+      const lockedSet = new Set(this.lockedIds);
+      const removed = this.events
+        .filter(({ type, uuid }) => type === eventType && !lockedSet.has(uuid))
+        .map(({ uuid }) => uuid);
 
-        return
+      this.removeByIds(removed);
+    },
+    // The server deleted these events (in this tab or another one): they go
+    // whether pinned or not.
+    dropByIds(eventUuids: EventId[]) {
+      const dropped = new Set(eventUuids);
+
+      if (this.lockedIds.some((uuid) => dropped.has(uuid))) {
+        this.lockedIds = this.lockedIds.filter((uuid) => !dropped.has(uuid));
+        setStoredLockedIds(this.lockedIds);
       }
 
-      this.events = this.events.filter(({ type }) => type !== eventType);
-      this.countsMap.set(eventType, 0);
+      this.removeByIds(eventUuids);
+    },
+    // The server's list is the truth: after a load, a reconnect or a clear
+    // made elsewhere. Pins come from the server too.
+    syncFromServer(events: ServerEvent<unknown>[]) {
+      this.lockedIds = events.filter((e) => e.is_pinned).map((e) => e.uuid);
+      setStoredLockedIds(this.lockedIds);
+
+      if (!events.length) {
+        this.events = [];
+        this.countsMap.clear();
+        this.removeCachedAll();
+
+        return;
+      }
+
+      this.initializeEvents(events);
     },
     // cached ids
     addCachedByType(cachedType: PageEventTypes) {
@@ -199,7 +213,9 @@ export const useEventsStore = defineStore("eventsStore", {
           type === cachedType || cachedType === PAGE_TYPES.ALL_EVENT_TYPES
         )
         .forEach((event) => {
-          this.cachedIds[cachedType].push(event.uuid);
+          if (!this.cachedIds[cachedType].includes(event.uuid)) {
+            this.cachedIds[cachedType].push(event.uuid);
+          }
         });
 
       setStoredCachedIds(this.cachedIds);
@@ -221,7 +237,7 @@ export const useEventsStore = defineStore("eventsStore", {
       this.removeCachedByIds([eventUuid]);
     },
     removeCachedAll() {
-      this.cachedIds = initialCachedIds;
+      this.cachedIds = createInitialCachedIds();
       setStoredCachedIds(this.cachedIds);
     },
     syncCachedWithActive(activeIds: EventId[]) {

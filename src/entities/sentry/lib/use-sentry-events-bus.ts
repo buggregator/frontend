@@ -1,3 +1,4 @@
+import type { PublicationContext } from 'centrifuge'
 import { onUnmounted } from 'vue'
 import { useCentrifuge } from '@/shared/lib/io'
 
@@ -18,38 +19,55 @@ const DEBOUNCE_MS = 1000
 // enough.
 const MIN_INTERVAL_MS = 10000
 
+const SENTRY_TYPES = new Set(['sentry', 'sentry-trace', 'sentry-log'])
+
+const notify = () => {
+  debounceTimer = null
+  lastNotifiedAt = Date.now()
+  for (const cb of listeners) {
+    cb()
+  }
+}
+
+// The timer is not reset by later events, so a steady stream still notifies
+// at least every MIN_INTERVAL_MS (audit 1.7).
+const schedule = (delay: number) => {
+  if (debounceTimer) return
+  debounceTimer = setTimeout(notify, delay)
+}
+
+const onPublication = (ctx: PublicationContext) => {
+  const name = ctx.data?.event
+
+  // A delete or a clear (this tab, another tab, the API) changes the lists
+  // too. `event.deleted` names no type, so every Sentry list refetches.
+  if (name === 'event.deleted' || name === 'events.cleared') {
+    schedule(DEBOUNCE_MS)
+    return
+  }
+
+  if (name !== 'event.received') return
+
+  const type = ctx.data?.data?.type as string | undefined
+  if (!type || !SENTRY_TYPES.has(type)) return
+
+  // Wait for the burst to settle, but no longer than needed to keep
+  // MIN_INTERVAL_MS since the previous notification.
+  const sinceLast = Date.now() - lastNotifiedAt
+  schedule(Math.max(DEBOUNCE_MS, MIN_INTERVAL_MS - sinceLast))
+}
+
 function subscribe() {
   if (isSubscribed) return
   isSubscribed = true
 
-  const { centrifuge } = useCentrifuge()
+  useCentrifuge().centrifuge.on('publication', onPublication)
+}
 
-  centrifuge.on('publication', (ctx) => {
-    if (ctx.data?.event !== 'event.received') return
-
-    const event = ctx?.data?.data
-    if (!event) return
-
-    // Notify listeners when a sentry-related event arrives.
-    const type = event.type as string
-    if (type === 'sentry' || type === 'sentry-trace' || type === 'sentry-log') {
-      // Debounce: if multiple events arrive in quick succession,
-      // only call listeners once after the burst settles.
-      if (debounceTimer) return
-
-      // Wait for the burst to settle, but no longer than needed to keep
-      // MIN_INTERVAL_MS since the previous notification.
-      const sinceLast = Date.now() - lastNotifiedAt
-      const delay = Math.max(DEBOUNCE_MS, MIN_INTERVAL_MS - sinceLast)
-
-      debounceTimer = setTimeout(() => {
-        debounceTimer = null
-        lastNotifiedAt = Date.now()
-        for (const cb of listeners) {
-          cb()
-        }
-      }, delay)
-    }
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    useCentrifuge().centrifuge.removeListener('publication', onPublication)
+    if (debounceTimer) clearTimeout(debounceTimer)
   })
 }
 

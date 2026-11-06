@@ -13,7 +13,9 @@ type TUseAttachments = (module?: EventModule) => {
 export const useAttachments: TUseAttachments = (module: EventModule = 'smtp') => {
   const { token } = storeToRefs(useProfileStore())
 
-  const headers = {"X-Auth-Token": token.value }
+  // Read at request time: the token is loaded (or changed by a login) after
+  // this composable was created.
+  const headers = () => ({ "X-Auth-Token": token.value })
 
   // The server namespaces attachment endpoints under `/api/{module}/attachments/...`
   // (literal `attachments` segment first) to avoid colliding with module routes
@@ -21,7 +23,7 @@ export const useAttachments: TUseAttachments = (module: EventModule = 'smtp') =>
   const calcDownloadLink = (id: EventId, attachmentId?: string): string =>
     `${REST_API_URL}/api/${module}/attachments/${id}${attachmentId ? `/${attachmentId}` : ''}`
 
-  const getAttachments = (id: EventId) => fetch(calcDownloadLink(id), { headers })
+  const getAttachments = (id: EventId) => fetch(calcDownloadLink(id), { headers: headers() })
     .then((response) => response.json())
     .then((response) => {
       if (response?.data) {

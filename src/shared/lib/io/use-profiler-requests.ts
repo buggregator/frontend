@@ -21,7 +21,9 @@ enum ProfilerPartType {
 export const useProfilerRequests: TUseProfilerRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const headers = {"X-Auth-Token": token.value }
+  // Read at request time: the token is loaded (or changed by a login) after
+  // this composable was created.
+  const headers = () => ({ "X-Auth-Token": token.value })
 
   const getProfilerPartsRestUrl = ({
     id,
@@ -39,7 +41,7 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
     return searchParams ? `${url}?${searchParams}` : url
   }
 
-  const getTopFunctions = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.TopFunctions }), { headers })
+  const getTopFunctions = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.TopFunctions }), { headers: headers() })
     .then((response) => response.json())
     .then((response) => {
       if (response) {
@@ -56,7 +58,7 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
       return {};
     })
 
-  const getCallGraph = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.CallGraph }), { headers })
+  const getCallGraph = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.CallGraph }), { headers: headers() })
     .then((response) => response.json())
     .then((response) => {
       if (response) {
@@ -74,7 +76,7 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
     })
 
 
-  const getFlameChart = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.FlameChart }), { headers })
+  const getFlameChart = (id: EventId, params?: Record<string, string>) => fetch(getProfilerPartsRestUrl({ id, params, type: ProfilerPartType.FlameChart }), { headers: headers() })
     .then((response) => response.json())
     .then((response) => {
       if (response) {
@@ -92,12 +94,12 @@ export const useProfilerRequests: TUseProfilerRequests = () => {
     })
 
 
-  const getSummary = (id: EventId) => fetch(getProfilerPartsRestUrl({ id, type: 'summary' as ProfilerPartType }), { headers })
+  const getSummary = (id: EventId) => fetch(getProfilerPartsRestUrl({ id, type: 'summary' as ProfilerPartType }), { headers: headers() })
     .then((response) => response.json())
 
   const compareProfiles = (baseId: EventId, compareId: EventId) => fetch(
     `${REST_API_URL}/api/profiler/compare?base=${baseId}&compare=${compareId}`,
-    { headers },
+    { headers: headers() },
   ).then((response) => response.json())
 
   return {

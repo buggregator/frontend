@@ -6,11 +6,18 @@ import type { EventId, EventType } from '../../types';
 import { type DeleteOptions, REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
 import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
+import { startEventsStream } from "./events-stream";
 
-let isEventsEmitted = false
-let eventBuffer: ServerEvent<unknown>[] = []
-let flushTimer: ReturnType<typeof setTimeout> | null = null
-const FLUSH_INTERVAL = 500
+// One stream per page load; a hot reload of this module stops the old one,
+// otherwise every reload adds another set of listeners.
+let stopEventsStream: (() => void) | null = null
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    stopEventsStream?.()
+    stopEventsStream = null
+  })
+}
 
 export const useApiTransport = () => {
   const { token } = storeToRefs(useProfileStore())
@@ -43,79 +50,37 @@ export const useApiTransport = () => {
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
-  // TODO: move to useCentrifuge
-  // const checkWSConnectionFail = (onConnectionLost: () => void) => {
-  //   if (!getWSConnection()) {
-  //     onConnectionLost()
-  //   }
-  //   setTimeout(() => {
-  //     checkWSConnectionFail(onConnectionLost)
-  //   }, CHECK_CONNECTION_INTERVAL)
-  // }
 
-  const subscribeToEvents = (): void => {
-    centrifuge.on('connected', () => {
-      connectionStore.addWSConnection()
-    });
-
-    centrifuge.on('disconnected', () => {
-      connectionStore.removeWSConnection()
-    });
-
-    centrifuge.on('error', () => {
-      connectionStore.removeWSConnection()
-    })
-
-    centrifuge.on('message', () => {
-      connectionStore.addWSConnection()
-    })
-
-    centrifuge.on('publication', (ctx) => {
-      // We need to handle only events from the channel 'events' with event name 'event.received'
-      if (ctx.data?.event === 'event.received') {
-        const event = ctx?.data?.data || null
-
-        if (!event) return
-
-        // Auto-detect new projects and refresh the project list
-        if (event.project && !eventsStore.availableProjects.some((p: { key: string }) => p.key === event.project)) {
-          const { api: { getProjects } } = useSettings()
-          getProjects().then(({ data }) => {
-            if (data) {
-              eventsStore.setAvailableProjects(data)
-            }
-          }).catch(() => {})
+  // Auto-detect new projects and refresh the project list.
+  const detectProject = (event: ServerEvent<unknown>) => {
+    if (event.project && !eventsStore.availableProjects.some((p: { key: string }) => p.key === event.project)) {
+      const { api: { getProjects } } = useSettings()
+      getProjects().then(({ data }) => {
+        if (data) {
+          eventsStore.setAvailableProjects(data)
         }
+      }).catch(() => {})
+    }
+  }
 
+  if (!stopEventsStream) {
+    stopEventsStream = startEventsStream({
+      centrifuge,
+      getProject: () => project.value,
+      setConnected: (connected) => (connected
+        ? connectionStore.addWSConnection()
+        : connectionStore.removeWSConnection()),
+      onReceived: (event) => {
+        detectProject(event)
         if (event.project === project.value) {
-          appBadge.onEventsReceived();
-          eventBuffer.push(event);
-
-          if (!flushTimer) {
-            flushTimer = setTimeout(() => {
-              if (eventBuffer.length > 0) {
-                eventsStore.addList(eventBuffer);
-                eventBuffer = [];
-              }
-              flushTimer = null;
-            }, FLUSH_INTERVAL);
-          }
+          appBadge.onEventsReceived()
         }
-      }
-    });
+      },
+      addEvents: (events) => eventsStore.addList(events),
+      dropEvents: (uuids) => eventsStore.dropByIds(uuids),
+      resync: () => getAll().then((events) => eventsStore.syncFromServer(events)),
+    })
   }
-
-  if (!isEventsEmitted) {
-    subscribeToEvents()
-    isEventsEmitted = true
-  }
-
-  // TODO: move to useCentrifuge
-  // checkWSConnectionFail(async () => {
-  //   const events = await getAll();
-  //
-  //   eventsStore.addList(events);
-  // })
 
   const deleteEvent = (eventId: EventId) => {
     if (getWSConnection()) {
@@ -133,7 +98,13 @@ export const useApiTransport = () => {
       ...(project.value ? { project: project.value } : {}),
       keep_pinned: '1',
     })
-    fetch(`${REST_API_URL}/api/sentry/all?${params}`, { method: 'DELETE', headers }).catch(() => {})
+    fetch(`${REST_API_URL}/api/sentry/all?${params}`, { method: 'DELETE', headers })
+      .then((response) => {
+        if (!response.ok) {
+          console.error('Sentry clear failed', response.status)
+        }
+      })
+      .catch((e) => console.error('Sentry clear failed', e))
   }
 
   const keepPinnedPayload = ({ keepPinned = false }: DeleteOptions = {}) =>

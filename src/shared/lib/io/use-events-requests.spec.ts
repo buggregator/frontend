@@ -1,9 +1,9 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useEventsStore } from '../../stores'
+import { useEventsStore, useProfileStore } from '../../stores'
 import { EventTypes } from '../../types'
 import { REST_API_URL } from './constants'
-import { useEventsRequests } from './use-events-requests'
+import { EventsLoadError, useEventsRequests } from './use-events-requests'
 
 // The server clears events only through `DELETE /api/events` with a JSON body
 // (`type`, `project`, `uuids`); `/api/events/preview` has no DELETE route.
@@ -63,5 +63,41 @@ describe('useEventsRequests: REST delete', () => {
       method: 'DELETE',
       body: { uuids: ['a', 'b'], project: 'default' },
     })
+  })
+})
+
+describe('useEventsRequests: getAll', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('returns the events of the answer', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"data":[{"uuid":"a"}]}'))))
+
+    expect(await useEventsRequests().getAll()).toEqual([{ uuid: 'a' }])
+  })
+
+  // An error answer used to become an empty list, which wiped the page.
+  it('throws on an error answer instead of returning no events', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"error":"db"}', { status: 500 }))))
+
+    await expect(useEventsRequests().getAll()).rejects.toBeInstanceOf(EventsLoadError)
+  })
+
+  // Audit 1.10: the token was read once, when the composable was created.
+  it('sends the token the store holds at request time', async () => {
+    const fetchMock = vi.fn((..._args: unknown[]) => Promise.resolve(new Response('{"data":[]}')))
+    vi.stubGlobal('fetch', fetchMock)
+    const requests = useEventsRequests()
+    useProfileStore().setToken('late-token')
+
+    await requests.getAll()
+
+    const init = fetchMock.mock.calls[0][1] as RequestInit
+    expect(init.headers).toEqual({ 'X-Auth-Token': 'late-token' })
   })
 })

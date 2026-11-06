@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import PageEventHeader from './page-event-header.vue'
 
-const removeById = vi.fn()
+const removeById = vi.fn((_id: string) => Promise.resolve(true))
 
 vi.mock('@/shared/lib/use-events', () => ({
   useEvents: () => ({ events: { removeById } }),
@@ -59,5 +59,15 @@ describe('PageEventHeader: Delete', () => {
 
     expect(removeById).toHaveBeenCalledWith('abc-123')
     expect(router.currentRoute.value.path).toBe('/smtp')
+  })
+
+  it('stays on the event when the server refuses the delete', async () => {
+    vi.stubGlobal('confirm', vi.fn(() => true))
+    removeById.mockResolvedValueOnce(false)
+
+    const router = await clickDelete()
+
+    expect(removeById).toHaveBeenCalledWith('abc-123')
+    expect(router.currentRoute.value.path).toBe('/smtp/abc-123')
   })
 })
