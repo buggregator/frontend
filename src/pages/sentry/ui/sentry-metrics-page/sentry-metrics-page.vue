@@ -9,7 +9,7 @@ import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 
 useTitle('Sentry Metrics | Buggregator')
 
-const { metrics, loading, total, page, filters, fetchList } = useSentryMetrics()
+const { metrics, isInitialLoading, total, page, filters, fetchList } = useSentryMetrics()
 
 const activeType = ref('all')
 const search = ref('')
@@ -39,7 +39,7 @@ onSentryEvent(() => {
     <SentrySubNav />
 
     <SentryEmptyState
-      v-if="!loading && metrics.length === 0 && !hasFilter"
+      v-if="!isInitialLoading && metrics.length === 0 && !hasFilter"
       type="metrics"
     />
 
@@ -48,11 +48,11 @@ onSentryEvent(() => {
       v-model:type="activeType"
       v-model:search="search"
       :metrics="metrics"
-      :loading="loading"
+      :loading="isInitialLoading"
     />
 
     <div
-      v-if="!loading && total > 0"
+      v-if="!isInitialLoading && total > 0"
       class="sentry-metrics-page__footer"
     >
       {{ total }} metric{{ total !== 1 ? 's' : '' }}
