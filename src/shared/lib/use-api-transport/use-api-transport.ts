@@ -162,7 +162,7 @@ export const useApiTransport = () => {
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload())
+      return centrifuge.rpc(`delete:api/events`, createPayload({ type }))
     }
 
     return deleteByType(type);
