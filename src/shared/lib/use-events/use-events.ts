@@ -1,6 +1,5 @@
 import { storeToRefs } from "pinia";
 import type { Ref } from "vue";
-import type { RayContentLock } from "@/entities/ray/types";
 import {
   type TEventsCachedIdsMap,
   useEventsStore,
@@ -28,8 +27,8 @@ type TUseEvents = () => {
     remove: (id: EventId) => Promise<boolean>
   },
   rayExecution: {
-    continue: (contentName: RayContentLock["name"]) => void
-    stop: (contentName: RayContentLock["name"]) => void
+    continue: (contentName: string) => void
+    stop: (contentName: string) => void
   }
 }
 

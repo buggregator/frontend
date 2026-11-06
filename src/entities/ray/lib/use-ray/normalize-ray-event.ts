@@ -4,7 +4,7 @@ import {EventTypes, type NormalizedEvent, type ServerEvent} from "@/shared/types
 import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
 import { RayEventTypes } from "../../types";
 
-export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
+export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump, RayDumpMeta> => {
   let origin = {
     php_version: event.payload.meta?.php_version,
     laravel_version: '',
@@ -49,7 +49,7 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     .filter(Boolean)
     .shift() || 'md') as RayDumpMeta['size']
 
-  const normalizedEvent: NormalizedEvent<RayDump> = {
+  const normalizedEvent: NormalizedEvent<RayDump, RayDumpMeta> = {
     id: event.uuid,
     type: EventTypes.RayDump,
     labels: [EventTypes.RayDump, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),

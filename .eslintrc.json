@@ -57,6 +57,12 @@
         "varsIgnorePattern": "^_",
         "ignoreRestSiblings": true
       }
+    ],
+    "@conarti/feature-sliced/layers-slices": [
+      "error",
+      {
+        "allowTypeImports": false
+      }
     ]
   }
 }

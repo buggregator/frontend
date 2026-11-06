@@ -1,4 +1,3 @@
-import type {RayDump, RayDumpMeta} from "@/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
 export enum EventTypes {
@@ -34,7 +33,8 @@ export interface ServerEvent<T> {
   is_pinned?: boolean,
 }
 
-export interface NormalizedEvent<T> {
+// M: extra data one event type adds to its cards (Ray: color and size).
+export interface NormalizedEvent<T, M = unknown> {
   id: EventId,
   type: EventType | 'unknown',
   labels: (string | { title: string, value: string, context: string } | { text: string, color: LabelColor })[],
@@ -42,7 +42,7 @@ export interface NormalizedEvent<T> {
   serverName: string,
   date: Date | null,
   payload: T
-  meta?: T extends RayDump ? RayDumpMeta: never
+  meta?: M
 }
 
 export interface MappedEventsProps<T> {
