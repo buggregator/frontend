@@ -1,5 +1,4 @@
 import { storeToRefs } from "pinia";
-import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
@@ -179,12 +178,12 @@ export const useApiTransport = () => {
   }
 
   // NOTE: works only with ws
-  const rayStopExecution = (hash: RayContentLock["name"]) => {
+  const rayStopExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
   }
 
   // NOTE: works only with ws
-  const rayContinueExecution = (hash: RayContentLock["name"]) => {
+  const rayContinueExecution = (hash: string) => {
     centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload())
   }
 

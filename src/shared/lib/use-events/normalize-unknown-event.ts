@@ -1,11 +1,8 @@
 import type { ServerEvent, NormalizedEvent } from "../../types";
+import { normalizeEvent } from "../normalize-event";
 
+// An unknown type gets no time label: its only label is the raw type.
 export const normalizeUnknownEvent = (event: ServerEvent<unknown>): NormalizedEvent<unknown> => ({
-  id: event.uuid,
-  type: 'unknown',
+  ...normalizeEvent(event, { type: 'unknown', labels: [] }),
   labels: [String(event.type)],
-  origin: null,
-  serverName: "",
-  date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-  payload: event.payload
 })

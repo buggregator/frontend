@@ -4,10 +4,10 @@ import type { NormalizedEvent, OneOfValues } from '@/shared/types'
 import { TableBase, TableBaseRow, EventDetailLayout, EventDetailSection } from '@/shared/ui'
 import { useRay } from '../../lib'
 import { rayColorClass } from '../../lib/ray-color'
-import { RayEventTypes, type RayDump } from '../../types'
+import { RayEventTypes, type RayDump, type RayDumpMeta } from '../../types'
 
 type Props = {
-  event: NormalizedEvent<RayDump>
+  event: NormalizedEvent<RayDump, RayDumpMeta>
 }
 
 const { COMPONENT_TYPE_MAP } = useRay()

@@ -1,6 +1,6 @@
-import { computed, ref, reactive } from 'vue'
-import { describeLoadError } from '@/shared/lib/io'
+import { ref, reactive } from 'vue'
 import type { SentryExceptionItem, SentryErrorGroup, SentryExceptionDetail } from '../types'
+import { useSentryPagedList } from './use-sentry-paged-list'
 import { useSentryRequests } from './use-sentry-requests'
 
 export const useSentryExceptions = () => {
@@ -9,66 +9,30 @@ export const useSentryExceptions = () => {
   const grouped = ref(false)
   const items = ref<SentryExceptionItem[]>([])
   const groupedItems = ref<SentryErrorGroup[]>([])
-  const loading = ref(false)
-  const hasLoaded = ref(false)
-  // Why the last load failed; the page shows it instead of the empty state.
-  const error = ref('')
-  // A first load and a background refresh are different things. The
-  // "Loading..." placeholder is only shown while there is nothing to show: on a
-  // WebSocket-driven refresh the list stays in place, otherwise the UI flickers
-  // on every incoming event.
-  const isInitialLoading = computed(() => loading.value && !hasLoaded.value)
-  const total = ref(0)
-  const page = ref(1)
   const filters = reactive<{ level: string | null; handled: string | null }>({
     level: null,
     handled: null,
   })
 
-  const buildParams = () => {
-    const params: Record<string, string> = { page: String(page.value) }
-    if (filters.level) params.level = filters.level
-    if (filters.handled !== null) params.handled = filters.handled
-    return params
-  }
-
-  const fetchList = async () => {
-    loading.value = true
-    try {
-      if (grouped.value) {
-        const res = await getExceptionsGrouped(buildParams())
-        groupedItems.value = res.data
-        total.value = res.meta.total
-      } else {
-        const res = await getExceptions(buildParams())
-        items.value = res.data
-        total.value = res.meta.total
-      }
-      error.value = ''
-    } catch (e) {
-      error.value = describeLoadError(e)
-    } finally {
-      loading.value = false
-      hasLoaded.value = true
-    }
-  }
+  const list = useSentryPagedList(
+    async (page) => {
+      const params: Record<string, string> = { page: String(page) }
+      if (filters.level) params.level = filters.level
+      if (filters.handled !== null) params.handled = filters.handled
+      // The answer is put into the list of the mode it was asked for.
+      return grouped.value
+        ? { grouped: true as const, ...(await getExceptionsGrouped(params)) }
+        : { grouped: false as const, ...(await getExceptions(params)) }
+    },
+    (res) => {
+      if (res.grouped) groupedItems.value = res.data
+      else items.value = res.data
+    },
+  )
 
   const fetchDetail = async (id: string): Promise<SentryExceptionDetail> => {
     return getExceptionDetail(id)
   }
 
-  return {
-    grouped,
-    items,
-    groupedItems,
-    loading,
-    hasLoaded,
-    error,
-    isInitialLoading,
-    total,
-    page,
-    filters,
-    fetchList,
-    fetchDetail,
-  }
+  return { grouped, items, groupedItems, ...list, filters, fetchDetail }
 }

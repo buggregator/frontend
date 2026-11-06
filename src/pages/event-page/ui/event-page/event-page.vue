@@ -8,7 +8,7 @@ import { PAGES_SETTINGS } from '@/shared/constants'
 import { describeLoadError } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import { useEvents } from '@/shared/lib/use-events'
-import { type EventId, type PageEventTypes, type ServerEvent } from '@/shared/types'
+import { type EventId, type PageEventTypes, type ServerEvent, isEventType } from '@/shared/types'
 import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
 import { StatusPanel } from '@/shared/ui/status-panel'
 
@@ -28,7 +28,7 @@ const paramsType = computed(() => (params?.type || undefined) as PageEventTypes 
 // Determine the event type: from route params, or from the loaded event's type.
 const resolvedType = computed(() => {
   if (paramsType.value) return paramsType.value
-  if (serverEvent.value?.type) return serverEvent.value.type as PageEventTypes
+  if (isEventType(serverEvent.value?.type)) return serverEvent.value.type
   return undefined
 })
 
@@ -54,7 +54,7 @@ const getEvent = async () => {
   isMissing.value = false
 
   try {
-    serverEvent.value = (await getItem(eventId)) as unknown as ServerEvent<unknown> | null
+    serverEvent.value = await getItem(eventId)
     isMissing.value = !serverEvent.value
   } catch (error) {
     logger(['UI: Failed to load event page', error])

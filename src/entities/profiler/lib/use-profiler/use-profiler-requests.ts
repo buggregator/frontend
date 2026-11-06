@@ -1,8 +1,8 @@
 import { storeToRefs } from "pinia";
-import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions, ProfilerSummary, ProfilerComparison} from "@/entities/profiler/types";
-import {useProfileStore} from "../../stores";
-import type { EventId } from "../../types";
-import { REST_API_URL } from "./constants";
+import { REST_API_URL } from "@/shared/lib/io";
+import {useProfileStore} from "@/shared/stores";
+import type { EventId } from "@/shared/types";
+import type {ProfileFlameChart, ProfilerCallGraph, ProfilerTopFunctions, ProfilerSummary, ProfilerComparison} from "../../types";
 
 type TUseProfilerRequests = () => {
   getTopFunctions: (id: EventId, params?: Record<string, string>) => Promise<ProfilerTopFunctions>

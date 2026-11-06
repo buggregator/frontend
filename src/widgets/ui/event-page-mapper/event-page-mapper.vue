@@ -10,7 +10,7 @@ import { useSms, SmsPage } from '@/entities/sms'
 import { useSmtp, SmtpPage } from '@/entities/smtp'
 import { useVarDump, VarDumpPage } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
-import { type ServerEvent, EventTypes, type MappedEventsProps } from '@/shared/types'
+import { type ServerEvent, EventTypes, type MappedEventsProps, isEventType } from '@/shared/types'
 import { PreviewCardDefault } from '../preview-card-default'
 
 const { normalizeRayEvent } = useRay()
@@ -69,7 +69,7 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   }
 } as Record<EventTypes, MappedEventsProps<unknown>>
 
-const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventTypes])
+const componentConfig = computed(() => isEventType(props.event.type) ? EVENT_TYPE_COMPONENTS_MAP[props.event.type] : undefined)
 
 const view = computed(() => componentConfig.value?.view ?? PreviewCardDefault)
 const normalize = computed(() => componentConfig.value?.normalize ?? normalizeUnknownEvent)

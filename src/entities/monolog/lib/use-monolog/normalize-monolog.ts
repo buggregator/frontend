@@ -1,4 +1,4 @@
-import moment from "moment/moment";
+import { normalizeEvent } from "@/shared/lib/normalize-event";
 import {type ServerEvent, type NormalizedEvent, type LabelColor, EventTypes} from "@/shared/types";
 import type { Monolog } from "../../types";
 
@@ -17,8 +17,7 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
   const levelName = event.payload.level_name || 'DEBUG'
   const levelColor = levelColorMap[levelName] || 'gray'
 
-  const normalizedEvent: NormalizedEvent<Monolog> = {
-    id: event.uuid,
+  return normalizeEvent(event, {
     type: EventTypes.Monolog,
     labels: [
       EventTypes.Monolog,
@@ -26,14 +25,5 @@ export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<M
       event.payload.channel,
     ],
     origin: event.payload?.context?.source || null,
-    serverName: "",
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload
-  }
-
-  if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
-  }
-
-  return normalizedEvent;
+  })
 }

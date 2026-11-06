@@ -1,9 +1,9 @@
-import {useProfilerRequests} from "@/shared/lib/io/use-profiler-requests";
 import type {ServerEvent, NormalizedEvent, EventId} from '@/shared/types';
 import type {StatBoardCost} from "../../types";
 import type {ProfileFlameChart, Profiler, ProfilerCallGraph, ProfilerTopFunctions, ProfilerSummary, ProfilerComparison} from "../../types";
 import { calcStatItems } from "./calc-stat-items";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
+import { useProfilerRequests } from "./use-profiler-requests";
 
 type TUseProfiler = () => {
   normalizeProfilerEvent: (event: ServerEvent<Profiler>) => NormalizedEvent<Profiler>

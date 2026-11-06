@@ -12,7 +12,7 @@ import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump'
 import { useEvents } from '@/shared/lib/use-events'
 import {
   type ServerEvent,
-  type EventType,
+  isEventType,
   EventTypes,
   type MappedEventsProps
 } from '@/shared/types'
@@ -87,7 +87,7 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   }
 } as Record<EventTypes, MappedEventsProps<unknown>>
 
-const componentConfig = computed(() => EVENT_TYPE_COMPONENTS_MAP[props.event.type as EventType])
+const componentConfig = computed(() => isEventType(props.event.type) ? EVENT_TYPE_COMPONENTS_MAP[props.event.type] : undefined)
 
 const view = computed(() => componentConfig?.value?.view ?? PreviewCardDefault)
 const normalize = computed(() => componentConfig?.value?.normalize ?? normalizeUnknownEvent)

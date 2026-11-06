@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 import {IDE_KEY_DEFAULT, IDE_KEYS} from "../../constants";
 import {REST_API_URL} from "../../lib/io/constants";
 import {describeLoadError} from "../../lib/io/request-result";
-import {type EventType, EventTypes, type FilePathMapping, type TSettings} from "../../types";
+import {EventTypes, type FilePathMapping, type TSettings} from "../../types";
 import {THEME_MODES} from "./constants";
 import {
   getStoredEventsCountVisibility,
@@ -31,7 +31,9 @@ export const useSettingsStore = defineStore("settingsStore", {
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
-    availableEvents: [] as EventType[],
+    // The types the server says it has. A newer server can list one this UI
+    // does not know: its events still show, with the default card.
+    availableEvents: [] as string[],
     isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
     customFilePathMapping: getStoredCustomFilePathMapping() || [],
   }),

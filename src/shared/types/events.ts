@@ -1,4 +1,3 @@
-import type {RayDump, RayDumpMeta} from "@/entities/ray/types";
 import type { OneOfValues } from "./generics";
 
 export enum EventTypes {
@@ -22,11 +21,19 @@ export type Uuid = string;
 
 export type EventType = OneOfValues<typeof EventTypes>;
 
+const EVENT_TYPES = new Set<string>(Object.values(EventTypes));
+
+// The server can send a type this UI does not know yet (a newer module).
+export const isEventType = (value: unknown): value is EventType =>
+  typeof value === 'string' && EVENT_TYPES.has(value);
+
 export type LabelColor = 'gray' | 'blue' | 'cyan' | 'amber' | 'red' | 'orange' | 'green' | 'violet';
 
 export interface ServerEvent<T> {
   uuid: EventId,
-  type: EventType | unknown,
+  // A known EventType, or any other string the server sent: check with isEventType.
+  // `string & {}` keeps the known names in autocomplete.
+  type: EventType | (string & {}),
   payload: T,
   project: string | null,
   timestamp: number, // unavailable for some ray dump events
@@ -34,7 +41,8 @@ export interface ServerEvent<T> {
   is_pinned?: boolean,
 }
 
-export interface NormalizedEvent<T> {
+// M: extra data one event type adds to its cards (Ray: color and size).
+export interface NormalizedEvent<T, M = unknown> {
   id: EventId,
   type: EventType | 'unknown',
   labels: (string | { title: string, value: string, context: string } | { text: string, color: LabelColor })[],
@@ -42,7 +50,7 @@ export interface NormalizedEvent<T> {
   serverName: string,
   date: Date | null,
   payload: T
-  meta?: T extends RayDump ? RayDumpMeta: never
+  meta?: M
 }
 
 export interface MappedEventsProps<T> {

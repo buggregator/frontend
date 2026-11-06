@@ -1,10 +1,10 @@
-import moment from "moment";
 import { pick } from "@/shared/lib/helpers";
+import { normalizeEvent } from "@/shared/lib/normalize-event";
 import {EventTypes, type NormalizedEvent, type ServerEvent} from "@/shared/types";
 import type {RayContentColor, RayContentLabel, RayContentSize, RayDump, RayDumpMeta} from "../../types";
 import { RayEventTypes } from "../../types";
 
-export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump> => {
+export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<RayDump, RayDumpMeta> => {
   let origin = {
     php_version: event.payload.meta?.php_version,
     laravel_version: '',
@@ -49,23 +49,13 @@ export const normalizeRayEvent = (event: ServerEvent<RayDump>): NormalizedEvent<
     .filter(Boolean)
     .shift() || 'md') as RayDumpMeta['size']
 
-  const normalizedEvent: NormalizedEvent<RayDump> = {
-    id: event.uuid,
+  return normalizeEvent<RayDump, RayDumpMeta>(event, {
     type: EventTypes.RayDump,
     labels: [EventTypes.RayDump, ...labels, ...typeLabels].filter((x, i, a) => a.indexOf(x) === i),
     origin,
-    serverName: "",
-    date: event.timestamp ? new Date(event.timestamp * 1000) : null,
-    payload: event.payload,
     meta: {
       color,
       size
     }
-  }
-
-  if (normalizedEvent.date) {
-    normalizedEvent.labels.unshift(moment(normalizedEvent.date).format("HH:mm:ss"));
-  }
-
-  return normalizedEvent;
+  })
 }

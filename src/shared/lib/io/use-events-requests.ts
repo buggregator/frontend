@@ -15,7 +15,7 @@ export type DeleteOptions = { keepPinned?: boolean }
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
-  getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>,
+  getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: (options?: DeleteOptions) => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
@@ -77,7 +77,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
       if (!response.ok) {
         throw new EventsLoadError(response.status)
       }
-      return (await response.json()) as ServerEvent<EventType>
+      return (await response.json()) as ServerEvent<unknown>
     })
 
   const deleteSingle = (id: EventId) => fetch(getEventRestUrl(id), {
