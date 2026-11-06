@@ -1,16 +1,33 @@
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useSmtp } from '../../lib'
 import { smtpWelcomeMock } from '../../mocks'
 import SmtpPage from './smtp-page.vue'
 
 const { normalizeSmtpEvent } = useSmtp()
 
+// Node 25+ has its own global `localStorage` that hides jsdom's and has no
+// working `getItem`, so the page's stores get a small in-memory one.
+const memoryStorage = () => {
+  const items = new Map<string, string>()
+  return {
+    getItem: (key: string) => items.get(key) ?? null,
+    setItem: (key: string, value: string) => void items.set(key, String(value)),
+    removeItem: (key: string) => void items.delete(key),
+    clear: () => items.clear(),
+  }
+}
+
 describe('SmtpPage: HTML preview', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.stubGlobal('localStorage', memoryStorage())
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"data":[]}'))))
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
   // A captured email is untrusted: its scripts must not run in the app's
