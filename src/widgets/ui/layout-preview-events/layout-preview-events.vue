@@ -8,6 +8,7 @@ import { PAGE_TYPES } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
+import { useVirtualFeed } from '@/shared/lib/use-virtual-feed'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
@@ -89,7 +90,18 @@ watch(
 
 const router = useRouter()
 const eventUuids = computed(() => visibleEvents.value.map((e) => e.uuid))
+
+// Only the cards near the screen are in the DOM (audit 2.3: 500 cards made
+// ~37 000 nodes and a 1 s first render).
+const { scroller, range, padTop, padBottom, scrollToKey } = useVirtualFeed(eventUuids)
+const renderedEvents = computed(() =>
+  visibleEvents.value
+    .slice(range.value.start, range.value.end)
+    .map((event, i) => ({ event, position: range.value.start + i + 1 }))
+)
+
 const { focusedId } = useKeyboardNav(eventUuids, {
+  scrollToId: scrollToKey,
   onOpen: (id) => {
     const event = visibleEvents.value.find((e) => e.uuid === id)
     if (event) {
@@ -187,23 +199,32 @@ const clearSearch = () => {
 
     <main
       v-if="visibleEvents.length"
+      ref="scroller"
       role="feed"
       :aria-label="`${props.title || 'Events'} feed, ${visibleEvents.length} items`"
       aria-live="polite"
       class="layout-preview-events__events"
     >
-      <EventCardMapper
-        v-for="event in visibleEvents"
-        :id="event.uuid"
-        :key="event.uuid"
-        :event="event"
-        role="article"
-        class="layout-preview-events__event"
-        :class="{
-          'layout-preview-events__event--focused': focusedId === event.uuid,
-          'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
-        }"
-      />
+      <div
+        class="layout-preview-events__list"
+        :style="{ paddingTop: `${padTop}px`, paddingBottom: `${padBottom}px` }"
+      >
+        <EventCardMapper
+          v-for="{ event, position } in renderedEvents"
+          :id="event.uuid"
+          :key="event.uuid"
+          :event="event"
+          role="article"
+          :aria-posinset="position"
+          :aria-setsize="visibleEvents.length"
+          data-virtual-item
+          class="layout-preview-events__event"
+          :class="{
+            'layout-preview-events__event--focused': focusedId === event.uuid,
+            'layout-preview-events__event--animate': recentEventIds.has(event.uuid)
+          }"
+        />
+      </div>
     </main>
 
     <template v-else-if="listState !== 'error'">
@@ -245,8 +266,13 @@ const clearSearch = () => {
 
 .layout-preview-events__events {
   @include mixins.border-style;
-  @apply divide-y divide-gray-200 dark:divide-gray-700;
   @apply flex-1 overflow-y-auto;
+  // useVirtualFeed keeps the first visible card in place itself.
+  overflow-anchor: none;
+}
+
+.layout-preview-events__list {
+  @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 
 .layout-preview-events__event {

@@ -97,4 +97,18 @@ describe('LayoutPreviewEvents: empty, loading and error views', () => {
     expect(wrapper.find('[role="alert"]').exists()).toBe(true)
     expect(wrapper.findAll('.card')).toHaveLength(2)
   })
+
+  // Audit 2.3: the feed renders the cards near the screen, not all of them.
+  it('renders a first page of a long feed and tells assistive tech the full size', async () => {
+    items.value = Array.from({ length: 200 }, (_, i) => event(`e${i}`))
+    useEventsStore().setListState('ready')
+
+    const wrapper = await render()
+
+    const cards = wrapper.findAll('.card')
+    expect(cards.length).toBeLessThan(50)
+    expect(cards[0].attributes('aria-posinset')).toBe('1')
+    expect(cards[0].attributes('aria-setsize')).toBe('200')
+    expect(wrapper.get('[role="feed"]').attributes('aria-label')).toContain('200 items')
+  })
 })
