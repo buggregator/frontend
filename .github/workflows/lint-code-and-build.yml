@@ -13,21 +13,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [24.x]
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Use Node.js from .nvmrc
+      uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version-file: .nvmrc
+        cache: yarn
     - name: Install JS dependencies
-      run: yarn install
-    - name: Lint code style
+      run: yarn install --frozen-lockfile
+    # No --fix here: a style error must fail the check, not be rewritten
+    - name: Lint code style and types
       run: yarn lint
-    - name: Run tests
+    - name: Run unit tests
       run: yarn test
     - name: Build dist files
       run: yarn generate
