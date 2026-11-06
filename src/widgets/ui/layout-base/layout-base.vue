@@ -8,7 +8,7 @@ import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { KeyboardShortcutsOverlay } from '../keyboard-shortcuts-overlay'
 
-const { activeProjectKey } = storeToRefs(useEventsStore())
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
 const { isShortcutsOverlayOpen } = useGlobalShortcuts()
@@ -38,8 +38,15 @@ watch(
   { immediate: true }
 )
 
+// The period is an input of the query just like the project: when either
+// changes, the feed is fetched again.
+//
+// The getter returns a string rather than an array: an array is a fresh object
+// every time and watch would compare it by reference, so re-setting the same
+// project (when the project list refreshes, say) would refetch the whole feed —
+// which is visible as a flicker.
 watch(
-  () => activeProjectKey.value,
+  () => `${activeProjectKey.value ?? ''}|${period.value}`,
   () => {
     events.getAll()
   },

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 import { useSentryTraces } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
@@ -7,12 +8,13 @@ import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
 import { ServiceMap } from '@/entities/sentry/ui/service-map'
 import { TracePreviewCard } from '@/entities/sentry/ui/trace-preview-card'
+import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Traces | Buggregator')
 
 const STORAGE_KEY = 'sentry_traces_view_mode'
 
-const { traces, isInitialLoading, total, fetchList } = useSentryTraces()
+const { traces, hasLoaded, isInitialLoading, total, fetchList } = useSentryTraces()
 
 const viewMode = ref<'list' | 'map'>(
   (window?.localStorage?.getItem(STORAGE_KEY) as 'list' | 'map') || 'list'
@@ -20,6 +22,16 @@ const viewMode = ref<'list' | 'map'>(
 
 watch(viewMode, (val) => {
   window?.localStorage?.setItem(STORAGE_KEY, val)
+})
+
+// The period is mixed into the request in use-sentry-requests and does not
+// trigger reactivity on its own, so refetch the list explicitly. The project
+// is not: the server keeps no project for traces, logs and metrics.
+const { period } = storeToRefs(useEventsStore())
+
+watch(period, () => {
+  hasLoaded.value = false // a filter change is a user action: show the loading state
+  fetchList()
 })
 
 onMounted(() => {

@@ -1,15 +1,17 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
 import { useSentryLogs } from '@/entities/sentry/lib'
 import { onSentryEvent } from '@/entities/sentry/lib/use-sentry-events-bus'
 import { SentryEmptyState } from '@/entities/sentry/ui/sentry-empty-state'
 import { SentryLogsList } from '@/entities/sentry/ui/sentry-logs-list'
 import { SentrySubNav } from '@/entities/sentry/ui/sentry-sub-nav'
+import { useEventsStore } from '@/shared/stores'
 
 useTitle('Sentry Logs | Buggregator')
 
-const { logs, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
+const { logs, hasLoaded, isInitialLoading, total, page, filters, fetchList } = useSentryLogs()
 
 // A chip stands for the levels SDKs send for it
 const levelsOfChip: Record<string, string | null> = {
@@ -23,6 +25,17 @@ const activeLevel = ref('all')
 watch(activeLevel, (level) => {
   filters.level = level in levelsOfChip ? levelsOfChip[level] : level
   page.value = 1
+  fetchList()
+})
+
+// The period is mixed into the request in use-sentry-requests and does not
+// trigger reactivity on its own, so refetch the list explicitly. The project
+// is not: the server keeps no project for traces, logs and metrics.
+const { period } = storeToRefs(useEventsStore())
+
+watch(period, () => {
+  page.value = 1
+  hasLoaded.value = false // a filter change is a user action: show the loading state
   fetchList()
 })
 

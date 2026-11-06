@@ -1,6 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { REST_API_URL } from '@/shared/lib/io'
-import { useProfileStore } from '@/shared/stores'
+import { useEventsStore, useProfileStore } from '@/shared/stores'
 import type {
   PaginatedResponse,
   SentryExceptionItem,
@@ -18,7 +18,26 @@ const BASE = `${REST_API_URL}/api/sentry`
 
 export const useSentryRequests = () => {
   const { token } = storeToRefs(useProfileStore())
+  const { activeProjectKey, period } = storeToRefs(useEventsStore())
   const headers = () => ({ 'X-Auth-Token': token.value })
+
+  // The period goes into every sentry list request; the project only where the
+  // server stores it. On the server (buggregator/server #352) only exceptions
+  // have a project: traces, logs and metrics have no project column, so a
+  // `project` there would be ignored and only pretend to filter.
+  const withScope = (
+    params: Record<string, string> = {},
+    { project = false }: { project?: boolean } = {}
+  ): Record<string, string> => {
+    const scoped = { ...params }
+    if (project && activeProjectKey.value && !scoped.project) {
+      scoped.project = activeProjectKey.value
+    }
+    if (period.value && !scoped.window && !scoped.from && !scoped.to) {
+      scoped.window = period.value
+    }
+    return scoped
+  }
 
   const fetchJSON = async <T>(url: string): Promise<T> => {
     const res = await fetch(url, { headers: headers() })
@@ -29,12 +48,12 @@ export const useSentryRequests = () => {
   }
 
   const getExceptions = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(params).toString()
+    const qs = new URLSearchParams(withScope(params, { project: true })).toString()
     return fetchJSON<PaginatedResponse<SentryExceptionItem>>(`${BASE}/exceptions${qs ? `?${qs}` : ''}`)
   }
 
   const getExceptionsGrouped = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams({ ...params, grouped: 'true' }).toString()
+    const qs = new URLSearchParams({ ...withScope(params, { project: true }), grouped: 'true' }).toString()
     return fetchJSON<PaginatedResponse<SentryErrorGroup>>(`${BASE}/exceptions?${qs}`)
   }
 
@@ -42,7 +61,7 @@ export const useSentryRequests = () => {
     fetchJSON<SentryExceptionDetail>(`${BASE}/exceptions/${id}`)
 
   const getTraces = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(params).toString()
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryTrace>>(`${BASE}/traces${qs ? `?${qs}` : ''}`)
   }
 
@@ -50,12 +69,12 @@ export const useSentryRequests = () => {
     fetchJSON<SentryTraceDetail>(`${BASE}/traces/${traceId}`)
 
   const getLogs = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(params).toString()
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryLog>>(`${BASE}/logs${qs ? `?${qs}` : ''}`)
   }
 
   const getMetrics = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(params).toString()
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
   }
 
@@ -64,8 +83,12 @@ export const useSentryRequests = () => {
     return fetchJSON<SentryServiceMap>(`${BASE}/service-map${qs}`)
   }
 
-  const getCounts = () =>
-    fetchJSON<SentryCounts>(`${BASE}/counts`)
+  // The badges label the lists: the server applies `project` to the
+  // exceptions count only, the period to every count.
+  const getCounts = () => {
+    const qs = new URLSearchParams(withScope({}, { project: true })).toString()
+    return fetchJSON<SentryCounts>(`${BASE}/counts${qs ? `?${qs}` : ''}`)
+  }
 
   return {
     getExceptions,
