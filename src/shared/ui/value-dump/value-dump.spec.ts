@@ -34,6 +34,19 @@ describe('ValueDump: HTML values', () => {
     expect(html).toContain('<i>after</i>')
   })
 
+  // A dump must not draw a working form in our page: a fake login or a button
+  // that posts somewhere is phishing inside Buggregator.
+  it('drops form controls and keeps their text', () => {
+    const html = renderedHtml(
+      '<form action="https://evil.test"><input name="token"><textarea>t</textarea>' +
+        '<select><option>o</option></select><button>Send</button></form><b>kept</b>',
+    )
+
+    expect(html).not.toMatch(/<(form|input|button|textarea|select)\b/i)
+    expect(html).toContain('Send')
+    expect(html).toContain('<b>kept</b>')
+  })
+
   it('keeps a real sf-dump unchanged, without its inline script and style', () => {
     const html = renderedHtml(`<style>.sf-dump{color:red}</style>${SF_DUMP}`)
 

@@ -195,8 +195,10 @@ useTitle('Settings | Buggregator')
               Single-key shortcuts
             </div>
             <div class="s-row__desc">
-              Keys without Ctrl, Alt or Cmd: j/k to move, x to delete, 0–9 to switch pages, ? for
-              the list. Turn off if they get in the way of typing or a screen reader
+              Keys without Ctrl, Alt or Cmd: j/k or <span class="whitespace-nowrap">↑/↓</span> to move
+              through the list, x to delete, 0–9 to switch pages, ? for the list. Turning this off frees
+              <span class="whitespace-nowrap">↑/↓</span> for scrolling too. Turn off if they get in the way of
+              typing or a screen reader.
             </div>
           </div>
           <button
