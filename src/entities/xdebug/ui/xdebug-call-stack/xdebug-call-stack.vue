@@ -4,7 +4,7 @@ import { foldFrames, shortFile } from '../../lib/xdebug-format'
 import type { XdebugFrame } from '../../types'
 import { XdebugIcon } from '../xdebug-icon'
 
-const props = defineProps<{ frames: XdebugFrame[]; selected: number }>()
+const props = defineProps<{ frames: XdebugFrame[]; selected: number; disabled?: boolean }>()
 const emit = defineEmits<{ select: [level: number] }>()
 
 const expanded = ref<Set<number>>(new Set())
@@ -39,6 +39,7 @@ const open = (first: number) => { expanded.value = new Set([...expanded.value, f
         :class="{ 'is-selected': row.frame.level === selected, 'is-vendor': row.frame.vendor }"
         :aria-current="row.frame.level === selected ? 'true' : undefined"
         :title="`${row.frame.where} — ${row.frame.file}:${row.frame.line}`"
+        :disabled="disabled"
         @click="emit('select', row.frame.level)"
       >
         <span class="xdebug-stack__fn">{{ row.frame.where || '{main}' }}</span>
@@ -66,6 +67,10 @@ const open = (first: number) => { expanded.value = new Set([...expanded.value, f
 
   &.is-selected {
     @apply border-blue-500 bg-blue-50 dark:bg-blue-500/10;
+  }
+
+  &:disabled {
+    @apply cursor-default opacity-70;
   }
 }
 

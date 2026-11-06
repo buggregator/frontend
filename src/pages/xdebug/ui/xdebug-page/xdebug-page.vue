@@ -12,6 +12,7 @@ import {
   useXdebugRequests,
   useXdebugSessions,
   onXdebugMessage,
+  onXdebugReconnect,
   XdebugAgentTimeline,
   XdebugCallStack,
   XdebugCodeView,
@@ -48,6 +49,10 @@ onXdebugMessage((message) => {
   list.apply(message)
   dbg.apply(message)
 })
+onXdebugReconnect(() => {
+  list.load()
+  dbg.refresh()
+})
 onMounted(() => list.load())
 useIntervalFn(() => list.tick(), 30_000)
 
@@ -79,9 +84,11 @@ const dismiss = async (id: string) => {
 
 const sessionsLabel = computed(() => `${sessions.value.length} ${sessions.value.length === 1 ? 'session' : 'sessions'}`)
 
+// The pick is written into the URL, so the selection stays put while that
+// session runs; it moves only when the session is gone.
 watch(selectedId, (id) => {
-  if (id && route.query.session && route.query.session !== id) router.replace({ query: { ...route.query, session: id } })
-})
+  if (id && route.query.session !== id) router.replace({ query: { ...route.query, session: id } })
+}, { immediate: true })
 </script>
 
 <template>
@@ -291,6 +298,7 @@ xdebug.client_port={{ port(config.addr) }}</pre>
               <XdebugCallStack
                 :frames="dbg.stack.value"
                 :selected="dbg.frame.value"
+                :disabled="!dbg.paused.value"
                 @select="dbg.selectFrame"
               />
             </details>

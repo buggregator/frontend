@@ -56,6 +56,8 @@ export type XdebugVar = {
   page?: number
   pagesize?: number
   children?: XdebugVar[]
+  // Client-only: the whole value (up to the server's cap) has been loaded.
+  full?: boolean
 }
 
 export type XdebugSourceLine = { line: number; text: string }

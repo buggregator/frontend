@@ -76,6 +76,10 @@ const toggle = (v: XdebugVar) => {
   open.value = next
 }
 
+// Xdebug cuts long strings; `size` is the whole length in bytes.
+const isCut = (v: XdebugVar) => !!v.size && v.size > (v.value?.length ?? 0)
+const bytes = (n: number | undefined) => ((n ?? 0) >= 1024 ? `${Math.round((n ?? 0) / 1024)} KB` : `${n ?? 0} bytes`)
+
 const more = (v: XdebugVar) => emit('expand', v.fullname, (v.page ?? 0) + 1)
 
 const focusRow = async (key: string | null) => {
@@ -108,8 +112,9 @@ const onKey = (e: KeyboardEvent, index: number) => {
       break
     case 'Enter':
     case ' ':
-      if (row.kind === 'var') toggle(row.v)
-      else more(row.v)
+      if (row.kind === 'more') more(row.v)
+      else if (hasChildren(row.v)) toggle(row.v)
+      else if (isCut(row.v) && !row.v.full) full(row.v)
       break
     default:
       return
@@ -207,15 +212,19 @@ watch(() => props.vars, () => { busy.value = new Set() }, { deep: true })
             class="xdebug-vars__type"
           >{{ row.v.type }}</span>
           <button
-            v-if="row.v.size && row.v.size > (row.v.value?.length ?? 0)"
+            v-if="isCut(row.v) && !row.v.full"
             type="button"
             class="xdebug-vars__link"
             tabindex="-1"
             :disabled="busy.has(row.v.fullname)"
             @click="full(row.v)"
           >
-            show all {{ row.v.size }} chars
+            show full value ({{ bytes(row.v.size) }})
           </button>
+          <span
+            v-else-if="isCut(row.v)"
+            class="xdebug-vars__type"
+          >cut at {{ bytes(row.v.value?.length) }}</span>
         </template>
       </template>
       <template v-else>

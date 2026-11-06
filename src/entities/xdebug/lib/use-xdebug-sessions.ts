@@ -45,7 +45,8 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
         break
       case 'session.status': {
         const { id, state: next, file, line, kind, target } = message.data
-        if (!all.value.some((s) => s.id === id)) {
+        const before = all.value.find((s) => s.id === id)
+        if (!before) {
           upsert({ id, state: next, ide_connected: true, agent_calls: 0 })
         }
         patch(id, {
@@ -54,7 +55,7 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
           ...(line ? { last_line: line } : {}),
           ...(kind ? { kind } : {}),
           ...(target ? { target } : {}),
-          ...(next === 'break' ? { paused_at: new Date().toISOString() } : {})
+          ...(next === 'break' && before?.state !== 'break' ? { paused_at: new Date().toISOString() } : {})
         })
         break
       }

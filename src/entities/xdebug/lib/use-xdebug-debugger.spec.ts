@@ -117,6 +117,91 @@ describe('useXdebugDebugger', () => {
     expect(api.getStack.mock.calls.length).toBe(calls + 1)
   })
 
+  // Eval runs code in the debugged process: never twice on one pause.
+  it('evaluates watches once per session and pause when switching A → B → A', async () => {
+    const { api, session, dbg } = setup('break', true)
+    const a = { ...session.value!, paused_at: 't1' }
+    const b: XdebugSession = { id: '2', state: 'break', ide_connected: true, agent_calls: 0, paused_at: 't2' }
+    session.value = a
+    dbg.addWatch('$a')
+    await flushPromises()
+
+    session.value = b
+    await flushPromises()
+    session.value = a
+    await flushPromises()
+
+    expect(api.evaluate.mock.calls.map(([sid]) => sid)).toEqual(['1', '2'])
+    expect(dbg.watches.value[0]).toMatchObject({ state: 'ready', result: { value: '42' } })
+  })
+
+  it('does not evaluate again when another session changes state', async () => {
+    const { api, dbg } = setup('break', true)
+    dbg.addWatch('$a')
+    await flushPromises()
+    dbg.apply({ event: 'session.status', data: { id: '1', state: 'break', file: 'file:///app/Cart.php', line: 43, pause_seq: 4 } })
+    dbg.apply({ event: 'session.status', data: { id: '2', state: 'running' } })
+    dbg.apply({ event: 'session.status', data: { id: '2', state: 'break', file: 'file:///b.php', line: 1, pause_seq: 1 } })
+    await flushPromises()
+
+    expect(api.evaluate).toHaveBeenCalledTimes(1)
+  })
+
+  it('a frame click does not drop watch replies or the next frame source', async () => {
+    const { api, dbg } = setup('break', true)
+    let release: (v: XdebugVar) => void = () => {}
+    api.evaluate.mockImplementationOnce(() => new Promise((r) => { release = r }))
+    dbg.addWatch('$a')
+    await flushPromises()
+
+    const click = dbg.selectFrame(1)
+    const ctx = dbg.selectContext(1)
+    release(v('$a', '7'))
+    await Promise.all([click, ctx])
+    await flushPromises()
+
+    expect(dbg.watches.value[0]).toMatchObject({ state: 'ready', result: { value: '7' } })
+    expect(dbg.sourceState.value).toBe('ready')
+    expect(dbg.source.value?.begin).toBe(1)
+  })
+
+  it('keeps «changed» tags when coming back to frame 0 in the same pause', async () => {
+    const { api, session, dbg } = setup()
+    await flushPromises()
+    session.value = { ...session.value!, state: 'running' }
+    dbg.apply({ event: 'session.status', data: { id: '1', state: 'running' } })
+    api.setLocals([v('$a', '5'), v('$b', '2')])
+    session.value = { ...session.value!, state: 'break' }
+    dbg.apply({ event: 'session.status', data: { id: '1', state: 'break', line: 44 } })
+    await flushPromises()
+
+    await dbg.selectFrame(1)
+    await dbg.selectFrame(0)
+
+    expect([...dbg.changed.value]).toEqual(['$a'])
+  })
+
+  it('pages children once even on a double click', async () => {
+    const { api, dbg } = setup()
+    api.setLocals([v('$items', '', { type: 'array', numchildren: 3 })])
+    await flushPromises()
+    await dbg.expand('$items')
+
+    await Promise.all([dbg.expand('$items', 1), dbg.expand('$items', 1)])
+
+    expect(dbg.variables.value[0].children?.map((x) => x.name)).toEqual(['$items[0]', '$items[1]', '$items[2]'])
+  })
+
+  it('ignores frame and scope picks while the script runs', async () => {
+    const { api, dbg } = setup('running')
+    await flushPromises()
+    await dbg.selectFrame(2)
+    await dbg.selectContext(1)
+
+    expect(api.getVariables).not.toHaveBeenCalled()
+    expect(dbg.frame.value).toBe(0)
+  })
+
   it('selecting another frame reloads its variables and source', async () => {
     const { api, dbg } = setup()
     await flushPromises()
