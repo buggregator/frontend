@@ -15,6 +15,7 @@ import {
   SentryTraceDetailPage,
 } from "@/pages/sentry";
 import {SettingsPage} from "@/pages/settings";
+import {XdebugPage} from "@/pages/xdebug";
 import {RouteName} from "@/shared/types";
 import {auth, checkType} from "./middlewares";
 
@@ -63,6 +64,14 @@ export const routes = [
     path: '/mock-server',
     name: RouteName.MockServer,
     component: MockServerPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
+    path: '/xdebug',
+    name: RouteName.Xdebug,
+    component: XdebugPage,
     meta: {
       middleware: [auth]
     }

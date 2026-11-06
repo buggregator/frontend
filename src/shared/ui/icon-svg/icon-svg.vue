@@ -597,6 +597,15 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'bug'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      class="fill-current"
+    >
+      <path d="M14.6 3.4 16 2l-1.9 1.9A5 5 0 0 1 17 8h2v2h-2v2h3v2h-3v1a5 5 0 0 1-.4 2H19v2h-3.1A5 5 0 0 1 12 21a5 5 0 0 1-3.9-2H5v-2h2.4A5 5 0 0 1 7 15v-1H4v-2h3v-2H5V8h2a5 5 0 0 1 2.9-4.1L8 2l1.4-1.4 2.2 2.2a5 5 0 0 1 .8 0zM9 10v5a3 3 0 0 0 6 0v-5zm2 1h2v2h-2zm0 3h2v2h-2z" />
+    </svg>
+
+    <svg
       v-else-if="name === 'settings'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
