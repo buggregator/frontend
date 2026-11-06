@@ -3,13 +3,16 @@ import {useEventsStore, useProfileStore} from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
 import { REST_API_URL } from "./constants";
 
+// keepPinned: the server keeps every pinned event (buggregator/server #365).
+export type DeleteOptions = { keepPinned?: boolean }
+
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
   getSingle: (id: EventId) => Promise<ServerEvent<EventType> | null>,
-  deleteAll: () => Promise<void | Response>,
+  deleteAll: (options?: DeleteOptions) => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
-  deleteByType: (type: EventType) => Promise<void | Response>,
+  deleteByType: (type: EventType, options?: DeleteOptions) => Promise<void | Response>,
   pinEvent: (id: EventId) => Promise<void | Response>,
   unpinEvent: (id: EventId) => Promise<void | Response>,
   replayHttpDump: (id: EventId) => Promise<void | Response>,
@@ -82,7 +85,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   // The server clears events only through `DELETE /api/events`; the body says
   // what to clear (no `type` and no `uuids`: every event of the project).
-  const deleteEvents = (body: { type?: EventType, uuids?: EventId[] }) => fetch(getEventsRestUrl(), {
+  const deleteEvents = (body: { type?: EventType, uuids?: EventId[], keep_pinned?: boolean }) => fetch(getEventsRestUrl(), {
     method: 'DELETE',
     headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -94,11 +97,13 @@ export const useEventsRequests: TUseEventsRequests = () => {
       console.error('Fetch Error', err)
     })
 
-  const deleteAll = () => deleteEvents({})
+  const keepPinned = ({ keepPinned: keep = false }: DeleteOptions = {}) => (keep ? { keep_pinned: true } : {})
+
+  const deleteAll = (options?: DeleteOptions) => deleteEvents(keepPinned(options))
 
   const deleteList = (uuids: EventId[]) => deleteEvents({ uuids })
 
-  const deleteByType = (type: EventType) => deleteEvents({ type })
+  const deleteByType = (type: EventType, options?: DeleteOptions) => deleteEvents({ type, ...keepPinned(options) })
 
   const pinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
     method: 'POST',

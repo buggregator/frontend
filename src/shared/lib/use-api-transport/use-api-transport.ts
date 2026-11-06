@@ -3,7 +3,7 @@ import type { RayContentLock } from "@/entities/ray/types";
 import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
-import { REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
+import { type DeleteOptions, REST_API_URL, useCentrifuge, useEventsRequests } from "../io";
 import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
 
@@ -125,19 +125,28 @@ export const useApiTransport = () => {
     return deleteSingle(eventId);
   }
 
+  // Traces, logs and metrics of the current project; pinned errors stay.
+  // Without `project` the server wipes every project's Sentry tables.
   const clearSentryTables = () => {
     const headers = { 'X-Auth-Token': token.value }
-    fetch(`${REST_API_URL}/api/sentry/all`, { method: 'DELETE', headers }).catch(() => {})
+    const params = new URLSearchParams({
+      ...(project.value ? { project: project.value } : {}),
+      keep_pinned: '1',
+    })
+    fetch(`${REST_API_URL}/api/sentry/all?${params}`, { method: 'DELETE', headers }).catch(() => {})
   }
 
-  const deleteEventsAll = () => {
+  const keepPinnedPayload = ({ keepPinned = false }: DeleteOptions = {}) =>
+    (keepPinned ? { keep_pinned: true } : undefined)
+
+  const deleteEventsAll = (options?: DeleteOptions) => {
     clearSentryTables()
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload())
+      return centrifuge.rpc(`delete:api/events`, createPayload(keepPinnedPayload(options)))
     }
 
-    return deleteAll();
+    return deleteAll(options);
   }
 
   const deleteEventsList = (uuids: EventId[]) => {
@@ -156,16 +165,16 @@ export const useApiTransport = () => {
     return deleteList(uuids);
   }
 
-  const deleteEventsByType = (type: EventType) => {
+  const deleteEventsByType = (type: EventType, options?: DeleteOptions) => {
     if (type === 'sentry') {
       clearSentryTables()
     }
 
     if (getWSConnection()) {
-      return centrifuge.rpc(`delete:api/events`, createPayload({ type }))
+      return centrifuge.rpc(`delete:api/events`, createPayload({ type, ...keepPinnedPayload(options) }))
     }
 
-    return deleteByType(type);
+    return deleteByType(type, options);
   }
 
   const pinEvent = (eventId: EventId) => {

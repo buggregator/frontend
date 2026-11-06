@@ -38,18 +38,11 @@ export const useEventsApi = (): TUseEventsApi => {
     }
   }
 
+  // With pins the server keeps every pinned event itself (keep_pinned), so
+  // Clear also reaches events the browser has not loaded; the store keeps the
+  // pinned ones locally.
   const removeAll = async () => {
-    if (lockedIds.value.length) {
-      const removedIds = events.value
-        .filter(({ uuid }) => !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid)
-
-      await removeList(removedIds)
-
-      return
-    }
-
-    const res = await deleteEventsAll()
+    const res = await deleteEventsAll({ keepPinned: lockedIds.value.length > 0 })
 
     if (res) {
       eventsStore.removeAll()
@@ -61,17 +54,7 @@ export const useEventsApi = (): TUseEventsApi => {
   }
 
   const removeByType = async (eventType: EventType) => {
-    if (lockedIds.value.length) {
-      const removedIds = events.value
-        .filter(({ type, uuid }) => type === eventType && !lockedIds.value.includes(uuid))
-        .map(({ uuid }) => uuid)
-
-      await removeList(removedIds)
-
-      return
-    }
-
-    const res = await deleteEventsByType(eventType)
+    const res = await deleteEventsByType(eventType, { keepPinned: lockedIds.value.length > 0 })
 
     if (res) {
       eventsStore.removeByType(eventType);
