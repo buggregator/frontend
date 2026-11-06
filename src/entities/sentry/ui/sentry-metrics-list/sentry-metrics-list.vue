@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import type { SentryMetric } from '../../types'
 import SentryMetricRow from './sentry-metric-row.vue'
 
@@ -8,22 +7,15 @@ type Props = {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false
 })
 
+// The filters are applied by the server: the list shows one page of the matches
+const activeType = defineModel<string>('type', { default: 'all' })
+const nameFilter = defineModel<string>('search', { default: '' })
+
 const types = ['all', 'counter', 'gauge', 'distribution'] as const
-const activeType = ref<string>('all')
-const nameFilter = ref('')
-
-const filteredMetrics = computed(() => {
-  const needle = nameFilter.value.trim().toLowerCase()
-
-  return props.metrics.filter((m) => {
-    if (activeType.value !== 'all' && m.type !== activeType.value) return false
-    return needle === '' || m.name.toLowerCase().includes(needle)
-  })
-})
 </script>
 
 <template>
@@ -50,7 +42,7 @@ const filteredMetrics = computed(() => {
 
     <div class="metrics-list__rows">
       <SentryMetricRow
-        v-for="metric in filteredMetrics"
+        v-for="metric in metrics"
         :key="metric.id"
         :metric="metric"
       />
@@ -63,7 +55,7 @@ const filteredMetrics = computed(() => {
       </div>
 
       <div
-        v-if="!loading && filteredMetrics.length === 0"
+        v-if="!loading && metrics.length === 0"
         class="metrics-list__status"
       >
         No metrics match the selected filter.
