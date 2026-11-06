@@ -27,7 +27,6 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern',
         loadPaths: [fileURLToPath(new URL('.', import.meta.url))],
       },
     },
