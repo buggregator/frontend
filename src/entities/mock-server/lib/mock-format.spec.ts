@@ -16,7 +16,8 @@ describe('mock-format', () => {
 
   it('builds a cURL command without hop headers and with quoted body', () => {
     const curl = toCurl('http://localhost:8000', {
-      method: 'post', uri: '/mock/orders?x=1', body: `{"a":"it's"}`, query: {},
+      // the HTTP dump keeps the URI without its leading slash and the query apart
+      method: 'post', uri: 'mock/orders', body: `{"a":"it's"}`, query: { x: '1' },
       headers: { Host: ['localhost:8000'], 'Content-Type': ['application/json'] },
     })
     expect(curl).toBe(

@@ -32,7 +32,7 @@ const { rules, configRules, ownRules } = rulesState
 const traffic = useMockTraffic()
 const { requests, pending, freshIds, paused, noMatchCount, hitsByRule } = traffic
 const { events } = useEvents()
-const { availableProjects } = storeToRefs(useEventsStore())
+const { availableProjects, lockedIds } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 
 const baseUrl = `${REST_API_URL}/mock/`
@@ -205,12 +205,16 @@ const runAction = async (fn: () => Promise<unknown>) => {
   }
 }
 
+// Like the main Clear: pinned events stay.
 const clearRequests = async () => {
-  const uuids = requests.value.map((e) => e.uuid)
+  const pinned = new Set(lockedIds.value)
+  const uuids = requests.value.map((e) => e.uuid).filter((id) => !pinned.has(id))
   if (!uuids.length) return
+  const kept = requests.value.length - uuids.length
+  const note = kept ? ` ${kept} pinned ${kept === 1 ? 'request stays' : 'requests stay'}.` : ''
   if (
     !window.confirm(
-      `Delete ${uuids.length} captured mock requests? They are HTTP dumps and leave the Events list too.`
+      `Delete ${uuids.length} captured mock requests? They are HTTP dumps and leave the Events list too.${note}`
     )
   )
     return

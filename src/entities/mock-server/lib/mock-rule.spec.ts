@@ -74,6 +74,13 @@ describe('validateRule', () => {
     expect(validateRule({ ...ok, body: 'x'.repeat(1024 * 1024 + 1) }).body).toBe('Body must be at most 1 MB.')
   })
 
+  // the server canonicalises names, so which value wins would depend on map order
+  it('header names that differ only in case', () => {
+    expect(validateRule({ ...ok, headers: { 'content-type': 'a', 'Content-Type': 'b' } }).headers).toBe(
+      'Header “Content-Type” is set twice.'
+    )
+  })
+
   it('header with an empty name or a space', () => {
     expect(validateRule({ ...ok, headers: { '': 'x' } }).headers).toBe('Header names cannot be empty or contain spaces or “:”.')
     expect(validateRule({ ...ok, headers: { 'X Y': 'x' } }).headers).toBeDefined()

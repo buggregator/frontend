@@ -82,8 +82,12 @@ export const validateRule = (rule: MockRuleInput): MockRuleErrors => {
   if (bodyBytes(rule.body) > MAX_BODY_BYTES) {
     errors.body = 'Body must be at most 1 MB.'
   }
-  if (Object.keys(rule.headers).some((k) => !k.trim() || /[\s:]/.test(k))) {
+  const names = Object.keys(rule.headers)
+  const twice = names.find((k, i) => names.findIndex((x) => x.toLowerCase() === k.toLowerCase()) !== i)
+  if (names.some((k) => !k.trim() || /[\s:]/.test(k))) {
     errors.headers = 'Header names cannot be empty or contain spaces or “:”.'
+  } else if (twice) {
+    errors.headers = `Header “${twice}” is set twice.`
   }
 
   return errors

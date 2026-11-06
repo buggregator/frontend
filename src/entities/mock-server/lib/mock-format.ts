@@ -1,4 +1,5 @@
 import type { MockHttpDump, MockNearReason } from '../types'
+import { withQuery } from './mock-rule'
 
 // Light badges use -700 on -50 (≥4.5:1 for 11 px text); dark -400 on -500/10.
 const TONES = {
@@ -38,8 +39,10 @@ const quote = (s: string) => `'${s.replace(/'/g, `'\\''`)}'`
 const SKIP_HEADERS = new Set(['host', 'content-length', 'connection', 'accept-encoding'])
 
 // A cURL command that repeats the captured request against the same server.
+// The dump stores the URI without its leading slash and the query apart.
 export const toCurl = (origin: string, req: MockHttpDump['request']): string => {
-  const parts = [`curl -X ${req.method.toUpperCase()} ${quote(origin + req.uri)}`]
+  const url = `${origin.replace(/\/+$/, '')}/${withQuery(req.uri.replace(/^\/+/, ''), req.query)}`
+  const parts = [`curl -X ${req.method.toUpperCase()} ${quote(url)}`]
   Object.entries(req.headers || {}).forEach(([name, values]) => {
     if (SKIP_HEADERS.has(name.toLowerCase())) return
     const list = Array.isArray(values) ? values : [values]
