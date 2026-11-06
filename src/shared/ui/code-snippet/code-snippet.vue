@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import highlightPlugin from '@highlightjs/vue-plugin'
 import isString from 'lodash.isstring'
-import { ref, computed } from 'vue'
+import { ref, computed, toRef } from 'vue'
 import { copyTextToClipboard } from '../../lib/clipboard'
+import { useHighlightLanguage } from '../../lib/highlight'
 import { logger } from '../../lib/logger'
 import { IconSvg } from '../icon-svg'
 
@@ -19,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const isCopied = ref(false)
+
+const highlightLanguage = useHighlightLanguage(toRef(props, 'language'))
 
 const normalizedCode = computed(() =>
   !isString(props.code) ? JSON.stringify(props.code, null, ' ') : props.code
@@ -56,7 +59,7 @@ const copyCode = (): void => {
     </button>
 
     <CodeHighlight
-      :language="language"
+      :language="highlightLanguage"
       :autodetect="false"
       :code="normalizedCode"
     />
