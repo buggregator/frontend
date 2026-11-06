@@ -22,6 +22,10 @@ const getPurifier = (): Purifier => {
 // Captured dumps (Ray, VarDumper) are untrusted HTML shown with v-html.
 // DOMPurify drops scripts, event handlers and javascript: URLs and keeps the
 // sf-dump markup (pre, samp, span, abbr, a, ids, classes, data-*). The dump's
-// own <style> goes too: our stylesheet already styles .sf-dump.
+// own <style> goes too: our stylesheet already styles .sf-dump. Form controls
+// go as well (their text stays): a dump has no business drawing a working form
+// in our page. The sf-dump search box is added later by its own script.
+const FORBID_TAGS = ['style', 'form', 'input', 'button', 'textarea', 'select']
+
 export const sanitizeHtml = (html: string): string =>
-  getPurifier().sanitize(html, { FORBID_TAGS: ['style'] })
+  getPurifier().sanitize(html, { FORBID_TAGS })

@@ -56,12 +56,14 @@ onMounted(() => {
     >
       {{ dumpBody }}
     </div>
-    <!-- sanitised by sanitizeHtml (DOMPurify) -->
+    <!-- v-html is safe here: baseSanitizedHtml goes through sanitizeHtml (DOMPurify) -->
+    <!-- eslint-disable vue/no-v-html -->
     <div
       v-else
       class="value-dump__html"
       v-html="baseSanitizedHtml"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </div>
 </template>
 

@@ -25,6 +25,12 @@ describe('SettingsPageContent: single-key shortcuts', () => {
     vi.unstubAllGlobals()
   })
 
+  it('says that the switch also covers the arrow keys', () => {
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.text()).toContain('Turning this off frees ↑/↓ for scrolling too.')
+  })
+
   it('turns single-key shortcuts off and remembers it', async () => {
     const wrapper = mount(SettingsPageContent)
     const toggle = wrapper.get('[role="switch"][aria-label="Single-key shortcuts"]')
