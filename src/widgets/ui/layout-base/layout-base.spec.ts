@@ -51,6 +51,16 @@ describe('LayoutBase', () => {
     wrapper.unmount()
   })
 
+  // Review of #316: following the link left #main-content in the URL.
+  it('skip link moves focus to main and leaves the URL as it is', async () => {
+    const wrapper = render()
+    const before = window.location.href
+    await wrapper.get('a').trigger('click')
+    expect(document.activeElement).toBe(wrapper.get('main').element)
+    expect(window.location.href).toBe(before)
+    wrapper.unmount()
+  })
+
   it('gives the page an h1 when it passes a heading', () => {
     expect(render({ heading: 'Settings' }).get('main h1').text()).toBe('Settings')
     expect(render().find('h1').exists()).toBe(false)

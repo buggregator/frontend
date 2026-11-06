@@ -20,6 +20,11 @@ const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
 const { isShortcutsOverlayOpen } = useGlobalShortcuts()
 
+// The skip link moves focus by hand: following its href would leave
+// #main-content in the URL (and in the history).
+const mainRef = ref<HTMLElement | null>(null)
+const skipToContent = () => mainRef.value?.focus()
+
 const isDismissed = ref(false)
 const showBanner = ref(false)
 let disconnectTimer: ReturnType<typeof setTimeout> | null = null
@@ -72,6 +77,7 @@ watch(
     <a
       href="#main-content"
       class="layout-base__skip"
+      @click.prevent="skipToContent"
     >Skip to content</a>
 
     <div
@@ -107,6 +113,7 @@ watch(
 
     <main
       id="main-content"
+      ref="mainRef"
       class="layout-base__content"
       tabindex="-1"
     >
