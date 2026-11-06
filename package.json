@@ -16,6 +16,7 @@
     "sb": "storybook dev -p 6006",
     "test:unit": "vitest",
     "typecheck": "vue-tsc --build --force",
+    "size": "node scripts/check-bundle-size.mjs",
     "format": "prettier --write src/"
   },
   "type": "module",
