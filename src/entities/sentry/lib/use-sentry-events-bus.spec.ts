@@ -4,6 +4,7 @@ type Handler = (ctx: unknown) => void
 let publish: Handler
 
 vi.mock('@/shared/lib/io', () => ({
+  guardHandler: (_: string, fn: Handler) => fn,
   useCentrifuge: () => ({
     centrifuge: {
       on: (_: string, h: Handler) => {

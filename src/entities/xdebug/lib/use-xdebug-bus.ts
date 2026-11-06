@@ -1,5 +1,5 @@
 import { onScopeDispose } from 'vue'
-import { useCentrifuge } from '@/shared/lib/io'
+import { guardHandler, useCentrifuge } from '@/shared/lib/io'
 import type { XdebugWsMessage } from '../types'
 
 export const XDEBUG_CHANNEL = 'xdebug'
@@ -24,13 +24,17 @@ export const onXdebugMessage = (listener: Listener) => {
   if (!subscribed) {
     subscribed = true
     const { centrifuge } = useCentrifuge()
-    centrifuge.on('publication', dispatchXdebugPublication)
+    // An exception in a handler would stop the client for good (centrifuge-js 5.8).
+    centrifuge.on('publication', guardHandler('publication', dispatchXdebugPublication))
     // Events sent while the connection was down are lost: tell the page to
     // re-read on every connect after the first.
-    centrifuge.on('connected', () => {
-      if (connectedOnce) reconnectListeners.forEach((listener) => listener())
-      connectedOnce = true
-    })
+    centrifuge.on(
+      'connected',
+      guardHandler('connected', () => {
+        if (connectedOnce) reconnectListeners.forEach((listener) => listener())
+        connectedOnce = true
+      })
+    )
     if (centrifuge.state === 'connected') connectedOnce = true
   }
   listeners.add(listener)

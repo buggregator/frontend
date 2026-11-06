@@ -5,7 +5,9 @@ import { readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 const DIST = process.argv[2] ?? new URL('../dist/', import.meta.url).pathname
-const BUDGET_KB = { js: 650, css: 500 }
+// js 650 -> 680: centrifuge 5.8.0 adds ~46 kB (+9.7 kB gzip) for its reconnect
+// and resume-after-sleep fixes; the WebSocket client is needed on every page.
+const BUDGET_KB = { js: 680, css: 500 }
 // Chunks that only pages other than the feed need.
 const LAZY_ONLY = [/@vue-flow/, /^assets\/common-/]
 

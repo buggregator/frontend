@@ -1,5 +1,6 @@
 import type { ClientEvents, PublicationContext } from 'centrifuge'
 import type { EventId, ServerEvent } from '../../types'
+import { guardHandler } from '../io/guard-handler'
 
 type Emitter = {
   state: string
@@ -142,11 +143,20 @@ export const startEventsStream = (options: EventsStreamOptions) => {
     }
   }
 
-  centrifuge.on('connected', onConnected)
-  centrifuge.on('connecting', onDisconnected)
-  centrifuge.on('disconnected', onDisconnected)
-  centrifuge.on('message', onMessage)
-  centrifuge.on('publication', onPublication)
+  // An exception in a handler would stop the client for good (centrifuge-js 5.8).
+  const handlers = {
+    connected: guardHandler('connected', onConnected),
+    connecting: guardHandler('connecting', onDisconnected),
+    disconnected: guardHandler('disconnected', onDisconnected),
+    message: guardHandler('message', onMessage),
+    publication: guardHandler('publication', onPublication),
+  }
+
+  centrifuge.on('connected', handlers.connected)
+  centrifuge.on('connecting', handlers.connecting)
+  centrifuge.on('disconnected', handlers.disconnected)
+  centrifuge.on('message', handlers.message)
+  centrifuge.on('publication', handlers.publication)
 
   // centrifuge emits "connecting" inside connect(), before these listeners
   // exist, and a failed retry emits nothing new: read the state once.
@@ -155,11 +165,11 @@ export const startEventsStream = (options: EventsStreamOptions) => {
   }
 
   return () => {
-    centrifuge.removeListener('connected', onConnected)
-    centrifuge.removeListener('connecting', onDisconnected)
-    centrifuge.removeListener('disconnected', onDisconnected)
-    centrifuge.removeListener('message', onMessage)
-    centrifuge.removeListener('publication', onPublication)
+    centrifuge.removeListener('connected', handlers.connected)
+    centrifuge.removeListener('connecting', handlers.connecting)
+    centrifuge.removeListener('disconnected', handlers.disconnected)
+    centrifuge.removeListener('message', handlers.message)
+    centrifuge.removeListener('publication', handlers.publication)
     stopPolling()
     ;[flushTimer, resyncTimer].forEach((timer) => timer && clearTimeout(timer))
   }

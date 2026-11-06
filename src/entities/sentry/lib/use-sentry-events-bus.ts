@@ -1,6 +1,6 @@
 import type { PublicationContext } from 'centrifuge'
 import { onUnmounted } from 'vue'
-import { useCentrifuge } from '@/shared/lib/io'
+import { guardHandler, useCentrifuge } from '@/shared/lib/io'
 
 type SentryEventCallback = () => void
 
@@ -57,16 +57,19 @@ const onPublication = (ctx: PublicationContext) => {
   schedule(Math.max(DEBOUNCE_MS, MIN_INTERVAL_MS - sinceLast))
 }
 
+// An exception in a handler would stop the client for good (centrifuge-js 5.8).
+const guardedPublication = guardHandler('publication', onPublication)
+
 function subscribe() {
   if (isSubscribed) return
   isSubscribed = true
 
-  useCentrifuge().centrifuge.on('publication', onPublication)
+  useCentrifuge().centrifuge.on('publication', guardedPublication)
 }
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    useCentrifuge().centrifuge.removeListener('publication', onPublication)
+    useCentrifuge().centrifuge.removeListener('publication', guardedPublication)
     if (debounceTimer) clearTimeout(debounceTimer)
   })
 }
