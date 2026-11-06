@@ -5,7 +5,7 @@ import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
 import { type EventType, type PageEventTypes, RouteName } from '@/shared/types'
-import { AppHeader, PauseButton, IconSvg, SearchBar } from '@/shared/ui'
+import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
 
 const { events, cachedEvents, lockedIds } = useEvents()
 const eventsStore = useEventsStore()
@@ -92,6 +92,8 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
+      <PeriodSelect />
+
       <SearchBar v-model="searchQuery" />
 
       <PauseButton

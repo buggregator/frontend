@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import { RouteName } from '@/shared/types'
-import { AppHeader } from '@/shared/ui'
+import { AppHeader, PeriodSelect } from '@/shared/ui'
 
 useTitle('Sentry | Buggregator')
 </script>
@@ -30,6 +30,10 @@ useTitle('Sentry | Buggregator')
         >
           Sentry
         </RouterLink>
+
+        <template #controls>
+          <PeriodSelect />
+        </template>
       </AppHeader>
     </template>
 
