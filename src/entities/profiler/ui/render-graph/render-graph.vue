@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { VueFlow, useVueFlow, MarkerType, type NodeMouseEvent } from '@vue-flow/core'
-import { ref, computed, watch } from 'vue'
+import { ref, shallowRef, computed, watch } from 'vue'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { mapToVueFlow } from '../../lib/vue-flow'
@@ -28,8 +28,8 @@ const emit = defineEmits<{
 
 const { nodes, edges } = mapToVueFlow(props.serverData)
 
-const flowNodes = ref(nodes)
-const flowEdges = ref(edges)
+const flowNodes = shallowRef(nodes)
+const flowEdges = shallowRef(edges)
 
 const selectedNodeId = ref<string | null>(null)
 const highlightedNodeIds = ref<Set<string>>(new Set())
