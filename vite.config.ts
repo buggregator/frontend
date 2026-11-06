@@ -42,10 +42,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       treeshake: {
-        // dagre is CommonJS without a `sideEffects` field, so Rollup kept it
-        // (and the vue-flow chunk it sits in) on the feed's first load just
-        // because the profiler and Sentry entity barrels import the graph
-        // helpers. It has no side effects at import time.
+        // dagre's package has no `sideEffects` field, so Rollup kept it (and
+        // the vue-flow chunk it sits in) on the feed's first load just because
+        // the profiler and Sentry entity barrels import the graph helpers. It
+        // has no side effects at import time.
         moduleSideEffects: (id: string) => !id.includes('node_modules/@dagrejs'),
       },
       output: {

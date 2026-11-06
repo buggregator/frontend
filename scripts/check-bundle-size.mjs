@@ -12,6 +12,11 @@ const LAZY_ONLY = [/@vue-flow/, /^assets\/common-/]
 const html = readFileSync(join(DIST, 'index.html'), 'utf8')
 const refs = [...html.matchAll(/(?:src|href)="\/(assets\/[^"]+\.(js|css))"/g)].map((m) => ({ path: m[1], kind: m[2] }))
 
+if (!refs.some((r) => r.kind === 'js')) {
+  console.error('bundle size: no /assets/*.js in dist/index.html, the check cannot measure the first load')
+  process.exit(1)
+}
+
 const total = { js: 0, css: 0 }
 for (const { path, kind } of refs) total[kind] += statSync(join(DIST, path)).size
 
