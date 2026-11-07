@@ -69,5 +69,12 @@ describe('MockRequestDetail', () => {
     const w = mountDetail(event({ matched: true, rule_id: 'a', status: 200 }), [rule('a', 'DELETE')])
     expect(w.find('.mock-request-detail__template-error').exists()).toBe(false)
   })
+
+  // A matched request that rendered fine is not a «No rule matched».
+  it('shows no no-match callout for a matched request', () => {
+    const w = mountDetail(event({ matched: true, rule_id: 'a', status: 200 }), [rule('a', 'DELETE')])
+    expect(w.find('.mock-request-detail__callout').exists()).toBe(false)
+    expect(w.find('.mock-request-detail__template-error').exists()).toBe(false)
+  })
 })
 

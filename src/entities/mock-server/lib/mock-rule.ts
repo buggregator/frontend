@@ -79,7 +79,8 @@ export const validateRule = (rule: MockRuleInput): MockRuleErrors => {
   if (!Number.isInteger(rule.delay_ms) || rule.delay_ms < 0 || rule.delay_ms > MAX_DELAY_MS) {
     errors.delay_ms = `Delay must be between 0 and ${MAX_DELAY_MS} ms.`
   }
-  if (!Number.isInteger(rule.seed)) {
+  // the seed field shows only with the template on
+  if (rule.template && !Number.isInteger(rule.seed)) {
     errors.seed = 'Seed must be a whole number.'
   }
   if (bodyBytes(rule.body) > MAX_BODY_BYTES) {

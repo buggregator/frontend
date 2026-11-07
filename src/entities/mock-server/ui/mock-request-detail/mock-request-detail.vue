@@ -109,14 +109,16 @@ const copyCurl = async () => {
       <span v-else> {{ mock.rule_name || 'a rule' }} <i>(deleted since)</i> </span>
     </div>
 
-    <p
-      v-if="mock.matched && mock.template_error"
-      class="mock-request-detail__template-error"
-      role="alert"
-    >
-      <span><b>The rule's template failed</b>, so the client got {{ mock.status }}.</span>
-      <code>{{ mock.template_error }}</code>
-    </p>
+    <template v-if="mock.matched">
+      <p
+        v-if="mock.template_error"
+        class="mock-request-detail__template-error"
+        role="alert"
+      >
+        <span><b>The rule's template failed</b>, so the client got {{ mock.status }}.</span>
+        <code>{{ mock.template_error }}</code>
+      </p>
+    </template>
 
     <template v-else>
       <div

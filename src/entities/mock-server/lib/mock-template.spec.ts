@@ -28,6 +28,12 @@ describe('filterFakes', () => {
     expect(filterFakes(list, 'full', '').map((f) => f.name)).toEqual(['name'])
   })
 
+  // «email» must not list filemimetype (description mentions email) first.
+  it('puts exact name matches first, then names that start with the query', () => {
+    const fakes = [fake('filemimetype', 'file', 'Mime type, e.g. for an email attachment'), fake('emailtext', 'internet'), fake('email', 'internet'), fake('companyemail', 'company')]
+    expect(filterFakes(fakes, 'email', '').map((f) => f.name)).toEqual(['email', 'emailtext', 'companyemail', 'filemimetype'])
+  })
+
   it('keeps one category', () => {
     expect(filterFakes(list, '', 'address').map((f) => f.name)).toEqual(['city'])
   })

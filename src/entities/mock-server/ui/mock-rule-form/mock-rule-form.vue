@@ -50,6 +50,13 @@ watch(
 const addHeader = () => rows.value.push({ name: '', value: '' })
 const removeHeader = (i: number) => rows.value.splice(i, 1)
 
+// A seed left half-typed is dropped with the template: the field hides.
+const toggleTemplate = () => {
+  const template = !props.modelValue.template
+  const seed = template || Number.isInteger(props.modelValue.seed) ? props.modelValue.seed : 0
+  patch({ template, seed })
+}
+
 const numberField = (key: 'status' | 'delay_ms' | 'seed', raw: string) =>
   patch({ [key]: raw.trim() === '' ? Number.NaN : Number(raw) })
 
@@ -383,7 +390,7 @@ const bodyKind = computed(() => {
             aria-describedby="mock-hint-template"
             :aria-checked="modelValue.template"
             :disabled="readOnly"
-            @click="patch({ template: !modelValue.template })"
+            @click="toggleTemplate"
           >
             <span class="mock-rule-form__knob" />
             <span class="mock-rule-form__switch-text">{{ modelValue.template ? 'On' : 'Off' }}</span>
@@ -634,6 +641,10 @@ const bodyKind = computed(() => {
 .mock-rule-form__switch {
   @apply inline-flex items-center gap-2 h-8 text-sm text-gray-800 dark:text-gray-100;
   @apply disabled:opacity-50 disabled:cursor-not-allowed;
+
+  @media (max-width: 639px) {
+    @apply h-11;
+  }
 }
 
 .mock-rule-form__knob {

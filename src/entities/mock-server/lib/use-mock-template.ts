@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch, type Ref } from 'vue'
+import { onScopeDispose, ref, shallowRef, watch, type Ref } from 'vue'
 import type { MockFake, MockHelper, MockHelpers, MockPreviewResult, MockRuleInput } from '../types'
 import { parseHeaderLines } from './mock-template'
 import { MockApiError, useMockRequests } from './use-mock-requests'
@@ -61,28 +61,45 @@ export const useMockPreview = (rule: Ref<MockRuleInput>) => {
   const result = ref<MockPreviewResult | null>(null)
   // Why there is no result: the server's message for a rule it rejects.
   const problem = ref('')
+  // The sample field the problem is about ('' = the rule itself).
+  const problemField = ref<'path' | ''>('')
   const pending = ref(false)
   const started = ref(false)
 
+  // Only the newest run may write: an older, slower answer is dropped.
+  let runs = 0
+
   const run = async () => {
+    const id = ++runs
     started.value = true
     pending.value = true
     try {
-      result.value = await api.preview(rule.value, {
+      const answer = await api.preview(rule.value, {
         method: sample.value.method,
-        path: sample.value.path,
+        // the field shows the path under /mock; the server strips that prefix
+        path: `/mock${sample.value.path}`,
         headers: parseHeaderLines(sample.value.headers),
         body: sample.value.body,
       })
+      if (id !== runs) return
+      result.value = answer
       problem.value = ''
+      problemField.value = ''
     } catch (e) {
+      if (id !== runs) return
       result.value = null
-      const fields = e instanceof MockApiError ? (e.fields as Record<string, string>) : {}
+      problemField.value = ''
+      const fields = e instanceof MockApiError ? e.fields : {}
+      const rule = fields.body || fields.headers
+      if (!rule && fields['request.path']) {
+        problem.value = `Sample path ${fields['request.path']}`
+        problemField.value = 'path'
+        return
+      }
       problem.value =
-        fields.body || fields.headers || fields['request.path'] || Object.values(fields)[0] ||
-        (e instanceof Error ? e.message : 'Preview failed.')
+        rule || Object.values(fields)[0] || (e instanceof Error ? e.message : 'Preview failed.')
     } finally {
-      pending.value = false
+      if (id === runs) pending.value = false
     }
   }
 
@@ -97,5 +114,7 @@ export const useMockPreview = (rule: Ref<MockRuleInput>) => {
     { deep: true }
   )
 
-  return { sample, result, problem, pending, run }
+  onScopeDispose(() => clearTimeout(timer))
+
+  return { sample, result, problem, problemField, pending, run }
 }

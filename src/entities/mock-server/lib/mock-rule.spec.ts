@@ -124,8 +124,14 @@ describe('response templates', () => {
   })
 
   it('asks for a whole number seed', () => {
-    expect(validateRule({ ...emptyDraft(), path: '/a', seed: 1.5 }).seed).toBe('Seed must be a whole number.')
-    expect(validateRule({ ...emptyDraft(), path: '/a', seed: Number.NaN }).seed).toBe('Seed must be a whole number.')
-    expect(validateRule({ ...emptyDraft(), path: '/a', seed: -7 }).seed).toBeUndefined()
+    const tpl = { ...emptyDraft(), path: '/a', template: true }
+    expect(validateRule({ ...tpl, seed: 1.5 }).seed).toBe('Seed must be a whole number.')
+    expect(validateRule({ ...tpl, seed: Number.NaN }).seed).toBe('Seed must be a whole number.')
+    expect(validateRule({ ...tpl, seed: -7 }).seed).toBeUndefined()
+  })
+
+  // The seed field is hidden with the template off: its error could not be shown.
+  it('does not check the seed of a plain body', () => {
+    expect(validateRule({ ...emptyDraft(), path: '/a', seed: Number.NaN })).toEqual({})
   })
 })

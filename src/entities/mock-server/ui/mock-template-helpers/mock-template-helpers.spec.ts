@@ -57,6 +57,18 @@ describe('MockTemplateHelpers', () => {
     expect(w.emitted('insert')).toEqual([['{{ fake "email" | json }}']])
   })
 
+  it('says when no generator matches and clears the search', async () => {
+    const w = await mountHelpers()
+    await w.find('#mock-helpers-tab-fake').trigger('click')
+    await w.find('input[type="search"]').setValue('zzz')
+    expect(w.text()).toContain('No generator matches “zzz”')
+
+    const clear = w.findAll('.mock-helpers__link').find((b) => b.text() === 'Clear search')
+    await clear!.trigger('click')
+    expect(w.find<HTMLInputElement>('input[type="search"]').element.value).toBe('')
+    expect(w.findAll('.mock-helpers__item')).toHaveLength(30)
+  })
+
   it('says when the list could not load', async () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{}', { status: 500 }))))
     const w = await mountHelpers()

@@ -7,7 +7,6 @@ import type {
   MockPreviewResult,
   MockRequestEvent,
   MockRule,
-  MockRuleErrors,
   MockRuleInput
 } from '../types'
 
@@ -20,7 +19,8 @@ export class MockApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly fields: MockRuleErrors = {}
+    // field → message of a 422 (a rule's or an import's fields)
+    readonly fields: Record<string, string> = {}
   ) {
     super(message)
     this.name = 'MockApiError'

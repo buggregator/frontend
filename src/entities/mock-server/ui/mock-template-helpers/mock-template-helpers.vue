@@ -32,6 +32,14 @@ const found = computed(() => filterFakes(fakes.value, query.value, category.valu
 const visible = computed(() => found.value.slice(0, shown.value))
 
 const resetPage = () => (shown.value = FAKES_PAGE)
+
+const searchInput = ref<HTMLInputElement | null>(null)
+const clearSearch = () => {
+  query.value = ''
+  category.value = ''
+  resetPage()
+  searchInput.value?.focus()
+}
 </script>
 
 <template>
@@ -132,6 +140,7 @@ const resetPage = () => (shown.value = FAKES_PAGE)
       <template v-else>
         <div class="mock-helpers__filters">
           <input
+            ref="searchInput"
             v-model="query"
             type="search"
             class="mock-helpers__input"
@@ -161,8 +170,24 @@ const resetPage = () => (shown.value = FAKES_PAGE)
           class="mock-helpers__note"
           aria-live="polite"
         >
-          {{ found.length }} of {{ fakes.length }} generators
+          <template v-if="found.length">
+            {{ found.length }} of {{ fakes.length }} generators
+          </template>
+          <template v-else-if="query.trim()">
+            No generator matches “{{ query.trim() }}”{{ category ? ` in ${category}` : '' }}.
+          </template>
+          <template v-else>
+            No generators in {{ category }}.
+          </template>
         </p>
+        <button
+          v-if="!found.length"
+          type="button"
+          class="mock-helpers__link"
+          @click="clearSearch"
+        >
+          Clear search
+        </button>
         <ul class="mock-helpers__list">
           <li
             v-for="f in visible"
@@ -224,10 +249,14 @@ const resetPage = () => (shown.value = FAKES_PAGE)
 .mock-helpers__tab {
   @apply h-8 px-3 text-xs font-medium rounded-t border-b-2 border-transparent;
   @apply text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white;
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
 
   &[aria-pressed='true'] {
     @apply border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-400;
+  }
+
+  @media (max-width: 639px) {
+    @apply h-11;
   }
 }
 
@@ -270,7 +299,11 @@ const resetPage = () => (shown.value = FAKES_PAGE)
 .mock-helpers__insert {
   @apply h-7 px-2 rounded text-xs border border-gray-400 dark:border-gray-500;
   @apply text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5;
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
+
+  @media (max-width: 639px) {
+    @apply h-11 px-3;
+  }
 }
 
 .mock-helpers__desc,
@@ -302,7 +335,7 @@ const resetPage = () => (shown.value = FAKES_PAGE)
 .mock-helpers__input {
   @apply flex-1 min-w-[10rem] h-8 px-2 rounded text-sm;
   @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 border border-gray-500;
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
 
   @media (max-width: 639px) {
     @apply h-10 text-base;
@@ -315,5 +348,10 @@ const resetPage = () => (shown.value = FAKES_PAGE)
 
 .mock-helpers__link {
   @apply self-start text-xs text-blue-700 dark:text-blue-400 hover:underline;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
+
+  @media (max-width: 639px) {
+    @apply inline-flex items-center min-h-11 px-2 -mx-2;
+  }
 }
 </style>

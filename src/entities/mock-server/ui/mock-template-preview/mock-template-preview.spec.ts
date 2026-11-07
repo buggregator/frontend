@@ -35,6 +35,16 @@ describe('MockTemplatePreview', () => {
 
   it('shows the parse error of a rejected template', async () => {
     const w = await run(answer({ message: 'validation failed', errors: { body: 'template: body:1: unexpected EOF' } }, 422))
-    expect(w.find('[role="alert"]').text()).toContain('unexpected EOF')
+    expect(w.find('.mock-preview__error').text()).toContain('unexpected EOF')
+    // one live region announces it; a role=alert inside would say it twice
+    expect(w.find('[role="alert"]').exists()).toBe(false)
+  })
+
+  it('marks the sample path when the server rejects it', async () => {
+    const w = await run(answer({ message: 'validation failed', errors: { 'request.path': 'must start with /' } }, 422))
+    const path = w.find('[aria-label="Sample request path with query"]')
+    expect(path.attributes('aria-invalid')).toBe('true')
+    expect(path.classes()).toContain('mock-preview__input--error')
+    expect(w.find('#mock-preview-problem').text()).toContain('Sample path must start with /')
   })
 })

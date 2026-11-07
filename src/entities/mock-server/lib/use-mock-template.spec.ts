@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { nextTick, ref } from 'vue'
+import { effectScope, nextTick, ref } from 'vue'
 import { REST_API_URL } from '@/shared/lib/io'
 import { emptyDraft } from './mock-rule'
 import { samplePath, useMockHelpers, useMockPreview, resetMockHelpersCache } from './use-mock-template'
@@ -75,7 +75,8 @@ describe('useMockPreview', () => {
 
     expect(lastBody()).toEqual({
       rule: rule.value,
-      request: { method: 'POST', path: '/users/42?page=2', headers: { 'X-A': '1' }, body: '' },
+      // as the field shows it: under /mock (a rule /mockups/{id} must not lose «ups»)
+      request: { method: 'POST', path: '/mock/users/42?page=2', headers: { 'X-A': '1' }, body: '' },
     })
     expect(p.result.value).toEqual(RESULT)
   })
@@ -94,6 +95,46 @@ describe('useMockPreview', () => {
 
     expect(p.result.value).toBeNull()
     expect(p.problem.value).toBe('template: body:1: unexpected "}"')
+  })
+
+  // The person must know the sample path is wrong, not the rule.
+  it('names the sample path field when the server rejects it', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      json({ message: 'validation failed', errors: { 'request.path': 'must start with /' } }, 422)
+    )
+    const p = useMockPreview(ref({ ...emptyDraft(), path: '/a' }))
+    await p.run()
+
+    expect(p.problem.value).toBe('Sample path must start with /')
+    expect(p.problemField.value).toBe('path')
+  })
+
+  it('keeps the newest answer when an older, slower one lands later', async () => {
+    let slow: (r: Response) => void = () => {}
+    fetchMock
+      .mockImplementationOnce(() => new Promise<Response>((res) => (slow = res)))
+      .mockImplementationOnce(() => json({ ...RESULT, status: 201 }))
+    const p = useMockPreview(ref({ ...emptyDraft(), path: '/a', template: true }))
+    const first = p.run()
+    await p.run()
+    slow(new Response(JSON.stringify({ ...RESULT, status: 500 })))
+    await first
+
+    expect(p.result.value?.status).toBe(201)
+    expect(p.pending.value).toBe(false)
+  })
+
+  it('stops the rerun timer when the editor closes', async () => {
+    const rule = ref({ ...emptyDraft(), path: '/a', template: true, body: '1' })
+    const scope = effectScope()
+    const p = scope.run(() => useMockPreview(rule))!
+    await p.run()
+    rule.value = { ...rule.value, body: '2' }
+    await nextTick()
+    scope.stop()
+    await vi.advanceTimersByTimeAsync(1000)
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
   it('runs again by itself after the rule changes, once the person ran it', async () => {

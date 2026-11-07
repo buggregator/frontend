@@ -8,7 +8,7 @@ import MockBadge from '../mock-badge/mock-badge.vue'
 type Props = { rule: MockRuleInput }
 const props = defineProps<Props>()
 
-const { sample, result, problem, pending, run } = useMockPreview(toRef(props, 'rule'))
+const { sample, result, problem, problemField, pending, run } = useMockPreview(toRef(props, 'rule'))
 
 const methods = MOCK_METHODS.filter((m) => m !== 'ANY')
 const shownBody = computed(() => (result.value ? formatJson(result.value.body) || result.value.body : ''))
@@ -50,6 +50,9 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
           <input
             v-model="sample.path"
             class="mock-preview__input"
+            :class="{ 'mock-preview__input--error': problemField === 'path' }"
+            :aria-invalid="problemField === 'path'"
+            :aria-describedby="problemField === 'path' ? 'mock-preview-problem' : undefined"
             aria-label="Sample request path with query"
             placeholder="/users/42?page=2"
             spellcheck="false"
@@ -103,8 +106,8 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
     >
       <p
         v-if="problem"
+        id="mock-preview-problem"
         class="mock-preview__error"
-        role="alert"
       >
         ⚠ {{ problem }}
       </p>
@@ -119,7 +122,6 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
         <p
           v-if="result.error"
           class="mock-preview__error"
-          role="alert"
         >
           ⚠ {{ result.error }}
         </p>
@@ -192,6 +194,10 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
   }
 }
 
+.mock-preview__input--error {
+  @apply border-red-700 dark:border-red-400 ring-1 ring-red-700 dark:ring-red-400;
+}
+
 .mock-preview__method {
   @apply w-auto;
 }
@@ -201,25 +207,26 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
 }
 
 .mock-preview__addon {
-  @apply flex flex-1 min-w-[12rem] items-stretch;
+  @apply flex flex-1 min-w-0 sm:min-w-[12rem] items-stretch;
 
   .mock-preview__input {
-    @apply rounded-l-none;
+    @apply sm:rounded-l-none;
   }
 }
 
 .mock-preview__addon-text {
-  @apply flex items-center px-2 font-mono text-xs border border-r-0 border-gray-500 rounded-l;
+  @apply hidden sm:flex items-center px-2 font-mono text-xs border border-r-0 border-gray-500 rounded-l;
   @apply bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300;
 }
 
 .mock-preview__run {
   @apply h-8 px-3 rounded text-xs font-medium bg-blue-600 text-white hover:bg-blue-700;
   @apply disabled:opacity-60 disabled:cursor-wait;
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
 
+  // phones: method and path share a row, Run goes under them full width
   @media (max-width: 639px) {
-    @apply h-10;
+    @apply h-11 basis-full;
   }
 }
 

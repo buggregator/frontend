@@ -13,14 +13,27 @@ export const insertAt = (
   return { text: text.slice(0, from) + snippet + text.slice(to), caret: from + snippet.length }
 }
 
-// Fake-data generators matching a search (name or description) and a category.
+// How well a generator matches a search: 0 exact name, 1 name starts with it,
+// 2 name contains it, 3 description only, -1 no match.
+const fakeRank = (f: MockFake, q: string): number => {
+  const name = f.name.toLowerCase()
+  if (name === q) return 0
+  if (name.startsWith(q)) return 1
+  if (name.includes(q)) return 2
+  return f.description.toLowerCase().includes(q) ? 3 : -1
+}
+
+// Fake-data generators matching a search (name or description) and a category,
+// best name matches first; the server's order stays within one rank.
 export const filterFakes = (fakes: MockFake[], query: string, category: string): MockFake[] => {
   const q = query.trim().toLowerCase()
-  return fakes.filter(
-    (f) =>
-      (!category || f.category === category) &&
-      (!q || f.name.toLowerCase().includes(q) || f.description.toLowerCase().includes(q))
-  )
+  const inCategory = fakes.filter((f) => !category || f.category === category)
+  if (!q) return inCategory
+  return inCategory
+    .map((f) => ({ f, rank: fakeRank(f, q) }))
+    .filter(({ rank }) => rank >= 0)
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ f }) => f)
 }
 
 export const fakeCategories = (fakes: MockFake[]): string[] =>
