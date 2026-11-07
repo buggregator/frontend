@@ -18,6 +18,8 @@ export type XdebugConfig = {
   addr: string
   ide_addr: string
   allow_eval: boolean
+  // Agents may step and continue over MCP (server PR #395).
+  allow_control?: boolean
 } & Partial<XdebugSettings>
 
 export type XdebugDriver = 'ide' | 'here'

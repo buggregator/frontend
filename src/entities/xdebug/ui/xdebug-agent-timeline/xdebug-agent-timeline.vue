@@ -10,9 +10,19 @@ type Props = {
   pausedAt?: string
   pausedFile?: string
   pausedLine?: number
+  // Who moved the script to this pause, after the time.
+  pausedBy?: string
+  hint?: string
 }
 
-const props = withDefaults(defineProps<Props>(), { inflight: null, pausedAt: '', pausedFile: '', pausedLine: 0 })
+const props = withDefaults(defineProps<Props>(), {
+  inflight: null,
+  pausedAt: '',
+  pausedFile: '',
+  pausedLine: 0,
+  pausedBy: 'by the IDE',
+  hint: 'Read-only MCP calls an agent made in this session. Your IDE never sees them.'
+})
 
 const time = (at: string) => {
   const d = new Date(at)
@@ -52,7 +62,7 @@ const empty = computed(() => !props.calls.length && !props.inflight)
             Paused at <b class="xdebug-tl__mono">{{ shortFile(pausedFile) }}:{{ pausedLine }}</b>
           </div>
           <div class="xdebug-tl__m">
-            {{ time(pausedAt) }} · by the IDE
+            {{ time(pausedAt) }} · {{ pausedBy }}
           </div>
         </div>
       </li>
@@ -115,7 +125,7 @@ const empty = computed(() => !props.calls.length && !props.inflight)
       The agent has not looked at this session.
     </p>
     <p class="xdebug-tl__hint">
-      Read-only MCP calls an agent made in this session. Your IDE never sees them.
+      {{ hint }}
     </p>
   </div>
 </template>

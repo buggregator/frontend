@@ -112,5 +112,5 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
     return [...fresh.filter(isLive).sort(byStart), ...fresh.filter((s) => !isLive(s)).sort(byStart)]
   })
 
-  return { config, sessions, state, load, apply, upsert, setSettings, dismiss, tick }
+  return { config, sessions, state, load, apply, setSettings, dismiss, tick }
 }

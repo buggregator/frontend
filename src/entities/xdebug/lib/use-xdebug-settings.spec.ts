@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import type { XdebugConfig } from '../types'
-import { useXdebugSettings } from './use-xdebug-settings'
 import { XdebugApiError } from './use-xdebug-requests'
+import { useXdebugSettings } from './use-xdebug-settings'
 
 const cfg = (over: Partial<XdebugConfig> = {}): XdebugConfig => ({
   enabled: true, addr: '127.0.0.1:9003', ide_addr: '127.0.0.1:9004', allow_eval: false,

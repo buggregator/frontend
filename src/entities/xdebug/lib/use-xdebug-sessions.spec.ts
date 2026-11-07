@@ -75,12 +75,9 @@ describe('useXdebugSessions', () => {
     expect(list.sessions.value[0]).toMatchObject({ state: 'detached', closed_reason: 'idle_detached', idle_deadline: null })
   })
 
-  it('takes a control reply and saved settings', async () => {
-    const list = useXdebugSessions(makeApi(true, [s('1', { driver: 'here' })]))
+  it('shows saved settings at once', async () => {
+    const list = useXdebugSessions(makeApi())
     await list.load()
-
-    list.upsert(s('1', { state: 'running', last_continuation_by: 'ui' }))
-    expect(list.sessions.value[0]).toMatchObject({ state: 'running', last_continuation_by: 'ui', driver: 'here' })
 
     list.setSettings({ mode: 'standalone', pause_on_first_line: true, idle_timeout_seconds: 600 })
     expect(list.config.value).toMatchObject({ enabled: true, mode: 'standalone', pause_on_first_line: true })
