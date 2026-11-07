@@ -74,7 +74,7 @@ export const useHttpDumpEvent = (event: Ref<NormalizedEvent<HttpDump>>) => {
     return `${(len / (1024 * 1024)).toFixed(1)} MB`
   })
 
-  const curlCommand = computed(() => buildCurlCommand(event.value.payload))
+  const curlCommand = computed(() => buildCurlCommand(event.value.payload, window.location.origin))
 
   const rawHttp = computed(() => {
     const req = event.value.payload.request

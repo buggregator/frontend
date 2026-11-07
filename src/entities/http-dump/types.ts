@@ -10,6 +10,8 @@ export interface HttpDumpServer {
   received_at: string,
   host: string,
   proxy?: boolean,
+  // Proxied requests only (server #4524): "http" or "https".
+  scheme?: string,
   duration_ms?: number,
   error?: string,
   response?: HttpDumpResponse,
