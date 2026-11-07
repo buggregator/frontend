@@ -58,4 +58,28 @@ describe('useXdebugSessions', () => {
     expect(api.dismissSession).toHaveBeenCalledWith('2')
     expect(list.sessions.value).toEqual([])
   })
+
+  it('keeps who drives a session and its idle deadline from the channel', async () => {
+    const list = useXdebugSessions(makeApi())
+    await list.load()
+    list.apply({ event: 'session.created', data: s('4', { driver: 'here' }) })
+
+    list.apply({ event: 'session.status', data: { id: '4', state: 'running', driver: 'here', last_continuation_by: 'agent', last_continuation_agent: 'claude-07', idle_deadline: null } })
+    expect(list.sessions.value[0]).toMatchObject({ state: 'running', last_continuation_by: 'agent', last_continuation_agent: 'claude-07', idle_deadline: null })
+
+    list.apply({ event: 'session.status', data: { id: '4', state: 'break', idle_deadline: '2026-11-07T12:10:00Z' } })
+    list.apply({ event: 'session.idle', data: { id: '4', idle_deadline: '2026-11-07T12:12:00Z' } })
+    expect(list.sessions.value[0]).toMatchObject({ state: 'break', driver: 'here', last_continuation_by: 'agent', idle_deadline: '2026-11-07T12:12:00Z' })
+
+    list.apply({ event: 'session.closed', data: { id: '4', reason: 'idle_detached', state: 'detached' } })
+    expect(list.sessions.value[0]).toMatchObject({ state: 'detached', closed_reason: 'idle_detached', idle_deadline: null })
+  })
+
+  it('shows saved settings at once', async () => {
+    const list = useXdebugSessions(makeApi())
+    await list.load()
+
+    list.setSettings({ mode: 'standalone', pause_on_first_line: true, idle_timeout_seconds: 600 })
+    expect(list.config.value).toMatchObject({ enabled: true, mode: 'standalone', pause_on_first_line: true })
+  })
 })

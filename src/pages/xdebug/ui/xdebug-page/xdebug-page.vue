@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-import { useIntervalFn, useTitle } from '@vueuse/core'
+import { useIntervalFn, useNow, useTitle } from '@vueuse/core'
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import {
   closedReasonText,
+  closedTitle,
   isLive,
   sessionTitle,
   splitPath,
+  useXdebugControl,
   useXdebugDebugger,
   useXdebugRequests,
   useXdebugSessions,
@@ -16,12 +18,14 @@ import {
   XdebugAgentTimeline,
   XdebugCallStack,
   XdebugCodeView,
+  XdebugControlBar,
   XdebugIcon,
   XdebugSessionRow,
   XdebugVarTree,
   XdebugWatches
 } from '@/entities/xdebug'
 import { AppHeader } from '@/shared/ui'
+import { XdebugSettingsButton } from '../xdebug-settings-button'
 
 useTitle('Xdebug | Buggregator')
 
@@ -56,11 +60,32 @@ onXdebugReconnect(() => {
 onMounted(() => list.load())
 useIntervalFn(() => list.tick(), 30_000)
 
+// Controls of a session Buggregator drives (server PR #392); `now` ticks the idle countdown.
+const now = useNow({ interval: 1000 })
+const ctl = useXdebugControl(api, selected, computed(() => now.value.getTime()))
+// Older servers have no `mode`: the page stays read-only, as before.
+const hasModes = computed(() => !!config.value?.mode)
+const showControls = computed(() => !!selected.value && (selected.value.driver === 'here' || (hasModes.value && config.value?.mode !== 'proxy')))
+// What the script does after a command from here; values on screen are from the last stop.
+const runningText = computed(() => {
+  if (ctl.lastCommand.value === 'detach') return 'Releasing the script: it runs on to the end.'
+  if (ctl.lastCommand.value === 'stop') return 'Stopping the request.'
+  return 'Running until the script pauses again. Values below are from the last stop.'
+})
+
+// The timeline of a session driven here: who stepped, and agents may step too.
+const timelineText = computed(() => selected.value?.driver === 'here'
+  ? { pausedBy: ctl.lastBy.value ? `last step: ${ctl.lastBy.value}` : 'stopped here', hint: 'MCP calls an agent made in this session.' }
+  : {})
+const agentDriving = computed(() => selected.value?.state === 'running' && selected.value.last_continuation_by === 'agent')
+
 const ideAddr = computed(() => config.value?.ide_addr ?? '127.0.0.1:9004')
 const port = (addr: string | undefined) => addr?.split(':').pop() ?? ''
 
-// After the IDE stepped, the old values stay on screen until the next pause.
-const stepping = computed(() => !!selected.value && selected.value.state === 'running' && dbg.stale.value)
+// After a step (IDE or here), the old values stay on screen until the next
+// pause. The stack decides, not only the stale flag, so the code and the
+// control bar do not blink between the `running` event and the stale mark.
+const stepping = computed(() => !!selected.value && selected.value.state === 'running' && (dbg.stale.value || dbg.stack.value.length > 0))
 const live = computed(() => !!selected.value && isLive(selected.value))
 const showDebugger = computed(() => !!selected.value && (selected.value.state === 'break' || stepping.value))
 
@@ -98,7 +123,7 @@ watch(selectedId, (id) => {
     </template>
 
     <template #header>
-      <AppHeader>
+      <AppHeader keep-title>
         <h1 class="xdebug-page__title">
           Xdebug
         </h1>
@@ -108,7 +133,7 @@ watch(selectedId, (id) => {
         >{{ sessionsLabel }}</span>
         <template #controls>
           <span
-            v-if="config?.enabled"
+            v-if="config?.enabled && (!hasModes || config.mode === 'proxy')"
             class="xdebug-page__tag xdebug-page__hide-s"
             :title="`Xdebug connects to ${config.addr}; Buggregator forwards to your IDE at ${config.ide_addr}`"
           >
@@ -123,6 +148,11 @@ watch(selectedId, (id) => {
               name="lock"
             />{{ allowEval ? 'eval on' : 'eval off' }}
           </span>
+          <XdebugSettingsButton
+            v-if="config?.enabled && hasModes"
+            :config="config"
+            @saved="list.setSettings"
+          />
         </template>
       </AppHeader>
     </template>
@@ -341,21 +371,59 @@ xdebug.client_port={{ port(config.addr) }}</pre>
           </div>
 
           <div
-            v-if="stepping"
+            v-if="ctl.error.value"
+            class="xdebug-page__banner xdebug-page__banner--err"
+            role="alert"
+          >
+            <XdebugIcon name="warn" />
+            <span>{{ ctl.error.value }}</span>
+            <button
+              type="button"
+              class="xdebug-page__btn xdebug-page__btn--sm"
+              @click="ctl.dismissError()"
+            >
+              Dismiss
+            </button>
+          </div>
+
+          <div
+            v-if="stepping && agentDriving"
+            class="xdebug-page__banner xdebug-page__banner--agent"
+            role="status"
+          >
+            <XdebugIcon name="agent" />
+            <span>{{ ctl.lastBy.value === 'an agent' ? 'An agent' : `The ${ctl.lastBy.value}` }} resumed the script via MCP, waiting for the next pause.</span>
+          </div>
+          <div
+            v-else-if="stepping"
             class="xdebug-page__banner"
             role="status"
           >
             <span class="xdebug-page__spin" />
-            <span>The IDE resumed the script, waiting for the next pause. Values are from the last stop.</span>
+            <span v-if="selected?.driver === 'here'">{{ runningText }}</span>
+            <span v-else>The IDE resumed the script, waiting for the next pause. Values are from the last stop.</span>
           </div>
 
           <template v-if="showDebugger">
+            <XdebugControlBar
+              v-if="showControls"
+              :key="selected?.id"
+              :can-control="ctl.canControl.value"
+              :pending="ctl.pending.value"
+              :driven-by-ide="ctl.drivenByIde.value"
+              :running="selected?.state === 'running'"
+              :agent-driving="agentDriving"
+              :idle-left="ctl.idleLeft.value"
+              :last-by="ctl.lastBy.value"
+              @command="ctl.send"
+            />
             <div class="xdebug-page__edhd">
               <span
                 class="xdebug-page__crumb"
                 :title="frame?.file"
               >{{ crumb.dir }}<b>{{ crumb.name }}</b>:{{ crumbLine }}</span>
               <span
+                v-if="!showControls"
                 class="xdebug-page__pill"
                 tabindex="0"
                 title="This version is read-only: resume and step from your IDE. Buttons here come in a later version."
@@ -406,8 +474,12 @@ xdebug.client_port={{ port(config.addr) }}</pre>
               <XdebugIcon name="warn" />
               <div>
                 <p>
-                  <b>{{ selected.state === 'detached' ? 'Detached.' : 'Ended.' }}</b>
-                  {{ closedReasonText(selected.closed_reason, ideAddr) }}
+                  <b>{{ closedTitle(selected) }}</b>
+                  {{ closedReasonText(selected.closed_reason, ideAddr, config?.idle_timeout_seconds) }}
+                </p>
+                <p v-if="selected.closed_reason === 'idle_detached'">
+                  A paused script holds a PHP worker, the session file and any open transaction, so Buggregator lets idle
+                  ones go. Change it with <code>xdebug.idle_timeout</code>.
                 </p>
                 <p v-if="selected.closed_reason === 'ide_unreachable'">
                   Start listening in your IDE on port {{ port(ideAddr) }}, or change <code>xdebug.ide_addr</code>.
@@ -438,6 +510,7 @@ xdebug.client_port={{ port(config.addr) }}</pre>
             :paused-at="selected?.state === 'break' ? selected.paused_at : ''"
             :paused-file="selected?.last_file"
             :paused-line="selected?.last_line"
+            v-bind="timelineText"
           />
         </aside>
       </div>
@@ -607,6 +680,30 @@ xdebug.client_port={{ port(config.addr) }}</pre>
 .xdebug-page__banner {
   @apply flex items-center gap-2 px-3 py-1.5 flex-none text-xs border-b;
   @apply bg-green-50 text-gray-800 border-gray-200 dark:bg-green-500/10 dark:text-gray-200 dark:border-gray-700;
+}
+
+.xdebug-page__banner--agent {
+  @apply bg-violet-50 text-violet-800 dark:bg-violet-500/10 dark:text-violet-300;
+
+  .xdebug-icon {
+    @apply w-3.5 h-3.5;
+  }
+}
+
+.xdebug-page__banner--err {
+  @apply bg-rose-50 text-rose-800 dark:bg-rose-500/10 dark:text-rose-300;
+
+  .xdebug-icon {
+    @apply w-3.5 h-3.5;
+  }
+
+  .xdebug-page__btn {
+    @apply ml-auto;
+  }
+}
+
+.xdebug-page__btn--sm {
+  @apply h-6 text-2xs;
 }
 
 .xdebug-page__spin {

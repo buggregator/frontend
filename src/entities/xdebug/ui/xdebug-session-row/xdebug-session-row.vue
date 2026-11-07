@@ -14,6 +14,15 @@ const where = computed(() => {
   return s.last_file ? `${shortFile(s.last_file)}:${s.last_line}` : shortFile(s.entry_file)
 })
 
+// Tombstones released from here (UI, agent, idle guard) say so; a step sent
+// from here reads «Running…», one from the IDE «Stepping in IDE…».
+const badge = computed(() => {
+  const s = props.session
+  if (s.closed_reason === 'detached' || s.closed_reason === 'idle_detached') return 'released'
+  if (props.stepping) return s.driver === 'here' ? 'stepping-here' : 'stepping'
+  return s.state
+})
+
 const started = computed(() => {
   const d = props.session.started_at ? new Date(props.session.started_at) : null
   return d && !Number.isNaN(d.getTime()) ? d.toLocaleTimeString([], { hour12: false }) : ''
@@ -33,7 +42,7 @@ const started = computed(() => {
     >
       <XdebugStateBadge
         class="xdebug-sess__state"
-        :state="stepping ? 'stepping' : session.state"
+        :state="badge"
       />
       <span class="xdebug-sess__t">{{ sessionTitle(session) }}</span>
       <span class="xdebug-sess__m">
@@ -42,7 +51,12 @@ const started = computed(() => {
           class="font-mono"
         >{{ where }}</span>
         <span
-          v-if="session.ide_connected"
+          v-if="session.driver === 'here'"
+          class="xdebug-sess__tag xdebug-sess__tag--here"
+          title="Buggregator drives this session: step it here"
+        >here</span>
+        <span
+          v-else-if="session.ide_connected"
           class="xdebug-sess__tag"
           :title="`IDE connected at ${ideAddr}`"
         ><XdebugIcon name="check" />IDE</span>
@@ -113,6 +127,10 @@ const started = computed(() => {
   .xdebug-icon {
     @apply w-2.5 h-2.5;
   }
+}
+
+.xdebug-sess__tag--here {
+  @apply font-semibold text-blue-700 dark:text-blue-300;
 }
 
 .xdebug-sess__tag--bad {

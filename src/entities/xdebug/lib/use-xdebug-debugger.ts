@@ -47,7 +47,7 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e))
 // most once per session and pause: results are kept per session under the
 // pause key, and switching sessions or re-reading a pause reuses them.
 export const useXdebugDebugger = (
-  api: Omit<XdebugRequests, 'getConfig' | 'getSessions' | 'dismissSession'>,
+  api: Omit<XdebugRequests, 'getConfig' | 'getSessions' | 'dismissSession' | 'control' | 'putSettings'>,
   session: Ref<XdebugSession | null>,
   allowEval: Ref<boolean>
 ) => {

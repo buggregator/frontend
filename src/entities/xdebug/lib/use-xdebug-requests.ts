@@ -4,10 +4,12 @@ import { useProfileStore } from '@/shared/stores'
 import type {
   XdebugAgentCall,
   XdebugBreakpoint,
+  XdebugCommand,
   XdebugConfig,
   XdebugContext,
   XdebugFrame,
   XdebugSession,
+  XdebugSettings,
   XdebugSource,
   XdebugVar
 } from '../types'
@@ -15,12 +17,15 @@ import type {
 const BASE = `${REST_API_URL}/api/xdebug`
 
 // Server error codes the page reacts to: `not_paused` (the script runs on),
-// `eval_disabled`, `not_found`, `xdebug_error`, `timeout`, `session_live`.
+// `eval_disabled`, `not_found`, `xdebug_error`, `timeout`, `session_live`,
+// `ide_attached` (an IDE drives: no control from here).
 export class XdebugApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly code: string
+    readonly code: string,
+    // The session state a 409 reports.
+    readonly state?: string
   ) {
     super(message)
     this.name = 'XdebugApiError'
@@ -43,7 +48,7 @@ export const useXdebugRequests = () => {
 
     const body = await res.json().catch(() => null)
     if (!res.ok) {
-      throw new XdebugApiError(body?.error || `Request failed: ${res.status}`, res.status, body?.code || 'http_error')
+      throw new XdebugApiError(body?.error || `Request failed: ${res.status}`, res.status, body?.code || 'http_error', body?.state)
     }
     return body as T
   }
@@ -71,6 +76,13 @@ export const useXdebugRequests = () => {
     request<XdebugAgentCall[]>(`${session(id)}/agent-log`).then((list) => list ?? [])
   const evaluate = (id: string, expression: string) =>
     request<XdebugVar>(`${session(id)}/eval`, { method: 'POST', body: JSON.stringify({ expression }) })
+  // A continuation of a session driven here. The reply comes before the next
+  // pause (state `running`); the new location arrives as `session.status`.
+  const control = (id: string, command: XdebugCommand) =>
+    request<XdebugSession>(`${session(id)}/${command}`, { method: 'POST', body: '{}' })
+  // A field left out keeps its value; applies to new sessions only.
+  const putSettings = (settings: Partial<Pick<XdebugSettings, 'mode' | 'pause_on_first_line'>>) =>
+    request<XdebugSettings>('/settings', { method: 'PUT', body: JSON.stringify(settings) })
 
   return {
     getConfig,
@@ -83,7 +95,9 @@ export const useXdebugRequests = () => {
     getSource,
     getBreakpoints,
     getAgentLog,
-    evaluate
+    evaluate,
+    control,
+    putSettings
   }
 }
 

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import type { XdebugSessionState } from '../../types'
 import { XdebugIcon, type XdebugIconName } from '../xdebug-icon'
 
-const props = defineProps<{ state: XdebugSessionState | 'stepping' }>()
+const props = defineProps<{ state: XdebugSessionState | 'stepping' | 'stepping-here' | 'released' }>()
 
 // Always icon + word: the state never reads by colour alone.
 const view = computed((): { label: string; icon: XdebugIconName | null; tone: string; title: string } => {
@@ -16,6 +16,10 @@ const view = computed((): { label: string; icon: XdebugIconName | null; tone: st
       return { label: 'Starting', icon: 'play', tone: 'running', title: 'Waiting for the first pause' }
     case 'stepping':
       return { label: 'Stepping in IDE…', icon: null, tone: 'running', title: 'The IDE sent a step; waiting for the next pause' }
+    case 'stepping-here':
+      return { label: 'Running…', icon: null, tone: 'running', title: 'Running to the next breakpoint' }
+    case 'released':
+      return { label: 'Released', icon: 'clock', tone: 'off', title: 'Released: the script ran on without pausing again' }
     case 'stopping':
       return { label: 'Stopping', icon: 'x', tone: 'off', title: 'The script is finishing' }
     case 'stopped':
