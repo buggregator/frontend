@@ -16,10 +16,13 @@ import {
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
 } from "./local-storage-actions";
+import {toUpdateInfo, type UpdateInfo} from "./update-info";
 
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
     apiVersion: '',
+    // A newer server release, from the server's own check; null = show nothing.
+    update: null as UpdateInfo | null,
     isFetched: false,
     // Why the settings could not be loaded; the app shows it instead of a
     // blank page (audit 1.9).
@@ -67,6 +70,8 @@ export const useSettingsStore = defineStore("settingsStore", {
         this.isAuthEnabled = settings.auth.enabled;
         this.authLogicUrl = settings.auth.login_url;
       }
+
+      this.update = toUpdateInfo(settings?.update)
 
       // TODO: meed to move to the events store
       this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);

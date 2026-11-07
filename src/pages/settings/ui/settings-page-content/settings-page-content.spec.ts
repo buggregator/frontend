@@ -44,3 +44,49 @@ describe('SettingsPageContent: single-key shortcuts', () => {
     expect(localStorage.getItem('single_key_shortcuts')).toBe('false')
   })
 })
+
+describe('SettingsPageContent: new server release', () => {
+  const release = {
+    current: '2.7.0',
+    latest: '2.8.0',
+    url: 'https://github.com/buggregator/server/releases/tag/v2.8.0',
+    available: true,
+  }
+
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('tells about a newer release and links its notes in a new tab', () => {
+    useSettingsStore().update = release
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.get('[data-test="update-available"]').text()).toContain('Buggregator 2.8.0 is available (you run 2.7.0)')
+    const link = wrapper.get('[data-test="update-available"] a')
+    expect(link.attributes('href')).toBe(release.url)
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toContain('noopener')
+    expect(wrapper.find('[data-test="update-current"]').exists()).toBe(false)
+  })
+
+  it('says up to date when the check found nothing newer', () => {
+    useSettingsStore().update = { ...release, latest: '2.7.0', available: false }
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.get('[data-test="update-current"]').text()).toBe('Up to date')
+    expect(wrapper.find('[data-test="update-available"]').exists()).toBe(false)
+  })
+
+  it('shows nothing new without a check result', () => {
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.find('[data-test="update-available"]').exists()).toBe(false)
+    expect(wrapper.find('[data-test="update-current"]').exists()).toBe(false)
+  })
+})

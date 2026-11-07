@@ -46,5 +46,29 @@ describe('settingsStore.fetchSettings', () => {
     expect(store.isFetched).toBe(true)
     expect(store.apiVersion).toBe('2.0.0')
     expect(store.isAuthEnabled).toBe(true)
+    expect(store.update).toBeNull()
+  })
+
+  it('keeps the newer release the server found', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify({
+      version: '2.7.0',
+      update: {
+        current: '2.7.0',
+        latest: '2.8.0',
+        url: 'https://github.com/buggregator/server/releases/tag/v2.8.0',
+        available: true,
+        checked_at: '2026-11-07T14:40:39Z',
+      },
+    })))))
+    const store = useSettingsStore()
+
+    await store.fetchSettings()
+
+    expect(store.update).toEqual({
+      current: '2.7.0',
+      latest: '2.8.0',
+      url: 'https://github.com/buggregator/server/releases/tag/v2.8.0',
+      available: true,
+    })
   })
 })
