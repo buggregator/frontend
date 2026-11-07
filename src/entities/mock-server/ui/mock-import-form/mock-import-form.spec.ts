@@ -71,4 +71,12 @@ describe('MockImportForm', () => {
     expect(w.find('.mock-import__skipped').text()).toContain('GET /f/{n}.json')
     expect(w.find('form').exists()).toBe(false)
   })
+
+  // The server's default group name carries the project when one is picked.
+  it('names the default group the server will use', async () => {
+    const w = mount(MockImportForm, { props: { projects: ['shop'] } })
+    expect(w.find('#mock-i-group-hint').text()).toBe('Empty = openapi:<title of the spec>')
+    await w.find('#mock-i-project').setValue('shop')
+    expect(w.find('#mock-i-group-hint').text()).toBe('Empty = openapi:shop:<title of the spec>')
+  })
 })

@@ -283,7 +283,7 @@ const submit = async () => {
           <span
             id="mock-i-group-hint"
             class="mock-import__hint"
-          >Empty = openapi:&lt;title of the spec&gt;</span>
+          >Empty = {{ draft.project ? `openapi:${draft.project}:<title of the spec>` : 'openapi:<title of the spec>' }}</span>
           <datalist id="mock-i-groups">
             <option
               v-for="g in groupNames"
