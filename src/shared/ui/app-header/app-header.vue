@@ -1,10 +1,13 @@
 <script lang="ts" setup>
+// `keepTitle`: the page name stays on phones too (it is hidden there by default).
+defineProps<{ keepTitle?: boolean }>()
 </script>
 
 <template>
   <header class="header">
     <nav
       class="header__nav"
+      :class="{ 'header__nav--keep': keepTitle }"
       aria-label="Breadcrumb"
     >
       <slot />
@@ -24,6 +27,10 @@
 .header__nav {
   @apply hidden sm:flex items-center;
   @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.header__nav--keep {
+  @apply flex min-w-0;
 }
 
 .header__actions {

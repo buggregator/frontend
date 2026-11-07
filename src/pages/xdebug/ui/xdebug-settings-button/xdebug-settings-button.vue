@@ -104,8 +104,9 @@ onClickOutside(root, () => {
     @apply w-4 h-4;
   }
 
+  // Phones: 44 px wide, as tall as the 36 px header allows.
   @media (max-width: 767px) {
-    @apply w-11 h-11;
+    @apply w-11 h-9;
   }
 }
 </style>

@@ -334,6 +334,12 @@ const send = (command: XdebugCommand) => {
 
 .xdebug-ctl__confirm {
   @apply absolute z-30 top-full left-2 mt-1 w-[340px] max-w-[calc(100vw-24px)] p-3.5 rounded-lg border shadow-xl text-xs;
+
+  // Below `sm`: the content column's full width, 8 px from each edge
+  // (the app sidebar stays at the left of the screen).
+  @media (max-width: 639px) {
+    @apply left-2 right-2 w-auto max-w-none;
+  }
   @apply border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200;
 
   h4 {
@@ -350,6 +356,15 @@ const send = (command: XdebugCommand) => {
 
   .xdebug-ctl__btn {
     @apply h-8 px-3;
+  }
+
+  // Phones: stacked, 44 px tall, «Stop request» last.
+  @media (max-width: 639px) {
+    @apply flex-col items-stretch;
+
+    .xdebug-ctl__btn {
+      @apply h-11;
+    }
   }
 }
 </style>

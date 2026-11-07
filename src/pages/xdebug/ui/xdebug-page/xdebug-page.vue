@@ -117,7 +117,7 @@ watch(selectedId, (id) => {
     </template>
 
     <template #header>
-      <AppHeader>
+      <AppHeader keep-title>
         <h1 class="xdebug-page__title">
           Xdebug
         </h1>
