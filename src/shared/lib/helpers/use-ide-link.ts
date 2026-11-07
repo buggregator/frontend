@@ -4,7 +4,7 @@ import { useSettingsStore } from '../../stores'
 import { pathToIDEFilePath } from './pathToIDEFilePath'
 
 export function useIdeLink() {
-  const { codeEditor, customFilePathMapping, isActiveFilePathMapping } = storeToRefs(useSettingsStore())
+  const { codeEditor, isCodeEditorChosen, customFilePathMapping, isActiveFilePathMapping } = storeToRefs(useSettingsStore())
 
   const buildLink = (file: string, line?: number): string | null => {
     if (!file || file === 'unknown') return null
@@ -27,5 +27,5 @@ export function useIdeLink() {
     }
   }
 
-  return { buildLink, codeEditor }
+  return { buildLink, codeEditor, isCodeEditorChosen }
 }

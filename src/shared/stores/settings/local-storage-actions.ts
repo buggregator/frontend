@@ -86,6 +86,14 @@ export const getStoredPrimaryCodeEditor = (): IDE_KEYS => {
   return storedCodeEditor && Object.values(IDE_KEYS).includes(storedCodeEditor as IDE_KEYS) ? storedCodeEditor as IDE_KEYS : IDE_KEY_DEFAULT;
 };
 
+// True once the person picked an editor in Settings (any valid one, the
+// default included); false while the editor is only the default.
+export const getStoredIsCodeEditorChosen = (): boolean => {
+  const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
+
+  return !!storedCodeEditor && Object.values(IDE_KEYS).includes(storedCodeEditor as IDE_KEYS);
+};
+
 export const setStoredPrimaryCodeEditor = (editor: string) => {
   window?.localStorage?.setItem(LocalStorageKeys.CodeEditor, editor);
 }

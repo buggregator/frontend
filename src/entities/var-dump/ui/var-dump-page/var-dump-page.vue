@@ -9,6 +9,7 @@ import {
   EventDetailLayout,
   EventDetailSection
 } from '@/shared/ui'
+import { sourceLink as sourceLinkFor } from '../../lib/source-link'
 import type { VarDump } from '../../types'
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { buildLink } = useIdeLink()
+const { buildLink, isCodeEditorChosen } = useIdeLink()
 
 const title = computed(() => {
   const type = String(props.event.payload.payload.type || 'Unknown type')
@@ -24,9 +25,7 @@ const title = computed(() => {
 })
 
 const source = computed(() => props.event.payload.context.source)
-const sourceLink = computed(() =>
-  source.value ? buildLink(source.value.file, source.value.line) : null
-)
+const sourceLink = computed(() => sourceLinkFor(source.value, buildLink, isCodeEditorChosen.value))
 const request = computed(() => props.event.payload.context.request)
 const cli = computed(() => props.event.payload.context.cli)
 const label = computed(() => props.event.payload.payload.label)
