@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { createReusableTemplate, useDebounceFn, useIntervalFn, useNow, useTitle } from '@vueuse/core'
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import {
@@ -126,6 +126,15 @@ watch(showBreakpoints, (on) => { if (on && bps.state.value === 'idle') bps.load(
 
 const [DefineBreakpoints, ReuseBreakpoints] = createReusableTemplate()
 
+// No sessions yet in Auto / Standalone: say Buggregator will pause here.
+const drivesHere = computed(() => hasModes.value && config.value?.mode !== 'proxy')
+const savedText = computed(() => {
+  const n = bpOn.value
+  if (!n) return 'your breakpoints'
+  return `your ${n} saved ${n === 1 ? 'breakpoint' : 'breakpoints'}`
+})
+const settingsButton = useTemplateRef<InstanceType<typeof XdebugSettingsButton>>('settingsButton')
+
 const contextLabel = (name: string) => (name === 'User defined constants' ? 'User constants' : name)
 
 const dismiss = async (id: string) => {
@@ -216,6 +225,7 @@ watch(selectedId, (id) => {
           </span>
           <XdebugSettingsButton
             v-if="config?.enabled && hasModes"
+            ref="settingsButton"
             :config="config"
             @saved="list.setSettings"
           />
@@ -283,13 +293,47 @@ watch(selectedId, (id) => {
             class="xdebug-page__empty-ico"
           />
           <h2>No debug sessions</h2>
-          <p>
-            Point Xdebug at Buggregator (<code>xdebug.client_port={{ port(config.addr) }}</code>) and move your IDE
-            to port <b>{{ port(config.ide_addr) }}</b>. Sessions appear here while the script runs.
-          </p>
-          <pre class="xdebug-page__pre">xdebug.mode=debug
+          <template v-if="drivesHere">
+            <p>
+              <template v-if="config.mode === 'standalone'">
+                Mode <b>Standalone</b>: Buggregator pauses at {{ savedText }} and you step here.
+              </template>
+              <template v-else>
+                Mode <b>Auto</b>: with no IDE listening, Buggregator pauses at {{ savedText }} and you step here.
+              </template>
+            </p>
+            <pre class="xdebug-page__pre">xdebug.mode=debug
+xdebug.client_host=127.0.0.1
+xdebug.client_port={{ port(config.addr) }}
+xdebug.start_with_request=yes</pre>
+            <p
+              v-if="config.pause_on_first_line"
+              class="xdebug-page__hint"
+            >
+              <b>Pause on the first line</b> is on: every new session stops at its first line.
+            </p>
+            <p
+              v-else
+              class="xdebug-page__hint"
+            >
+              No breakpoint yet? Turn on
+              <button
+                type="button"
+                class="xdebug-page__link"
+                @click="settingsButton?.show($event)"
+                v-text="'Pause on the first line'"
+              />, run the request, then click line numbers.
+            </p>
+          </template>
+          <template v-else>
+            <p>
+              Point Xdebug at Buggregator (<code>xdebug.client_port={{ port(config.addr) }}</code>) and move your IDE
+              to port <b>{{ port(config.ide_addr) }}</b>. Sessions appear here while the script runs.
+            </p>
+            <pre class="xdebug-page__pre">xdebug.mode=debug
 xdebug.client_host=127.0.0.1
 xdebug.client_port={{ port(config.addr) }}</pre>
+          </template>
           <div
             v-if="showBreakpoints"
             class="xdebug-page__bpcard"
@@ -836,6 +880,15 @@ xdebug.client_port={{ port(config.addr) }}</pre>
   code {
     @apply font-mono text-xs px-1 rounded bg-gray-100 dark:bg-gray-800;
   }
+}
+
+.xdebug-page__hint {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.xdebug-page__link {
+  @apply underline text-blue-700 dark:text-blue-300 rounded;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
 }
 
 .xdebug-page__empty--wide {

@@ -105,14 +105,16 @@ const submitCondition = async (id: number, value = draft.value) => {
         class="xdebug-bp__row"
         :class="{ 'is-off': !row.bp.enabled }"
       >
-        <input
-          type="checkbox"
-          class="xdebug-bp__cb"
-          :checked="row.bp.enabled"
-          :disabled="readOnly"
-          :aria-label="`Enabled: ${where(row.bp)}`"
-          @change="emit('enable', row.bp.id, ($event.target as HTMLInputElement).checked)"
-        >
+        <label class="xdebug-bp__cbcell">
+          <input
+            type="checkbox"
+            class="xdebug-bp__cb"
+            :checked="row.bp.enabled"
+            :disabled="readOnly"
+            :aria-label="`Enabled: ${where(row.bp)}`"
+            @change="emit('enable', row.bp.id, ($event.target as HTMLInputElement).checked)"
+          >
+        </label>
         <span class="xdebug-bp__loc">
           <template v-if="row.bp.type === 'exception'">
             <span
@@ -261,7 +263,7 @@ const submitCondition = async (id: number, value = draft.value) => {
         Your IDE sets the breakpoints of this session. These saved ones apply to sessions without an IDE.
       </template>
       <template v-else>
-        Absolute paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
+        Or an exception class, e.g. \Throwable. Absolute paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
       </template>
     </p>
   </div>
@@ -277,6 +279,12 @@ const submitCondition = async (id: number, value = draft.value) => {
 
   grid-template-columns: 16px minmax(0, 1fr) auto;
 
+  @media (max-width: 639px) {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+
+    @apply pl-0;
+  }
+
   &:hover,
   &:focus-within {
     @apply bg-gray-50 dark:bg-gray-800/60;
@@ -284,6 +292,15 @@ const submitCondition = async (id: number, value = draft.value) => {
 
   @media (max-width: 767px) {
     @apply py-2;
+  }
+}
+
+.xdebug-bp__cbcell {
+  @apply grid place-items-center;
+
+  // A 44 px tap target on phones; the row grows with it.
+  @media (max-width: 639px) {
+    @apply min-w-11 min-h-11 -my-2;
   }
 }
 
@@ -459,7 +476,7 @@ const submitCondition = async (id: number, value = draft.value) => {
 }
 
 .xdebug-bp__btn--primary {
-  @apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-700;
+  @apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700 dark:text-white dark:hover:bg-blue-700;
 }
 
 .xdebug-bp__link {
