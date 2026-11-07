@@ -3,9 +3,14 @@ import type { VarDump } from '../types'
 type Source = VarDump['context']['source']
 type BuildLink = (file: string, line?: number) => string | null
 
-// Not IDE links: file:// is Symfony's default when the app sets no IDE (the
-// container path, no mapping), http(s) opens a page, the rest run code.
-const NOT_IDE_SCHEMES = ['file', 'http', 'https', 'javascript', 'data', 'vbscript']
+// IDE schemes a dump's file_link may use: Symfony's FileLinkFormatter presets
+// and common editors. Anything else (file:// is Symfony's default with no IDE
+// set and points into the container; http(s), OS handlers, script schemes)
+// falls back to the link built from Settings.
+const IDE_SCHEMES = [
+  'phpstorm', 'idea', 'vscode', 'vscode-insiders', 'vscodium', 'cursor', 'windsurf', 'zed',
+  'subl', 'txmt', 'mvim', 'emacs', 'editor', 'atom', 'nova', 'fleet', 'netbeans',
+]
 
 // The scheme of a link, read the way a browser does: control characters and
 // whitespace inside it are dropped, case ignored. null when there is none.
@@ -15,21 +20,22 @@ const schemeOf = (link: string): string | null => {
   return match ? match[1].toLowerCase() : null
 }
 
-// Link for the dump's source (GitHub server#255). An IDE the person chose in
-// Settings wins, with its path mapping. Otherwise the SDK's file_link (Symfony
+// Link for the dump's source (GitHub server#255). When the person set things up
+// in Settings (picked an editor or turned path mapping on), the Settings link
+// wins. Otherwise the SDK's file_link (Symfony
 // file_link_format, local path already mapped) is used as is when it is an IDE
 // link; else the link is built from the Settings defaults.
 export const sourceLink = (
   source: Source | undefined,
   buildLink: BuildLink,
-  isEditorChosen: boolean,
+  preferSettings: boolean,
 ): string | null => {
   if (!source) return null
-  if (isEditorChosen) return buildLink(source.file, source.line)
+  if (preferSettings) return buildLink(source.file, source.line)
 
   const fileLink = typeof source.file_link === 'string' ? source.file_link.trim() : ''
   const scheme = fileLink ? schemeOf(fileLink) : null
-  if (scheme && !NOT_IDE_SCHEMES.includes(scheme)) {
+  if (scheme && IDE_SCHEMES.includes(scheme)) {
     return fileLink
   }
 

@@ -1,4 +1,5 @@
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import type { IDE_KEYS } from '../../constants'
 import { useSettingsStore } from '../../stores'
 import { pathToIDEFilePath } from './pathToIDEFilePath'
@@ -27,5 +28,11 @@ export function useIdeLink() {
     }
   }
 
-  return { buildLink, codeEditor, isCodeEditorChosen }
+  // The person set up links in Settings (picked an editor, or turned path
+  // mapping on): then a link the SDK sent does not override them.
+  const isSettingsLinkPreferred = computed(() =>
+    isCodeEditorChosen.value || (isActiveFilePathMapping.value && customFilePathMapping.value.length > 0)
+  )
+
+  return { buildLink, codeEditor, isSettingsLinkPreferred }
 }

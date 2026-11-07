@@ -49,6 +49,17 @@ describe('VarDumper list card: source link', () => {
     expect(href).toBe(`subl://open?url=${encodeURIComponent(`file://${FILE}`)}&line=48`)
   })
 
+  it('uses the path mapping turned on in Settings over the SDK link', () => {
+    const settings = useSettingsStore()
+    settings.setCustomFilePathMapping([{ source_path: '/root/repos/', target_path: '/home/me/repos/' }])
+    settings.changeIsActiveFilePathMapping(true)
+    const href = mountCard('phpstorm://open?file=/elsewhere/HomeController.php&line=48')
+      .get('a.vd-body__source').attributes('href')
+
+    expect(href).toContain('/home/me/repos/spiral-apps/filters-bridge/app/src/Controller/HomeController.php')
+    expect(href).not.toContain('/elsewhere/')
+  })
+
   it('builds the link from Settings when the SDK sent none, a file:// or an unsafe one', () => {
     for (const fileLink of [undefined, `file://${FILE}#L48`, 'javascript:alert(1)']) {
       const href = mountCard(fileLink).get('a.vd-body__source').attributes('href')

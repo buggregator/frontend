@@ -11,7 +11,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { buildLink, isCodeEditorChosen } = useIdeLink()
+const { buildLink, isSettingsLinkPreferred } = useIdeLink()
 
 const eventValue = computed(() => String(props.event.payload?.payload?.value || ''))
 const eventType = computed(() => String(props.event.payload?.payload?.type || 'string'))
@@ -22,7 +22,7 @@ const source = computed(() => {
   if (!sourceObj.value?.file) return null
   return `${sourceObj.value.file}:${sourceObj.value.line}`
 })
-const sourceLink = computed(() => sourceLinkFor(sourceObj.value, buildLink, isCodeEditorChosen.value))
+const sourceLink = computed(() => sourceLinkFor(sourceObj.value, buildLink, isSettingsLinkPreferred.value))
 
 const typeName = computed(() => {
   const t = props.event.payload?.payload?.type
