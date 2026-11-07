@@ -109,6 +109,15 @@ const copyCurl = async () => {
       <span v-else> {{ mock.rule_name || 'a rule' }} <i>(deleted since)</i> </span>
     </div>
 
+    <p
+      v-if="mock.matched && mock.template_error"
+      class="mock-request-detail__template-error"
+      role="alert"
+    >
+      <b>The rule's template failed</b>, so the client got {{ mock.status }}.
+      <code>{{ mock.template_error }}</code>
+    </p>
+
     <template v-else>
       <div
         class="mock-request-detail__callout"
@@ -296,6 +305,15 @@ const copyCurl = async () => {
 .mock-request-detail__callout {
   @apply p-3 rounded text-xs border border-amber-300 bg-amber-50 text-amber-900;
   @apply dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200;
+}
+
+.mock-request-detail__template-error {
+  @apply flex flex-col gap-1 p-2 rounded text-xs;
+  @apply bg-red-50 text-red-800 dark:bg-red-500/10 dark:text-red-300;
+
+  code {
+    @apply font-mono [overflow-wrap:anywhere];
+  }
 }
 
 .mock-request-detail__near {

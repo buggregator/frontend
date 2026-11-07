@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { formatJson } from '../../lib/mock-format'
 import { bodyBytes, MAX_BODY_BYTES } from '../../lib/mock-rule'
+import { insertAt } from '../../lib/mock-template'
 import { MOCK_METHODS, type MockRuleErrors, type MockRuleInput } from '../../types'
+import MockTemplateHelpers from '../mock-template-helpers/mock-template-helpers.vue'
+import MockTemplatePreview from '../mock-template-preview/mock-template-preview.vue'
 
 type Props = {
   modelValue: MockRuleInput
@@ -47,7 +50,7 @@ watch(
 const addHeader = () => rows.value.push({ name: '', value: '' })
 const removeHeader = (i: number) => rows.value.splice(i, 1)
 
-const numberField = (key: 'status' | 'delay_ms', raw: string) =>
+const numberField = (key: 'status' | 'delay_ms' | 'seed', raw: string) =>
   patch({ [key]: raw.trim() === '' ? Number.NaN : Number(raw) })
 
 const bytes = computed(() => bodyBytes(props.modelValue.body))
@@ -76,6 +79,22 @@ const sampleUrl = computed(() => {
 
 const describedBy = (key: keyof MockRuleInput, hint?: string) =>
   props.errors[key] ? `mock-err-${key}` : hint
+
+// A helper goes into the body where the cursor is (or over the selection).
+const bodyField = ref<HTMLTextAreaElement | null>(null)
+const insertIntoBody = async (snippet: string) => {
+  const el = bodyField.value
+  const { text, caret } = insertAt(props.modelValue.body, el?.selectionStart ?? null, el?.selectionEnd ?? null, snippet)
+  patch({ body: text })
+  await nextTick()
+  el?.focus()
+  el?.setSelectionRange(caret, caret)
+}
+
+const bodyKind = computed(() => {
+  if (props.modelValue.template) return 'Template'
+  return formattedBody.value ? 'JSON' : props.modelValue.body ? 'Plain text' : 'Empty'
+})
 </script>
 
 <template>
@@ -350,11 +369,79 @@ const describedBy = (key: keyof MockRuleInput, hint?: string) =>
         </p>
       </div>
 
+      <div class="mock-rule-form__template">
+        <div class="mock-rule-form__field">
+          <span
+            id="mock-f-template-label"
+            class="mock-rule-form__label"
+          >Template</span>
+          <button
+            type="button"
+            role="switch"
+            class="mock-rule-form__switch"
+            aria-labelledby="mock-f-template-label"
+            aria-describedby="mock-hint-template"
+            :aria-checked="modelValue.template"
+            :disabled="readOnly"
+            @click="patch({ template: !modelValue.template })"
+          >
+            <span class="mock-rule-form__knob" />
+            <span class="mock-rule-form__switch-text">{{ modelValue.template ? 'On' : 'Off' }}</span>
+          </button>
+        </div>
+        <div
+          v-if="modelValue.template"
+          class="mock-rule-form__field"
+        >
+          <label
+            class="mock-rule-form__label"
+            for="mock-f-seed"
+          >Seed</label>
+          <input
+            id="mock-f-seed"
+            class="mock-rule-form__input mock-rule-form__mono mock-rule-form__short"
+            :class="{ 'mock-rule-form__input--error': errors.seed }"
+            :value="Number.isNaN(modelValue.seed) ? '' : modelValue.seed"
+            inputmode="numeric"
+            :readonly="readOnly"
+            :aria-invalid="errors.seed ? 'true' : undefined"
+            :aria-describedby="describedBy('seed', 'mock-hint-seed')"
+            @input="numberField('seed', ($event.target as HTMLInputElement).value)"
+          >
+        </div>
+        <p
+          id="mock-hint-template"
+          class="mock-rule-form__hint mock-rule-form__template-hint"
+        >
+          <template v-if="modelValue.template">
+            Body and header values are Go templates, rendered for every request:
+            <code v-pre>{{ path "id" }}</code>, <code v-pre>{{ fake "email" | json }}</code>.
+          </template>
+          <template v-else>
+            Off: the body is sent as written. On: the body can use request values and fake data.
+          </template>
+        </p>
+        <p
+          v-if="modelValue.template && errors.seed"
+          id="mock-err-seed"
+          class="mock-rule-form__error mock-rule-form__template-hint"
+        >
+          ⚠ {{ errors.seed }}
+        </p>
+        <p
+          v-else-if="modelValue.template"
+          id="mock-hint-seed"
+          class="mock-rule-form__hint mock-rule-form__template-hint"
+        >
+          Seed 0: new fake data on every request. Any other number: the same data every time.
+        </p>
+      </div>
+
       <div class="mock-rule-form__field">
         <div class="mock-rule-form__label">
           <label for="mock-f-body">Body</label>
           <button
-            v-if="!readOnly && canFormat"
+            v-if="!readOnly && canFormat && !modelValue.template"
             type="button"
             class="mock-rule-form__link"
             @click="patch({ body: formattedBody || modelValue.body })"
@@ -364,6 +451,7 @@ const describedBy = (key: keyof MockRuleInput, hint?: string) =>
         </div>
         <textarea
           id="mock-f-body"
+          ref="bodyField"
           class="mock-rule-form__input mock-rule-form__mono mock-rule-form__body"
           :class="{ 'mock-rule-form__input--error': errors.body }"
           :value="modelValue.body"
@@ -385,10 +473,18 @@ const describedBy = (key: keyof MockRuleInput, hint?: string) =>
           id="mock-hint-body"
           class="mock-rule-form__hint mock-rule-form__between"
         >
-          <span>{{ formattedBody ? 'JSON' : modelValue.body ? 'Plain text' : 'Empty' }}</span>
+          <span>{{ bodyKind }}</span>
           <span :class="{ 'mock-rule-form__over': bytes > MAX_BODY_BYTES }">{{ bytesText }} / 1 MB</span>
         </p>
       </div>
+
+      <template v-if="modelValue.template">
+        <MockTemplateHelpers
+          v-if="!readOnly"
+          @insert="insertIntoBody"
+        />
+        <MockTemplatePreview :rule="modelValue" />
+      </template>
     </fieldset>
 
     <div class="mock-rule-form__try">
@@ -555,6 +651,14 @@ const describedBy = (key: keyof MockRuleInput, hint?: string) =>
       @apply translate-x-3;
     }
   }
+}
+
+.mock-rule-form__template {
+  @apply flex flex-wrap items-start gap-x-6 gap-y-1;
+}
+
+.mock-rule-form__template-hint {
+  @apply basis-full;
 }
 
 .mock-rule-form__try {
