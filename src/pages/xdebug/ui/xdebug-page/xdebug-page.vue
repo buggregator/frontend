@@ -57,8 +57,9 @@ const dbg = useXdebugDebugger(api, selected, allowEval)
 // Saved breakpoints (server PR #401). The server sends a change to the
 // paused session before it answers, so the session's states are re-read after
 // each change from here; an agent's change comes as `breakpoints.changed`.
-const bps = useXdebugBreakpoints(api, () => dbg.reloadBreakpoints())
+// Own changes and their `breakpoints.changed` echo share one debounced re-read.
 const reloadSessionBreakpoints = useDebounceFn(() => dbg.reloadBreakpoints(), 300)
+const bps = useXdebugBreakpoints(api, () => reloadSessionBreakpoints())
 
 onXdebugMessage((message) => {
   list.apply(message)
@@ -187,6 +188,7 @@ watch(selectedId, (id) => {
           :find-files="api.findFiles"
           :adding="bps.adding.value"
           :server-error="bps.addError.value"
+          @edit="bps.clearAddError()"
         />
       </XdebugBreakpoints>
     </details>

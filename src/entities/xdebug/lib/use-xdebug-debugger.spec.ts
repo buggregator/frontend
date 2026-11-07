@@ -279,4 +279,18 @@ describe('useXdebugDebugger', () => {
     await dbg.reloadBreakpoints()
     expect(api.getBreakpoints).not.toHaveBeenCalled()
   })
+  it('re-reads the states of a running session driven here, last call wins', async () => {
+    const { api, session, dbg } = setup('running')
+    session.value = { ...session.value!, driver: 'here' }
+    await flushPromises()
+    let first!: (v: unknown) => void
+    api.getBreakpoints
+      .mockImplementationOnce(() => new Promise((res) => { first = res }) as never)
+      .mockResolvedValueOnce([{ id: 2 as unknown as string, type: 'line', state: 'pending', file: 'file:///app/Cart.php', line: 22 }])
+    const a = dbg.reloadBreakpoints()
+    await dbg.reloadBreakpoints()
+    first([{ id: 2, type: 'line', state: 'resolved' }])
+    await a
+    expect(dbg.breakpoints.value[0].state).toBe('pending')
+  })
 })

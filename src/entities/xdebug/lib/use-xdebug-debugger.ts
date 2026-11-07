@@ -243,12 +243,17 @@ export const useXdebugDebugger = (
 
   // After a breakpoint change: the server has sent it to the paused session,
   // so its states (resolved, moved, skipped) are current now.
+  // A session driven here answers while it runs too (a change waits as
+  // `pending`); an IDE's list is read only at a pause. The last call wins.
+  let bpToken = 0
   const reloadBreakpoints = async () => {
     const sid = id.value
-    if (!sid || !paused.value) return
+    const here = session.value?.driver === 'here' && !session.value.closed_reason
+    if (!sid || (!paused.value && !here)) return
+    const t = ++bpToken
     try {
       const bps = await api.getBreakpoints(sid)
-      if (id.value === sid) breakpoints.value = bps
+      if (id.value === sid && t === bpToken) breakpoints.value = bps
     } catch {
       // The old states stay; the next pause reads them again.
     }

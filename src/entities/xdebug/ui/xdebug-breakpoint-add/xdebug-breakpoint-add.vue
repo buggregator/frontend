@@ -14,6 +14,8 @@ type Props = {
   serverError?: string
 }
 const props = withDefaults(defineProps<Props>(), { adding: false, serverError: '' })
+// The user typed again: the last server error no longer applies.
+const emit = defineEmits<{ edit: [] }>()
 
 const uid = useId()
 const listId = `${uid}-files`
@@ -26,6 +28,8 @@ const open = ref(false)
 const active = ref(-1)
 const input = ref<HTMLInputElement | null>(null)
 let asked = 0
+// Set by typing, cleared by close: a late or debounced reply opens nothing.
+let wanted = false
 
 const error = computed(() => localError.value || props.serverError)
 // Suggestions only while the path is typed, not after the colon.
@@ -40,7 +44,7 @@ const fetchFiles = useDebounceFn(async () => {
     if (n !== asked) return
     files.value = found
     active.value = -1
-    open.value = found.length > 0 && document.activeElement === input.value
+    open.value = wanted && found.length > 0 && document.activeElement === input.value
   } catch {
     if (n === asked) files.value = []
   }
@@ -48,6 +52,8 @@ const fetchFiles = useDebounceFn(async () => {
 
 const onInput = () => {
   localError.value = ''
+  wanted = true
+  if (props.serverError) emit('edit')
   if (query.value === null) {
     open.value = false
     return
@@ -56,6 +62,7 @@ const onInput = () => {
 }
 
 const close = () => {
+  wanted = false
   open.value = false
   active.value = -1
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { XdebugBreakpoint, XdebugSavedBreakpoint } from '../types'
-import { breakpointRows, filePath, gutterMarks, parseBreakpointInput } from './xdebug-breakpoints'
+import { breakpointRows, filePath, gutterMarks, parseBreakpointInput, sameFile } from './xdebug-breakpoints'
 
 const F = 'file:///app/src/Services/CartService.php'
 const saved = (over: Partial<XdebugSavedBreakpoint> = {}): XdebugSavedBreakpoint => ({
@@ -19,9 +19,10 @@ describe('parseBreakpointInput', () => {
     expect(parseBreakpointInput('C:\\app\\x.php:7')).toEqual({ draft: { type: 'line', file: 'C:\\app\\x.php', line: 7 } })
   })
 
-  it('reads a class name as an exception breakpoint', () => {
-    expect(parseBreakpointInput('\\RuntimeException')).toEqual({ draft: { type: 'exception', exception: '\\RuntimeException' } })
-    expect(parseBreakpointInput('App\\Error\\Boom')).toEqual({ draft: { type: 'exception', exception: 'App\\Error\\Boom' } })
+  it('reads a class name as an exception breakpoint, without the leading backslash Xdebug does not match', () => {
+    expect(parseBreakpointInput('\\RuntimeException')).toEqual({ draft: { type: 'exception', exception: 'RuntimeException' } })
+    expect(parseBreakpointInput('\\App\\Error\\Boom')).toEqual({ draft: { type: 'exception', exception: 'App\\Error\\Boom' } })
+    expect(parseBreakpointInput('*')).toEqual({ draft: { type: 'exception', exception: '*' } })
   })
 
   it('asks for a line number when a path has none', () => {
@@ -43,6 +44,21 @@ describe('filePath', () => {
   it('drops the file:// scheme, keeping the drive on Windows', () => {
     expect(filePath(F)).toBe('/app/src/Services/CartService.php')
     expect(filePath('file:///C:/app/x.php')).toBe('C:/app/x.php')
+  })
+})
+
+describe('sameFile', () => {
+  it('matches one file written with %20 or a space, c: or C:', () => {
+    expect(sameFile('file:///app/my%20dir/x.php', 'file:///app/my dir/x.php')).toBe(true)
+    expect(sameFile('file:///c:/app/x.php', 'file:///C:/app/x.php')).toBe(true)
+    expect(sameFile('file:///app/x.php', 'file:///app/y.php')).toBe(false)
+    expect(sameFile(undefined, 'file:///app/x.php')).toBe(false)
+  })
+})
+
+describe('gutterMarks across spellings', () => {
+  it('marks a line saved as file:///c:/… in Xdebug\'s file:///C:/…', () => {
+    expect(gutterMarks('file:///C:/app/x.php', [saved({ file: 'file:///c:/app/x.php', line: 3 })], [], false).get(3)).toBe('on')
   })
 })
 

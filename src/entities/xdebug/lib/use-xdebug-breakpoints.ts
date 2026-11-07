@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import type { XdebugBreakpointDraft, XdebugBreakpointPatch, XdebugSavedBreakpoint, XdebugWsMessage } from '../types'
 import { XdebugApiError, type XdebugRequests } from './use-xdebug-requests'
+import { fileKey, sameFile } from './xdebug-breakpoints'
 
 type Api = Pick<XdebugRequests, 'listSavedBreakpoints' | 'addBreakpoint' | 'updateBreakpoint' | 'removeBreakpoint'>
 
@@ -54,7 +55,13 @@ export const useXdebugBreakpoints = (api: Api, onChanged: () => void = () => {})
     if (message.event === 'breakpoints.changed') list.value = message.data ?? []
   }
 
+  // file:line adds on their way: a double click posts once.
+  const inflight = new Set<string>()
+
   const add = async (draft: XdebugBreakpointDraft) => {
+    const key = draft.type === 'line' ? `${fileKey(draft.file)}:${draft.line}` : ''
+    if (key && inflight.has(key)) return false
+    if (key) inflight.add(key)
     adding.value = true
     addError.value = ''
     try {
@@ -65,6 +72,7 @@ export const useXdebugBreakpoints = (api: Api, onChanged: () => void = () => {})
       addError.value = errorText(e)
       return false
     } finally {
+      if (key) inflight.delete(key)
       adding.value = false
     }
   }
@@ -86,16 +94,24 @@ export const useXdebugBreakpoints = (api: Api, onChanged: () => void = () => {})
   }
 
   // The checkbox moves at once; it goes back if the server refuses.
-  const setEnabled = (id: number, enabled: boolean) => {
+  // One change per row at a time: a later reply could undo a newer click.
+  const setEnabled = async (id: number, enabled: boolean) => {
+    if (busy.value.has(id)) return false
     const before = list.value.find((b) => b.id === id)
     if (before) upsert({ ...before, enabled })
     return change(id, { enabled }, before)
   }
 
   // An empty condition removes it.
-  const setCondition = (id: number, condition: string) => change(id, { condition: condition.trim() })
+  const setCondition = async (id: number, condition: string) => {
+    if (busy.value.has(id)) return false
+    return change(id, { condition: condition.trim() })
+  }
+
+  const clearAddError = () => { addError.value = '' }
 
   const remove = async (id: number) => {
+    if (busy.value.has(id)) return
     mark(id, true)
     setRowError(id, '')
     try {
@@ -111,12 +127,12 @@ export const useXdebugBreakpoints = (api: Api, onChanged: () => void = () => {})
 
   // The gutter: a line with a breakpoint loses it, any other line gets one.
   const toggleLine = async (file: string, line: number) => {
-    const there = list.value.find((b) => b.type === 'line' && b.file === file && b.line === line)
+    const there = list.value.find((b) => b.type === 'line' && sameFile(b.file, file) && b.line === line)
     if (there) return remove(there.id)
     await add({ type: 'line', file, line })
   }
 
-  return { list, state, busy, rowError, adding, addError, load, apply, add, setEnabled, setCondition, remove, toggleLine }
+  return { list, state, busy, rowError, adding, addError, load, apply, add, clearAddError, setEnabled, setCondition, remove, toggleLine }
 }
 
 export type XdebugBreakpointsStore = ReturnType<typeof useXdebugBreakpoints>

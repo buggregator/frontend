@@ -22,7 +22,7 @@ describe('XdebugBreakpoints', () => {
   })
 
   it('says how to add one when the list is empty', () => {
-    expect(mk({ rows: [] }).text()).toContain('No breakpoints. Click a line number in the code, or type path:line below.')
+    expect(mk({ rows: [] }).text()).toContain('No breakpoints. When a session pauses, click a line number in the code, or type path:line below.')
   })
 
   it('tags agent breakpoints, hits, the moved line and a condition skipped with eval off', () => {
@@ -75,6 +75,17 @@ describe('XdebugBreakpoints', () => {
     expect(w.find('input[type=checkbox]').attributes('disabled')).toBeDefined()
     expect(w.find('.xdebug-bp__acts').exists()).toBe(false)
     expect(w.text()).toContain('Your IDE sets the breakpoints of this session.')
+    w.unmount()
+  })
+  it('shows an exception class without the leading backslash, and * as every exception', () => {
+    const w = mk({ rows: [row({ id: 1, type: 'exception', file: undefined, line: undefined, exception: '\\RuntimeException' }), row({ id: 2, type: 'exception', file: undefined, line: undefined, exception: '*' })] })
+    expect(w.findAll('.xdebug-bp__f').map((e) => e.text())).toEqual(['on RuntimeException', 'on every exception'])
+    w.unmount()
+  })
+
+  it('locks the checkbox while its change is on the way', () => {
+    const w = mk({ busy: new Set([1]) })
+    expect(w.find('input[type=checkbox]').attributes('disabled')).toBeDefined()
     w.unmount()
   })
 })

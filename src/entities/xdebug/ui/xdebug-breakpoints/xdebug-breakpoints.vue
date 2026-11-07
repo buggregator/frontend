@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue'
-import { type BreakpointRow, filePath } from '../../lib/xdebug-breakpoints'
+import { type BreakpointRow, exceptionName, filePath } from '../../lib/xdebug-breakpoints'
 import { splitPath } from '../../lib/xdebug-format'
 import type { XdebugSavedBreakpoint } from '../../types'
 import { XdebugIcon } from '../xdebug-icon'
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{ enable: [id: number, enabled: boolean]; remove: [id: number]; retry: [] }>()
 
 const where = (bp: XdebugSavedBreakpoint) => {
-  if (bp.type === 'exception') return bp.exception ?? ''
+  if (bp.type === 'exception') return bp.exception === '*' ? 'every exception' : exceptionName(bp.exception)
   const { name } = splitPath(bp.file)
   return `${name}:${bp.line}`
 }
@@ -91,7 +91,7 @@ const submitCondition = async (id: number, value = draft.value) => {
       v-else-if="!rows.length"
       class="xdebug-bp__note"
     >
-      {{ readOnly ? 'No saved breakpoints.' : 'No breakpoints. Click a line number in the code, or type path:line below.' }}
+      {{ readOnly ? 'No saved breakpoints.' : 'No breakpoints. When a session pauses, click a line number in the code, or type path:line below.' }}
     </p>
 
     <ul
@@ -110,7 +110,7 @@ const submitCondition = async (id: number, value = draft.value) => {
             type="checkbox"
             class="xdebug-bp__cb"
             :checked="row.bp.enabled"
-            :disabled="readOnly"
+            :disabled="readOnly || busy.has(row.bp.id)"
             :aria-label="`Enabled: ${where(row.bp)}`"
             @change="emit('enable', row.bp.id, ($event.target as HTMLInputElement).checked)"
           >
@@ -121,7 +121,7 @@ const submitCondition = async (id: number, value = draft.value) => {
               class="xdebug-bp__ex"
               title="Pause when this exception is thrown"
             ><XdebugIcon name="bolt" /></span>
-            <span class="xdebug-bp__f">on {{ row.bp.exception }}</span>
+            <span class="xdebug-bp__f">on {{ where(row.bp) }}</span>
           </template>
           <template v-else>
             <span
@@ -263,7 +263,7 @@ const submitCondition = async (id: number, value = draft.value) => {
         Your IDE sets the breakpoints of this session. These saved ones apply to sessions without an IDE.
       </template>
       <template v-else>
-        Or an exception class, e.g. \Throwable. Absolute paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
+        Or an exception class, e.g. Throwable (* for every exception). Absolute paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
       </template>
     </p>
   </div>

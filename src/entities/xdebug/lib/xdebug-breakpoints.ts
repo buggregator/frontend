@@ -2,7 +2,7 @@ import type { XdebugBreakpoint, XdebugBreakpointDraft, XdebugBreakpointState, Xd
 
 export const LINE_HINT = '/app/src/Services/CartService.php:43'
 const NEED_LINE = `Add a line number after the colon, e.g. ${LINE_HINT}`
-const NEED_ANY = `Type path:line, e.g. ${LINE_HINT}, or an exception class such as \\RuntimeException`
+const NEED_ANY = `Type path:line, e.g. ${LINE_HINT}, or an exception class such as RuntimeException`
 
 const CLASS_NAME = /^\\?[A-Za-z_][A-Za-z0-9_]*(\\[A-Za-z_][A-Za-z0-9_]*)*$/
 const PATH_LIKE = /[/\\.]/
@@ -14,10 +14,27 @@ export const parseBreakpointInput = (raw: string): { draft?: XdebugBreakpointDra
   if (!text) return {}
   const m = /^(.+):(\d+)$/.exec(text)
   if (m && Number(m[2]) >= 1) return { draft: { type: 'line', file: m[1], line: Number(m[2]) } }
-  if (CLASS_NAME.test(text) && !text.includes('.')) return { draft: { type: 'exception', exception: text } }
+  // Xdebug matches the class name as PHP holds it, never with a leading «\»
+  // (checked on Xdebug 3.4); «*» is every exception.
+  if (text === '*' || CLASS_NAME.test(text)) return { draft: { type: 'exception', exception: exceptionName(text) } }
   if (PATH_LIKE.test(text)) return { error: NEED_LINE }
   return { error: NEED_ANY }
 }
+
+export const exceptionName = (name: string | undefined) => (name ?? '').replace(/^\\/, '')
+
+// One file in two spellings: %20 or a space, c: or C:, \ or /.
+export const fileKey = (uri: string | undefined) => {
+  let path = uri ?? ''
+  try {
+    path = decodeURI(path)
+  } catch {
+    // Not URI-encoded: compare as typed.
+  }
+  path = path.replace(/\\/g, '/').replace(/^file:\/\//, '').replace(/^\/?([a-zA-Z]):\//, (_, d: string) => `/${d.toUpperCase()}:/`)
+  return path
+}
+export const sameFile = (a: string | undefined, b: string | undefined) => !!a && !!b && fileKey(a) === fileKey(b)
 
 // The path PHP sees, without the file:// scheme (file:///C:/x → C:/x).
 export const filePath = (uri: string | undefined) => {
@@ -58,7 +75,7 @@ export const gutterMarks = (file: string | undefined, saved: XdebugSavedBreakpoi
   if (!file) return marks
   for (const row of breakpointRows(saved, session, drivenHere)) {
     const { bp } = row
-    if (bp.type !== 'line' || bp.file !== file || !bp.line) continue
+    if (bp.type !== 'line' || !sameFile(bp.file, file) || !bp.line) continue
     let mark: GutterMark = bp.condition ? 'cond' : 'on'
     if (!bp.enabled) mark = 'off'
     else if (row.movedTo || (row.state && NOT_SET.has(row.state))) mark = 'unres'

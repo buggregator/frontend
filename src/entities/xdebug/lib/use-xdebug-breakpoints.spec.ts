@@ -102,4 +102,39 @@ describe('useXdebugBreakpoints', () => {
     await b.setCondition(1, '')
     expect(api.updateBreakpoint).toHaveBeenLastCalledWith(1, { condition: '' })
   })
+  it('adds a line once on a double click, before the first reply', async () => {
+    const { b, api } = setup([])
+    await b.load()
+    await Promise.all([b.toggleLine(F, 41), b.toggleLine(F, 41)])
+    expect(api.addBreakpoint).toHaveBeenCalledTimes(1)
+    expect(b.list.value).toHaveLength(1)
+  })
+
+  it('removes a breakpoint saved under another spelling of the file', async () => {
+    const { b, api } = setup([bp({ file: 'file:///c:/app/x.php', line: 3 })])
+    await b.load()
+    await b.toggleLine('file:///C:/app/x.php', 3)
+    expect(api.removeBreakpoint).toHaveBeenCalledWith(1)
+  })
+
+  it('ignores a second switch while the first is on its way', async () => {
+    const { b, api } = setup()
+    await b.load()
+    let release!: () => void
+    api.updateBreakpoint.mockImplementationOnce((id: number, patch: object) => new Promise((res) => { release = () => res(bp({ id, ...patch })) }))
+    const p = b.setEnabled(1, false)
+    expect(await b.setEnabled(1, true)).toBe(false)
+    release()
+    await p
+    expect(api.updateBreakpoint).toHaveBeenCalledTimes(1)
+    expect(b.list.value[0].enabled).toBe(false)
+  })
+
+  it('clears the add error when asked (the user types again)', async () => {
+    const { b, api } = setup([])
+    api.addBreakpoint.mockRejectedValueOnce(new Error('bad'))
+    await b.add({ type: 'exception', exception: 'X' })
+    b.clearAddError()
+    expect(b.addError.value).toBe('')
+  })
 })
