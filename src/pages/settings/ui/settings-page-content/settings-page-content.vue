@@ -26,7 +26,8 @@ const {
   customFilePathMapping,
   isActiveFilePathMapping,
   codeEditor,
-  apiVersion
+  apiVersion,
+  update
 } = storeToRefs(settingsStore)
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
@@ -348,10 +349,31 @@ useTitle('Settings | Buggregator')
     <!-- About -->
     <EventDetailSection title="About">
       <div class="s-card">
+        <div
+          v-if="update?.available"
+          class="s-update"
+          data-test="update-available"
+        >
+          <span class="s-update__text">Buggregator {{ update.latest }} is available (you run {{ update.current }})</span>
+          <a
+            :href="update.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="s-update__link"
+          >
+            Release notes<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        </div>
+
         <div class="s-about-boxes">
           <div class="s-about-box">
             <span class="s-about-box__label">Server</span>
             <span class="s-about-box__value">{{ serverVersion || '—' }}</span>
+            <span
+              v-if="update && !update.available"
+              class="s-about-box__note"
+              data-test="update-current"
+            >Up to date</span>
           </div>
           <div class="s-about-box">
             <span class="s-about-box__label">Client</span>
@@ -544,6 +566,23 @@ useTitle('Settings | Buggregator')
 
 .s-about-box__value {
   @apply text-sm font-mono mt-1;
+}
+
+/* Newer server release */
+.s-update {
+  @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3;
+  @apply bg-blue-50 dark:bg-blue-500/10;
+  @apply text-sm text-blue-900 dark:text-blue-100;
+}
+
+.s-update__link {
+  @apply text-sm font-medium underline;
+  @apply text-blue-700 dark:text-blue-300;
+  @apply hover:text-blue-900 dark:hover:text-blue-100;
+}
+
+.s-about-box__note {
+  @apply text-xs mt-0.5 text-gray-500 dark:text-gray-400;
 }
 
 /* Links */
