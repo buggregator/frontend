@@ -25,6 +25,29 @@ describe('sourceLink', () => {
     expect(sourceLink({ ...source, file_link: 'file:///var/www/app/src/HomeController.php#L52' }, buildLink, false)).toBe(built)
   })
 
+  it.each([
+    'phpstorm://open?file=/a.php&line=1',
+    'idea://open?file=/a.php&line=1',
+    'vscode://file//a.php:1',
+    'vscode-insiders://file//a.php:1',
+    'vscodium://file//a.php:1',
+    'cursor://file//a.php:1',
+    'windsurf://file//a.php:1',
+    'zed://file/a.php:1',
+    'subl://open?url=file:///a.php&line=1',
+    'txmt://open?url=file:///a.php&line=1',
+    'mvim://open?url=file:///a.php&line=1',
+    'emacs://open?url=file:///a.php&line=1',
+    'editor://open?file=/a.php&line=1',
+    'atom://core/open/file?filename=/a.php&line=1',
+    'nova://open?path=/a.php&line=1',
+    'fleet://open?file=/a.php&line=1',
+    'netbeans://open/?f=/a.php:1',
+    'PhpStorm://open?file=/a.php&line=1',
+  ])('uses a known IDE link %j', (fileLink) => {
+    expect(sourceLink({ ...source, file_link: fileLink }, buildLink, false)).toBe(fileLink)
+  })
+
   it('builds the link from Settings when the SDK sent none', () => {
     expect(sourceLink(source, buildLink, false)).toBe(built)
     expect(sourceLink({ ...source, file_link: '' }, buildLink, false)).toBe(built)
@@ -40,6 +63,10 @@ describe('sourceLink', () => {
     'https://example.com/HomeController.php',
     'http://example.com/HomeController.php',
     'FILE:///var/www/app/src/HomeController.php',
+    'ms-msdt:/id PCWDiagnostic',
+    'search-ms:query=x',
+    'mailto:me@example.com',
+    'unknown-ide://open?file=/a.php',
     '/relative/path.php',
   ])('does not use a link that is not an IDE link: %j', (fileLink) => {
     expect(sourceLink({ ...source, file_link: fileLink }, buildLink, false)).toBe(built)

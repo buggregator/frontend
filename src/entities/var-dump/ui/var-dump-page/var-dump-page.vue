@@ -17,7 +17,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { buildLink, isCodeEditorChosen } = useIdeLink()
+const { buildLink, isSettingsLinkPreferred } = useIdeLink()
 
 const title = computed(() => {
   const type = String(props.event.payload.payload.type || 'Unknown type')
@@ -25,7 +25,7 @@ const title = computed(() => {
 })
 
 const source = computed(() => props.event.payload.context.source)
-const sourceLink = computed(() => sourceLinkFor(source.value, buildLink, isCodeEditorChosen.value))
+const sourceLink = computed(() => sourceLinkFor(source.value, buildLink, isSettingsLinkPreferred.value))
 const request = computed(() => props.event.payload.context.request)
 const cli = computed(() => props.event.payload.context.cli)
 const label = computed(() => props.event.payload.payload.label)
