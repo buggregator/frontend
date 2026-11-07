@@ -79,3 +79,54 @@ export type MockRequestEvent = ServerEvent<MockHttpDump>
 
 // Field → message, as in the server's 422 `errors`.
 export type MockRuleErrors = Partial<Record<keyof MockRuleInput, string>>
+
+// GET /api/mocks/helpers: template functions and fake-data generators.
+export type MockHelperGroup = 'request' | 'data' | 'output' | 'fake'
+
+export interface MockHelper {
+  name: string
+  group: MockHelperGroup
+  usage: string
+  description: string
+  example: string
+  result: string
+}
+
+export interface MockFakeParam {
+  name: string
+  type: string
+  optional: boolean
+  default?: string
+  options?: string[]
+}
+
+export interface MockFake {
+  name: string
+  category: string
+  description: string
+  example: string
+  output: string
+  params: MockFakeParam[]
+}
+
+export interface MockHelpers {
+  helpers: MockHelper[]
+  fake: MockFake[]
+}
+
+// POST /api/mocks/preview: an unsaved rule answered for a sample request.
+export interface MockPreviewRequest {
+  method: string
+  path: string
+  headers: Record<string, string>
+  body: string
+}
+
+export interface MockPreviewResult {
+  status: number
+  headers: Record<string, string>
+  body: string
+  matched: boolean
+  // A template that failed while rendering: "mock template: …", status 500.
+  error: string | null
+}
