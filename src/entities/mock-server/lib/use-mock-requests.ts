@@ -3,6 +3,8 @@ import { REST_API_URL } from '@/shared/lib/io'
 import { useEventsStore, useProfileStore } from '@/shared/stores'
 import type {
   MockHelpers,
+  MockOpenAPIImport,
+  MockOpenAPIResult,
   MockPreviewRequest,
   MockPreviewResult,
   MockRequestEvent,
@@ -64,5 +66,22 @@ export const useMockRequests = () => {
   const preview = (rule: MockRuleInput, sample: MockPreviewRequest) =>
     send<MockPreviewResult>('POST', `${BASE}/preview`, { rule, request: sample })
 
-  return { getRules, getRequests, createRule, updateRule, deleteRule, reorderRules, getHelpers, preview }
+  const importOpenAPI = (input: MockOpenAPIImport) =>
+    send<MockOpenAPIResult>('POST', `${BASE}/import/openapi`, input)
+  // Deletes the stored rules of a group; yaml rules of it stay.
+  const deleteGroup = (group: string) =>
+    send<{ deleted: number }>('DELETE', `${BASE}/groups/${encodeURIComponent(group)}`)
+
+  return {
+    getRules,
+    getRequests,
+    createRule,
+    updateRule,
+    deleteRule,
+    reorderRules,
+    getHelpers,
+    preview,
+    importOpenAPI,
+    deleteGroup
+  }
 }

@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import type { MockRule, MockRuleInput } from '../types'
+import type { MockOpenAPIImport, MockOpenAPIResult, MockRule, MockRuleInput } from '../types'
 import { useMockRequests } from './use-mock-requests'
 import type { LoadState } from './use-mock-traffic'
 
@@ -69,5 +69,29 @@ export const useMockRules = () => {
     rules.value = await api.reorderRules(ids)
   }
 
-  return { rules, state, configRules, ownRules, load, save, remove, toggle, move }
+  // A re-import of a group replaces its stored rules on the server.
+  const importOpenAPI = async (input: MockOpenAPIImport): Promise<MockOpenAPIResult> => {
+    const result = await api.importOpenAPI(input)
+    await refresh()
+    return result
+  }
+
+  const removeGroup = async (group: string) => {
+    await api.deleteGroup(group)
+    await refresh()
+  }
+
+  return {
+    rules,
+    state,
+    configRules,
+    ownRules,
+    load,
+    save,
+    remove,
+    toggle,
+    move,
+    importOpenAPI,
+    removeGroup
+  }
 }

@@ -22,8 +22,11 @@ export interface MockRule {
   // Fake-data seed of a template: 0 = new data on every request.
   seed?: number
   position: number
-  source: 'config' | 'api'
+  source: 'config' | 'api' | 'mcp'
   read_only: boolean
+  // The OpenAPI import that made the rule ("" = none). A re-import of the
+  // group replaces its stored rules.
+  group?: string
   created_at?: string
   updated_at?: string
 }
@@ -129,4 +132,29 @@ export interface MockPreviewResult {
   matched: boolean
   // A template that failed while rendering: "mock template: …", status 500.
   error: string | null
+}
+
+// POST /api/mocks/import/openapi: exactly one of spec / url. base_path absent
+// = the path of the spec's servers[0].url; "" = no prefix.
+export interface MockOpenAPIImport {
+  spec?: string
+  url?: string
+  project?: string
+  group?: string
+  base_path?: string
+}
+
+export type MockOpenAPIErrors = Partial<Record<'spec' | 'url' | 'project' | 'group' | 'base_path', string>>
+
+export interface MockOpenAPISkip {
+  method: string
+  path: string
+  reason: string
+}
+
+export interface MockOpenAPIResult {
+  group: string
+  title: string
+  rules: MockRule[]
+  skipped: MockOpenAPISkip[]
 }
