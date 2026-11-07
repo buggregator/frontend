@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: Install dependencies
@@ -42,8 +42,20 @@ jobs:
             ./screenshots \
             origin/${{ github.base_ref }}
 
+      # Pull requests from forks get no secrets and a read-only token, so the
+      # push and the comment are skipped there; the screenshots still prove
+      # that Storybook builds and renders, and they are kept as an artifact.
+      - name: Upload screenshots
+        if: hashFiles('screenshots/*.png') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-screenshots
+          path: screenshots/
+          retention-days: 14
+
       - name: Push screenshots to external repo
         id: push-screenshots
+        if: github.event.pull_request.head.repo.full_name == github.repository
         env:
           SCREENSHOTS_TOKEN: ${{ secrets.GHCR_PASSWORD }}
         run: |
