@@ -32,7 +32,9 @@ export default withVueTs(
     // Slice folders beside the standard ones: mocks hold Storybook/test events.
     segments: ['mocks'],
     // Mocks are story and test data, kept out of the slice public API so they stay out of the app bundle.
-    publicApi: { ignoreImports: ['@/entities/*/mocks'] }
+    // The sidebar reads Xdebug's on/off through the lib segment: the slice index
+    // also pulls the debugger components, and their CSS into the first load.
+    publicApi: { ignoreImports: ['@/entities/*/mocks', '@/entities/xdebug/lib'] }
   }),
   {
     name: 'buggregator/rules',
