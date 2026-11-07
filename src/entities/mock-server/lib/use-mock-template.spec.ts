@@ -97,6 +97,28 @@ describe('useMockPreview', () => {
     expect(p.problem.value).toBe('template: body:1: unexpected "}"')
   })
 
+  // Under /mock the server takes any sample path, so the client checks it.
+  it('does not send a sample path without a leading slash and names the field', async () => {
+    const p = useMockPreview(ref({ ...emptyDraft(), path: '/a' }))
+    p.sample.value.path = 'users/42'
+    await p.run()
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(p.problem.value).toBe('Sample path must start with /')
+    expect(p.problemField.value).toBe('path')
+  })
+
+  it('names the rule field of a rejected rule', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      json({ message: 'invalid mock rule: path: must start with /', errors: { path: 'must start with /' } }, 422)
+    )
+    const p = useMockPreview(ref({ ...emptyDraft(), path: 'users/42' }))
+    await p.run()
+
+    expect(p.problem.value).toBe('Rule path must start with /')
+    expect(p.problemField.value).toBe('')
+  })
+
   // The person must know the sample path is wrong, not the rule.
   it('names the sample path field when the server rejects it', async () => {
     fetchMock.mockImplementationOnce(() =>

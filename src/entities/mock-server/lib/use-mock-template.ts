@@ -5,8 +5,9 @@ import { MockApiError, useMockRequests } from './use-mock-requests'
 import type { LoadState } from './use-mock-traffic'
 
 // A request path the rule's path matches: {params} → 42, a trailing * → a/b.png.
+// Always starts with / (a rule path typed without it is the rule's problem).
 export const samplePath = (path: string): string =>
-  (path || '/').replace(/\{[^}]+\}/g, '42').replace(/\*$/, 'a/b.png')
+  `/${path.replace(/^\/+/, '')}`.replace(/\{[^}]+\}/g, '42').replace(/\*$/, 'a/b.png')
 
 // The helper list is the same for every rule: one request per page load.
 let cached: Promise<MockHelpers> | null = null
@@ -45,6 +46,29 @@ export const useMockHelpers = () => {
 
 export type PreviewSample = { method: string; path: string; headers: string; body: string }
 
+// Field names of a rejected rule, as the editor labels them.
+const RULE_FIELDS: Record<string, string> = {
+  path: 'Rule path',
+  method: 'Rule method',
+  status: 'Status',
+  delay_ms: 'Delay',
+  seed: 'Seed',
+  project: 'Project',
+  name: 'Name',
+  'request.path': 'Sample path',
+}
+
+// A rejected preview in words: template errors (body, headers) name
+// themselves; other fields get the editor's label in front.
+const problemText = (e: unknown): string => {
+  const fields = e instanceof MockApiError ? e.fields : {}
+  const rule = fields.body || fields.headers
+  if (rule) return rule
+  const [key, text] = Object.entries(fields)[0] || []
+  if (key && text) return `${RULE_FIELDS[key] || key} ${text}`
+  return e instanceof Error ? e.message : 'Preview failed.'
+}
+
 const RERUN_MS = 400
 
 // The rule as edited (not saved) answered for a sample request. After the
@@ -72,6 +96,14 @@ export const useMockPreview = (rule: Ref<MockRuleInput>) => {
   const run = async () => {
     const id = ++runs
     started.value = true
+    // Under /mock the server takes any sample path: check it here.
+    if (!sample.value.path.startsWith('/')) {
+      result.value = null
+      problem.value = 'Sample path must start with /'
+      problemField.value = 'path'
+      pending.value = false
+      return
+    }
     pending.value = true
     try {
       const answer = await api.preview(rule.value, {
@@ -88,16 +120,9 @@ export const useMockPreview = (rule: Ref<MockRuleInput>) => {
     } catch (e) {
       if (id !== runs) return
       result.value = null
-      problemField.value = ''
       const fields = e instanceof MockApiError ? e.fields : {}
-      const rule = fields.body || fields.headers
-      if (!rule && fields['request.path']) {
-        problem.value = `Sample path ${fields['request.path']}`
-        problemField.value = 'path'
-        return
-      }
-      problem.value =
-        rule || Object.values(fields)[0] || (e instanceof Error ? e.message : 'Preview failed.')
+      problemField.value = fields['request.path'] && !fields.body && !fields.headers ? 'path' : ''
+      problem.value = problemText(e)
     } finally {
       if (id === runs) pending.value = false
     }
