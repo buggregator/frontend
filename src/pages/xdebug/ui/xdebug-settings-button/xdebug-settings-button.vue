@@ -104,9 +104,16 @@ onClickOutside(root, () => {
     @apply w-4 h-4;
   }
 
-  // Phones: 44 px wide, as tall as the 36 px header allows.
+  // Phones: 44×36 to fit the 36 px header; the tap area reaches 8 px below
+  // it to 44 px (as the mock-server header buttons).
   @media (max-width: 767px) {
-    @apply w-11 h-9;
+    @apply relative w-11 h-9;
+
+    &::after {
+      @apply absolute inset-x-0 top-0 -bottom-2;
+
+      content: '';
+    }
   }
 }
 </style>
