@@ -3,6 +3,16 @@ import {REST_API_URL} from "../../lib/io/constants";
 import type {TProfile} from "../../types";
 import {getStoredToken, removeStoredToken, setStoredToken} from "./local-storage-actions";
 
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+// The Go server answers /api/me with {"data":{...}}; a flat profile is read as is.
+const toProfile = (body: unknown): TProfile | undefined => {
+  const profile = isObject(body) && 'data' in body ? body.data : body
+
+  return isObject(profile) ? (profile as TProfile) : undefined
+}
+
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
@@ -34,7 +44,7 @@ export const useProfileStore = defineStore("profileStore", {
           this.removeToken();
           console.error('Auth Error', response.status, response.statusText)
         } else if (response.ok) {
-          profile = await response.json()
+          profile = toProfile(await response.json())
         }
       } catch (e) {
         console.error(e);

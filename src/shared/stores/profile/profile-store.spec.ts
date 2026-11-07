@@ -36,4 +36,22 @@ describe('profileStore.getProfile', () => {
 
     expect(await useProfileStore().getProfile()).toEqual({ username: 'ann' })
   })
+
+  // The Go server wraps the profile: {"data":{...}} (internal/auth/handlers.go handleMe).
+  it('unwraps the profile from the data envelope of the Go server', async () => {
+    const body = '{"data":{"username":"ann","email":"ann@example.com","avatar":"","logout_url":""}}'
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(body))))
+    const store = useProfileStore()
+
+    await store.getProfile()
+
+    expect(store.profile?.username).toBe('ann')
+    expect(store.profile?.email).toBe('ann@example.com')
+  })
+
+  it('keeps no profile when the answer is not a profile object', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"data":null}'))))
+
+    expect(await useProfileStore().getProfile()).toBeUndefined()
+  })
 })
