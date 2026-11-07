@@ -41,15 +41,14 @@ const resetPage = () => (shown.value = FAKES_PAGE)
   >
     <div
       class="mock-helpers__tabs"
-      role="tablist"
+      role="group"
+      aria-label="Show"
     >
       <button
         id="mock-helpers-tab-functions"
         type="button"
-        role="tab"
         class="mock-helpers__tab"
-        :aria-selected="tab === 'functions'"
-        aria-controls="mock-helpers-panel"
+        :aria-pressed="tab === 'functions'"
         @click="tab = 'functions'"
       >
         Functions
@@ -57,22 +56,15 @@ const resetPage = () => (shown.value = FAKES_PAGE)
       <button
         id="mock-helpers-tab-fake"
         type="button"
-        role="tab"
         class="mock-helpers__tab"
-        :aria-selected="tab === 'fake'"
-        aria-controls="mock-helpers-panel"
+        :aria-pressed="tab === 'fake'"
         @click="tab = 'fake'"
       >
         Fake data <span class="mock-helpers__count">{{ fakes.length }}</span>
       </button>
     </div>
 
-    <div
-      id="mock-helpers-panel"
-      role="tabpanel"
-      :aria-labelledby="`mock-helpers-tab-${tab}`"
-      class="mock-helpers__panel"
-    >
+    <div class="mock-helpers__panel">
       <p
         v-if="state === 'loading'"
         class="mock-helpers__note"
@@ -234,7 +226,7 @@ const resetPage = () => (shown.value = FAKES_PAGE)
   @apply text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white;
   @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
 
-  &[aria-selected='true'] {
+  &[aria-pressed='true'] {
     @apply border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-400;
   }
 }

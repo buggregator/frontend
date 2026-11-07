@@ -114,7 +114,7 @@ const copyCurl = async () => {
       class="mock-request-detail__template-error"
       role="alert"
     >
-      <b>The rule's template failed</b>, so the client got {{ mock.status }}.
+      <span><b>The rule's template failed</b>, so the client got {{ mock.status }}.</span>
       <code>{{ mock.template_error }}</code>
     </p>
 
