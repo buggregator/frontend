@@ -5,15 +5,21 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import {
   emptyDraft,
+  groupHeaderAt,
   MockApiError,
+  MockImportForm,
   MockRequestDetail,
   MockRequestRow,
   MockRuleForm,
   MockRuleRow,
+  storedGroupSizes,
   toInput,
   useMockRules,
   useMockTraffic,
   validateRule,
+  type MockOpenAPIErrors,
+  type MockOpenAPIImport,
+  type MockOpenAPIResult,
   type MockRequestEvent,
   type MockRule,
   type MockRuleErrors,
@@ -43,8 +49,15 @@ type View =
   | { kind: 'traffic' }
   | { kind: 'detail'; uuid: string }
   | { kind: 'edit'; ruleId: string | null; from?: string; back?: View }
+  | { kind: 'import' }
 
 const view = ref<View>({ kind: 'traffic' })
+const PANE_LABELS: Record<View['kind'], string> = {
+  traffic: 'Requests',
+  detail: 'Request details',
+  edit: 'Rule editor',
+  import: 'Import OpenAPI'
+}
 const filterRuleId = ref<string | null>(null)
 const onlyNoMatch = ref(false)
 // narrow screens show one pane at a time
@@ -195,6 +208,63 @@ const removeRule = async () => {
   }
 }
 
+// ---- OpenAPI import ------------------------------------------------------------
+const groupSizes = computed(() => storedGroupSizes(rules.value))
+const importKey = ref(0)
+const importErrors = ref<MockOpenAPIErrors>({})
+const importError = ref('')
+const importResult = ref<MockOpenAPIResult | null>(null)
+const importing = ref(false)
+
+const openImport = () => {
+  importErrors.value = {}
+  importError.value = ''
+  importResult.value = null
+  importKey.value++
+  view.value = { kind: 'import' }
+  focusRight()
+}
+
+const runImport = async (input: MockOpenAPIImport) => {
+  importing.value = true
+  importErrors.value = {}
+  importError.value = ''
+  try {
+    importResult.value = await rulesState.importOpenAPI(input)
+    filterRuleId.value = null
+    await focusRight()
+  } catch (e) {
+    if (e instanceof MockApiError && e.status === 422 && Object.keys(e.fields).length) {
+      importErrors.value = e.fields
+      await nextTick()
+      rightPane.value?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()
+    } else {
+      importError.value = e instanceof Error ? e.message : 'Request failed'
+    }
+  } finally {
+    importing.value = false
+  }
+}
+
+// Deletes the stored rules of a group; yaml rules of it stay.
+const removeGroup = async (group: string) => {
+  const n = groupSizes.value.get(group) || 0
+  if (!n) return
+  if (
+    !window.confirm(
+      `Delete ${n} ${n === 1 ? 'rule' : 'rules'} of group ${group}? This cannot be undone.`
+    )
+  )
+    return
+  await runAction(async () => {
+    await rulesState.removeGroup(group)
+    if (filterRuleId.value && !rules.value.some((r) => r.id === filterRuleId.value)) {
+      filterRuleId.value = null
+    }
+    if (view.value.kind === 'edit' && view.value.ruleId && !editing.value) showTraffic()
+  })
+}
+
 const actionError = ref('')
 const runAction = async (fn: () => Promise<unknown>) => {
   actionError.value = ''
@@ -277,6 +347,7 @@ const loadAll = () => Promise.all([rulesState.load(), traffic.load()])
 const onKey = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && view.value.kind !== 'traffic') {
     if (view.value.kind === 'edit') closeEditor()
+    else if (view.value.kind === 'import' && importing.value) return
     else showTraffic()
   }
 }
@@ -318,6 +389,13 @@ onBeforeUnmount(() => {
           </button>
         </span>
         <template #controls>
+          <button
+            type="button"
+            class="mock-page__btn"
+            @click="openImport"
+          >
+            Import <span class="mock-page__hide-xs">OpenAPI</span>
+          </button>
           <button
             type="button"
             class="mock-page__btn mock-page__btn--primary"
@@ -378,6 +456,13 @@ onBeforeUnmount(() => {
         >
           + Create first rule
         </button>
+        <button
+          type="button"
+          class="mock-page__btn"
+          @click="openImport"
+        >
+          Import an OpenAPI spec
+        </button>
         <p class="mock-page__live">
           <span
             class="mock-page__dot"
@@ -434,18 +519,27 @@ onBeforeUnmount(() => {
                   <div class="mock-page__grp">
                     <span class="mock-page__yaml">yaml</span> buggregator.yaml · read-only
                   </div>
-                  <MockRuleRow
+                  <template
                     v-for="(rule, i) in configRules"
                     :key="rule.id"
-                    :rule="rule"
-                    :order="i + 1"
-                    :hits="hitsByRule.get(rule.id)"
-                    :selected="selectedRuleId === rule.id"
-                    :answered="answeredRuleId === rule.id"
-                    :near="nearRuleIds.has(rule.id)"
-                    @select="selectRule"
-                    @edit="editRule"
-                  />
+                  >
+                    <div
+                      v-if="groupHeaderAt(configRules, i)"
+                      class="mock-page__group"
+                    >
+                      <code :title="rule.group">{{ rule.group }}</code>
+                    </div>
+                    <MockRuleRow
+                      :rule="rule"
+                      :order="i + 1"
+                      :hits="hitsByRule.get(rule.id)"
+                      :selected="selectedRuleId === rule.id"
+                      :answered="answeredRuleId === rule.id"
+                      :near="nearRuleIds.has(rule.id)"
+                      @select="selectRule"
+                      @edit="editRule"
+                    />
+                  </template>
                 </template>
                 <div
                   v-if="configRules.length"
@@ -453,35 +547,62 @@ onBeforeUnmount(() => {
                 >
                   Your rules
                 </div>
-                <MockRuleRow
+                <template
                   v-for="(rule, i) in ownRules"
                   :key="rule.id"
-                  :rule="rule"
-                  :order="configRules.length + i + 1"
-                  :hits="hitsByRule.get(rule.id)"
-                  :selected="selectedRuleId === rule.id"
-                  :answered="answeredRuleId === rule.id"
-                  :near="nearRuleIds.has(rule.id)"
-                  :can-move-up="i > 0"
-                  :can-move-down="i < ownRules.length - 1"
-                  @select="selectRule"
-                  @edit="editRule"
-                  @toggle="(r) => runAction(() => rulesState.toggle(r))"
-                  @move="(r, d) => runAction(() => rulesState.move(r.id, d))"
-                />
+                >
+                  <div
+                    v-if="groupHeaderAt(ownRules, i)"
+                    class="mock-page__group"
+                  >
+                    <code :title="rule.group">{{ rule.group }}</code>
+                    <span class="mock-page__muted">{{ groupSizes.get(rule.group || '') }}</span>
+                    <span class="mock-page__spacer" />
+                    <button
+                      type="button"
+                      class="mock-page__icon"
+                      :aria-label="`Delete group ${rule.group}`"
+                      title="Delete group"
+                      @click="removeGroup(rule.group || '')"
+                    >
+                      🗑
+                    </button>
+                  </div>
+                  <MockRuleRow
+                    :rule="rule"
+                    :order="configRules.length + i + 1"
+                    :hits="hitsByRule.get(rule.id)"
+                    :selected="selectedRuleId === rule.id"
+                    :answered="answeredRuleId === rule.id"
+                    :near="nearRuleIds.has(rule.id)"
+                    :can-move-up="i > 0"
+                    :can-move-down="i < ownRules.length - 1"
+                    @select="selectRule"
+                    @edit="editRule"
+                    @toggle="(r) => runAction(() => rulesState.toggle(r))"
+                    @move="(r, d) => runAction(() => rulesState.move(r.id, d))"
+                  />
+                </template>
                 <p
                   v-if="!rules.length"
                   class="mock-page__hint mock-page__pad"
                 >
                   No rules yet. Every request gets a 404 until one matches.
                 </p>
-                <div class="mock-page__pad">
+                <div class="mock-page__pad mock-page__row">
                   <button
                     type="button"
                     class="mock-page__btn"
                     @click="newRule"
                   >
                     + New rule
+                  </button>
+                  <button
+                    type="button"
+                    class="mock-page__btn"
+                    @click="openImport"
+                  >
+                    Import OpenAPI
                   </button>
                 </div>
               </template>
@@ -492,13 +613,7 @@ onBeforeUnmount(() => {
           <section
             ref="rightPane"
             class="mock-page__right"
-            :aria-label="
-              view.kind === 'edit'
-                ? 'Rule editor'
-                : view.kind === 'detail'
-                  ? 'Request details'
-                  : 'Requests'
-            "
+            :aria-label="PANE_LABELS[view.kind]"
           >
             <!-- live requests -->
             <template v-if="view.kind === 'traffic'">
@@ -658,6 +773,83 @@ onBeforeUnmount(() => {
               </div>
             </template>
 
+            <!-- OpenAPI import -->
+            <template v-else-if="view.kind === 'import'">
+              <div class="mock-page__ph">
+                <button
+                  type="button"
+                  class="mock-page__btn mock-page__btn--ghost"
+                  @click="showTraffic"
+                >
+                  ← Requests
+                </button>
+                <span class="mock-page__spacer" />
+                <h2
+                  class="mock-page__edit-title"
+                  tabindex="-1"
+                >
+                  Import OpenAPI
+                </h2>
+              </div>
+              <div class="mock-page__form">
+                <div class="mock-page__scroll mock-page__edit">
+                  <div
+                    v-if="importError"
+                    class="mock-page__callout"
+                    role="alert"
+                  >
+                    <span><b>Couldn't import.</b> {{ importError }}</span>
+                  </div>
+                  <MockImportForm
+                    :key="importKey"
+                    :projects="projects"
+                    :groups="groupSizes"
+                    :errors="importErrors"
+                    :busy="importing"
+                    :result="importResult"
+                    @submit="runImport"
+                  />
+                </div>
+                <div class="mock-page__foot">
+                  <span class="mock-page__spacer" />
+                  <template v-if="importResult">
+                    <button
+                      type="button"
+                      class="mock-page__btn"
+                      @click="openImport"
+                    >
+                      Import another
+                    </button>
+                    <button
+                      type="button"
+                      class="mock-page__btn mock-page__btn--primary"
+                      @click="showTraffic"
+                    >
+                      Done
+                    </button>
+                  </template>
+                  <template v-else>
+                    <button
+                      type="button"
+                      class="mock-page__btn"
+                      @click="showTraffic"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      form="mock-import-form"
+                      class="mock-page__btn mock-page__btn--primary"
+                      :disabled="importing"
+                      :aria-busy="importing"
+                    >
+                      {{ importing ? 'Importing…' : 'Import' }}
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </template>
+
             <!-- rule editor -->
             <template v-else>
               <div class="mock-page__ph">
@@ -695,6 +887,13 @@ onBeforeUnmount(() => {
                     <span><b>Defined in buggregator.yaml</b> — read-only here. Change it in the file
                       and restart the server, or duplicate it as an editable rule; it will run after
                       the yaml rules.</span>
+                  </div>
+                  <div
+                    v-if="editing?.group && !readOnly"
+                    class="mock-page__callout mock-page__callout--note"
+                  >
+                    <span>Imported into group <code>{{ editing.group }}</code>. A new import into
+                      this group replaces the rule and your changes.</span>
                   </div>
                   <div
                     v-if="formError"
@@ -788,8 +987,9 @@ onBeforeUnmount(() => {
   }
 }
 
+// Hidden on phones but still read out: «+ New rule», «Import OpenAPI».
 .mock-page__hide-xs {
-  @apply hidden sm:inline;
+  @apply sr-only sm:not-sr-only;
 }
 
 .mock-page__panes {
@@ -865,6 +1065,20 @@ onBeforeUnmount(() => {
 .mock-page__grp {
   @apply flex items-center gap-2 px-3 py-1.5 text-2xs font-medium uppercase tracking-wide;
   @apply bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300;
+}
+
+.mock-page__group {
+  @apply flex items-center gap-2 px-3 py-1 min-w-0 text-2xs;
+  @apply bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300;
+  @apply border-t border-gray-200 dark:border-gray-700;
+
+  code {
+    @apply font-mono truncate;
+  }
+}
+
+.mock-page__row {
+  @apply flex flex-wrap gap-2;
 }
 
 .mock-page__yaml {
@@ -958,6 +1172,14 @@ onBeforeUnmount(() => {
 
 .mock-page__callout--yaml {
   @apply border-violet-300 bg-violet-50 text-violet-900 dark:border-violet-500/40 dark:bg-violet-500/10 dark:text-violet-200;
+}
+
+.mock-page__callout--note {
+  @apply border-blue-300 bg-blue-50 text-blue-900 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-200;
+
+  code {
+    @apply font-mono;
+  }
 }
 
 .mock-page__form {
