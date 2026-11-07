@@ -122,7 +122,7 @@ const parts = (uri: string) => {
         :aria-activedescendant="open && active >= 0 ? `${listId}-${active}` : undefined"
         :aria-invalid="error ? 'true' : undefined"
         :aria-describedby="error ? errId : undefined"
-        placeholder="path:line or \Exception"
+        placeholder="/absolute/path.php:line or \Exception"
         spellcheck="false"
         autocomplete="off"
         @input="onInput"

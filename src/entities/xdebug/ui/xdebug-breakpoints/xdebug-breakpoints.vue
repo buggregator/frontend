@@ -261,7 +261,7 @@ const submitCondition = async (id: number, value = draft.value) => {
         Your IDE sets the breakpoints of this session. These saved ones apply to sessions without an IDE.
       </template>
       <template v-else>
-        Paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
+        Absolute paths as PHP sees them (inside the container). Saved, sent to every new session and to the paused one right away.
       </template>
     </p>
   </div>
