@@ -86,7 +86,7 @@ describe('gutterMarks', () => {
       saved({ id: 3, line: 31, enabled: false }),
       saved({ id: 4, line: 22 }),
       saved({ id: 5, file: 'file:///other.php', line: 5 }),
-      saved({ id: 6, type: 'exception', file: undefined, line: undefined, exception: '\\Throwable' })
+      saved({ id: 6, type: 'exception', file: undefined, line: undefined, exception: '\\RuntimeException' })
     ], [inSession({ id: 4, line: 22, state: 'unresolved' })], true)
     expect(Object.fromEntries(marks)).toEqual({ 40: 'on', 43: 'cond', 31: 'off', 22: 'unres' })
   })

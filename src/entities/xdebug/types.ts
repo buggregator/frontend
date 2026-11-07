@@ -123,7 +123,7 @@ export type XdebugSavedBreakpoint = {
   // file:// URI as PHP sees it (line breakpoints).
   file?: string
   line?: number
-  // Class name, e.g. \Throwable (exception breakpoints).
+  // Class name, e.g. RuntimeException (exception breakpoints; Xdebug matches the class and its parents, not interfaces).
   exception?: string
   // PHP expression; sent only while eval is allowed.
   condition?: string
