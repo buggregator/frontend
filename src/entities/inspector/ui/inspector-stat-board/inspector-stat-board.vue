@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import moment from 'moment'
 import { computed } from 'vue'
+import { inspectorTimestampToDate } from '../../lib/inspector-timestamp'
 import type { InspectorTransaction } from '../../types'
 
 type Props = {
@@ -9,7 +9,9 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const processDate = computed(() => moment(props.transaction.timestamp).toLocaleString())
+const processDate = computed(
+  () => inspectorTimestampToDate(props.transaction.timestamp)?.toString() ?? '—'
+)
 const processResult = computed(() => (props.transaction.result || 'success').toUpperCase())
 </script>
 
