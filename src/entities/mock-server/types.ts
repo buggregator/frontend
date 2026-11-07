@@ -17,6 +17,10 @@ export interface MockRule {
   body: string
   delay_ms: number
   enabled: boolean
+  // Response template: body and header values are Go templates rendered per request.
+  template?: boolean
+  // Fake-data seed of a template: 0 = new data on every request.
+  seed?: number
   position: number
   source: 'config' | 'api'
   read_only: boolean
@@ -28,7 +32,10 @@ export interface MockRule {
 export type MockRuleInput = Pick<
   MockRule,
   'project' | 'name' | 'method' | 'path' | 'status' | 'headers' | 'body' | 'delay_ms' | 'enabled'
->
+> & {
+  template: boolean
+  seed: number
+}
 
 export type MockNearReason = 'disabled' | 'method' | 'project'
 
@@ -50,6 +57,8 @@ export interface MockSnapshot {
   body_truncated: boolean
   delay_ms: number
   near?: MockNear[]
+  // Set when the rule's template failed while answering this request.
+  template_error?: string
 }
 
 // The captured request: the part of the HTTP dump payload this page reads.

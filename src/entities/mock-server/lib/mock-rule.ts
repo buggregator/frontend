@@ -79,6 +79,9 @@ export const validateRule = (rule: MockRuleInput): MockRuleErrors => {
   if (!Number.isInteger(rule.delay_ms) || rule.delay_ms < 0 || rule.delay_ms > MAX_DELAY_MS) {
     errors.delay_ms = `Delay must be between 0 and ${MAX_DELAY_MS} ms.`
   }
+  if (!Number.isInteger(rule.seed)) {
+    errors.seed = 'Seed must be a whole number.'
+  }
   if (bodyBytes(rule.body) > MAX_BODY_BYTES) {
     errors.body = 'Body must be at most 1 MB.'
   }
@@ -103,6 +106,8 @@ export const emptyDraft = (): MockRuleInput => ({
   body: '',
   delay_ms: 0,
   enabled: true,
+  template: false,
+  seed: 0,
 })
 
 const ID_SEGMENT = /^(\d+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i
