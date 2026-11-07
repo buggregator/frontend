@@ -1162,9 +1162,11 @@ onBeforeUnmount(() => {
   @media (max-width: 639px) {
     @apply relative h-9;
 
+    // The bar sits at the top edge, so the extra room goes down: placed from
+    // the padding box, -12px makes the tap area about 45 px tall.
     &::after {
       content: '';
-      @apply absolute inset-x-0 -inset-y-1;
+      @apply absolute inset-x-0 top-0 -bottom-3;
     }
   }
 }
