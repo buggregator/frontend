@@ -36,3 +36,10 @@ export const parseHeaderLines = (text: string): Record<string, string> => {
   })
   return headers
 }
+
+// Go types a JSON body can take as written; anything else (strings, maps,
+// lists) needs `| json`. Parameters are left out: the server fills defaults.
+const PLAIN_OUTPUT = /^(u?int(8|16|32|64)?|float(32|64)|bool)$/
+
+export const fakeSnippet = (f: MockFake): string =>
+  PLAIN_OUTPUT.test(f.output) ? `{{ fake "${f.name}" }}` : `{{ fake "${f.name}" | json }}`

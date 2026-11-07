@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
-import { fakeCategories, filterFakes } from '../../lib/mock-template'
+import { fakeCategories, fakeSnippet, filterFakes } from '../../lib/mock-template'
 import { useMockHelpers } from '../../lib/use-mock-template'
 import type { MockHelperGroup } from '../../types'
 
@@ -185,7 +185,7 @@ const resetPage = () => (shown.value = FAKES_PAGE)
                   type="button"
                   class="mock-helpers__insert"
                   :aria-label="`Insert fake ${f.name}`"
-                  @click="emit('insert', f.example)"
+                  @click="emit('insert', fakeSnippet(f))"
                 >Insert</button>
               </span>
             </div>
@@ -202,8 +202,8 @@ const resetPage = () => (shown.value = FAKES_PAGE)
               ><code>{{ p.name }}</code> {{ p.type }}<template v-if="p.optional">, optional</template><template v-if="p.default">, default {{ p.default }}</template><template v-if="p.options?.length">: {{ p.options.join(' | ') }}</template></span>
             </p>
             <p class="mock-helpers__example">
-              <code>{{ f.example }}</code> <span aria-hidden="true">→</span><span class="sr-only">gives</span>
-              <code>{{ f.output }}</code>
+              <code>{{ fakeSnippet(f) }}</code> <span aria-hidden="true">→</span><span class="sr-only">gives, for example,</span>
+              <code class="mock-helpers__sample">{{ f.example }}</code>
             </p>
           </li>
         </ul>
@@ -297,6 +297,10 @@ const resetPage = () => (shown.value = FAKES_PAGE)
 
 .mock-helpers__example {
   @apply font-mono text-2xs text-gray-700 dark:text-gray-300 [overflow-wrap:anywhere];
+}
+
+.mock-helpers__sample {
+  @apply inline-block max-h-16 overflow-hidden align-top whitespace-pre-wrap;
 }
 
 .mock-helpers__filters {

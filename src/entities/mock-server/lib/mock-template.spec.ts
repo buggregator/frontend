@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import type { MockFake } from '../types'
-import { fakeCategories, filterFakes, insertAt, parseHeaderLines } from './mock-template'
+import { fakeCategories, fakeSnippet, filterFakes, insertAt, parseHeaderLines } from './mock-template'
 
-const fake = (name: string, category: string, description = ''): MockFake => ({
-  name, category, description, example: `{{ fake "${name}" | json }}`, output: '"x"', params: [],
+const fake = (name: string, category: string, description = '', output = 'string'): MockFake => ({
+  name, category, description, example: 'sample', output, params: [],
 })
 
 describe('insertAt', () => {
@@ -47,5 +47,20 @@ describe('parseHeaderLines', () => {
 
   it('keeps a colon inside the value and drops lines without a name', () => {
     expect(parseHeaderLines('Referer: http://a/b\n: x\nbroken')).toEqual({ Referer: 'http://a/b' })
+  })
+})
+
+describe('fakeSnippet', () => {
+  // The server's `example` is a sample value and `output` the Go type.
+  it('writes strings and objects as JSON', () => {
+    expect(fakeSnippet(fake('email', 'person'))).toBe('{{ fake "email" | json }}')
+    expect(fakeSnippet(fake('person', 'person', '', 'map[string]any'))).toBe('{{ fake "person" | json }}')
+    expect(fakeSnippet(fake('words', 'text', '', '[]string'))).toBe('{{ fake "words" | json }}')
+  })
+
+  it('writes numbers and bools as they are', () => {
+    expect(fakeSnippet(fake('number', 'number', '', 'int'))).toBe('{{ fake "number" }}')
+    expect(fakeSnippet(fake('price', 'payment', '', 'float64'))).toBe('{{ fake "price" }}')
+    expect(fakeSnippet(fake('bool', 'misc', '', 'bool'))).toBe('{{ fake "bool" }}')
   })
 })

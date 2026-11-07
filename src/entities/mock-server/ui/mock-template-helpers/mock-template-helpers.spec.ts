@@ -6,9 +6,9 @@ import MockTemplateHelpers from './mock-template-helpers.vue'
 
 const fakes = Array.from({ length: 35 }, (_, i) => ({
   name: `gen${i}`, category: i % 2 ? 'internet' : 'person', description: `Generator ${i}`,
-  example: `{{ fake "gen${i}" | json }}`, output: '"x"', params: [],
+  example: 'sample', output: 'string', params: [],
 }))
-fakes.push({ name: 'email', category: 'internet', description: 'Email address', example: '{{ fake "email" | json }}', output: '"a@example.com"', params: [] })
+fakes.push({ name: 'email', category: 'internet', description: 'Email address', example: 'a@example.com', output: 'string', params: [] })
 
 const DATA = {
   helpers: [
