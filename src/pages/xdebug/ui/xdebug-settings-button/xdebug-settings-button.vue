@@ -35,6 +35,9 @@ const save = async () => {
   if (await settings.save()) close()
 }
 
+// The page's «Pause on the first line» link opens it too; focus returns there.
+defineExpose({ show })
+
 onClickOutside(root, () => {
   if (open.value) open.value = false
 })

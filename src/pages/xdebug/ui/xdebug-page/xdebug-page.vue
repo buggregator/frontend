@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { useIntervalFn, useNow, useTitle } from '@vueuse/core'
-import { computed, onMounted, watch } from 'vue'
+import { createReusableTemplate, useDebounceFn, useIntervalFn, useNow, useTitle } from '@vueuse/core'
+import { computed, onMounted, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
 import {
+  breakpointRows,
   closedReasonText,
+  gutterMarks,
   closedTitle,
   isLive,
   sessionTitle,
   splitPath,
+  useXdebugBreakpoints,
   useXdebugControl,
   useXdebugDebugger,
   useXdebugRequests,
@@ -16,6 +19,8 @@ import {
   onXdebugMessage,
   onXdebugReconnect,
   XdebugAgentTimeline,
+  XdebugBreakpointAdd,
+  XdebugBreakpoints,
   XdebugCallStack,
   XdebugCodeView,
   XdebugControlBar,
@@ -49,13 +54,23 @@ const select = (id: string) => router.replace({ query: { ...route.query, session
 const allowEval = computed(() => !!config.value?.allow_eval)
 const dbg = useXdebugDebugger(api, selected, allowEval)
 
+// Saved breakpoints (server PR #401). The server sends a change to the
+// paused session before it answers, so the session's states are re-read after
+// each change from here; an agent's change comes as `breakpoints.changed`.
+// Own changes and their `breakpoints.changed` echo share one debounced re-read.
+const reloadSessionBreakpoints = useDebounceFn(() => dbg.reloadBreakpoints(), 300)
+const bps = useXdebugBreakpoints(api, () => reloadSessionBreakpoints())
+
 onXdebugMessage((message) => {
   list.apply(message)
   dbg.apply(message)
+  bps.apply(message)
+  if (message.event === 'breakpoints.changed' && selected.value?.driver === 'here') reloadSessionBreakpoints()
 })
 onXdebugReconnect(() => {
   list.load()
   dbg.refresh()
+  if (showBreakpoints.value) bps.load()
 })
 onMounted(() => list.load())
 useIntervalFn(() => list.tick(), 30_000)
@@ -96,6 +111,31 @@ const breakpointLines = computed(() => dbg.breakpoints.value
   .filter((b) => b.line && b.file === (dbg.source.value?.file ?? frame.value?.file))
   .map((b) => b.line as number))
 
+// Buggregator drives the selected session: the gutter and the panel edit.
+const drivenHere = computed(() => selected.value?.driver === 'here')
+// Mode proxy and older servers: no saved breakpoints (today's page).
+const showBreakpoints = computed(() => !!config.value?.enabled && (drivenHere.value || (hasModes.value && config.value.mode !== 'proxy')))
+const bpReadOnly = computed(() => selected.value?.driver === 'ide')
+const bpRows = computed(() => breakpointRows(bps.list.value, dbg.breakpoints.value, drivenHere.value))
+const bpOn = computed(() => bps.list.value.filter((b) => b.enabled).length)
+const gutter = computed(() => gutterMarks(dbg.source.value?.file, bps.list.value, dbg.breakpoints.value, drivenHere.value))
+const toggleBreakpoint = (line: number) => {
+  const file = dbg.source.value?.file
+  if (file) bps.toggleLine(file, line)
+}
+watch(showBreakpoints, (on) => { if (on && bps.state.value === 'idle') bps.load() }, { immediate: true })
+
+const [DefineBreakpoints, ReuseBreakpoints] = createReusableTemplate()
+
+// No sessions yet in Auto / Standalone: say Buggregator will pause here.
+const drivesHere = computed(() => hasModes.value && config.value?.mode !== 'proxy')
+const savedText = computed(() => {
+  const n = bpOn.value
+  if (!n) return 'your breakpoints'
+  return `your ${n} saved ${n === 1 ? 'breakpoint' : 'breakpoints'}`
+})
+const settingsButton = useTemplateRef<InstanceType<typeof XdebugSettingsButton>>('settingsButton')
+
 const contextLabel = (name: string) => (name === 'User defined constants' ? 'User constants' : name)
 
 const dismiss = async (id: string) => {
@@ -117,6 +157,43 @@ watch(selectedId, (id) => {
 </script>
 
 <template>
+  <DefineBreakpoints>
+    <details
+      class="xdebug-sec"
+      open
+    >
+      <summary>
+        <XdebugIcon name="down" />Breakpoints <span class="xdebug-sec__count">{{ bps.list.value.length }}</span>
+        <span
+          v-if="bps.list.value.length && !bpReadOnly"
+          class="xdebug-sec__right"
+        >{{ bpOn }} on</span>
+      </summary>
+      <XdebugBreakpoints
+        :rows="bpRows"
+        :read-only="bpReadOnly"
+        :allow-eval="allowEval"
+        :show-hits="drivenHere && dbg.paused.value"
+        :busy="bps.busy.value"
+        :row-error="bps.rowError.value"
+        :load-error="bps.state.value === 'error'"
+        :save-condition="bps.setCondition"
+        @enable="bps.setEnabled"
+        @remove="bps.remove"
+        @retry="bps.load()"
+      >
+        <XdebugBreakpointAdd
+          v-if="!bpReadOnly && bps.state.value !== 'error'"
+          :add="bps.add"
+          :find-files="api.findFiles"
+          :adding="bps.adding.value"
+          :server-error="bps.addError.value"
+          @edit="bps.clearAddError()"
+        />
+      </XdebugBreakpoints>
+    </details>
+  </DefineBreakpoints>
+
   <LayoutBase>
     <template #sidebar>
       <LayoutSidebar />
@@ -150,6 +227,7 @@ watch(selectedId, (id) => {
           </span>
           <XdebugSettingsButton
             v-if="config?.enabled && hasModes"
+            ref="settingsButton"
             :config="config"
             @saved="list.setSettings"
           />
@@ -217,13 +295,53 @@ watch(selectedId, (id) => {
             class="xdebug-page__empty-ico"
           />
           <h2>No debug sessions</h2>
-          <p>
-            Point Xdebug at Buggregator (<code>xdebug.client_port={{ port(config.addr) }}</code>) and move your IDE
-            to port <b>{{ port(config.ide_addr) }}</b>. Sessions appear here while the script runs.
-          </p>
-          <pre class="xdebug-page__pre">xdebug.mode=debug
+          <template v-if="drivesHere">
+            <p>
+              <template v-if="config.mode === 'standalone'">
+                Mode <b>Standalone</b>: Buggregator pauses at {{ savedText }} and you step here.
+              </template>
+              <template v-else>
+                Mode <b>Auto</b>: with no IDE listening, Buggregator pauses at {{ savedText }} and you step here.
+              </template>
+            </p>
+            <pre class="xdebug-page__pre">xdebug.mode=debug
+xdebug.client_host=127.0.0.1
+xdebug.client_port={{ port(config.addr) }}
+xdebug.start_with_request=yes</pre>
+            <p
+              v-if="config.pause_on_first_line"
+              class="xdebug-page__hint"
+            >
+              <b>Pause on the first line</b> is on: every new session stops at its first line.
+            </p>
+            <p
+              v-else
+              class="xdebug-page__hint"
+            >
+              No breakpoint yet? Turn on
+              <button
+                type="button"
+                class="xdebug-page__link"
+                @click="settingsButton?.show($event)"
+                v-text="'Pause on the first line'"
+              />, run the request, then click line numbers.
+            </p>
+          </template>
+          <template v-else>
+            <p>
+              Point Xdebug at Buggregator (<code>xdebug.client_port={{ port(config.addr) }}</code>) and move your IDE
+              to port <b>{{ port(config.ide_addr) }}</b>. Sessions appear here while the script runs.
+            </p>
+            <pre class="xdebug-page__pre">xdebug.mode=debug
 xdebug.client_host=127.0.0.1
 xdebug.client_port={{ port(config.addr) }}</pre>
+          </template>
+          <div
+            v-if="showBreakpoints"
+            class="xdebug-page__bpcard"
+          >
+            <ReuseBreakpoints />
+          </div>
         </div>
       </div>
 
@@ -317,7 +435,11 @@ xdebug.client_port={{ port(config.addr) }}</pre>
                 @remove="dbg.removeWatch"
               />
             </details>
+          </template>
 
+          <ReuseBreakpoints v-if="showBreakpoints" />
+
+          <template v-if="showDebugger">
             <details
               class="xdebug-sec"
               open
@@ -437,9 +559,12 @@ xdebug.client_port={{ port(config.addr) }}</pre>
               :line="frame?.line ?? null"
               :is-top-frame="dbg.frame.value === 0"
               :breakpoint-lines="breakpointLines"
+              :editable="drivenHere && showControls"
+              :marks="gutter"
               :loading="dbg.sourceState.value === 'loading' || dbg.stackState.value === 'loading'"
               :error="dbg.stackState.value === 'error' ? 'Could not read the call stack.' : dbg.sourceError.value"
               :stale="dbg.stale.value"
+              @toggle="toggleBreakpoint"
             />
           </template>
 
@@ -590,6 +715,18 @@ xdebug.client_port={{ port(config.addr) }}</pre>
 
   &:not([open]) > summary > .xdebug-icon {
     @apply -rotate-90;
+  }
+}
+
+.xdebug-sec__right {
+  @apply ml-auto normal-case tracking-normal font-medium text-gray-500 dark:text-gray-400;
+}
+
+.xdebug-page__bpcard {
+  @apply mt-4 rounded-md border text-left border-gray-200 dark:border-gray-700 overflow-visible;
+
+  .xdebug-sec {
+    @apply border-b-0;
   }
 }
 
@@ -745,6 +882,15 @@ xdebug.client_port={{ port(config.addr) }}</pre>
   code {
     @apply font-mono text-xs px-1 rounded bg-gray-100 dark:bg-gray-800;
   }
+}
+
+.xdebug-page__hint {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.xdebug-page__link {
+  @apply underline text-blue-700 dark:text-blue-300 rounded;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
 }
 
 .xdebug-page__empty--wide {

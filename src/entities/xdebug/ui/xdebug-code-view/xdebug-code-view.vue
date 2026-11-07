@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useResizeObserver } from '@vueuse/core'
 import { computed, nextTick, ref, watch } from 'vue'
+import type { GutterMark } from '../../lib/xdebug-breakpoints'
 import { highlightPhp, shortFile } from '../../lib/xdebug-format'
 import type { XdebugSource } from '../../types'
 import { XdebugIcon } from '../xdebug-icon'
@@ -10,7 +11,11 @@ type Props = {
   line: number | null
   // The paused line of the top frame; another frame's line is marked lighter.
   isTopFrame?: boolean
+  // Read-only dots (an IDE's breakpoints).
   breakpointLines?: number[]
+  // Buggregator drives: the gutter toggles saved breakpoints, `marks` shows them.
+  editable?: boolean
+  marks?: Map<number, GutterMark>
   loading?: boolean
   error?: string
   stale?: boolean
@@ -19,23 +24,41 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   isTopFrame: true,
   breakpointLines: () => [],
+  editable: false,
+  marks: () => new Map(),
   loading: false,
   error: '',
   stale: false
 })
 
+const emit = defineEmits<{ toggle: [line: number] }>()
+
 const root = ref<HTMLElement | null>(null)
-const bps = computed(() => new Set(props.breakpointLines))
+const lineMarks = computed(() => props.editable
+  ? props.marks
+  : new Map(props.breakpointLines.map((n) => [n, 'on' as GutterMark])))
 const rows = computed(() => (props.source?.lines ?? []).map(({ line, text }) => ({
   line,
   tokens: highlightPhp(text),
   current: line === props.line,
-  breakpoint: bps.value.has(line)
+  mark: lineMarks.value.get(line)
 })))
+
+const MARK_TEXT: Record<GutterMark, string> = {
+  on: 'breakpoint',
+  cond: 'conditional breakpoint',
+  off: 'disabled breakpoint',
+  unres: 'breakpoint Xdebug has not set here'
+}
+const gutLabel = (line: number, mark: GutterMark | undefined) =>
+  `Line ${line}${mark ? `, ${MARK_TEXT[mark]}` : ''} — press to ${mark ? 'remove the' : 'add a'} breakpoint`
+const gutTitle = (line: number, mark: GutterMark | undefined) =>
+  mark ? `Remove breakpoint · line ${line}` : `Add breakpoint · line ${line}`
 
 const label = computed(() => {
   const name = shortFile(props.source?.file)
-  const marks = props.breakpointLines.length ? `, breakpoints on lines ${props.breakpointLines.join(', ')}` : ''
+  const lines = [...lineMarks.value.keys()].sort((a, b) => a - b)
+  const marks = lines.length ? `, breakpoints on lines ${lines.join(', ')}` : ''
   return name ? `Source of ${name}${marks}` : 'Source'
 })
 
@@ -57,7 +80,7 @@ useResizeObserver(root, () => scrollToLine())
   <div
     ref="root"
     class="xdebug-code"
-    :class="{ 'xdebug-code--stale': stale }"
+    :class="{ 'xdebug-code--stale': stale, 'xdebug-code--edit': editable }"
     role="region"
     :aria-label="label"
     :aria-busy="loading || undefined"
@@ -91,9 +114,32 @@ useResizeObserver(root, () => scrollToLine())
         :class="{ 'is-cur': row.current, 'is-other-frame': row.current && !isTopFrame }"
         :aria-current="row.current ? 'step' : undefined"
       >
-        <span class="xdebug-code__gut">
+        <button
+          v-if="editable"
+          type="button"
+          class="xdebug-code__gut"
+          :aria-label="gutLabel(row.line, row.mark)"
+          :title="gutTitle(row.line, row.mark)"
+          @click="emit('toggle', row.line)"
+        >
           <span
-            v-if="row.breakpoint"
+            class="xdebug-code__slot"
+            :class="row.mark ? `is-${row.mark}` : undefined"
+          />
+          <span
+            v-if="row.current"
+            class="xdebug-code__arrow"
+          >
+            <XdebugIcon name="right" />
+          </span>
+          <span class="xdebug-code__no">{{ row.line }}</span>
+        </button>
+        <span
+          v-else
+          class="xdebug-code__gut"
+        >
+          <span
+            v-if="row.mark"
             class="xdebug-code__bp"
             title="Breakpoint (set in the IDE)"
           />
@@ -192,6 +238,68 @@ useResizeObserver(root, () => scrollToLine())
   width: 9px;
   height: 9px;
   box-shadow: 0 0 0 2px var(--gut-bg);
+}
+
+// Buggregator drives: the whole gutter toggles a breakpoint (design #4526 §4.1).
+button.xdebug-code__gut {
+  @apply border-0 cursor-pointer;
+
+  font: inherit;
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-inset ring-blue-500;
+  }
+}
+
+.xdebug-code__slot {
+  @apply flex-none grid place-items-center rounded-full;
+
+  width: 11px;
+  height: 11px;
+
+  .xdebug-code__ln:hover &:not([class*='is-']),
+  .xdebug-code__gut:focus-visible &:not([class*='is-']) {
+    box-shadow: inset 0 0 0 1.5px rgb(244 63 94 / 70%);
+  }
+
+  &.is-on,
+  &.is-cond {
+    @apply bg-rose-500;
+
+    box-shadow: 0 0 0 2px var(--gut-bg);
+  }
+
+  // The «=» mark of a condition, cut in the gutter colour.
+  &.is-cond::after {
+    content: '';
+    width: 5px;
+    height: 2px;
+    margin-top: 2px;
+    border-radius: 1px;
+    background: var(--gut-bg);
+    box-shadow: 0 -2.5px 0 var(--gut-bg);
+  }
+
+  &.is-off {
+    box-shadow: inset 0 0 0 2px theme('colors.rose.500');
+  }
+
+  &.is-unres {
+    @apply text-gray-500 dark:text-gray-400;
+
+    box-shadow: inset 0 0 0 2px currentcolor;
+  }
+}
+
+@media (max-width: 767px) {
+  .xdebug-code--edit {
+    line-height: 26px;
+  }
+
+  .xdebug-code__slot {
+    width: 13px;
+    height: 13px;
+  }
 }
 
 .xdebug-code__arrow {
