@@ -3,6 +3,7 @@ import type { XdebugSession, XdebugVar } from '../types'
 import {
   changedNames,
   closedReasonText,
+  closedTitle,
   flattenValues,
   foldFrames,
   highlightPhp,
@@ -45,6 +46,10 @@ describe('xdebug-format', () => {
     expect(closedReasonText('ide_closed', 'x')).toMatch(/IDE/)
     expect(closedReasonText('engine_closed', 'x')).toMatch(/script/i)
     expect(closedReasonText('stopped', 'x')).toMatch(/stopped/i)
+    expect(closedReasonText('detached', 'x')).toBe('The script runs on to the end without pausing again.')
+    expect(closedReasonText('idle_detached', 'x', 600)).toBe('Released after 10 minutes without a command. The script ran on to the end.')
+    expect(closedReasonText('idle_detached', 'x', 90)).toMatch(/^Released after 90 seconds without a command/)
+    expect(closedReasonText('idle_detached', 'x')).toMatch(/^Released after a while without a command/)
   })
 
   it('folds runs of vendor frames, keeping the selected one visible', () => {
@@ -81,6 +86,17 @@ describe('xdebug-format', () => {
     ])
     expect([...changedNames(before, after)].sort()).toEqual(['$a', '$c'])
     expect(changedNames(null, after).size).toBe(0)
+  })
+})
+
+describe('closedTitle', () => {
+  const t = (over: Partial<XdebugSession>) => closedTitle({ id: '1', state: 'detached', ide_connected: false, agent_calls: 0, ...over })
+
+  it('names a released session apart from one the IDE dropped', () => {
+    expect(t({ closed_reason: 'detached' })).toBe('Released.')
+    expect(t({ closed_reason: 'idle_detached' })).toBe('Released.')
+    expect(t({ closed_reason: 'ide_closed' })).toBe('Detached.')
+    expect(t({ state: 'stopped', closed_reason: 'stopped' })).toBe('Ended.')
   })
 })
 

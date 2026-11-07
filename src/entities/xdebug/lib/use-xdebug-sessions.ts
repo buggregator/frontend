@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import type { XdebugConfig, XdebugSession, XdebugWsMessage } from '../types'
+import type { XdebugConfig, XdebugDriving, XdebugSession, XdebugSettings, XdebugWsMessage } from '../types'
 import type { XdebugRequests } from './use-xdebug-requests'
 import { isLive } from './xdebug-format'
 
@@ -8,6 +8,12 @@ export type LoadState = 'loading' | 'ready' | 'error'
 // The server keeps a closed session for ten minutes; the page hides it after
 // the same time without asking again.
 export const TOMBSTONE_TTL_MS = 10 * 60 * 1000
+
+const DRIVING_KEYS = ['driver', 'last_continuation_by', 'last_continuation_agent', 'idle_deadline'] as const
+
+// The driving fields a status event carries; a field it lacks (older server) keeps its value.
+const driving = (data: XdebugDriving): XdebugDriving =>
+  Object.fromEntries(DRIVING_KEYS.filter((k) => k in data).map((k) => [k, data[k]]))
 
 // Module config and the session list: loaded once, then kept live from the
 // `xdebug` channel (`apply`).
@@ -55,6 +61,7 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
           ...(line ? { last_line: line } : {}),
           ...(kind ? { kind } : {}),
           ...(target ? { target } : {}),
+          ...driving(message.data),
           ...(next === 'break' && before?.state !== 'break' ? { paused_at: new Date().toISOString() } : {})
         })
         break
@@ -64,8 +71,12 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
           state: message.data.state,
           closed_reason: message.data.reason,
           closed_at: new Date().toISOString(),
+          idle_deadline: null,
           ...(message.data.reason === 'ide_unreachable' || message.data.reason === 'ide_closed' ? { ide_connected: false } : {})
         })
+        break
+      case 'session.idle':
+        patch(message.data.id, { idle_deadline: message.data.idle_deadline })
         break
       case 'agent.call': {
         const s = all.value.find((x) => x.id === message.data.session_id)
@@ -82,6 +93,11 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
     all.value = all.value.filter((s) => s.id !== id)
   }
 
+  // After PUT /api/xdebug/settings: the page shows the saved values at once.
+  const setSettings = (settings: XdebugSettings) => {
+    if (config.value) config.value = { ...config.value, ...settings }
+  }
+
   const tick = () => {
     now.value = Date.now()
   }
@@ -96,5 +112,5 @@ export const useXdebugSessions = (api: Pick<XdebugRequests, 'getConfig' | 'getSe
     return [...fresh.filter(isLive).sort(byStart), ...fresh.filter((s) => !isLive(s)).sort(byStart)]
   })
 
-  return { config, sessions, state, load, apply, dismiss, tick }
+  return { config, sessions, state, load, apply, upsert, setSettings, dismiss, tick }
 }

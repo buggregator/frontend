@@ -15,7 +15,13 @@ export const sessionTitle = (s: XdebugSession) => s.target || shortFile(s.entry_
 // A tombstone is a closed session the server keeps for ten minutes.
 export const isLive = (s: XdebugSession) => !s.closed_reason && s.state !== 'stopped' && s.state !== 'detached'
 
-export const closedReasonText = (reason: XdebugClosedReason | undefined, ideAddr: string) => {
+const duration = (seconds: number | undefined) => {
+  if (!seconds) return 'a while'
+  if (seconds % 60 === 0) return `${seconds / 60} ${seconds === 60 ? 'minute' : 'minutes'}`
+  return `${seconds} seconds`
+}
+
+export const closedReasonText = (reason: XdebugClosedReason | undefined, ideAddr: string, idleSeconds?: number) => {
   switch (reason) {
     case 'ide_unreachable':
       return `IDE not reachable at ${ideAddr}. The script ran on without debugging.`
@@ -25,9 +31,19 @@ export const closedReasonText = (reason: XdebugClosedReason | undefined, ideAddr
       return 'The script finished or Xdebug closed the connection.'
     case 'stopped':
       return 'The session was stopped.'
+    case 'detached':
+      return 'The script runs on to the end without pausing again.'
+    case 'idle_detached':
+      return `Released after ${duration(idleSeconds)} without a command. The script ran on to the end.`
     default:
       return 'The session has ended.'
   }
+}
+
+// Headline of a tombstone: released from here (UI, agent, idle guard), dropped by the IDE, or ended.
+export const closedTitle = (s: XdebugSession) => {
+  if (s.closed_reason === 'detached' || s.closed_reason === 'idle_detached') return 'Released.'
+  return s.state === 'detached' ? 'Detached.' : 'Ended.'
 }
 
 export type FrameRow =
