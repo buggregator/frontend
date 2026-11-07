@@ -4,10 +4,13 @@ import { useProfileStore } from '@/shared/stores'
 import type {
   XdebugAgentCall,
   XdebugBreakpoint,
+  XdebugBreakpointDraft,
+  XdebugBreakpointPatch,
   XdebugCommand,
   XdebugConfig,
   XdebugContext,
   XdebugFrame,
+  XdebugSavedBreakpoint,
   XdebugSession,
   XdebugSettings,
   XdebugSource,
@@ -84,6 +87,17 @@ export const useXdebugRequests = () => {
   const putSettings = (settings: Partial<Pick<XdebugSettings, 'mode' | 'pause_on_first_line'>>) =>
     request<XdebugSettings>('/settings', { method: 'PUT', body: JSON.stringify(settings) })
 
+  // Saved breakpoints (server PR #401). A condition with eval off: 403 `eval_disabled`.
+  const listSavedBreakpoints = () => request<XdebugSavedBreakpoint[]>('/breakpoints').then((list) => list ?? [])
+  const addBreakpoint = (draft: XdebugBreakpointDraft) =>
+    request<XdebugSavedBreakpoint>('/breakpoints', { method: 'POST', body: JSON.stringify(draft) })
+  const updateBreakpoint = (bp: number, patch: XdebugBreakpointPatch) =>
+    request<XdebugSavedBreakpoint>(`/breakpoints/${bp}`, { method: 'PATCH', body: JSON.stringify(patch) })
+  const removeBreakpoint = (bp: number) => request<void>(`/breakpoints/${bp}`, { method: 'DELETE' })
+  // Files seen in earlier pauses and stacks, as file:// URIs.
+  const findFiles = (q: string, limit = 20) =>
+    request<string[]>(`/files?${qs({ q, limit })}`).then((list) => list ?? [])
+
   return {
     getConfig,
     getSessions,
@@ -97,7 +111,12 @@ export const useXdebugRequests = () => {
     getAgentLog,
     evaluate,
     control,
-    putSettings
+    putSettings,
+    listSavedBreakpoints,
+    addBreakpoint,
+    updateBreakpoint,
+    removeBreakpoint,
+    findFiles
   }
 }
 

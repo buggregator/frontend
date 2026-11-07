@@ -47,7 +47,7 @@ const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e))
 // most once per session and pause: results are kept per session under the
 // pause key, and switching sessions or re-reading a pause reuses them.
 export const useXdebugDebugger = (
-  api: Omit<XdebugRequests, 'getConfig' | 'getSessions' | 'dismissSession' | 'control' | 'putSettings'>,
+  api: Pick<XdebugRequests, 'getStack' | 'getContexts' | 'getVariables' | 'getProperty' | 'getSource' | 'getBreakpoints' | 'getAgentLog' | 'evaluate'>,
   session: Ref<XdebugSession | null>,
   allowEval: Ref<boolean>
 ) => {
@@ -241,6 +241,19 @@ export const useXdebugDebugger = (
     }
   }
 
+  // After a breakpoint change: the server has sent it to the paused session,
+  // so its states (resolved, moved, skipped) are current now.
+  const reloadBreakpoints = async () => {
+    const sid = id.value
+    if (!sid || !paused.value) return
+    try {
+      const bps = await api.getBreakpoints(sid)
+      if (id.value === sid) breakpoints.value = bps
+    } catch {
+      // The old states stay; the next pause reads them again.
+    }
+  }
+
   const loadAgentLog = async () => {
     const sid = id.value
     if (!sid) return
@@ -382,6 +395,13 @@ export const useXdebugDebugger = (
         if (!agentLog.value.some((c) => c.seq === message.data.seq)) agentLog.value = [...agentLog.value, message.data]
         inflight.value = null
         break
+      case 'breakpoint.resolved': {
+        const { session_id: sid, breakpoint_id: bid, line } = message.data
+        if (sid !== id.value) return
+        breakpoints.value = breakpoints.value.map((b) =>
+          String(b.id) === String(bid) ? { ...b, state: 'resolved', resolved_line: line } : b)
+        break
+      }
       default:
         break
     }
@@ -421,6 +441,7 @@ export const useXdebugDebugger = (
     selectFrame,
     selectContext,
     loadPause,
+    reloadBreakpoints,
     expand,
     showFull,
     addWatch,

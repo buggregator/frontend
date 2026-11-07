@@ -100,14 +100,54 @@ export type XdebugSource = {
   lines: XdebugSourceLine[]
 }
 
+// A breakpoint in one session: what the IDE set (id from Xdebug), or for a
+// session driven here a saved one with its state there (numeric id).
 export type XdebugBreakpoint = {
-  id: string
+  id: string | number
   type: string
   state: string
   file?: string
   line?: number
   function?: string
   hit_count?: number
+  // Sessions driven here: the line Xdebug stops at when it moved the breakpoint.
+  resolved_line?: number
+}
+
+// Saved breakpoints (server PR #401): sent to every session driven here.
+export type XdebugBreakpointType = 'line' | 'exception'
+
+export type XdebugSavedBreakpoint = {
+  id: number
+  type: XdebugBreakpointType
+  // file:// URI as PHP sees it (line breakpoints).
+  file?: string
+  line?: number
+  // Class name, e.g. \Throwable (exception breakpoints).
+  exception?: string
+  // PHP expression; sent only while eval is allowed.
+  condition?: string
+  enabled: boolean
+  // `mcp`: set by an agent.
+  source: 'ui' | 'mcp'
+  created_at: string
+}
+
+// POST body: a plain absolute path becomes a file:// URI on the server.
+export type XdebugBreakpointDraft =
+  | { type: 'line'; file: string; line: number; condition?: string }
+  | { type: 'exception'; exception: string }
+
+// PATCH body: a field left out keeps its value.
+export type XdebugBreakpointPatch = Partial<Pick<XdebugSavedBreakpoint, 'enabled' | 'condition'>>
+
+// A saved breakpoint's state in a session driven here.
+export type XdebugBreakpointState = 'resolved' | 'unresolved' | 'skipped' | 'disabled' | 'pending'
+
+export type XdebugBreakpointResolved = {
+  session_id: string
+  breakpoint_id: number
+  line: number
 }
 
 export type XdebugAgentCall = {
@@ -159,3 +199,5 @@ export type XdebugWsMessage =
   | { event: 'session.idle'; data: XdebugIdleUpdate }
   | { event: 'agent.call.started'; data: XdebugAgentCallStarted }
   | { event: 'agent.call'; data: XdebugAgentCall }
+  | { event: 'breakpoints.changed'; data: XdebugSavedBreakpoint[] }
+  | { event: 'breakpoint.resolved'; data: XdebugBreakpointResolved }

@@ -260,4 +260,23 @@ describe('useXdebugDebugger', () => {
     await flushPromises()
     expect(on.dbg.watches.value[0]).toMatchObject({ state: 'ready', result: { value: '42' } })
   })
+  it('re-reads the session breakpoints while paused and keeps the line Xdebug resolved', async () => {
+    const { api, dbg } = setup()
+    await flushPromises()
+    api.getBreakpoints.mockResolvedValueOnce([{ id: 4 as unknown as string, type: 'line', state: 'unresolved', file: 'file:///app/Cart.php', line: 22 }])
+    await dbg.reloadBreakpoints()
+    expect(dbg.breakpoints.value[0]).toMatchObject({ id: 4, state: 'unresolved' })
+
+    dbg.apply({ event: 'breakpoint.resolved', data: { session_id: '1', breakpoint_id: 4, line: 24 } })
+    expect(dbg.breakpoints.value[0]).toMatchObject({ state: 'resolved', resolved_line: 24 })
+    dbg.apply({ event: 'breakpoint.resolved', data: { session_id: '2', breakpoint_id: 4, line: 30 } })
+    expect(dbg.breakpoints.value[0].resolved_line).toBe(24)
+  })
+
+  it('does not re-read breakpoints while the script runs', async () => {
+    const { api, dbg } = setup('running')
+    await flushPromises()
+    await dbg.reloadBreakpoints()
+    expect(api.getBreakpoints).not.toHaveBeenCalled()
+  })
 })
