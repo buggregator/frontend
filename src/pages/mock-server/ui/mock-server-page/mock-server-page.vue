@@ -391,14 +391,14 @@ onBeforeUnmount(() => {
         <template #controls>
           <button
             type="button"
-            class="mock-page__btn"
+            class="mock-page__btn mock-page__btn--head"
             @click="openImport"
           >
             Import <span class="mock-page__hide-xs">OpenAPI</span>
           </button>
           <button
             type="button"
-            class="mock-page__btn mock-page__btn--primary"
+            class="mock-page__btn mock-page__btn--primary mock-page__btn--head"
             @click="newRule"
           >
             + <span class="mock-page__hide-xs">New rule</span>
@@ -560,7 +560,7 @@ onBeforeUnmount(() => {
                     <span class="mock-page__spacer" />
                     <button
                       type="button"
-                      class="mock-page__icon"
+                      class="mock-page__icon mock-page__group-del"
                       :aria-label="`Delete group ${rule.group}`"
                       title="Delete group"
                       @click="removeGroup(rule.group || '')"
@@ -1077,6 +1077,14 @@ onBeforeUnmount(() => {
   }
 }
 
+.mock-page__icon.mock-page__group-del {
+  @apply shrink-0;
+
+  @media (max-width: 639px) {
+    @apply w-11 h-11;
+  }
+}
+
 .mock-page__row {
   @apply flex flex-wrap gap-2;
 }
@@ -1142,9 +1150,22 @@ onBeforeUnmount(() => {
   @apply inline-flex items-center justify-center gap-1 h-7 px-3 rounded text-xs font-medium whitespace-nowrap;
   @apply border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200;
   @apply hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
 
   @media (max-width: 639px) {
-    @apply h-10;
+    @apply h-11 min-w-11;
+  }
+}
+
+.mock-page__btn--head {
+  // the header bar is 36 px: the button stays inside, the hit area reaches 44
+  @media (max-width: 639px) {
+    @apply relative h-9;
+
+    &::after {
+      content: '';
+      @apply absolute inset-x-0 -inset-y-1;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { buildImport, emptyImportDraft } from '../../lib/mock-openapi'
 import type { MockOpenAPIErrors, MockOpenAPIImport, MockOpenAPIResult } from '../../types'
 
@@ -30,7 +30,26 @@ const draft = ref(emptyImportDraft())
 const fileError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const specError = computed(() => fileError.value || props.errors.spec || '')
+// Set when Import is pressed with nothing to import; cleared by typing.
+const missing = ref(false)
+watch(
+  () => [draft.value.spec, draft.value.url, draft.value.source],
+  () => (missing.value = false)
+)
+
+const specError = computed(
+  () =>
+    fileError.value ||
+    props.errors.spec ||
+    (missing.value && draft.value.source === 'paste' ? 'Paste a spec or load a file.' : '')
+)
+const urlError = computed(
+  () =>
+    props.errors.url ||
+    props.errors.spec ||
+    (missing.value && draft.value.source === 'url' ? 'Enter the spec URL.' : '')
+)
+const form = ref<HTMLFormElement | null>(null)
 const groupNames = computed(() => [...props.groups.keys()])
 const replaces = computed(() => props.groups.get(draft.value.group.trim()) || 0)
 const canSubmit = computed(() =>
@@ -52,8 +71,15 @@ const readFile = async (e: Event) => {
   draft.value.spec = await file.text()
 }
 
-const submit = () => {
-  if (!canSubmit.value || props.busy) return
+const submit = async () => {
+  if (props.busy) return
+  if (!canSubmit.value) {
+    missing.value = true
+    await nextTick()
+    // focus reads the message out (aria-describedby)
+    form.value?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()
+    return
+  }
   emit('submit', buildImport(draft.value))
 }
 </script>
@@ -93,6 +119,7 @@ const submit = () => {
   <form
     v-else
     id="mock-import-form"
+    ref="form"
     class="mock-import"
     novalidate
     @submit.prevent="submit"
@@ -189,17 +216,17 @@ const submit = () => {
           type="url"
           inputmode="url"
           class="mock-import__input mock-import__mono"
-          :class="{ 'mock-import__input--error': errors.url || errors.spec }"
+          :class="{ 'mock-import__input--error': urlError }"
           placeholder="https://petstore3.swagger.io/api/v3/openapi.json"
-          :aria-invalid="!!(errors.url || errors.spec)"
-          :aria-describedby="errors.url || errors.spec ? 'mock-i-url-err' : undefined"
+          :aria-invalid="!!urlError"
+          :aria-describedby="urlError ? 'mock-i-url-err' : undefined"
         >
         <p
-          v-if="errors.url || errors.spec"
+          v-if="urlError"
           id="mock-i-url-err"
           class="mock-import__error"
         >
-          {{ errors.url || errors.spec }}
+          {{ urlError }}
         </p>
       </div>
     </fieldset>
@@ -238,7 +265,7 @@ const submit = () => {
           <label
             class="mock-import__label"
             for="mock-i-group"
-          >Group <span class="mock-import__hint">empty = openapi:&lt;title of the spec&gt;</span></label>
+          >Group</label>
           <input
             id="mock-i-group"
             v-model="draft.group"
@@ -248,11 +275,15 @@ const submit = () => {
             :class="{ 'mock-import__input--error': errors.group }"
             :aria-invalid="!!errors.group"
             :aria-describedby="
-              [errors.group && 'mock-i-group-err', replaces && 'mock-i-group-warn']
+              ['mock-i-group-hint', errors.group && 'mock-i-group-err', replaces && 'mock-i-group-warn']
                 .filter(Boolean)
                 .join(' ') || undefined
             "
           >
+          <span
+            id="mock-i-group-hint"
+            class="mock-import__hint"
+          >Empty = openapi:&lt;title of the spec&gt;</span>
           <datalist id="mock-i-groups">
             <option
               v-for="g in groupNames"
@@ -364,11 +395,11 @@ const submit = () => {
 }
 
 .mock-import__row {
-  @apply flex flex-wrap gap-3;
+  @apply flex flex-col sm:flex-row sm:flex-wrap gap-3;
 }
 
 .mock-import__grow {
-  @apply flex-1 min-w-[12rem];
+  @apply sm:flex-1 sm:min-w-[12rem];
 }
 
 .mock-import__field {
@@ -396,6 +427,7 @@ const submit = () => {
 
   input {
     @apply mt-0.5 shrink-0;
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
   }
 
   @media (max-width: 639px) {
@@ -452,6 +484,11 @@ const submit = () => {
 
 .mock-import__link {
   @apply text-xs text-blue-700 dark:text-blue-400 underline underline-offset-2;
+
+  @media (max-width: 639px) {
+    @apply inline-flex items-center min-h-11 px-2 -mr-2;
+  }
+
   @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400;
 }
 

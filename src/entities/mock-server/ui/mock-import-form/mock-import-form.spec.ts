@@ -11,10 +11,26 @@ describe('MockImportForm', () => {
     expect(w.emitted('submit')?.[0]).toEqual([{ spec: 'openapi: 3.0.0', project: 'shop' }])
   })
 
-  it('does not submit without a spec', async () => {
-    const w = mount(MockImportForm)
+  it('says what is missing instead of submitting an empty spec', async () => {
+    const w = mount(MockImportForm, { attachTo: document.body })
     await w.find('form').trigger('submit')
     expect(w.emitted('submit')).toBeUndefined()
+    expect(w.find('#mock-i-spec').attributes('aria-invalid')).toBe('true')
+    expect(w.find('#mock-i-spec-err').text()).toBe('Paste a spec or load a file.')
+    expect(document.activeElement?.id).toBe('mock-i-spec')
+
+    await w.find('#mock-i-spec').setValue('openapi: 3.0.0')
+    expect(w.find('#mock-i-spec-err').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('asks for the url on the URL tab', async () => {
+    const w = mount(MockImportForm)
+    await w.findAll('.mock-import__tab')[1].trigger('click')
+    await w.find('form').trigger('submit')
+    expect(w.emitted('submit')).toBeUndefined()
+    expect(w.find('#mock-i-url').attributes('aria-invalid')).toBe('true')
+    expect(w.find('#mock-i-url-err').text()).toBe('Enter the spec URL.')
   })
 
   it('submits a url and an own base path', async () => {
