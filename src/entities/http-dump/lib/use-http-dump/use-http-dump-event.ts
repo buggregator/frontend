@@ -1,6 +1,7 @@
 import { computed, type Ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import type { HttpDump } from '../../types'
+import { buildCurlCommand } from './build-curl-command'
 
 export const useHttpDumpEvent = (event: Ref<NormalizedEvent<HttpDump>>) => {
   const isProxy = computed(() => !!event.value.payload.proxy)
@@ -73,31 +74,7 @@ export const useHttpDumpEvent = (event: Ref<NormalizedEvent<HttpDump>>) => {
     return `${(len / (1024 * 1024)).toFixed(1)} MB`
   })
 
-  const curlCommand = computed(() => {
-    const req = event.value.payload.request
-    let curl = `curl -X ${req.method}`
-
-    if (isProxy.value) {
-      curl += ` '${event.value.payload.host}${req.uri}'`
-    } else if (host.value) {
-      curl += ` '${host.value}${req.uri}'`
-    } else {
-      curl += ` '${req.uri}'`
-    }
-
-    const headers = req.headers || {}
-    for (const [key, val] of Object.entries(headers)) {
-      if (key.toLowerCase() === 'host') continue
-      const v = Array.isArray(val) ? val[0] : val
-      curl += ` \\\n  -H '${key}: ${v}'`
-    }
-
-    if (req.body) {
-      curl += ` \\\n  -d '${req.body.replace(/'/g, "'\\''")}'`
-    }
-
-    return curl
-  })
+  const curlCommand = computed(() => buildCurlCommand(event.value.payload, window.location.origin))
 
   const rawHttp = computed(() => {
     const req = event.value.payload.request
