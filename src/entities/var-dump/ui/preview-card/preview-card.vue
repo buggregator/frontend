@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard, ValueDump } from '@/shared/ui'
+import { sourceLink as sourceLinkFor } from '../../lib/source-link'
 import type { VarDump } from '../../types'
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { buildLink } = useIdeLink()
+const { buildLink, isCodeEditorChosen } = useIdeLink()
 
 const eventValue = computed(() => String(props.event.payload?.payload?.value || ''))
 const eventType = computed(() => String(props.event.payload?.payload?.type || 'string'))
@@ -21,9 +22,7 @@ const source = computed(() => {
   if (!sourceObj.value?.file) return null
   return `${sourceObj.value.file}:${sourceObj.value.line}`
 })
-const sourceLink = computed(() =>
-  sourceObj.value ? buildLink(sourceObj.value.file, sourceObj.value.line) : null
-)
+const sourceLink = computed(() => sourceLinkFor(sourceObj.value, buildLink, isCodeEditorChosen.value))
 
 const typeName = computed(() => {
   const t = props.event.payload?.payload?.type

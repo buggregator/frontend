@@ -12,6 +12,7 @@ import {
   setStoredFixedHeader,
   setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
+  getStoredIsCodeEditorChosen,
   setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
@@ -30,6 +31,9 @@ export const useSettingsStore = defineStore("settingsStore", {
     isAuthEnabled: false,
     authLogicUrl: '/login',
     codeEditor: getStoredPrimaryCodeEditor() || IDE_KEY_DEFAULT,
+    // Picked in Settings, not just the default: then it wins over an IDE link
+    // the SDK sent (VarDumper file_link).
+    isCodeEditorChosen: getStoredIsCodeEditorChosen(),
     themeType: getStoredActiveTheme(),
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
@@ -104,6 +108,7 @@ export const useSettingsStore = defineStore("settingsStore", {
     },
     changeActiveCodeEditor(editor: IDE_KEYS) {
       this.codeEditor = editor;
+      this.isCodeEditorChosen = true;
 
       setStoredPrimaryCodeEditor(editor);
     },

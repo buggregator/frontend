@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { IDE_KEYS } from '../../constants'
 import { EventTypes } from '../../types'
 import { useSettingsStore } from './settings-store'
 
@@ -70,5 +71,45 @@ describe('settingsStore.fetchSettings', () => {
       url: 'https://github.com/buggregator/server/releases/tag/v2.8.0',
       available: true,
     })
+  })
+})
+
+// GitHub server#255: an IDE link sent by the SDK is used only while the person
+// has not picked an editor in Settings themselves.
+describe('settingsStore.isCodeEditorChosen', () => {
+  const memoryStorage = (initial: Record<string, string> = {}) => {
+    const items = new Map(Object.entries(initial))
+    return {
+      getItem: (key: string) => items.get(key) ?? null,
+      setItem: (key: string, value: string) => void items.set(key, String(value)),
+      removeItem: (key: string) => void items.delete(key),
+      clear: () => items.clear(),
+    }
+  }
+
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('is off while the editor is the default', () => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    setActivePinia(createPinia())
+
+    expect(useSettingsStore().isCodeEditorChosen).toBe(false)
+  })
+
+  it('is on once an editor is picked, and after a reload', () => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    setActivePinia(createPinia())
+    useSettingsStore().changeActiveCodeEditor(IDE_KEYS.PHPSTORM)
+
+    expect(useSettingsStore().isCodeEditorChosen).toBe(true)
+
+    setActivePinia(createPinia())
+    expect(useSettingsStore().isCodeEditorChosen).toBe(true)
   })
 })
