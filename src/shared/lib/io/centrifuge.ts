@@ -1,4 +1,6 @@
 import { Centrifuge } from "centrifuge";
+import { useProfileStore } from "../../stores";
+import { createGetToken, followToken } from "./connection-token";
 import { WS_URL } from "./constants";
 import { guardHandler } from "./guard-handler";
 import { logger } from "./logger";
@@ -13,7 +15,13 @@ class WSConnection {
   private static instance: WSConnection;
 
   private constructor() {
-    this.centrifuge = new Centrifuge(WS_URL);
+    // With auth on the server refuses a connect without the token.
+    // Created after the router's auth check, so a stored token is loaded.
+    const profileStore = useProfileStore();
+    this.centrifuge = new Centrifuge(WS_URL, {
+      getToken: createGetToken(() => profileStore.token),
+    });
+    followToken(this.centrifuge, () => profileStore.token);
 
     // Every handler is guarded: an exception in one would stop the client
     // for good (centrifuge-js 5.8).
