@@ -17,6 +17,10 @@ export interface MockRule {
   body: string
   delay_ms: number
   enabled: boolean
+  // Response template: body and header values are Go templates rendered per request.
+  template?: boolean
+  // Fake-data seed of a template: 0 = new data on every request.
+  seed?: number
   position: number
   source: 'config' | 'api'
   read_only: boolean
@@ -28,7 +32,10 @@ export interface MockRule {
 export type MockRuleInput = Pick<
   MockRule,
   'project' | 'name' | 'method' | 'path' | 'status' | 'headers' | 'body' | 'delay_ms' | 'enabled'
->
+> & {
+  template: boolean
+  seed: number
+}
 
 export type MockNearReason = 'disabled' | 'method' | 'project'
 
@@ -50,6 +57,8 @@ export interface MockSnapshot {
   body_truncated: boolean
   delay_ms: number
   near?: MockNear[]
+  // Set when the rule's template failed while answering this request.
+  template_error?: string
 }
 
 // The captured request: the part of the HTTP dump payload this page reads.
@@ -70,3 +79,54 @@ export type MockRequestEvent = ServerEvent<MockHttpDump>
 
 // Field → message, as in the server's 422 `errors`.
 export type MockRuleErrors = Partial<Record<keyof MockRuleInput, string>>
+
+// GET /api/mocks/helpers: template functions and fake-data generators.
+export type MockHelperGroup = 'request' | 'data' | 'output' | 'fake'
+
+export interface MockHelper {
+  name: string
+  group: MockHelperGroup
+  usage: string
+  description: string
+  example: string
+  result: string
+}
+
+export interface MockFakeParam {
+  name: string
+  type: string
+  optional: boolean
+  default?: string
+  options?: string[]
+}
+
+export interface MockFake {
+  name: string
+  category: string
+  description: string
+  example: string
+  output: string
+  params: MockFakeParam[]
+}
+
+export interface MockHelpers {
+  helpers: MockHelper[]
+  fake: MockFake[]
+}
+
+// POST /api/mocks/preview: an unsaved rule answered for a sample request.
+export interface MockPreviewRequest {
+  method: string
+  path: string
+  headers: Record<string, string>
+  body: string
+}
+
+export interface MockPreviewResult {
+  status: number
+  headers: Record<string, string>
+  body: string
+  matched: boolean
+  // A template that failed while rendering: "mock template: …", status 500.
+  error: string | null
+}

@@ -53,4 +53,28 @@ describe('MockRequestDetail', () => {
     const w = mountDetail(event({ matched: true, rule_id: 'gone', rule_name: 'old' }), [])
     expect(w.find('.mock-request-detail__answer').text()).toContain('deleted since')
   })
+
+  it('shows the template error of a matched rule that failed', () => {
+    const w = mountDetail(
+      event({ matched: true, rule_id: 'a', rule_name: 'users', status: 500, template_error: 'mock template: body:1: map has no entry for key "id"' }),
+      [rule('a', 'DELETE')]
+    )
+    const alert = w.find('.mock-request-detail__template-error')
+
+    expect(alert.attributes('role')).toBe('alert')
+    expect(alert.text()).toContain('map has no entry for key "id"')
+  })
+
+  it('shows no template error when the answer rendered', () => {
+    const w = mountDetail(event({ matched: true, rule_id: 'a', status: 200 }), [rule('a', 'DELETE')])
+    expect(w.find('.mock-request-detail__template-error').exists()).toBe(false)
+  })
+
+  // A matched request that rendered fine is not a «No rule matched».
+  it('shows no no-match callout for a matched request', () => {
+    const w = mountDetail(event({ matched: true, rule_id: 'a', status: 200 }), [rule('a', 'DELETE')])
+    expect(w.find('.mock-request-detail__callout').exists()).toBe(false)
+    expect(w.find('.mock-request-detail__template-error').exists()).toBe(false)
+  })
 })
+

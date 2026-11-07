@@ -113,3 +113,25 @@ describe('draftFromRequest', () => {
     expect(draftFromRequest('POST', '/mock/payments/charge', 'default').path).toBe('/payments/charge')
   })
 })
+
+describe('response templates', () => {
+  it('a new rule is a plain body: template off, random seed', () => {
+    expect(emptyDraft()).toMatchObject({ template: false, seed: 0 })
+  })
+
+  it('a rule from a captured request is plain too', () => {
+    expect(draftFromRequest('GET', '/mock/users/42', '')).toMatchObject({ template: false, seed: 0 })
+  })
+
+  it('asks for a whole number seed', () => {
+    const tpl = { ...emptyDraft(), path: '/a', template: true }
+    expect(validateRule({ ...tpl, seed: 1.5 }).seed).toBe('Seed must be a whole number.')
+    expect(validateRule({ ...tpl, seed: Number.NaN }).seed).toBe('Seed must be a whole number.')
+    expect(validateRule({ ...tpl, seed: -7 }).seed).toBeUndefined()
+  })
+
+  // The seed field is hidden with the template off: its error could not be shown.
+  it('does not check the seed of a plain body', () => {
+    expect(validateRule({ ...emptyDraft(), path: '/a', seed: Number.NaN })).toEqual({})
+  })
+})

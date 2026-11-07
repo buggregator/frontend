@@ -1,12 +1,24 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import { emptyDraft } from '../../lib/mock-rule'
 import type { MockRuleInput } from '../../types'
 import MockRuleForm from './mock-rule-form.vue'
 
+// Stand-ins: the real panels call the server.
+/* eslint-disable vue/one-component-per-file */
+const HelpersStub = defineComponent({
+  name: 'MockTemplateHelpers',
+  emits: ['insert'],
+  setup: (_, { emit }) => () => h('button', { class: 'helpers-stub', onClick: () => emit('insert', '{{ path "id" }}') }),
+})
+const PreviewStub = defineComponent({ name: 'MockTemplatePreview', props: { rule: { type: Object, required: true } }, setup: () => () => h('div', { class: 'preview-stub' }) })
+
 const mountForm = (props: Partial<InstanceType<typeof MockRuleForm>['$props']> = {}) =>
   mount(MockRuleForm, {
     props: { modelValue: { ...emptyDraft(), path: '/users/{id}' }, baseUrl: 'http://h/mock/', ...props },
+    global: { stubs: { MockTemplateHelpers: HelpersStub, MockTemplatePreview: PreviewStub } },
+    attachTo: document.body,
   })
 
 const lastValue = (w: ReturnType<typeof mountForm>) =>
@@ -43,5 +55,57 @@ describe('MockRuleForm', () => {
     expect(w.find('#mock-f-path').attributes('readonly')).toBeDefined()
     expect(w.find('.mock-rule-form__chips').exists()).toBe(false)
     expect(w.find('[role="switch"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('has the template switch off for a new rule and no template tools', () => {
+    const w = mountForm()
+    const sw = w.find('[aria-labelledby="mock-f-template-label"]')
+
+    expect(sw.attributes('aria-checked')).toBe('false')
+    expect(w.find('#mock-f-seed').exists()).toBe(false)
+    expect(w.find('.helpers-stub').exists()).toBe(false)
+    expect(w.find('.preview-stub').exists()).toBe(false)
+  })
+
+  it('turns the template on', async () => {
+    const w = mountForm()
+    await w.find('[aria-labelledby="mock-f-template-label"]').trigger('click')
+    expect(lastValue(w).template).toBe(true)
+  })
+
+  it('shows the seed, helpers and preview for a template and edits the seed', async () => {
+    const w = mountForm({ modelValue: { ...emptyDraft(), path: '/a', template: true } })
+    await w.find('#mock-f-seed').setValue('42')
+
+    expect(lastValue(w).seed).toBe(42)
+    expect(w.find('.helpers-stub').exists()).toBe(true)
+    expect(w.find('.preview-stub').exists()).toBe(true)
+    expect(w.text()).toContain('Template')
+  })
+
+  it('inserts a helper at the cursor of the body', async () => {
+    const w = mountForm({ modelValue: { ...emptyDraft(), path: '/a', template: true, body: '{"id": }' } })
+    const body = w.find('#mock-f-body').element as HTMLTextAreaElement
+    body.setSelectionRange(7, 7)
+    await w.find('.helpers-stub').trigger('click')
+
+    expect(lastValue(w).body).toBe('{"id": {{ path "id" }}}')
+    w.unmount()
+  })
+
+  it('marks a template error from the server on the body', () => {
+    const w = mountForm({
+      modelValue: { ...emptyDraft(), path: '/a', template: true },
+      errors: { body: 'template: body:1: unexpected "}" in operand' },
+    })
+    expect(w.find('#mock-f-body').attributes('aria-invalid')).toBe('true')
+    expect(w.find('#mock-err-body').text()).toContain('unexpected')
+  })
+
+  it('a yaml template rule shows the preview but no helpers', () => {
+    const w = mountForm({ readOnly: true, modelValue: { ...emptyDraft(), path: '/a', template: true } })
+    expect(w.find('.helpers-stub').exists()).toBe(false)
+    expect(w.find('.preview-stub').exists()).toBe(true)
+    expect(w.find('[aria-labelledby="mock-f-template-label"]').attributes('disabled')).toBeDefined()
   })
 })

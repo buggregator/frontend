@@ -13,6 +13,8 @@ export const toInput = (rule: MockRule): MockRuleInput => ({
   body: rule.body,
   delay_ms: rule.delay_ms,
   enabled: rule.enabled,
+  template: rule.template ?? false,
+  seed: rule.seed ?? 0,
 })
 
 // Rules in match order (yaml rules first, read-only). Writes go to the server

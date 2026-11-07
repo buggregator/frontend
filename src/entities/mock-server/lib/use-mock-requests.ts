@@ -1,7 +1,14 @@
 import { storeToRefs } from 'pinia'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEventsStore, useProfileStore } from '@/shared/stores'
-import type { MockRequestEvent, MockRule, MockRuleErrors, MockRuleInput } from '../types'
+import type {
+  MockHelpers,
+  MockPreviewRequest,
+  MockPreviewResult,
+  MockRequestEvent,
+  MockRule,
+  MockRuleInput
+} from '../types'
 
 const BASE = `${REST_API_URL}/api/mocks`
 
@@ -12,7 +19,8 @@ export class MockApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly fields: MockRuleErrors = {}
+    // field → message of a 422 (a rule's or an import's fields)
+    readonly fields: Record<string, string> = {}
   ) {
     super(message)
     this.name = 'MockApiError'
@@ -52,5 +60,9 @@ export const useMockRequests = () => {
   const reorderRules = (ids: string[]) =>
     send<{ data: MockRule[] }>('POST', `${BASE}/order`, { ids }).then(({ data }) => data)
 
-  return { getRules, getRequests, createRule, updateRule, deleteRule, reorderRules }
+  const getHelpers = () => request<MockHelpers>(`${BASE}/helpers`)
+  const preview = (rule: MockRuleInput, sample: MockPreviewRequest) =>
+    send<MockPreviewResult>('POST', `${BASE}/preview`, { rule, request: sample })
+
+  return { getRules, getRequests, createRule, updateRule, deleteRule, reorderRules, getHelpers, preview }
 }
