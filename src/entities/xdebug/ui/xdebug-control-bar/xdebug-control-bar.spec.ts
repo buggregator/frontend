@@ -57,4 +57,16 @@ describe('XdebugControlBar', () => {
     expect(w.emitted('command')).toEqual([['detach'], ['stop']])
     w.unmount()
   })
+
+  it('drops an open Stop confirm when the script moves on, so a later pause is never stopped', async () => {
+    const w = mount(XdebugControlBar, { props: props() })
+    await w.get('[aria-label="Stop"]').trigger('click')
+    expect(w.find('[role="alertdialog"]').exists()).toBe(true)
+
+    await w.setProps({ canControl: false, running: true })
+    expect(w.find('[role="alertdialog"]').exists()).toBe(false)
+    await w.setProps({ canControl: true, running: false })
+    expect(w.find('[role="alertdialog"]').exists()).toBe(false)
+    expect(w.emitted('command')).toBeUndefined()
+  })
 })

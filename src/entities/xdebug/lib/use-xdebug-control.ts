@@ -45,6 +45,8 @@ export const useXdebugControl = (
   now: Ref<number>
 ) => {
   const pending = ref<XdebugCommand | null>(null)
+  // The last command sent from here, kept after it settles (banner text).
+  const lastCommand = ref<XdebugCommand | null>(null)
   const error = ref('')
   let fallback: ReturnType<typeof setTimeout> | undefined
 
@@ -61,10 +63,14 @@ export const useXdebugControl = (
     const s = session.value
     if (!s || !canControl.value) return
     pending.value = command
+    lastCommand.value = command
     error.value = ''
     try {
       await api.control(s.id, command)
-      if (pending.value === command) fallback = setTimeout(settle, PENDING_FALLBACK_MS)
+      if (pending.value === command) {
+        clearTimeout(fallback)
+        fallback = setTimeout(settle, PENDING_FALLBACK_MS)
+      }
     } catch (e) {
       if (session.value?.id === s.id) error.value = failureText(command, e)
       settle()
@@ -79,8 +85,10 @@ export const useXdebugControl = (
     dismissError()
     settle()
   })
-  watch(() => session.value?.state, (state) => {
+  watch(() => session.value?.state, (state, before) => {
     if (state !== 'break') settle()
+    // A new pause: a refusal from the last one is old news.
+    else if (before && before !== 'break') dismissError()
   })
   onScopeDispose(() => clearTimeout(fallback))
 
@@ -91,12 +99,13 @@ export const useXdebugControl = (
 
   const lastBy = computed(() => {
     const s = session.value
-    if (s?.last_continuation_by === 'ui') return 'You'
+    // `ui` is any browser tab, not only this one.
+    if (s?.last_continuation_by === 'ui') return 'the UI'
     if (s?.last_continuation_by === 'agent') return s.last_continuation_agent ? `agent ${s.last_continuation_agent}` : 'an agent'
     return ''
   })
 
-  return { pending, error, drivenHere, drivenByIde, canControl, send, dismissError, idleLeft, lastBy }
+  return { pending, lastCommand, error, drivenHere, drivenByIde, canControl, send, dismissError, idleLeft, lastBy }
 }
 
 export type XdebugControl = ReturnType<typeof useXdebugControl>

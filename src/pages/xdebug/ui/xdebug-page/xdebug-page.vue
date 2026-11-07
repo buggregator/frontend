@@ -66,6 +66,13 @@ const ctl = useXdebugControl(api, selected, computed(() => now.value.getTime()))
 // Older servers have no `mode`: the page stays read-only, as before.
 const hasModes = computed(() => !!config.value?.mode)
 const showControls = computed(() => !!selected.value && (selected.value.driver === 'here' || (hasModes.value && config.value?.mode !== 'proxy')))
+// What the script does after a command from here; values on screen are from the last stop.
+const runningText = computed(() => {
+  if (ctl.lastCommand.value === 'detach') return 'Releasing the script: it runs on to the end.'
+  if (ctl.lastCommand.value === 'stop') return 'Stopping the request.'
+  return 'Running until the script pauses again. Values below are from the last stop.'
+})
+
 // The timeline of a session driven here: who stepped, and agents may step too.
 const timelineText = computed(() => selected.value?.driver === 'here'
   ? { pausedBy: ctl.lastBy.value ? `last step: ${ctl.lastBy.value}` : 'stopped here', hint: 'MCP calls an agent made in this session.' }
@@ -76,9 +83,8 @@ const ideAddr = computed(() => config.value?.ide_addr ?? '127.0.0.1:9004')
 const port = (addr: string | undefined) => addr?.split(':').pop() ?? ''
 
 // After a step (IDE or here), the old values stay on screen until the next
-// pause. A step sent from here sets `running` from its reply, a moment before
-// the status event marks the values stale: the stack decides, so the code and
-// the control bar do not blink.
+// pause. The stack decides, not only the stale flag, so the code and the
+// control bar do not blink between the `running` event and the stale mark.
 const stepping = computed(() => !!selected.value && selected.value.state === 'running' && (dbg.stale.value || dbg.stack.value.length > 0))
 const live = computed(() => !!selected.value && isLive(selected.value))
 const showDebugger = computed(() => !!selected.value && (selected.value.state === 'break' || stepping.value))
@@ -394,13 +400,14 @@ xdebug.client_port={{ port(config.addr) }}</pre>
             role="status"
           >
             <span class="xdebug-page__spin" />
-            <span v-if="selected?.driver === 'here'">Running to the next breakpoint. Values below are from the last stop.</span>
+            <span v-if="selected?.driver === 'here'">{{ runningText }}</span>
             <span v-else>The IDE resumed the script, waiting for the next pause. Values are from the last stop.</span>
           </div>
 
           <template v-if="showDebugger">
             <XdebugControlBar
               v-if="showControls"
+              :key="selected?.id"
               :can-control="ctl.canControl.value"
               :pending="ctl.pending.value"
               :driven-by-ide="ctl.drivenByIde.value"

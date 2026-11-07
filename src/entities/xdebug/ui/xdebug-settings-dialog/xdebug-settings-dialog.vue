@@ -27,10 +27,10 @@ const MODES: { id: XdebugMode; title: string; text: string; recommended?: boolea
   {
     id: 'auto',
     title: 'Auto',
-    text: 'IDE listening → your IDE steps. No IDE → Buggregator pauses and you step here.',
+    text: 'IDE listening → your IDE steps. No IDE → Buggregator pauses at xdebug_break() (or the first line, if set below) and you step here.',
     recommended: true
   },
-  { id: 'standalone', title: 'Standalone', text: 'Never call the IDE. You always step here.' }
+  { id: 'standalone', title: 'Standalone', text: 'Never call the IDE. The script pauses at xdebug_break() (or the first line) and you step here.' }
 ]
 
 const idleText = (seconds: number) => {

@@ -116,7 +116,7 @@ describe('useXdebugControl', () => {
 
   it('names who sent the last continuation', () => {
     const { ctl, current } = setup(s({ last_continuation_by: 'ui' }))
-    expect(ctl.lastBy.value).toBe('You')
+    expect(ctl.lastBy.value).toBe('the UI')
 
     current.value = s({ last_continuation_by: 'agent', last_continuation_agent: 'claude-07' })
     expect(ctl.lastBy.value).toBe('agent claude-07')

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { COMMAND_LABEL } from '../../lib/use-xdebug-control'
 import type { XdebugCommand } from '../../types'
 import { XdebugIcon, type XdebugIconName } from '../xdebug-icon'
@@ -39,13 +39,16 @@ const openConfirm = async () => {
 
 const closeConfirm = async (command?: XdebugCommand) => {
   confirming.value = false
-  if (command) {
-    emit('command', command)
-    return
-  }
+  if (command) emit('command', command)
   await nextTick()
   stopButton.value?.focus()
 }
+
+// The script moved on (agent, idle guard, another tab): a confirm opened for
+// that pause must not stop a later one.
+watch(() => props.canControl, (can) => {
+  if (!can) confirming.value = false
+})
 
 const send = (command: XdebugCommand) => {
   if (props.canControl) emit('command', command)
