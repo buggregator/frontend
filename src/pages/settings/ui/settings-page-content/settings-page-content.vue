@@ -222,8 +222,9 @@ useTitle('Settings | Buggregator')
               Show key hints
             </div>
             <div class="s-row__desc">
-              Small key badges: a bar with the main keys on the event list and event pages, and hints next to
-              search boxes and other fields. Press ? for the full list.
+              Small key badges: hints next to search boxes and other fields, and, while single-key shortcuts
+              are on, a bar with the main keys on the event list and event pages. Press ? for the full list
+              (also a single-key shortcut).
             </div>
           </div>
           <button

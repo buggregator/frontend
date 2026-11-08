@@ -55,7 +55,7 @@ const sections = SHORTCUT_GROUPS
           </div>
 
           <p class="shortcuts-modal__note">
-            Shortcuts work when the cursor is not in a text field.
+            Most shortcuts work when the cursor is not in a text field.
             <template v-if="!isSingleKeyShortcutsEnabled">
               Single-key shortcuts are off: the dimmed ones do nothing.
             </template>

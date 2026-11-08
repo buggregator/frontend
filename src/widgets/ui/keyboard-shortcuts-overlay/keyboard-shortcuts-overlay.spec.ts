@@ -59,7 +59,7 @@ describe('KeyboardShortcutsOverlay', () => {
 
   it('says shortcuts work outside text fields', () => {
     const wrapper = mount(KeyboardShortcutsOverlay, { attachTo: document.body })
-    expect(document.body.textContent).toContain('Shortcuts work when the cursor is not in a text field')
+    expect(document.body.textContent).toContain('Most shortcuts work when the cursor is not in a text field')
     wrapper.unmount()
   })
 

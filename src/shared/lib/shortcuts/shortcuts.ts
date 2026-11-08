@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { PAGES_SETTINGS } from '../../constants/pages'
 import { EventTypes } from '../../types'
 
@@ -82,7 +83,12 @@ export type HintSpec = {
   ids: string[]
   caps?: string[] // shown instead of the first cap of each id (e.g. «1–9»)
   label: string
+  needsSearchBox?: boolean // its key works only while a search box is on the page
 }
+
+// How many search boxes are on the page: `/` does nothing without one
+// (e.g. Sentry exceptions in Timeline mode). The search box counts itself.
+export const mountedSearchBoxes = ref(0)
 
 export type HintBarId = 'event-list' | 'event-page'
 
@@ -92,7 +98,7 @@ export const HINT_BARS: Record<HintBarId, HintSpec[]> = {
     { ids: ['list-open'], label: 'open' },
     { ids: ['list-pin'], label: 'pin' },
     { ids: ['list-delete'], label: 'delete' },
-    { ids: ['search-focus'], label: 'find' },
+    { ids: ['search-focus'], label: 'find', needsSearchBox: true },
     { ids: ['help'], label: 'all keys' },
   ],
   'event-page': [
@@ -104,7 +110,7 @@ export const HINT_BARS: Record<HintBarId, HintSpec[]> = {
 }
 
 export const hintsOf = (bar: HintBarId): { caps: string[], label: string }[] =>
-  HINT_BARS[bar].map((spec) => ({
+  HINT_BARS[bar].filter((spec) => !spec.needsSearchBox || mountedSearchBoxes.value > 0).map((spec) => ({
     caps: spec.caps ?? spec.ids.map((id) => capsOf(shortcutById(id)!)[0]),
     label: spec.label,
   }))

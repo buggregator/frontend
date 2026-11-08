@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { shortcutFor, useKeyHints } from '../../lib/shortcuts'
+import { mountedSearchBoxes, shortcutFor, useKeyHints } from '../../lib/shortcuts'
 import { hasCommandModifier, isTextFieldFocused } from '../../lib/use-keyboard-nav'
 import { useSettingsStore } from '../../stores'
 import { IconSvg } from '../icon-svg'
@@ -35,8 +35,14 @@ const onInputKeydown = (e: KeyboardEvent) => {
   }
 }
 
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onUnmounted(() => document.removeEventListener('keydown', onKeydown))
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  mountedSearchBoxes.value++
+})
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown)
+  mountedSearchBoxes.value--
+})
 </script>
 
 <!--TODO: move svg to icon component-->
