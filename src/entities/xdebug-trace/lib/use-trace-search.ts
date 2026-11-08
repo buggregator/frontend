@@ -42,6 +42,7 @@ export const useTraceSearch = (search: SearchTrace) => {
     }
     hits.value = []
     next.value = null
+    searched.value = '' // until the answer: no text about the old query
     await fetchPage(q, undefined, false)
   }
 

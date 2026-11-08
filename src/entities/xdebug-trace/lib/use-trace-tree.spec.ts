@@ -116,4 +116,50 @@ describe('useTraceTree', () => {
     expect(api).toHaveBeenLastCalledWith({ from: 150 })
     expect(tree.childrenOf(ROOT).map((n) => n.nr)).toEqual([1, 2])
   })
+
+  // A slow server like the real one: callees of 100 come in two pages,
+  // the second holds 300, which has its own callees.
+  const slow = <T>(v: T) => new Promise<T>((r) => setTimeout(() => r(v), 5))
+  const slowApi = async (q: TreeQuery): Promise<XdebugTraceTreePage> => {
+    if (q.parent === undefined && q.from === undefined) return slow(page([node(1, 100, 2)]))
+    if (q.parent === 100 && q.from === undefined) return slow(page([node(2, 200)], 300))
+    if (q.parent === 100 && q.from === 300) return slow(page([node(3, 300, 1)]))
+    if (q.parent === 300) return slow(page([node(9, 900)]))
+    throw new Error(`unexpected ${JSON.stringify(q)}`)
+  }
+
+  it('reveals a hit whose ancestor sits past the first page of its caller', async () => {
+    const tree = useTraceTree(slowApi)
+
+    await tree.reveal({ ...node(9, 900), path: [{ nr: 1, func: 'f1', offset: 100 }, { nr: 3, func: 'f3', offset: 300 }] })
+
+    expect(tree.childrenOf(100).map((n) => n.offset)).toContain(300)
+    expect(tree.isExpanded(300)).toBe(true)
+    expect(tree.childrenOf(300).map((n) => n.offset)).toEqual([900])
+    expect(tree.highlighted.value).toBe(900)
+  })
+
+  it('finishes a reveal while a «more» of the same caller is in flight', async () => {
+    const api = vi.fn(slowApi)
+    const tree = useTraceTree(api)
+    await tree.loadRoot()
+    await tree.toggle(tree.childrenOf(ROOT)[0])
+
+    const more = tree.loadMore(100)
+    await tree.reveal({ ...node(3, 300, 1), path: [{ nr: 1, func: 'f1', offset: 100 }] })
+    await more
+
+    expect(tree.highlighted.value).toBe(300)
+    expect(tree.childrenOf(100).map((n) => n.nr)).toEqual([2, 3])
+    expect(api.mock.calls.filter(([q]) => q.from === 300)).toHaveLength(1)
+  })
+
+  it('stops a reveal when the hit is not in its caller', async () => {
+    const tree = useTraceTree(slowApi)
+
+    await tree.reveal({ ...node(7, 700), path: [{ nr: 1, func: 'f1', offset: 100 }] })
+
+    expect(tree.childrenOf(100).map((n) => n.nr)).toEqual([2, 3])
+    expect(tree.highlighted.value).toBe(700)
+  })
 })

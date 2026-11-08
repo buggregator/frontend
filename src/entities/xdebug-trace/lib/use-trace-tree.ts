@@ -30,21 +30,34 @@ export const useTraceTree = (load: LoadTreePage) => {
     return levels.get(key) as Level
   }
 
+  // The request running per level: a second load of the same level waits
+  // for it instead of returning before its answer is in.
+  const inFlight = new Map<number, Promise<void>>()
+
   const fetchInto = async (key: number, query: TreeQuery, append: boolean) => {
-    const state = level(key)
-    if (state.loading) return
-    state.loading = true
-    state.error = ''
-    try {
-      const answer = await load(query)
-      state.nodes = append ? [...state.nodes, ...answer.nodes] : answer.nodes
-      state.next = answer.next ?? null
-      state.loaded = true
-    } catch (e) {
-      state.error = e instanceof Error ? e.message : String(e)
-    } finally {
-      state.loading = false
+    const running = inFlight.get(key)
+    if (running) {
+      await running
+      return
     }
+    const state = level(key)
+    const request = (async () => {
+      state.loading = true
+      state.error = ''
+      try {
+        const answer = await load(query)
+        state.nodes = append ? [...state.nodes, ...answer.nodes] : answer.nodes
+        state.next = answer.next ?? null
+        state.loaded = true
+      } catch (e) {
+        state.error = e instanceof Error ? e.message : String(e)
+      } finally {
+        state.loading = false
+        inFlight.delete(key)
+      }
+    })()
+    inFlight.set(key, request)
+    await request
   }
 
   const loadLevel = async (key: number) => {
@@ -80,19 +93,30 @@ export const useTraceTree = (load: LoadTreePage) => {
     if (node.children > 0) await open(node.offset)
   }
 
+  // Loads pages of a level until it holds the call at offset, or the list
+  // ends, fails, or a pass brings nothing new.
+  const pageUntil = async (key: number, offset: number) => {
+    const state = level(key)
+    const has = () => state.nodes.some((n) => n.offset === offset)
+    while (!has() && !state.error) {
+      const before = state.nodes.length
+      if (!state.loaded) await loadLevel(key)
+      else if (state.next !== null) await loadMore(key)
+      else return
+      if (state.nodes.length === before && !inFlight.has(key)) return
+    }
+  }
+
   // Opens every ancestor of a search hit, top level first, and marks the hit.
+  // Any of them, and the hit itself, may sit past the first page of its caller.
   const reveal = async (hit: XdebugTraceNode) => {
-    await loadRoot()
-    const path = hit.path ?? []
-    for (const step of path) {
+    let parent = ROOT
+    for (const step of hit.path ?? []) {
+      await pageUntil(parent, step.offset)
       await open(step.offset)
+      parent = step.offset
     }
-    // The hit may sit past the first page of its caller's callees.
-    const key = path.length ? path[path.length - 1].offset : ROOT
-    const has = () => level(key).nodes.some((n) => n.offset === hit.offset)
-    while (!has() && level(key).next !== null && !level(key).error) {
-      await loadMore(key)
-    }
+    await pageUntil(parent, hit.offset)
     highlighted.value = hit.offset
   }
 

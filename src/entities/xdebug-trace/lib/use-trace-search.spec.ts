@@ -75,4 +75,20 @@ describe('useTraceSearch', () => {
     expect(s.searched.value).toBe('new')
     expect(s.hits.value.map((h) => h.nr)).toEqual([7])
   })
+
+  it('does not name the old query after a new search fails', async () => {
+    const api = vi.fn()
+      .mockResolvedValueOnce(page([hit(1)]))
+      .mockRejectedValueOnce(new Error('timeout'))
+    const s = useTraceSearch(api)
+    s.query.value = 'foo'
+    await s.run()
+
+    s.query.value = 'bar'
+    await s.run()
+
+    expect(s.error.value).toBe('timeout')
+    expect(s.searched.value).toBe('')
+    expect(s.hits.value).toEqual([])
+  })
 })
