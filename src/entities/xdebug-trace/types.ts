@@ -12,6 +12,17 @@ export type XdebugTrace = {
   max_depth: number
   truncated: boolean  // cut at the size limit, or the trace has no end
   size: number        // bytes stored
+  summary?: XdebugTraceSummary // only on the event page: the stored payload carries it
+}
+
+// The stored payload, as GET /api/event/{uuid} sends it (the list sends the preview).
+export type XdebugTraceStored = {
+  file: string
+  name: string
+  url: string
+  size: number
+  compressed: boolean
+  summary: XdebugTraceSummary
 }
 
 export type XdebugTraceFuncStat = {
@@ -72,7 +83,7 @@ export type XdebugTraceNode = XdebugTraceCall & {
   path?: XdebugTracePathStep[] // search hits only
 }
 
-export type XdebugTracePage = {
+export type XdebugTraceTreePage = {
   parent?: XdebugTraceNode
   nodes: XdebugTraceNode[]
   next: number | null

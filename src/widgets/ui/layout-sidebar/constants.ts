@@ -10,4 +10,5 @@ export const EVENTS_NAV_ORDER: EventTypes[] = [
   EventTypes.VarDump,
   EventTypes.Monolog,
   EventTypes.RayDump,
+  EventTypes.XdebugTrace,
 ]

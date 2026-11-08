@@ -588,6 +588,16 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'trace'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M3 2a1 1 0 0 1 1 1v3h6a1 1 0 1 1 0 2H4v5h6a1 1 0 1 1 0 2H4v4h6a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm10 4h8a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2Zm0 7h5a1 1 0 1 1 0 2h-5a1 1 0 1 1 0-2Zm0 6h8a1 1 0 1 1 0 2h-8a1 1 0 1 1 0-2Z"
+      />
+    </svg>
+
+    <svg
       v-else-if="name === 'mock-server'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"

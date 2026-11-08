@@ -1,11 +1,11 @@
 import { reactive, ref } from 'vue'
-import type { XdebugTraceNode, XdebugTracePage } from '../types'
+import type { XdebugTraceNode, XdebugTraceTreePage } from '../types'
 
 // Key of the top level in the per-parent state.
 export const ROOT = -1
 
 export type TreeQuery = { parent?: number, from?: number }
-export type LoadTreePage = (query: TreeQuery) => Promise<XdebugTracePage>
+export type LoadTreePage = (query: TreeQuery) => Promise<XdebugTraceTreePage>
 
 type Level = {
   nodes: XdebugTraceNode[]
@@ -57,7 +57,14 @@ export const useTraceTree = (load: LoadTreePage) => {
   const loadMore = async (key: number) => {
     const next = level(key).next
     if (next === null) return
-    await fetchInto(key, { from: next }, true)
+    // The server continues the same list: callees of a call keep parent=.
+    await fetchInto(key, key === ROOT ? { from: next } : { parent: key, from: next }, true)
+  }
+
+  // After an error: the first page again, or the page after the loaded ones.
+  const retry = async (key: number) => {
+    if (level(key).loaded) await loadMore(key)
+    else await loadLevel(key)
   }
 
   const open = async (offset: number) => {
@@ -76,8 +83,15 @@ export const useTraceTree = (load: LoadTreePage) => {
   // Opens every ancestor of a search hit, top level first, and marks the hit.
   const reveal = async (hit: XdebugTraceNode) => {
     await loadRoot()
-    for (const step of hit.path ?? []) {
+    const path = hit.path ?? []
+    for (const step of path) {
       await open(step.offset)
+    }
+    // The hit may sit past the first page of its caller's callees.
+    const key = path.length ? path[path.length - 1].offset : ROOT
+    const has = () => level(key).nodes.some((n) => n.offset === hit.offset)
+    while (!has() && level(key).next !== null && !level(key).error) {
+      await loadMore(key)
     }
     highlighted.value = hit.offset
   }
@@ -86,6 +100,7 @@ export const useTraceTree = (load: LoadTreePage) => {
     highlighted,
     loadRoot,
     loadMore,
+    retry,
     toggle,
     reveal,
     childrenOf: (key: number) => levels.get(key)?.nodes ?? [],
@@ -97,4 +112,4 @@ export const useTraceTree = (load: LoadTreePage) => {
   }
 }
 
-export type TraceTree = ReturnType<typeof useTraceTree>
+export type TraceTreeState = ReturnType<typeof useTraceTree>

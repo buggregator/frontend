@@ -1,0 +1,17 @@
+{
+  "uuid": "0193a2b4-1111-7000-8000-00000000a002",
+  "type": "xdebug-trace",
+  "timestamp": 1731070100,
+  "project": null,
+  "payload": {
+    "name": "import:products",
+    "url": "",
+    "main": "/var/www/artisan",
+    "duration": 12.4071,
+    "peak_memory": 142606336,
+    "calls": 1904311,
+    "max_depth": 87,
+    "truncated": true,
+    "size": 52428800
+  }
+}

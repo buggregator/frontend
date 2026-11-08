@@ -9,6 +9,7 @@ import { useSentry, PreviewCard as PreviewSentry } from '@/entities/sentry'
 import { useSms, PreviewCard as PreviewSms } from '@/entities/sms'
 import { useSmtp, PreviewCard as PreviewSMTP } from '@/entities/smtp'
 import { useVarDump, PreviewCard as PreviewVarDump } from '@/entities/var-dump'
+import { normalizeXdebugTraceEvent, PreviewCard as PreviewXdebugTrace } from '@/entities/xdebug-trace'
 import { useEvents } from '@/shared/lib/use-events'
 import {
   type ServerEvent,
@@ -80,6 +81,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.SentryLog]: {
     view: PreviewSentry,
     normalize: normalizeSentryEvent
+  },
+  [EventTypes.XdebugTrace]: {
+    view: PreviewXdebugTrace,
+    normalize: normalizeXdebugTraceEvent
   },
   unknown: {
     view: PreviewCardDefault,

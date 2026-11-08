@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formatMemoryDelta, formatSeconds, traceTitle } from './trace-format'
+import { shortPath } from './trace-path'
 
 describe('formatSeconds', () => {
   it.each([
@@ -31,5 +32,15 @@ describe('traceTitle', () => {
     expect(traceTitle({ ...trace, name: 'users list' })).toBe('users list')
     expect(traceTitle(trace)).toBe('/app/public/index.php')
     expect(traceTitle({ ...trace, main: '' })).toBe('Xdebug trace')
+  })
+})
+
+describe('shortPath', () => {
+  it('keeps the last two parts of a long path', () => {
+    expect(shortPath('/var/www/app/Http/Kernel.php')).toBe('…/Http/Kernel.php')
+  })
+  it('keeps a short path as it is', () => {
+    expect(shortPath('/index.php')).toBe('/index.php')
+    expect(shortPath('')).toBe('')
   })
 })

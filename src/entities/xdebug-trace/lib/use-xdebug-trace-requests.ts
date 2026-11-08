@@ -2,7 +2,7 @@ import { storeToRefs } from 'pinia'
 import { REST_API_URL, describeLoadError } from '@/shared/lib/io'
 import { useProfileStore } from '@/shared/stores'
 import type { EventId } from '@/shared/types'
-import type { XdebugTracePage, XdebugTraceSummaryAnswer } from '../types'
+import type { XdebugTraceTreePage, XdebugTraceSummaryAnswer } from '../types'
 import type { TreeQuery } from './use-trace-tree'
 
 // The server answers at most 1000 nodes per request.
@@ -19,7 +19,7 @@ export const useXdebugTraceRequests = () => {
       if (value !== undefined) query.set(key, String(value))
     })
     const qs = query.toString()
-    try {
+    const request = async (): Promise<T> => {
       const response = await fetch(
         `${REST_API_URL}/api/xdebug-traces/${id}/${part}${qs ? `?${qs}` : ''}`,
         { headers: { 'X-Auth-Token': token.value } },
@@ -29,16 +29,16 @@ export const useXdebugTraceRequests = () => {
         throw Object.assign(new Error(body?.error || response.statusText), { status: response.status })
       }
       return await response.json() as T
-    } catch (e) {
-      throw new Error(describeLoadError(e))
     }
+    // One message for every failure: network, HTTP status, broken JSON.
+    return request().catch((e: unknown) => Promise.reject(new Error(describeLoadError(e))))
   }
 
   return {
     getSummary: (id: EventId) => get<XdebugTraceSummaryAnswer>(id, 'summary', {}),
     getTree: (id: EventId, query: TreeQuery) =>
-      get<XdebugTracePage>(id, 'tree', { ...query, limit: TRACE_PAGE_LIMIT }),
+      get<XdebugTraceTreePage>(id, 'tree', { ...query, limit: TRACE_PAGE_LIMIT }),
     search: (id: EventId, q: string, from?: number) =>
-      get<XdebugTracePage>(id, 'search', { q, from, limit: TRACE_PAGE_LIMIT }),
+      get<XdebugTraceTreePage>(id, 'search', { q, from, limit: TRACE_PAGE_LIMIT }),
   }
 }
