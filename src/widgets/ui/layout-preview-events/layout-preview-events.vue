@@ -6,6 +6,7 @@ import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
+import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useVirtualFeed } from '@/shared/lib/use-virtual-feed'
@@ -72,6 +73,8 @@ const visibleEvents = computed(() => {
     return JSON.stringify(event.payload).toLowerCase().includes(query)
   })
 })
+
+const { showHintBar } = useKeyHints()
 
 const recentEventIds = ref(new Set<string>())
 // Said by screen readers instead of the feed itself being a live region: the
@@ -244,6 +247,12 @@ const clearSearch = () => {
           }"
         />
       </div>
+      <!-- Room for the key hint bar, so it does not cover the last card. -->
+      <div
+        v-if="showHintBar"
+        class="layout-preview-events__hint-room"
+        aria-hidden="true"
+      />
     </div>
 
     <template v-else-if="listState !== 'error'">
@@ -292,6 +301,10 @@ const clearSearch = () => {
 
 // Every card has the same bottom border, whichever card is rendered first, so
 // a card keeps its measured height when the rendered range moves.
+.layout-preview-events__hint-room {
+  @apply hidden md:block h-10;
+}
+
 .layout-preview-events__event {
   @apply border-b border-gray-200 dark:border-gray-700;
 }

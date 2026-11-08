@@ -141,7 +141,7 @@ const sections = SHORTCUT_GROUPS
   @apply rounded-xl shadow-2xl overflow-hidden;
   @apply bg-white dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700;
-  @apply w-full max-w-lg mx-4;
+  @apply w-full max-w-2xl mx-4;
   animation: modal-in 0.15s ease-out;
 }
 
@@ -213,8 +213,8 @@ const sections = SHORTCUT_GROUPS
 
 .shortcuts-modal__body {
   @apply px-5 py-4;
-  @apply grid grid-cols-1 sm:grid-cols-2 gap-5;
-  max-height: 60vh;
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5;
+  max-height: calc(100vh - 12rem);
   overflow-y: auto;
 }
 
@@ -229,8 +229,9 @@ const sections = SHORTCUT_GROUPS
 }
 
 .shortcuts-row {
-  @apply flex items-center justify-between gap-3;
-  @apply py-1;
+  @apply grid items-center gap-3;
+  @apply py-0.5;
+  grid-template-columns: 4.5rem 1fr;
 }
 
 .shortcuts-row--off {
