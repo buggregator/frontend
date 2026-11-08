@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { shortcutFor } from '../../lib/shortcuts'
+import { hasCommandModifier, isTextFieldFocused } from '../../lib/use-keyboard-nav'
+import { useSettingsStore } from '../../stores'
 import { IconSvg } from '../icon-svg'
 
 const model = defineModel<string>({ default: '' })
 
+const settingsStore = useSettingsStore()
 const inputRef = ref<HTMLInputElement | null>(null)
 
 const focus = () => inputRef.value?.focus()
@@ -12,23 +16,20 @@ const clear = () => {
   focus()
 }
 
+// Keys come from the shortcut registry (group «search»).
 const onKeydown = (e: KeyboardEvent) => {
-  if (e.key === '/' && !isInputFocused()) {
+  if (!settingsStore.isSingleKeyShortcutsEnabled || hasCommandModifier(e)) return
+  if (shortcutFor('search', e.key) === 'search-focus' && !isTextFieldFocused()) {
     e.preventDefault()
     focus()
   }
 }
 
 const onInputKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
+  if (shortcutFor('search', e.key) === 'search-clear') {
     clear()
     inputRef.value?.blur()
   }
-}
-
-const isInputFocused = () => {
-  const active = document.activeElement
-  return active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement
 }
 
 onMounted(() => document.addEventListener('keydown', onKeydown))

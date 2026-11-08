@@ -113,3 +113,38 @@ describe('settingsStore.isCodeEditorChosen', () => {
     expect(useSettingsStore().isCodeEditorChosen).toBe(true)
   })
 })
+
+describe('settingsStore.isKeyHintsEnabled', () => {
+  const memoryStorage = () => {
+    const items = new Map<string, string>()
+    return {
+      getItem: (key: string) => items.get(key) ?? null,
+      setItem: (key: string, value: string) => void items.set(key, String(value)),
+      removeItem: (key: string) => void items.delete(key),
+      clear: () => items.clear(),
+    }
+  }
+
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    vi.stubGlobal('localStorage', memoryStorage())
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('is off by default', () => {
+    expect(useSettingsStore().isKeyHintsEnabled).toBe(false)
+  })
+
+  it('is remembered after a reload once turned on', () => {
+    useSettingsStore().changeKeyHints()
+
+    expect(useSettingsStore().isKeyHintsEnabled).toBe(true)
+
+    setActivePinia(createPinia())
+    expect(useSettingsStore().isKeyHintsEnabled).toBe(true)
+  })
+})

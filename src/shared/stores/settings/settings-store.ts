@@ -16,6 +16,7 @@ import {
   setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
+  getStoredKeyHints, setStoredKeyHints,
 } from "./local-storage-actions";
 import {toUpdateInfo, type UpdateInfo} from "./update-info";
 
@@ -38,6 +39,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
+    // Small key badges: a hint bar on event pages, hints under inputs.
+    isKeyHintsEnabled: getStoredKeyHints(),
     // The types the server says it has. A newer server can list one this UI
     // does not know: its events still show, with the default card.
     availableEvents: [] as string[],
@@ -100,6 +103,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isSingleKeyShortcutsEnabled = !this.isSingleKeyShortcutsEnabled;
 
       setStoredSingleKeyShortcuts(this.isSingleKeyShortcutsEnabled)
+    },
+    changeKeyHints() {
+      this.isKeyHintsEnabled = !this.isKeyHintsEnabled;
+
+      setStoredKeyHints(this.isKeyHintsEnabled)
     },
     changeEventCountsVisibility() {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;
