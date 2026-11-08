@@ -2,11 +2,12 @@
 import { useTitle } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
+import { KeyHintBar, LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { describeLoadError } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
+import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
 import { type EventId, type PageEventTypes, type ServerEvent, isEventType } from '@/shared/types'
 import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
@@ -15,6 +16,7 @@ import { StatusPanel } from '@/shared/ui/status-panel'
 const route = useRoute()
 const { params } = route
 const router = useRouter()
+const { showHintBar } = useKeyHints()
 const eventId = params.id as EventId
 
 const {
@@ -109,11 +111,23 @@ onMounted(getEvent)
       v-if="serverEvent"
       :event="serverEvent"
     />
+
+    <!-- Room for the key hint bar, so it does not cover the page end. -->
+    <div
+      v-if="showHintBar"
+      class="event-page__hint-room"
+      aria-hidden="true"
+    />
+    <KeyHintBar bar="event-page" />
   </LayoutBase>
 </template>
 
 <style lang="scss" scoped>
 .events-list-page {
   display: block;
+}
+
+.event-page__hint-room {
+  @apply hidden md:block h-12 flex-none;
 }
 </style>

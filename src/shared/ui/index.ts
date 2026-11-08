@@ -19,3 +19,4 @@ export * from './highlight-text';
 export * from './json-tree-view';
 export * from './period-select';
 export * from './address-flow';
+export * from './key-hints';

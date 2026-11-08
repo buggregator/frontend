@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import moment from 'moment'
 import { ref, computed, nextTick, watch } from 'vue'
+import { shortcutFor } from '@/shared/lib/shortcuts'
 import { CodeSnippet } from '@/shared/ui'
 import type { SentryBreadcrumb } from '../../types'
 
@@ -40,13 +41,15 @@ function next() {
 function onKeydown(e: KeyboardEvent) {
   if (selectedIndex.value === null) return
 
-  if (e.key === 'ArrowUp' || e.key === 'k') {
+  // Keys come from the shortcut registry (group «sentry-breadcrumbs»).
+  const id = shortcutFor('sentry-breadcrumbs', e.key)
+  if (id === 'crumbs-prev') {
     e.preventDefault()
     prev()
-  } else if (e.key === 'ArrowDown' || e.key === 'j') {
+  } else if (id === 'crumbs-next') {
     e.preventDefault()
     next()
-  } else if (e.key === 'Escape') {
+  } else if (id === 'crumbs-close') {
     selectedIndex.value = null
   }
 }

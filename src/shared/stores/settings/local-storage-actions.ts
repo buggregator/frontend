@@ -80,6 +80,14 @@ export const setStoredSingleKeyShortcuts = (state: boolean) => {
   window?.localStorage?.setItem(LocalStorageKeys.SingleKeyShortcuts, String(state));
 }
 
+// Off unless the person turned them on.
+export const getStoredKeyHints = (): boolean =>
+  window?.localStorage?.getItem(LocalStorageKeys.KeyHints) === "true";
+
+export const setStoredKeyHints = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.KeyHints, String(state));
+}
+
 export const getStoredPrimaryCodeEditor = (): IDE_KEYS => {
   const storedCodeEditor = window?.localStorage?.getItem(LocalStorageKeys.CodeEditor);
 

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useKeyHints } from '@/shared/lib/shortcuts'
+import { KeyHints } from '@/shared/ui/key-hints'
 import { formatSeconds } from '../../lib/trace-format'
 import { shortPath } from '../../lib/trace-path'
 import type { TraceSearchState } from '../../lib/use-trace-search'
@@ -12,6 +14,12 @@ const props = defineProps<Props>()
 
 // The search state is owned by the page; the box writes its query ref.
 const query = props.search.query
+
+const { showInputHints } = useKeyHints()
+const hints = [
+  { caps: ['Enter'], label: 'find' },
+  { caps: ['Esc'], label: 'clear' },
+]
 
 const emit = defineEmits<{
   reveal: [hit: XdebugTraceNode]
@@ -41,6 +49,12 @@ const emit = defineEmits<{
         Find
       </button>
     </form>
+
+    <KeyHints
+      v-if="showInputHints"
+      class="trace-search__hints"
+      :hints="hints"
+    />
 
     <p
       v-if="search.error.value"
@@ -117,6 +131,10 @@ const emit = defineEmits<{
 
 .trace-search__form {
   @apply flex gap-2;
+}
+
+.trace-search__hints {
+  @apply mt-1;
 }
 
 .trace-search__input {

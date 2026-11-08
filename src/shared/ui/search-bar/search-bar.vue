@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { mountedSearchBoxes, shortcutFor, useKeyHints } from '../../lib/shortcuts'
+import { hasCommandModifier, isTextFieldFocused } from '../../lib/use-keyboard-nav'
+import { useSettingsStore } from '../../stores'
 import { IconSvg } from '../icon-svg'
+import { KeyHints } from '../key-hints'
 
 const model = defineModel<string>({ default: '' })
 
+const settingsStore = useSettingsStore()
 const inputRef = ref<HTMLInputElement | null>(null)
+const isFocused = ref(false)
+const { showInputHints } = useKeyHints()
 
 const focus = () => inputRef.value?.focus()
 const clear = () => {
@@ -12,27 +19,30 @@ const clear = () => {
   focus()
 }
 
+// Keys come from the shortcut registry (group «search»).
 const onKeydown = (e: KeyboardEvent) => {
-  if (e.key === '/' && !isInputFocused()) {
+  if (!settingsStore.isSingleKeyShortcutsEnabled || hasCommandModifier(e)) return
+  if (shortcutFor('search', e.key) === 'search-focus' && !isTextFieldFocused()) {
     e.preventDefault()
     focus()
   }
 }
 
 const onInputKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') {
+  if (shortcutFor('search', e.key) === 'search-clear') {
     clear()
     inputRef.value?.blur()
   }
 }
 
-const isInputFocused = () => {
-  const active = document.activeElement
-  return active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement
-}
-
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onUnmounted(() => document.removeEventListener('keydown', onKeydown))
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  mountedSearchBoxes.value++
+})
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown)
+  mountedSearchBoxes.value--
+})
 </script>
 
 <!--TODO: move svg to icon component-->
@@ -59,11 +69,20 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
       placeholder="Search events..."
       aria-label="Search events"
       @keydown="onInputKeydown"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
     >
 
+    <KeyHints
+      v-if="showInputHints && isFocused"
+      class="search-bar__hints"
+      :hints="[{ caps: ['Esc'], label: model ? 'clear' : 'leave' }]"
+    />
+
     <kbd
-      v-if="!model"
+      v-if="!model && !isFocused"
       class="search-bar__shortcut"
+      title="Press / to search"
     >/</kbd>
 
     <button
@@ -103,6 +122,10 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
   @apply bg-transparent outline-none text-xs flex-1 min-w-0;
   @apply text-gray-800 dark:text-gray-200;
   @apply placeholder-gray-400 dark:placeholder-gray-500;
+}
+
+.search-bar__hints {
+  @apply flex-shrink-0 flex-nowrap;
 }
 
 .search-bar__shortcut {

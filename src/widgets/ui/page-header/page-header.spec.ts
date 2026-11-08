@@ -46,6 +46,7 @@ const clickClear = (type: string) =>
 
 describe('PageHeader: Clear', () => {
   beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
     setActivePinia(createPinia())
     removeAll.mockClear()
     removeByType.mockClear()

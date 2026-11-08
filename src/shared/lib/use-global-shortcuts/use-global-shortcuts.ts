@@ -2,20 +2,10 @@ import { storeToRefs } from 'pinia'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '../../stores'
-import { RouteName, EventTypes } from '../../types'
+import { RouteName } from '../../types'
+import { NAV_TYPES, shortcutFor } from '../shortcuts'
 import { hasCommandModifier, isTextFieldFocused } from '../use-keyboard-nav'
 
-const NAV_TYPES: EventTypes[] = [
-  EventTypes.Sentry,
-  EventTypes.Profiler,
-  EventTypes.Smtp,
-  EventTypes.Sms,
-  EventTypes.HttpDump,
-  EventTypes.Inspector,
-  EventTypes.VarDump,
-  EventTypes.Monolog,
-  EventTypes.RayDump,
-]
 
 export const isShortcutsOverlayOpen = ref(false)
 
@@ -35,8 +25,9 @@ export function useGlobalShortcuts() {
     // Every shortcut below is a single key (WCAG 2.1.4: it can be turned off)
     if (!isSingleKeyShortcutsEnabled.value || hasCommandModifier(e)) return
 
-    // ? toggles the overlay
-    if (e.key === '?') {
+    const id = shortcutFor('everywhere', e.key)
+
+    if (id === 'help') {
       if (isTextFieldFocused() && !isShortcutsOverlayOpen.value) return
       e.preventDefault()
       isShortcutsOverlayOpen.value = !isShortcutsOverlayOpen.value
@@ -44,32 +35,25 @@ export function useGlobalShortcuts() {
     }
 
     // All other shortcuts: skip if input focused or overlay open
-    if (isTextFieldFocused() || isShortcutsOverlayOpen.value) return
+    if (!id || isTextFieldFocused() || isShortcutsOverlayOpen.value) return
 
-    // 0 — go to all events (home)
-    if (e.key === '0') {
+    if (id === 'go-home') {
       e.preventDefault()
       router.push({ name: RouteName.Home })
       return
     }
 
-    // f — favorites
-    if (e.key === 'f') {
+    if (id === 'go-favorites') {
       e.preventDefault()
       router.push({ name: RouteName.Favorites })
       return
     }
 
-    // 1-8 — navigate to event type
-    const num = parseInt(e.key, 10)
-    if (num >= 1 && num <= NAV_TYPES.length) {
-      const type = NAV_TYPES[num - 1]
-      const available = settingsStore.availableEvents
-      if (available.includes(type)) {
-        e.preventDefault()
-        router.push({ name: RouteName.EventList, params: { type } })
-      }
-      return
+    // go-<type>: the digit keys, in NAV_TYPES order
+    const type = NAV_TYPES.find((t) => id === `go-${t}`)
+    if (type && settingsStore.availableEvents.includes(type)) {
+      e.preventDefault()
+      router.push({ name: RouteName.EventList, params: { type } })
     }
   }
 

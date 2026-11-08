@@ -43,6 +43,18 @@ describe('SettingsPageContent: single-key shortcuts', () => {
     expect(useSettingsStore().isSingleKeyShortcutsEnabled).toBe(false)
     expect(localStorage.getItem('single_key_shortcuts')).toBe('false')
   })
+
+  it('turns key hints on and remembers it', async () => {
+    const wrapper = mount(SettingsPageContent)
+    const toggle = wrapper.get('[role="switch"][aria-label="Show key hints"]')
+
+    expect(toggle.attributes('aria-checked')).toBe('false')
+
+    await toggle.trigger('click')
+
+    expect(toggle.attributes('aria-checked')).toBe('true')
+    expect(localStorage.getItem('key_hints')).toBe('true')
+  })
 })
 
 describe('SettingsPageContent: new server release', () => {

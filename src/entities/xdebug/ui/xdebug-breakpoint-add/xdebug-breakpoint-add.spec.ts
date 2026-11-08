@@ -1,4 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import XdebugBreakpointAdd from './xdebug-breakpoint-add.vue'
 
@@ -9,8 +10,15 @@ const mk = (add = vi.fn(async () => true), findFiles = vi.fn(async () => ['file:
 })
 
 describe('XdebugBreakpointAdd', () => {
-  beforeEach(() => { vi.useFakeTimers() })
-  afterEach(() => { vi.useRealTimers() })
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
 
   it('adds path:line and empties the field', async () => {
     const { w, add } = mk()

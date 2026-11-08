@@ -2,6 +2,7 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
 import { useSettingsStore } from '../../stores'
 import type { EventId } from '../../types'
+import { shortcutFor } from '../shortcuts'
 import { hasCommandModifier, isControlFocused, isModalOpen, isTextFieldFocused } from './keyboard-guards'
 
 export type KeyboardNavCallbacks = {
@@ -28,7 +29,7 @@ export function showToast(message: string, duration = 2000) {
   toastTimer = setTimeout(() => { toastMessage.value = '' }, duration)
 }
 
-const ACTION_KEYS = new Set(['x', 'l', 'y', 's'])
+const ACTION_IDS = new Set(['list-delete', 'list-pin', 'list-copy', 'list-screenshot'])
 
 export function useKeyboardNav(
   eventIds: Ref<EventId[]>,
@@ -67,32 +68,33 @@ export function useKeyboardNav(
     const ids = eventIds.value
     if (ids.length === 0) return
 
+    const id = shortcutFor('event-list', e.key)
+    if (!id) return
+
     // Navigation (works without focus)
-    switch (e.key) {
-      case 'j':
-      case 'ArrowDown':
+    switch (id) {
+      case 'list-next':
         e.preventDefault()
         updateFocus(focusedIndex.value + 1)
         return
-      case 'k':
-      case 'ArrowUp':
+      case 'list-prev':
         e.preventDefault()
         updateFocus(focusedIndex.value - 1)
         return
-      case 'Enter':
+      case 'list-open':
         if (focusedId.value && options.onOpen && !isControlFocused()) {
           e.preventDefault()
           options.onOpen(focusedId.value)
         }
         return
-      case 'Escape':
+      case 'list-clear':
         focusedIndex.value = -1
         focusedId.value = null
         return
     }
 
     // Action keys — require focused event
-    if (ACTION_KEYS.has(e.key)) {
+    if (ACTION_IDS.has(id)) {
       if (!focusedId.value) {
         showToast('Press j/k to select an event first')
         return
@@ -100,8 +102,8 @@ export function useKeyboardNav(
 
       e.preventDefault()
 
-      switch (e.key) {
-        case 'x':
+      switch (id) {
+        case 'list-delete':
           if (options.onDelete) {
             const deletedIndex = focusedIndex.value
             options.onDelete(focusedId.value)
@@ -114,17 +116,17 @@ export function useKeyboardNav(
             }
           }
           break
-        case 'l':
+        case 'list-pin':
           if (options.onLock) {
             options.onLock(focusedId.value)
           }
           break
-        case 'y':
+        case 'list-copy':
           if (options.onCopyPayload) {
             options.onCopyPayload(focusedId.value)
           }
           break
-        case 's':
+        case 'list-screenshot':
           if (options.onScreenshot) {
             options.onScreenshot(focusedId.value)
           }
