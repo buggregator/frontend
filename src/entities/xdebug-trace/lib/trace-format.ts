@@ -19,3 +19,9 @@ export const formatMemoryDelta = (bytes: number): string => {
 // What the trace was recorded for: the request, the name the client gave, or the script.
 export const traceTitle = (trace: Pick<XdebugTrace, 'name' | 'url' | 'main'>): string =>
   trace.url || trace.name || trace.main || 'Xdebug trace'
+
+// The second line: what the title left out (the name the client gave, the script).
+export const traceSubtitle = (trace: Pick<XdebugTrace, 'name' | 'url' | 'main'>): string => {
+  const title = traceTitle(trace)
+  return [trace.name, trace.main].filter((part) => part && part !== title).join(' · ')
+}

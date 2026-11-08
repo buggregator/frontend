@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatMemoryDelta, formatSeconds, traceTitle } from './trace-format'
+import { formatMemoryDelta, formatSeconds, traceSubtitle, traceTitle } from './trace-format'
 import { shortPath } from './trace-path'
 
 describe('formatSeconds', () => {
@@ -42,5 +42,13 @@ describe('shortPath', () => {
   it('keeps a short path as it is', () => {
     expect(shortPath('/index.php')).toBe('/index.php')
     expect(shortPath('')).toBe('')
+  })
+})
+
+describe('traceSubtitle', () => {
+  it('lists the name and the script the title does not show', () => {
+    expect(traceSubtitle({ url: 'GET /users', name: 'users index', main: '/app/index.php' })).toBe('users index · /app/index.php')
+    expect(traceSubtitle({ url: '', name: 'import', main: '/app/artisan' })).toBe('/app/artisan')
+    expect(traceSubtitle({ url: '', name: '', main: '/app/artisan' })).toBe('')
   })
 })

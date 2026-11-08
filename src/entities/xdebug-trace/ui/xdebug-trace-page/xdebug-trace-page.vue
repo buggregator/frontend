@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout, PageTab, PageTabs } from '@/shared/ui'
-import { formatSeconds, traceTitle } from '../../lib/trace-format'
+import { formatSeconds, traceSubtitle, traceTitle } from '../../lib/trace-format'
 import { useTraceSearch } from '../../lib/use-trace-search'
 import { useTraceTree } from '../../lib/use-trace-tree'
 import { useXdebugTraceRequests } from '../../lib/use-xdebug-trace-requests'
@@ -45,10 +45,7 @@ onMounted(() => {
 })
 
 const title = computed(() => traceTitle(props.event.payload))
-const script = computed(() => {
-  const { main } = props.event.payload
-  return main && main !== title.value ? main : ''
-})
+const subtitle = computed(() => traceSubtitle(props.event.payload))
 
 const stats = computed(() => {
   const p = props.event.payload
@@ -76,10 +73,10 @@ const reveal = (hit: XdebugTraceNode) => tree.reveal(hit)
           {{ title }}
         </h2>
         <p
-          v-if="script"
+          v-if="subtitle"
           class="trace-page__script"
         >
-          {{ script }}
+          {{ subtitle }}
         </p>
         <dl class="trace-page__stats">
           <div

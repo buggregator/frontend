@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
-import { formatSeconds, traceTitle } from '../../lib/trace-format'
+import { formatSeconds, traceSubtitle, traceTitle } from '../../lib/trace-format'
 import type { XdebugTrace } from '../../types'
 
 type Props = {
@@ -14,11 +14,7 @@ const props = defineProps<Props>()
 
 const eventLink = computed(() => `/xdebug-trace/${props.event.id}`)
 const title = computed(() => traceTitle(props.event.payload))
-// The script goes under the title when the title is something else.
-const script = computed(() => {
-  const { main } = props.event.payload
-  return main && main !== title.value ? main : ''
-})
+const subtitle = computed(() => traceSubtitle(props.event.payload))
 </script>
 
 <template>
@@ -36,10 +32,10 @@ const script = computed(() => {
         >cut</span>
       </div>
       <p
-        v-if="script"
+        v-if="subtitle"
         class="trace-card__script"
       >
-        {{ script }}
+        {{ subtitle }}
       </p>
       <dl class="trace-card__stats">
         <div class="trace-card__stat">
