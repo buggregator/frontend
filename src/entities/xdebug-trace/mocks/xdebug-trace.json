@@ -1,0 +1,17 @@
+{
+  "uuid": "0193a2b4-1111-7000-8000-00000000a001",
+  "type": "xdebug-trace",
+  "timestamp": 1731070000,
+  "project": null,
+  "payload": {
+    "name": "",
+    "url": "GET /users?page=2",
+    "main": "/var/www/public/index.php",
+    "duration": 0.183412,
+    "peak_memory": 6815744,
+    "calls": 48213,
+    "max_depth": 41,
+    "truncated": false,
+    "size": 1843200
+  }
+}

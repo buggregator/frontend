@@ -9,6 +9,7 @@ import { useSentry, SentryPage } from '@/entities/sentry'
 import { useSms, SmsPage } from '@/entities/sms'
 import { useSmtp, SmtpPage } from '@/entities/smtp'
 import { useVarDump, VarDumpPage } from '@/entities/var-dump'
+import { normalizeXdebugTraceEvent, XdebugTracePage } from '@/entities/xdebug-trace'
 import { useEvents } from '@/shared/lib/use-events'
 import { type ServerEvent, EventTypes, type MappedEventsProps, isEventType } from '@/shared/types'
 import { PreviewCardDefault } from '../preview-card-default'
@@ -66,6 +67,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.Sms]: {
     view: SmsPage,
     normalize: normalizeSmsEvent
+  },
+  [EventTypes.XdebugTrace]: {
+    view: XdebugTracePage,
+    normalize: normalizeXdebugTraceEvent
   }
 } as Record<EventTypes, MappedEventsProps<unknown>>
 

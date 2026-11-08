@@ -79,5 +79,11 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     sidebarTitle: 'Sentry logs',
     iconName: 'sentry',
     eventType: EventTypes.SentryLog,
+  },
+  [PAGE_TYPES.XdebugTrace]: {
+    title: 'Xdebug Trace',
+    sidebarTitle: 'Xdebug traces',
+    iconName: 'trace',
+    eventType: EventTypes.XdebugTrace,
   }
 }

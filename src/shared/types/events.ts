@@ -12,6 +12,7 @@ export enum EventTypes {
   Sms = "sms",
   SentryTrace = "sentry-trace",
   SentryLog = "sentry-log",
+  XdebugTrace = "xdebug-trace",
 }
 
 // TODO: add T prefix to all types
