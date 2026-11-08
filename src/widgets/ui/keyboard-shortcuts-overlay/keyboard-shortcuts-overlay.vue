@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, useId } from 'vue'
+import { SHORTCUT_GROUPS, capsOf, shortcutsIn } from '@/shared/lib/shortcuts'
 import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
 
 const emit = defineEmits<{
@@ -10,41 +11,10 @@ const modal = ref<HTMLElement | null>(null)
 const titleId = useId()
 useDialogFocus(modal, () => emit('close'))
 
-const sections = [
-  {
-    title: 'Navigation',
-    shortcuts: [
-      { keys: ['0'], desc: 'All events' },
-      { keys: ['f'], desc: 'Favorites' },
-      { keys: ['1'], desc: 'Sentry' },
-      { keys: ['2'], desc: 'Profiler' },
-      { keys: ['3'], desc: 'SMTP' },
-      { keys: ['4'], desc: 'SMS' },
-      { keys: ['5'], desc: 'HTTP Dump' },
-      { keys: ['6'], desc: 'Inspector' },
-      { keys: ['7'], desc: 'VarDump' },
-      { keys: ['8'], desc: 'Monolog' },
-      { keys: ['9'], desc: 'Ray' }
-    ]
-  },
-  {
-    title: 'Event List',
-    shortcuts: [
-      { keys: ['j', '↓'], desc: 'Next event' },
-      { keys: ['k', '↑'], desc: 'Previous event' },
-      { keys: ['Enter'], desc: 'Open event' },
-      { keys: ['x'], desc: 'Delete event' },
-      { keys: ['l'], desc: 'Pin / unpin event' },
-      { keys: ['y'], desc: 'Copy payload to clipboard' },
-      { keys: ['s'], desc: 'Screenshot to clipboard' },
-      { keys: ['Esc'], desc: 'Clear focus' }
-    ]
-  },
-  {
-    title: 'General',
-    shortcuts: [{ keys: ['?'], desc: 'Toggle this overlay' }]
-  }
-]
+// Read from the one registry the key handlers use.
+const sections = SHORTCUT_GROUPS
+  .map((group) => ({ title: group.title, shortcuts: shortcutsIn(group.id) }))
+  .filter((section) => section.shortcuts.length > 0)
 </script>
 
 <template>
@@ -91,19 +61,19 @@ const sections = [
               <div class="shortcuts-section__list">
                 <div
                   v-for="shortcut in section.shortcuts"
-                  :key="shortcut.desc"
+                  :key="shortcut.id"
                   class="shortcuts-row"
                 >
                   <span class="shortcuts-row__keys">
                     <kbd
-                      v-for="key in shortcut.keys"
+                      v-for="key in capsOf(shortcut)"
                       :key="key"
                       class="shortcuts-row__kbd"
                     >{{
                       key
                     }}</kbd>
                   </span>
-                  <span class="shortcuts-row__desc">{{ shortcut.desc }}</span>
+                  <span class="shortcuts-row__desc">{{ shortcut.label }}</span>
                 </div>
               </div>
             </div>

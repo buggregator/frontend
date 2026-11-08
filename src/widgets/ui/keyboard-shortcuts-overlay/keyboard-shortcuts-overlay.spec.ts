@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import { SHORTCUTS, capsOf } from '@/shared/lib/shortcuts'
 import KeyboardShortcutsOverlay from './keyboard-shortcuts-overlay.vue'
 
 // Audit 5.9: the overlay was not a dialog, focus stayed behind it, «×» had no name.
@@ -23,5 +24,19 @@ describe('KeyboardShortcutsOverlay', () => {
 
     wrapper.unmount()
     expect(document.activeElement).toBe(opener)
+  })
+
+  it('lists every shortcut of the registry with its keys', () => {
+    const wrapper = mount(KeyboardShortcutsOverlay, { attachTo: document.body })
+    const rows = [...document.querySelectorAll('.shortcuts-row')].map((row) => ({
+      keys: [...row.querySelectorAll('kbd')].map((k) => k.textContent?.trim()),
+      label: row.querySelector('.shortcuts-row__desc')?.textContent?.trim(),
+    }))
+
+    for (const s of SHORTCUTS) {
+      expect(rows).toContainEqual({ keys: capsOf(s), label: s.label })
+    }
+    expect(rows).toHaveLength(SHORTCUTS.length)
+    wrapper.unmount()
   })
 })
