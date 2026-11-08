@@ -63,4 +63,15 @@ describe('SearchBar keys', () => {
     expect(document.activeElement).not.toBe(input.element)
     wrapper.unmount()
   })
+
+  it('shows «Esc clear» while typing, when key hints are on', async () => {
+    useSettingsStore().changeKeyHints()
+    const wrapper = mountBar('error')
+
+    expect(wrapper.find('.key-hints').exists()).toBe(false)
+    await wrapper.find('input').trigger('focus')
+
+    expect(wrapper.find('.key-hints').text()).toContain('Escclear')
+    wrapper.unmount()
+  })
 })

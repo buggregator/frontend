@@ -13,6 +13,7 @@ import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
+import { KeyHintBar } from '../key-hint-bar'
 import { PagePlaceholder } from '../page-placeholder'
 
 type Props = {
@@ -211,6 +212,8 @@ const clearSearch = () => {
     >
       {{ newEventsNote }}
     </p>
+
+    <KeyHintBar bar="event-list" />
 
     <div
       v-if="visibleEvents.length"

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useDebounceFn } from '@vueuse/core'
 import { computed, nextTick, ref, useId } from 'vue'
+import { useKeyHints } from '@/shared/lib/shortcuts'
+import { KeyHints } from '@/shared/ui/key-hints'
 import { filePath, parseBreakpointInput } from '../../lib/xdebug-breakpoints'
 import type { XdebugBreakpointDraft } from '../../types'
 import { XdebugIcon } from '../xdebug-icon'
@@ -75,6 +77,13 @@ const pick = async (uri: string) => {
   el?.focus()
   el?.setSelectionRange(text.value.length, text.value.length)
 }
+
+const { showInputHints } = useKeyHints()
+const hints = [
+  { caps: ['↑', '↓'], label: 'pick a file' },
+  { caps: ['Enter'], label: 'add' },
+  { caps: ['Esc'], label: 'close the list' },
+]
 
 const move = (step: number) => {
   if (!open.value) {
@@ -181,12 +190,21 @@ const parts = (uri: string) => {
     >
       {{ error }}
     </p>
+    <KeyHints
+      v-else-if="showInputHints"
+      class="xdebug-bpadd__hints"
+      :hints="hints"
+    />
   </form>
 </template>
 
 <style lang="scss" scoped>
 .xdebug-bpadd {
   @apply px-2 pt-2 pb-1 pl-3;
+}
+
+.xdebug-bpadd__hints {
+  @apply mt-1;
 }
 
 .xdebug-bpadd__row {

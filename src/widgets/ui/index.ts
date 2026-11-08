@@ -6,3 +6,4 @@ export * from './page-placeholder';
 export * from './layout-sidebar';
 export * from './layout-base';
 export * from './layout-preview-events';
+export * from './key-hint-bar';

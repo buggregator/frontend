@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
 import { ref, useId } from 'vue'
 import { SHORTCUT_GROUPS, capsOf, shortcutsIn } from '@/shared/lib/shortcuts'
 import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
+import { useSettingsStore } from '@/shared/stores'
 
 const emit = defineEmits<{
   close: []
@@ -10,6 +12,9 @@ const emit = defineEmits<{
 const modal = ref<HTMLElement | null>(null)
 const titleId = useId()
 useDialogFocus(modal, () => emit('close'))
+
+const settingsStore = useSettingsStore()
+const { isSingleKeyShortcutsEnabled, isKeyHintsEnabled } = storeToRefs(settingsStore)
 
 // Read from the one registry the key handlers use.
 const sections = SHORTCUT_GROUPS
@@ -37,7 +42,7 @@ const sections = SHORTCUT_GROUPS
               :id="titleId"
               class="shortcuts-modal__title"
             >
-              Keyboard Shortcuts
+              Keyboard shortcuts
             </h2>
             <button
               type="button"
@@ -48,6 +53,13 @@ const sections = SHORTCUT_GROUPS
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+
+          <p class="shortcuts-modal__note">
+            Shortcuts work when the cursor is not in a text field.
+            <template v-if="!isSingleKeyShortcutsEnabled">
+              Single-key shortcuts are off: the dimmed ones do nothing.
+            </template>
+          </p>
 
           <div class="shortcuts-modal__body">
             <div
@@ -63,6 +75,7 @@ const sections = SHORTCUT_GROUPS
                   v-for="shortcut in section.shortcuts"
                   :key="shortcut.id"
                   class="shortcuts-row"
+                  :class="{ 'shortcuts-row--off': shortcut.singleKey && !isSingleKeyShortcutsEnabled }"
                 >
                   <span class="shortcuts-row__keys">
                     <kbd
@@ -77,6 +90,38 @@ const sections = SHORTCUT_GROUPS
                 </div>
               </div>
             </div>
+          </div>
+
+          <div class="shortcuts-modal__footer">
+            <label class="shortcuts-switch">
+              <button
+                type="button"
+                role="switch"
+                class="shortcuts-switch__track"
+                :class="{ 'shortcuts-switch__track--on': isSingleKeyShortcutsEnabled }"
+                :aria-checked="isSingleKeyShortcutsEnabled"
+                aria-label="Single-key shortcuts"
+                @click="settingsStore.changeSingleKeyShortcuts()"
+              >
+                <span class="shortcuts-switch__knob" />
+              </button>
+              <span aria-hidden="true">Single-key shortcuts</span>
+            </label>
+
+            <label class="shortcuts-switch">
+              <button
+                type="button"
+                role="switch"
+                class="shortcuts-switch__track"
+                :class="{ 'shortcuts-switch__track--on': isKeyHintsEnabled }"
+                :aria-checked="isKeyHintsEnabled"
+                aria-label="Show key hints"
+                @click="settingsStore.changeKeyHints()"
+              >
+                <span class="shortcuts-switch__knob" />
+              </button>
+              <span aria-hidden="true">Show key hints</span>
+            </label>
           </div>
         </div>
       </div>
@@ -131,10 +176,45 @@ const sections = SHORTCUT_GROUPS
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
 }
 
+.shortcuts-modal__note {
+  @apply px-5 pt-3 text-xs text-gray-500 dark:text-gray-400;
+}
+
+.shortcuts-modal__footer {
+  @apply flex flex-wrap items-center gap-x-6 gap-y-2;
+  @apply px-5 py-3;
+  @apply border-t border-gray-200 dark:border-gray-700;
+}
+
+.shortcuts-switch {
+  @apply inline-flex items-center gap-2 cursor-pointer;
+  @apply text-xs text-gray-600 dark:text-gray-300;
+}
+
+.shortcuts-switch__track {
+  @apply relative inline-flex h-5 w-9 items-center rounded-full flex-shrink-0 cursor-pointer;
+  @apply bg-gray-300 dark:bg-gray-600;
+  @apply transition-colors duration-200;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
+}
+
+.shortcuts-switch__track--on {
+  @apply bg-blue-500 dark:bg-blue-600;
+}
+
+.shortcuts-switch__knob {
+  @apply inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm;
+  @apply transition-transform duration-200 translate-x-[3px];
+
+  .shortcuts-switch__track--on & {
+    @apply translate-x-[19px];
+  }
+}
+
 .shortcuts-modal__body {
   @apply px-5 py-4;
   @apply grid grid-cols-1 sm:grid-cols-2 gap-5;
-  max-height: 70vh;
+  max-height: 60vh;
   overflow-y: auto;
 }
 
@@ -151,6 +231,10 @@ const sections = SHORTCUT_GROUPS
 .shortcuts-row {
   @apply flex items-center justify-between gap-3;
   @apply py-1;
+}
+
+.shortcuts-row--off {
+  @apply opacity-40;
 }
 
 .shortcuts-row__keys {

@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
+import { KeyHintBar, LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { describeLoadError } from '@/shared/lib/io'
@@ -109,6 +109,8 @@ onMounted(getEvent)
       v-if="serverEvent"
       :event="serverEvent"
     />
+
+    <KeyHintBar bar="event-page" />
   </LayoutBase>
 </template>
 

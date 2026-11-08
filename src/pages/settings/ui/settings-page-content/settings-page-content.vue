@@ -14,6 +14,7 @@ const {
   changeNavbar,
   changeEventCountsVisibility,
   changeSingleKeyShortcuts,
+  changeKeyHints,
   changeActiveCodeEditor,
   setCustomFilePathMapping,
   changeIsActiveFilePathMapping
@@ -23,6 +24,7 @@ const {
   isFixedHeader,
   isVisibleEventCounts,
   isSingleKeyShortcutsEnabled,
+  isKeyHintsEnabled,
   customFilePathMapping,
   isActiveFilePathMapping,
   codeEditor,
@@ -209,6 +211,28 @@ useTitle('Settings | Buggregator')
             :aria-checked="isSingleKeyShortcutsEnabled"
             aria-label="Single-key shortcuts"
             @click="changeSingleKeyShortcuts"
+          >
+            <span class="s-toggle__knob" />
+          </button>
+        </div>
+
+        <div class="s-row">
+          <div class="s-row__info">
+            <div class="s-row__label">
+              Show key hints
+            </div>
+            <div class="s-row__desc">
+              Small key badges: a bar with the main keys on the event list and event pages, and hints next to
+              search boxes and other fields. Press ? for the full list.
+            </div>
+          </div>
+          <button
+            class="s-toggle"
+            :class="{ 's-toggle--active': isKeyHintsEnabled }"
+            role="switch"
+            :aria-checked="isKeyHintsEnabled"
+            aria-label="Show key hints"
+            @click="changeKeyHints"
           >
             <span class="s-toggle__knob" />
           </button>

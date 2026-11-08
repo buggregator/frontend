@@ -1,14 +1,17 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { shortcutFor } from '../../lib/shortcuts'
+import { shortcutFor, useKeyHints } from '../../lib/shortcuts'
 import { hasCommandModifier, isTextFieldFocused } from '../../lib/use-keyboard-nav'
 import { useSettingsStore } from '../../stores'
 import { IconSvg } from '../icon-svg'
+import { KeyHints } from '../key-hints'
 
 const model = defineModel<string>({ default: '' })
 
 const settingsStore = useSettingsStore()
 const inputRef = ref<HTMLInputElement | null>(null)
+const isFocused = ref(false)
+const { showInputHints } = useKeyHints()
 
 const focus = () => inputRef.value?.focus()
 const clear = () => {
@@ -60,11 +63,20 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
       placeholder="Search events..."
       aria-label="Search events"
       @keydown="onInputKeydown"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
     >
 
+    <KeyHints
+      v-if="showInputHints && isFocused"
+      class="search-bar__hints"
+      :hints="[{ caps: ['Esc'], label: model ? 'clear' : 'leave' }]"
+    />
+
     <kbd
-      v-if="!model"
+      v-if="!model && !isFocused"
       class="search-bar__shortcut"
+      title="Press / to search"
     >/</kbd>
 
     <button
@@ -104,6 +116,10 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
   @apply bg-transparent outline-none text-xs flex-1 min-w-0;
   @apply text-gray-800 dark:text-gray-200;
   @apply placeholder-gray-400 dark:placeholder-gray-500;
+}
+
+.search-bar__hints {
+  @apply flex-shrink-0 flex-nowrap;
 }
 
 .search-bar__shortcut {

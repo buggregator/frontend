@@ -73,3 +73,38 @@ export const shortcutFor = (group: ShortcutGroupId, key: string): string | null 
 export const shortcutsIn = (group: ShortcutGroupId): Shortcut[] => SHORTCUTS.filter((s) => s.group === group)
 
 export const capsOf = (s: Shortcut): string[] => s.caps ?? s.keys
+
+export const shortcutById = (id: string): Shortcut | undefined => SHORTCUTS.find((s) => s.id === id)
+
+// Hint bars: a few keys of the page, shown when «Show key hints» is on.
+// Each hint names registry ids, so a hint cannot show a key that does nothing.
+export type HintSpec = {
+  ids: string[]
+  caps?: string[] // shown instead of the first cap of each id (e.g. «1–9»)
+  label: string
+}
+
+export type HintBarId = 'event-list' | 'event-page'
+
+export const HINT_BARS: Record<HintBarId, HintSpec[]> = {
+  'event-list': [
+    { ids: ['list-next', 'list-prev'], label: 'events' },
+    { ids: ['list-open'], label: 'open' },
+    { ids: ['list-pin'], label: 'pin' },
+    { ids: ['list-delete'], label: 'delete' },
+    { ids: ['search-focus'], label: 'find' },
+    { ids: ['help'], label: 'all keys' },
+  ],
+  'event-page': [
+    { ids: ['go-home'], label: 'all events' },
+    { ids: navShortcuts.map((s) => s.id), caps: ['1–9'], label: 'event types' },
+    { ids: ['go-favorites'], label: 'favorites' },
+    { ids: ['help'], label: 'all keys' },
+  ],
+}
+
+export const hintsOf = (bar: HintBarId): { caps: string[], label: string }[] =>
+  HINT_BARS[bar].map((spec) => ({
+    caps: spec.caps ?? spec.ids.map((id) => capsOf(shortcutById(id)!)[0]),
+    label: spec.label,
+  }))
