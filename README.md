@@ -47,4 +47,4 @@ issue or submit a pull request on our GitHub repository to get started.
 
 ## License
 
-Buggregator is open-sourced software licensed under the BSD-4 License.
+Buggregator is open-sourced software licensed under the MIT License.
