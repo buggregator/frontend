@@ -84,7 +84,14 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
   }
 }
 
+/* The panels are flex children: without min-h-0 they grow to their content
+   (a long Top functions table) and the parent clips them, so nothing scrolls.
+   Bounded here, the tab's own content scrolls (server#428). */
+.profiler-page__stat-tabs :deep(.tabs-component-panels) {
+  @apply min-h-0;
+}
+
 .profiler-page__stat-tabs :deep(.tabs-component-panel) {
-  @apply flex-1 overflow-hidden;
+  @apply flex-1 min-h-0 overflow-hidden;
 }
 </style>
