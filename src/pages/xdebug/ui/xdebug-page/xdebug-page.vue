@@ -1,11 +1,5 @@
 <script lang="ts" setup>
-import {
-  createReusableTemplate,
-  useDebounceFn,
-  useIntervalFn,
-  useNow,
-  useTitle
-} from '@vueuse/core'
+import { createReusableTemplate, useDebounceFn, useIntervalFn, useNow, useTitle } from '@vueuse/core'
 import { computed, onMounted, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
@@ -73,8 +67,7 @@ onXdebugMessage((message) => {
   list.apply(message)
   dbg.apply(message)
   bps.apply(message)
-  if (message.event === 'breakpoints.changed' && selected.value?.driver === 'here')
-    reloadSessionBreakpoints()
+  if (message.event === 'breakpoints.changed' && selected.value?.driver === 'here') reloadSessionBreakpoints()
 })
 onXdebugReconnect(() => {
   list.load()
@@ -86,18 +79,10 @@ useIntervalFn(() => list.tick(), 30_000)
 
 // Controls of a session Buggregator drives (server PR #392); `now` ticks the idle countdown.
 const now = useNow({ interval: 1000 })
-const ctl = useXdebugControl(
-  api,
-  selected,
-  computed(() => now.value.getTime())
-)
+const ctl = useXdebugControl(api, selected, computed(() => now.value.getTime()))
 // Older servers have no `mode`: the page stays read-only, as before.
 const hasModes = computed(() => !!config.value?.mode)
-const showControls = computed(
-  () =>
-    !!selected.value &&
-    (selected.value.driver === 'here' || (hasModes.value && config.value?.mode !== 'proxy'))
-)
+const showControls = computed(() => !!selected.value && (selected.value.driver === 'here' || (hasModes.value && config.value?.mode !== 'proxy')))
 // What the script does after a command from here; values on screen are from the last stop.
 const runningText = computed(() => {
   if (ctl.lastCommand.value === 'detach') return 'Releasing the script: it runs on to the end.'
@@ -106,17 +91,10 @@ const runningText = computed(() => {
 })
 
 // The timeline of a session driven here: who stepped, and agents may step too.
-const timelineText = computed(() =>
-  selected.value?.driver === 'here'
-    ? {
-        pausedBy: ctl.lastBy.value ? `last step: ${ctl.lastBy.value}` : 'stopped here',
-        hint: 'MCP calls an agent made in this session.'
-      }
-    : {}
-)
-const agentDriving = computed(
-  () => selected.value?.state === 'running' && selected.value.last_continuation_by === 'agent'
-)
+const timelineText = computed(() => selected.value?.driver === 'here'
+  ? { pausedBy: ctl.lastBy.value ? `last step: ${ctl.lastBy.value}` : 'stopped here', hint: 'MCP calls an agent made in this session.' }
+  : {})
+const agentDriving = computed(() => selected.value?.state === 'running' && selected.value.last_continuation_by === 'agent')
 
 const ideAddr = computed(() => config.value?.ide_addr ?? '127.0.0.1:9004')
 const port = (addr: string | undefined) => addr?.split(':').pop() ?? ''
@@ -124,53 +102,30 @@ const port = (addr: string | undefined) => addr?.split(':').pop() ?? ''
 // After a step (IDE or here), the old values stay on screen until the next
 // pause. The stack decides, not only the stale flag, so the code and the
 // control bar do not blink between the `running` event and the stale mark.
-const stepping = computed(
-  () =>
-    !!selected.value &&
-    selected.value.state === 'running' &&
-    (dbg.stale.value || dbg.stack.value.length > 0)
-)
+const stepping = computed(() => !!selected.value && selected.value.state === 'running' && (dbg.stale.value || dbg.stack.value.length > 0))
 const live = computed(() => !!selected.value && isLive(selected.value))
-const showDebugger = computed(
-  () => !!selected.value && (selected.value.state === 'break' || stepping.value)
-)
+const showDebugger = computed(() => !!selected.value && (selected.value.state === 'break' || stepping.value))
 
 const frame = computed(() => dbg.currentFrame.value)
 const crumb = computed(() => splitPath(frame.value?.file ?? selected.value?.last_file))
 const crumbLine = computed(() => frame.value?.line ?? selected.value?.last_line)
-const breakpointLines = computed(() =>
-  dbg.breakpoints.value
-    .filter((b) => b.line && b.file === (dbg.source.value?.file ?? frame.value?.file))
-    .map((b) => b.line as number)
-)
+const breakpointLines = computed(() => dbg.breakpoints.value
+  .filter((b) => b.line && b.file === (dbg.source.value?.file ?? frame.value?.file))
+  .map((b) => b.line as number))
 
 // Buggregator drives the selected session: the gutter and the panel edit.
 const drivenHere = computed(() => selected.value?.driver === 'here')
 // Mode proxy and older servers: no saved breakpoints (today's page).
-const showBreakpoints = computed(
-  () =>
-    !!config.value?.enabled &&
-    (drivenHere.value || (hasModes.value && config.value.mode !== 'proxy'))
-)
+const showBreakpoints = computed(() => !!config.value?.enabled && (drivenHere.value || (hasModes.value && config.value.mode !== 'proxy')))
 const bpReadOnly = computed(() => selected.value?.driver === 'ide')
-const bpRows = computed(() =>
-  breakpointRows(bps.list.value, dbg.breakpoints.value, drivenHere.value)
-)
+const bpRows = computed(() => breakpointRows(bps.list.value, dbg.breakpoints.value, drivenHere.value))
 const bpOn = computed(() => bps.list.value.filter((b) => b.enabled).length)
-const gutter = computed(() =>
-  gutterMarks(dbg.source.value?.file, bps.list.value, dbg.breakpoints.value, drivenHere.value)
-)
+const gutter = computed(() => gutterMarks(dbg.source.value?.file, bps.list.value, dbg.breakpoints.value, drivenHere.value))
 const toggleBreakpoint = (line: number) => {
   const file = dbg.source.value?.file
   if (file) bps.toggleLine(file, line)
 }
-watch(
-  showBreakpoints,
-  (on) => {
-    if (on && bps.state.value === 'idle') bps.load()
-  },
-  { immediate: true }
-)
+watch(showBreakpoints, (on) => { if (on && bps.state.value === 'idle') bps.load() }, { immediate: true })
 
 const [DefineBreakpoints, ReuseBreakpoints] = createReusableTemplate()
 
@@ -181,9 +136,7 @@ const savedText = computed(() => {
   if (!n) return 'your breakpoints'
   return `your ${n} saved ${n === 1 ? 'breakpoint' : 'breakpoints'}`
 })
-const modeText = computed(() =>
-  xdebugModeText(config.value?.mode, port(config.value?.ide_addr), savedText.value)
-)
+const modeText = computed(() => xdebugModeText(config.value?.mode, port(config.value?.ide_addr), savedText.value))
 const settingsButton = useTemplateRef<InstanceType<typeof XdebugSettingsButton>>('settingsButton')
 
 const contextLabel = (name: string) => (name === 'User defined constants' ? 'User constants' : name)
@@ -197,19 +150,13 @@ const dismiss = async (id: string) => {
   }
 }
 
-const sessionsLabel = computed(
-  () => `${sessions.value.length} ${sessions.value.length === 1 ? 'session' : 'sessions'}`
-)
+const sessionsLabel = computed(() => `${sessions.value.length} ${sessions.value.length === 1 ? 'session' : 'sessions'}`)
 
 // The pick is written into the URL, so the selection stays put while that
 // session runs; it moves only when the session is gone.
-watch(
-  selectedId,
-  (id) => {
-    if (id && route.query.session !== id) router.replace({ query: { ...route.query, session: id } })
-  },
-  { immediate: true }
-)
+watch(selectedId, (id) => {
+  if (id && route.query.session !== id) router.replace({ query: { ...route.query, session: id } })
+}, { immediate: true })
 </script>
 
 <template>
@@ -219,8 +166,7 @@ watch(
       open
     >
       <summary>
-        <XdebugIcon name="down" />Breakpoints
-        <span class="xdebug-sec__count">{{ bps.list.value.length }}</span>
+        <XdebugIcon name="down" />Breakpoints <span class="xdebug-sec__count">{{ bps.list.value.length }}</span>
         <span
           v-if="bps.list.value.length && !bpReadOnly"
           class="xdebug-sec__right"
@@ -271,9 +217,7 @@ watch(
             class="xdebug-page__tag xdebug-page__hide-s"
             :title="`Xdebug connects to ${config.addr}; Buggregator forwards to your IDE at ${config.ide_addr}`"
           >
-            <XdebugIcon name="check" />proxy :{{ port(config.addr) }} → IDE :{{
-              port(config.ide_addr)
-            }}
+            <XdebugIcon name="check" />proxy :{{ port(config.addr) }} → IDE :{{ port(config.ide_addr) }}
           </span>
           <span
             v-if="config?.enabled"
@@ -316,10 +260,7 @@ watch(
             class="xdebug-page__empty-ico"
           />
           <h2>Could not load the Xdebug proxy</h2>
-          <p>
-            The server did not answer <code>/api/xdebug</code>. It may be an older Buggregator
-            without the Xdebug module.
-          </p>
+          <p>The server did not answer <code>/api/xdebug</code>. It may be an older Buggregator without the Xdebug module.</p>
           <button
             type="button"
             class="xdebug-page__btn"
@@ -341,8 +282,8 @@ watch(
           />
           <h2>Xdebug proxy is off</h2>
           <p>
-            Set <code>xdebug.enabled: true</code> in <code>buggregator.yaml</code> or
-            <code>XDEBUG_PROXY_ENABLED=true</code>, and restart.
+            Set <code>xdebug.enabled: true</code> in <code>buggregator.yaml</code>
+            or <code>XDEBUG_PROXY_ENABLED=true</code>, and restart.
           </p>
         </div>
       </div>
@@ -404,8 +345,7 @@ watch(
             open
           >
             <summary>
-              <XdebugIcon name="down" />Sessions
-              <span class="xdebug-sec__count">{{ sessions.length }}</span>
+              <XdebugIcon name="down" />Sessions <span class="xdebug-sec__count">{{ sessions.length }}</span>
             </summary>
             <XdebugSessionRow
               v-for="s in sessions"
@@ -471,9 +411,7 @@ watch(
                 <span
                   v-if="dbg.watches.value.length"
                   class="xdebug-sec__count"
-                >{{
-                  dbg.watches.value.length
-                }}</span>
+                >{{ dbg.watches.value.length }}</span>
               </summary>
               <XdebugWatches
                 :rows="dbg.watches.value"
@@ -493,8 +431,7 @@ watch(
               open
             >
               <summary>
-                <XdebugIcon name="down" />Call stack
-                <span class="xdebug-sec__count">{{ dbg.stack.value.length }}</span>
+                <XdebugIcon name="down" />Call stack <span class="xdebug-sec__count">{{ dbg.stack.value.length }}</span>
               </summary>
               <XdebugCallStack
                 :frames="dbg.stack.value"
@@ -507,8 +444,7 @@ watch(
 
           <details class="xdebug-sec xdebug-sec--agent">
             <summary>
-              <XdebugIcon name="down" />Agent
-              <span class="xdebug-sec__count">{{ dbg.agentLog.value.length }}</span>
+              <XdebugIcon name="down" />Agent <span class="xdebug-sec__count">{{ dbg.agentLog.value.length }}</span>
             </summary>
             <XdebugAgentTimeline
               :calls="dbg.agentLog.value"
@@ -537,8 +473,7 @@ watch(
                 :key="s.id"
                 :value="s.id"
               >
-                {{ s.state === 'break' ? '⏸' : isLive(s) ? '▶' : '✕' }} #{{ s.id }}
-                {{ sessionTitle(s) }}
+                {{ s.state === 'break' ? '⏸' : isLive(s) ? '▶' : '✕' }} #{{ s.id }} {{ sessionTitle(s) }}
               </option>
             </select>
           </div>
@@ -565,10 +500,7 @@ watch(
             role="status"
           >
             <XdebugIcon name="agent" />
-            <span>{{
-              ctl.lastBy.value === 'an agent' ? 'An agent' : `The ${ctl.lastBy.value}`
-            }}
-              resumed the script via MCP, waiting for the next pause.</span>
+            <span>{{ ctl.lastBy.value === 'an agent' ? 'An agent' : `The ${ctl.lastBy.value}` }} resumed the script via MCP, waiting for the next pause.</span>
           </div>
           <div
             v-else-if="stepping"
@@ -577,8 +509,7 @@ watch(
           >
             <span class="xdebug-page__spin" />
             <span v-if="selected?.driver === 'here'">{{ runningText }}</span>
-            <span v-else>The IDE resumed the script, waiting for the next pause. Values are from the last
-              stop.</span>
+            <span v-else>The IDE resumed the script, waiting for the next pause. Values are from the last stop.</span>
           </div>
 
           <template v-if="showDebugger">
@@ -617,11 +548,7 @@ watch(
               :editable="drivenHere && showControls"
               :marks="gutter"
               :loading="dbg.sourceState.value === 'loading' || dbg.stackState.value === 'loading'"
-              :error="
-                dbg.stackState.value === 'error'
-                  ? 'Could not read the call stack.'
-                  : dbg.sourceError.value
-              "
+              :error="dbg.stackState.value === 'error' ? 'Could not read the call stack.' : dbg.sourceError.value"
               :stale="dbg.stale.value"
               @toggle="toggleBreakpoint"
             />
@@ -637,9 +564,7 @@ watch(
                 class="xdebug-page__empty-ico"
               />
               <h2>Running</h2>
-              <p>
-                No breakpoint hit yet. Source, variables and stack appear when the script pauses.
-              </p>
+              <p>No breakpoint hit yet. Source, variables and stack appear when the script pauses.</p>
               <p
                 v-if="selected.last_file"
                 class="xdebug-page__muted"
@@ -661,17 +586,14 @@ watch(
               <div>
                 <p>
                   <b>{{ closedTitle(selected) }}</b>
-                  {{
-                    closedReasonText(selected.closed_reason, ideAddr, config?.idle_timeout_seconds)
-                  }}
+                  {{ closedReasonText(selected.closed_reason, ideAddr, config?.idle_timeout_seconds) }}
                 </p>
                 <p v-if="selected.closed_reason === 'idle_detached'">
-                  A paused script holds a PHP worker, the session file and any open transaction, so
-                  Buggregator lets idle ones go. Change it with <code>xdebug.idle_timeout</code>.
+                  A paused script holds a PHP worker, the session file and any open transaction, so Buggregator lets idle
+                  ones go. Change it with <code>xdebug.idle_timeout</code>.
                 </p>
                 <p v-if="selected.closed_reason === 'ide_unreachable'">
-                  Start listening in your IDE on port {{ port(ideAddr) }}, or change
-                  <code>xdebug.ide_addr</code>.
+                  Start listening in your IDE on port {{ port(ideAddr) }}, or change <code>xdebug.ide_addr</code>.
                 </p>
                 <button
                   type="button"

@@ -15,6 +15,7 @@ describe('XdebugSetupGuide', () => {
     expect(sections[1].text()).toContain('xdebug.client_host=buggregator')
     expect(sections[1].text()).toContain('XDEBUG_PROXY_ADDR=0.0.0.0:9003')
     expect(sections[1].text()).toContain('XDEBUG_PROXY_IDE_ADDR=host.docker.internal:9004')
+    expect(sections[1].text()).toContain('On Linux also add extra_hosts: - host.docker.internal:host-gateway to that service.')
   })
 
   it('tells PHP to talk to Buggregator and the IDE to listen on its own port', () => {
@@ -28,6 +29,7 @@ describe('XdebugSetupGuide', () => {
     const w = mount(XdebugSetupGuide, { props: { config: config({ mode: 'standalone' }) } })
     expect(w.text()).not.toContain('IDE listens')
     expect(w.text()).not.toContain('XDEBUG_PROXY_IDE_ADDR')
+    expect(w.text()).not.toContain('host-gateway')
     expect(w.text()).toContain('XDEBUG_PROXY_ADDR=0.0.0.0:9003')
   })
 })

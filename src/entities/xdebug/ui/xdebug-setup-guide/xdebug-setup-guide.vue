@@ -50,6 +50,13 @@ const callsIde = computed(() => props.config.mode !== 'standalone')
         >{{
           setup.dockerEnv
         }}</pre>
+        <p
+          v-if="callsIde"
+          class="xdebug-setup__hint"
+        >
+          On Linux also add <code>extra_hosts: - host.docker.internal:host-gateway</code> to that
+          service.
+        </p>
       </section>
     </div>
     <p class="xdebug-setup__hint">
