@@ -16,6 +16,7 @@ import {
   useXdebugDebugger,
   useXdebugRequests,
   useXdebugSessions,
+  xdebugModeText,
   onXdebugMessage,
   onXdebugReconnect,
   XdebugAgentTimeline,
@@ -26,6 +27,7 @@ import {
   XdebugControlBar,
   XdebugIcon,
   XdebugSessionRow,
+  XdebugSetupGuide,
   XdebugVarTree,
   XdebugWatches
 } from '@/entities/xdebug'
@@ -134,6 +136,7 @@ const savedText = computed(() => {
   if (!n) return 'your breakpoints'
   return `your ${n} saved ${n === 1 ? 'breakpoint' : 'breakpoints'}`
 })
+const modeText = computed(() => xdebugModeText(config.value?.mode, port(config.value?.ide_addr), savedText.value))
 const settingsButton = useTemplateRef<InstanceType<typeof XdebugSettingsButton>>('settingsButton')
 
 const contextLabel = (name: string) => (name === 'User defined constants' ? 'User constants' : name)
@@ -294,20 +297,12 @@ watch(selectedId, (id) => {
             name="bug"
             class="xdebug-page__empty-ico"
           />
-          <h2>No debug sessions</h2>
+          <h2>No session has reached Buggregator yet</h2>
+          <p>
+            Mode <b>{{ modeText.mode }}</b>: {{ modeText.text }}
+          </p>
+          <XdebugSetupGuide :config="config" />
           <template v-if="drivesHere">
-            <p>
-              <template v-if="config.mode === 'standalone'">
-                Mode <b>Standalone</b>: Buggregator pauses at {{ savedText }} and you step here.
-              </template>
-              <template v-else>
-                Mode <b>Auto</b>: with no IDE listening, Buggregator pauses at {{ savedText }} and you step here.
-              </template>
-            </p>
-            <pre class="xdebug-page__pre">xdebug.mode=debug
-xdebug.client_host=127.0.0.1
-xdebug.client_port={{ port(config.addr) }}
-xdebug.start_with_request=yes</pre>
             <p
               v-if="config.pause_on_first_line"
               class="xdebug-page__hint"
@@ -326,15 +321,6 @@ xdebug.start_with_request=yes</pre>
                 v-text="'Pause on the first line'"
               />, run the request, then click line numbers.
             </p>
-          </template>
-          <template v-else>
-            <p>
-              Point Xdebug at Buggregator (<code>xdebug.client_port={{ port(config.addr) }}</code>) and move your IDE
-              to port <b>{{ port(config.ide_addr) }}</b>. Sessions appear here while the script runs.
-            </p>
-            <pre class="xdebug-page__pre">xdebug.mode=debug
-xdebug.client_host=127.0.0.1
-xdebug.client_port={{ port(config.addr) }}</pre>
           </template>
           <div
             v-if="showBreakpoints"
@@ -869,7 +855,13 @@ xdebug.client_port={{ port(config.addr) }}</pre>
 }
 
 .xdebug-page__center {
-  @apply flex flex-1 items-center justify-center p-6 overflow-auto;
+  @apply flex flex-1 justify-center p-6 overflow-auto;
+
+  // Centred with margins, not align-items: a block taller than the screen
+  // then scrolls from its top instead of being cut off above it.
+  > * {
+    @apply my-auto;
+  }
 }
 
 .xdebug-page__empty {
@@ -894,15 +886,11 @@ xdebug.client_port={{ port(config.addr) }}</pre>
 }
 
 .xdebug-page__empty--wide {
-  @apply max-w-xl;
+  @apply max-w-3xl;
 }
 
 .xdebug-page__empty-ico {
   @apply w-8 h-8 text-gray-500 dark:text-gray-400;
-}
-
-.xdebug-page__pre {
-  @apply w-full p-3 rounded text-left font-mono text-xs bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200;
 }
 
 .xdebug-page__callout {
