@@ -246,7 +246,7 @@ onMounted(() => {
 }
 
 .login-hero__headline {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-weight: 700;
   font-size: 3.5rem;
   line-height: 1.08;
@@ -273,7 +273,7 @@ onMounted(() => {
 }
 
 .login-hero__tagline {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.3);
   margin-top: 24px;
@@ -291,7 +291,7 @@ onMounted(() => {
 }
 
 .login-hero__cta {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-size: 1rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.5);
@@ -316,7 +316,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.2);
   opacity: 0;
