@@ -29,8 +29,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"DM Sans"', 'Nunito', defaultTheme.fontFamily.sans],
-        mono: ['"JetBrains Mono"', defaultTheme.fontFamily.mono]
+        sans: ['"DM Sans Variable"', 'Nunito', defaultTheme.fontFamily.sans],
+        mono: ['"JetBrains Mono Variable"', defaultTheme.fontFamily.mono]
       },
       transitionProperty: {
         height: 'height'

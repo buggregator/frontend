@@ -234,7 +234,7 @@ onMounted(() => {
 
 /* ── Giant 404 ────────────────────────────────────────────── */
 .nf__giant {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-weight: 900;
   font-size: clamp(12rem, 25vw, 22rem);
   line-height: 0.85;
@@ -268,7 +268,7 @@ onMounted(() => {
 }
 
 .nf__headline {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-weight: 700;
   font-size: clamp(2rem, 4.5vw, 3.5rem);
   line-height: 1.1;
@@ -295,7 +295,7 @@ onMounted(() => {
 }
 
 .nf__sub {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.3);
   margin-top: 24px;
@@ -351,7 +351,7 @@ onMounted(() => {
   padding: 11px 28px;
   border-radius: 10.5px;
   background: rgba(0, 0, 0, 0.85);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans Variable', sans-serif;
   font-weight: 600;
   font-size: 0.9375rem;
   color: #fff;
@@ -388,7 +388,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.15);
   opacity: 0;

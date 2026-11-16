@@ -671,6 +671,16 @@
     "@floating-ui/utils" "^0.2.8"
     vue-demi ">=0.13.0"
 
+"@fontsource-variable/dm-sans@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/dm-sans/-/dm-sans-5.3.0.tgz#691f0c9cb3de0306984a6bddf4fbfc725f135ff9"
+  integrity sha512-BpUG5bqePiDFMBM4ZtLSlPdAIOM990uB1dlXzIf4aw21yQR7BmykedLXXXMqGWsR18aMLOsbWccwJNh3ztTQaA==
+
+"@fontsource-variable/jetbrains-mono@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/jetbrains-mono/-/jetbrains-mono-5.3.0.tgz#5738dedd3af40606b0d9b7626f4ba7c4586cb39b"
+  integrity sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw==
+
 "@highlightjs/vue-plugin@^2.1.2":
   version "2.1.2"
   resolved "https://registry.npmjs.org/@highlightjs/vue-plugin/-/vue-plugin-2.1.2.tgz"

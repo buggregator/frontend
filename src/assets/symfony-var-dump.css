@@ -130,7 +130,7 @@ pre.sf-dump .sf-dump-search-bar {
   border: 1px solid #2a2f3a;
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
   font-size: 11px;
 }
 
