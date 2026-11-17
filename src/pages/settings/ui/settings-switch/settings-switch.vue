@@ -1,20 +1,27 @@
 <script lang="ts" setup>
 type Props = {
   checked: boolean
+  // Stays focusable so a screen reader still reaches it; a click does nothing.
+  disabled?: boolean
 }
 
-defineProps<Props>()
-defineEmits<{ toggle: [] }>()
+const props = withDefaults(defineProps<Props>(), { disabled: false })
+const emit = defineEmits<{ toggle: [] }>()
+
+const onClick = () => {
+  if (!props.disabled) emit('toggle')
+}
 </script>
 
 <template>
   <button
     type="button"
     class="settings-switch"
-    :class="{ 'settings-switch--on': checked }"
+    :class="{ 'settings-switch--on': checked, 'settings-switch--disabled': disabled }"
     role="switch"
     :aria-checked="checked"
-    @click="$emit('toggle')"
+    :aria-disabled="disabled || undefined"
+    @click="onClick"
   >
     <span class="settings-switch__knob" />
   </button>
@@ -37,6 +44,10 @@ defineEmits<{ toggle: [] }>()
 
 .settings-switch--on {
   @apply bg-blue-600 dark:bg-blue-500;
+}
+
+.settings-switch--disabled {
+  @apply opacity-50 cursor-not-allowed;
 }
 
 .settings-switch__knob {

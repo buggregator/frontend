@@ -197,8 +197,8 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     const wrapper = mount(SettingsPageContent)
 
     const links = wrapper.findAll('nav[aria-label="Settings sections"] a')
-    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Keyboard', 'Editor', 'About & updates'])
-    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#keyboard', '#editor', '#updates'])
+    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Menu', 'Keyboard', 'Editor', 'About & updates'])
+    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#menu', '#keyboard', '#editor', '#updates'])
     expect(links[0].attributes('aria-current')).toBe('true')
   })
 
@@ -210,7 +210,7 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     expect(wrapper.get('[data-setting="single-key-shortcuts"]').classes()).not.toContain('settings-row--dim')
     expect(wrapper.get('[data-setting="single-key-shortcuts"] mark').text()).toBe('sho')
     expect(wrapper.get('[data-setting="pin-header"]').classes()).toContain('settings-row--dim')
-    expect(wrapper.get('[role="status"]').text()).toBe('3 settings match.')
+    expect(wrapper.get('[role="status"]').text()).toBe('4 settings match.')
   })
 
   it('says when nothing matches', async () => {
@@ -219,7 +219,7 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     await wrapper.get('input[aria-label="Search settings"]').setValue('zzz')
 
     expect(wrapper.text()).toContain('No settings match «zzz».')
-    expect(wrapper.findAll('.settings-row--dim').length).toBe(7)
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(8)
 
     await wrapper.get('.settings__empty button').trigger('click')
 

@@ -290,6 +290,20 @@ describe('LayoutSidebar: groups and «new» badges', () => {
     expect(wrapper.get('a[title="Sentry"]').classes()).not.toContain('layout-sidebar__link--empty')
   })
 
+  it('leaves out entries turned off in Settings › Menu, with their «new» badge and an emptied group', () => {
+    useSettingsStore().hiddenMenuItems = ['sentry', 'profiler', 'inspector', 'mock-server']
+    const wrapper = expanded()
+
+    expect(wrapper.find('a[title="Sentry"]').exists()).toBe(false)
+    expect(wrapper.find('[data-test="nav-new"]').exists()).toBe(false)
+    expect(wrapper.find('a[title="Mock server"]').exists()).toBe(false)
+    expect(wrapper.findAll('.layout-sidebar__group-title').map((t) => t.text())).toEqual(['Dumps', 'Mail & logs'])
+    // The fixed entries stay.
+    expect(wrapper.find('a[title="Events"]').exists()).toBe(true)
+    expect(wrapper.find('a[title="Favorites"]').exists()).toBe(true)
+    expect(wrapper.find('a[title="Settings"]').exists()).toBe(true)
+  })
+
   it('shows «new» even with event counts turned off', () => {
     useSettingsStore().isVisibleEventCounts = false
     const sentry = expanded().get('a[title="Sentry"]')
