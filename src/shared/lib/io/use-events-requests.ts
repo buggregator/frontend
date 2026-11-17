@@ -15,6 +15,7 @@ export type DeleteOptions = { keepPinned?: boolean }
 
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
+  hasAny: () => Promise<boolean>,
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: (options?: DeleteOptions) => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
@@ -66,6 +67,23 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
       return body.data as ServerEvent<unknown>[]
     })
+
+  // Whether the project has any event at all, whatever the period: the
+  // empty home shows only for a project with none (#6012).
+  const hasAny = () => {
+    const params = new URLSearchParams({ limit: '1' })
+    if (project.value) {
+      params.set('project', project.value)
+    }
+    return fetch(`${REST_API_URL}/api/events/preview?${params}`, { headers: headers() })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new EventsLoadError(response.status)
+        }
+        const body = await response.json()
+        return Array.isArray(body?.data) && body.data.length > 0
+      })
+  }
 
   // null: the server has no such event (deleted, cleared, a wrong link).
   // Any other failure throws, so the page can tell the two apart.
@@ -135,6 +153,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   return {
     getAll,
+    hasAny,
     getSingle,
     deleteAll,
     deleteList,
