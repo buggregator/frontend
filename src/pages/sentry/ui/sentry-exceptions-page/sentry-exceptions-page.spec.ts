@@ -69,4 +69,24 @@ describe('SentryExceptionsPage', () => {
     feed().vm.$emit('clear-filter')
     expect(useSentryFilters().exceptionsLevel).toBe('')
   })
+
+  // Review of #353: Group by type with a level that matches nothing said
+  // «Waiting for exceptions… send your DSN».
+  it('Group by type, a level with no matches: says so and offers all levels, no setup guide', async () => {
+    const f = useSentryFilters()
+    f.exceptionsView = 'grouped'
+    f.exceptionsLevel = 'fatal'
+    const wrapper = mount(SentryExceptionsPage, {
+      global: { stubs: { LayoutPreviewEvents: true, SetupGuide: { template: '<div class="guide-stub" />' } } },
+    })
+    const panel = wrapper.get('[data-test="grouped-level-empty"]')
+
+    expect(panel.text()).toContain('No fatal exceptions')
+    expect(wrapper.find('.guide-stub').exists()).toBe(false)
+    expect(wrapper.text()).not.toContain('Waiting for exceptions')
+
+    await panel.get('button').trigger('click')
+    expect(f.exceptionsLevel).toBe('')
+    expect(wrapper.find('[data-test="grouped-level-empty"]').exists()).toBe(false)
+  })
 })

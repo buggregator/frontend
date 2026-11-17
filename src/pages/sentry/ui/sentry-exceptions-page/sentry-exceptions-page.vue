@@ -6,7 +6,6 @@ import { LayoutPreviewEvents, SetupGuide } from '@/widgets/ui'
 import {
   useSentryExceptions,
   onSentryEvent,
-  SentryEmptyState,
   SentryExceptionGroupCard,
   useSentryFilters
 } from '@/entities/sentry'
@@ -114,8 +113,9 @@ onSentryEvent(() => {
         />
       </template>
 
-      <!-- No exception yet: how to send the first one (#5941); a level filter
-           that matches nothing keeps the plain empty state. -->
+      <!-- No exception yet: how to send the first one (#5941). A level that
+           matches nothing says so, with a way back (the level sits behind the
+           filter button). -->
       <SetupGuide
         v-else-if="!sentryFilters.exceptionsLevel"
         section-id="sentry"
@@ -123,9 +123,12 @@ onSentryEvent(() => {
         kicker="Sentry · Exceptions"
       />
 
-      <SentryEmptyState
+      <StatusPanel
         v-else
-        type="exceptions"
+        :title="`No ${sentryFilters.exceptionsLevel} exceptions`"
+        action-label="Show all levels"
+        data-test="grouped-level-empty"
+        @action="sentryFilters.exceptionsLevel = ''"
       />
 
       <div
