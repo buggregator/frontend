@@ -216,7 +216,7 @@ const logout = () => {
   router.push('/login')
 }
 
-const { availableEvents, hiddenMenuItems } = storeToRefs(useSettingsStore())
+const { availableEvents, hiddenMenuItems, isMockServerAvailable } = storeToRefs(useSettingsStore())
 
 // Opens the Ctrl/⌘+K window: the way in without a keyboard.
 const paletteKey = paletteKeyCaption()
@@ -249,7 +249,9 @@ const navGroups = computed(() =>
     types: group.types.filter((type) => availableEvents.value.includes(type) && isShown(type))
   })).filter((group) => group.types.length > 0)
 )
-const isMockServerShown = computed(() => isShown(MENU_TOOL_IDS.mockServer))
+const isMockServerShown = computed(
+  () => isMockServerAvailable.value && isShown(MENU_TOOL_IDS.mockServer)
+)
 const isXdebugShown = computed(() => xdebugEnabled.value && isShown(MENU_TOOL_IDS.xdebug))
 const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 

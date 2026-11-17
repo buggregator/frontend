@@ -68,6 +68,17 @@ describe('CommandPalette', () => {
     wrapper.unmount()
   })
 
+  // The server serves mocks from the http-dump module (#6019).
+  it('offers no Mock server page when the server has http-dump off', async () => {
+    const { wrapper, type } = await setup()
+    useSettingsStore().availableEvents = ['sentry', 'smtp']
+
+    await type('mock')
+
+    expect(document.querySelector('[data-command="page-mock-server"]')).toBeNull()
+    wrapper.unmount()
+  })
+
   it('finds pages and settings, best match first', async () => {
     const { wrapper, type, options } = await setup()
 

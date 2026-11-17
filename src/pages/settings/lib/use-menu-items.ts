@@ -10,12 +10,12 @@ export type MenuItemState = MenuItem & { shown: boolean; locked: boolean }
 // the rule that one of them always stays on.
 export const useMenuItems = () => {
   const settingsStore = useSettingsStore()
-  const { availableEvents, hiddenMenuItems } = storeToRefs(settingsStore)
+  const { availableEvents, hiddenMenuItems, isMockServerAvailable } = storeToRefs(settingsStore)
   const xdebugEnabled = useXdebugEnabled()
 
   const available = computed(() =>
     MENU_ITEMS.filter((item) => {
-      if (item.id === MENU_TOOL_IDS.mockServer) return true
+      if (item.id === MENU_TOOL_IDS.mockServer) return isMockServerAvailable.value
       if (item.id === MENU_TOOL_IDS.xdebug) return xdebugEnabled.value
       return availableEvents.value.includes(item.id)
     })

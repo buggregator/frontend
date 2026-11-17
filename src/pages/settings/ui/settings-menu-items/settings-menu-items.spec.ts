@@ -26,7 +26,7 @@ describe('SettingsMenuItems', () => {
     vi.stubGlobal('localStorage', memoryStorage())
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     setActivePinia(createPinia())
-    useSettingsStore().availableEvents = ['sentry', 'ray', 'smtp']
+    useSettingsStore().availableEvents = ['sentry', 'ray', 'http-dump', 'smtp']
     xdebug.value = false
   })
 
@@ -38,7 +38,7 @@ describe('SettingsMenuItems', () => {
     const wrapper = mount(SettingsMenuItems)
     const items = wrapper.findAll('[data-menu-item]').map((el) => el.attributes('data-menu-item'))
 
-    expect(items).toEqual(['sentry', 'ray', 'smtp', 'mock-server'])
+    expect(items).toEqual(['sentry', 'ray', 'http-dump', 'smtp', 'mock-server'])
     expect(wrapper.findAll('.s-menu__group-title').map((el) => el.text())).toEqual([
       'Errors & performance', 'Dumps', 'Mail & logs', 'Tools',
     ])
@@ -49,6 +49,12 @@ describe('SettingsMenuItems', () => {
   it('shows Xdebug only when the server has it', () => {
     xdebug.value = true
     expect(mount(SettingsMenuItems).find('[data-menu-item="xdebug"]').exists()).toBe(true)
+  })
+
+  // The server serves mocks from the http-dump module (#6019).
+  it('has no Mock server entry when the server has http-dump off', () => {
+    useSettingsStore().availableEvents = ['sentry', 'ray', 'smtp']
+    expect(mount(SettingsMenuItems).find('[data-menu-item="mock-server"]').exists()).toBe(false)
   })
 
   it('turns an entry off and remembers it per browser', async () => {
@@ -62,7 +68,7 @@ describe('SettingsMenuItems', () => {
   })
 
   it('keeps the last entry on and says why', async () => {
-    useSettingsStore().hiddenMenuItems = ['sentry', 'ray', 'smtp']
+    useSettingsStore().hiddenMenuItems = ['sentry', 'ray', 'http-dump', 'smtp']
     const wrapper = mount(SettingsMenuItems)
     const last = switchOf(wrapper, 'mock-server')
 
@@ -92,7 +98,7 @@ describe('SettingsMenuItems', () => {
   it('reads what was saved before', () => {
     localStorage.setItem('hidden_menu_items', '["smtp"]')
     setActivePinia(createPinia())
-    useSettingsStore().availableEvents = ['sentry', 'ray', 'smtp']
+    useSettingsStore().availableEvents = ['sentry', 'ray', 'http-dump', 'smtp']
 
     expect(switchOf(mount(SettingsMenuItems), 'smtp').attributes('aria-checked')).toBe('false')
   })

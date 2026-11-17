@@ -108,6 +108,7 @@ describe('LayoutSidebar: menu and project switcher', () => {
     vi.stubGlobal('localStorage', memoryStorage())
     narrowScreen(false)
     setActivePinia(createPinia())
+    useSettingsStore().availableEvents = ['sentry', 'http-dump', 'smtp']
     await router.push('/')
   })
 
@@ -257,7 +258,7 @@ describe('LayoutSidebar: groups and «new» badges', () => {
     vi.stubGlobal('localStorage', memoryStorage())
     narrowScreen(false)
     setActivePinia(createPinia())
-    useSettingsStore().availableEvents = ['sentry', 'profiler', 'inspector', 'ray', 'smtp', 'monolog']
+    useSettingsStore().availableEvents = ['sentry', 'profiler', 'inspector', 'ray', 'http-dump', 'smtp', 'monolog']
     totals.value = { sentry: 5, ray: 2, smtp: 4 }
     fresh.value = { sentry: 3 }
     await router.push('/favorites')
@@ -281,6 +282,12 @@ describe('LayoutSidebar: groups and «new» badges', () => {
     expect(names).toEqual(['Errors & performance', 'Dumps', 'Mail & logs', 'Tools'])
     expect(groups[0].findAll('a').map((a) => a.attributes('title'))).toEqual(['Sentry', 'Profiler', 'Inspector'])
     expect(groups[3].find('a[title="Mock server"]').exists()).toBe(true)
+  })
+
+  // The server serves mocks from the http-dump module (#6019).
+  it('has no Mock server link when the server has http-dump off', () => {
+    useSettingsStore().availableEvents = ['sentry', 'smtp']
+    expect(expanded().find('a[title="Mock server"]').exists()).toBe(false)
   })
 
   it('shows «N new» and the total, and says both', () => {
