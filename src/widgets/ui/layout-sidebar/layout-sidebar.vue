@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { PAGES_SETTINGS } from '@/shared/constants'
+import { isCommandPaletteOpen, paletteKeyCaption } from '@/shared/lib/command-palette'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useMenuKeys } from '@/shared/lib/use-menu-keys'
@@ -219,6 +220,9 @@ const logout = () => {
 
 const { availableEvents } = storeToRefs(useSettingsStore())
 
+// Opens the Ctrl/⌘+K window: the way in without a keyboard.
+const paletteKey = paletteKeyCaption()
+
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey)
 
@@ -392,6 +396,26 @@ const linkLabel = (type: EventType) =>
         :class="{ 'layout-sidebar__scroll--more': hasMoreBelow }"
         @scroll.passive="updateMoreBelow"
       >
+        <button
+          type="button"
+          class="layout-sidebar__link layout-sidebar__goto"
+          :title="`Go to… (${paletteKey})`"
+          aria-label="Go to a page, project, setting or action"
+          aria-keyshortcuts="Control+K Meta+K"
+          aria-haspopup="dialog"
+          data-test="open-palette"
+          @click="isCommandPaletteOpen = true"
+        >
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              name="search"
+            />
+          </span>
+          <span class="layout-sidebar__link-label">Go to…</span>
+          <kbd class="layout-sidebar__goto-key">{{ paletteKey }}</kbd>
+        </button>
+
         <RouterLink
           :to="{ name: RouteName.Home }"
           title="Events"
@@ -892,6 +916,20 @@ const linkLabel = (type: EventType) =>
 .layout-sidebar__new {
   @apply hidden ml-auto px-1.5 py-0.5 rounded-full text-[10px] leading-none font-medium;
   @apply bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply inline-block;
+  }
+}
+
+.layout-sidebar__goto {
+  @apply w-full text-left;
+}
+
+.layout-sidebar__goto-key {
+  @apply hidden ml-auto flex-shrink-0 font-mono text-[10px] leading-none px-1 py-0.5 rounded;
+  @apply border border-gray-300 dark:border-gray-600;
+  @apply text-gray-500 dark:text-gray-400;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply inline-block;

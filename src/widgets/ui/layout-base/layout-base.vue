@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { defineAsyncComponent, ref, watch } from 'vue'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { isCommandPaletteOpen } from '@/shared/lib/command-palette'
 import { useEvents } from '@/shared/lib/use-events'
 import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
 import { toastMessage } from '@/shared/lib/use-keyboard-nav'
@@ -30,6 +31,10 @@ const UpdateRestartStrip = defineAsyncComponent(() =>
   loadUpdateProgress().then((m) => m.UpdateRestartStrip)
 )
 const { isShortcutsOverlayOpen } = useGlobalShortcuts()
+// Ctrl/⌘+K: loaded on first open, its styles stay out of the first load.
+const CommandPalette = defineAsyncComponent(() =>
+  import('../command-palette').then((m) => m.CommandPalette)
+)
 
 // The skip link moves focus by hand: following its href would leave
 // #main-content in the URL (and in the history).
@@ -150,6 +155,11 @@ watch(
     <KeyboardShortcutsOverlay
       v-if="isShortcutsOverlayOpen"
       @close="isShortcutsOverlayOpen = false"
+    />
+
+    <CommandPalette
+      v-if="isCommandPaletteOpen"
+      @close="isCommandPaletteOpen = false"
     />
 
     <!-- Action toast. The live region stays in the DOM, so a screen reader

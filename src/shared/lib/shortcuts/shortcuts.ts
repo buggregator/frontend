@@ -46,6 +46,8 @@ const navShortcuts: Shortcut[] = NAV_TYPES.map((type, i) => ({
 
 export const SHORTCUTS: Shortcut[] = [
   { id: 'help', group: 'everywhere', keys: ['?'], label: 'Show this list', singleKey: true },
+  // Handled by itself (it needs Ctrl or ⌘); no plain key triggers it.
+  { id: 'palette', group: 'everywhere', keys: [], caps: ['Ctrl/⌘ K'], label: 'Go to a page, project, setting or action', singleKey: false },
   { id: 'go-home', group: 'everywhere', keys: ['0'], label: 'All events', singleKey: true },
   { id: 'go-favorites', group: 'everywhere', keys: ['f'], label: 'Favorites', singleKey: true },
   ...navShortcuts,

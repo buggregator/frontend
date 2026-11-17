@@ -5,6 +5,7 @@ import { defineComponent, h } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useSettingsStore } from '../../stores'
 import { EventTypes, RouteName } from '../../types'
+import { isCommandPaletteOpen } from '../command-palette'
 import { isShortcutsOverlayOpen, useGlobalShortcuts } from './use-global-shortcuts'
 
 const memoryStorage = () => {
@@ -48,6 +49,7 @@ describe('useGlobalShortcuts', () => {
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     setActivePinia(createPinia())
     isShortcutsOverlayOpen.value = false
+    isCommandPaletteOpen.value = false
   })
 
   afterEach(() => {
@@ -87,6 +89,35 @@ describe('useGlobalShortcuts', () => {
 
     expect(router.currentRoute.value.path).toBe('/smtp')
     expect(isShortcutsOverlayOpen.value).toBe(false)
+    wrapper.unmount()
+  })
+
+  // Idea 5: Ctrl/⌘+K opens the «Go to» window, also from a text field and with
+  // single-key shortcuts off (it has a modifier).
+  it('opens and closes the Go to window with Ctrl+K or ⌘+K', async () => {
+    const { wrapper } = await setup()
+    useSettingsStore().isSingleKeyShortcutsEnabled = false
+    const input = document.createElement('input')
+    document.body.appendChild(input)
+    input.focus()
+
+    press('k', { ctrlKey: true })
+    expect(isCommandPaletteOpen.value).toBe(true)
+    press('K', { metaKey: true, shiftKey: true })
+    expect(isCommandPaletteOpen.value).toBe(true)
+    press('k', { metaKey: true })
+    expect(isCommandPaletteOpen.value).toBe(false)
+
+    input.remove()
+    wrapper.unmount()
+  })
+
+  it('does not open it with a plain k', async () => {
+    const { wrapper } = await setup()
+
+    press('k')
+    expect(isCommandPaletteOpen.value).toBe(false)
+
     wrapper.unmount()
   })
 })

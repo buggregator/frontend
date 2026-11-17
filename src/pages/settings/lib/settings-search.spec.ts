@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SETTINGS_SECTIONS } from '../config/settings-catalog'
+import { SETTINGS_SECTIONS } from '@/shared/constants'
 import { matchesQuery, matchingSettingIds } from './settings-search'
 
 describe('matchingSettingIds', () => {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, useId } from 'vue'
+import type { SettingItem } from '@/shared/constants'
 import { HighlightText } from '@/shared/ui'
-import type { SettingItem } from '../../config/settings-catalog'
 import { matchesQuery, useSettingMatch } from '../../lib/settings-search'
 
 type Props = {

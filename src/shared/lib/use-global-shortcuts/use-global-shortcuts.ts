@@ -3,6 +3,7 @@ import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '../../stores'
 import { RouteName } from '../../types'
+import { isCommandPaletteOpen } from '../command-palette'
 import { NAV_TYPES, shortcutFor } from '../shortcuts'
 import { hasCommandModifier, isTextFieldFocused } from '../use-keyboard-nav'
 
@@ -15,6 +16,15 @@ export function useGlobalShortcuts() {
   const { isSingleKeyShortcutsEnabled } = storeToRefs(settingsStore)
 
   const handleKeydown = (e: KeyboardEvent) => {
+    // Ctrl/⌘+K: the «Go to» window. It has a modifier, so it works in a text
+    // field and with single-key shortcuts off. Shift+Ctrl+K is left alone.
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'k') {
+      e.preventDefault()
+      isShortcutsOverlayOpen.value = false
+      isCommandPaletteOpen.value = !isCommandPaletteOpen.value
+      return
+    }
+
     // Escape closes overlay
     if (e.key === 'Escape' && isShortcutsOverlayOpen.value) {
       e.preventDefault()
