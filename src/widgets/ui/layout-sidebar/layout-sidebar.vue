@@ -8,14 +8,13 @@ import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS } from '@/shared/constants'
 import { isCommandPaletteOpen, paletteKeyCaption } from '@/shared/lib/command-palette'
-import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useMenuKeys } from '@/shared/lib/use-menu-keys'
 import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
-import { IconSvg } from '@/shared/ui'
+import { IconSvg, ProjectAvatar } from '@/shared/ui'
 import { navLinkLabel } from './nav-label'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
@@ -254,9 +253,6 @@ const isMockServerShown = computed(() => isShown(MENU_TOOL_IDS.mockServer))
 const isXdebugShown = computed(() => xdebugEnabled.value && isShown(MENU_TOOL_IDS.xdebug))
 const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 
-const makeShortTitle = (title: string) => (title || '').substring(0, 2)
-const generateRadialGradient = (input: string) =>
-  `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 
 // A fade at the list's bottom edge while more of it is below the fold.
 const scrollList = ref<HTMLElement | undefined>()
@@ -368,15 +364,10 @@ const linkLabel = (type: EventType) =>
             :title="activeProject.name"
             @click="toggleProjects"
           >
-            <span
+            <ProjectAvatar
               class="layout-sidebar__project"
-              aria-hidden="true"
-              :style="{
-                background: generateRadialGradient(activeProject.name)
-              }"
-            >
-              {{ makeShortTitle(activeProject.name) }}
-            </span>
+              :project-key="activeProject.key"
+            />
             <span class="layout-sidebar__project-name">{{ activeProject.name }}</span>
             <svg
               class="layout-sidebar__project-chevron"
@@ -616,13 +607,10 @@ const linkLabel = (type: EventType) =>
         tabindex="-1"
         @click="setProject(project.key)"
       >
-        <span
+        <ProjectAvatar
           class="layout-sidebar__project"
-          aria-hidden="true"
-          :style="{ background: generateRadialGradient(project.name) }"
-        >
-          {{ makeShortTitle(project.name) }}
-        </span>
+          :project-key="project.key"
+        />
 
         <div class="layout-sidebar__dropdown-item-text">
           <span
@@ -1058,10 +1046,7 @@ const linkLabel = (type: EventType) =>
 }
 
 .layout-sidebar__project {
-  @apply text-2xs font-semibold uppercase;
-  @apply h-7 w-7 rounded;
-  @apply flex items-center justify-center relative flex-shrink-0;
-  @apply text-white dark:text-black;
+  @apply h-7 w-7;
 }
 
 /* ---- Dropdown ---- */
