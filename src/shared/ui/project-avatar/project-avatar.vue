@@ -11,9 +11,9 @@ const props = withDefaults(defineProps<Props>(), {
   size: 28
 })
 
-// 7 cells of 4.5 in a 32 box, 0.25 margin each side.
-const CELL = 4.5
-const OFFSET = 0.25
+// 7 cells of 4 in a 28 box: whole 4 px cells at the usual 28 px, sharp at 2×.
+const CELL = 4
+const OFFSET = 0
 const square = (x: number, y: number) =>
   `M${OFFSET + x * CELL} ${OFFSET + y * CELL}h${CELL}v${CELL}h-${CELL}z`
 
@@ -40,7 +40,7 @@ const colors = computed(() => {
     class="project-avatar"
     :width="size"
     :height="size"
-    viewBox="0 0 32 32"
+    viewBox="0 0 28 28"
     aria-hidden="true"
     focusable="false"
     shape-rendering="crispEdges"
@@ -49,8 +49,8 @@ const colors = computed(() => {
   >
     <rect
       class="project-avatar__tile"
-      width="32"
-      height="32"
+      width="28"
+      height="28"
     />
     <path
       class="project-avatar__ink"
