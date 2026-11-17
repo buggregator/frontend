@@ -103,13 +103,6 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
-      <!-- An empty section shows the guide itself. -->
-      <SetupHelpButton
-        v-if="hasSetupHelp(type) && allEvents.length > 0"
-        :section-id="type"
-        :section-title="PAGES_SETTINGS[type].sidebarTitle"
-      />
-
       <PeriodSelect />
 
       <SearchBar v-model="searchQuery" />
@@ -133,6 +126,13 @@ const toggleUpdate = () => {
         />
         <span class="action-btn__text">Clear</span>
       </button>
+
+      <!-- An empty section shows the guide itself. -->
+      <SetupHelpButton
+        v-if="hasSetupHelp(type) && allEvents.length > 0"
+        :section-id="type"
+        :section-title="PAGES_SETTINGS[type].sidebarTitle"
+      />
     </template>
   </AppHeader>
 </template>

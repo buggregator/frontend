@@ -46,13 +46,14 @@ describe('SentryLayoutPage header (#5980)', () => {
   })
   afterEach(() => vi.clearAllMocks())
 
-  it('one row: tabs in the header, then «How to set up», Period and the filter button', () => {
+  it('one row: tabs in the header, then Period, the filter button and «How to set up» last', () => {
     sentryCount.value = 3
     const header = render().get('header')
 
     expect(header.find('.tabs-stub').attributes('data-current')).toBe('exceptions')
     const controls = header.get('.header__actions').findAll('button, select').map((e) => e.classes()[0])
-    expect(controls).toEqual(['help-stub', 'period-stub', 'filter-stub'])
+    expect(controls).toEqual(['period-stub', 'filter-stub', 'help-stub'])
+    expect(header.find('.header__tabs-sep').attributes('aria-hidden')).toBe('true')
   })
 
   it('phone: the tabs leave the header for a second row; «How to set up» stays in the bar', () => {

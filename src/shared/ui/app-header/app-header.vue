@@ -18,6 +18,11 @@ defineProps<{ keepTitle?: boolean }>()
       v-if="$slots.tabs"
       class="header__tabs"
     >
+      <!-- Keeps the crumbs and the tabs apart (#5999). -->
+      <span
+        class="header__tabs-sep"
+        aria-hidden="true"
+      />
       <slot name="tabs" />
     </div>
 
@@ -42,7 +47,11 @@ defineProps<{ keepTitle?: boolean }>()
 }
 
 .header__tabs {
-  @apply flex self-stretch flex-1 min-w-0 ml-4 mr-3;
+  @apply flex self-stretch flex-1 min-w-0 mr-3;
+}
+
+.header__tabs-sep {
+  @apply flex-none self-center h-4 w-px mx-4 bg-gray-200 dark:bg-gray-700;
 }
 
 .header__actions {

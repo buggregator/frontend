@@ -212,10 +212,6 @@ watch(selectedId, (id) => {
           class="xdebug-page__count"
         >{{ sessionsLabel }}</span>
         <template #controls>
-          <SetupHelpButton
-            section-id="xdebug"
-            section-title="Xdebug"
-          />
           <span
             v-if="config?.enabled && (!hasModes || config.mode === 'proxy')"
             class="xdebug-page__tag xdebug-page__hide-s"
@@ -237,6 +233,10 @@ watch(selectedId, (id) => {
             ref="settingsButton"
             :config="config"
             @saved="list.setSettings"
+          />
+          <SetupHelpButton
+            section-id="xdebug"
+            section-title="Xdebug"
           />
         </template>
       </AppHeader>

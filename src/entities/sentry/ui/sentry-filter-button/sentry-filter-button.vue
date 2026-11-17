@@ -107,7 +107,7 @@ watch(
 }
 
 .sentry-filter__btn {
-  @apply relative inline-flex items-center justify-center gap-1.5 h-7 min-w-7 px-2 rounded;
+  @apply relative inline-flex items-center justify-center gap-1.5 h-7 min-w-7 px-[7px] rounded;
   @apply text-xs font-medium;
   @apply bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors;

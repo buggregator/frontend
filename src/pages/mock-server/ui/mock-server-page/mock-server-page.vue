@@ -389,10 +389,6 @@ onBeforeUnmount(() => {
           </button>
         </span>
         <template #controls>
-          <SetupHelpButton
-            section-id="mock-server"
-            section-title="Mock server"
-          />
           <button
             type="button"
             class="mock-page__btn mock-page__btn--head"
@@ -407,6 +403,10 @@ onBeforeUnmount(() => {
           >
             + <span class="mock-page__hide-xs">New rule</span>
           </button>
+          <SetupHelpButton
+            section-id="mock-server"
+            section-title="Mock server"
+          />
         </template>
       </AppHeader>
     </template>

@@ -186,7 +186,8 @@ describe('SetupHelpButton', () => {
     const wrapper = mount(SetupHelpButton, { props: { sectionId: 'smtp', sectionTitle: 'SMTP' }, attachTo: document.body })
     const button = wrapper.get('[data-test="setup-help-button"]')
 
-    expect(button.attributes('aria-label')).toBe('How to set up SMTP')
+    expect(button.attributes('aria-label')).toBe('How to set up')
+    expect(button.attributes('title')).toBe('How to set up')
     ;(button.element as HTMLElement).focus()
     await button.trigger('click')
     await vi.dynamicImportSettled()
