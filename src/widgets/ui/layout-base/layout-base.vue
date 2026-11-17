@@ -234,9 +234,12 @@ watch(
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;
+}
 
-  :global(html.sidebar-collapsed) & {
-    @apply xl:left-16;
+/* The whole selector in :global(): `:global(html.x) &` drops the `&`. */
+:global(html.sidebar-collapsed .layout-base__connection-banner) {
+  @media (min-width: 1280px) {
+    left: 4rem;
   }
 }
 
