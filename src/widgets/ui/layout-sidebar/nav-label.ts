@@ -1,4 +1,7 @@
-// The accessible name of a sidebar section link. The dot and the count badge
-// are visual only; the name carries the same fact.
-export const navLinkLabel = (title: string, count: number): string =>
-  count > 0 ? `${title}, ${count} ${count === 1 ? 'event' : 'events'}` : title
+// The accessible name of a sidebar section link. The «new» badge and the count
+// are visual only; the name carries the same facts.
+export const navLinkLabel = (title: string, count: number, fresh = 0): string => {
+  if (count <= 0) return title
+  const total = `${count} ${count === 1 ? 'event' : 'events'}`
+  return fresh > 0 ? `${title}, ${fresh} new, ${total}` : `${title}, ${total}`
+}

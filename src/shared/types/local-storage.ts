@@ -11,6 +11,7 @@ export enum LocalStorageKeys {
   Period = "period",
   SingleKeyShortcuts = "single_key_shortcuts",
   KeyHints = "key_hints",
+  SeenEvents = "seen_events",
 }
 
 export enum SessionStorageKeys {

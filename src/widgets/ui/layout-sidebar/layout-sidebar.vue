@@ -10,11 +10,12 @@ import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
 import { useMenuKeys } from '@/shared/lib/use-menu-keys'
+import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
-import { EVENTS_NAV_ORDER } from './constants'
+import { EVENTS_NAV_GROUPS } from './constants'
 import { navLinkLabel } from './nav-label'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
@@ -29,6 +30,7 @@ const { getItemsCount } = useEvents()
 const xdebugEnabled = useXdebugEnabled()
 
 const route = useRoute()
+const router = useRouter()
 
 const projectDd = ref<HTMLElement | undefined>()
 const projectMenu = ref<HTMLElement | undefined>()
@@ -212,7 +214,6 @@ const toggleProjects = async () => {
 
 const logout = () => {
   profileStore.removeToken()
-  const router = useRouter()
   router.push('/login')
 }
 
@@ -232,17 +233,19 @@ const projectSwitcherLabel = computed(
   () => `Project: ${activeProject.value?.name ?? ''}. Switch project`
 )
 
-const filteredNavOrder = computed(() =>
-  EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
+// Groups of the event types this server has; an empty group is left out.
+const navGroups = computed(() =>
+  EVENTS_NAV_GROUPS.map((group) => ({
+    ...group,
+    types: group.types.filter((type) => availableEvents.value.includes(type))
+  })).filter((group) => group.types.length > 0)
 )
+const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 
 const makeShortTitle = (title: string) => (title || '').substring(0, 2)
 const generateRadialGradient = (input: string) =>
   `linear-gradient(to right, ${textToColors(input || '').join(', ')})`
 
-// The colored dot is the at-a-glance indicator that events of this type
-// exist. The numeric count badge (gated by isVisibleEventCounts) is separate
-// — turning counts off should not also hide the indicator.
 // A fade at the list's bottom edge while more of it is below the fold.
 const scrollList = ref<HTMLElement | undefined>()
 const hasMoreBelow = ref(false)
@@ -253,7 +256,7 @@ const updateMoreBelow = () => {
 useResizeObserver(scrollList, updateMoreBelow)
 // The box keeps its size when entries come or go: check again then too.
 watch(
-  () => [filteredNavOrder.value.length, isVisuallyCollapsed.value],
+  () => [navTypesCount.value, isVisuallyCollapsed.value],
   () => nextTick(updateMoreBelow)
 )
 
@@ -262,9 +265,24 @@ const isRouteActive = (name: RouteName) => route.name === name
 const isTypeActive = (type: EventType) =>
   route.params.type === type || (type === 'sentry' && route.path.startsWith('/sentry'))
 
+// «N new» since the person last looked at a type (blue, in both widths); the
+// total (grey, expanded only, behind the «event counts» setting). What is on
+// screen counts as seen: one type on its page, all of them on «All events».
+const viewingTypes = computed<EventType[]>(() => {
+  if (route.name === RouteName.Home) return navGroups.value.flatMap((g) => g.types)
+  const type = navGroups.value.flatMap((g) => g.types).find(isTypeActive)
+  return type ? [type] : []
+})
+const { newCount } = useSeenEvents(viewingTypes)
+const newBadge = (type: EventType) => {
+  const n = newCount(type)
+  const shown = n > 99 ? '99+' : String(n)
+  return isVisuallyCollapsed.value ? shown : `${shown} new`
+}
+
 const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
 const linkLabel = (type: EventType) =>
-  navLinkLabel(PAGES_SETTINGS[type].sidebarTitle, getItemsCount.value(type))
+  navLinkLabel(PAGES_SETTINGS[type].sidebarTitle, getItemsCount.value(type), newCount(type))
 </script>
 
 <template>
@@ -390,17 +408,32 @@ const linkLabel = (type: EventType) =>
           <span class="layout-sidebar__link-label">All events</span>
         </RouterLink>
 
-        <template
-          v-for="type in filteredNavOrder"
-          :key="type"
+        <div
+          v-for="group in navGroups"
+          :key="group.id"
+          role="group"
+          :aria-labelledby="`nav-group-${group.id}`"
+          class="layout-sidebar__group"
         >
+          <p
+            :id="`nav-group-${group.id}`"
+            class="layout-sidebar__group-title"
+          >
+            {{ group.title }}
+          </p>
+
           <RouterLink
+            v-for="type in group.types"
+            :key="type"
             :to="
               type === 'sentry'
                 ? '/sentry/exceptions'
                 : { name: RouteName.EventList, params: { type } }
             "
-            :class="{ 'layout-sidebar__link--active': isTypeActive(type) }"
+            :class="{
+              'layout-sidebar__link--active': isTypeActive(type),
+              'layout-sidebar__link--empty': !hasEvents(type)
+            }"
             :title="PAGES_SETTINGS[type].sidebarTitle"
             :aria-label="linkLabel(type)"
             class="layout-sidebar__link"
@@ -410,56 +443,71 @@ const linkLabel = (type: EventType) =>
                 class="layout-sidebar__link-icon"
                 :name="PAGES_SETTINGS[type].iconName"
               />
-              <span
-                v-if="hasEvents(type)"
-                class="layout-sidebar__dot"
-                :class="`layout-sidebar__dot--${type}`"
-              />
             </span>
-            <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
+            <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].sidebarTitle }}</span>
             <span
-              v-if="isVisibleEventCounts && getItemsCount(type) > 0"
+              v-if="newCount(type) > 0"
+              class="layout-sidebar__new-count"
+              data-test="nav-new"
+            >{{
+              newBadge(type)
+            }}</span>
+            <span
+              v-if="isVisibleEventCounts && hasEvents(type)"
               class="layout-sidebar__count"
             >
               {{ getItemsCount(type) > 99 ? '99+' : getItemsCount(type) }}
             </span>
           </RouterLink>
-        </template>
+        </div>
 
-        <RouterLink
-          :to="{ name: RouteName.MockServer }"
-          title="Mock server"
-          aria-label="Mock server"
-          class="layout-sidebar__link"
-          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.MockServer) }"
+        <div
+          role="group"
+          aria-labelledby="nav-group-tools"
+          class="layout-sidebar__group"
         >
-          <span class="layout-sidebar__link-icon-wrap">
-            <IconSvg
-              class="layout-sidebar__link-icon"
-              name="mock-server"
-            />
-          </span>
-          <span class="layout-sidebar__link-label">Mock server</span>
-          <span class="layout-sidebar__new">new</span>
-        </RouterLink>
+          <p
+            id="nav-group-tools"
+            class="layout-sidebar__group-title"
+          >
+            Tools
+          </p>
 
-        <RouterLink
-          v-if="xdebugEnabled"
-          :to="{ name: RouteName.Xdebug }"
-          title="Xdebug"
-          aria-label="Xdebug"
-          class="layout-sidebar__link"
-          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Xdebug) }"
-        >
-          <span class="layout-sidebar__link-icon-wrap">
-            <IconSvg
-              class="layout-sidebar__link-icon"
-              name="bug"
-            />
-          </span>
-          <span class="layout-sidebar__link-label">Xdebug</span>
-          <span class="layout-sidebar__new">new</span>
-        </RouterLink>
+          <RouterLink
+            :to="{ name: RouteName.MockServer }"
+            title="Mock server"
+            aria-label="Mock server"
+            class="layout-sidebar__link"
+            :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.MockServer) }"
+          >
+            <span class="layout-sidebar__link-icon-wrap">
+              <IconSvg
+                class="layout-sidebar__link-icon"
+                name="mock-server"
+              />
+            </span>
+            <span class="layout-sidebar__link-label">Mock server</span>
+            <span class="layout-sidebar__new">new</span>
+          </RouterLink>
+
+          <RouterLink
+            v-if="xdebugEnabled"
+            :to="{ name: RouteName.Xdebug }"
+            title="Xdebug"
+            aria-label="Xdebug"
+            class="layout-sidebar__link"
+            :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Xdebug) }"
+          >
+            <span class="layout-sidebar__link-icon-wrap">
+              <IconSvg
+                class="layout-sidebar__link-icon"
+                name="bug"
+              />
+            </span>
+            <span class="layout-sidebar__link-label">Xdebug</span>
+            <span class="layout-sidebar__new">new</span>
+          </RouterLink>
+        </div>
       </div>
 
       <!-- Pinned: always in view, however short the screen -->
@@ -475,10 +523,6 @@ const linkLabel = (type: EventType) =>
             <IconSvg
               class="layout-sidebar__link-icon"
               name="pin"
-            />
-            <span
-              v-if="lockedIds.length > 0"
-              class="layout-sidebar__dot layout-sidebar__dot--favorites"
             />
           </span>
           <span class="layout-sidebar__link-label">Favorites</span>
@@ -789,7 +833,7 @@ const linkLabel = (type: EventType) =>
 
   /* Expanded mode: full-width highlight */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply justify-start px-4;
+    @apply justify-start pl-3 pr-2;
     @apply hover:bg-gray-200/50 dark:hover:bg-white/5;
   }
 
@@ -838,7 +882,7 @@ const linkLabel = (type: EventType) =>
 }
 
 .layout-sidebar__link-label {
-  @apply hidden text-sm font-medium truncate ml-3 flex-1;
+  @apply hidden text-sm font-medium truncate ml-2.5 flex-1 min-w-0;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply inline;
@@ -855,8 +899,8 @@ const linkLabel = (type: EventType) =>
 }
 
 .layout-sidebar__count {
-  @apply hidden text-[10px] font-mono tabular-nums leading-none;
-  @apply min-w-[20px] text-center px-1.5 py-0.5 rounded-full;
+  @apply hidden text-[10px] font-mono tabular-nums leading-none flex-shrink-0;
+  @apply min-w-[18px] text-center px-1 py-0.5 rounded-full;
   @apply bg-gray-200/80 dark:bg-white/5;
   @apply text-gray-500 dark:text-gray-400;
 
@@ -865,45 +909,54 @@ const linkLabel = (type: EventType) =>
   }
 }
 
-/* Colored dot indicator for collapsed mode */
-.layout-sidebar__dot {
-  @apply absolute;
-  @apply w-[6px] h-[6px] rounded-full;
-  @apply bg-gray-400;
-  top: -1px;
-  right: -2px;
-  box-shadow: 0 0 0 1.5px theme('colors.gray.100');
+/* ---- Groups ---- */
+.layout-sidebar__group {
+  @apply flex flex-col;
 
-  .dark & {
-    box-shadow: 0 0 0 1.5px theme('colors.gray.900');
+  & + & {
+    @apply mt-1;
   }
 
-  /* Hide dot in expanded mode (count badge is shown instead) */
+  /* Collapsed: a thin line between groups instead of the titles. */
+  .layout-sidebar--collapsed & + &::before {
+    content: '';
+    @apply block mx-auto my-1 w-6 h-px;
+    background-color: rgba(128, 128, 128, 0.25);
+  }
+}
+
+.layout-sidebar__group-title {
+  @apply hidden px-4 pt-2 pb-1;
+  @apply text-2xs font-semibold uppercase tracking-wider;
+  @apply text-gray-500 dark:text-gray-400;
+
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply hidden;
+    @apply block;
   }
 }
 
-$dotColors: (
-  'sentry': 'rose',
-  'profiler': 'violet',
-  'smtp': 'amber',
-  'sms': 'indigo',
-  'http-dump': 'green',
-  'inspector': 'yellow',
-  'var-dump': 'orange',
-  'monolog': 'teal',
-  'ray': 'cyan'
-);
+/* «N new» since the last look: blue, in both widths. Collapsed: a number on
+   the icon's corner. */
+.layout-sidebar__new-count {
+  @apply ml-1 mr-1 px-1.5 py-0.5 rounded-full flex-shrink-0;
+  @apply text-[10px] leading-none font-semibold tabular-nums whitespace-nowrap;
+  @apply bg-blue-600 text-white;
 
-@each $type, $color in $dotColors {
-  .layout-sidebar__dot--#{$type} {
-    @apply bg-#{$color}-500 dark:bg-#{$color}-400;
+  .layout-sidebar--collapsed & {
+    @apply absolute m-0 px-1 min-w-[16px] text-center;
+    top: 2px;
+    right: calc(50% - 22px);
+    box-shadow: 0 0 0 2px theme('colors.gray.100');
+
+    .dark & {
+      box-shadow: 0 0 0 2px theme('colors.gray.900');
+    }
   }
 }
 
-.layout-sidebar__dot--favorites {
-  @apply bg-amber-500 dark:bg-amber-400;
+/* A type with no events: the icon steps back; the name keeps its contrast. */
+.layout-sidebar__link--empty:not(.layout-sidebar__link--active) .layout-sidebar__link-icon {
+  @apply opacity-40;
 }
 
 .layout-sidebar__link--active {

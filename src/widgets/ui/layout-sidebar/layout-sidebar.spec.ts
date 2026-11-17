@@ -1,15 +1,22 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { availableStatus, restartingStatus, upToDateStatus } from '@/entities/server-update/mocks'
-import { useEventsStore } from '@/shared/stores'
+import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { LocalStorageKeys, RouteName } from '@/shared/types'
 import LayoutSidebar from './layout-sidebar.vue'
 
-vi.mock('@/shared/lib/use-events', () => ({ useEvents: () => ({ getItemsCount: ref(() => 0) }) }))
+const totals = ref<Record<string, number>>({})
+const fresh = ref<Record<string, number>>({})
+vi.mock('@/shared/lib/use-events', () => ({
+  useEvents: () => ({ getItemsCount: computed(() => (type: string) => totals.value[type] ?? 0) }),
+}))
+vi.mock('@/shared/lib/use-seen-events', () => ({
+  useSeenEvents: () => ({ newCount: (type: string) => fresh.value[type] ?? 0 }),
+}))
 vi.mock('@/entities/xdebug/lib', () => ({ useXdebugEnabled: () => ref(false) }))
 
 const memoryStorage = () => {
@@ -31,6 +38,7 @@ const router = createRouter({
     { path: '/favorites', name: RouteName.Favorites, component: page },
     { path: '/mock-server', name: RouteName.MockServer, component: page },
     { path: '/xdebug', name: RouteName.Xdebug, component: page },
+    { path: '/login', name: RouteName.Login, component: page },
     { path: '/:type', name: RouteName.EventList, component: page },
   ],
 })
@@ -225,5 +233,92 @@ describe('LayoutSidebar: project list rows', () => {
     expect(def.find('.layout-sidebar__dropdown-item-text-key').exists()).toBe(false)
     expect(shop.get('.layout-sidebar__dropdown-item-text-key').text()).toBe('shop')
     wrapper.unmount()
+  })
+})
+
+describe('LayoutSidebar: groups and «new» badges', () => {
+  beforeEach(async () => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    narrowScreen(false)
+    setActivePinia(createPinia())
+    useSettingsStore().availableEvents = ['sentry', 'profiler', 'inspector', 'ray', 'smtp', 'monolog']
+    totals.value = { sentry: 5, ray: 2, smtp: 4 }
+    fresh.value = { sentry: 3 }
+    await router.push('/favorites')
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    totals.value = {}
+    fresh.value = {}
+  })
+
+  const expanded = () => {
+    localStorage.setItem(LocalStorageKeys.SidebarCollapsed, 'false')
+    return render()
+  }
+
+  it('puts event types in named groups, tools last', () => {
+    const groups = expanded().findAll('[role="group"]')
+    const names = groups.map((g) => g.get('.layout-sidebar__group-title').text())
+
+    expect(names).toEqual(['Errors & performance', 'Dumps', 'Mail & logs', 'Tools'])
+    expect(groups[0].findAll('a').map((a) => a.attributes('title'))).toEqual(['Sentry', 'Profiler', 'Inspector'])
+    expect(groups[3].find('a[title="Mock server"]').exists()).toBe(true)
+  })
+
+  it('shows «N new» and the total, and says both', () => {
+    const sentry = expanded().get('a[title="Sentry"]')
+
+    expect(sentry.get('[data-test="nav-new"]').text()).toBe('3 new')
+    expect(sentry.get('.layout-sidebar__count').text()).toBe('5')
+    expect(sentry.attributes('aria-label')).toBe('Sentry, 3 new, 5 events')
+  })
+
+  it('keeps the «new» number in the collapsed menu, without the word', () => {
+    const sentry = render().get('a[title="Sentry"]')
+
+    expect(sentry.get('[data-test="nav-new"]').text()).toBe('3')
+    expect(sentry.find('.layout-sidebar__dot').exists()).toBe(false)
+  })
+
+  it('shows no badge where nothing is new, and dims types without events', () => {
+    const wrapper = expanded()
+
+    expect(wrapper.get('a[title="Ray"]').find('[data-test="nav-new"]').exists()).toBe(false)
+    expect(wrapper.get('a[title="Profiler"]').classes()).toContain('layout-sidebar__link--empty')
+    expect(wrapper.get('a[title="Sentry"]').classes()).not.toContain('layout-sidebar__link--empty')
+  })
+
+  it('shows «new» even with event counts turned off', () => {
+    useSettingsStore().isVisibleEventCounts = false
+    const sentry = expanded().get('a[title="Sentry"]')
+
+    expect(sentry.find('[data-test="nav-new"]').exists()).toBe(true)
+    expect(sentry.find('.layout-sidebar__count').exists()).toBe(false)
+  })
+})
+
+describe('LayoutSidebar: logout', () => {
+  beforeEach(async () => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    narrowScreen(false)
+    setActivePinia(createPinia())
+    await router.push('/settings')
+  })
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('drops the token and goes to the login page', async () => {
+    useSettingsStore().isAuthEnabled = true
+    useProfileStore().setProfile({ username: 'ann', email: 'ann@example.test', avatar: 'https://example.test/a.png' })
+    const wrapper = render()
+
+    await wrapper.get('[aria-label="User profile menu"]').trigger('click')
+    const logout = wrapper.findAll('button').find((b) => b.text().includes('Logout'))!
+    await logout.trigger('click')
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe(RouteName.Login)
   })
 })
