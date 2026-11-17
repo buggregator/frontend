@@ -53,6 +53,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     // The types the server says it has. A newer server can list one this UI
     // does not know: its events still show, with the default card.
     availableEvents: [] as string[],
+    // From /api/settings `ports`; null on older servers (setup help uses defaults).
+    ports: null as Record<string, number> | null,
     isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
     customFilePathMapping: getStoredCustomFilePathMapping() || [],
     // Left-menu entries turned off in Settings › Menu; their events are still stored.
@@ -90,6 +92,8 @@ export const useSettingsStore = defineStore("settingsStore", {
       }
 
       this.update = toUpdateInfo(settings?.update)
+
+      this.ports = settings?.ports ?? null
 
       // TODO: meed to move to the events store
       this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);

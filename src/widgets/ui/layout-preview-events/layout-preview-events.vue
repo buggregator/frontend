@@ -4,7 +4,7 @@ import { toBlob } from 'html-to-image'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { PAGE_TYPES } from '@/shared/constants'
+import { PAGE_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
@@ -16,6 +16,7 @@ import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { KeyHintBar } from '../key-hint-bar'
 import { PagePlaceholder } from '../page-placeholder'
+import { SetupGuide, hasSetupHelp } from '../setup-guide'
 
 type Props = {
   title?: string
@@ -279,7 +280,16 @@ const clearSearch = () => {
         v-else
         class="layout-preview-events__welcome"
       >
-        <PagePlaceholder class="layout-preview-events__tips" />
+        <!-- A section with setup help shows how to send its first event (#5941). -->
+        <SetupGuide
+          v-if="hasSetupHelp(type)"
+          :section-id="type"
+          :section-title="PAGES_SETTINGS[type].sidebarTitle"
+        />
+        <PagePlaceholder
+          v-else
+          class="layout-preview-events__tips"
+        />
       </section>
     </template>
   </div>

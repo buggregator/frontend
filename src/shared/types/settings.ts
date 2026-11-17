@@ -18,6 +18,9 @@ export type TSettings = {
   // Server's check for a newer release; null when the check is off, absent on
   // older servers. latest, url and checked_at come with the first good check.
   update?: TUpdateCheck | null,
+  // Listen ports of the server's ingest points (http, smtp, monolog, var_dumper,
+  // proxy, xdebug, mcp); only those that are on. Absent on older servers.
+  ports?: Record<string, number>,
 }
 
 export type TUpdateCheck = {
