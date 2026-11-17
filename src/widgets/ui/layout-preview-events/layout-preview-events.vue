@@ -11,7 +11,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useVirtualFeed } from '@/shared/lib/use-virtual-feed'
 import { useEventsStore } from '@/shared/stores'
-import { type PageEventTypes, RouteName } from '@/shared/types'
+import { type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { KeyHintBar } from '../key-hint-bar'
@@ -22,12 +22,21 @@ type Props = {
   title?: string
   type: PageEventTypes
   favoritesOnly?: boolean
+  // A page's own narrowing on top of the type (Sentry exceptions: the level).
+  filter?: (event: ServerEvent<unknown>) => boolean
+  // What the page says when its filter hides every event, instead of the
+  // setup welcome; its action clears the filter (emits `clear-filter`).
+  filterEmpty?: { title: string; text?: string; action: string }
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
-  favoritesOnly: false
+  favoritesOnly: false,
+  filter: undefined,
+  filterEmpty: undefined
 })
+
+const emit = defineEmits<{ 'clear-filter': [] }>()
 
 const { events, cachedEvents, lockedIds } = useEvents()
 
@@ -60,6 +69,10 @@ const visibleEvents = computed(() => {
   if (props.favoritesOnly) {
     const allEvts = events.items.value
     result = allEvts.filter((e) => lockedIds.items.value.includes(e.uuid))
+  }
+
+  if (props.filter) {
+    result = result.filter(props.filter)
   }
 
   const query = debouncedSearch.value.toLowerCase().trim()
@@ -189,6 +202,8 @@ const emptyView = computed(() => {
   if (listState.value === 'loading' && !events.items.value.length) return 'loading'
   if (debouncedSearch.value.trim()) return 'no-match'
   if (props.favoritesOnly) return 'no-favorites'
+  // The page's own filter is on: events may exist, the guide would mislead.
+  if (props.filter) return 'no-filter-match'
   return 'welcome'
 })
 
@@ -274,6 +289,15 @@ const clearSearch = () => {
         :title="`No events match “${debouncedSearch.trim()}”`"
         action-label="Clear search"
         @action="clearSearch"
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-filter-match'"
+        :title="filterEmpty?.title ?? 'No events match the filter'"
+        :text="filterEmpty?.text"
+        :action-label="filterEmpty?.action ?? 'Clear the filter'"
+        data-test="feed-filter-empty"
+        @action="emit('clear-filter')"
       />
 
       <section

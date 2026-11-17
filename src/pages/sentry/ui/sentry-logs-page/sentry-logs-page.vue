@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import {
   useSentryLogs,
   onSentryEvent,
   SentryEmptyState,
   SentryLogsList,
-  SentrySubNav
+  useSentryFilters
 } from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
@@ -24,13 +24,19 @@ const levelsOfChip: Record<string, string | null> = {
   error: 'error,fatal'
 }
 
-const activeLevel = ref('all')
+// The level comes from the filter button in the Sentry header (#5980).
+const sentryFilters = useSentryFilters()
+const toQuery = (level: string) => (level in levelsOfChip ? levelsOfChip[level] : level)
+filters.level = toQuery(sentryFilters.logsLevel || 'all')
 
-watch(activeLevel, (level) => {
-  filters.level = level in levelsOfChip ? levelsOfChip[level] : level
-  page.value = 1
-  fetchList()
-})
+watch(
+  () => sentryFilters.logsLevel,
+  (level) => {
+    filters.level = toQuery(level || 'all')
+    page.value = 1
+    fetchList()
+  }
+)
 
 // The period is mixed into the request in use-sentry-requests and does not
 // trigger reactivity on its own, so refetch the list explicitly. The project
@@ -54,8 +60,6 @@ onSentryEvent(() => {
 
 <template>
   <div class="sentry-logs-page">
-    <SentrySubNav />
-
     <StatusPanel
       v-if="error"
       tone="error"
@@ -68,13 +72,12 @@ onSentryEvent(() => {
     <!-- The list and its filters stay under an error: a retry may need
          another filter. -->
     <SentryEmptyState
-      v-if="!error && !isInitialLoading && logs.length === 0 && activeLevel === 'all'"
+      v-if="!error && !isInitialLoading && logs.length === 0 && !sentryFilters.logsLevel"
       type="logs"
     />
 
     <SentryLogsList
       v-else
-      v-model:level="activeLevel"
       :logs="logs"
       :loading="isInitialLoading"
     />

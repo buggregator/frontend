@@ -10,3 +10,4 @@ export * from './service-map';
 export * from './sentry-logs-list';
 export * from './sentry-metrics-list';
 export * from './sentry-empty-state';
+export * from './sentry-filter-button';
