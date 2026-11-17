@@ -1,5 +1,5 @@
 import { computed, inject, ref, type ComputedRef, type InjectionKey, type Ref } from 'vue'
-import type { SettingItem, SettingsSection } from '../config/settings-catalog'
+import type { SettingItem, SettingsSection } from '@/shared/constants'
 
 const normalize = (query: string) => query.trim().toLowerCase()
 
