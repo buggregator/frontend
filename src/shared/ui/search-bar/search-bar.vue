@@ -6,6 +6,16 @@ import { useSettingsStore } from '../../stores'
 import { IconSvg } from '../icon-svg'
 import { KeyHints } from '../key-hints'
 
+type Props = {
+  placeholder?: string
+  label?: string
+}
+
+withDefaults(defineProps<Props>(), {
+  placeholder: 'Search events...',
+  label: 'Search events'
+})
+
 const model = defineModel<string>({ default: '' })
 
 const settingsStore = useSettingsStore()
@@ -66,8 +76,8 @@ onUnmounted(() => {
       v-model="model"
       type="text"
       class="search-bar__input"
-      placeholder="Search events..."
-      aria-label="Search events"
+      :placeholder="placeholder"
+      :aria-label="label"
       @keydown="onInputKeydown"
       @focus="isFocused = true"
       @blur="isFocused = false"

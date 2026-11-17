@@ -5,13 +5,15 @@ import { useEventsStore } from '../../stores'
 
 type Props = {
   text: string
+  // What to mark; the event search when not given.
+  query?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { query: undefined })
 const { searchQuery } = storeToRefs(useEventsStore())
 
 const segments = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase()
+  const query = (props.query ?? searchQuery.value).trim().toLowerCase()
   if (!query || !props.text) {
     return [{ text: props.text, match: false }]
   }

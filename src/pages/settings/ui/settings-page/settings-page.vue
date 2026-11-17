@@ -11,18 +11,20 @@ import { SettingsPageContent } from '../settings-page-content'
 
 useTitle('Settings | Buggregator')
 
-// The Settings dot and the header pill link to /settings#updates. The page
-// scrolls inside <main>, so the block is brought into view by hand: on the
-// link, and once the block is there (it waits for GET /api/update).
+// A link to a section (/settings#keyboard; the Settings dot and the header
+// pill link to #updates). The page scrolls inside <main>, so the section is
+// brought into view by hand: on the link, and again once About & updates has
+// its content (it waits for GET /api/update).
 const route = useRoute()
 const { status: updateStatus } = storeToRefs(useServerUpdateStore())
 
 watch(
   [() => route.hash, () => !!updateStatus.value],
-  async ([hash, shown]) => {
-    if (hash !== '#updates' || !shown) return
+  async ([hash]) => {
+    const id = hash.slice(1)
+    if (!id) return
     await nextTick()
-    document.getElementById('updates')?.scrollIntoView({ block: 'start' })
+    document.getElementById(id)?.scrollIntoView({ block: 'start' })
   },
   { immediate: true }
 )

@@ -10,7 +10,10 @@ import { StatusPanel } from '@/shared/ui'
 const { initialize } = useEventsStore()
 const { token } = storeToRefs(useProfileStore())
 // Without settings the app cannot work; say why instead of a blank page.
-const { fetchError: settingsError } = storeToRefs(useSettingsStore())
+const settingsStore = useSettingsStore()
+const { fetchError: settingsError } = storeToRefs(settingsStore)
+// Theme «System» follows the system while the app is open.
+settingsStore.watchSystemTheme()
 
 const reload = () => window.location.reload()
 

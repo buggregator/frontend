@@ -148,3 +148,76 @@ describe('settingsStore.isKeyHintsEnabled', () => {
     expect(useSettingsStore().isKeyHintsEnabled).toBe(true)
   })
 })
+
+// Settings › Theme: «System» could not be picked; it was neither marked nor
+// remembered (#5874).
+describe('settingsStore.themeMode', () => {
+  let systemDark = false
+  let onSystemChange: (() => void) | null = null
+  const items = new Map<string, string>()
+
+  beforeEach(() => {
+    systemDark = false
+    onSystemChange = null
+    items.clear()
+    vi.stubGlobal('matchMedia', () => ({
+      get matches() { return systemDark },
+      addEventListener: (_: string, cb: () => void) => { onSystemChange = cb },
+    }))
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => items.get(key) ?? null,
+      setItem: (key: string, value: string) => void items.set(key, String(value)),
+    })
+    document.documentElement.classList.remove('dark')
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('is System when nothing was picked, and follows the system', () => {
+    systemDark = true
+    const store = useSettingsStore()
+
+    expect(store.themeMode).toBe('system')
+    expect(store.themeType).toBe('dark')
+  })
+
+  it('remembers System after a reload', () => {
+    useSettingsStore().setThemeMode('light')
+    useSettingsStore().setThemeMode('system')
+
+    setActivePinia(createPinia())
+    expect(useSettingsStore().themeMode).toBe('system')
+    expect(items.get('theme')).toBe('system')
+  })
+
+  it('switches the page when the system theme changes, in System only', () => {
+    const store = useSettingsStore()
+    store.setThemeMode('system')
+    store.watchSystemTheme()
+
+    systemDark = true
+    onSystemChange?.()
+    expect(store.themeType).toBe('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+    store.setThemeMode('light')
+    systemDark = false
+    onSystemChange?.()
+    systemDark = true
+    onSystemChange?.()
+    expect(store.themeType).toBe('light')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+  })
+
+  it('keeps an explicit pick over the system', () => {
+    systemDark = true
+    useSettingsStore().setThemeMode('light')
+
+    setActivePinia(createPinia())
+    expect(useSettingsStore().themeMode).toBe('light')
+    expect(useSettingsStore().themeType).toBe('light')
+  })
+})

@@ -8,9 +8,14 @@ import {
   getStoredEventsCountVisibility,
   getStoredFixedHeader,
   getStoredActiveTheme,
+  getStoredThemeMode,
+  setStoredThemeMode,
+  resolveTheme,
+  applyTheme,
+  onSystemThemeChange,
+  type ThemeMode,
   setStoredEventsCountVisibility,
   setStoredFixedHeader,
-  setStoredActiveTheme,
   getStoredPrimaryCodeEditor,
   getStoredIsCodeEditorChosen,
   setStoredPrimaryCodeEditor, setStoredCustomFilePathMapping, getStoredCustomFilePathMapping,
@@ -35,7 +40,10 @@ export const useSettingsStore = defineStore("settingsStore", {
     // Picked in Settings, not just the default: then it wins over an IDE link
     // the SDK sent (VarDumper file_link).
     isCodeEditorChosen: getStoredIsCodeEditorChosen(),
-    themeType: getStoredActiveTheme(),
+    // What the person picked: light, dark or system.
+    themeMode: getStoredThemeMode(),
+    // What the page shows now: light or dark.
+    themeType: getStoredActiveTheme() as string,
     isFixedHeader: getStoredFixedHeader(),
     isVisibleEventCounts: getStoredEventsCountVisibility(),
     isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
@@ -88,11 +96,22 @@ export const useSettingsStore = defineStore("settingsStore", {
       return settings
     },
     changeTheme() {
-      this.themeType = this.themeType === THEME_MODES.DARK
-        ? THEME_MODES.LIGHT
-        : THEME_MODES.DARK;
+      this.setThemeMode(this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK)
+    },
+    setThemeMode(mode: ThemeMode) {
+      this.themeMode = mode;
+      this.themeType = resolveTheme(mode);
 
-      setStoredActiveTheme(this.themeType)
+      setStoredThemeMode(mode)
+      applyTheme(this.themeType as 'light' | 'dark')
+    },
+    // In System the page follows the system theme while it is open; call once.
+    watchSystemTheme() {
+      onSystemThemeChange(() => {
+        if (this.themeMode === THEME_MODES.SYSTEM) {
+          this.setThemeMode(THEME_MODES.SYSTEM)
+        }
+      })
     },
     changeNavbar() {
       this.isFixedHeader = !this.isFixedHeader;

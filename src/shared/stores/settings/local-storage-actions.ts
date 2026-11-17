@@ -2,40 +2,44 @@ import {IDE_KEYS, IDE_KEY_DEFAULT} from "../../constants";
 import {LocalStorageKeys} from "../../types";
 import {THEME_MODES} from "./constants";
 
-export const getStoredActiveTheme = () => {
-  const isStoredTheme = window?.localStorage.getItem(LocalStorageKeys.Theme);
-  const isSystemDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+export type ThemeMode = 'light' | 'dark' | 'system'
 
-  if (isStoredTheme) {
-    if (isStoredTheme === THEME_MODES.DARK) {
-      document?.documentElement?.classList?.add(THEME_MODES.DARK);
-    } else {
-      document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-    }
+const prefersDark = () => !!window.matchMedia?.("(prefers-color-scheme: dark)").matches;
 
-    return isStoredTheme
-  }
+// No stored choice, or «system», follows the system theme.
+export const getStoredThemeMode = (): ThemeMode => {
+  const stored = window?.localStorage.getItem(LocalStorageKeys.Theme);
 
-  if (isSystemDarkTheme) {
-    document?.documentElement?.classList?.add(THEME_MODES.DARK);
-
-    return THEME_MODES.DARK
-  }
-
-  document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-
-  return THEME_MODES.LIGHT
+  return stored === THEME_MODES.LIGHT || stored === THEME_MODES.DARK ? stored : THEME_MODES.SYSTEM;
 };
 
-export const setStoredActiveTheme = (themeName: string) => {
-  window?.localStorage.setItem(LocalStorageKeys.Theme, themeName);
+export const setStoredThemeMode = (mode: ThemeMode) => {
+  window?.localStorage.setItem(LocalStorageKeys.Theme, mode);
+};
 
-  if (themeName === THEME_MODES.LIGHT) {
-    window?.document?.documentElement?.classList?.remove(THEME_MODES.DARK);
-  } else {
-    window?.document?.documentElement?.classList?.add(THEME_MODES.DARK);
+// The theme the page shows for a mode: light or dark.
+export const resolveTheme = (mode: ThemeMode): 'light' | 'dark' => {
+  if (mode === THEME_MODES.SYSTEM) {
+    return prefersDark() ? THEME_MODES.DARK : THEME_MODES.LIGHT;
   }
-}
+
+  return mode;
+};
+
+export const applyTheme = (theme: 'light' | 'dark') => {
+  window?.document?.documentElement?.classList?.toggle(THEME_MODES.DARK, theme === THEME_MODES.DARK);
+};
+
+export const getStoredActiveTheme = () => {
+  const theme = resolveTheme(getStoredThemeMode());
+  applyTheme(theme);
+
+  return theme;
+};
+
+export const onSystemThemeChange = (callback: () => void) => {
+  window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", callback);
+};
 
 export const getStoredFixedHeader = () => {
   const storedValue: string = window?.localStorage.getItem(LocalStorageKeys.Navbar) || "true";
