@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useFloating } from '@floating-ui/vue'
-import { onClickOutside, useMediaQuery } from '@vueuse/core'
+import { onClickOutside, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -224,6 +224,10 @@ const setProject = (projectKey: string) => {
   closeProjects()
 }
 
+// The key line under a project's name only when it says something new.
+const keyRepeatsName = (project: { key: string; name: string }) =>
+  project.key.toLowerCase() === project.name.toLowerCase()
+
 const projectSwitcherLabel = computed(
   () => `Project: ${activeProject.value?.name ?? ''}. Switch project`
 )
@@ -239,6 +243,20 @@ const generateRadialGradient = (input: string) =>
 // The colored dot is the at-a-glance indicator that events of this type
 // exist. The numeric count badge (gated by isVisibleEventCounts) is separate
 // — turning counts off should not also hide the indicator.
+// A fade at the list's bottom edge while more of it is below the fold.
+const scrollList = ref<HTMLElement | undefined>()
+const hasMoreBelow = ref(false)
+const updateMoreBelow = () => {
+  const el = scrollList.value
+  hasMoreBelow.value = !!el && el.scrollTop + el.clientHeight < el.scrollHeight - 1
+}
+useResizeObserver(scrollList, updateMoreBelow)
+// The box keeps its size when entries come or go: check again then too.
+watch(
+  () => [filteredNavOrder.value.length, isVisuallyCollapsed.value],
+  () => nextTick(updateMoreBelow)
+)
+
 // One rule for every menu entry: the page it opens is the current one.
 const isRouteActive = (name: RouteName) => route.name === name
 const isTypeActive = (type: EventType) =>
@@ -350,7 +368,12 @@ const linkLabel = (type: EventType) =>
       </template>
 
       <!-- Event types, tools: scrolls when the screen is short -->
-      <div class="layout-sidebar__scroll">
+      <div
+        ref="scrollList"
+        class="layout-sidebar__scroll"
+        :class="{ 'layout-sidebar__scroll--more': hasMoreBelow }"
+        @scroll.passive="updateMoreBelow"
+      >
         <RouterLink
           :to="{ name: RouteName.Home }"
           title="Events"
@@ -507,6 +530,7 @@ const linkLabel = (type: EventType) =>
         role="menuitemradio"
         :title="project.name"
         :aria-checked="activeProject.key === project.key ? 'true' : 'false'"
+        :aria-current="activeProject.key === project.key ? 'true' : undefined"
         :class="{
           'layout-sidebar__dropdown-item--active': activeProject.key === project.key
         }"
@@ -522,11 +546,31 @@ const linkLabel = (type: EventType) =>
         </span>
 
         <div class="layout-sidebar__dropdown-item-text">
-          <span class="layout-sidebar__dropdown-item-text-key">
+          <span
+            v-if="!keyRepeatsName(project)"
+            class="layout-sidebar__dropdown-item-text-key"
+          >
             {{ project.key }}
           </span>
           {{ project.name }}
         </div>
+
+        <svg
+          v-if="activeProject.key === project.key"
+          class="layout-sidebar__dropdown-item-check"
+          data-test="project-current"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <path
+            d="M3.5 8.5l3 3 6-7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </button>
       <p
         class="layout-sidebar__dropdown-hint"
@@ -654,6 +698,10 @@ const linkLabel = (type: EventType) =>
   @apply flex flex-col flex-1 min-h-0 pb-1;
   @apply overflow-y-auto overflow-x-hidden overscroll-contain;
   scrollbar-width: thin;
+}
+
+.layout-sidebar__scroll--more {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
 }
 
 .layout-sidebar__pinned {
@@ -968,6 +1016,11 @@ $dotColors: (
 .layout-sidebar__dropdown-item--active {
   @apply font-medium;
   @apply bg-gray-50 dark:bg-gray-700;
+}
+
+.layout-sidebar__dropdown-item-check {
+  @apply w-4 h-4 ml-auto flex-shrink-0;
+  @apply text-blue-600 dark:text-blue-400;
 }
 
 .layout-sidebar__dropdown-item-icon {

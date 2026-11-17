@@ -192,3 +192,38 @@ describe('LayoutSidebar: menu and project switcher', () => {
     expect(wrapper.get('aside').classes()).not.toContain('layout-sidebar--overlay')
   })
 })
+
+describe('LayoutSidebar: project list rows', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    narrowScreen(false)
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    document.body.innerHTML = ''
+  })
+
+  it('ticks the current project and shows the key only when it differs from the name', async () => {
+    const store = useEventsStore()
+    store.setAvailableProjects([
+      { key: 'default', name: 'Default', is_default: true },
+      { key: 'shop', name: 'shop-api', is_default: false },
+    ])
+    store.setActiveProjectKey('shop')
+    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    await wrapper.get('[data-test="project-switcher"]').trigger('click')
+
+    const [def, shop] = wrapper.findAll('[role="menuitemradio"]')
+    expect(shop.attributes('aria-current')).toBe('true')
+    expect(shop.find('[data-test="project-current"]').exists()).toBe(true)
+    expect(def.attributes('aria-current')).toBeUndefined()
+    expect(def.find('[data-test="project-current"]').exists()).toBe(false)
+
+    // «default» repeats «Default»: no key line. «shop» differs from «shop-api»: shown.
+    expect(def.find('.layout-sidebar__dropdown-item-text-key').exists()).toBe(false)
+    expect(shop.get('.layout-sidebar__dropdown-item-text-key').text()).toBe('shop')
+    wrapper.unmount()
+  })
+})
