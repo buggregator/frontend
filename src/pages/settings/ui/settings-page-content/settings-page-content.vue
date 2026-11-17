@@ -2,7 +2,7 @@
 import { useNow, useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, provide, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
 import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
@@ -90,7 +90,11 @@ const clearSearch = () => {
 // The list on the left (tabs on a phone) jumps to a section and moves the
 // focus there, so Tab goes on inside it.
 const router = useRouter()
-const { active: activeSection, setActive } = useSectionSpy(() => sections.value.map((s) => s.id))
+const route = useRoute()
+const { active: activeSection, setActive } = useSectionSpy(
+  () => sections.value.map((s) => s.id),
+  () => route?.hash ?? ''
+)
 const goToSection = (id: string) => {
   const el = document.getElementById(id)
   if (!el) return
