@@ -88,6 +88,20 @@ describe('eventsStore', () => {
     })
   })
 
+  // Review of #6012: the server's list is its enabled modules, not what the
+  // feed may hold. Proxy calls are stored as http-dump with that module off,
+  // and events stored before a module was switched off stay too.
+  describe('a known type the server has off', () => {
+    it('stays in the feed', () => {
+      useSettingsStore().availableEvents = ['sentry', 'smtp']
+      const store = useEventsStore()
+      store.initializeEvents([event('a', 'http-dump')])
+      store.addList([event('b', 'var-dump')])
+      expect(ids(store.events)).toEqual(['b', 'a'])
+      expect(store.eventsCounts(EventTypes.HttpDump)).toBe(1)
+    })
+  })
+
   describe('syncFromServer', () => {
     it('replaces the list and takes pins from the server', () => {
       const store = useEventsStore()

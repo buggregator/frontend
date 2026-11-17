@@ -56,6 +56,15 @@ describe('buildChannelGroups', () => {
     expect(all).not.toContain('ray')
   })
 
+  it('no Mock server card when the http-dump module is off: the server serves mocks from it', () => {
+    const tools = (events: string[]) =>
+      buildChannelGroups(input({ availableEvents: events }))
+        .find((g) => g.id === 'tools')!
+        .channels.map((c) => c.id)
+    expect(tools(ALL_EVENT_TYPES_LIST.filter((t) => t !== 'http-dump'))).toEqual(['http-proxy', 'xdebug'])
+    expect(tools(ALL_EVENT_TYPES_LIST)).toContain('mock-server')
+  })
+
   it('drops a group with no cards', () => {
     const groups = buildChannelGroups(input({ hidden: ['smtp', 'sms', 'monolog'] }))
     expect(groups.map((g) => g.title)).not.toContain('Mail & logs')

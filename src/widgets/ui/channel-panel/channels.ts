@@ -68,9 +68,23 @@ const LISTENER: Record<string, string> = {
 const XDEBUG_HINT = 'Turn it on with XDEBUG_PROXY_ENABLED'
 const OFF_HINT = 'Its listener is not running on this server'
 
-const TOOLS: { id: string; title: string; icon: string; to: RouteLocationRaw | null }[] = [
+// `module`: the server module the tool lives in. The proxy is always on.
+const TOOLS: {
+  id: string
+  title: string
+  icon: string
+  to: RouteLocationRaw | null
+  module?: string
+}[] = [
   { id: 'http-proxy', title: 'HTTP proxy', icon: 'host', to: null },
-  { id: MENU_TOOL_IDS.mockServer, title: 'Mock server', icon: 'mock-server', to: { name: RouteName.MockServer } },
+  {
+    id: MENU_TOOL_IDS.mockServer,
+    title: 'Mock server',
+    icon: 'mock-server',
+    to: { name: RouteName.MockServer },
+    // The server serves mocks from the http-dump module.
+    module: EventTypes.HttpDump
+  },
   { id: MENU_TOOL_IDS.xdebug, title: 'Xdebug', icon: 'bug', to: { name: RouteName.Xdebug } }
 ]
 
@@ -119,7 +133,10 @@ export const buildChannelGroups = (input: ChannelInput): ChannelGroup[] => {
     id: 'tools',
     title: 'Tools',
     // The proxy has no menu entry of its own, so nothing hides it.
-    channels: TOOLS.filter((t) => t.id === 'http-proxy' || shown(t.id)).map((t) => card(input, t))
+    channels: TOOLS.filter(
+      (t) =>
+        (t.id === 'http-proxy' || shown(t.id)) && (!t.module || input.availableEvents.includes(t.module))
+    ).map(({ module: _module, ...t }) => card(input, t))
   })
 
   return groups.filter((g) => g.channels.length > 0)
