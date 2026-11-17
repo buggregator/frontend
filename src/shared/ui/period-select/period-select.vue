@@ -55,5 +55,11 @@ const selected = computed({
   @apply border-0 outline-none cursor-pointer;
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply transition-colors;
+
+  // Phones: a 44 px tall control with the same 28 px look (the padding
+  // stays outside the painted background).
+  @media (max-width: 639px) {
+    @apply h-11 -mt-1 -mb-3 py-2 bg-clip-content;
+  }
 }
 </style>

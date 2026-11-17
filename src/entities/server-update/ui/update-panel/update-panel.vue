@@ -841,6 +841,11 @@ const hasMiddle = computed(() => {
   @apply mt-2.5 mb-0 text-[13px];
 
   a {
+    // Phones: a 44 px tap area around the one-line link.
+    @media (max-width: 639px) {
+      @apply inline-block py-3.5 -my-3.5;
+    }
+
     @apply underline underline-offset-2 text-blue-700 dark:text-blue-400;
     @apply hover:text-blue-900 dark:hover:text-blue-300;
   }

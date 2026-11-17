@@ -39,6 +39,19 @@ defineProps<{ keepTitle?: boolean }>()
   @apply flex items-center gap-1.5 min-w-0;
 }
 
+// Phones: the bar is 36 px, its buttons 28. Each gets a 44 px tap area from
+// the top edge of the bar down (as the mock-server header buttons do).
+@media (max-width: 639px) {
+  .header__actions :slotted(button) {
+    @apply relative;
+  }
+
+  .header__actions :slotted(button)::after {
+    content: '';
+    @apply absolute inset-x-0 -top-1 -bottom-3;
+  }
+}
+
 .header__action-btn {
   @apply h-7 w-7 flex items-center justify-center rounded;
   @apply text-gray-600 dark:text-gray-300;

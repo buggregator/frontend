@@ -46,7 +46,8 @@ const { indicator } = storeToRefs(useServerUpdateStore())
     &::after {
       content: '';
       position: absolute;
-      inset: -7px -4px;
+      // The pill sits 2 px under the top edge: up to it, and down to 44 px.
+      inset: -2px -4px -11px;
     }
   }
 }
