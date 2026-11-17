@@ -30,7 +30,7 @@ const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
 export const usePaletteCommands = () => {
   const router = useRouter()
   const settingsStore = useSettingsStore()
-  const { availableEvents, themeMode } = storeToRefs(settingsStore)
+  const { availableEvents, themeMode, isMockServerAvailable } = storeToRefs(settingsStore)
   const eventsStore = useEventsStore()
   const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
   const updateStore = useServerUpdateStore()
@@ -73,13 +73,17 @@ export const usePaletteCommands = () => {
       icon: 'pin',
       run: () => router.push({ name: RouteName.Favorites })
     },
-    {
-      id: 'page-mock-server',
-      group: 'pages',
-      label: 'Mock server',
-      icon: 'mock-server',
-      run: () => router.push({ name: RouteName.MockServer })
-    },
+    ...(isMockServerAvailable.value
+      ? [
+          <Command>{
+            id: 'page-mock-server',
+            group: 'pages',
+            label: 'Mock server',
+            icon: 'mock-server',
+            run: () => router.push({ name: RouteName.MockServer })
+          }
+        ]
+      : []),
     ...(xdebugEnabled.value
       ? [
           {

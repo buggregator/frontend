@@ -62,6 +62,8 @@ export const useSettingsStore = defineStore("settingsStore", {
   }),
   getters: {
     loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+    // The server serves mocks from its http-dump module (#6019).
+    isMockServerAvailable: ({ availableEvents }) => availableEvents.includes(EventTypes.HttpDump),
   },
   actions: {
     async fetchSettings(): Promise<TSettings | null> {

@@ -82,7 +82,8 @@ const TOOLS: {
     title: 'Mock server',
     icon: 'mock-server',
     to: { name: RouteName.MockServer },
-    // The server serves mocks from the http-dump module.
+    // The server serves mocks from the http-dump module (settings store
+    // isMockServerAvailable says the same for the menus).
     module: EventTypes.HttpDump
   },
   { id: MENU_TOOL_IDS.xdebug, title: 'Xdebug', icon: 'bug', to: { name: RouteName.Xdebug } }
