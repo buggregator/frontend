@@ -4,6 +4,7 @@ import { onClickOutside, useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
@@ -89,6 +90,16 @@ const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
 
 const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'))
 
+// Self-update: a dot on Settings when something waits there; while the server
+// restarts the connection shows as reconnecting, not as lost.
+const updateStore = useServerUpdateStore()
+const { hasAttention: hasUpdateAttention, attentionText: updateAttentionText } =
+  storeToRefs(updateStore)
+const isServerRestarting = computed(() => updateStore.phase === 'restarting')
+const settingsLabel = computed(() =>
+  hasUpdateAttention.value ? `Settings, ${updateAttentionText.value}` : 'Settings'
+)
+
 const avatar = computed(() => {
   if (!profile.value) return null
 
@@ -109,7 +120,21 @@ const profileEmail = computed(() => {
   return profile.value.email
 })
 
-const connectionText = computed(() => `WS connection is ${connectionStatus.value}`)
+const connectionText = computed(() =>
+  isServerRestarting.value
+    ? 'The server is restarting'
+    : `WS connection is ${connectionStatus.value}`
+)
+const connectionDotClass = computed(() => {
+  if (isServerRestarting.value) return 'layout-sidebar__connection-dot--restarting'
+  return isConnectedWS.value
+    ? 'layout-sidebar__connection-dot--on'
+    : 'layout-sidebar__connection-dot--off'
+})
+const connectionLabel = computed(() => {
+  if (isServerRestarting.value) return 'Reconnecting'
+  return isConnectedWS.value ? 'Connected' : 'Disconnected'
+})
 
 const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value
@@ -339,15 +364,20 @@ const linkLabel = (type: EventType) =>
       </RouterLink>
 
       <RouterLink
-        :to="{ name: RouteName.Settings }"
+        :to="{ name: RouteName.Settings, hash: hasUpdateAttention ? '#updates' : undefined }"
         title="Settings"
-        aria-label="Settings"
+        :aria-label="settingsLabel"
         class="layout-sidebar__link"
       >
         <span class="layout-sidebar__link-icon-wrap">
           <IconSvg
             class="layout-sidebar__link-icon"
             name="settings"
+          />
+          <span
+            v-if="hasUpdateAttention"
+            class="layout-sidebar__update-dot"
+            data-test="settings-update-dot"
           />
         </span>
         <span class="layout-sidebar__link-label">Settings</span>
@@ -467,14 +497,10 @@ const linkLabel = (type: EventType) =>
       >
         <span
           class="layout-sidebar__connection-dot"
-          :class="
-            isConnectedWS
-              ? 'layout-sidebar__connection-dot--on'
-              : 'layout-sidebar__connection-dot--off'
-          "
+          :class="connectionDotClass"
         />
         <span class="layout-sidebar__connection-label">
-          {{ isConnectedWS ? 'Connected' : 'Disconnected' }}
+          {{ connectionLabel }}
         </span>
       </div>
     </div>
@@ -812,6 +838,36 @@ $dotColors: (
 .layout-sidebar__connection-dot--off {
   @apply bg-red-400 dark:bg-red-500;
   box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+}
+
+.layout-sidebar__connection-dot--restarting {
+  @apply bg-amber-500 dark:bg-amber-400;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+  animation: layout-sidebar-blink 1s infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes layout-sidebar-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Settings: an update waits there. Shown in both sidebar widths; the link's
+   aria-label says it. */
+.layout-sidebar__update-dot {
+  @apply absolute w-2 h-2 rounded-full;
+  @apply bg-blue-600 dark:bg-blue-400;
+  top: -1px;
+  right: -2px;
+  box-shadow: 0 0 0 2px theme('colors.gray.100');
+
+  .dark & {
+    box-shadow: 0 0 0 2px theme('colors.gray.900');
+  }
 }
 
 .layout-sidebar__connection-label {

@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useAppBadge } from '@/shared/lib/use-app-badge'
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
@@ -13,6 +14,10 @@ const { fetchError: settingsError } = storeToRefs(useSettingsStore())
 
 const reload = () => window.location.reload()
 
+// Self-update: the state is read once the token is known, then follows the
+// socket (`update.progress`). Older servers answer 404 and see nothing new.
+const updateStore = useServerUpdateStore()
+
 // The auth middleware of the first navigation loads the stored token; asking
 // for the projects before it ends sends no token (401 with auth on). A login
 // changes the token: the projects are asked for again.
@@ -22,6 +27,7 @@ let isRouterReady = false
 watch(token, (value) => {
   if (isRouterReady && value) {
     initialize()
+    updateStore.load()
   }
 })
 
@@ -30,6 +36,7 @@ useRouter()
   .then(() => {
     isRouterReady = true
     initialize()
+    updateStore.init()
   })
 
 let stopAppBadge = () => {}

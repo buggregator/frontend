@@ -34,7 +34,11 @@ export default withVueTs(
     // Mocks are story and test data, kept out of the slice public API so they stay out of the app bundle.
     // The sidebar reads Xdebug's on/off through the lib segment: the slice index
     // also pulls the debugger components, and their CSS into the first load.
-    publicApi: { ignoreImports: ['@/entities/*/mocks', '@/entities/xdebug/lib'] }
+    // The app shell, the sidebar and the header read the self-update state
+    // the same way: the Settings update block stays in the Settings chunk.
+    publicApi: {
+      ignoreImports: ['@/entities/*/mocks', '@/entities/xdebug/lib', '@/entities/server-update/lib']
+    }
   }),
   {
     name: 'buggregator/rules',

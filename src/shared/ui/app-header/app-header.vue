@@ -21,7 +21,7 @@ defineProps<{ keepTitle?: boolean }>()
 
 <style lang="scss" scoped>
 .header {
-  @apply flex items-center justify-between h-full px-1;
+  @apply flex items-center justify-between h-full px-1 min-w-0;
 }
 
 .header__nav {
@@ -34,7 +34,9 @@ defineProps<{ keepTitle?: boolean }>()
 }
 
 .header__actions {
-  @apply flex items-center gap-1.5;
+  // Shrinks (the search box first) when something sits next to the header,
+  // such as the update pill on a phone.
+  @apply flex items-center gap-1.5 min-w-0;
 }
 
 .header__action-btn {

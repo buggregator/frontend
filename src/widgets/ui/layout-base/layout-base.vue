@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { defineAsyncComponent, ref, watch } from 'vue'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useEvents } from '@/shared/lib/use-events'
 import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
 import { toastMessage } from '@/shared/lib/use-keyboard-nav'
@@ -18,6 +19,16 @@ const props = withDefaults(defineProps<Props>(), { heading: '' })
 const { activeProjectKey, period } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
+// A self-update restarts the server: the socket drop is expected then, and the
+// restart strip explains it instead of the red banner.
+const updateStore = useServerUpdateStore()
+// Loaded only while an update runs: their styles stay out of the first load.
+const loadUpdateProgress = () => import('../update-progress')
+const UpdatePill = defineAsyncComponent(() => loadUpdateProgress().then((m) => m.UpdatePill))
+const UpdateTopline = defineAsyncComponent(() => loadUpdateProgress().then((m) => m.UpdateTopline))
+const UpdateRestartStrip = defineAsyncComponent(() =>
+  loadUpdateProgress().then((m) => m.UpdateRestartStrip)
+)
 const { isShortcutsOverlayOpen } = useGlobalShortcuts()
 
 // The skip link moves focus by hand: following its href would leave
@@ -91,12 +102,18 @@ watch(
       v-if="$slots.header"
       class="layout-base__header"
     >
-      <slot name="header" />
+      <div class="layout-base__header-slot">
+        <slot name="header" />
+      </div>
+      <template v-if="updateStore.isActive">
+        <UpdatePill class="layout-base__update-pill" />
+        <UpdateTopline />
+      </template>
     </div>
 
     <transition name="banner">
       <div
-        v-if="showBanner && !isDismissed && $slots.sidebar"
+        v-if="showBanner && !isDismissed && $slots.sidebar && updateStore.phase !== 'restarting'"
         class="layout-base__connection-banner"
       >
         <span>WebSocket disconnected. Events will not stream until connection is restored.</span>
@@ -117,6 +134,10 @@ watch(
       class="layout-base__content"
       tabindex="-1"
     >
+      <UpdateRestartStrip
+        v-if="$slots.sidebar && updateStore.phase === 'restarting'"
+        class="layout-base__update-strip"
+      />
       <h1
         v-if="props.heading"
         class="sr-only"
@@ -180,10 +201,25 @@ watch(
 
 .layout-base__header {
   @include mixins.layout-head;
+  @apply flex items-center;
 
   .layout-base--no-sidebar & {
     @apply left-0;
   }
+}
+
+.layout-base__header-slot {
+  @apply flex-1 min-w-0 h-full;
+}
+
+.layout-base__update-pill {
+  @apply ml-2;
+}
+
+/* First in the page, kept in view under the header while it scrolls. A
+   <section>: the page's own root is the <div> styled below. */
+.layout-base__update-strip {
+  @apply sticky top-0 z-40 flex-none;
 }
 
 .layout-base__connection-banner {

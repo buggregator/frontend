@@ -1,8 +1,10 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { downloadingStatus, restartingStatus } from '@/entities/server-update/mocks'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
 import LayoutBase from './layout-base.vue'
 
@@ -18,7 +20,13 @@ const memoryStorage = () => {
   }
 }
 
-const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/', component: { template: '<div/>' } }] })
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    { path: '/', component: { template: '<div/>' } },
+    { path: '/settings', name: 'settings', component: { template: '<div/>' } },
+  ],
+})
 
 const render = (props = {}) =>
   mount(LayoutBase, {
@@ -73,6 +81,57 @@ describe('LayoutBase', () => {
     showToast('Event deleted')
     await nextTick()
     expect(region?.textContent).toContain('Event deleted')
+    wrapper.unmount()
+  })
+})
+
+describe('LayoutBase: server update', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.stubGlobal('localStorage', memoryStorage())
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+  afterEach(() => {
+    useServerUpdateStore().stop()
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+    document.body.innerHTML = ''
+  })
+
+  it('puts the update pill and the thin bar into the header while an update runs', async () => {
+    useServerUpdateStore().setStatus(downloadingStatus)
+    const wrapper = render()
+    await vi.dynamicImportSettled()
+    await flushPromises()
+    const header = wrapper.get('.layout-base__header')
+
+    expect(header.find('[data-test="update-pill"]').exists()).toBe(true)
+    expect(header.find('[data-test="update-topline"]').exists()).toBe(true)
+    expect(header.text()).toContain('head')
+  })
+
+  // The socket drops on purpose: the yellow strip says why, not the red banner.
+  it('while the server restarts shows the restart strip, not the lost-connection banner', async () => {
+    useServerUpdateStore().setStatus(restartingStatus)
+    const wrapper = render()
+
+    vi.advanceTimersByTime(4000)
+    await vi.dynamicImportSettled()
+    await flushPromises()
+
+    expect(wrapper.find('[data-test="update-restart-strip"]').exists()).toBe(true)
+    expect(wrapper.find('.layout-base__connection-banner').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('without an update the lost-connection banner still comes', async () => {
+    const wrapper = render()
+
+    vi.advanceTimersByTime(4000)
+    await nextTick()
+
+    expect(wrapper.find('.layout-base__connection-banner').exists()).toBe(true)
     wrapper.unmount()
   })
 })
