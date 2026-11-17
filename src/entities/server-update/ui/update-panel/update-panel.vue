@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
+import { IconSvg } from '@/shared/ui'
 import { reasonParts } from '../../lib/reason-text'
 import { renderReleaseNotes } from '../../lib/release-notes'
 import { toUpdateView } from '../../lib/update-view'
@@ -68,6 +69,16 @@ const requestCheck = () => {
 }
 
 const notesHtml = computed(() => renderReleaseNotes(props.status.notes))
+
+// «What's new» stays folded until asked for; a new title folds it again.
+const notesOpen = ref(false)
+const notesId = useId()
+watch(
+  () => view.value.notesTitle,
+  () => {
+    notesOpen.value = false
+  }
+)
 
 const logCopied = ref(false)
 watch(
@@ -507,26 +518,46 @@ const hasMiddle = computed(() => {
       :aria-label="view.notesTitle"
     >
       <h3 class="upd__notes-title">
-        {{ view.notesTitle }}
+        <button
+          type="button"
+          class="upd__notes-toggle"
+          :aria-expanded="notesOpen"
+          :aria-controls="notesId"
+          @click="notesOpen = !notesOpen"
+        >
+          <IconSvg
+            class="upd__notes-chevron"
+            :class="{ 'upd__notes-chevron--open': notesOpen }"
+            name="collapsed"
+          />
+          {{ view.notesTitle }}
+        </button>
       </h3>
-      <!-- Built from escaped text by renderReleaseNotes: no markup of the release body survives. -->
-      <!-- eslint-disable vue/no-v-html -->
       <div
-        v-if="notesHtml"
-        class="upd__notes-body"
-        v-html="notesHtml"
-      />
-      <!-- eslint-enable vue/no-v-html -->
-      <p
-        v-if="status.url"
-        class="upd__notes-link"
+        v-if="notesOpen"
+        :id="notesId"
+        class="upd__notes-content"
+        data-test="update-notes-body"
       >
-        <a
-          :href="status.url"
-          target="_blank"
-          rel="noopener noreferrer"
-        >Full release notes on GitHub<span class="sr-only"> (opens in a new tab)</span></a>
-      </p>
+        <!-- Built from escaped text by renderReleaseNotes: no markup of the release body survives. -->
+        <!-- eslint-disable vue/no-v-html -->
+        <div
+          v-if="notesHtml"
+          class="upd__notes-body"
+          v-html="notesHtml"
+        />
+        <!-- eslint-enable vue/no-v-html -->
+        <p
+          v-if="status.url"
+          class="upd__notes-link"
+        >
+          <a
+            :href="status.url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Full release notes on GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+        </p>
+      </div>
     </section>
   </div>
 </template>
@@ -797,8 +828,35 @@ const hasMiddle = computed(() => {
   @apply border-t border-gray-200 dark:border-gray-700 px-4 pt-3.5 pb-4 sm:px-[18px];
 }
 
+.upd__notes {
+  // Folded: the heading alone, without the gap meant for the notes below it.
+  &:has(.upd__notes-content) .upd__notes-title {
+    @apply mb-2.5;
+  }
+}
+
 .upd__notes-title {
-  @apply m-0 mb-2.5 text-sm font-semibold;
+  @apply m-0 text-sm font-semibold;
+}
+
+.upd__notes-toggle {
+  @apply inline-flex items-center gap-1.5 -mx-1 px-1 py-0.5 rounded text-left font-semibold;
+  @apply text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-300;
+
+  // Phones: a 44 px tap area.
+  @media (max-width: 639px) {
+    @apply py-3 -my-3;
+  }
+}
+
+.upd__notes-chevron {
+  @apply w-3.5 h-3.5 flex-shrink-0 text-gray-500 dark:text-gray-400;
+  transform: rotate(-90deg);
+  transition: transform 0.15s ease;
+}
+
+.upd__notes-chevron--open {
+  transform: none;
 }
 
 .upd__notes-body {

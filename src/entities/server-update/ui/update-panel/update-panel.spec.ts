@@ -90,8 +90,25 @@ describe('UpdatePanel', () => {
 
     await wrapper.get('button[data-test="update-start"]').trigger('click')
     expect(wrapper.emitted('start')).toEqual([['2.10.0']])
-    expect(wrapper.get('[data-test="update-notes"]').html()).toContain('<h4>Added</h4>')
     expect(wrapper.get('[data-test="update-notes"] h3').text()).toBe("What's new in 2.10.0")
+  })
+
+  it('release notes: collapsed by default, the heading button expands and collapses them', async () => {
+    const wrapper = render(availableStatus)
+    const toggle = wrapper.get('[data-test="update-notes"] h3 button')
+
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(wrapper.find('[data-test="update-notes-body"]').exists()).toBe(false)
+
+    await toggle.trigger('click')
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+    const body = wrapper.get('[data-test="update-notes-body"]')
+    expect(toggle.attributes('aria-controls')).toBe(body.attributes('id'))
+    expect(body.html()).toContain('<h4>Added</h4>')
+
+    await toggle.trigger('click')
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(wrapper.find('[data-test="update-notes-body"]').exists()).toBe(false)
   })
 
   it('memory database: a red warning and a red button', () => {

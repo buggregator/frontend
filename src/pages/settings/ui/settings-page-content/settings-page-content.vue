@@ -4,7 +4,12 @@ import { storeToRefs } from 'pinia'
 import { computed, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
-import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP, SETTINGS_ITEMS, SETTINGS_SECTIONS } from '@/shared/constants'
+import {
+  IDE_KEYS,
+  IDE_TITLES_TO_KEYS_MAP,
+  SETTINGS_ITEMS,
+  SETTINGS_SECTIONS
+} from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { useSettingsStore } from '@/shared/stores'
 import type { FilePathMapping } from '@/shared/types'
@@ -534,20 +539,26 @@ useTitle('Settings | Buggregator')
   grid-template-columns: 11rem minmax(0, 40rem);
 }
 
+/* A plain table of contents on one straight 1 px track (#5936): no
+   backgrounds, no rounding; the active item is a 2 px segment of the
+   track in the text colour. Blue stays for links and primary buttons. */
 .settings__nav {
-  @apply sticky top-5 self-start flex flex-col gap-0.5;
+  @apply sticky top-5 self-start flex flex-col;
+  @apply border-l border-gray-200 dark:border-gray-700;
 }
 
 .settings__nav-link {
-  @apply block rounded-md px-3 py-1.5 text-sm;
-  @apply text-gray-600 dark:text-gray-300;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100;
+  // Overlaps the track by 1 px, so the active 2 px edge sits on it.
+  @apply block -ml-px border-l-2 border-transparent px-3 py-1.5 text-sm font-normal;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply hover:text-gray-700 dark:hover:text-gray-200;
   @apply transition-colors;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400;
 }
 
 .settings__nav-link--active {
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium;
-  box-shadow: inset 2px 0 0 theme('colors.blue.500');
+  @apply font-medium text-gray-800 dark:text-gray-100;
+  @apply hover:text-gray-800 dark:hover:text-gray-100 border-current;
 }
 
 .settings__nav-link--dim {
@@ -588,19 +599,18 @@ useTitle('Settings | Buggregator')
   }
 
   .settings__nav {
-    @apply top-0 z-10 flex-row overflow-x-auto -mx-5 px-5 py-1;
+    @apply top-0 z-10 flex-row overflow-x-auto -mx-5 px-5 py-1 border-l-0;
     @apply bg-gray-50 dark:bg-gray-900;
     @apply border-b border-gray-200 dark:border-gray-700/50;
     scrollbar-width: none;
   }
 
   .settings__nav-link {
-    @apply flex-none flex items-center min-h-[44px] rounded-none px-3;
+    @apply flex-none flex items-center min-h-[44px] ml-0 border-l-0 px-3;
   }
 
   .settings__nav-link--active {
-    @apply bg-transparent dark:bg-transparent;
-    box-shadow: inset 0 -2px 0 theme('colors.blue.500');
+    box-shadow: inset 0 -2px 0 currentColor;
   }
 
   .settings__section {
