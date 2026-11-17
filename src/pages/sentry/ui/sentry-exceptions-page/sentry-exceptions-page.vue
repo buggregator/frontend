@@ -1,22 +1,20 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { LayoutPreviewEvents } from '@/widgets/ui'
 import {
   useSentryExceptions,
   onSentryEvent,
   SentryEmptyState,
   SentryExceptionGroupCard,
-  SentrySubNav
+  useSentryFilters
 } from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
-import { EventTypes } from '@/shared/types'
+import { EventTypes, type ServerEvent } from '@/shared/types'
 import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Exceptions | Buggregator')
-
-const STORAGE_KEY = 'sentry_exceptions_view_mode'
 
 const {
   grouped,
@@ -30,23 +28,32 @@ const {
   fetchList
 } = useSentryExceptions()
 
-// Restore view mode preference from localStorage.
-const storedMode = window?.localStorage?.getItem(STORAGE_KEY)
-if (storedMode === 'grouped') {
-  grouped.value = true
-}
+// View and level come from the filter button in the Sentry header (#5980).
+const sentryFilters = useSentryFilters()
+grouped.value = sentryFilters.exceptionsView === 'grouped'
+filters.level = sentryFilters.exceptionsLevel || null
 
-const levelOptions = ['', 'fatal', 'error', 'warning', 'info', 'debug']
-const selectedLevel = ref(filters.level || '')
+watch(
+  () => sentryFilters.exceptionsView,
+  (view) => {
+    grouped.value = view === 'grouped'
+  }
+)
 
-const setViewMode = (mode: boolean) => {
-  grouped.value = mode
-  window?.localStorage?.setItem(STORAGE_KEY, mode ? 'grouped' : 'timeline')
-}
+watch(
+  () => sentryFilters.exceptionsLevel,
+  (level) => {
+    filters.level = level || null
+    page.value = 1
+    if (grouped.value) fetchList()
+  }
+)
 
-watch(selectedLevel, (val) => {
-  filters.level = val || null
-  if (grouped.value) fetchList()
+// The timeline is the live event feed: the level is matched in the browser.
+const levelFilter = computed(() => {
+  const level = sentryFilters.exceptionsLevel
+  if (!level) return undefined
+  return (event: ServerEvent<unknown>) => (event.payload as { level?: string })?.level === level
 })
 
 watch(grouped, () => {
@@ -74,46 +81,6 @@ onSentryEvent(() => {
 
 <template>
   <div class="sentry-exceptions-page">
-    <SentrySubNav />
-
-    <div class="sentry-exceptions-page__header">
-      <div class="sentry-exceptions-page__toggle">
-        <button
-          class="sentry-exceptions-page__toggle-btn"
-          :class="{ 'sentry-exceptions-page__toggle-btn--active': !grouped }"
-          @click="setViewMode(false)"
-        >
-          Timeline
-        </button>
-        <button
-          class="sentry-exceptions-page__toggle-btn"
-          :class="{ 'sentry-exceptions-page__toggle-btn--active': grouped }"
-          @click="setViewMode(true)"
-        >
-          Group by type
-        </button>
-      </div>
-
-      <div class="sentry-exceptions-page__filters">
-        <select
-          v-model="selectedLevel"
-          class="sentry-exceptions-page__select"
-          aria-label="Level"
-        >
-          <option value="">
-            All levels
-          </option>
-          <option
-            v-for="level in levelOptions.filter((l) => l)"
-            :key="level"
-            :value="level"
-          >
-            {{ level }}
-          </option>
-        </select>
-      </div>
-    </div>
-
     <!-- Grouped mode -->
     <div
       v-if="grouped"
@@ -164,6 +131,7 @@ onSentryEvent(() => {
       v-else
       :type="EventTypes.Sentry"
       title="Sentry Exceptions"
+      :filter="levelFilter"
     />
   </div>
 </template>
@@ -171,45 +139,6 @@ onSentryEvent(() => {
 <style lang="scss" scoped>
 .sentry-exceptions-page {
   @apply flex flex-col h-full;
-}
-
-.sentry-exceptions-page__header {
-  @apply flex items-center justify-between gap-3 px-4 py-2;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-800;
-}
-
-.sentry-exceptions-page__toggle {
-  @apply flex rounded-md overflow-hidden;
-  @apply border border-gray-200 dark:border-gray-600;
-}
-
-.sentry-exceptions-page__toggle-btn {
-  @apply px-3 py-1 text-xs font-medium;
-  @apply text-gray-500 dark:text-gray-400;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50;
-  @apply transition-colors cursor-pointer;
-
-  & + & {
-    @apply border-l border-gray-200 dark:border-gray-600;
-  }
-}
-
-.sentry-exceptions-page__toggle-btn--active {
-  @apply bg-gray-100 dark:bg-gray-700;
-  @apply text-gray-900 dark:text-white;
-}
-
-.sentry-exceptions-page__filters {
-  @apply flex gap-2;
-}
-
-.sentry-exceptions-page__select {
-  @apply text-xs rounded-md px-2 py-1;
-  @apply border border-gray-200 dark:border-gray-600;
-  @apply bg-white dark:bg-gray-800;
-  @apply text-gray-700 dark:text-gray-300;
 }
 
 .sentry-exceptions-page__list {

@@ -11,7 +11,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
 import { useVirtualFeed } from '@/shared/lib/use-virtual-feed'
 import { useEventsStore } from '@/shared/stores'
-import { type PageEventTypes, RouteName } from '@/shared/types'
+import { type PageEventTypes, type ServerEvent, RouteName } from '@/shared/types'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { KeyHintBar } from '../key-hint-bar'
@@ -21,11 +21,14 @@ type Props = {
   title?: string
   type: PageEventTypes
   favoritesOnly?: boolean
+  // A page's own narrowing on top of the type (Sentry exceptions: the level).
+  filter?: (event: ServerEvent<unknown>) => boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
-  favoritesOnly: false
+  favoritesOnly: false,
+  filter: undefined
 })
 
 const { events, cachedEvents, lockedIds } = useEvents()
@@ -59,6 +62,10 @@ const visibleEvents = computed(() => {
   if (props.favoritesOnly) {
     const allEvts = events.items.value
     result = allEvts.filter((e) => lockedIds.items.value.includes(e.uuid))
+  }
+
+  if (props.filter) {
+    result = result.filter(props.filter)
   }
 
   const query = debouncedSearch.value.toLowerCase().trim()

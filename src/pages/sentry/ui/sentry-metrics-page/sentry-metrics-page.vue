@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { useTitle, watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import {
   useSentryMetrics,
   onSentryEvent,
   SentryEmptyState,
   SentryMetricsList,
-  SentrySubNav
+  useSentryFilters
 } from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
@@ -17,19 +17,26 @@ useTitle('Sentry Metrics | Buggregator')
 const { metrics, hasLoaded, error, isInitialLoading, total, page, filters, fetchList } =
   useSentryMetrics()
 
-const activeType = ref('all')
-const search = ref('')
-const hasFilter = computed(() => activeType.value !== 'all' || search.value.trim() !== '')
+// Type and name come from the filter button in the Sentry header (#5980).
+const sentryFilters = useSentryFilters()
+const hasFilter = computed(
+  () => !!sentryFilters.metricsType || sentryFilters.metricsName.trim() !== ''
+)
+
+const setFilters = () => {
+  filters.type = sentryFilters.metricsType || null
+  filters.search = sentryFilters.metricsName.trim() || null
+}
+setFilters()
 
 const applyFilters = () => {
-  filters.type = activeType.value === 'all' ? null : activeType.value
-  filters.search = search.value.trim() || null
+  setFilters()
   page.value = 1
   fetchList()
 }
 
-watch(activeType, applyFilters)
-watchDebounced(search, applyFilters, { debounce: 300 })
+watch(() => sentryFilters.metricsType, applyFilters)
+watchDebounced(() => sentryFilters.metricsName, applyFilters, { debounce: 300 })
 
 // The period is mixed into the request in use-sentry-requests and does not
 // trigger reactivity on its own, so refetch the list explicitly. The project
@@ -53,8 +60,6 @@ onSentryEvent(() => {
 
 <template>
   <div class="sentry-metrics-page">
-    <SentrySubNav />
-
     <StatusPanel
       v-if="error"
       tone="error"
@@ -73,8 +78,6 @@ onSentryEvent(() => {
 
     <SentryMetricsList
       v-else
-      v-model:type="activeType"
-      v-model:search="search"
       :metrics="metrics"
       :loading="isInitialLoading"
     />

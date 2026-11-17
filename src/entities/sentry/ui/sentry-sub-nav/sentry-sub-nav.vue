@@ -1,9 +1,15 @@
 <script lang="ts" setup>
+import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useEventsStore } from '@/shared/stores'
 import { useSentryCounts } from '../../lib'
 import { onSentryEvent } from '../../lib/use-sentry-events-bus'
+import type { SentryTab } from '../../lib/use-sentry-filters'
+
+// Underline tabs of the Sentry header (#5980): the tab name and its count.
+// `current`: the tab of the page shown (the trace page belongs to Traces).
+const props = defineProps<{ current?: SentryTab | '' }>()
 
 const { counts, fetchCounts } = useSentryCounts()
 const { activeProjectKey, period } = storeToRefs(useEventsStore())
@@ -12,7 +18,7 @@ onMounted(() => {
   fetchCounts()
 })
 
-// The badges follow the same project and period as the lists they label.
+// The counts follow the same project and period as the lists they label.
 watch([activeProjectKey, period], () => {
   fetchCounts()
 })
@@ -20,120 +26,121 @@ watch([activeProjectKey, period], () => {
 onSentryEvent(() => {
   fetchCounts()
 })
+
+const TABS: { id: SentryTab; label: string; to: string }[] = [
+  { id: 'exceptions', label: 'Exceptions', to: '/sentry/exceptions' },
+  { id: 'traces', label: 'Traces', to: '/sentry/traces' },
+  { id: 'logs', label: 'Logs', to: '/sentry/logs' },
+  { id: 'metrics', label: 'Metrics', to: '/sentry/metrics' }
+]
+
+// Tabs without data stay hidden; Exceptions and the open tab always show.
+const tabs = computed(() =>
+  TABS.filter((t) => t.id === 'exceptions' || t.id === props.current || counts.value[t.id] > 0)
+)
+
+// Sideways scroll when the row is too narrow: an edge fades where more tabs hide.
+const nav = ref<HTMLElement | null>(null)
+const fadeStart = ref(false)
+const fadeEnd = ref(false)
+const updateFade = () => {
+  const el = nav.value
+  if (!el) return
+  fadeStart.value = el.scrollLeft > 1
+  fadeEnd.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+}
+// The open tab is kept in view (a phone shows two or three tabs at once).
+const revealCurrent = () => {
+  const el = nav.value
+  const tab = el?.querySelector<HTMLElement>('[aria-current="page"]')
+  if (!el || !tab) return
+  const left = tab.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft
+  if (left < el.scrollLeft) el.scrollLeft = left - 16
+  else if (left + tab.offsetWidth > el.scrollLeft + el.clientWidth)
+    el.scrollLeft = left + tab.offsetWidth - el.clientWidth + 16
+  updateFade()
+}
+useResizeObserver(nav, updateFade)
+watch(
+  [tabs, () => props.current],
+  () => requestAnimationFrame(revealCurrent),
+  { immediate: true }
+)
 </script>
 
 <template>
   <nav
-    class="sentry-sub-nav"
-    role="tablist"
+    ref="nav"
+    class="sentry-tabs"
+    :class="{ 'sentry-tabs--fade-start': fadeStart, 'sentry-tabs--fade-end': fadeEnd }"
+    aria-label="Sentry"
+    @scroll.passive="updateFade"
   >
     <RouterLink
-      to="/sentry/exceptions"
-      class="sentry-sub-nav__tab"
-      active-class="sentry-sub-nav__tab--active"
-      role="tab"
+      v-for="tab in tabs"
+      :key="tab.id"
+      :to="tab.to"
+      class="sentry-tabs__tab"
+      :class="{ 'sentry-tabs__tab--current': tab.id === current }"
+      :aria-current="tab.id === current ? 'page' : undefined"
+      :data-test="`sentry-tab-${tab.id}`"
     >
-      Exceptions
+      {{ tab.label }}
       <span
-        v-if="counts.exceptions > 0"
-        class="sentry-sub-nav__badge"
-      >
-        {{ counts.exceptions }}
-      </span>
-    </RouterLink>
-
-    <RouterLink
-      v-show="counts.traces > 0"
-      to="/sentry/traces"
-      class="sentry-sub-nav__tab"
-      :class="{ 'sentry-sub-nav__tab--hidden': counts.traces === 0 }"
-      active-class="sentry-sub-nav__tab--active"
-      role="tab"
-    >
-      Traces
-      <span class="sentry-sub-nav__badge">{{ counts.traces }}</span>
-    </RouterLink>
-
-    <RouterLink
-      v-show="counts.logs > 0"
-      to="/sentry/logs"
-      class="sentry-sub-nav__tab"
-      :class="{ 'sentry-sub-nav__tab--hidden': counts.logs === 0 }"
-      active-class="sentry-sub-nav__tab--active"
-      role="tab"
-    >
-      Logs
-      <span class="sentry-sub-nav__badge">{{ counts.logs }}</span>
-    </RouterLink>
-
-    <RouterLink
-      v-show="counts.metrics > 0"
-      to="/sentry/metrics"
-      class="sentry-sub-nav__tab"
-      :class="{ 'sentry-sub-nav__tab--hidden': counts.metrics === 0 }"
-      active-class="sentry-sub-nav__tab--active"
-      role="tab"
-    >
-      Metrics
-      <span class="sentry-sub-nav__badge">{{ counts.metrics }}</span>
+        v-if="counts[tab.id] > 0"
+        class="sentry-tabs__count"
+      >{{ counts[tab.id] }}</span>
     </RouterLink>
   </nav>
 </template>
 
 <style lang="scss" scoped>
-.sentry-sub-nav {
-  @apply flex items-center gap-1 px-4 py-2;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-800;
+.sentry-tabs {
+  @apply flex items-stretch gap-5 min-w-0 overflow-x-auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.sentry-sub-nav__tab {
-  @apply inline-flex items-center gap-1.5;
-  @apply px-3 py-1.5 rounded-md;
-  @apply text-xs font-medium;
-  @apply text-gray-500 dark:text-gray-400;
+.sentry-tabs--fade-end {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.sentry-tabs--fade-start {
+  mask-image: linear-gradient(to right, transparent, #000 24px);
+}
+
+.sentry-tabs--fade-start.sentry-tabs--fade-end {
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.sentry-tabs__tab {
+  @apply flex flex-none items-center gap-1.5 px-0.5 whitespace-nowrap;
+  @apply text-sm text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50;
-  transition:
-    opacity 0.2s ease,
-    padding 0.2s ease,
-    color 0.15s ease,
-    background-color 0.15s ease;
+  @apply border-b-2 border-transparent;
+  @apply transition-colors;
+  // The underline sits on the header's bottom line.
+  margin-bottom: -1px;
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-inset ring-blue-600 dark:ring-blue-400 rounded-sm;
+  }
 }
 
-.sentry-sub-nav__tab--hidden {
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  overflow: hidden;
-  padding: 0;
+.sentry-tabs__tab--current {
+  @apply font-medium text-gray-800 dark:text-gray-100;
+  @apply border-gray-800 dark:border-gray-100;
 }
 
-.sentry-sub-nav__tab--active {
-  @apply text-gray-900 dark:text-white;
-  @apply bg-gray-100 dark:bg-gray-700;
-}
-
-.sentry-sub-nav__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-
-  @apply bg-gray-200 dark:bg-gray-700;
+.sentry-tabs__count {
+  @apply text-xs font-mono tabular-nums font-normal;
   @apply text-gray-500 dark:text-gray-400;
-  @apply tabular-nums font-mono;
 
-  .sentry-sub-nav__tab--active & {
-    @apply bg-rose-100 dark:bg-rose-500/15;
-    @apply text-rose-600 dark:text-rose-400;
+  .sentry-tabs__tab--current & {
+    @apply text-gray-600 dark:text-gray-400;
   }
 }
 </style>

@@ -3,7 +3,7 @@ import { useTitle } from '@vueuse/core'
 import moment from 'moment'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSentryTraces, SentrySubNav, TraceWaterfall } from '@/entities/sentry'
+import { useSentryTraces, TraceWaterfall } from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
@@ -39,8 +39,6 @@ onMounted(async () => {
 
 <template>
   <div class="trace-detail">
-    <SentrySubNav />
-
     <div
       v-if="loading"
       class="trace-detail__loading"

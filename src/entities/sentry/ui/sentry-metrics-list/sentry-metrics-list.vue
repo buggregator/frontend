@@ -11,35 +11,11 @@ withDefaults(defineProps<Props>(), {
   loading: false
 })
 
-// The filters are applied by the server: the list shows one page of the matches
-const activeType = defineModel<string>('type', { default: 'all' })
-const nameFilter = defineModel<string>('search', { default: '' })
-
-const types = ['all', 'counter', 'gauge', 'distribution'] as const
+// The type and name filters sit in the Sentry header (#5980); the server applies them.
 </script>
 
 <template>
   <div class="metrics-list">
-    <div class="metrics-list__filters">
-      <button
-        v-for="t in types"
-        :key="t"
-        class="metrics-list__chip"
-        :class="{ 'metrics-list__chip--active': activeType === t }"
-        @click="activeType = t"
-      >
-        {{ t }}
-      </button>
-
-      <input
-        v-model="nameFilter"
-        class="metrics-list__search"
-        type="search"
-        placeholder="Filter by name"
-        aria-label="Filter metrics by name"
-      >
-    </div>
-
     <div class="metrics-list__rows">
       <SentryMetricRow
         v-for="metric in metrics"
@@ -67,33 +43,6 @@ const types = ['all', 'counter', 'gauge', 'distribution'] as const
 <style lang="scss" scoped>
 .metrics-list {
   @apply flex flex-col;
-}
-
-.metrics-list__filters {
-  @apply flex items-center gap-1 px-4 py-2;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-800;
-}
-
-.metrics-list__chip {
-  @apply text-2xs font-semibold uppercase tracking-wide;
-  @apply px-2 py-1 rounded cursor-pointer;
-  @apply text-gray-500 dark:text-gray-400;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50;
-  @apply transition-colors duration-100;
-}
-
-.metrics-list__chip--active {
-  @apply bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-white;
-}
-
-.metrics-list__search {
-  @apply ml-auto w-56 px-2 py-1 rounded text-xs font-mono;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border border-gray-200 dark:border-gray-700;
-  @apply text-gray-700 dark:text-gray-200;
-  @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50;
 }
 
 .metrics-list__rows {

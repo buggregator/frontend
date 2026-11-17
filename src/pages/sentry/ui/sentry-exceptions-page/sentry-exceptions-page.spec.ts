@@ -3,9 +3,11 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { LayoutPreviewEvents } from '@/widgets/ui'
+import { reloadSentryFilters, useSentryFilters } from '@/entities/sentry'
 import SentryExceptionsPage from './sentry-exceptions-page.vue'
 
-vi.mock('@/entities/sentry/lib', () => ({
+vi.mock('@/entities/sentry/lib', async () => ({
+  ...(await vi.importActual<object>('@/entities/sentry/lib/use-sentry-filters')),
   useSentryExceptions: () => ({
     grouped: ref(false),
     groupedItems: ref([]),
@@ -34,6 +36,7 @@ describe('SentryExceptionsPage', () => {
   beforeEach(() => {
     vi.stubGlobal('localStorage', memoryStorage())
     setActivePinia(createPinia())
+    reloadSentryFilters()
   })
   afterEach(() => {
     vi.unstubAllGlobals()
@@ -42,16 +45,24 @@ describe('SentryExceptionsPage', () => {
   // Audit 5.16: the timeline feed wrote «Events: N» over the page title.
   it('names its timeline feed «Sentry Exceptions»', () => {
     const wrapper = mount(SentryExceptionsPage, {
-      global: { stubs: { LayoutPreviewEvents: true, SentrySubNav: true } },
+      global: { stubs: { LayoutPreviewEvents: true } },
     })
     expect(wrapper.findComponent(LayoutPreviewEvents).props('title')).toBe('Sentry Exceptions')
   })
 
-  // Audit 5.15: the level select had no label.
-  it('labels the level select', () => {
+  // #5980: the level is set in the header; the timeline matches it in the browser.
+  it('passes the header’s level to the timeline feed', async () => {
     const wrapper = mount(SentryExceptionsPage, {
-      global: { stubs: { LayoutPreviewEvents: true, SentrySubNav: true } },
+      global: { stubs: { LayoutPreviewEvents: true } },
     })
-    expect(wrapper.get('select').attributes('aria-label')).toBe('Level')
+    const feed = () => wrapper.findComponent(LayoutPreviewEvents)
+    expect(feed().props('filter')).toBeUndefined()
+
+    useSentryFilters().exceptionsLevel = 'error'
+    await wrapper.vm.$nextTick()
+    const filter = feed().props('filter') as (e: { payload: unknown }) => boolean
+
+    expect(filter({ payload: { level: 'error' } })).toBe(true)
+    expect(filter({ payload: { level: 'warning' } })).toBe(false)
   })
 })

@@ -13,6 +13,14 @@ defineProps<{ keepTitle?: boolean }>()
       <slot />
     </nav>
 
+    <!-- Section tabs next to the crumbs, stretched to the bar's bottom line. -->
+    <div
+      v-if="$slots.tabs"
+      class="header__tabs"
+    >
+      <slot name="tabs" />
+    </div>
+
     <div class="header__actions">
       <slot name="controls" />
     </div>
@@ -31,6 +39,10 @@ defineProps<{ keepTitle?: boolean }>()
 
 .header__nav--keep {
   @apply flex min-w-0;
+}
+
+.header__tabs {
+  @apply flex self-stretch flex-1 min-w-0 ml-4 mr-3;
 }
 
 .header__actions {
