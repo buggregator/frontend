@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, useId } from 'vue'
-import { useEventsStore, useSettingsStore } from '@/shared/stores'
+import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { fillSegments, pageHttpPort, resolveValues, usedPorts } from './fill'
+import { fillSegments, usedPorts } from './fill'
 import SetupCodeBlock from './setup-code-block.vue'
 import SetupExternalIcon from './setup-external-icon.vue'
 import content from './setup-help.json'
 import SetupStackTabs from './setup-stack-tabs.vue'
 import type { SetupContent } from './types'
 import { pageHost, useSetupHost, useSetupStack } from './use-setup-prefs'
+import { useSetupValues } from './use-setup-values'
 
 // How to send the first event of a section, with this server's values filled
 // in (#5941, design #5938). `page` on an empty section, `panel` in the drawer
@@ -24,16 +25,15 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), { variant: 'page', kicker: '' })
 
-const { defaults, sections } = content as SetupContent
+const { sections } = content as SetupContent
 const section = computed(() => sections.find((s) => s.id === props.sectionId))
 
-const { ports } = storeToRefs(useSettingsStore())
 const { activeProject } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 
 // Host
-const { storedHost, setHost, resetHost } = useSetupHost()
-const host = computed(() => storedHost.value || pageHost())
+const { setHost, resetHost } = useSetupHost()
+const { host, pageHttp, resolved, values } = useSetupValues()
 const isEditingHost = ref(false)
 const hostDraft = ref('')
 const hostInput = ref<HTMLInputElement | null>(null)
@@ -60,26 +60,6 @@ const resetToPage = () => {
   closeEditor()
 }
 
-// Values. HTTP: the port the browser reached this server through — the
-// page's own port, or the scheme's behind a reverse proxy (pageHttpPort);
-// /api/settings gives the container's listen port. A host typed by hand
-// keeps the server's port.
-const pageHttp = computed(() => (storedHost.value ? null : pageHttpPort(window.location)))
-const resolved = computed(() => {
-  const r = resolveValues({
-    host: host.value,
-    projectKey: activeProject.value?.key ?? '',
-    ports: ports.value,
-    defaults
-  })
-  if (pageHttp.value) {
-    r.values.http_port = pageHttp.value.port
-    r.defaulted.delete('http_port')
-    r.off.delete('http_port')
-  }
-  return r
-})
-const values = computed(() => resolved.value.values)
 
 // Stack: one choice for every section; a section without it shows its first.
 const { stack, setStack } = useSetupStack()

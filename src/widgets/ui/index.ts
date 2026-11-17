@@ -8,3 +8,4 @@ export * from './layout-base';
 export * from './layout-preview-events';
 export * from './key-hint-bar';
 export * from './setup-guide';
+export * from './channel-panel';

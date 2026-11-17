@@ -8,7 +8,8 @@ import {
   type ServerEvent,
   type PageEventTypes,
   type TProjects,
-  EventTypes
+  EventTypes,
+  isEventType
 } from '../../types';
 import {useSettingsStore} from "../settings";
 import {
@@ -67,6 +68,15 @@ const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.XdebugTrace]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
 });
+
+// What the feed holds: every type this UI knows, and a newer type the server
+// lists (#320). The server's list is its enabled modules, not a filter: proxy
+// calls are stored as http-dump with that module off, and events stored before
+// a module was switched off stay (#6012 review).
+const feedFilter = () => {
+  const { availableEvents } = useSettingsStore();
+  return (type: string) => isEventType(type) || availableEvents.includes(type);
+};
 
 export const useEventsStore = defineStore("eventsStore", {
   state: () => ({
@@ -135,10 +145,10 @@ export const useEventsStore = defineStore("eventsStore", {
     },
     // events
     initializeEvents (events: ServerEvent<unknown>[]): void {
-      const { availableEvents } = useSettingsStore();
+      const inFeed = feedFilter();
 
       this.events = events
-        .filter((el) => availableEvents.includes(el.type))
+        .filter((el) => inFeed(el.type))
         .slice(0, MAX_EVENTS_COUNT);
 
       this.rebuildCountsMap();
@@ -146,11 +156,11 @@ export const useEventsStore = defineStore("eventsStore", {
       this.initActiveProjectKey();
     },
     addList(events: ServerEvent<unknown>[]): void {
-      const { availableEvents } = useSettingsStore();
+      const inFeed = feedFilter();
       const existingIds = new Set(this.events.map(e => e.uuid));
 
       events
-        .filter((el) => availableEvents.includes(el.type))
+        .filter((el) => inFeed(el.type))
         .forEach((event) => {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
