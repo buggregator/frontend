@@ -234,6 +234,22 @@ describe('LayoutSidebar: project list rows', () => {
     expect(shop.get('.layout-sidebar__dropdown-item-text-key').text()).toBe('shop')
     wrapper.unmount()
   })
+
+  it('draws each project as the pixel bug of its key, the same bug on the switcher', async () => {
+    const store = useEventsStore()
+    store.setAvailableProjects(projects)
+    store.setActiveProjectKey('shop')
+    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const switcherBug = wrapper.get('[data-test="project-switcher"] [data-test="project-avatar"]').html()
+    await wrapper.get('[data-test="project-switcher"]').trigger('click')
+
+    const rows = wrapper.findAll('[role="menuitemradio"]')
+    const bugs = rows.map((row) => row.get('[data-test="project-avatar"]').html())
+    expect(bugs[1]).toBe(switcherBug)
+    expect(new Set(bugs).size).toBe(3)
+    expect(wrapper.html()).not.toContain('linear-gradient')
+    wrapper.unmount()
+  })
 })
 
 describe('LayoutSidebar: groups and «new» badges', () => {
