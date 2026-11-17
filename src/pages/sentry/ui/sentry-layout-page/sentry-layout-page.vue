@@ -56,11 +56,17 @@ const isWide = useMediaQuery('(min-width: 640px)')
         >/</span>
 
         <RouterLink
+          v-if="isWide"
           to="/sentry/exceptions"
           class="nav__crumb nav__current"
         >
           Sentry
         </RouterLink>
+        <!-- Phone: the page title, not a link (the Exceptions tab is right under it). -->
+        <span
+          v-else
+          class="nav__current"
+        >Sentry</span>
 
         <template
           v-if="isWide"
