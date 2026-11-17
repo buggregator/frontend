@@ -279,6 +279,7 @@ const clearSearch = () => {
       <section
         v-else
         class="layout-preview-events__welcome"
+        :class="{ 'layout-preview-events__welcome--dots': !hasSetupHelp(type) }"
       >
         <!-- A section with setup help shows how to send its first event (#5941). -->
         <SetupGuide

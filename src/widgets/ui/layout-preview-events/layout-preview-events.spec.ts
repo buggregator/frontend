@@ -71,6 +71,16 @@ describe('LayoutPreviewEvents: empty, loading and error views', () => {
     expect(wrapper.text()).toContain('No favorites yet')
   })
 
+  // #5989: the owner asked for no dot grid behind the setup help.
+  it('no dot grid behind the setup help; the plain welcome keeps it', async () => {
+    const guide = await render({ type: 'smtp' })
+    expect(guide.find('[data-test="setup-guide"]').exists()).toBe(true)
+    expect(guide.get('.layout-preview-events__welcome').classes()).not.toContain('layout-preview-events__welcome--dots')
+
+    const plain = await render()
+    expect(plain.get('.layout-preview-events__welcome').classes()).toContain('layout-preview-events__welcome--dots')
+  })
+
   it('shows a skeleton, not the welcome, while the first load runs', async () => {
     useEventsStore().setListState('loading')
 
