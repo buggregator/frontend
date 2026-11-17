@@ -138,3 +138,21 @@ export const getStoredIsActiveCustomFilePathMapping = (): boolean => {
 
   return storageValue === "true";
 }
+
+// Left-menu entries the person turned off (#5949): ids from MENU_ITEMS.
+export const getStoredHiddenMenuItems = (): string[] => {
+  try {
+    const stored = JSON.parse(window?.localStorage?.getItem(LocalStorageKeys.HiddenMenuItems) || "[]");
+    return Array.isArray(stored) ? stored.filter((id): id is string => typeof id === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
+export const setStoredHiddenMenuItems = (ids: string[]) => {
+  try {
+    window?.localStorage?.setItem(LocalStorageKeys.HiddenMenuItems, JSON.stringify(ids));
+  } catch {
+    // Storage blocked: the choice lasts until the page reloads.
+  }
+};

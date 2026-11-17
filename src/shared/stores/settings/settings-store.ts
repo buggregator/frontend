@@ -22,6 +22,7 @@ import {
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
   getStoredKeyHints, setStoredKeyHints,
+  getStoredHiddenMenuItems, setStoredHiddenMenuItems,
 } from "./local-storage-actions";
 import {toUpdateInfo, type UpdateInfo} from "./update-info";
 
@@ -54,6 +55,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     availableEvents: [] as string[],
     isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
     customFilePathMapping: getStoredCustomFilePathMapping() || [],
+    // Left-menu entries turned off in Settings › Menu; their events are still stored.
+    hiddenMenuItems: getStoredHiddenMenuItems(),
   }),
   getters: {
     loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
@@ -127,6 +130,17 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isKeyHintsEnabled = !this.isKeyHintsEnabled;
 
       setStoredKeyHints(this.isKeyHintsEnabled)
+    },
+    setMenuItemHidden(id: string, hidden: boolean) {
+      const rest = this.hiddenMenuItems.filter((item) => item !== id);
+      this.hiddenMenuItems = hidden ? [...rest, id] : rest;
+
+      setStoredHiddenMenuItems(this.hiddenMenuItems)
+    },
+    showAllMenuItems() {
+      this.hiddenMenuItems = [];
+
+      setStoredHiddenMenuItems([])
     },
     changeEventCountsVisibility() {
       this.isVisibleEventCounts = !this.isVisibleEventCounts;

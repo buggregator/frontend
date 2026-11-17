@@ -6,7 +6,7 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
-import { PAGES_SETTINGS } from '@/shared/constants'
+import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS } from '@/shared/constants'
 import { isCommandPaletteOpen, paletteKeyCaption } from '@/shared/lib/command-palette'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
@@ -16,7 +16,6 @@ import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stor
 import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
-import { EVENTS_NAV_GROUPS } from './constants'
 import { navLinkLabel } from './nav-label'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
@@ -218,7 +217,7 @@ const logout = () => {
   router.push('/login')
 }
 
-const { availableEvents } = storeToRefs(useSettingsStore())
+const { availableEvents, hiddenMenuItems } = storeToRefs(useSettingsStore())
 
 // Opens the Ctrl/⌘+K window: the way in without a keyboard.
 const paletteKey = paletteKeyCaption()
@@ -237,13 +236,22 @@ const projectSwitcherLabel = computed(
   () => `Project: ${activeProject.value?.name ?? ''}. Switch project`
 )
 
-// Groups of the event types this server has; an empty group is left out.
+// Groups of the event types this server has, minus those turned off in
+// Settings › Menu (#5949); an empty group is left out.
+const availableTypes = computed(() =>
+  MENU_EVENT_GROUPS.flatMap((group) => group.types).filter((type) =>
+    availableEvents.value.includes(type)
+  )
+)
+const isShown = (id: string) => !hiddenMenuItems.value.includes(id)
 const navGroups = computed(() =>
-  EVENTS_NAV_GROUPS.map((group) => ({
+  MENU_EVENT_GROUPS.map((group) => ({
     ...group,
-    types: group.types.filter((type) => availableEvents.value.includes(type))
+    types: group.types.filter((type) => availableEvents.value.includes(type) && isShown(type))
   })).filter((group) => group.types.length > 0)
 )
+const isMockServerShown = computed(() => isShown(MENU_TOOL_IDS.mockServer))
+const isXdebugShown = computed(() => xdebugEnabled.value && isShown(MENU_TOOL_IDS.xdebug))
 const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 
 const makeShortTitle = (title: string) => (title || '').substring(0, 2)
@@ -273,8 +281,9 @@ const isTypeActive = (type: EventType) =>
 // total (grey, expanded only, behind the «event counts» setting). What is on
 // screen counts as seen: one type on its page, all of them on «All events».
 const viewingTypes = computed<EventType[]>(() => {
-  if (route.name === RouteName.Home) return navGroups.value.flatMap((g) => g.types)
-  const type = navGroups.value.flatMap((g) => g.types).find(isTypeActive)
+  // Hidden types too, so they do not pile up «N new» while off.
+  if (route.name === RouteName.Home) return availableTypes.value
+  const type = availableTypes.value.find(isTypeActive)
   return type ? [type] : []
 })
 const { newCount } = useSeenEvents(viewingTypes)
@@ -486,6 +495,7 @@ const linkLabel = (type: EventType) =>
         </div>
 
         <div
+          v-if="isMockServerShown || isXdebugShown"
           role="group"
           aria-labelledby="nav-group-tools"
           class="layout-sidebar__group"
@@ -498,6 +508,7 @@ const linkLabel = (type: EventType) =>
           </p>
 
           <RouterLink
+            v-if="isMockServerShown"
             :to="{ name: RouteName.MockServer }"
             title="Mock server"
             aria-label="Mock server"
@@ -515,7 +526,7 @@ const linkLabel = (type: EventType) =>
           </RouterLink>
 
           <RouterLink
-            v-if="xdebugEnabled"
+            v-if="isXdebugShown"
             :to="{ name: RouteName.Xdebug }"
             title="Xdebug"
             aria-label="Xdebug"

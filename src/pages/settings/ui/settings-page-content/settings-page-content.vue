@@ -4,7 +4,12 @@ import { storeToRefs } from 'pinia'
 import { computed, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
-import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP, SETTINGS_ITEMS, SETTINGS_SECTIONS } from '@/shared/constants'
+import {
+  IDE_KEYS,
+  IDE_TITLES_TO_KEYS_MAP,
+  SETTINGS_ITEMS,
+  SETTINGS_SECTIONS
+} from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { useSettingsStore } from '@/shared/stores'
 import type { FilePathMapping } from '@/shared/types'
@@ -12,6 +17,7 @@ import { EventDetailLayout, EventDetailSection, IconSvg, SearchBar } from '@/sha
 import { version } from '../../../../../package.json' with { type: 'json' }
 import { SETTINGS_SEARCH, useSettingsSearch } from '../../lib/settings-search'
 import { useSectionSpy } from '../../lib/use-section-spy'
+import { SettingsMenuItems } from '../settings-menu-items'
 import { SettingsRow } from '../settings-row'
 import { SettingsSwitch } from '../settings-switch'
 
@@ -263,6 +269,17 @@ useTitle('Settings | Buggregator')
                 @toggle="changeEventCountsVisibility"
               />
             </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="menu"
+          class="settings__section"
+          title="Menu"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsMenuItems />
           </div>
         </EventDetailSection>
 

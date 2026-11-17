@@ -3,14 +3,13 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update'
 import { useXdebugEnabled } from '@/entities/xdebug'
-import { PAGES_SETTINGS, SETTINGS_SECTIONS } from '@/shared/constants'
+import { MENU_EVENT_GROUPS, PAGES_SETTINGS, SETTINGS_SECTIONS } from '@/shared/constants'
 import type { Command } from '@/shared/lib/command-palette'
 import { useEvents } from '@/shared/lib/use-events'
 import { isShortcutsOverlayOpen } from '@/shared/lib/use-global-shortcuts'
 import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useEventsStore, useSettingsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
-import { EVENTS_NAV_GROUPS } from '../layout-sidebar/constants'
 
 // Words people look for an event type by: not shown.
 const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
@@ -49,7 +48,7 @@ export const usePaletteCommands = () => {
       icon: 'events',
       run: () => router.push({ name: RouteName.Home })
     },
-    ...EVENTS_NAV_GROUPS.flatMap((group) => group.types)
+    ...MENU_EVENT_GROUPS.flatMap((group) => group.types)
       .filter((type) => availableEvents.value.includes(type))
       .map<Command>((type) => {
         const n = newCount(type)

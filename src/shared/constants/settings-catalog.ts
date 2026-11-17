@@ -1,6 +1,8 @@
 // Every setting the page shows, with the words search looks at. One place for
 // the section list, the search and the row text (#5874).
 
+import { MENU_ITEMS } from './menu-items'
+
 export type SettingItem = {
   id: string
   label: string
@@ -57,6 +59,15 @@ export const SETTINGS_ITEMS = {
       'for the full list (also a single-key shortcut).',
     keywords: ['keyboard', 'badges', 'help']
   },
+  menuItems: {
+    id: 'menu-items',
+    label: 'Menu items',
+    hint: 'Hidden items still collect events, and Ctrl/⌘+K still finds them.',
+    keywords: [
+      'sidebar', 'navigation', 'hide', 'show', 'left menu', 'sections',
+      ...MENU_ITEMS.map((item) => item.label)
+    ]
+  },
   codeEditor: {
     id: 'code-editor',
     label: 'Code editor',
@@ -85,6 +96,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'appearance',
     title: 'Appearance',
     items: [SETTINGS_ITEMS.theme, SETTINGS_ITEMS.pinHeader, SETTINGS_ITEMS.eventCounts]
+  },
+  {
+    id: 'menu',
+    title: 'Menu',
+    items: [SETTINGS_ITEMS.menuItems]
   },
   {
     id: 'keyboard',
