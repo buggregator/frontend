@@ -42,34 +42,38 @@ const lockedNoteId = `${uid}-locked`
           >
             {{ group.title }}
           </p>
-          <div
+          <template
             v-for="item in group.items"
             :key="item.id"
-            class="s-menu__item"
-            :data-menu-item="item.id"
           >
-            <span
-              :id="itemId(item.id)"
-              class="s-menu__label"
-              :class="{ 's-menu__label--off': !item.shown }"
-            >{{ item.label }}</span>
-            <SettingsSwitch
-              :checked="item.shown"
-              :disabled="item.locked"
-              :aria-labelledby="itemId(item.id)"
-              :aria-describedby="item.locked ? lockedNoteId : undefined"
-              @toggle="toggle(item)"
-            />
-          </div>
+            <div
+              class="s-menu__item"
+              :data-menu-item="item.id"
+            >
+              <span
+                :id="itemId(item.id)"
+                class="s-menu__label"
+                :class="{ 's-menu__label--off': !item.shown }"
+              >{{ item.label }}</span>
+              <SettingsSwitch
+                :checked="item.shown"
+                :disabled="item.locked"
+                :aria-labelledby="itemId(item.id)"
+                :aria-describedby="item.locked ? lockedNoteId : undefined"
+                @toggle="toggle(item)"
+              />
+            </div>
+            <!-- Right under the locked switch, in its column, so the eye links them. -->
+            <p
+              v-if="item.locked"
+              :id="lockedNoteId"
+              class="s-menu__note"
+            >
+              One item always stays on.
+            </p>
+          </template>
         </div>
       </div>
-      <p
-        v-if="groups.some((g) => g.items.some((i) => i.locked))"
-        :id="lockedNoteId"
-        class="s-menu__note"
-      >
-        One item always stays on.
-      </p>
     </template>
   </SettingsRow>
 </template>
@@ -117,6 +121,6 @@ const lockedNoteId = `${uid}-locked`
 }
 
 .s-menu__note {
-  @apply mt-2 mb-0 text-xs text-gray-500 dark:text-gray-400;
+  @apply -mt-0.5 mb-0 text-xs text-gray-500 dark:text-gray-400;
 }
 </style>

@@ -70,6 +70,10 @@ describe('SettingsMenuItems', () => {
     await last.trigger('click')
     expect(last.attributes('aria-checked')).toBe('true')
     expect(wrapper.get(`#${last.attributes('aria-describedby')}`).text()).toBe('One item always stays on.')
+    // Right under the locked row.
+    expect(wrapper.get('[data-menu-item="mock-server"]').element.nextElementSibling?.textContent?.trim()).toBe(
+      'One item always stays on.',
+    )
   })
 
   it('«Show all» turns every entry back on; nothing to show disables it', async () => {
