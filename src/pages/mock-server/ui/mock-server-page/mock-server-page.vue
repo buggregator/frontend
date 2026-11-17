@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
+import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
 import {
   emptyDraft,
   groupHeaderAt,
@@ -389,6 +389,10 @@ onBeforeUnmount(() => {
           </button>
         </span>
         <template #controls>
+          <SetupHelpButton
+            section-id="mock-server"
+            section-title="Mock server"
+          />
           <button
             type="button"
             class="mock-page__btn mock-page__btn--head"
@@ -892,8 +896,7 @@ onBeforeUnmount(() => {
                     v-if="editing?.group && !readOnly"
                     class="mock-page__callout mock-page__callout--note"
                   >
-                    <span>Imported into group <code>{{ editing.group }}</code>. A new import into
-                      this group replaces the rule and your changes.</span>
+                    <span>Imported into group <code>{{ editing.group }}</code>. A new import into this group replaces the rule and your changes.</span>
                   </div>
                   <div
                     v-if="formError"

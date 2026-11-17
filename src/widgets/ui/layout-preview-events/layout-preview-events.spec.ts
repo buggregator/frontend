@@ -71,6 +71,33 @@ describe('LayoutPreviewEvents: empty, loading and error views', () => {
     expect(wrapper.text()).toContain('No favorites yet')
   })
 
+  // #5989: the owner asked for no dot grid behind the setup help.
+  it('no dot grid behind the setup help; the plain welcome keeps it', async () => {
+    const guide = await render({ type: 'smtp' })
+    expect(guide.find('[data-test="setup-guide"]').exists()).toBe(true)
+    expect(guide.get('.layout-preview-events__welcome').classes()).not.toContain('layout-preview-events__welcome--dots')
+
+    const plain = await render()
+    expect(plain.get('.layout-preview-events__welcome').classes()).toContain('layout-preview-events__welcome--dots')
+  })
+
+  // Review of #353: a page filter that hides every event said «waiting for the
+  // first event» with the setup guide.
+  it('a page filter that hides every event: says so, no setup guide, a way to clear it', async () => {
+    items.value = [{ ...event('a'), type: 'sentry', payload: { level: 'error' } }]
+    const wrapper = await render({
+      type: 'sentry',
+      filter: () => false,
+      filterEmpty: { title: 'No fatal exceptions', action: 'Show all levels' },
+    })
+
+    expect(wrapper.find('[data-test="setup-guide"]').exists()).toBe(false)
+    const panel = wrapper.get('[data-test="feed-filter-empty"]')
+    expect(panel.text()).toContain('No fatal exceptions')
+    await panel.get('button').trigger('click')
+    expect(wrapper.emitted('clear-filter')).toHaveLength(1)
+  })
+
   it('shows a skeleton, not the welcome, while the first load runs', async () => {
     useEventsStore().setListState('loading')
 

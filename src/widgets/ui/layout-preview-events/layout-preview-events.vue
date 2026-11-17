@@ -4,7 +4,7 @@ import { toBlob } from 'html-to-image'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { PAGE_TYPES } from '@/shared/constants'
+import { PAGE_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
@@ -16,6 +16,7 @@ import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 import { EventCardMapper } from '../event-card-mapper'
 import { KeyHintBar } from '../key-hint-bar'
 import { PagePlaceholder } from '../page-placeholder'
+import { SetupGuide, hasSetupHelp } from '../setup-guide'
 
 type Props = {
   title?: string
@@ -23,13 +24,19 @@ type Props = {
   favoritesOnly?: boolean
   // A page's own narrowing on top of the type (Sentry exceptions: the level).
   filter?: (event: ServerEvent<unknown>) => boolean
+  // What the page says when its filter hides every event, instead of the
+  // setup welcome; its action clears the filter (emits `clear-filter`).
+  filterEmpty?: { title: string; text?: string; action: string }
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
   favoritesOnly: false,
-  filter: undefined
+  filter: undefined,
+  filterEmpty: undefined
 })
+
+const emit = defineEmits<{ 'clear-filter': [] }>()
 
 const { events, cachedEvents, lockedIds } = useEvents()
 
@@ -195,6 +202,8 @@ const emptyView = computed(() => {
   if (listState.value === 'loading' && !events.items.value.length) return 'loading'
   if (debouncedSearch.value.trim()) return 'no-match'
   if (props.favoritesOnly) return 'no-favorites'
+  // The page's own filter is on: events may exist, the guide would mislead.
+  if (props.filter) return 'no-filter-match'
   return 'welcome'
 })
 
@@ -282,11 +291,30 @@ const clearSearch = () => {
         @action="clearSearch"
       />
 
+      <StatusPanel
+        v-else-if="emptyView === 'no-filter-match'"
+        :title="filterEmpty?.title ?? 'No events match the filter'"
+        :text="filterEmpty?.text"
+        :action-label="filterEmpty?.action ?? 'Clear the filter'"
+        data-test="feed-filter-empty"
+        @action="emit('clear-filter')"
+      />
+
       <section
         v-else
         class="layout-preview-events__welcome"
+        :class="{ 'layout-preview-events__welcome--dots': !hasSetupHelp(type) }"
       >
-        <PagePlaceholder class="layout-preview-events__tips" />
+        <!-- A section with setup help shows how to send its first event (#5941). -->
+        <SetupGuide
+          v-if="hasSetupHelp(type)"
+          :section-id="type"
+          :section-title="PAGES_SETTINGS[type].sidebarTitle"
+        />
+        <PagePlaceholder
+          v-else
+          class="layout-preview-events__tips"
+        />
       </section>
     </template>
   </div>

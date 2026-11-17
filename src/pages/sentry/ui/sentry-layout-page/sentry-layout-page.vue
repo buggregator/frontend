@@ -2,9 +2,10 @@
 import { useMediaQuery, useTitle } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
+import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
 import { SentryFilterButton, SentrySubNav, type SentryTab } from '@/entities/sentry'
-import { RouteName } from '@/shared/types'
+import { useEvents } from '@/shared/lib/use-events'
+import { EventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PeriodSelect } from '@/shared/ui'
 
 useTitle('Sentry | Buggregator')
@@ -28,6 +29,10 @@ const heading = computed(() => HEADINGS[String(route.name)] ?? '')
 const tab = computed(() => TAB_OF_ROUTE[String(route.name)] ?? '')
 // The filters belong to a list: none on the trace page.
 const filterTab = computed(() => (route.name === RouteName.SentryTraceDetail ? '' : tab.value))
+
+// «How to set up» on every Sentry tab once Sentry has events (#5941).
+const { getItemsCount } = useEvents()
+const hasSentryEvents = computed(() => getItemsCount.value(EventTypes.Sentry) > 0)
 
 // One row from sm up (crumbs, tabs | Period, filters, #5980); on a phone the
 // tabs are a second row under the bar. One instance of the tabs at a time:
@@ -76,6 +81,11 @@ const isWide = useMediaQuery('(min-width: 640px)')
         </template>
 
         <template #controls>
+          <SetupHelpButton
+            v-if="hasSentryEvents"
+            section-id="sentry"
+            section-title="Sentry"
+          />
           <PeriodSelect />
           <SentryFilterButton
             v-if="filterTab"

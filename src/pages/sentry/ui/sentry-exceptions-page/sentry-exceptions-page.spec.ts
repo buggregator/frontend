@@ -64,5 +64,9 @@ describe('SentryExceptionsPage', () => {
 
     expect(filter({ payload: { level: 'error' } })).toBe(true)
     expect(filter({ payload: { level: 'warning' } })).toBe(false)
+
+    // «Show all levels» in the feed's empty state clears the header's level.
+    feed().vm.$emit('clear-filter')
+    expect(useSentryFilters().exceptionsLevel).toBe('')
   })
 })

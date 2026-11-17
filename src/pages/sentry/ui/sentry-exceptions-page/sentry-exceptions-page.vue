@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, watch } from 'vue'
-import { LayoutPreviewEvents } from '@/widgets/ui'
+import { LayoutPreviewEvents, SetupGuide } from '@/widgets/ui'
 import {
   useSentryExceptions,
   onSentryEvent,
@@ -49,7 +49,8 @@ watch(
   }
 )
 
-// The timeline is the live event feed: the level is matched in the browser.
+// The timeline is the live event feed: the level is matched in the browser,
+// over the events this page has loaded (Group by type asks the server).
 const levelFilter = computed(() => {
   const level = sentryFilters.exceptionsLevel
   if (!level) return undefined
@@ -113,6 +114,15 @@ onSentryEvent(() => {
         />
       </template>
 
+      <!-- No exception yet: how to send the first one (#5941); a level filter
+           that matches nothing keeps the plain empty state. -->
+      <SetupGuide
+        v-else-if="!sentryFilters.exceptionsLevel"
+        section-id="sentry"
+        section-title="Sentry"
+        kicker="Sentry · Exceptions"
+      />
+
       <SentryEmptyState
         v-else
         type="exceptions"
@@ -132,6 +142,12 @@ onSentryEvent(() => {
       :type="EventTypes.Sentry"
       title="Sentry Exceptions"
       :filter="levelFilter"
+      :filter-empty="{
+        title: `No ${sentryFilters.exceptionsLevel} exceptions`,
+        text: 'The level is matched over the events loaded on this page. Group by type searches all of them.',
+        action: 'Show all levels'
+      }"
+      @clear-filter="sentryFilters.exceptionsLevel = ''"
     />
   </div>
 </template>

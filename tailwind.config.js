@@ -17,7 +17,10 @@ export default {
     './src/assets/**/*.{scss,css}',
     './src/**/*.{js,vue,ts}',
     './src/**/*.stories.{js,vue,ts}',
-    './src/app.vue'
+    './src/app.vue',
+    // Setup help (#5941) loads on demand and styles only its own classes via
+    // @apply: scanning it would add its utilities to the first-load CSS.
+    '!./src/widgets/ui/setup-guide/**'
   ],
   variants: {
     extend: {
