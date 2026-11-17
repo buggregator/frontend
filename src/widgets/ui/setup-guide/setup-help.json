@@ -256,12 +256,12 @@
         {
           "id": "laravel",
           "label": "Laravel",
-          "file": ".env",
-          "lang": "dotenv",
-          "code": "LOG_CHANNEL=socket\nLOG_SOCKET_URL={host}:{monolog_port}",
-          "hint": null,
+          "file": "config/logging.php",
+          "lang": "php",
+          "code": "// config/logging.php, inside 'channels' => [ ... ]\n'socket' => [\n    'driver' => 'monolog',\n    'level' => env('LOG_LEVEL', 'debug'),\n    'handler' => \\Monolog\\Handler\\SocketHandler::class,\n    'formatter' => \\Monolog\\Formatter\\JsonFormatter::class,\n    'handler_with' => [\n        'connectionString' => env('LOG_SOCKET_URL', '{host}:{monolog_port}'),\n    ],\n],",
+          "hint": "Laravel has no socket channel by default: add this one, then set LOG_CHANNEL=socket in .env. If config/logging.php is missing, run php artisan config:publish logging first. While Buggregator is down, logging to this channel throws.",
           "checked": false,
-          "note": "Values checked on server master with the same PHP library; the Laravel app itself was not run. Library: monolog/monolog 3."
+          "note": "Channel from docs config/monolog.md (Laravel). Values checked on master with monolog/monolog 3 SocketHandler; the Laravel app was not run."
         },
         {
           "id": "symfony",

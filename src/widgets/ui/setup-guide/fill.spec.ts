@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fillSegments, fillText, projectJs, resolveValues, usedPorts } from './fill'
+import { fillSegments, fillText, pageHttpPort, projectJs, resolveValues, usedPorts } from './fill'
 
 const defaults = { http_port: 8000, smtp_port: 1025, vardumper_port: 9912, monolog_port: 9913, proxy_port: 8080, xdebug_port: 9003 }
 
@@ -45,5 +45,24 @@ describe('setup help values', () => {
 
   it('project key for the JS SDK: every - becomes _', () => {
     expect(projectJs('a-b-c')).toBe('a_b_c')
+  })
+  it('ports present but one missing: that listener is off, not «could not read»', () => {
+    const { values, defaulted, off } = resolveValues({ host: 'h', projectKey: '', ports: { http: 8000, smtp: 1025 }, defaults })
+    expect(values.xdebug_port).toBe('9003')
+    expect(defaulted.has('xdebug_port')).toBe(true)
+    expect(off.has('xdebug_port')).toBe(true)
+    expect(off.has('smtp_port')).toBe(false)
+  })
+
+  it('no ports at all: nothing is «off», all are unknown', () => {
+    expect(resolveValues({ host: 'h', projectKey: '', ports: null, defaults }).off.size).toBe(0)
+  })
+
+  it('HTTP port from the page address: explicit port, else the scheme port', () => {
+    expect(pageHttpPort({ protocol: 'http:', port: '9000' })).toEqual({ port: '9000', https: false })
+    expect(pageHttpPort({ protocol: 'http:', port: '' })).toEqual({ port: '80', https: false })
+    expect(pageHttpPort({ protocol: 'https:', port: '' })).toEqual({ port: '443', https: true })
+    expect(pageHttpPort({ protocol: 'https:', port: '8443' })).toEqual({ port: '8443', https: true })
+    expect(pageHttpPort({ protocol: 'file:', port: '' })).toBeNull()
   })
 })

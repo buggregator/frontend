@@ -64,6 +64,41 @@ describe('SetupGuide', () => {
     expect(wrapper.get('[data-test="setup-ports-unknown"]').text()).toContain('(1025)')
   })
 
+  it('Xdebug proxy off (ports sent, no xdebug key): says it is off, not «could not read»', () => {
+    useSettingsStore().ports = { http: 8000, smtp: 1025 }
+    const wrapper = render('xdebug')
+
+    expect(wrapper.find('[data-test="setup-ports-unknown"]').exists()).toBe(false)
+    expect(wrapper.get('[data-test="setup-port-off"]').text()).toBe(
+      'The Xdebug proxy is off on this server; 9003 is its default port.'
+    )
+  })
+
+  const atPage = (href: string) => {
+    const url = new URL(href)
+    vi.stubGlobal('location', { ...window.location, href, protocol: url.protocol, hostname: url.hostname, port: url.port })
+  }
+
+  it('behind a reverse proxy (no port in the address): the scheme port, not the listen port', () => {
+    atPage('http://bugs.example.test/')
+    useSettingsStore().ports = { http: 8000 }
+    const wrapper = render('sentry')
+    const fills = wrapper.get('[data-test="setup-code"]').findAll('.setup-code__fill').map((f) => f.text())
+
+    expect(fills).toContain('80')
+    expect(fills).not.toContain('8000')
+    expect(wrapper.find('[data-test="setup-https-note"]').exists()).toBe(false)
+  })
+
+  it('on https: port 443 and a line to use https:// in the samples', () => {
+    atPage('https://bugs.example.test/')
+    useSettingsStore().ports = { http: 8000 }
+    const wrapper = render('sentry')
+
+    expect(wrapper.get('[data-test="setup-code"]').text()).toContain('bugs.example.test:443')
+    expect(wrapper.get('[data-test="setup-https-note"]').text()).toContain('https://')
+  })
+
   it('Sentry › JavaScript: the project key with _ for -', async () => {
     useSetupStack().setStack('javascript')
     const wrapper = render('sentry')

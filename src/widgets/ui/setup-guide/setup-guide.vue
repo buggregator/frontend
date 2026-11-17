@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, useId } from 'vue'
 import { useEventsStore, useSettingsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { fillSegments, resolveValues, usedPorts } from './fill'
+import { fillSegments, pageHttpPort, resolveValues, usedPorts } from './fill'
 import SetupCodeBlock from './setup-code-block.vue'
 import SetupExternalIcon from './setup-external-icon.vue'
 import content from './setup-help.json'
@@ -60,9 +60,11 @@ const resetToPage = () => {
   closeEditor()
 }
 
-// Values. HTTP: the page's own port when it has one — the browser reached
-// this server's HTTP listener through it (Docker -p 9000:8000 included);
-// /api/settings gives the container's port.
+// Values. HTTP: the port the browser reached this server through — the
+// page's own port, or the scheme's behind a reverse proxy (pageHttpPort);
+// /api/settings gives the container's listen port. A host typed by hand
+// keeps the server's port.
+const pageHttp = computed(() => (storedHost.value ? null : pageHttpPort(window.location)))
 const resolved = computed(() => {
   const r = resolveValues({
     host: host.value,
@@ -70,10 +72,10 @@ const resolved = computed(() => {
     ports: ports.value,
     defaults
   })
-  const pagePort = window.location.port
-  if (pagePort && !storedHost.value) {
-    r.values.http_port = pagePort
+  if (pageHttp.value) {
+    r.values.http_port = pageHttp.value.port
     r.defaulted.delete('http_port')
+    r.off.delete('http_port')
   }
   return r
 })
@@ -85,11 +87,32 @@ const current = computed(
   () => section.value?.stacks.find((s) => s.id === stack.value) ?? section.value?.stacks[0]
 )
 
-const portsUnknown = computed(() => {
+const portsUsed = computed(() => {
   if (!current.value || !section.value) return []
-  const texts = [current.value.code, ...section.value.steps].join('\n')
-  return usedPorts(texts).filter((p) => resolved.value.defaulted.has(p))
+  return usedPorts([current.value.code, ...section.value.steps].join('\n'))
 })
+// No ports from the server at all (an old server): every one is a guess.
+const portsUnknown = computed(() =>
+  portsUsed.value.filter((p) => resolved.value.defaulted.has(p) && !resolved.value.off.has(p))
+)
+// The server sent its ports, this listener is not among them: it is off.
+const LISTENERS: Record<string, string> = {
+  smtp_port: 'The SMTP server',
+  monolog_port: 'The Monolog listener',
+  vardumper_port: 'The VarDumper listener',
+  proxy_port: 'The HTTP proxy',
+  xdebug_port: 'The Xdebug proxy'
+}
+const portsOff = computed(() =>
+  portsUsed.value
+    .filter((p) => resolved.value.off.has(p))
+    .map(
+      (p) =>
+        `${LISTENERS[p] ?? 'This listener'} is off on this server; ${values.value[p]} is its default port.`
+    )
+)
+// The page is on https: the samples say http://, the app should not.
+const httpsNote = computed(() => !!pageHttp.value?.https && portsUsed.value.includes('http_port'))
 
 const projectName = computed(() => activeProject.value?.name ?? 'Default')
 const projectKey = computed(() => activeProject.value?.key ?? 'default')
@@ -235,6 +258,22 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
       Could not read this server’s ports, showing the defaults ({{
         portsUnknown.map((p) => values[p]).join(', ')
       }}).
+    </p>
+    <p
+      v-for="text in portsOff"
+      :key="text"
+      class="setup-guide__warn"
+      data-test="setup-port-off"
+    >
+      {{ text }}
+    </p>
+    <p
+      v-if="httpsNote"
+      class="setup-guide__warn"
+      data-test="setup-https-note"
+    >
+      This page is on https: in the samples use https:// instead of http:// with port
+      {{ values.http_port }}.
     </p>
 
     <ol class="setup-guide__steps">
