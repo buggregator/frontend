@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useServerUpdateStore } from '@/entities/server-update'
+import { availableStatus } from '@/entities/server-update/mocks'
 import { useSettingsStore } from '@/shared/stores'
 import SettingsPageContent from './settings-page-content.vue'
 
@@ -100,5 +102,52 @@ describe('SettingsPageContent: new server release', () => {
 
     expect(wrapper.find('[data-test="update-available"]').exists()).toBe(false)
     expect(wrapper.find('[data-test="update-current"]').exists()).toBe(false)
+  })
+})
+
+describe('SettingsPageContent: About & updates', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('shows the update block when the server has /api/update', () => {
+    useServerUpdateStore().setStatus(availableStatus)
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.get('#updates h2').text()).toBe('About & updates')
+    expect(wrapper.find('[data-test="update-panel"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test="update-available"]').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Client')
+  })
+
+  it('passes Check now and Update to the store', async () => {
+    const store = useServerUpdateStore()
+    store.setStatus(availableStatus)
+    const check = vi.spyOn(store, 'check').mockResolvedValue()
+    const start = vi.spyOn(store, 'start').mockResolvedValue()
+    const wrapper = mount(SettingsPageContent)
+
+    await wrapper.get('[data-test="update-check"]').trigger('click')
+    await wrapper.get('[data-test="update-start"]').trigger('click')
+
+    expect(check).toHaveBeenCalled()
+    expect(start).toHaveBeenCalledWith('2.10.0')
+  })
+
+  // An older server answers 404: the About block stays as it was.
+  it('keeps the old About block without /api/update', () => {
+    useServerUpdateStore().supported = false
+    useSettingsStore().update = { current: '2.7.0', latest: '2.8.0', url: 'https://github.com/x', available: true }
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.find('[data-test="update-panel"]').exists()).toBe(false)
+    expect(wrapper.find('[data-test="update-available"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('About')
   })
 })

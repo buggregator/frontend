@@ -1,0 +1,30 @@
+// Buttons of the update block. 32 px tall, 44 px on phones (touch target).
+@mixin btn {
+  @apply inline-flex items-center justify-center gap-1.5 min-h-[32px] px-3.5 py-1.5 rounded-md;
+  @apply text-sm font-medium leading-tight whitespace-nowrap no-underline cursor-pointer;
+  @apply border border-transparent transition-colors;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  @apply focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 ring-offset-white dark:ring-offset-gray-800;
+
+  @media (max-width: 639px) {
+    @apply min-h-[44px];
+  }
+}
+
+@mixin btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+}
+
+@mixin btn-danger {
+  @apply bg-red-700 text-white hover:bg-red-800;
+}
+
+@mixin btn-ghost {
+  @apply bg-transparent text-gray-800 dark:text-gray-100;
+  @apply border-gray-300 dark:border-gray-600;
+  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+@mixin btn-disabled {
+  @apply opacity-60 cursor-not-allowed;
+}

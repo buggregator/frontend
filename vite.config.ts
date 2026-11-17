@@ -13,11 +13,20 @@ const devPlugins = async (): Promise<Plugin[]> => {
   return [analyzer() as Plugin, vueDevTools() as Plugin];
 }
 
+// MOCK_UPDATE=1 yarn dev: a fake server for the self-update UI
+// (scripts/dev-update-mock.mjs). Dev server only, never in a build.
+const mockPlugins = async (): Promise<Plugin[]> => {
+  if (!process.env.MOCK_UPDATE) return [];
+  const { devUpdateMock } = await import('./scripts/dev-update-mock.mjs');
+  return [devUpdateMock()];
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     ...await devPlugins(),
+    ...await mockPlugins(),
   ],
   resolve: {
     alias: {

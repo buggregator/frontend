@@ -88,6 +88,29 @@ describe('startEventsStream', () => {
     expect(dropEvents).toHaveBeenCalledWith(['a'])
   })
 
+  // Self-update progress comes on the project channels too; it is no event.
+  it('does not take update.progress for an event', () => {
+    const onReceived = vi.fn()
+    stop()
+    stop = startEventsStream({
+      centrifuge: centrifuge as never,
+      getProject: () => project,
+      setConnected,
+      onReceived,
+      addEvents,
+      dropEvents,
+      resync,
+    })
+
+    centrifuge.publish('update.progress', { phase: 'downloading', version: '2.10.0', bytes: 1, total: 2, error: '', at: '', project: 'p1', uuid: 'x' })
+    vi.advanceTimersByTime(1000)
+
+    expect(onReceived).not.toHaveBeenCalled()
+    expect(addEvents).not.toHaveBeenCalled()
+    expect(dropEvents).not.toHaveBeenCalled()
+    expect(resync).not.toHaveBeenCalled()
+  })
+
   it('ignores a clear of another project', () => {
     centrifuge.publish('events.cleared', null, 'events.project.p2')
     vi.advanceTimersByTime(300)

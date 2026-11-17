@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { useTitle } from '@vueuse/core'
+import { useNow, useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
 import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { THEME_MODES, useSettingsStore } from '@/shared/stores'
@@ -31,6 +32,32 @@ const {
   apiVersion,
   update
 } = storeToRefs(settingsStore)
+
+// GET /api/update: null on older servers, which keep the About block as it was.
+const updateStore = useServerUpdateStore()
+const {
+  status: updateStatus,
+  loadedVersion,
+  checking,
+  checkMessage,
+  starting,
+  actionError,
+  restartGaveUp
+} = storeToRefs(updateStore)
+// «Last checked 2 h ago» moves on while the page is open.
+const now = useNow({ interval: 30_000 })
+
+// The header pill links to /settings#updates; the page scrolls inside <main>,
+// so the block is brought into view by hand once it is there.
+watch(
+  () => !!updateStatus.value,
+  async (shown) => {
+    if (!shown || window.location.hash !== '#updates') return
+    await nextTick()
+    document.getElementById('updates')?.scrollIntoView({ block: 'start' })
+  },
+  { immediate: true }
+)
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
@@ -198,10 +225,10 @@ useTitle('Settings | Buggregator')
               Single-key shortcuts
             </div>
             <div class="s-row__desc">
-              Keys without Ctrl, Alt or Cmd: j/k or <span class="whitespace-nowrap">↑/↓</span> to move
-              through the list, x to delete, 0–9 to switch pages, ? for the list. Turning this off frees
-              <span class="whitespace-nowrap">↑/↓</span> for scrolling too. Turn off if they get in the way of
-              typing or a screen reader.
+              Keys without Ctrl, Alt or Cmd: j/k or <span class="whitespace-nowrap">↑/↓</span> to
+              move through the list, x to delete, 0–9 to switch pages, ? for the list. Turning this
+              off frees <span class="whitespace-nowrap">↑/↓</span> for scrolling too. Turn off if
+              they get in the way of typing or a screen reader.
             </div>
           </div>
           <button
@@ -222,9 +249,9 @@ useTitle('Settings | Buggregator')
               Show key hints
             </div>
             <div class="s-row__desc">
-              Small key badges: hints next to search boxes and other fields, and, while single-key shortcuts
-              are on, a bar with the main keys on the event list and event pages. Press ? for the full list
-              (also a single-key shortcut).
+              Small key badges: hints next to search boxes and other fields, and, while single-key
+              shortcuts are on, a bar with the main keys on the event list and event pages. Press ?
+              for the full list (also a single-key shortcut).
             </div>
           </div>
           <button
@@ -371,8 +398,76 @@ useTitle('Settings | Buggregator')
       </div>
     </EventDetailSection>
 
+    <!-- About & updates (servers with /api/update) -->
+    <EventDetailSection
+      v-if="updateStatus"
+      id="updates"
+      title="About & updates"
+    >
+      <UpdatePanel
+        :status="updateStatus"
+        :loaded-version="loadedVersion"
+        :checking="checking"
+        :check-message="checkMessage"
+        :starting="starting"
+        :action-error="actionError"
+        :restart-gave-up="restartGaveUp"
+        :now="now.getTime()"
+        @check="updateStore.check()"
+        @start="updateStore.start($event)"
+        @reload="updateStore.reload()"
+      />
+
+      <div class="s-card s-card--spaced">
+        <div class="s-about-boxes">
+          <div class="s-about-box">
+            <span class="s-about-box__label">Client</span>
+            <span class="s-about-box__value">{{ clientVersion || '—' }}</span>
+          </div>
+        </div>
+        <div class="s-links">
+          <a
+            href="https://github.com/buggregator"
+            target="_blank"
+            class="s-links__item"
+          >
+            <IconSvg
+              name="github"
+              class="s-links__icon"
+            />
+            GitHub
+          </a>
+          <a
+            href="https://docs.buggregator.dev"
+            target="_blank"
+            class="s-links__item"
+          >
+            <IconSvg
+              name="docs"
+              class="s-links__icon"
+            />
+            Documentation
+          </a>
+          <a
+            href="https://discord.gg/vDsCD3EKUB"
+            target="_blank"
+            class="s-links__item"
+          >
+            <IconSvg
+              name="discord"
+              class="s-links__icon"
+            />
+            Discord
+          </a>
+        </div>
+      </div>
+    </EventDetailSection>
+
     <!-- About -->
-    <EventDetailSection title="About">
+    <EventDetailSection
+      v-else
+      title="About"
+    >
       <div class="s-card">
         <div
           v-if="update?.available"
@@ -572,6 +667,10 @@ useTitle('Settings | Buggregator')
   @apply border border-gray-200 dark:border-gray-600;
   @apply text-gray-800 dark:text-gray-200;
   @apply min-w-[160px];
+}
+
+.s-card--spaced {
+  @apply mt-3;
 }
 
 /* About boxes */
