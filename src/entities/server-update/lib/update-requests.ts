@@ -33,10 +33,15 @@ export const createUpdateRequests = (getToken: () => string, base: string = REST
       )
     }
 
+    // An older server answers unknown paths with its web page (200, HTML).
+    if (!body || typeof body !== 'object' || !('state' in body)) {
+      throw new UpdateApiError('The server does not support updates from the UI.', 404)
+    }
+
     return body as UpdateStatus
   }
 
-  // null: an older server without the feature.
+  // null: an older server without the feature (404, or its web page).
   const getStatus = () =>
     request('').catch((e) => {
       if (e instanceof UpdateApiError && e.status === 404) return null

@@ -55,6 +55,8 @@ describe('LayoutSidebar: server update', () => {
 
     expect(link.find('[data-test="settings-update-dot"]').exists()).toBe(true)
     expect(link.attributes('aria-label')).toBe('Settings, Buggregator 2.10.0 is available')
+    // It lands on About & updates.
+    expect(link.attributes('href')).toBe('/settings#updates')
   })
 
   it('has no dot when up to date or on an older server', () => {
@@ -63,6 +65,7 @@ describe('LayoutSidebar: server update', () => {
 
     expect(link.find('[data-test="settings-update-dot"]').exists()).toBe(false)
     expect(link.attributes('aria-label')).toBe('Settings')
+    expect(link.attributes('href')).toBe('/settings')
   })
 
   it('shows the connection as reconnecting while the server restarts', () => {

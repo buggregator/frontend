@@ -2,6 +2,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   availableStatus,
+  doneThenNewerStatus,
   doneStatus,
   downloadingStatus,
   failedStatus,
@@ -94,6 +95,8 @@ describe('useServerUpdateStore', () => {
       ['failed', failedStatus, true, 'The update failed'],
       ['rolled back', rolledBackStatus, true, 'The update was rolled back'],
       ['done', doneStatus, false, ''],
+      ['done, then a newer release', doneThenNewerStatus, true, 'Buggregator 2.11.0 is available'],
+      ['failed for an older release', { ...failedStatus, latest: '2.11.0' }, true, 'Buggregator 2.11.0 is available'],
     ])('%s → %s', async (_, status, visible, text) => {
       serve({ 'GET /api/update': answer(status) })
       const store = await init()
@@ -212,6 +215,8 @@ describe('useServerUpdateStore', () => {
       expect(store.checking).toBe(false)
       expect(store.status?.available).toBe(true)
       expect(store.checkMessage).toBe('')
+      // The server takes one check a minute.
+      expect(store.checkAvailableAt).toBe(Date.now() + 60_000)
     })
 
     it('says to wait when checked within a minute', async () => {
@@ -224,10 +229,11 @@ describe('useServerUpdateStore', () => {
       await store.check()
 
       expect(store.checkMessage).toBe('Checked less than a minute ago. Try again in 42 s.')
+      expect(store.checkAvailableAt).toBe(Date.now() + 42_000)
       expect(store.status).toEqual(upToDateStatus)
     })
 
-    it('says why a check failed', async () => {
+    it('says why a check failed (502 when the check is off)', async () => {
       serve({
         'GET /api/update': answer(upToDateStatus),
         'POST /api/update/check': () => json({ message: 'GitHub cannot be reached', code: 502 }, 502),
@@ -258,7 +264,7 @@ describe('useServerUpdateStore', () => {
     it.each([
       [409, 'An update is already running. Its progress is shown here.'],
       [400, 'A newer release came out since the last check. Check again, then update.'],
-      [403, 'Updating from this page is off: switched off on the server'],
+      [403, 'switched off on the server'],
       [500, 'The update did not start: boom'],
     ])('a refused start (%s) says why', async (code, text) => {
       serve({

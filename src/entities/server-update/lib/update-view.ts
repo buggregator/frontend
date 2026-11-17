@@ -51,13 +51,16 @@ export type UpdateViewInput = {
   loadedVersion: string
   checking: boolean
   now: number
+  // The server version from /api/settings: /api/update has none when the
+  // update check is off.
+  fallbackVersion?: string
 }
 
 export const ACTIVE_PHASES: UpdatePhase[] = ['downloading', 'verifying', 'installing', 'restarting']
 
 export const isActivePhase = (phase: UpdatePhase | undefined) => !!phase && ACTIVE_PHASES.includes(phase)
 
-export const timeAgo = (iso: string | undefined, now: number): string => {
+export const timeAgo = (iso: string | null | undefined, now: number): string => {
   const time = iso ? Date.parse(iso) : NaN
   if (Number.isNaN(time)) return ''
 
@@ -67,12 +70,6 @@ export const timeAgo = (iso: string | undefined, now: number): string => {
   const hours = Math.floor(minutes / 60)
   if (hours < 24) return `${hours} h ago`
   return `${Math.floor(hours / 24)} d ago`
-}
-
-const clock = (iso: string | undefined): string => {
-  const time = iso ? new Date(iso) : null
-  if (!time || Number.isNaN(time.getTime())) return ''
-  return `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
 }
 
 const megabytes = (bytes: number) => (bytes / (1024 * 1024)).toFixed(1)
@@ -96,28 +93,41 @@ const STEP_NAMES: Record<StepId, string> = {
   restart: 'Restart',
 }
 
-// The server may name the step or the phase it was in.
-const toStepId = (raw: string | undefined): StepId | null => {
-  const value = (raw ?? '').toLowerCase()
-  if (value.startsWith('download')) return 'download'
-  if (value.startsWith('verif') || value.startsWith('checksum')) return 'verify'
-  if (value.startsWith('install')) return 'install'
-  if (value.startsWith('restart')) return 'restart'
-  return null
+// failed_step as the server sends it: the phase that failed, or `starting`
+// when the new version did not start (rolled_back).
+const FAILED_STEP: Record<string, StepId> = {
+  downloading: 'download',
+  verifying: 'verify',
+  installing: 'install',
+  starting: 'restart',
+}
+
+const toStepId = (raw: string | undefined): StepId | null => FAILED_STEP[raw ?? ''] ?? null
+
+const RESULT_PHASES: UpdatePhase[] = ['done', 'failed', 'rolled_back', 'restart_required']
+
+// The server keeps a result (done, failed, …) until the next update starts.
+// It is about the latest release only while it names that release; once a
+// newer one is out, the newer one is offered instead.
+export const isCurrentResult = (status: UpdateStatus): boolean => {
+  const { phase, version } = status.state ?? {}
+  if (!phase || !RESULT_PHASES.includes(phase)) return false
+  return !status.latest || !status.available || version === status.latest
 }
 
 const kindOf = (status: UpdateStatus): UpdateKind => {
   const phase = status.state?.phase
   if (isActivePhase(phase)) return 'progress'
-  if (phase === 'done' || phase === 'failed' || phase === 'rolled_back' || phase === 'restart_required') return phase
+  if (isCurrentResult(status)) return phase as UpdateKind
   return status.available && status.latest ? 'available' : 'current'
 }
 
 const buildSteps = (status: UpdateStatus, kind: UpdateKind, previous: string): StepView[] => {
-  if (kind !== 'progress' && kind !== 'failed') return []
+  if (kind !== 'progress' && kind !== 'failed' && kind !== 'rolled_back') return []
 
   const { state } = status
-  const failed = kind === 'failed' ? toStepId(state.failed_step) : null
+  // rolled_back: the new version did not start, whatever step the server names.
+  const failed = kind === 'failed' ? toStepId(state.failed_step) : kind === 'rolled_back' ? 'restart' : null
   const nowStep = kind === 'progress' ? PHASE_STEP[state.phase] ?? null : null
   const pivot = failed ?? nowStep
   const pivotIndex = pivot ? STEP_ORDER.indexOf(pivot) : -1
@@ -180,23 +190,24 @@ const reportUrl = (status: UpdateStatus, target: string, previous: string) => {
   return `${REPORT_ISSUE_URL}?${query.toString()}`
 }
 
-export const toUpdateView = ({ status, loadedVersion, checking, now }: UpdateViewInput): UpdateView => {
+export const toUpdateView = ({ status, loadedVersion, checking, now, fallbackVersion = '' }: UpdateViewInput): UpdateView => {
   const kind = kindOf(status)
   const { state } = status
   const target = state.version || status.latest || ''
-  const previous = state.previous || loadedVersion || status.current
+  const current = status.current || fallbackVersion || loadedVersion
+  const previous = state.previous || loadedVersion || current
   const latest = status.latest ?? ''
   const percent = state.phase === 'downloading' ? downloadPercent(state.bytes, state.total) : null
   const isSelf = status.mode === 'self'
 
   const view: UpdateView = {
     kind,
-    version: status.current,
+    version: current,
     target,
     previous,
     badge: { tone: 'muted', icon: 'info', text: '' },
     meta: '',
-    canCheck: kind !== 'progress' && kind !== 'restart_required',
+    canCheck: status.check_enabled !== false && kind !== 'progress' && kind !== 'restart_required',
     actions: [],
     memoryWarning: false,
     hint: '',
@@ -213,7 +224,7 @@ export const toUpdateView = ({ status, loadedVersion, checking, now }: UpdateVie
   const checkedAgo = timeAgo(status.checked_at, now)
   view.meta = checkedAgo
     ? `Last checked ${checkedAgo}`
-    : status.check_enabled === false ? 'Automatic checks are off' : 'No check yet'
+    : status.check_enabled === false ? 'Update checks are off' : 'No check yet'
 
   const releaseNotes = (): UpdateAction[] => (status.url ? [{ kind: 'release-notes', href: status.url }] : [])
 
@@ -239,8 +250,8 @@ export const toUpdateView = ({ status, loadedVersion, checking, now }: UpdateVie
           },
         ]
         view.hint = status.restart_manual
-          ? `Download, checksum check (sha256), replace. Then restart Buggregator yourself: it runs in a console window. ${status.current} runs until then.`
-          : `Download, checksum check (sha256), replace, restart: about a minute. If ${latest} does not start, ${status.current} comes back by itself.`
+          ? `Download, checksum check (sha256), replace. Then restart Buggregator yourself: it runs in a console window. ${current} runs until then.`
+          : `Download, checksum check (sha256), replace, restart: about a minute. If ${latest} does not start, ${current} is put back (after a crash: on the next start).`
       } else if (status.mode === 'manual') {
         view.actions = releaseNotes()
         view.manual = {
@@ -254,9 +265,8 @@ export const toUpdateView = ({ status, loadedVersion, checking, now }: UpdateVie
       break
 
     case 'progress': {
-      const started = clock(state.at)
       view.badge = { tone: 'new', icon: 'spinner', text: `Updating to ${target}` }
-      view.meta = started ? `Started ${started} · do not close the server's window` : "Do not close the server's window"
+      view.meta = "Do not close the server's window"
       view.progress = {
         line: progressLine(status, target, previous, percent),
         percent,
@@ -267,9 +277,9 @@ export const toUpdateView = ({ status, loadedVersion, checking, now }: UpdateVie
     }
 
     case 'done': {
-      const ago = timeAgo(state.at, now)
+      const ago = timeAgo(state.updated_at ?? undefined, now)
       view.badge = { tone: 'ok', icon: 'check', text: `Updated from ${previous}` }
-      view.meta = `${ago ? `Updated ${ago}` : 'Updated'} · ${previous} kept as backup until the next update`
+      view.meta = ago ? `Updated ${ago}` : 'Updated'
       view.notesTitle = 'What changed'
       break
     }

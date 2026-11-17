@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useServerUpdateStore } from '@/entities/server-update'
-import { availableStatus } from '@/entities/server-update/mocks'
+import { availableStatus, checkOffStatus } from '@/entities/server-update/mocks'
 import { useSettingsStore } from '@/shared/stores'
 import SettingsPageContent from './settings-page-content.vue'
 
@@ -138,6 +138,16 @@ describe('SettingsPageContent: About & updates', () => {
 
     expect(check).toHaveBeenCalled()
     expect(start).toHaveBeenCalledWith('2.10.0')
+  })
+
+  // With the update check off the server sends no version: /api/settings has it.
+  it('shows the version from settings when /api/update has none', () => {
+    useSettingsStore().apiVersion = '2.9.0'
+    useServerUpdateStore().setStatus(checkOffStatus)
+    const wrapper = mount(SettingsPageContent)
+
+    expect(wrapper.get('[data-test="update-version"]').text()).toBe('v2.9.0')
+    expect(wrapper.find('[data-test="update-check"]').exists()).toBe(false)
   })
 
   // An older server answers 404: the About block stays as it was.

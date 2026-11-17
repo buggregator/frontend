@@ -364,7 +364,7 @@ const linkLabel = (type: EventType) =>
       </RouterLink>
 
       <RouterLink
-        :to="{ name: RouteName.Settings }"
+        :to="{ name: RouteName.Settings, hash: hasUpdateAttention ? '#updates' : undefined }"
         title="Settings"
         :aria-label="settingsLabel"
         class="layout-sidebar__link"

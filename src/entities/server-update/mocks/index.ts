@@ -19,7 +19,7 @@ export const mockNotes = `## Before you upgrade
 - **Sentry timestamps are returned in UTC**, so the UI shows the right local time.
 - HTTP proxy: compressed bodies decoded, large bodies pass through whole ([#412](https://github.com/buggregator/server/pull/412)).`
 
-const idle: UpdateState = { phase: 'idle', version: '', bytes: 0, total: 0, error: '', at: '', failed_step: '', previous: '', log: '' }
+const idle: UpdateState = { phase: 'idle', version: '', bytes: 0, total: 0, error: '', updated_at: null, failed_step: '', previous: '', log: '' }
 
 const base: UpdateStatus = {
   current: MOCK_CURRENT,
@@ -41,14 +41,15 @@ const base: UpdateStatus = {
 
 const running = (state: Partial<UpdateState>): UpdateStatus => ({
   ...base,
-  state: { ...idle, version: MOCK_LATEST, previous: MOCK_CURRENT, at: '2026-11-17T10:24:00Z', total: SIZE, ...state },
+  state: { ...idle, version: MOCK_LATEST, previous: MOCK_CURRENT, updated_at: '2026-11-17T09:58:00Z', total: SIZE, ...state },
 })
 
+// As the server sends it before the first check.
 export const neverCheckedStatus: UpdateStatus = {
   ...base,
-  latest: undefined,
-  url: undefined,
-  checked_at: undefined,
+  latest: '',
+  url: '',
+  checked_at: null,
   available: false,
   notes: '',
 }
@@ -73,20 +74,20 @@ export const doneStatus: UpdateStatus = {
   ...base,
   current: MOCK_LATEST,
   available: false,
-  state: { ...idle, phase: 'done', version: MOCK_LATEST, previous: MOCK_CURRENT, at: '2026-11-17T09:35:00Z' },
+  state: { ...idle, phase: 'done', version: MOCK_LATEST, previous: MOCK_CURRENT, updated_at: '2026-11-17T09:35:00Z' },
 }
 
 export const failedStatus = running({
   phase: 'failed',
   bytes: Math.round(SIZE * 0.4),
-  failed_step: 'download',
+  failed_step: 'downloading',
   error: 'connection reset after 15.9 of 37.9 MB',
 })
 
 export const rolledBackStatus = running({
   phase: 'rolled_back',
   bytes: SIZE,
-  failed_step: 'restart',
+  failed_step: 'starting',
   error: 'exited 3 s after start: listen tcp :1025: bind: address already in use',
   log: 'time=2026-11-17T10:25:01Z level=INFO msg="starting buggregator" version=2.10.0\ntime=2026-11-17T10:25:03Z level=ERROR msg="smtp server" err="listen tcp :1025: bind: address already in use"',
 })
@@ -107,6 +108,25 @@ export const dockerStatus: UpdateStatus = {
     { id: 'compose', label: 'Compose', command: 'docker compose pull buggregator\ndocker compose up -d buggregator' },
     { id: 'helm', label: 'Helm', command: `helm upgrade buggregator ./helm-chart --set image.tag=${MOCK_LATEST}` },
   ],
+}
+
+// A newer release came out after the last update: the old result stays in
+// state (done is kept until the next update starts).
+export const doneThenNewerStatus: UpdateStatus = {
+  ...doneStatus,
+  latest: '2.11.0',
+  url: 'https://github.com/buggregator/server/releases/tag/v2.11.0',
+  available: true,
+}
+
+// Update check switched off: no version, no check, mode off.
+export const checkOffStatus: UpdateStatus = {
+  ...neverCheckedStatus,
+  current: '',
+  check_enabled: false,
+  mode: 'off',
+  reason: 'The update check is off (update_check.enabled: false).',
+  commands: [],
 }
 
 export const offStatus: UpdateStatus = {
@@ -130,4 +150,6 @@ export const updateStatusMocks = {
   restartRequired: restartRequiredStatus,
   docker: dockerStatus,
   off: offStatus,
+  doneThenNewer: doneThenNewerStatus,
+  checkOff: checkOffStatus,
 }

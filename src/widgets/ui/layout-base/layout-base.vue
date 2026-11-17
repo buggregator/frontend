@@ -219,7 +219,7 @@ watch(
 /* First in the page, kept in view under the header while it scrolls. A
    <section>: the page's own root is the <div> styled below. */
 .layout-base__update-strip {
-  @apply sticky top-10 md:top-14 z-40 flex-none;
+  @apply sticky top-0 z-40 flex-none;
 }
 
 .layout-base__connection-banner {

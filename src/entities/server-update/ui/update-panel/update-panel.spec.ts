@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   availableStatus,
+  checkOffStatus,
   dockerStatus,
   doneStatus,
   downloadingStatus,
@@ -51,6 +52,26 @@ describe('UpdatePanel', () => {
     expect(wrapper.get('[data-test="update-checking"]').text()).toBe('Checking…')
   })
 
+  it('after a check, Check now waits out the minute with a countdown', async () => {
+    const wrapper = render(upToDateStatus, { checkAvailableAt: NOW + 42_000 })
+
+    const check = wrapper.get('[data-test="update-check"]')
+    expect(check.attributes('aria-disabled')).toBe('true')
+    expect(check.text()).toBe('Check now (42 s)')
+    await check.trigger('click')
+    expect(wrapper.emitted('check')).toBeUndefined()
+
+    await wrapper.setProps({ now: NOW + 43_000 })
+    expect(wrapper.get('[data-test="update-check"]').attributes('aria-disabled')).toBeUndefined()
+  })
+
+  it('with the update check off: no Check now, the version from settings', () => {
+    const wrapper = render(checkOffStatus, { fallbackVersion: '2.9.0' })
+
+    expect(wrapper.get('[data-test="update-version"]').text()).toBe('v2.9.0')
+    expect(wrapper.find('[data-test="update-check"]').exists()).toBe(false)
+  })
+
   it('shows a refused check as a status message', () => {
     const wrapper = render(upToDateStatus, { checkMessage: 'Checked less than a minute ago. Try again in 42 s.' })
 
@@ -94,6 +115,11 @@ describe('UpdatePanel', () => {
     expect(wrapper.find('button[data-test="update-start"]').exists()).toBe(false)
     expect(wrapper.findAll('[role="tab"]').map((tab) => tab.text())).toEqual(['Docker', 'Compose', 'Helm'])
     expect(wrapper.text()).toContain(dockerStatus.reason)
+    // The server writes reasons lower-case; the page starts them with a capital.
+    const manual = render({ ...dockerStatus, reason: 'running in a container: pull the new image' })
+    expect(manual.get('[data-test="update-manual-text"]').text()).toBe('Running in a container: pull the new image')
+    // Phones show the release notes after the commands.
+    expect(wrapper.get('[data-test="update-manual-notes"]').attributes('href')).toBe(dockerStatus.url)
   })
 
   it('off: a locked button that does nothing, and the reason', async () => {
@@ -101,9 +127,12 @@ describe('UpdatePanel', () => {
 
     const locked = wrapper.get('[data-test="update-locked"]')
     expect(locked.attributes('aria-disabled')).toBe('true')
+    expect(locked.attributes('title')).toBe('Updating from here is off')
     await locked.trigger('click')
     expect(wrapper.emitted('start')).toBeUndefined()
-    expect(wrapper.get('[data-test="update-off-reason"]').text()).toContain('update.self_update: on')
+    const reason = wrapper.get('[data-test="update-off-reason"]')
+    expect(reason.findAll('code').map((code) => code.text())).toEqual(['update.self_update: on', 'UPDATE_SELF=on'])
+    expect(reason.text().startsWith('Sign-in is off')).toBe(true)
   })
 
   it('downloading: a progress bar with the percent and the steps', () => {
@@ -149,7 +178,8 @@ describe('UpdatePanel', () => {
 
     const failure = wrapper.get('[data-test="update-failure"]')
     expect(failure.attributes('role')).toBe('alert')
-    expect(failure.text()).toContain('Download failed: connection reset after 15.9 of 37.9 MB')
+    expect(failure.text()).toContain('Download failed. Error: connection reset')
+    expect(failure.get('code').text()).toBe('connection reset after 15.9 of 37.9 MB')
     expect(failure.text()).toContain('Nothing was changed; 2.9.0 keeps running.')
     expect(wrapper.get('[data-step="download"]').text()).toContain('Download: failed')
 
@@ -165,7 +195,9 @@ describe('UpdatePanel', () => {
     const notice = wrapper.get('[data-test="update-rollback"]')
     expect(notice.attributes('role')).toBe('alert')
     expect(notice.text()).toContain('2.10.0 did not start')
-    expect(notice.text()).toContain('2.9.0 is back. exited 3 s after start')
+    expect(notice.text()).toContain('2.9.0 is back. Error: exited 3 s')
+    expect(notice.get('code').text()).toBe(rolledBackStatus.state.error)
+    expect(wrapper.get('[data-step="restart"]').text()).toContain('Restart: failed')
     expect(buttons(wrapper)).toEqual(['Copy log', 'Report the problem (opens in a new tab)'])
 
     await wrapper.get('button[data-test="update-copy-log"]').trigger('click')
@@ -173,6 +205,23 @@ describe('UpdatePanel', () => {
     expect(writeText).toHaveBeenCalledWith(rolledBackStatus.state.log)
     expect(wrapper.get('button[data-test="update-copy-log"]').text()).toBe('Log copied')
     expect(wrapper.emitted('reload')).toBeUndefined()
+  })
+
+  // In-memory database (the default): every restart deletes the events.
+  it('rolled back says the events were kept only with a database file', () => {
+    expect(render(rolledBackStatus).get('[data-test="update-rollback"]').text()).toContain('Your events are kept.')
+
+    const memory = render({ ...rolledBackStatus, memory_db: true }).get('[data-test="update-rollback"]').text()
+    expect(memory).not.toContain('kept')
+    expect(memory).toContain('The restarts deleted all events: the database is in memory.')
+  })
+
+  it('done and restart required tell what an in-memory database means', () => {
+    expect(render({ ...doneStatus, memory_db: true }, { loadedVersion: '2.10.0' }).get('[data-test="update-done"]').text())
+      .toContain('The restart deleted all events: the database is in memory.')
+    expect(render({ ...restartRequiredStatus, memory_db: true }).get('[data-test="update-restart-required"]').text())
+      .toContain('Restarting deletes all events: the database is in memory.')
+    expect(render(doneStatus, { loadedVersion: '2.10.0' }).get('[data-test="update-done"]').text()).not.toContain('deleted')
   })
 
   it('restart required: installed, two steps to restart it by hand', () => {

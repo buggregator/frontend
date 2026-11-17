@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   availableStatus,
+  checkOffStatus,
+  doneThenNewerStatus,
   dockerStatus,
   doneStatus,
   downloadingStatus,
@@ -19,8 +21,14 @@ import type { UpdateStatus } from '../types'
 import { timeAgo, toUpdateView } from './update-view'
 
 const NOW = Date.parse('2026-11-17T10:00:00Z')
-const view = (status: UpdateStatus, extra: { checking?: boolean; loadedVersion?: string } = {}) =>
-  toUpdateView({ status, now: NOW, loadedVersion: extra.loadedVersion ?? '2.9.0', checking: extra.checking ?? false })
+const view = (status: UpdateStatus, extra: { checking?: boolean; loadedVersion?: string; fallbackVersion?: string } = {}) =>
+  toUpdateView({
+    status,
+    now: NOW,
+    loadedVersion: extra.loadedVersion ?? '2.9.0',
+    checking: extra.checking ?? false,
+    fallbackVersion: extra.fallbackVersion ?? '',
+  })
 
 const stepStates = (status: UpdateStatus) => view(status).steps.map((step) => `${step.id}:${step.state}`)
 const actionKinds = (status: UpdateStatus) => view(status).actions.map((action) => action.kind)
@@ -77,7 +85,7 @@ describe('toUpdateView: before an update', () => {
       { kind: 'update', label: 'Update to 2.10.0', version: '2.10.0', danger: false },
     ])
     expect(v.memoryWarning).toBe(false)
-    expect(v.hint).toContain('If 2.10.0 does not start, 2.9.0 comes back by itself.')
+    expect(v.hint).toContain('If 2.10.0 does not start, 2.9.0 is put back (after a crash: on the next start).')
     expect(v.notesTitle).toBe("What's new in 2.10.0")
   })
 
@@ -134,6 +142,7 @@ describe('toUpdateView: while it runs', () => {
     expect(v.progress).toEqual({ line: 'Downloading 2.10.0… 42%', percent: 42, restarting: false })
     expect(stepStates(downloadingStatus)).toEqual(['download:now', 'verify:waiting', 'install:waiting', 'restart:waiting'])
     expect(v.steps[0].aux).toBe('15.9 of 37.9 MB')
+    expect(v.meta).toBe("Do not close the server's window")
     expect(v.steps[2].label).toBe('Install, keep 2.9.0 as backup')
     expect(v.actions).toEqual([])
     expect(v.canCheck).toBe(false)
@@ -174,7 +183,7 @@ describe('toUpdateView: how it ended', () => {
     expect(v.kind).toBe('done')
     expect(v.version).toBe('2.10.0')
     expect(v.badge).toMatchObject({ tone: 'ok', text: 'Updated from 2.9.0' })
-    expect(v.meta).toBe('Updated 25 min ago · 2.9.0 kept as backup until the next update')
+    expect(v.meta).toBe('Updated 25 min ago')
     expect(v.notesTitle).toBe('What changed')
     expect(v.steps).toEqual([])
   })
@@ -216,6 +225,11 @@ describe('toUpdateView: how it ended', () => {
     expect(v.log).toBe(rolledBackStatus.state.log)
   })
 
+  // The server names the step `starting` when the new version did not start.
+  it('rolled back marks the restart step failed', () => {
+    expect(stepStates(rolledBackStatus)).toEqual(['download:done', 'verify:done', 'install:done', 'restart:failed'])
+  })
+
   it('rolled back without a log copies the error', () => {
     expect(view({ ...rolledBackStatus, state: { ...rolledBackStatus.state, log: '' } }).log).toBe(rolledBackStatus.state.error)
   })
@@ -227,5 +241,54 @@ describe('toUpdateView: how it ended', () => {
     expect(v.badge).toMatchObject({ tone: 'warn', text: '2.10.0 installed, waiting for restart' })
     expect(v.actions).toEqual([])
     expect(v.canCheck).toBe(false)
+  })
+})
+
+// The server keeps done, failed and rolled_back until the next update starts,
+// also when a newer release comes out meanwhile.
+describe('toUpdateView: an old result and a newer release', () => {
+  it('done for an older version: the newer release is offered', () => {
+    const v = view(doneThenNewerStatus, { loadedVersion: '2.10.0' })
+
+    expect(v.kind).toBe('available')
+    expect(v.badge.text).toBe('2.11.0 is available')
+    expect(v.actions[1]).toMatchObject({ kind: 'update', version: '2.11.0', label: 'Update to 2.11.0' })
+    expect(v.notesTitle).toBe("What's new in 2.11.0")
+    expect(v.hint).toContain('If 2.11.0 does not start, 2.10.0 is put back')
+  })
+
+  it.each([
+    ['failed', failedStatus],
+    ['rolled back', rolledBackStatus],
+    ['restart required', restartRequiredStatus],
+  ])('%s for an older version: the newer release is offered', (_, status) => {
+    const v = view({ ...status, latest: '2.11.0', available: true })
+
+    expect(v.kind).toBe('available')
+    expect(v.steps).toEqual([])
+  })
+
+  // Reviewer's cases, live against server master.
+  it('done 9.1.0 with 9.2.0 out offers «Update to 9.2.0»; rolled back 9.2.0 with 9.2.1 out offers 9.2.1', () => {
+    const done = { ...doneStatus, current: '9.1.0', latest: '9.2.0', available: true, state: { ...doneStatus.state, version: '9.1.0', previous: '9.0.0' } }
+    expect(view(done, { loadedVersion: '9.1.0' }).actions[1]).toMatchObject({ label: 'Update to 9.2.0' })
+
+    const rolled = { ...rolledBackStatus, current: '9.1.0', latest: '9.2.1', available: true, state: { ...rolledBackStatus.state, version: '9.2.0', previous: '9.1.0' } }
+    expect(view(rolled, { loadedVersion: '9.1.0' }).actions[1]).toMatchObject({ label: 'Update to 9.2.1' })
+  })
+
+  it('a result about the latest release stays shown', () => {
+    expect(view(failedStatus).kind).toBe('failed')
+    expect(view({ ...doneStatus, latest: '' }, { loadedVersion: '2.10.0' }).kind).toBe('done')
+  })
+})
+
+describe('toUpdateView: update check off', () => {
+  it('no Check now, and the version from /api/settings', () => {
+    const v = view(checkOffStatus, { fallbackVersion: '2.9.0' })
+
+    expect(v.canCheck).toBe(false)
+    expect(v.version).toBe('2.9.0')
+    expect(v.meta).toBe('Update checks are off')
   })
 })

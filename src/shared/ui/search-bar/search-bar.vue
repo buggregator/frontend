@@ -102,7 +102,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .search-bar {
-  @apply flex items-center gap-2 px-2.5 h-7 rounded flex-1;
+  @apply flex items-center gap-2 px-2.5 h-7 rounded flex-1 min-w-0;
   @apply bg-gray-100 dark:bg-gray-700/60;
   @apply border border-transparent;
   @apply transition-colors;

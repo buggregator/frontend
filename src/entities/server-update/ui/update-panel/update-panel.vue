@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
+import { reasonParts } from '../../lib/reason-text'
 import { renderReleaseNotes } from '../../lib/release-notes'
 import { toUpdateView } from '../../lib/update-view'
 import type { UpdateStatus } from '../../types'
@@ -19,8 +20,12 @@ type Props = {
   starting?: boolean
   actionError?: string
   restartGaveUp?: boolean
-  // For «2 h ago»; the page ticks it.
+  // For «2 h ago» and the check countdown; the page ticks it.
   now?: number
+  // The server version from /api/settings, for a status without one.
+  fallbackVersion?: string
+  // Until then (ms) the server refuses another check.
+  checkAvailableAt?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,7 +34,9 @@ const props = withDefaults(defineProps<Props>(), {
   starting: false,
   actionError: '',
   restartGaveUp: false,
-  now: () => Date.now()
+  now: () => Date.now(),
+  fallbackVersion: '',
+  checkAvailableAt: 0
 })
 
 const emit = defineEmits<{
@@ -43,9 +50,22 @@ const view = computed(() =>
     status: props.status,
     loadedVersion: props.loadedVersion,
     checking: props.checking,
-    now: props.now
+    now: props.now,
+    fallbackVersion: props.fallbackVersion
   })
 )
+
+const offReason = computed(() => reasonParts(view.value.offReason))
+const manualText = computed(() => reasonParts(view.value.manual?.text))
+
+// Seconds until the server takes another check; 0 = now.
+const checkWait = computed(() =>
+  Math.max(0, Math.ceil((props.checkAvailableAt - props.now) / 1000))
+)
+
+const requestCheck = () => {
+  if (checkWait.value === 0) emit('check')
+}
 
 const notesHtml = computed(() => renderReleaseNotes(props.status.notes))
 
@@ -141,10 +161,12 @@ const hasMiddle = computed(() => {
               v-else
               type="button"
               class="upd__link-btn"
+              :class="{ 'upd__link-btn--waiting': checkWait > 0 }"
+              :aria-disabled="checkWait > 0 ? 'true' : undefined"
               data-test="update-check"
-              @click="emit('check')"
+              @click="requestCheck"
             >
-              Check now
+              {{ checkWait > 0 ? `Check now (${checkWait} s)` : 'Check now' }}
             </button>
           </template>
         </div>
@@ -160,6 +182,7 @@ const hasMiddle = computed(() => {
 
       <div
         class="upd__actions"
+        :class="{ 'upd__actions--manual': view.manual }"
         data-test="update-actions"
       >
         <template
@@ -193,6 +216,7 @@ const hasMiddle = computed(() => {
             type="button"
             class="upd__btn upd__btn--primary upd__btn--locked"
             aria-disabled="true"
+            title="Updating from here is off"
             :aria-describedby="offReasonId"
             data-test="update-locked"
           >
@@ -280,13 +304,31 @@ const hasMiddle = computed(() => {
         v-if="view.manual"
         class="upd__manual"
       >
-        <p class="upd__text">
-          {{ view.manual.text }}
+        <p
+          class="upd__text"
+          data-test="update-manual-text"
+        >
+          <template
+            v-for="(part, index) in manualText"
+            :key="index"
+          >
+            <code v-if="part.code">{{ part.text }}</code><template v-else>
+              {{ part.text }}
+            </template>
+          </template>
         </p>
         <UpdateCommands
           v-if="view.manual.commands.length"
           :commands="view.manual.commands"
         />
+        <a
+          v-if="status.url"
+          class="upd__manual-notes"
+          :href="status.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-test="update-manual-notes"
+        >Release notes<span class="sr-only"> (opens in a new tab)</span></a>
       </div>
 
       <div
@@ -299,7 +341,10 @@ const hasMiddle = computed(() => {
           name="lock"
           class="upd__callout-icon"
         />
-        <span>{{ view.offReason }}</span>
+        <span><template
+          v-for="(part, index) in offReason"
+          :key="index"
+        ><code v-if="part.code">{{ part.text }}</code><template v-else>{{ part.text }}</template></template></span>
       </div>
 
       <div
@@ -334,7 +379,7 @@ const hasMiddle = computed(() => {
             />
             <span class="upd__callout-body">
               <span><b>The server has not answered for 90 seconds.</b> Check the window or the log
-                where Buggregator runs, then reload this page.</span>
+                where Buggregator runs; if it stopped, start it again. Then reload this page.</span>
               <button
                 type="button"
                 class="upd__btn upd__btn--ghost"
@@ -379,27 +424,38 @@ const hasMiddle = computed(() => {
             name="x"
             class="upd__callout-icon"
           />
-          <span><b>{{ view.failure.step || 'The update' }} failed:</b>
-            {{ view.failure.error || 'no details' }}. Nothing was changed;
-            {{ view.failure.previous }} keeps running.</span>
+          <span><b>{{ view.failure.step || 'The update' }} failed.</b>
+            <template v-if="view.failure.error">
+              Error: <code>{{ view.failure.error }}</code>.</template>
+            Nothing was changed; {{ view.failure.previous }} keeps running.</span>
         </div>
         <UpdateSteps :steps="view.steps" />
       </div>
 
       <div
         v-if="view.rollback"
-        class="upd__callout upd__callout--warn"
-        role="alert"
-        data-test="update-rollback"
+        class="upd__progress"
       >
-        <UpdateIcon
-          name="undo"
-          class="upd__callout-icon"
-        />
-        <span><b>{{ view.rollback.target }} did not start, {{ view.rollback.previous }} is back.</b>
-          {{ view.rollback.error ? `${view.rollback.error}.` : '' }}
-          Your events are kept. «Copy log» copies what {{ view.rollback.target }} printed, for a
-          report.</span>
+        <div
+          class="upd__callout upd__callout--warn"
+          role="alert"
+          data-test="update-rollback"
+        >
+          <UpdateIcon
+            name="undo"
+            class="upd__callout-icon"
+          />
+          <span><b>{{ view.rollback.target }} did not start, {{ view.rollback.previous }} is back.</b>
+            <template v-if="view.rollback.error">
+              Error: <code>{{ view.rollback.error }}</code>.</template>
+            {{
+              status.memory_db
+                ? 'The restarts deleted all events: the database is in memory.'
+                : 'Your events are kept.'
+            }}
+            «Copy log» copies what {{ view.rollback.target }} printed, for a report.</span>
+        </div>
+        <UpdateSteps :steps="view.steps" />
       </div>
 
       <div
@@ -416,6 +472,9 @@ const hasMiddle = computed(() => {
           <b>{{ view.target }} is installed — restart it yourself.</b>
           Buggregator runs in a console window, so it cannot restart itself.
           {{ view.previous }} runs until then.
+          <template v-if="status.memory_db">
+            Restarting deletes all events: the database is in memory.
+          </template>
           <ol class="upd__how">
             <li>Press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the window where Buggregator runs.</li>
             <li>Start it again the same way.</li>
@@ -434,7 +493,10 @@ const hasMiddle = computed(() => {
           class="upd__callout-icon"
         />
         <span><b>Updated to {{ view.version }}.</b> {{ view.previous }} is kept as a backup until the
-          next update.</span>
+          next update.
+          {{
+            status.memory_db ? 'The restart deleted all events: the database is in memory.' : ''
+          }}</span>
       </div>
     </div>
 
@@ -545,6 +607,10 @@ const hasMiddle = computed(() => {
   }
 }
 
+.upd__link-btn--waiting {
+  @apply no-underline text-gray-500 dark:text-gray-400 cursor-not-allowed;
+}
+
 .upd__check-message {
   @apply mt-1 text-xs text-amber-700 dark:text-amber-400;
 }
@@ -562,6 +628,21 @@ const hasMiddle = computed(() => {
 
   &:empty {
     @apply hidden;
+  }
+}
+
+// Phones, manual mode: the commands come first, the notes link after them.
+.upd__actions--manual {
+  @media (max-width: 639px) {
+    @apply hidden;
+  }
+}
+
+.upd__manual-notes {
+  @apply hidden mt-1 text-[13px] underline underline-offset-2 text-blue-700 dark:text-blue-400;
+
+  @media (max-width: 639px) {
+    @apply inline-block py-3;
   }
 }
 
@@ -600,6 +681,10 @@ const hasMiddle = computed(() => {
 
 .upd__text {
   @apply m-0 mb-2.5 text-[13px];
+
+  code {
+    @apply font-mono text-xs px-1 rounded bg-black/5 dark:bg-white/10 break-words;
+  }
 }
 
 .upd__gap {

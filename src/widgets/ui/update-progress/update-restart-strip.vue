@@ -22,7 +22,7 @@ const target = computed(() => status.value?.state.version || status.value?.lates
   >
     <template v-if="restartGaveUp">
       <span><b>The server has not come back after 90 seconds.</b> Check the window or the log where
-        Buggregator runs.</span>
+        Buggregator runs; if it stopped, start it again.</span>
       <button
         type="button"
         class="update-strip__btn"

@@ -29,6 +29,13 @@ describe('createUpdateRequests', () => {
     await expect(createUpdateRequests(() => '', 'http://x').getStatus()).resolves.toBeNull()
   })
 
+  // An older server serves its SPA for unknown paths: 200 with HTML.
+  it('answers null when the server sends the web page instead of JSON', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('<!doctype html><html></html>', { status: 200, headers: { 'Content-Type': 'text/html' } }))))
+
+    await expect(createUpdateRequests(() => '', 'http://x').getStatus()).resolves.toBeNull()
+  })
+
   it('throws with the status on other errors', async () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(json({ message: 'nope', code: 401 }, 401))))
 

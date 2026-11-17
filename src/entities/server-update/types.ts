@@ -26,8 +26,10 @@ export type UpdateState = {
   bytes: number
   total: number
   error: string
-  at: string
-  // The step that failed: download, verify, install or restart.
+  // When the state last changed (null before anything ran).
+  updated_at?: string | null
+  // failed: downloading, verifying or installing; rolled_back: starting (the
+  // new version did not start).
   failed_step?: string
   // The version that ran before the update.
   previous?: string
@@ -43,11 +45,13 @@ export type UpdateCommand = {
 
 export type UpdateStatus = {
   current: string
-  // latest, url and checked_at come with the first check.
+  // With the update check off, current is "" (the version is then taken from
+  // /api/settings). latest and url are "" and checked_at null before the
+  // first check.
   latest?: string
   available: boolean
   url?: string
-  checked_at?: string
+  checked_at?: string | null
   // Release body (markdown); "" when the release has none.
   notes?: string
   mode: UpdateMode

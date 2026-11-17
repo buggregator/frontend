@@ -4,7 +4,7 @@ import type { UpdateState, UpdateStatus } from '../types'
 import { startRestartWatch } from './restart-watch'
 import { onUpdateProgress } from './update-bus'
 import { UpdateApiError, useUpdateRequests } from './update-requests'
-import { downloadPercent, isActivePhase } from './update-view'
+import { downloadPercent, isActivePhase, isCurrentResult } from './update-view'
 
 // While a download runs and the socket is down, the state is asked for over
 // REST this often.
@@ -55,6 +55,8 @@ export const useServerUpdateStore = defineStore('serverUpdateStore', {
     starting: false,
     actionError: '',
     restartGaveUp: false,
+    // The server takes one check a minute: Check now waits until then (ms).
+    checkAvailableAt: 0,
   }),
   getters: {
     phase: ({ status }) => status?.state?.phase ?? 'idle',
@@ -80,9 +82,11 @@ export const useServerUpdateStore = defineStore('serverUpdateStore', {
     // What the dot on the Settings icon stands for; '' = no dot.
     attentionText(): string {
       if (!this.status || this.isActive) return ''
-      if (this.phase === 'failed') return 'The update failed'
-      if (this.phase === 'rolled_back') return 'The update was rolled back'
-      if (this.phase === 'restart_required') return 'Restart Buggregator to finish the update'
+      // A result about an older release gives way to the newer one.
+      const result = isCurrentResult(this.status)
+      if (result && this.phase === 'failed') return 'The update failed'
+      if (result && this.phase === 'rolled_back') return 'The update was rolled back'
+      if (result && this.phase === 'restart_required') return 'Restart Buggregator to finish the update'
       if (this.status.available && this.status.latest) return `Buggregator ${this.status.latest} is available`
       return ''
     },
@@ -177,8 +181,10 @@ export const useServerUpdateStore = defineStore('serverUpdateStore', {
       this.checkMessage = ''
       try {
         this.setStatus(await useUpdateRequests().check())
+        this.checkAvailableAt = Date.now() + 60_000
       } catch (e) {
         if (e instanceof UpdateApiError && e.status === 429) {
+          this.checkAvailableAt = Date.now() + (e.retryAfter ?? 60) * 1000
           this.checkMessage = `Checked less than a minute ago. Try again in ${e.retryAfter ? `${e.retryAfter} s` : 'a minute'}.`
         } else {
           this.checkMessage = `Could not check: ${describeError(e)}`
@@ -201,7 +207,8 @@ export const useServerUpdateStore = defineStore('serverUpdateStore', {
         } else if (status === 400) {
           this.actionError = 'A newer release came out since the last check. Check again, then update.'
         } else if (status === 403) {
-          this.actionError = `Updating from this page is off: ${describeError(e)}`
+          // The server says why: off, or a host it does not trust.
+          this.actionError = describeError(e)
         } else {
           this.actionError = `The update did not start: ${describeError(e)}`
         }

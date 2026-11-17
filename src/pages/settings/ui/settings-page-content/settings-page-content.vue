@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useNow, useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
 import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
@@ -42,22 +42,11 @@ const {
   checkMessage,
   starting,
   actionError,
-  restartGaveUp
+  restartGaveUp,
+  checkAvailableAt
 } = storeToRefs(updateStore)
-// «Last checked 2 h ago» moves on while the page is open.
-const now = useNow({ interval: 30_000 })
-
-// The header pill links to /settings#updates; the page scrolls inside <main>,
-// so the block is brought into view by hand once it is there.
-watch(
-  () => !!updateStatus.value,
-  async (shown) => {
-    if (!shown || window.location.hash !== '#updates') return
-    await nextTick()
-    document.getElementById('updates')?.scrollIntoView({ block: 'start' })
-  },
-  { immediate: true }
-)
+// «Last checked 2 h ago» and the Check now countdown move on while the page is open.
+const now = useNow({ interval: 1000 })
 
 const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
 
@@ -413,6 +402,8 @@ useTitle('Settings | Buggregator')
         :action-error="actionError"
         :restart-gave-up="restartGaveUp"
         :now="now.getTime()"
+        :fallback-version="apiVersion"
+        :check-available-at="checkAvailableAt"
         @check="updateStore.check()"
         @start="updateStore.start($event)"
         @reload="updateStore.reload()"

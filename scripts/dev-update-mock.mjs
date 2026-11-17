@@ -11,10 +11,11 @@
 //   http://localhost:3000/__update-mock?preset=available
 //
 // Presets: uptodate, never, available, memory, downloading, verifying,
-// installing, restarting, done, failed, rolledback, restartreq, docker,
-// kubernetes, binaryro, off, unsupported (404, an older server).
+// installing, restarting, done, donenewer (done, then 2.11.0 came out),
+// failed, rolledback, restartreq, docker, kubernetes, binaryro, off,
+// checkoff (update check off), unsupported (an older server: HTML, 200).
 // Flags for the live flow started by «Update»: fail=download|verify|install,
-// rollback=1, windows=1 (restart by hand), down=<ms the server is away>,
+// rollback=1, windows=1 (restart by hand), memory=1 (:memory: database), down=<ms the server is away>,
 // pct=<frozen download percent for the downloading preset>.
 import { WebSocketServer } from 'ws'
 
@@ -50,7 +51,7 @@ const COMMANDS = {
 }
 
 const iso = (ms) => new Date(ms).toISOString()
-const idleState = () => ({ phase: 'idle', version: '', bytes: 0, total: 0, error: '', at: '', failed_step: '', previous: '', log: '' })
+const idleState = () => ({ phase: 'idle', version: '', bytes: 0, total: 0, error: '', updated_at: null, failed_step: '', previous: '', log: '' })
 
 const createSim = () => ({
   supported: true,
@@ -65,6 +66,8 @@ const createSim = () => ({
   memoryDb: false,
   restartManual: false,
   os: 'linux',
+  checkEnabled: true,
+  wsDown: false,
   state: idleState(),
   lastCheck: 0,
   flow: { fail: '', rollback: false, down: 5000 },
@@ -74,9 +77,13 @@ const createSim = () => ({
 
 let sim = createSim()
 
+// As buggregator/server internal/selfupdate Info: latest and url "" and
+// checked_at null before the first check; current "" with the check off.
 const statusBody = () => ({
-  current: sim.current,
-  ...(sim.checkedAt ? { latest: sim.latest, url: RELEASE_URL.replace(NEW, sim.latest), checked_at: iso(sim.checkedAt) } : {}),
+  current: sim.checkEnabled ? sim.current : '',
+  latest: sim.checkedAt ? sim.latest : '',
+  url: sim.checkedAt ? RELEASE_URL.replace(NEW, sim.latest) : '',
+  checked_at: sim.checkedAt ? iso(sim.checkedAt) : null,
   available: !!sim.checkedAt && sim.available,
   notes: sim.checkedAt ? NOTES : '',
   mode: sim.mode,
@@ -85,7 +92,7 @@ const statusBody = () => ({
   commands: sim.commands,
   memory_db: sim.memoryDb,
   restart_manual: sim.restartManual,
-  check_enabled: true,
+  check_enabled: sim.checkEnabled,
   os: sim.os,
   state: sim.state,
 })
@@ -161,16 +168,16 @@ const finishRestart = () => {
     sim.state = {
       ...sim.state,
       phase: 'rolled_back',
-      failed_step: 'restart',
+      failed_step: 'starting',
       error: 'exited 3 s after start: listen tcp :1025: bind: address already in use',
       log: `time=${iso(Date.now())} level=INFO msg="starting buggregator" version=${NEW}\ntime=${iso(Date.now())} level=ERROR msg="smtp server" err="listen tcp :1025: bind: address already in use"`,
-      at: iso(Date.now()),
+      updated_at: iso(Date.now()),
     }
     return
   }
   sim.current = sim.latest
   sim.available = false
-  sim.state = { ...idleState(), phase: 'done', version: sim.latest, previous: OLD, at: iso(Date.now()) }
+  sim.state = { ...idleState(), phase: 'done', version: sim.latest, previous: OLD, updated_at: iso(Date.now()) }
 }
 
 const tick = () => {
@@ -178,35 +185,35 @@ const tick = () => {
   const { fail } = sim.flow
   const failWith = (step, error, bytes = SIZE) => {
     stopRun()
-    setState({ phase: 'failed', failed_step: step, error, bytes, at: iso(Date.now()) })
+    setState({ phase: 'failed', failed_step: step, error, bytes, updated_at: iso(Date.now()) })
   }
 
   if (elapsed < DOWNLOAD_MS) {
     const bytes = Math.round((SIZE * elapsed) / DOWNLOAD_MS)
     if (fail === 'download' && elapsed > DOWNLOAD_MS * 0.4) {
-      failWith('download', 'connection reset after 15.9 of 37.9 MB', bytes)
+      failWith('downloading', 'connection reset after 15.9 of 37.9 MB', bytes)
       return
     }
     setState({ phase: 'downloading', bytes })
     return
   }
   if (elapsed < DOWNLOAD_MS + STEP_MS) {
-    if (fail === 'verify') return failWith('verify', 'sha256 does not match checksums.txt')
+    if (fail === 'verify') return failWith('verifying', 'the sha256 does not match checksums.txt')
     if (sim.state.phase !== 'verifying') setState({ phase: 'verifying', bytes: SIZE })
     return
   }
   if (elapsed < DOWNLOAD_MS + 2 * STEP_MS) {
-    if (fail === 'install') return failWith('install', 'rename /usr/local/bin/buggregator: permission denied')
+    if (fail === 'install') return failWith('installing', 'rename /usr/local/bin/buggregator: permission denied')
     if (sim.state.phase !== 'installing') setState({ phase: 'installing' })
     return
   }
 
   stopRun()
   if (sim.restartManual) {
-    setState({ phase: 'restart_required', at: iso(Date.now()) })
+    setState({ phase: 'restart_required', updated_at: iso(Date.now()) })
     return
   }
-  setState({ phase: 'restarting', at: iso(Date.now()) })
+  setState({ phase: 'restarting', updated_at: iso(Date.now()) })
   // The process exits: sockets close, nothing answers for a while.
   setTimeout(() => {
     sim.downUntil = Date.now() + sim.flow.down
@@ -216,7 +223,7 @@ const tick = () => {
 }
 
 const startRun = (version) => {
-  sim.state = { ...idleState(), phase: 'downloading', version, total: SIZE, previous: sim.current, at: iso(Date.now()) }
+  sim.state = { ...idleState(), phase: 'downloading', version, total: SIZE, previous: sim.current, updated_at: iso(Date.now()) }
   sim.run = { startedAt: Date.now(), timer: setInterval(tick, 250) }
   broadcastState()
 }
@@ -224,7 +231,7 @@ const startRun = (version) => {
 // --- presets ---
 
 const frozen = (phase, patch = {}) => {
-  sim.state = { ...idleState(), phase, version: NEW, previous: OLD, total: SIZE, bytes: SIZE, at: iso(Date.now() - 60_000), ...patch }
+  sim.state = { ...idleState(), phase, version: NEW, previous: OLD, total: SIZE, bytes: SIZE, updated_at: iso(Date.now() - 60_000), ...patch }
 }
 
 const applyPreset = (query) => {
@@ -235,6 +242,7 @@ const applyPreset = (query) => {
     rollback: query.get('rollback') === '1',
     down: Number(query.get('down') || 5000),
   }
+  if (query.get('memory') === '1') sim.memoryDb = true
   if (query.get('windows') === '1') {
     sim.restartManual = true
     sim.os = 'windows'
@@ -258,20 +266,38 @@ const applyPreset = (query) => {
       break
     case 'verifying':
     case 'installing':
-    case 'restarting':
       frozen(query.get('preset'))
+      break
+    case 'restarting':
+      // The process is gone: the socket is down. HTTP still answers here so
+      // the page can load at all (a real server would not).
+      frozen('restarting')
+      sim.wsDown = true
+      dropSockets()
+      break
+    case 'donenewer':
+      sim.current = NEW
+      sim.latest = '2.11.0'
+      frozen('done', { updated_at: iso(Date.now() - 3 * 86400_000) })
+      break
+    case 'checkoff':
+      sim.checkEnabled = false
+      sim.checkedAt = 0
+      sim.available = false
+      sim.mode = 'off'
+      sim.reason = 'the update check is off: set update_check.enabled: true (env UPDATE_CHECK_ENABLED=true)'
       break
     case 'done':
       sim.current = NEW
       sim.available = false
-      frozen('done', { at: iso(Date.now() - 60_000) })
+      frozen('done', { updated_at: iso(Date.now() - 60_000) })
       break
     case 'failed':
-      frozen('failed', { failed_step: 'download', bytes: Math.round(SIZE * 0.42), error: 'connection reset after 15.9 of 37.9 MB' })
+      frozen('failed', { failed_step: 'downloading', bytes: Math.round(SIZE * 0.42), error: 'connection reset after 15.9 of 37.9 MB' })
       break
     case 'rolledback':
       frozen('rolled_back', {
-        failed_step: 'restart',
+        failed_step: 'starting',
         error: 'exited 3 s after start: listen tcp :1025: bind: address already in use',
         log: 'level=ERROR msg="smtp server" err="listen tcp :1025: bind: address already in use"',
       })
@@ -287,17 +313,17 @@ const applyPreset = (query) => {
       sim.install = query.get('preset')
       sim.commands = COMMANDS[sim.install]
       sim.reason = sim.install === 'docker'
-        ? 'Buggregator runs in a container: pull the new image and recreate the container. Your data stays if it is on a volume.'
-        : 'Buggregator runs in Kubernetes: upgrade the release with the new image tag. Your data stays if it is on a persistent volume.'
+        ? 'running in a container: pull the new image and re-create the container'
+        : 'running in Kubernetes: upgrade the Helm release'
       break
     case 'binaryro':
       sim.mode = 'manual'
       sim.commands = COMMANDS.binary
-      sim.reason = 'Buggregator cannot replace /usr/local/bin/buggregator (no write access). Run the installer yourself, then restart Buggregator.'
+      sim.reason = 'the server cannot write to /usr/local/bin: update it from a terminal'
       break
     case 'off':
       sim.mode = 'off'
-      sim.reason = 'Sign-in is off and this server is reachable from the network, so anyone who opens this page could restart it. Turn on sign-in, or set update.self_update: on (env UPDATE_SELF=on) if you accept that.'
+      sim.reason = 'the server listens on :8000 without auth: set update.self_update: on (env UPDATE_SELF=on) to allow updates from the UI, or listen on 127.0.0.1'
       break
     case 'unsupported':
       sim.supported = false
@@ -344,9 +370,16 @@ const handleApi = async (req, res, path) => {
   }
 
   if (path === '/api/update' || path === '/api/update/check') {
-    if (!sim.supported) return json(res, 404, { message: 'Not found', code: 404 })
+    // An older server serves its web page for unknown paths.
+    if (!sim.supported) {
+      res.setHeader('Content-Type', 'text/html')
+      return res.end('<!doctype html><html><body>Buggregator</body></html>')
+    }
 
     if (path === '/api/update/check' && method === 'POST') {
+      if (!sim.checkEnabled) {
+        return json(res, 502, { message: 'update check failed: the update check is off', code: 502 })
+      }
       const wait = 60 - Math.floor((Date.now() - sim.lastCheck) / 1000)
       if (sim.lastCheck && wait > 0) {
         return json(res, 429, { message: 'Checked less than a minute ago', code: 429, retry_after: wait })
@@ -382,7 +415,7 @@ export const devUpdateMock = () => ({
   configureServer(server) {
     server.httpServer?.on('upgrade', (req, socket, head) => {
       if (!req.url?.startsWith('/connection/websocket')) return
-      if (Date.now() < sim.downUntil) {
+      if (Date.now() < sim.downUntil || sim.wsDown) {
         socket.destroy()
         return
       }
