@@ -2,8 +2,9 @@
 import { useTitle } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
-import { RouteName } from '@/shared/types'
+import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
+import { useEvents } from '@/shared/lib/use-events'
+import { EventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PeriodSelect } from '@/shared/ui'
 
 useTitle('Sentry | Buggregator')
@@ -17,6 +18,10 @@ const HEADINGS: Partial<Record<string, string>> = {
 }
 const route = useRoute()
 const heading = computed(() => HEADINGS[String(route.name)] ?? '')
+
+// «How to set up» on every Sentry tab once Sentry has events (#5941).
+const { getItemsCount } = useEvents()
+const hasSentryEvents = computed(() => getItemsCount.value(EventTypes.Sentry) > 0)
 </script>
 
 <template>
@@ -30,20 +35,21 @@ const heading = computed(() => HEADINGS[String(route.name)] ?? '')
         <RouterLink
           :to="{ name: RouteName.Home }"
           class="nav__crumb"
-        >
-          Home
-        </RouterLink>
+        > Home </RouterLink>
 
         <span class="nav__sep">/</span>
 
         <RouterLink
           to="/sentry/exceptions"
           class="nav__crumb"
-        >
-          Sentry
-        </RouterLink>
+        > Sentry </RouterLink>
 
         <template #controls>
+          <SetupHelpButton
+            v-if="hasSentryEvents"
+            section-id="sentry"
+            section-title="Sentry"
+          />
           <PeriodSelect />
         </template>
       </AppHeader>

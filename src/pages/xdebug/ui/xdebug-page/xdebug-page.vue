@@ -2,7 +2,7 @@
 import { createReusableTemplate, useDebounceFn, useIntervalFn, useNow, useTitle } from '@vueuse/core'
 import { computed, onMounted, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { LayoutBase, LayoutSidebar } from '@/widgets/ui'
+import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
 import {
   breakpointRows,
   closedReasonText,
@@ -212,6 +212,10 @@ watch(selectedId, (id) => {
           class="xdebug-page__count"
         >{{ sessionsLabel }}</span>
         <template #controls>
+          <SetupHelpButton
+            section-id="xdebug"
+            section-title="Xdebug"
+          />
           <span
             v-if="config?.enabled && (!hasModes || config.mode === 'proxy')"
             class="xdebug-page__tag xdebug-page__hide-s"

@@ -2,7 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
-import { LayoutPreviewEvents } from '@/widgets/ui'
+import { LayoutPreviewEvents, SetupGuide } from '@/widgets/ui'
 import {
   useSentryExceptions,
   onSentryEvent,
@@ -145,6 +145,15 @@ onSentryEvent(() => {
           :group="group"
         />
       </template>
+
+      <!-- No exception yet: how to send the first one (#5941); a level filter
+           that matches nothing keeps the plain empty state. -->
+      <SetupGuide
+        v-else-if="!selectedLevel"
+        section-id="sentry"
+        section-title="Sentry"
+        kicker="Sentry · Exceptions"
+      />
 
       <SentryEmptyState
         v-else

@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { ALL_EVENT_TYPES } from '@/shared/constants'
+import { ALL_EVENT_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
+import { SetupHelpButton, hasSetupHelp } from '../setup-guide'
 
 const { events, cachedEvents, lockedIds } = useEvents()
 const eventsStore = useEventsStore()
@@ -102,6 +103,13 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
+      <!-- An empty section shows the guide itself. -->
+      <SetupHelpButton
+        v-if="hasSetupHelp(type) && allEvents.length > 0"
+        :section-id="type"
+        :section-title="PAGES_SETTINGS[type].sidebarTitle"
+      />
+
       <PeriodSelect />
 
       <SearchBar v-model="searchQuery" />
