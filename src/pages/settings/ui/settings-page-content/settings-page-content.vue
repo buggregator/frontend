@@ -1,14 +1,20 @@
 <script lang="ts" setup>
 import { useNow, useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
 import { IDE_KEYS, IDE_TITLES_TO_KEYS_MAP } from '@/shared/constants'
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
-import { THEME_MODES, useSettingsStore } from '@/shared/stores'
+import { useSettingsStore } from '@/shared/stores'
 import type { FilePathMapping } from '@/shared/types'
-import { EventDetailLayout, EventDetailSection, IconSvg } from '@/shared/ui'
+import { EventDetailLayout, EventDetailSection, IconSvg, SearchBar } from '@/shared/ui'
 import { version } from '../../../../../package.json' with { type: 'json' }
+import { SETTINGS_ITEMS, SETTINGS_SECTIONS } from '../../config/settings-catalog'
+import { SETTINGS_SEARCH, useSettingsSearch } from '../../lib/settings-search'
+import { useSectionSpy } from '../../lib/use-section-spy'
+import { SettingsRow } from '../settings-row'
+import { SettingsSwitch } from '../settings-switch'
 
 const settingsStore = useSettingsStore()
 const {
@@ -21,7 +27,7 @@ const {
   changeIsActiveFilePathMapping
 } = settingsStore
 const {
-  themeType,
+  themeMode,
   isFixedHeader,
   isVisibleEventCounts,
   isSingleKeyShortcutsEnabled,
@@ -48,24 +54,55 @@ const {
 // «Last checked 2 h ago» and the Check now countdown move on while the page is open.
 const now = useNow({ interval: 1000 })
 
-const isDarkMode = computed(() => themeType.value === THEME_MODES.DARK)
+const THEME_OPTIONS = [
+  { mode: 'light', label: 'Light', icon: 'sun' },
+  { mode: 'dark', label: 'Dark', icon: 'moon' },
+  { mode: 'system', label: 'System', icon: '' }
+] as const
 
-const setThemeMode = (mode: string) => {
-  if (mode === 'system') {
-    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if ((isSystemDark && !isDarkMode.value) || (!isSystemDark && isDarkMode.value)) {
-      settingsStore.changeTheme()
-    }
-  } else if (mode === 'dark' && !isDarkMode.value) {
-    settingsStore.changeTheme()
-  } else if (mode === 'light' && isDarkMode.value) {
-    settingsStore.changeTheme()
-  }
+// «About & updates» needs GET /api/update; older servers show «About».
+const sections = computed(() =>
+  SETTINGS_SECTIONS.map((section) =>
+    section.id === 'updates' && !updateStatus.value ? { ...section, title: 'About' } : section
+  )
+)
+
+const search = useSettingsSearch(() => sections.value)
+provide(SETTINGS_SEARCH, search)
+const { query, matches } = search
+
+const isSearching = computed(() => query.value.trim() !== '')
+const sectionMatches = (id: string) =>
+  sections.value.find((s) => s.id === id)?.items.some((item) => matches.value.has(item.id)) ?? false
+const matchCount = computed(() => matches.value.size)
+const searchStatus = computed(() => {
+  if (!isSearching.value) return ''
+  if (matchCount.value === 0) return 'No settings match.'
+  return matchCount.value === 1 ? '1 setting matches.' : `${matchCount.value} settings match.`
+})
+
+const mainRef = ref<HTMLElement | null>(null)
+const clearSearch = () => {
+  query.value = ''
+  mainRef.value?.querySelector<HTMLInputElement>('input[aria-label="Search settings"]')?.focus()
 }
 
-const activeThemeOption = computed(() => {
-  return isDarkMode.value ? 'dark' : 'light'
-})
+// The list on the left (tabs on a phone) jumps to a section and moves the
+// focus there, so Tab goes on inside it.
+const router = useRouter()
+const route = useRoute()
+const { active: activeSection, setActive } = useSectionSpy(
+  () => sections.value.map((s) => s.id),
+  () => route?.hash ?? ''
+)
+const goToSection = (id: string) => {
+  const el = document.getElementById(id)
+  if (!el) return
+  setActive(id)
+  el.scrollIntoView({ block: 'start' })
+  el.focus({ preventScroll: true })
+  router.replace({ hash: `#${id}` })
+}
 
 const changeCodeEditor = (event: Event) => {
   const editor = (event.target as HTMLInputElement).value as IDE_KEYS
@@ -117,422 +154,461 @@ useTitle('Settings | Buggregator')
 
 <template>
   <EventDetailLayout title="Settings">
-    <!-- Appearance -->
-    <EventDetailSection title="Appearance">
-      <div class="s-card">
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Theme
-            </div>
-            <div class="s-row__desc">
-              Choose how Buggregator looks to you
-            </div>
-          </div>
-          <div class="s-segmented">
-            <button
-              class="s-segmented__opt"
-              :class="{ 's-segmented__opt--active': activeThemeOption === 'light' }"
-              @click="setThemeMode('light')"
-            >
-              <IconSvg
-                name="sun"
-                class="s-segmented__icon"
-              />
-              Light
-            </button>
-            <button
-              class="s-segmented__opt"
-              :class="{ 's-segmented__opt--active': activeThemeOption === 'dark' }"
-              @click="setThemeMode('dark')"
-            >
-              <IconSvg
-                name="moon"
-                class="s-segmented__icon"
-              />
-              Dark
-            </button>
-            <button
-              class="s-segmented__opt"
-              @click="setThemeMode('system')"
-            >
-              System
-            </button>
-          </div>
-        </div>
-
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Pin header
-            </div>
-            <div class="s-row__desc">
-              Keep the header bar visible while scrolling
-            </div>
-          </div>
-          <button
-            class="s-toggle"
-            :class="{ 's-toggle--active': isFixedHeader }"
-            role="switch"
-            :aria-checked="isFixedHeader"
-            aria-label="Pin header to top of page"
-            @click="changeNavbar"
-          >
-            <span class="s-toggle__knob" />
-          </button>
-        </div>
-
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Event counts
-            </div>
-            <div class="s-row__desc">
-              Show event count badges on sidebar navigation items
-            </div>
-          </div>
-          <button
-            class="s-toggle"
-            :class="{ 's-toggle--active': isVisibleEventCounts }"
-            role="switch"
-            :aria-checked="isVisibleEventCounts"
-            aria-label="Show event counts in sidebar"
-            @click="changeEventCountsVisibility"
-          >
-            <span class="s-toggle__knob" />
-          </button>
-        </div>
-      </div>
-    </EventDetailSection>
-
-    <!-- Keyboard -->
-    <EventDetailSection title="Keyboard">
-      <div class="s-card">
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Single-key shortcuts
-            </div>
-            <div class="s-row__desc">
-              Keys without Ctrl, Alt or Cmd: j/k or <span class="whitespace-nowrap">↑/↓</span> to
-              move through the list, x to delete, 0–9 to switch pages, ? for the list. Turning this
-              off frees <span class="whitespace-nowrap">↑/↓</span> for scrolling too. Turn off if
-              they get in the way of typing or a screen reader.
-            </div>
-          </div>
-          <button
-            class="s-toggle"
-            :class="{ 's-toggle--active': isSingleKeyShortcutsEnabled }"
-            role="switch"
-            :aria-checked="isSingleKeyShortcutsEnabled"
-            aria-label="Single-key shortcuts"
-            @click="changeSingleKeyShortcuts"
-          >
-            <span class="s-toggle__knob" />
-          </button>
-        </div>
-
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Show key hints
-            </div>
-            <div class="s-row__desc">
-              Small key badges: hints next to search boxes and other fields, and, while single-key
-              shortcuts are on, a bar with the main keys on the event list and event pages. Press ?
-              for the full list (also a single-key shortcut).
-            </div>
-          </div>
-          <button
-            class="s-toggle"
-            :class="{ 's-toggle--active': isKeyHintsEnabled }"
-            role="switch"
-            :aria-checked="isKeyHintsEnabled"
-            aria-label="Show key hints"
-            @click="changeKeyHints"
-          >
-            <span class="s-toggle__knob" />
-          </button>
-        </div>
-      </div>
-    </EventDetailSection>
-
-    <!-- Editor Integration -->
-    <EventDetailSection title="Editor Integration">
-      <div class="s-card">
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Code editor
-            </div>
-            <div class="s-row__desc">
-              Click file paths in events to open them in your editor
-            </div>
-          </div>
-          <select
-            class="s-select"
-            :value="codeEditor"
-            aria-label="Code editor"
-            @change="changeCodeEditor"
-          >
-            <option
-              v-for="(title, key) in IDE_TITLES_TO_KEYS_MAP"
-              :key="key"
-              :value="key"
-            >
-              {{ title }}
-            </option>
-          </select>
-        </div>
-
-        <div class="s-row s-row--compact">
-          <span class="s-row__hint">Example link:</span>
-          <code class="s-row__code">
-            {{ pathToIDEFilePath(codeEditor, '/App/Modules/Logger.php', 12) }}
-          </code>
-        </div>
-
-        <div class="s-row">
-          <div class="s-row__info">
-            <div class="s-row__label">
-              Enable Custom File Path Mapping
-            </div>
-            <div class="s-row__desc">
-              Map event file paths to your local project structure automatically, making it possible
-              to open files outside your project root or with different path prefixes.
-            </div>
-          </div>
-          <button
-            class="s-toggle"
-            :class="{ 's-toggle--active': isActiveFilePathMapping }"
-            role="switch"
-            :aria-checked="isActiveFilePathMapping"
-            aria-label="Enable custom file path mapping"
-            @click="changeActiveCustomMapping"
-          >
-            <span class="s-toggle__knob" />
-          </button>
-        </div>
-
-        <div
-          v-if="isActiveFilePathMapping"
-          class="s-row s-row--multiline"
+    <div class="settings">
+      <nav
+        class="settings__nav"
+        aria-label="Settings sections"
+      >
+        <a
+          v-for="section in sections"
+          :key="section.id"
+          :href="`#${section.id}`"
+          class="settings__nav-link"
+          :class="{
+            'settings__nav-link--active': activeSection === section.id,
+            'settings__nav-link--dim': isSearching && !sectionMatches(section.id)
+          }"
+          :aria-current="activeSection === section.id ? 'true' : undefined"
+          @click.prevent="goToSection(section.id)"
         >
+          {{ section.title }}
+        </a>
+      </nav>
+
+      <div
+        ref="mainRef"
+        class="settings__main"
+      >
+        <SearchBar
+          v-model="query"
+          class="settings__search"
+          placeholder="Search settings"
+          label="Search settings"
+        />
+        <p
+          class="sr-only"
+          role="status"
+        >
+          {{ searchStatus }}
+        </p>
+        <p
+          v-if="isSearching && matchCount === 0"
+          class="settings__empty"
+        >
+          No settings match «{{ query.trim() }}».
+          <button
+            type="button"
+            class="settings__clear"
+            @click="clearSearch"
+          >
+            Clear search
+          </button>
+        </p>
+
+        <EventDetailSection
+          id="appearance"
+          class="settings__section"
+          title="Appearance"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.theme"
+            >
+              <div
+                class="s-segmented"
+                role="group"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+              >
+                <button
+                  v-for="option in THEME_OPTIONS"
+                  :key="option.mode"
+                  type="button"
+                  class="s-segmented__opt"
+                  :class="{ 's-segmented__opt--active': themeMode === option.mode }"
+                  :aria-pressed="themeMode === option.mode"
+                  @click="settingsStore.setThemeMode(option.mode)"
+                >
+                  <IconSvg
+                    v-if="option.icon"
+                    :name="option.icon"
+                    class="s-segmented__icon"
+                  />
+                  {{ option.label }}
+                </button>
+              </div>
+            </SettingsRow>
+
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.pinHeader"
+            >
+              <SettingsSwitch
+                :checked="isFixedHeader"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+                @toggle="changeNavbar"
+              />
+            </SettingsRow>
+
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.eventCounts"
+            >
+              <SettingsSwitch
+                :checked="isVisibleEventCounts"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+                @toggle="changeEventCountsVisibility"
+              />
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="keyboard"
+          class="settings__section"
+          title="Keyboard"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.singleKey"
+            >
+              <SettingsSwitch
+                :checked="isSingleKeyShortcutsEnabled"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+                @toggle="changeSingleKeyShortcuts"
+              />
+            </SettingsRow>
+
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.keyHints"
+            >
+              <SettingsSwitch
+                :checked="isKeyHintsEnabled"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+                @toggle="changeKeyHints"
+              />
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="editor"
+          class="settings__section"
+          title="Editor"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow :item="SETTINGS_ITEMS.codeEditor">
+              <template #default="{ labelId, hintId }">
+                <select
+                  class="s-select"
+                  :value="codeEditor"
+                  :aria-labelledby="labelId"
+                  :aria-describedby="hintId"
+                  @change="changeCodeEditor"
+                >
+                  <option
+                    v-for="(title, key) in IDE_TITLES_TO_KEYS_MAP"
+                    :key="key"
+                    :value="key"
+                  >
+                    {{ title }}
+                  </option>
+                </select>
+              </template>
+
+              <template #extra>
+                <div class="s-example">
+                  <span class="s-example__hint">Example link:</span>
+                  <code class="s-example__code">
+                    {{ pathToIDEFilePath(codeEditor, '/App/Modules/Logger.php', 12) }}
+                  </code>
+                </div>
+              </template>
+            </SettingsRow>
+
+            <SettingsRow :item="SETTINGS_ITEMS.pathMapping">
+              <template #default="{ labelId, hintId }">
+                <SettingsSwitch
+                  :checked="isActiveFilePathMapping"
+                  :aria-labelledby="labelId"
+                  :aria-describedby="hintId"
+                  @toggle="changeActiveCustomMapping"
+                />
+              </template>
+
+              <template #extra>
+                <div
+                  v-if="isActiveFilePathMapping"
+                  class="s-mapping"
+                >
+                  <div
+                    v-for="(pathMap, index) in customFilePathMapping"
+                    :key="index"
+                    class="s-mapping__row"
+                  >
+                    <div class="s-mapping__field">
+                      <span class="s-mapping__hint">Source</span>
+                      <span class="s-mapping__value">{{ pathMap.source_path }}</span>
+                    </div>
+
+                    <div class="s-mapping__field">
+                      <span class="s-mapping__hint">Target</span>
+                      <span class="s-mapping__value">{{ pathMap.target_path }}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      class="s-mapping__action"
+                      title="Remove mapping"
+                      aria-label="Remove mapping"
+                      @click="clearMapping(index)"
+                    >
+                      <IconSvg
+                        name="minus"
+                        class="s-mapping__action-icon"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="s-mapping__row">
+                    <label class="s-mapping__field">
+                      <span class="s-mapping__hint">Source</span>
+                      <input
+                        class="s-mapping__input"
+                        :value="newFilePathMapping.source_path"
+                        @input="setSourcePath"
+                      >
+                    </label>
+
+                    <label class="s-mapping__field">
+                      <span class="s-mapping__hint">Target</span>
+                      <input
+                        class="s-mapping__input"
+                        :value="newFilePathMapping.target_path"
+                        @input="setTargetPath"
+                      >
+                    </label>
+
+                    <button
+                      type="button"
+                      class="s-mapping__action"
+                      title="Save mapping"
+                      aria-label="Save mapping"
+                      :disabled="!isVisibleSaveButton"
+                      @click="saveMapping"
+                    >
+                      <IconSvg
+                        name="plus"
+                        class="s-mapping__action-icon"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <!-- About & updates (servers with /api/update) -->
+        <EventDetailSection
+          id="updates"
+          class="settings__section"
+          :class="{ 'settings__section--dim': isSearching && !sectionMatches('updates') }"
+          :title="updateStatus ? 'About & updates' : 'About'"
+          tabindex="-1"
+        >
+          <UpdatePanel
+            v-if="updateStatus"
+            :status="updateStatus"
+            :loaded-version="loadedVersion"
+            :checking="checking"
+            :check-message="checkMessage"
+            :starting="starting"
+            :action-error="actionError"
+            :restart-gave-up="restartGaveUp"
+            :now="now.getTime()"
+            :fallback-version="apiVersion"
+            :check-available-at="checkAvailableAt"
+            @check="updateStore.check()"
+            @start="updateStore.start($event)"
+            @reload="updateStore.reload()"
+          />
+
           <div
-            v-for="(pathMap, index) in customFilePathMapping"
-            :key="index"
-            class="s-row__info s-row__info--mapping"
+            class="s-card"
+            :class="{ 's-card--spaced': updateStatus }"
           >
-            <div class="s-row__label">
-              <span class="s-row__hint">Source</span>
-
-              {{ pathMap.source_path }}
+            <div
+              v-if="!updateStatus && update?.available"
+              class="s-update"
+              data-test="update-available"
+            >
+              <span class="s-update__text">Buggregator {{ update.latest }} is available (you run {{ update.current }})</span>
+              <a
+                :href="update.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="s-update__link"
+              >
+                Release notes<span class="sr-only"> (opens in a new tab)</span>
+              </a>
             </div>
 
-            <div class="s-row__label">
-              <span class="s-row__hint">Target</span>
-
-              {{ pathMap.target_path }}
+            <div class="s-about-boxes">
+              <div
+                v-if="!updateStatus"
+                class="s-about-box"
+              >
+                <span class="s-about-box__label">Server</span>
+                <span class="s-about-box__value">{{ serverVersion || '—' }}</span>
+                <span
+                  v-if="update && !update.available"
+                  class="s-about-box__note"
+                  data-test="update-current"
+                >Up to date</span>
+              </div>
+              <div class="s-about-box">
+                <span class="s-about-box__label">Client</span>
+                <span class="s-about-box__value">{{ clientVersion || '—' }}</span>
+              </div>
             </div>
 
-            <button
-              class="s-row__action"
-              title="Remove mapping"
-              aria-label="Remove mapping"
-              @click="clearMapping(index)"
-            >
-              <IconSvg
-                name="minus"
-                class="s-row__action-icon"
-              />
-              <span class="action-btn__text sr-only">Clear</span>
-            </button>
-          </div>
-
-          <div class="s-row__info s-row__info--mapping">
-            <label class="s-row__label">
-              <span class="s-row__hint">Source</span>
-
-              <input
-                class="s-row__input"
-                :value="newFilePathMapping.source_path"
-                @input="setSourcePath"
+            <div class="s-links">
+              <a
+                href="https://github.com/buggregator"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="s-links__item"
               >
-            </label>
-
-            <label class="s-row__label">
-              <span class="s-row__hint">Target</span>
-              <input
-                class="s-row__input"
-                :value="newFilePathMapping.target_path"
-                @input="setTargetPath"
+                <IconSvg
+                  name="github"
+                  class="s-links__icon"
+                />
+                GitHub
+              </a>
+              <a
+                href="https://docs.buggregator.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="s-links__item"
               >
-            </label>
-
-            <button
-              class="s-row__action"
-              title="Save mapping"
-              aria-label="Save mapping"
-              :disabled="!isVisibleSaveButton"
-              @click="saveMapping"
-            >
-              <IconSvg
-                name="plus"
-                class="s-row__action-icon"
-              />
-              <span class="action-btn__text sr-only">Save</span>
-            </button>
+                <IconSvg
+                  name="docs"
+                  class="s-links__icon"
+                />
+                Documentation
+              </a>
+              <a
+                href="https://discord.gg/vDsCD3EKUB"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="s-links__item"
+              >
+                <IconSvg
+                  name="discord"
+                  class="s-links__icon"
+                />
+                Discord
+              </a>
+            </div>
           </div>
-        </div>
+        </EventDetailSection>
       </div>
-    </EventDetailSection>
-
-    <!-- About & updates (servers with /api/update) -->
-    <EventDetailSection
-      v-if="updateStatus"
-      id="updates"
-      title="About & updates"
-    >
-      <UpdatePanel
-        :status="updateStatus"
-        :loaded-version="loadedVersion"
-        :checking="checking"
-        :check-message="checkMessage"
-        :starting="starting"
-        :action-error="actionError"
-        :restart-gave-up="restartGaveUp"
-        :now="now.getTime()"
-        :fallback-version="apiVersion"
-        :check-available-at="checkAvailableAt"
-        @check="updateStore.check()"
-        @start="updateStore.start($event)"
-        @reload="updateStore.reload()"
-      />
-
-      <div class="s-card s-card--spaced">
-        <div class="s-about-boxes">
-          <div class="s-about-box">
-            <span class="s-about-box__label">Client</span>
-            <span class="s-about-box__value">{{ clientVersion || '—' }}</span>
-          </div>
-        </div>
-        <div class="s-links">
-          <a
-            href="https://github.com/buggregator"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="github"
-              class="s-links__icon"
-            />
-            GitHub
-          </a>
-          <a
-            href="https://docs.buggregator.dev"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="docs"
-              class="s-links__icon"
-            />
-            Documentation
-          </a>
-          <a
-            href="https://discord.gg/vDsCD3EKUB"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="discord"
-              class="s-links__icon"
-            />
-            Discord
-          </a>
-        </div>
-      </div>
-    </EventDetailSection>
-
-    <!-- About -->
-    <EventDetailSection
-      v-else
-      title="About"
-    >
-      <div class="s-card">
-        <div
-          v-if="update?.available"
-          class="s-update"
-          data-test="update-available"
-        >
-          <span class="s-update__text">Buggregator {{ update.latest }} is available (you run {{ update.current }})</span>
-          <a
-            :href="update.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="s-update__link"
-          >
-            Release notes<span class="sr-only"> (opens in a new tab)</span>
-          </a>
-        </div>
-
-        <div class="s-about-boxes">
-          <div class="s-about-box">
-            <span class="s-about-box__label">Server</span>
-            <span class="s-about-box__value">{{ serverVersion || '—' }}</span>
-            <span
-              v-if="update && !update.available"
-              class="s-about-box__note"
-              data-test="update-current"
-            >Up to date</span>
-          </div>
-          <div class="s-about-box">
-            <span class="s-about-box__label">Client</span>
-            <span class="s-about-box__value">{{ clientVersion || '—' }}</span>
-          </div>
-        </div>
-
-        <div class="s-links">
-          <a
-            href="https://github.com/buggregator"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="github"
-              class="s-links__icon"
-            />
-            GitHub
-          </a>
-          <a
-            href="https://docs.buggregator.dev"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="docs"
-              class="s-links__icon"
-            />
-            Documentation
-          </a>
-          <a
-            href="https://discord.gg/vDsCD3EKUB"
-            target="_blank"
-            class="s-links__item"
-          >
-            <IconSvg
-              name="discord"
-              class="s-links__icon"
-            />
-            Discord
-          </a>
-        </div>
-      </div>
-    </EventDetailSection>
+    </div>
   </EventDetailLayout>
 </template>
 
 <style lang="scss" scoped>
+/* Page: sections on the left, rows no wider than 640 px (#5874) */
+.settings {
+  @apply grid gap-6;
+  grid-template-columns: 11rem minmax(0, 40rem);
+}
+
+.settings__nav {
+  @apply sticky top-5 self-start flex flex-col gap-0.5;
+}
+
+.settings__nav-link {
+  @apply block rounded-md px-3 py-1.5 text-sm;
+  @apply text-gray-600 dark:text-gray-300;
+  @apply hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100;
+  @apply transition-colors;
+}
+
+.settings__nav-link--active {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium;
+  box-shadow: inset 2px 0 0 theme('colors.blue.500');
+}
+
+.settings__nav-link--dim {
+  @apply opacity-40;
+}
+
+.settings__main {
+  @apply flex flex-col gap-6 min-w-0;
+}
+
+.settings__search {
+  @apply h-9 flex-none;
+}
+
+.settings__empty {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.settings__clear {
+  @apply ml-1 underline underline-offset-2;
+  @apply text-blue-700 dark:text-blue-300;
+  @apply hover:text-blue-900 dark:hover:text-blue-100;
+}
+
+.settings__section {
+  @apply outline-none;
+  scroll-margin-top: 1.25rem;
+}
+
+.settings__section--dim {
+  @apply opacity-40;
+}
+
+/* Phone: the sections become tabs on top */
+@media (max-width: 767px) {
+  .settings {
+    @apply flex flex-col gap-4;
+  }
+
+  .settings__nav {
+    @apply top-0 z-10 flex-row overflow-x-auto -mx-5 px-5 py-1;
+    @apply bg-gray-50 dark:bg-gray-900;
+    @apply border-b border-gray-200 dark:border-gray-700/50;
+    scrollbar-width: none;
+  }
+
+  .settings__nav-link {
+    @apply flex-none flex items-center min-h-[44px] rounded-none px-3;
+  }
+
+  .settings__nav-link--active {
+    @apply bg-transparent dark:bg-transparent;
+    box-shadow: inset 0 -2px 0 theme('colors.blue.500');
+  }
+
+  .settings__section {
+    scroll-margin-top: 3.5rem;
+  }
+}
+
 /* Card container — matches Sentry/HTTP Dump section blocks */
 .s-card {
   @apply rounded overflow-hidden;
@@ -540,95 +616,13 @@ useTitle('Settings | Buggregator')
   @apply divide-y divide-gray-200 dark:divide-gray-700;
 }
 
-/* Rows */
-.s-row {
-  @apply flex items-center justify-between;
-  @apply px-4 py-3;
-  @apply bg-white dark:bg-gray-800;
-}
-
-.s-row--multiline {
-  @apply flex-col items-start gap-3;
-}
-
-.s-row--compact {
-  @apply py-2;
-}
-
-.s-row__info {
-  @apply flex-1 mr-4;
-}
-
-.s-row__info--mapping {
-  @apply flex flex-row gap-2 mr-0 min-w-full items-start;
-}
-
-.s-row__label {
-  @apply text-sm font-medium w-full;
-}
-
-.s-row__input {
-  @apply text-sm font-medium h-7;
-  @apply bg-transparent text-xs flex-1 w-full;
-  @apply text-gray-800 dark:text-gray-200;
-  @apply placeholder-gray-400 dark:placeholder-gray-500;
-  @apply border border-gray-300 dark:border-gray-600 rounded px-2 py-1;
-}
-
-.s-row__action {
-  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
-  @apply text-xs font-medium;
-  @apply text-gray-500 dark:text-gray-400;
-  @apply bg-gray-100 dark:bg-gray-700;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply transition-colors cursor-pointer mt-auto;
-
-  &:disabled {
-    @apply opacity-50 pointer-events-none;
-  }
-}
-
-.s-row__action-icon {
-  @apply w-3 h-3;
-}
-
-.s-row__desc {
-  @apply text-xs text-gray-500 dark:text-gray-400 mt-0.5;
-}
-
-.s-row__hint {
-  @apply text-xs text-gray-500 dark:text-gray-400 mr-2;
-}
-
-.s-row__code {
-  @apply text-xs font-mono text-blue-600 dark:text-blue-400 break-all;
-}
-
-/* Toggle */
-.s-toggle {
-  @apply relative inline-flex h-6 w-11 items-center rounded-full flex-shrink-0 cursor-pointer;
-  @apply bg-gray-300 dark:bg-gray-600;
-  @apply transition-colors duration-200;
-}
-
-.s-toggle--active {
-  @apply bg-blue-500 dark:bg-blue-600;
-}
-
-.s-toggle__knob {
-  @apply inline-block h-4 w-4 transform rounded-full bg-white shadow-sm;
-  @apply transition-transform duration-200;
-  @apply translate-x-1;
-
-  .s-toggle--active & {
-    @apply translate-x-6;
-  }
+.s-card--spaced {
+  @apply mt-3;
 }
 
 /* Segmented control */
 .s-segmented {
-  @apply inline-flex rounded-lg p-0.5;
+  @apply inline-flex rounded-lg p-0.5 flex-shrink-0;
   @apply bg-gray-100 dark:bg-gray-700;
 }
 
@@ -660,8 +654,81 @@ useTitle('Settings | Buggregator')
   @apply min-w-[160px];
 }
 
-.s-card--spaced {
-  @apply mt-3;
+/* Editor: example link and path mapping, under their rows */
+.s-example {
+  @apply flex flex-wrap items-baseline gap-x-2 mt-2;
+}
+
+.s-example__hint,
+.s-mapping__hint {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.s-example__code {
+  @apply text-xs font-mono text-blue-600 dark:text-blue-400 break-all;
+}
+
+.s-mapping {
+  @apply flex flex-col gap-2 mt-3;
+}
+
+.s-mapping__row {
+  @apply flex items-end gap-2;
+}
+
+.s-mapping__field {
+  @apply flex flex-col gap-1 flex-1 min-w-0;
+}
+
+.s-mapping__value {
+  @apply text-sm font-mono break-all;
+}
+
+.s-mapping__input {
+  @apply h-7 w-full text-xs rounded px-2 py-1;
+  @apply bg-transparent text-gray-800 dark:text-gray-200;
+  @apply border border-gray-300 dark:border-gray-600;
+}
+
+.s-mapping__action {
+  @apply h-7 w-7 flex items-center justify-center rounded flex-shrink-0;
+  @apply text-gray-500 dark:text-gray-400;
+  @apply bg-gray-100 dark:bg-gray-700;
+  @apply hover:text-gray-700 dark:hover:text-gray-200;
+  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
+  @apply transition-colors cursor-pointer;
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+.s-mapping__action-icon {
+  @apply w-3 h-3;
+}
+
+/* Phone: 44 px to tap */
+@media (max-width: 639px) {
+  .settings__search {
+    @apply h-11;
+  }
+
+  .s-segmented__opt {
+    @apply min-h-[44px] px-4;
+  }
+
+  .s-select,
+  .s-mapping__input {
+    @apply h-11 text-sm;
+  }
+
+  .s-mapping__action {
+    @apply h-11 w-11;
+  }
+
+  .s-links__item {
+    @apply min-h-[44px];
+  }
 }
 
 /* About boxes */
@@ -683,6 +750,10 @@ useTitle('Settings | Buggregator')
   @apply text-sm font-mono mt-1;
 }
 
+.s-about-box__note {
+  @apply text-xs mt-0.5 text-gray-500 dark:text-gray-400;
+}
+
 /* Newer server release */
 .s-update {
   @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3;
@@ -696,13 +767,9 @@ useTitle('Settings | Buggregator')
   @apply hover:text-blue-900 dark:hover:text-blue-100;
 }
 
-.s-about-box__note {
-  @apply text-xs mt-0.5 text-gray-500 dark:text-gray-400;
-}
-
 /* Links */
 .s-links {
-  @apply flex gap-4 px-4 py-3;
+  @apply flex flex-wrap gap-x-4 gap-y-1 px-4 py-3;
   @apply bg-gray-50 dark:bg-gray-900;
 }
 

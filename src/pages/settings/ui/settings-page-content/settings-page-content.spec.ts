@@ -35,7 +35,9 @@ describe('SettingsPageContent: single-key shortcuts', () => {
 
   it('turns single-key shortcuts off and remembers it', async () => {
     const wrapper = mount(SettingsPageContent)
-    const toggle = wrapper.get('[role="switch"][aria-label="Single-key shortcuts"]')
+    const toggle = wrapper.get('[data-setting="single-key-shortcuts"] [role="switch"]')
+    // Named by its row label.
+    expect(wrapper.get(`#${toggle.attributes('aria-labelledby')}`).text()).toBe('Single-key shortcuts')
 
     expect(toggle.attributes('aria-checked')).toBe('true')
 
@@ -48,7 +50,7 @@ describe('SettingsPageContent: single-key shortcuts', () => {
 
   it('turns key hints on and remembers it', async () => {
     const wrapper = mount(SettingsPageContent)
-    const toggle = wrapper.get('[role="switch"][aria-label="Show key hints"]')
+    const toggle = wrapper.get('[data-setting="key-hints"] [role="switch"]')
 
     expect(toggle.attributes('aria-checked')).toBe('false')
 
@@ -159,5 +161,93 @@ describe('SettingsPageContent: About & updates', () => {
     expect(wrapper.find('[data-test="update-panel"]').exists()).toBe(false)
     expect(wrapper.find('[data-test="update-available"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('About')
+  })
+})
+
+describe('SettingsPageContent: theme, search, sections (#5874)', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  const themeButton = (wrapper: ReturnType<typeof mount>, label: string) =>
+    wrapper.findAll('[data-setting="theme"] button').find((b) => b.text() === label)!
+
+  it('marks System and remembers it', async () => {
+    const wrapper = mount(SettingsPageContent)
+
+    expect(themeButton(wrapper, 'System').attributes('aria-pressed')).toBe('true')
+
+    await themeButton(wrapper, 'Dark').trigger('click')
+    expect(themeButton(wrapper, 'Dark').attributes('aria-pressed')).toBe('true')
+    expect(themeButton(wrapper, 'System').attributes('aria-pressed')).toBe('false')
+
+    await themeButton(wrapper, 'System').trigger('click')
+    expect(themeButton(wrapper, 'System').attributes('aria-pressed')).toBe('true')
+    expect(localStorage.getItem('theme')).toBe('system')
+  })
+
+  it('lists the sections, About & updates included', () => {
+    useServerUpdateStore().setStatus(availableStatus)
+    const wrapper = mount(SettingsPageContent)
+
+    const links = wrapper.findAll('nav[aria-label="Settings sections"] a')
+    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Keyboard', 'Editor', 'About & updates'])
+    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#keyboard', '#editor', '#updates'])
+    expect(links[0].attributes('aria-current')).toBe('true')
+  })
+
+  it('fades the settings that do not match and marks the match', async () => {
+    const wrapper = mount(SettingsPageContent)
+
+    await wrapper.get('input[aria-label="Search settings"]').setValue('sho')
+
+    expect(wrapper.get('[data-setting="single-key-shortcuts"]').classes()).not.toContain('settings-row--dim')
+    expect(wrapper.get('[data-setting="single-key-shortcuts"] mark').text()).toBe('sho')
+    expect(wrapper.get('[data-setting="pin-header"]').classes()).toContain('settings-row--dim')
+    expect(wrapper.get('[role="status"]').text()).toBe('3 settings match.')
+  })
+
+  it('says when nothing matches', async () => {
+    const wrapper = mount(SettingsPageContent)
+
+    await wrapper.get('input[aria-label="Search settings"]').setValue('zzz')
+
+    expect(wrapper.text()).toContain('No settings match «zzz».')
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(7)
+
+    await wrapper.get('.settings__empty button').trigger('click')
+
+    expect((wrapper.get('input[aria-label="Search settings"]').element as HTMLInputElement).value).toBe('')
+    expect(wrapper.find('.settings__empty').exists()).toBe(false)
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(0)
+  })
+
+  it('keeps the hint to one line and shows the rest behind More', async () => {
+    const wrapper = mount(SettingsPageContent)
+    const row = wrapper.get('[data-setting="key-hints"]')
+    const more = row.get('button[aria-expanded]')
+    const text = row.get(`#${more.attributes('aria-controls')}`)
+
+    expect(more.attributes('aria-expanded')).toBe('false')
+    expect(text.attributes('style')).toContain('display: none')
+
+    await more.trigger('click')
+
+    expect(more.attributes('aria-expanded')).toBe('true')
+    expect(text.attributes('style') ?? '').not.toContain('display: none')
+  })
+
+  it('opens the long text when only it matches the search', async () => {
+    const wrapper = mount(SettingsPageContent)
+
+    await wrapper.get('input[aria-label="Search settings"]').setValue('screen reader')
+
+    expect(wrapper.get('[data-setting="single-key-shortcuts"] button[aria-expanded]').attributes('aria-expanded')).toBe('true')
   })
 })
