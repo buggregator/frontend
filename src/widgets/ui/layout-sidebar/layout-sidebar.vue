@@ -965,9 +965,10 @@ const linkLabel = (type: EventType) =>
 
 .layout-sidebar__group-title {
   @apply hidden px-4 pt-2 pb-1;
-  // The owner's size (#5935): small caps-like labels that do not compete with the items.
+  // The owner's size (#5935): small labels that do not compete with the items;
+  // gray-600 keeps ≥4.5:1 on the light sidebar (gray-500 gave 4.39:1).
   @apply text-[.55rem] leading-4 font-semibold uppercase tracking-wider;
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-gray-600 dark:text-gray-400;
 
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
     @apply block;
