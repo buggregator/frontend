@@ -56,14 +56,17 @@ const ADDRESS: Record<string, string> = {
   [MENU_TOOL_IDS.xdebug]: '{host}:{xdebug_port}'
 }
 
-// Channels on a listener of their own: its port, and the setting that opens it.
-const LISTENER: Record<string, { port: string; env: string }> = {
-  [EventTypes.Smtp]: { port: 'smtp_port', env: 'SMTP_ADDR' },
-  [EventTypes.VarDump]: { port: 'vardumper_port', env: 'VAR_DUMPER_ADDR' },
-  [EventTypes.Monolog]: { port: 'monolog_port', env: 'MONOLOG_ADDR' },
-  'http-proxy': { port: 'proxy_port', env: 'PROXY_ADDR' },
-  [MENU_TOOL_IDS.xdebug]: { port: 'xdebug_port', env: 'XDEBUG_PROXY_ENABLED' }
+// Channels on a listener of their own, by its port. A module that is on but
+// whose port is missing did not open it (VarDumper on Windows): no setting
+// turns that on, so only Xdebug, off by default, names its switch.
+const LISTENER: Record<string, string> = {
+  [EventTypes.Smtp]: 'smtp_port',
+  [EventTypes.VarDump]: 'vardumper_port',
+  [EventTypes.Monolog]: 'monolog_port',
+  'http-proxy': 'proxy_port'
 }
+const XDEBUG_HINT = 'Turn it on with XDEBUG_PROXY_ENABLED'
+const OFF_HINT = 'Its listener is not running on this server'
 
 const TOOLS: { id: string; title: string; icon: string; to: RouteLocationRaw | null }[] = [
   { id: 'http-proxy', title: 'HTTP proxy', icon: 'host', to: null },
@@ -74,8 +77,8 @@ const TOOLS: { id: string; title: string; icon: string; to: RouteLocationRaw | n
 const stateOf = (id: string, input: ChannelInput): ChannelState => {
   if (!input.connected) return 'offline'
   if (id === MENU_TOOL_IDS.xdebug) return input.xdebugEnabled ? 'listening' : 'off'
-  const listener = LISTENER[id]
-  return listener && input.off.has(listener.port) ? 'off' : 'listening'
+  const port = LISTENER[id]
+  return port && input.off.has(port) ? 'off' : 'listening'
 }
 
 const card = (
@@ -83,12 +86,11 @@ const card = (
   base: Pick<Channel, 'id' | 'title' | 'icon' | 'to' | 'eventType'>
 ): Channel => {
   const state = stateOf(base.id, input)
-  const listener = LISTENER[base.id]
   return {
     ...base,
     address: fillText(ADDRESS[base.id] ?? '', input.values),
     state,
-    offHint: state === 'off' && listener ? `Turn it on with ${listener.env}` : undefined,
+    offHint: state === 'off' ? (base.id === MENU_TOOL_IDS.xdebug ? XDEBUG_HINT : OFF_HINT) : undefined,
     // An off channel's page has nothing to show yet.
     to: state === 'off' ? null : base.to
   }

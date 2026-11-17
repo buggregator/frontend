@@ -61,12 +61,24 @@ describe('buildChannelGroups', () => {
     expect(groups.map((g) => g.title)).not.toContain('Mail & logs')
   })
 
-  it('marks a listener the server did not open as off, with how to turn it on', () => {
-    const all = buildChannelGroups(input({ off: new Set(['smtp_port', 'xdebug_port']) })).flatMap((g) => g.channels)
-    const smtp = all.find((c) => c.id === 'smtp')!
+  it('has no card for a module the server has off', () => {
+    const all = buildChannelGroups(
+      input({ availableEvents: ALL_EVENT_TYPES_LIST.filter((t) => t !== 'var-dump'), off: new Set(['vardumper_port']) })
+    ).flatMap((g) => g.channels)
+    expect(all.map((c) => c.id)).not.toContain('var-dump')
+  })
+
+  it('a module on whose listener did not start: off, naming no setting that would not help', () => {
+    const all = buildChannelGroups(input({ off: new Set(['vardumper_port', 'smtp_port', 'xdebug_port']) })).flatMap(
+      (g) => g.channels
+    )
+    for (const id of ['var-dump', 'smtp']) {
+      const c = all.find((x) => x.id === id)!
+      expect(c.state).toBe('off')
+      expect(c.offHint).toBe('Its listener is not running on this server')
+      expect(c.offHint).not.toMatch(/_ADDR/)
+    }
     const xdebug = all.find((c) => c.id === 'xdebug')!
-    expect(smtp.state).toBe('off')
-    expect(smtp.offHint).toBe('Turn it on with SMTP_ADDR')
     expect(xdebug.state).toBe('off')
     expect(xdebug.offHint).toBe('Turn it on with XDEBUG_PROXY_ENABLED')
     expect(xdebug.to).toBeNull()

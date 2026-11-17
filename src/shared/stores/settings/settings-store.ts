@@ -96,7 +96,9 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.ports = settings?.ports ?? null
 
       // TODO: meed to move to the events store
-      this.availableEvents = settings?.client?.events ?? Object.values(EventTypes);
+      // The server's enabled modules: top-level `events`; `client.events` on
+      // older servers; neither: every type.
+      this.availableEvents = settings?.events ?? settings?.client?.events ?? Object.values(EventTypes);
 
       this.isFetched = !!settings
 

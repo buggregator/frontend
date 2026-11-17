@@ -72,6 +72,31 @@ describe('settingsStore.fetchSettings', () => {
       available: true,
     })
   })
+
+  // The server sends the enabled modules as top-level `events` (#6012 review);
+  // `client.events` is the older shape; neither: every type.
+  it.each([
+    ['top-level events', { events: ['sentry', 'smtp'] }, ['sentry', 'smtp']],
+    ['the older client.events', { client: { events: ['ray'] } }, ['ray']],
+    ['top-level over client', { events: ['smtp'], client: { events: ['ray'] } }, ['smtp']],
+  ])('takes the enabled modules from %s', async (_, body, expected) => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify({ version: '2.11.0', ...body })))))
+    const store = useSettingsStore()
+
+    await store.fetchSettings()
+
+    expect(store.availableEvents).toEqual(expected)
+  })
+
+  it('takes every type when the server names none', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"version":"1.0.0"}'))))
+    const store = useSettingsStore()
+
+    await store.fetchSettings()
+
+    expect(store.availableEvents).toContain('var-dump')
+    expect(store.availableEvents).toContain('sentry')
+  })
 })
 
 // GitHub server#255: an IDE link sent by the SDK is used only while the person

@@ -12,7 +12,10 @@ export type TSettings = {
     login_url: string,
   },
   version: string,
-  client: {
+  // The modules enabled on the server.
+  events?: EventType[],
+  // The same list from older servers.
+  client?: {
     events: EventType[],
   },
   // Server's check for a newer release; null when the check is off, absent on
