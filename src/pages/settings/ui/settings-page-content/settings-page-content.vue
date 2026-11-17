@@ -81,6 +81,12 @@ const searchStatus = computed(() => {
   return matchCount.value === 1 ? '1 setting matches.' : `${matchCount.value} settings match.`
 })
 
+const mainRef = ref<HTMLElement | null>(null)
+const clearSearch = () => {
+  query.value = ''
+  mainRef.value?.querySelector<HTMLInputElement>('input[aria-label="Search settings"]')?.focus()
+}
+
 // The list on the left (tabs on a phone) jumps to a section and moves the
 // focus there, so Tab goes on inside it.
 const router = useRouter()
@@ -165,7 +171,10 @@ useTitle('Settings | Buggregator')
         </a>
       </nav>
 
-      <div class="settings__main">
+      <div
+        ref="mainRef"
+        class="settings__main"
+      >
         <SearchBar
           v-model="query"
           class="settings__search"
@@ -183,6 +192,13 @@ useTitle('Settings | Buggregator')
           class="settings__empty"
         >
           No settings match «{{ query.trim() }}».
+          <button
+            type="button"
+            class="settings__clear"
+            @click="clearSearch"
+          >
+            Clear search
+          </button>
         </p>
 
         <EventDetailSection
@@ -545,6 +561,12 @@ useTitle('Settings | Buggregator')
 
 .settings__empty {
   @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.settings__clear {
+  @apply ml-1 underline underline-offset-2;
+  @apply text-blue-700 dark:text-blue-300;
+  @apply hover:text-blue-900 dark:hover:text-blue-100;
 }
 
 .settings__section {

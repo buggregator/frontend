@@ -220,6 +220,12 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
 
     expect(wrapper.text()).toContain('No settings match «zzz».')
     expect(wrapper.findAll('.settings-row--dim').length).toBe(7)
+
+    await wrapper.get('.settings__empty button').trigger('click')
+
+    expect((wrapper.get('input[aria-label="Search settings"]').element as HTMLInputElement).value).toBe('')
+    expect(wrapper.find('.settings__empty').exists()).toBe(false)
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(0)
   })
 
   it('keeps the hint to one line and shows the rest behind More', async () => {
