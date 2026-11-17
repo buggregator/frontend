@@ -5,6 +5,7 @@ import { useEventsStore, useSettingsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { fillSegments, resolveValues, usedPorts } from './fill'
 import SetupCodeBlock from './setup-code-block.vue'
+import SetupExternalIcon from './setup-external-icon.vue'
 import content from './setup-help.json'
 import SetupStackTabs from './setup-stack-tabs.vue'
 import type { SetupContent } from './types'
@@ -133,7 +134,8 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
         :href="section.docs"
         target="_blank"
         rel="noopener noreferrer"
-      >{{ sectionTitle }} docs ↗<span class="sr-only"> (opens in a new tab)</span></a>
+      >{{ sectionTitle }} docs<SetupExternalIcon /><span class="sr-only">
+        (opens in a new tab)</span></a>
     </header>
 
     <p
@@ -287,7 +289,7 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
         :href="section.docs"
         target="_blank"
         rel="noopener noreferrer"
-      >{{ sectionTitle }} setup in the docs ↗<span class="sr-only">
+      >{{ sectionTitle }} setup in the docs<SetupExternalIcon /><span class="sr-only">
         (opens in a new tab)</span></a>
     </footer>
   </div>
@@ -298,7 +300,9 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
   --setup-surface: theme('colors.gray.50');
   @apply w-full text-sm text-gray-800 dark:text-gray-200;
 
-  :global(.dark) & {
+  // `.dark .setup-guide[data-v]`: outranks --panel; page and panel are
+  // gray-800 in dark. (`:global(.dark) .x` compiles to a bare `.dark`.)
+  .dark & {
     --setup-surface: theme('colors.gray.800');
   }
 }

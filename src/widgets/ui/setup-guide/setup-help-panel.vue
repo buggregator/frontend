@@ -2,6 +2,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
 import { IconSvg } from '@/shared/ui'
+import SetupExternalIcon from './setup-external-icon.vue'
 import SetupGuide from './setup-guide.vue'
 import content from './setup-help.json'
 
@@ -55,7 +56,8 @@ onMounted(() => nextTick(() => guide.value?.focusTabs()))
           :href="docs"
           target="_blank"
           rel="noopener noreferrer"
-        >{{ sectionTitle }} docs ↗<span class="sr-only"> (opens in a new tab)</span></a>
+        >{{ sectionTitle }} docs<SetupExternalIcon /><span class="sr-only">
+          (opens in a new tab)</span></a>
         <button
           type="button"
           class="setup-panel__close"
@@ -93,7 +95,7 @@ onMounted(() => nextTick(() => guide.value?.focusTabs()))
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   animation: setup-slide 0.2s ease-out;
 
-  :global(.dark) & {
+  .dark & {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   }
 }
