@@ -7,7 +7,10 @@ import { join } from 'node:path'
 const DIST = process.argv[2] ?? new URL('../dist/', import.meta.url).pathname
 // js 650 -> 680: centrifuge 5.8.0 adds ~46 kB (+9.7 kB gzip) for its reconnect
 // and resume-after-sleep fixes; the WebSocket client is needed on every page.
-const BUDGET_KB = { js: 680, css: 500 }
+// css 500 -> 505: the sidebar on every page gains a scrolling list, a pinned
+// footer, the menu over the page below 1280 px and the named project switcher
+// (~3.5 kB raw; was 499.7 kB).
+const BUDGET_KB = { js: 680, css: 505 }
 // Chunks that only pages other than the feed need.
 const LAZY_ONLY = [/@vue-flow/, /^assets\/common-/]
 

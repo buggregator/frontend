@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import { useFloating } from '@floating-ui/vue'
-import { onClickOutside, useMediaQuery } from '@vueuse/core'
+import { onClickOutside, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { textToColors } from '@/shared/lib/helpers'
 import { useEvents } from '@/shared/lib/use-events'
+import { useMenuKeys } from '@/shared/lib/use-menu-keys'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
@@ -27,6 +28,8 @@ const { profile } = storeToRefs(profileStore)
 const { getItemsCount } = useEvents()
 const xdebugEnabled = useXdebugEnabled()
 
+const route = useRoute()
+
 const projectDd = ref<HTMLElement | undefined>()
 const projectMenu = ref<HTMLElement | undefined>()
 const userDd = ref<HTMLElement | undefined>()
@@ -39,9 +42,16 @@ const isVisibleProjects = ref(false)
 const storedCollapsed = window?.localStorage?.getItem(LocalStorageKeys.SidebarCollapsed)
 const isCollapsed = ref(storedCollapsed === null ? true : storedCollapsed === 'true')
 
-// Below xl breakpoint = always visually collapsed (same rules as manual collapse)
+// Below xl the page keeps the narrow rail; expanding opens the full menu over
+// the page instead (not remembered, closes on Esc, outside click or navigation).
 const isBelowXl = useMediaQuery('(max-width: 1279px)')
-const isVisuallyCollapsed = computed(() => isCollapsed.value || isBelowXl.value)
+const isOverlayOpen = ref(false)
+const isOverlay = computed(() => isBelowXl.value && isOverlayOpen.value)
+const isVisuallyCollapsed = computed(() =>
+  isBelowXl.value ? !isOverlayOpen.value : isCollapsed.value
+)
+const expandBtn = ref<HTMLElement | undefined>()
+const closeBtn = ref<HTMLElement | undefined>()
 
 const applySidebarClass = (collapsed: boolean) => {
   if (collapsed) {
@@ -69,12 +79,52 @@ const toggleCollapse = () => {
   applySidebarClass(isCollapsed.value)
 }
 
+const openOverlay = async () => {
+  isOverlayOpen.value = true
+  await nextTick()
+  closeBtn.value?.focus()
+}
+
+const closeOverlay = async (returnFocus = true) => {
+  if (!isOverlayOpen.value) return
+  isOverlayOpen.value = false
+  if (returnFocus) {
+    await nextTick()
+    expandBtn.value?.focus()
+  }
+}
+
+const expand = () => (isBelowXl.value ? openOverlay() : toggleCollapse())
+const collapse = () => (isBelowXl.value ? closeOverlay() : toggleCollapse())
+
+const onAsideKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && isOverlay.value) {
+    e.stopPropagation()
+    closeOverlay()
+  }
+}
+
+// The overlay lifts the sidebar above the page header (see layout-base).
+watch(isOverlay, (open) => document?.documentElement?.classList?.toggle('sidebar-overlay', open))
+watch(isBelowXl, (below) => {
+  if (!below) isOverlayOpen.value = false
+})
+watch(
+  () => route.fullPath,
+  () => closeOverlay(false)
+)
+onUnmounted(() => document?.documentElement?.classList?.remove('sidebar-overlay'))
+
 // TODO: need to check why project is empty on first load
 const isProjectLoading = computed(() => !activeProject.value)
 
-onClickOutside(projectMenu, () => {
-  isVisibleProjects.value = false
-})
+onClickOutside(
+  projectMenu,
+  () => {
+    isVisibleProjects.value = false
+  },
+  { ignore: [projectDd] }
+)
 
 onClickOutside(userMenu, () => {
   isVisibleProfile.value = false
@@ -140,8 +190,24 @@ const toggleProfileDropdown = () => {
   isVisibleProfile.value = !isVisibleProfile.value
 }
 
-const toggleProjects = () => {
-  isVisibleProjects.value = !isVisibleProjects.value
+const { onKeydown: onProjectMenuKeydown, focusCurrent: focusCurrentProject } = useMenuKeys(
+  projectMenu,
+  () => closeProjects()
+)
+
+const closeProjects = async (returnFocus = true) => {
+  isVisibleProjects.value = false
+  if (returnFocus) {
+    await nextTick()
+    projectDd.value?.focus()
+  }
+}
+
+const toggleProjects = async () => {
+  if (isVisibleProjects.value) return closeProjects()
+  isVisibleProjects.value = true
+  await nextTick()
+  focusCurrentProject()
 }
 
 const logout = () => {
@@ -155,8 +221,16 @@ const { availableEvents } = storeToRefs(useSettingsStore())
 const setProject = (projectKey: string) => {
   eventsStore.setActiveProjectKey(projectKey)
 
-  isVisibleProjects.value = false
+  closeProjects()
 }
+
+// The key line under a project's name only when it says something new.
+const keyRepeatsName = (project: { key: string; name: string }) =>
+  project.key.toLowerCase() === project.name.toLowerCase()
+
+const projectSwitcherLabel = computed(
+  () => `Project: ${activeProject.value?.name ?? ''}. Switch project`
+)
 
 const filteredNavOrder = computed(() =>
   EVENTS_NAV_ORDER.filter((type) => availableEvents.value.includes(type))
@@ -169,15 +243,45 @@ const generateRadialGradient = (input: string) =>
 // The colored dot is the at-a-glance indicator that events of this type
 // exist. The numeric count badge (gated by isVisibleEventCounts) is separate
 // — turning counts off should not also hide the indicator.
+// A fade at the list's bottom edge while more of it is below the fold.
+const scrollList = ref<HTMLElement | undefined>()
+const hasMoreBelow = ref(false)
+const updateMoreBelow = () => {
+  const el = scrollList.value
+  hasMoreBelow.value = !!el && el.scrollTop + el.clientHeight < el.scrollHeight - 1
+}
+useResizeObserver(scrollList, updateMoreBelow)
+// The box keeps its size when entries come or go: check again then too.
+watch(
+  () => [filteredNavOrder.value.length, isVisuallyCollapsed.value],
+  () => nextTick(updateMoreBelow)
+)
+
+// One rule for every menu entry: the page it opens is the current one.
+const isRouteActive = (name: RouteName) => route.name === name
+const isTypeActive = (type: EventType) =>
+  route.params.type === type || (type === 'sentry' && route.path.startsWith('/sentry'))
+
 const hasEvents = (type: EventType) => getItemsCount.value(type) > 0
 const linkLabel = (type: EventType) =>
   navLinkLabel(PAGES_SETTINGS[type].sidebarTitle, getItemsCount.value(type))
 </script>
 
 <template>
+  <div
+    v-if="isOverlay"
+    class="layout-sidebar__backdrop"
+    data-test="sidebar-backdrop"
+    @click="closeOverlay()"
+  />
+
   <aside
     class="layout-sidebar"
-    :class="{ 'layout-sidebar--collapsed': isVisuallyCollapsed }"
+    :class="{
+      'layout-sidebar--collapsed': isVisuallyCollapsed,
+      'layout-sidebar--overlay': isOverlay
+    }"
+    @keydown="onAsideKeydown"
   >
     <nav
       class="layout-sidebar__nav"
@@ -206,10 +310,11 @@ const linkLabel = (type: EventType) =>
 
         <button
           v-if="!isVisuallyCollapsed"
+          ref="closeBtn"
           class="layout-sidebar__toggle-btn"
-          title="Collapse sidebar"
-          aria-label="Collapse sidebar"
-          @click="toggleCollapse"
+          :title="isOverlay ? 'Close menu' : 'Collapse sidebar'"
+          :aria-label="isOverlay ? 'Close menu' : 'Collapse sidebar'"
+          @click="collapse"
         >
           <IconSvg
             class="layout-sidebar__toggle-icon"
@@ -225,33 +330,56 @@ const linkLabel = (type: EventType) =>
           <button
             ref="projectDd"
             class="layout-sidebar__dropdown"
-            tabindex="0"
-            aria-haspopup="true"
+            data-test="project-switcher"
+            aria-haspopup="menu"
             :aria-expanded="isVisibleProjects"
-            aria-label="Switch project"
+            :aria-label="projectSwitcherLabel"
+            :title="activeProject.name"
             @click="toggleProjects"
           >
             <span
-              :title="activeProject.name"
               class="layout-sidebar__project"
+              aria-hidden="true"
               :style="{
                 background: generateRadialGradient(activeProject.name)
               }"
             >
               {{ makeShortTitle(activeProject.name) }}
             </span>
+            <span class="layout-sidebar__project-name">{{ activeProject.name }}</span>
+            <svg
+              class="layout-sidebar__project-chevron"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 6l4 4 4-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </button>
         </div>
 
         <hr class="layout-sidebar__sep">
       </template>
 
-      <template v-if="!isMultipleProjects || isProjectLoading">
+      <!-- Event types, tools: scrolls when the screen is short -->
+      <div
+        ref="scrollList"
+        class="layout-sidebar__scroll"
+        :class="{ 'layout-sidebar__scroll--more': hasMoreBelow }"
+        @scroll.passive="updateMoreBelow"
+      >
         <RouterLink
           :to="{ name: RouteName.Home }"
           title="Events"
           aria-label="All events"
           class="layout-sidebar__link"
+          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Home) }"
         >
           <span class="layout-sidebar__link-icon-wrap">
             <IconSvg
@@ -259,129 +387,130 @@ const linkLabel = (type: EventType) =>
               name="events"
             />
           </span>
-          <span class="layout-sidebar__link-label">Events</span>
+          <span class="layout-sidebar__link-label">All events</span>
         </RouterLink>
-      </template>
 
-      <template
-        v-for="type in filteredNavOrder"
-        :key="type"
-      >
+        <template
+          v-for="type in filteredNavOrder"
+          :key="type"
+        >
+          <RouterLink
+            :to="
+              type === 'sentry'
+                ? '/sentry/exceptions'
+                : { name: RouteName.EventList, params: { type } }
+            "
+            :class="{ 'layout-sidebar__link--active': isTypeActive(type) }"
+            :title="PAGES_SETTINGS[type].sidebarTitle"
+            :aria-label="linkLabel(type)"
+            class="layout-sidebar__link"
+          >
+            <span class="layout-sidebar__link-icon-wrap">
+              <IconSvg
+                class="layout-sidebar__link-icon"
+                :name="PAGES_SETTINGS[type].iconName"
+              />
+              <span
+                v-if="hasEvents(type)"
+                class="layout-sidebar__dot"
+                :class="`layout-sidebar__dot--${type}`"
+              />
+            </span>
+            <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
+            <span
+              v-if="isVisibleEventCounts && getItemsCount(type) > 0"
+              class="layout-sidebar__count"
+            >
+              {{ getItemsCount(type) > 99 ? '99+' : getItemsCount(type) }}
+            </span>
+          </RouterLink>
+        </template>
+
         <RouterLink
-          :to="
-            type === 'sentry'
-              ? '/sentry/exceptions'
-              : { name: RouteName.EventList, params: { type } }
-          "
-          :class="{
-            'layout-sidebar__link--active':
-              $route.params.type === type ||
-              (type === 'sentry' && $route.path.startsWith('/sentry'))
-          }"
-          :title="PAGES_SETTINGS[type].sidebarTitle"
-          :aria-label="linkLabel(type)"
+          :to="{ name: RouteName.MockServer }"
+          title="Mock server"
+          aria-label="Mock server"
           class="layout-sidebar__link"
+          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.MockServer) }"
         >
           <span class="layout-sidebar__link-icon-wrap">
             <IconSvg
               class="layout-sidebar__link-icon"
-              :name="PAGES_SETTINGS[type].iconName"
+              name="mock-server"
+            />
+          </span>
+          <span class="layout-sidebar__link-label">Mock server</span>
+          <span class="layout-sidebar__new">new</span>
+        </RouterLink>
+
+        <RouterLink
+          v-if="xdebugEnabled"
+          :to="{ name: RouteName.Xdebug }"
+          title="Xdebug"
+          aria-label="Xdebug"
+          class="layout-sidebar__link"
+          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Xdebug) }"
+        >
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              name="bug"
+            />
+          </span>
+          <span class="layout-sidebar__link-label">Xdebug</span>
+          <span class="layout-sidebar__new">new</span>
+        </RouterLink>
+      </div>
+
+      <!-- Pinned: always in view, however short the screen -->
+      <div class="layout-sidebar__pinned">
+        <RouterLink
+          :to="{ name: RouteName.Favorites }"
+          title="Favorites"
+          aria-label="Favorites"
+          class="layout-sidebar__link"
+          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Favorites) }"
+        >
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              name="pin"
             />
             <span
-              v-if="hasEvents(type)"
-              class="layout-sidebar__dot"
-              :class="`layout-sidebar__dot--${type}`"
+              v-if="lockedIds.length > 0"
+              class="layout-sidebar__dot layout-sidebar__dot--favorites"
             />
           </span>
-          <span class="layout-sidebar__link-label">{{ PAGES_SETTINGS[type].title }}</span>
+          <span class="layout-sidebar__link-label">Favorites</span>
           <span
-            v-if="isVisibleEventCounts && getItemsCount(type) > 0"
+            v-if="isVisibleEventCounts && lockedIds.length > 0"
             class="layout-sidebar__count"
           >
-            {{ getItemsCount(type) > 99 ? '99+' : getItemsCount(type) }}
+            {{ lockedIds.length > 99 ? '99+' : lockedIds.length }}
           </span>
         </RouterLink>
-      </template>
 
-      <RouterLink
-        :to="{ name: RouteName.MockServer }"
-        title="Mock server"
-        aria-label="Mock server"
-        class="layout-sidebar__link"
-      >
-        <span class="layout-sidebar__link-icon-wrap">
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            name="mock-server"
-          />
-        </span>
-        <span class="layout-sidebar__link-label">Mock server</span>
-        <span class="layout-sidebar__new">new</span>
-      </RouterLink>
-
-      <RouterLink
-        v-if="xdebugEnabled"
-        :to="{ name: RouteName.Xdebug }"
-        title="Xdebug"
-        aria-label="Xdebug"
-        class="layout-sidebar__link"
-      >
-        <span class="layout-sidebar__link-icon-wrap">
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            name="bug"
-          />
-        </span>
-        <span class="layout-sidebar__link-label">Xdebug</span>
-        <span class="layout-sidebar__new">new</span>
-      </RouterLink>
-
-      <hr class="layout-sidebar__sep">
-
-      <RouterLink
-        :to="{ name: RouteName.Favorites }"
-        title="Favorites"
-        aria-label="Favorites"
-        class="layout-sidebar__link"
-      >
-        <span class="layout-sidebar__link-icon-wrap">
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            name="pin"
-          />
-          <span
-            v-if="lockedIds.length > 0"
-            class="layout-sidebar__dot layout-sidebar__dot--favorites"
-          />
-        </span>
-        <span class="layout-sidebar__link-label">Favorites</span>
-        <span
-          v-if="isVisibleEventCounts && lockedIds.length > 0"
-          class="layout-sidebar__count"
+        <RouterLink
+          :to="{ name: RouteName.Settings, hash: hasUpdateAttention ? '#updates' : undefined }"
+          title="Settings"
+          :aria-label="settingsLabel"
+          class="layout-sidebar__link"
+          :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Settings) }"
         >
-          {{ lockedIds.length > 99 ? '99+' : lockedIds.length }}
-        </span>
-      </RouterLink>
-
-      <RouterLink
-        :to="{ name: RouteName.Settings, hash: hasUpdateAttention ? '#updates' : undefined }"
-        title="Settings"
-        :aria-label="settingsLabel"
-        class="layout-sidebar__link"
-      >
-        <span class="layout-sidebar__link-icon-wrap">
-          <IconSvg
-            class="layout-sidebar__link-icon"
-            name="settings"
-          />
-          <span
-            v-if="hasUpdateAttention"
-            class="layout-sidebar__update-dot"
-            data-test="settings-update-dot"
-          />
-        </span>
-        <span class="layout-sidebar__link-label">Settings</span>
-      </RouterLink>
+          <span class="layout-sidebar__link-icon-wrap">
+            <IconSvg
+              class="layout-sidebar__link-icon"
+              name="settings"
+            />
+            <span
+              v-if="hasUpdateAttention"
+              class="layout-sidebar__update-dot"
+              data-test="settings-update-dot"
+            />
+          </span>
+          <span class="layout-sidebar__link-label">Settings</span>
+        </RouterLink>
+      </div>
     </nav>
 
     <!--  Need to place projectMenu out of nav because of overflow -->
@@ -392,34 +521,63 @@ const linkLabel = (type: EventType) =>
       aria-label="Project list"
       class="layout-sidebar__dropdown-items"
       :style="projectDdStyles"
+      @keydown="onProjectMenuKeydown"
     >
       <button
         v-for="project in availableProjects"
         :key="project.key"
         class="layout-sidebar__dropdown-item"
-        role="menuitem"
+        role="menuitemradio"
         :title="project.name"
+        :aria-checked="activeProject.key === project.key ? 'true' : 'false'"
         :aria-current="activeProject.key === project.key ? 'true' : undefined"
         :class="{
           'layout-sidebar__dropdown-item--active': activeProject.key === project.key
         }"
-        tabindex="0"
+        tabindex="-1"
         @click="setProject(project.key)"
       >
         <span
           class="layout-sidebar__project"
+          aria-hidden="true"
           :style="{ background: generateRadialGradient(project.name) }"
         >
           {{ makeShortTitle(project.name) }}
         </span>
 
         <div class="layout-sidebar__dropdown-item-text">
-          <span class="layout-sidebar__dropdown-item-text-key">
+          <span
+            v-if="!keyRepeatsName(project)"
+            class="layout-sidebar__dropdown-item-text-key"
+          >
             {{ project.key }}
           </span>
           {{ project.name }}
         </div>
+
+        <svg
+          v-if="activeProject.key === project.key"
+          class="layout-sidebar__dropdown-item-check"
+          data-test="project-current"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+        >
+          <path
+            d="M3.5 8.5l3 3 6-7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </button>
+      <p
+        class="layout-sidebar__dropdown-hint"
+        aria-hidden="true"
+      >
+        ↑↓ choose · Enter open · Esc close
+      </p>
     </div>
 
     <div class="layout-sidebar__bottom">
@@ -476,10 +634,12 @@ const linkLabel = (type: EventType) =>
       <!-- Expand button (collapsed mode) -->
       <template v-if="isVisuallyCollapsed">
         <button
+          ref="expandBtn"
           class="layout-sidebar__expand-btn"
           title="Expand sidebar"
           aria-label="Expand sidebar"
-          @click="toggleCollapse"
+          :aria-expanded="false"
+          @click="expand"
         >
           <IconSvg
             class="layout-sidebar__toggle-icon"
@@ -510,14 +670,43 @@ const linkLabel = (type: EventType) =>
 <style lang="scss" scoped>
 .layout-sidebar {
   @apply bg-gray-100 dark:bg-gray-900;
-  @apply flex flex-col justify-between h-full;
+  @apply flex flex-col h-full;
   @apply border-r border-gray-200 dark:border-gray-800;
   @apply relative;
 }
 
+/* Below 1280 px the expanded menu lies over the page; layout-base lifts its
+   wrapper above the header while html.sidebar-overlay is set. */
+.layout-sidebar--overlay {
+  @apply fixed top-0 bottom-0 left-0 w-56 shadow-2xl;
+  max-width: calc(100vw - 48px);
+  z-index: 2;
+}
+
+.layout-sidebar__backdrop {
+  @apply fixed inset-0 bg-gray-900/40;
+  z-index: 1;
+}
+
 .layout-sidebar__nav {
-  @apply flex-col flex overflow-auto overflow-hidden;
-  @apply py-1;
+  @apply flex flex-col flex-1 min-h-0;
+  @apply pt-1;
+}
+
+/* The list scrolls; Favorites and Settings below it stay in view. */
+.layout-sidebar__scroll {
+  @apply flex flex-col flex-1 min-h-0 pb-1;
+  @apply overflow-y-auto overflow-x-hidden overscroll-contain;
+  scrollbar-width: thin;
+}
+
+.layout-sidebar__scroll--more {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+}
+
+.layout-sidebar__pinned {
+  @apply flex flex-col flex-none py-1;
+  border-top: 1px solid rgba(128, 128, 128, 0.08);
 }
 
 .layout-sidebar__sep {
@@ -611,6 +800,13 @@ const linkLabel = (type: EventType) =>
 
   .layout-sidebar__projects & {
     @apply p-2;
+  }
+
+  /* Phone, menu open over the page: 44 px rows for a finger. */
+  @media (max-width: 639px) {
+    .layout-sidebar--overlay & {
+      min-height: 44px;
+    }
   }
 }
 
@@ -713,9 +909,18 @@ $dotColors: (
 .layout-sidebar__link--active {
   @apply text-gray-900 dark:text-gray-50;
 
+  /* The current page: a blue bar on the left, in both widths. */
+  &::before {
+    content: '';
+    @apply absolute left-0 w-[3px] rounded-r-sm;
+    @apply bg-blue-600 dark:bg-blue-400;
+    top: 6px;
+    bottom: 6px;
+  }
+
   /* Expanded: full-width bg */
   .layout-sidebar:not(.layout-sidebar--collapsed) & {
-    @apply bg-gray-200/80 dark:bg-white/[0.08];
+    @apply bg-gray-200 dark:bg-white/10;
   }
 
   /* Collapsed: no full-width bg (icon-wrap handles it) */
@@ -732,6 +937,20 @@ $dotColors: (
 /* ---- Projects ---- */
 .layout-sidebar__projects {
   @apply flex items-center justify-center flex-col;
+
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply items-stretch px-2;
+  }
+}
+
+.layout-sidebar__project-name {
+  @apply hidden flex-1 min-w-0 truncate text-left text-sm font-medium;
+  @apply text-gray-800 dark:text-gray-100;
+}
+
+.layout-sidebar__project-chevron {
+  @apply hidden w-4 h-4 flex-shrink-0;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 .layout-sidebar__project {
@@ -747,9 +966,28 @@ $dotColors: (
   @apply p-2;
   @apply flex items-center justify-center;
   @apply relative cursor-pointer;
+
+  /* Expanded: the project's colour chip, its name and a chevron. */
+  .layout-sidebar:not(.layout-sidebar--collapsed) & {
+    @apply justify-start gap-2 w-full rounded-md;
+    @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
+
+    .layout-sidebar__project-name {
+      @apply block;
+    }
+
+    .layout-sidebar__project-chevron {
+      @apply block;
+    }
+  }
+}
+
+.layout-sidebar__dropdown-hint {
+  @apply px-4 py-2 text-2xs text-gray-500 dark:text-gray-400;
 }
 
 .layout-sidebar__dropdown-items {
+  @apply z-10;
   @apply divide-y divide-gray-100 dark:divide-gray-700;
   @apply rounded-lg shadow-xl;
   @apply min-w-60;
@@ -778,6 +1016,11 @@ $dotColors: (
 .layout-sidebar__dropdown-item--active {
   @apply font-medium;
   @apply bg-gray-50 dark:bg-gray-700;
+}
+
+.layout-sidebar__dropdown-item-check {
+  @apply w-4 h-4 ml-auto flex-shrink-0;
+  @apply text-blue-600 dark:text-blue-400;
 }
 
 .layout-sidebar__dropdown-item-icon {

@@ -199,6 +199,13 @@ watch(
   @include mixins.layout-sidebar;
 }
 
+/* The sidebar's menu is open over the page (below 1280 px): above the header
+   and the connection banner. The whole selector sits in :global() — in a
+   scoped style `:global(html.x) &` drops the `&`. */
+:global(html.sidebar-overlay .layout-base__sidebar) {
+  z-index: 70;
+}
+
 .layout-base__header {
   @include mixins.layout-head;
   @apply flex items-center;
