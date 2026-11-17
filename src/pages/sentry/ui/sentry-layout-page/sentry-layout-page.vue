@@ -81,15 +81,15 @@ const isWide = useMediaQuery('(min-width: 640px)')
         </template>
 
         <template #controls>
-          <SetupHelpButton
-            v-if="hasSentryEvents"
-            section-id="sentry"
-            section-title="Sentry"
-          />
           <PeriodSelect />
           <SentryFilterButton
             v-if="filterTab"
             :tab="filterTab"
+          />
+          <SetupHelpButton
+            v-if="hasSentryEvents"
+            section-id="sentry"
+            section-title="Sentry"
           />
         </template>
       </AppHeader>
