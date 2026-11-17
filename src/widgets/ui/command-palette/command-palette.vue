@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, useId, watch } from 'vue'
-import { type Command, filterCommands } from '@/shared/lib/command-palette'
+import { type Command, filterCommands, hiddenMatch } from '@/shared/lib/command-palette'
 import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
 import { HighlightText, IconSvg } from '@/shared/ui'
 import { usePaletteCommands } from './use-palette-commands'
@@ -21,6 +21,14 @@ const sections = computed(() => filterCommands(commands.value, query.value))
 const flat = computed(() => sections.value.flatMap((section) => section.commands))
 const activeIndex = ref(0)
 const indexOf = (command: Command) => flat.value.indexOf(command)
+// On the right: the hidden word a row was found by (it takes a setting's
+// section place; a page keeps its «N new» after it), else the row's own note.
+const noteOf = (command: Command) => {
+  const word = hiddenMatch(command, query.value)
+  if (!word) return command.note
+  if (command.group === 'settings' || !command.note || command.note === word) return word
+  return `${word} · ${command.note}`
+}
 
 watch(query, () => {
   activeIndex.value = 0
@@ -159,9 +167,9 @@ const onKeydown = (e: KeyboardEvent) => {
                 />
               </span>
               <span
-                v-if="command.note"
+                v-if="noteOf(command)"
                 class="palette__item-note"
-              >{{ command.note }}</span>
+              >{{ noteOf(command) }}</span>
             </div>
           </div>
 

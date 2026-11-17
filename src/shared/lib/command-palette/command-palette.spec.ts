@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type Command, commandScore, filterCommands } from './command-palette'
+import { type Command, commandScore, filterCommands, hiddenMatch } from './command-palette'
 
 const cmd = (group: Command['group'], label: string, extra: Partial<Command> = {}): Command => ({
   id: label,
@@ -54,5 +54,24 @@ describe('commandScore', () => {
     expect(commandScore(c, 'request')).toBe(3)
     expect(commandScore(c, 'quests')).toBeNull()
     expect(commandScore(c, 'zzz')).toBeNull()
+  })
+})
+
+describe('hiddenMatch', () => {
+  const smtp = cmd('pages', 'SMTP', { keywords: ['SMTP', 'smtp', 'mail', 'email'] })
+  const about = cmd('settings', 'About & updates', { note: 'About & updates', keywords: ['Versions, updates and links', 'server'] })
+
+  it('names the hidden word a row was found by', () => {
+    expect(hiddenMatch(smtp, 'ma')).toBe('mail')
+    expect(hiddenMatch(about, 'se')).toBe('server')
+  })
+
+  it('names nothing when the label matches', () => {
+    expect(hiddenMatch(smtp, 'smt')).toBeNull()
+    expect(hiddenMatch(smtp, '')).toBeNull()
+  })
+
+  it('takes one word out of a long hint', () => {
+    expect(hiddenMatch(cmd('settings', 'Code editor', { keywords: ['Open file paths from events in your editor'] }), 'pat')).toBe('paths')
   })
 })

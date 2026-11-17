@@ -84,6 +84,8 @@ describe('CommandPalette', () => {
     await type('mail')
 
     expect(options()[0].dataset.command).toBe('page-smtp')
+    // Shows why it is there.
+    expect(options()[0].querySelector('.palette__item-note')?.textContent).toBe('mail')
     wrapper.unmount()
   })
 

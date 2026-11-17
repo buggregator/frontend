@@ -46,6 +46,20 @@ export const commandScore = (command: Command, query: string): number | null => 
   return null
 }
 
+// For a row found only by a hidden word: that word, to show why it is there
+// («mail» for SMTP). Null when the label itself matches.
+export const hiddenMatch = (command: Command, query: string): string | null => {
+  const q = query.trim().toLowerCase()
+  if (!q || commandScore(command, query) !== 3) return null
+  for (const text of [command.note ?? '', ...(command.keywords ?? [])]) {
+    const lower = text.toLowerCase()
+    if (lower.startsWith(q)) return words(text).length <= 3 ? text : text.slice(0, q.length)
+    const word = words(text).find((w) => w.toLowerCase().startsWith(q))
+    if (word) return word
+  }
+  return null
+}
+
 export type CommandSection = { id: CommandGroup; title: string; commands: Command[] }
 
 // The matching commands, in the groups' order; inside a group the best match
