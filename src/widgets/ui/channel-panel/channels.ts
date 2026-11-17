@@ -47,7 +47,7 @@ const ADDRESS: Record<string, string> = {
   [EventTypes.RayDump]: 'ray:{project}@{host}:{http_port}',
   [EventTypes.HttpDump]: 'http://http-dump:{project}@{host}:{http_port}',
   [EventTypes.VarDump]: 'tcp://{host}:{vardumper_port}',
-  [EventTypes.XdebugTrace]: 'http://{host}:{http_port} · X-Buggregator-Event: xdebug-trace',
+  [EventTypes.XdebugTrace]: 'header X-Buggregator-Event: xdebug-trace',
   [EventTypes.Smtp]: 'smtp://{host}:{smtp_port}',
   [EventTypes.Sms]: 'http://{host}:{http_port}/sms/{project}',
   [EventTypes.Monolog]: 'tcp://{host}:{monolog_port}',

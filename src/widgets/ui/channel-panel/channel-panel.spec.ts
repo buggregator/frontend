@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { availableStatus, downloadingStatus } from '@/entities/server-update/mocks'
 import { useConnectionStore, useEventsStore, useSettingsStore } from '@/shared/stores'
 import type { ServerEvent } from '@/shared/types'
 import ChannelPanel from './channel-panel.vue'
@@ -11,7 +13,7 @@ vi.mock('@/entities/xdebug/lib', () => ({ useXdebugEnabled: () => ref(false) }))
 
 const router = createRouter({
   history: createMemoryHistory(),
-  routes: ['/mock-server', '/xdebug', '/sentry/exceptions', '/:type'].map((path) => ({
+  routes: ['/mock-server', '/xdebug', '/settings', '/sentry/exceptions', '/:type'].map((path) => ({
     path,
     name: path === '/:type' ? 'event-list' : path.slice(1),
     component: { template: '<div />' }
@@ -99,6 +101,24 @@ describe('ChannelPanel', () => {
     expect(help.attributes('aria-label')).toBe('How to set up SMTP')
     await help.trigger('click')
     await vi.waitFor(() => expect(document.body.querySelector('[role="dialog"]')).not.toBeNull())
+    wrapper.unmount()
+  })
+
+  it('shows the update pill on the status line while the server updates, not otherwise', async () => {
+    useServerUpdateStore().setStatus(availableStatus)
+    const wrapper = await render()
+    expect(wrapper.find('[data-test="update-pill"]').exists()).toBe(false)
+
+    useServerUpdateStore().setStatus(downloadingStatus)
+    await vi.waitFor(() => expect(wrapper.find('.channel-panel__top [data-test="update-pill"]').exists()).toBe(true))
+    useServerUpdateStore().stop()
+    wrapper.unmount()
+  })
+
+  it('says how Xdebug traces arrive in a few words', async () => {
+    useSettingsStore().availableEvents.push('xdebug-trace')
+    const wrapper = await render()
+    expect(wrapper.get('[data-test="channel-xdebug-trace"]').text()).toContain('header X-Buggregator-Event: xdebug-trace')
     wrapper.unmount()
   })
 })

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { useNow } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore, useSettingsStore } from '@/shared/stores'
@@ -15,6 +16,12 @@ import { buildChannelGroups, type Channel } from './channels'
 // It stays while the person is on it after the first event; `open-list`
 // asks the page for the usual list.
 const emit = defineEmits<{ 'open-list': [] }>()
+
+// No page header here, so the header's update pill sits on the status line
+// (#5802): an empty project is where a fresh install updates. Loaded only
+// while an update runs, as in the header.
+const updateStore = useServerUpdateStore()
+const UpdatePill = defineAsyncComponent(() => import('../update-progress').then((m) => m.UpdatePill))
 
 const { availableEvents, hiddenMenuItems, apiVersion } = storeToRefs(useSettingsStore())
 const { activeProject } = storeToRefs(useEventsStore())
@@ -73,33 +80,41 @@ const eventsWord = (n: number) => `${n} ${n === 1 ? 'event' : 'events'}`
     aria-labelledby="channel-panel-title"
     data-test="channel-panel"
   >
-    <p
-      v-if="isConnectedWS"
-      class="channel-panel__status"
-      role="status"
-    >
+    <div class="channel-panel__top">
+      <p
+        v-if="isConnectedWS"
+        class="channel-panel__status"
+        role="status"
+      >
+        <span
+          class="channel-panel__status-dot"
+          aria-hidden="true"
+        />
+        <b class="channel-panel__status-word">Listening</b>
+        <span class="channel-panel__status-project">
+          · project {{ projectName }} <span class="channel-panel__mono">({{ projectKey }})</span>
+        </span>
+      </p>
+      <p
+        v-else
+        class="channel-panel__status channel-panel__status--offline"
+        role="status"
+        data-test="channel-panel-offline"
+      >
+        <span
+          class="channel-panel__status-dot"
+          aria-hidden="true"
+        />
+        <b class="channel-panel__status-word">Not connected</b>
+        <span class="channel-panel__status-project">· reconnecting…</span>
+      </p>
       <span
-        class="channel-panel__status-dot"
-        aria-hidden="true"
-      />
-      <b class="channel-panel__status-word">Listening</b>
-      <span class="channel-panel__status-project">
-        · project {{ projectName }} <span class="channel-panel__mono">({{ projectKey }})</span>
+        v-if="updateStore.isActive"
+        class="channel-panel__update"
+      >
+        <UpdatePill />
       </span>
-    </p>
-    <p
-      v-else
-      class="channel-panel__status channel-panel__status--offline"
-      role="status"
-      data-test="channel-panel-offline"
-    >
-      <span
-        class="channel-panel__status-dot"
-        aria-hidden="true"
-      />
-      <b class="channel-panel__status-word">Not connected</b>
-      <span class="channel-panel__status-project">· reconnecting…</span>
-    </p>
+    </div>
 
     <h1
       id="channel-panel-title"
@@ -198,8 +213,21 @@ const eventsWord = (n: number) => `${n} ${n === 1 ? 'event' : 'events'}`
   @apply text-xs;
 }
 
+.channel-panel__top {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-2;
+}
+
 .channel-panel__status {
   @apply flex flex-wrap items-center gap-x-1.5 text-[13px] leading-5;
+}
+
+.channel-panel__update {
+  @apply ml-auto inline-flex;
+
+  // Phone: its own line under the status.
+  @media (max-width: 639px) {
+    @apply ml-0 basis-full;
+  }
 }
 
 .channel-panel__status-dot {
@@ -267,6 +295,11 @@ const eventsWord = (n: number) => `${n} ${n === 1 ? 'event' : 'events'}`
   @apply text-[13px] text-gray-600 dark:text-gray-400;
 
   a {
+    // Phone: 44 px tap targets.
+    @media (max-width: 639px) {
+      @apply inline-flex items-center min-h-11;
+    }
+
     @apply hover:text-gray-900 dark:hover:text-gray-100 underline-offset-2 hover:underline;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 rounded;
   }
