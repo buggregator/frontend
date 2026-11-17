@@ -5,7 +5,8 @@ import { ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { availableStatus, restartingStatus, upToDateStatus } from '@/entities/server-update/mocks'
-import { RouteName } from '@/shared/types'
+import { useEventsStore } from '@/shared/stores'
+import { LocalStorageKeys, RouteName } from '@/shared/types'
 import LayoutSidebar from './layout-sidebar.vue'
 
 vi.mock('@/shared/lib/use-events', () => ({ useEvents: () => ({ getItemsCount: ref(() => 0) }) }))
@@ -75,5 +76,119 @@ describe('LayoutSidebar: server update', () => {
     expect(wrapper.find('.layout-sidebar__connection-dot--restarting').exists()).toBe(true)
     expect(wrapper.get('.layout-sidebar__connection').attributes('title')).toBe('The server is restarting')
     expect(wrapper.get('.layout-sidebar__connection-label').text()).toBe('Reconnecting')
+  })
+})
+
+const projects = [
+  { key: 'default', name: 'Default', is_default: true },
+  { key: 'shop', name: 'shop-api', is_default: false },
+  { key: 'billing', name: 'billing', is_default: false },
+]
+
+const narrowScreen = (narrow: boolean) =>
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: narrow && query.includes('max-width'),
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }))
+
+const press = (el: Element, key: string) =>
+  el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+
+describe('LayoutSidebar: menu and project switcher', () => {
+  beforeEach(async () => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    narrowScreen(false)
+    setActivePinia(createPinia())
+    await router.push('/')
+  })
+
+  afterEach(() => {
+    useServerUpdateStore().stop()
+    vi.unstubAllGlobals()
+    document.body.innerHTML = ''
+  })
+
+  const withProjects = () => {
+    const store = useEventsStore()
+    store.setAvailableProjects(projects)
+    store.setActiveProjectKey('shop')
+  }
+
+  it('keeps «All events» in the menu when there are several projects', () => {
+    withProjects()
+    const wrapper = render()
+
+    expect(wrapper.find('a[aria-label="All events"]').exists()).toBe(true)
+  })
+
+  it('names the current project on the switcher', () => {
+    withProjects()
+    localStorage.setItem(LocalStorageKeys.SidebarCollapsed, 'false')
+    const wrapper = render()
+    const button = wrapper.get('[data-test="project-switcher"]')
+
+    expect(button.text()).toContain('shop-api')
+    expect(button.attributes('aria-label')).toBe('Project: shop-api. Switch project')
+  })
+
+  it('opens the project list on the current project, moves with arrows, closes with Esc', async () => {
+    withProjects()
+    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const button = wrapper.get('[data-test="project-switcher"]')
+
+    await button.trigger('click')
+    const menu = wrapper.get('[role="menu"][aria-label="Project list"]')
+    expect(document.activeElement?.textContent).toContain('shop-api')
+
+    press(document.activeElement!, 'ArrowDown')
+    expect(document.activeElement?.textContent).toContain('billing')
+
+    press(menu.element, 'Escape')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[aria-label="Project list"]').exists()).toBe(false)
+    expect(document.activeElement).toBe(button.element)
+    wrapper.unmount()
+  })
+
+  it.each([
+    ['/settings', 'Settings'],
+    ['/favorites', 'Favorites'],
+    ['/mock-server', 'Mock server'],
+    ['/', 'Events'],
+  ])('marks the current page (%s) in the menu', async (path, title) => {
+    await router.push(path)
+    const wrapper = render()
+
+    expect(wrapper.get(`a[title="${title}"]`).classes()).toContain('layout-sidebar__link--active')
+  })
+
+  it('below 1280 px the expand button opens the menu over the page, and Esc closes it', async () => {
+    narrowScreen(true)
+    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const aside = wrapper.get('aside')
+    expect(aside.classes()).toContain('layout-sidebar--collapsed')
+
+    await wrapper.get('button[aria-label="Expand sidebar"]').trigger('click')
+    expect(aside.classes()).toContain('layout-sidebar--overlay')
+    expect(aside.classes()).not.toContain('layout-sidebar--collapsed')
+    // Opening it does not change the remembered desktop choice.
+    expect(localStorage.getItem(LocalStorageKeys.SidebarCollapsed)).toBeNull()
+
+    press(aside.element, 'Escape')
+    await wrapper.vm.$nextTick()
+    expect(aside.classes()).not.toContain('layout-sidebar--overlay')
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Expand sidebar')
+    wrapper.unmount()
+  })
+
+  it('closes the overlay menu when a page is picked', async () => {
+    narrowScreen(true)
+    const wrapper = render()
+    await wrapper.get('button[aria-label="Expand sidebar"]').trigger('click')
+
+    await router.push('/settings')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('aside').classes()).not.toContain('layout-sidebar--overlay')
   })
 })
