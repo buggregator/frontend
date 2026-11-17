@@ -1,6 +1,7 @@
 import type {ServerEvent, NormalizedEvent, EventId} from '@/shared/types';
 import type {StatBoardCost} from "../../types";
 import type {ProfileFlameChart, Profiler, ProfilerCallGraph, ProfilerTopFunctions, ProfilerSummary, ProfilerComparison} from "../../types";
+import { fitFlameChart } from "../flame-chart";
 import { calcStatItems } from "./calc-stat-items";
 import { normalizeProfilerEvent } from "./normalize-profile-event";
 import { useProfilerRequests } from "./use-profiler-requests";
@@ -22,7 +23,7 @@ export const useProfiler: TUseProfiler = () => {
     normalizeProfilerEvent,
     getTopFunctions,
     getCallGraph,
-    getFlameChart,
+    getFlameChart: (id, params) => getFlameChart(id, params).then(fitFlameChart),
     getSummary,
     compareProfiles,
     calcStatItems,
