@@ -64,5 +64,7 @@ describe('formatAttrValue', () => {
     expect(formatAttrValue(null)).toBe('—')
     expect(formatAttrValue({ a: 1 })).toBe('{"a":1}')
     expect(formatAttrValue(91)).toBe('91')
+    expect(formatAttrValue({ type: 'integer', value: 502 })).toBe('502')
+    expect(formatAttrValue({ type: 'string', value: 'shop-web', unit: 'x' })).toBe('{"type":"string","value":"shop-web","unit":"x"}')
   })
 })

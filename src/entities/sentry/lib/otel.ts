@@ -78,7 +78,11 @@ export const servicesChain = (services: string[] | undefined, max = 3): string =
   return [...list.slice(0, max - 1), '…', list[list.length - 1]].join(' → ')
 }
 
+// Sentry SDK logs send typed attributes ({type, value}): show the value.
 export const formatAttrValue = (val: unknown): string => {
+  if (isRecord(val) && 'value' in val && 'type' in val && Object.keys(val).length === 2) {
+    return formatAttrValue(val.value)
+  }
   if (val === null || val === undefined) return '—'
   if (typeof val === 'object') return JSON.stringify(val)
   return String(val)
