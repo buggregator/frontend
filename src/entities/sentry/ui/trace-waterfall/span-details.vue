@@ -34,6 +34,9 @@ const resourceEntries = computed(() => Object.entries(parts.value.resource))
 const RESOURCE_PREVIEW = 4
 const ATTR_PREVIEW = 8
 
+const str = (v: unknown) => (v === null || v === undefined ? '' : String(v))
+const formatOffset = (ms: number) => (ms < 0 ? `\u2212${Math.abs(ms)} ms` : `+${ms} ms`)
+
 const spanRows = computed(() =>
   [
     ['trace_id', props.traceId ?? ''],
@@ -41,8 +44,12 @@ const spanRows = computed(() =>
     ['parent_span_id', props.span.parent_span_id ?? ''],
     ['kind', parts.value.kind ?? ''],
     ['status', props.span.status ?? ''],
+    // OTel status lives here, not among the attributes (reviewer, #359).
+    ['status_code', str(parts.value.status.code)],
+    ['status_description', str(parts.value.status.description)],
     ['peer_address', props.span.peer_address ?? ''],
-    ['start', `+${props.span.start_offset_ms} ms`],
+    // Skewed host clocks can put a span before the root: a real minus sign.
+    ['start', formatOffset(props.span.start_offset_ms)],
     ['duration', `${props.span.duration_ms} ms`],
     ['scope', parts.value.scope ? [parts.value.scope.name, parts.value.scope.version].filter(Boolean).join(' ') : '']
   ].filter(([, v]) => v !== '')
