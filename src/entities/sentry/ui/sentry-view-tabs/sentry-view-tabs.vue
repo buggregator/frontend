@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue'
 import { VIEW_ICONS, type ViewIcon } from '../../lib/view-icons'
+import { tabIdOf } from './tab-id'
 
 // A row of view tabs under the header (#6543 variant B): Traces (List /
 // Service map), Exceptions (Timeline / Grouped) and the trace page (Waterfall
@@ -9,8 +10,9 @@ import { VIEW_ICONS, type ViewIcon } from '../../lib/view-icons'
 
 export type SentryViewTab = { id: string; label: string; icon?: ViewIcon; count?: number | null }
 
-type Props = { tabs: SentryViewTab[]; current: string; label: string }
-
+// panelId: the element showing the current tab's content (role="tabpanel");
+// its aria-labelledby is `tabIdOf(panelId, current)`.
+type Props = { tabs: SentryViewTab[]; current: string; label: string; panelId?: string }
 const props = defineProps<Props>()
 const emit = defineEmits<{ select: [id: string] }>()
 
@@ -46,6 +48,7 @@ const onKey = (e: KeyboardEvent, i: number) => {
     >
       <button
         v-for="(tab, i) in tabs"
+        :id="panelId ? tabIdOf(panelId, tab.id) : undefined"
         :key="tab.id"
         ref="buttons"
         type="button"
@@ -53,6 +56,7 @@ const onKey = (e: KeyboardEvent, i: number) => {
         class="sentry-view-tabs__tab"
         :class="{ 'sentry-view-tabs__tab--on': tab.id === current }"
         :aria-selected="tab.id === current"
+        :aria-controls="panelId"
         :tabindex="tab.id === current ? 0 : -1"
         :data-test="`view-tab-${tab.id}`"
         @click="emit('select', tab.id)"

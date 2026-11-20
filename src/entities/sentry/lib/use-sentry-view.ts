@@ -35,6 +35,9 @@ export const useSentryView = (tab: SentryViewTabName) => {
       if (allowed(view)) state[key] = view
       // «Traces» from a map service opens the list filtered by it.
       else if (tab === 'traces' && service) state[key] = 'list'
+      // No view in the URL: write the current one in, so Back from another
+      // view comes back to it (#6549) instead of keeping the newer one.
+      if (!allowed(view)) router.replace({ query: { ...route.query, view: state[key] } })
     },
     { immediate: true }
   )
@@ -77,7 +80,9 @@ export const useTraceView = () => {
     () => route.query.view,
     (v) => {
       if (isTraceView(v)) view.value = v
-    }
+      else router.replace({ query: { ...route.query, view: view.value } })
+    },
+    { immediate: true }
   )
 
   const select = (id: string) => {

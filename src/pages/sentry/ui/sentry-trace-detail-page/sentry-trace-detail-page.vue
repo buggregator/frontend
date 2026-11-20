@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   SOURCE_LABEL,
   SentryViewTabs,
+  tabIdOf,
   serviceColors,
   spansWithRoot,
   useSentryTraces,
@@ -136,10 +137,14 @@ onMounted(async () => {
         :tabs="viewTabs"
         :current="activeTab"
         label="Trace view"
+        panel-id="trace-view-panel"
         @select="selectView"
       />
 
       <div
+        id="trace-view-panel"
+        role="tabpanel"
+        :aria-labelledby="tabIdOf('trace-view-panel', activeTab)"
         class="trace-detail__content"
         :class="{ 'trace-detail__content--graph': isGraphTab }"
       >

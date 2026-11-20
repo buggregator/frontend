@@ -125,6 +125,16 @@ describe('ServiceMap (#6533 B, V1 from #6540)', () => {
     expect(w.find('[data-test="svc-drawer"]').exists()).toBe(false)
   })
 
+  it('#6549: closing the panel puts focus back on the service that opened it', async () => {
+    const w = await render()
+    const node = w.get('[data-test="svc-node-checkout-api"]')
+    ;(node.element as HTMLElement).focus()
+    await node.trigger('click')
+    await w.get('[aria-label="Close the panel"]').trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(node.element)
+  })
+
   it('a line click lists its traces, and loads the rest on demand', async () => {
     getServiceMapEdge.mockResolvedValue({ total: 45, traces: [{ trace_id: 'more'.padEnd(32, '0'), start_ts: '2026-11-20T18:06:00Z', duration_ms: 10, is_error: false }] })
     const w = await render()

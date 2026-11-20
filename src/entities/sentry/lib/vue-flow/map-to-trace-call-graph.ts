@@ -64,36 +64,73 @@ const hostOf = (address: string): string => {
 }
 
 export const mapToTraceCallGraph = (
-  spans: SentrySpan[]
+  input: SentrySpan[]
 ): { nodes: Node[]; edges: Edge[]; clusters: ServiceCluster[] } => {
-  if (!spans.length) return { nodes: [], edges: [], clusters: [] }
+  if (!input.length) return { nodes: [], edges: [], clusters: [] }
+  // A duplicate span_id would give two nodes one id: the first one stays.
+  const seenIds = new Set<string>()
+  const spans = input.filter((s) => !seenIds.has(s.span_id) && !!seenIds.add(s.span_id))
 
   const colors = serviceColors(spans)
   const self = selfTimes(spans)
   const roots = buildSpanTree(spans)
-
   // 1–3: services in depth-first order, a row and a sub-column per span.
   const services: string[] = []
   const rowOf = new Map<string, number>()
   const subOf = new Map<string, number>()
   const used = new Map<string, number>() // `${service}:${row}` → next sub-column
-  const externals: { id: string; caller: SentrySpan; host: string }[] = []
-
-  const place = (n: SpanTreeNode, row: number) => {
-    const service = serviceOf(n.span)
-    if (!services.includes(service)) services.push(service)
+  // An external host takes its own slot one row under its caller (no overlap with a sibling's child).
+  const externals: { id: string; caller: SentrySpan; host: string; service: string; row: number; sub: number }[] = []
+  const take = (service: string, row: number) => {
     const key = `${service}:${row}`
     const sub = used.get(key) ?? 0
     used.set(key, sub + 1)
-    rowOf.set(n.span.span_id, row)
-    subOf.set(n.span.span_id, sub)
-    for (const c of n.children) place(c, serviceOf(c.span) === service ? row + 1 : row)
-    if (isExternalCall(n)) externals.push({ id: `ext:${n.span.span_id}`, caller: n.span, host: hostOf(n.span.peer_address!) })
+    return sub
   }
+
+  const place = (n: SpanTreeNode, row: number) => {
+    if (rowOf.has(n.span.span_id)) return // a cycle: placed already
+    const service = serviceOf(n.span)
+    if (!services.includes(service)) services.push(service)
+    rowOf.set(n.span.span_id, row)
+    subOf.set(n.span.span_id, take(service, row))
+    for (const c of n.children) place(c, serviceOf(c.span) === service ? row + 1 : row)
+    if (isExternalCall(n)) {
+      externals.push({
+        id: `ext:${n.span.span_id}`,
+        caller: n.span,
+        host: hostOf(n.span.peer_address!),
+        service,
+        row: row + 1,
+        sub: take(service, row + 1)
+      })
+    }
+  }
+  const maxRow = () => Math.max(0, ...rowOf.values(), ...externals.map((e) => e.row))
   let nextRow = 0
   for (const r of roots) {
     place(r, nextRow)
-    nextRow = Math.max(...rowOf.values()) + 1
+    nextRow = maxRow() + 1
+  }
+  // Spans no root reaches (a parent cycle): each unplaced one starts a tree of its own.
+  const childrenOf = new Map<string, SentrySpan[]>()
+  for (const sp of spans) {
+    if (sp.parent_span_id && sp.parent_span_id !== sp.span_id) {
+      const list = childrenOf.get(sp.parent_span_id)
+      if (list) list.push(sp)
+      else childrenOf.set(sp.parent_span_id, [sp])
+    }
+  }
+  for (const sp of [...spans].sort((a, b) => a.start_offset_ms - b.start_offset_ms)) {
+    if (rowOf.has(sp.span_id)) continue
+    const n: SpanTreeNode = { span: sp, children: [] }
+    const visit = (id: string, seen: Set<string>): SpanTreeNode[] =>
+      (childrenOf.get(id) ?? [])
+        .filter((c) => !seen.has(c.span_id))
+        .map((c) => ({ span: c, children: visit(c.span_id, new Set([...seen, c.span_id])) }))
+    n.children = visit(sp.span_id, new Set([sp.span_id]))
+    place(n, nextRow)
+    nextRow = maxRow() + 1
   }
 
   // 4: cluster boxes, left to right.
@@ -102,8 +139,9 @@ export const mapToTraceCallGraph = (
   let x = 0
   for (const service of services) {
     const ids = spans.filter((s) => serviceOf(s) === service).map((s) => s.span_id)
-    const rows = ids.map((id) => rowOf.get(id)!)
-    const subs = Math.max(...ids.map((id) => subOf.get(id)!)) + 1
+    const ext = externals.filter((e) => e.service === service)
+    const rows = [...ids.map((id) => rowOf.get(id)!), ...ext.map((e) => e.row)]
+    const subs = Math.max(...ids.map((id) => subOf.get(id)!), ...ext.map((e) => e.sub)) + 1
     const width = PAD * 2 + subs * NODE_W + (subs - 1) * SUB_GAP
     const minRow = Math.min(...rows)
     const maxRow = Math.max(...rows)
@@ -169,11 +207,10 @@ export const mapToTraceCallGraph = (
   }
 
   for (const e of externals) {
-    const p = posOf(e.caller)
     nodes.push({
       id: e.id,
       type: 'traceExternal',
-      position: { x: p.x, y: p.y + ROW + PAD },
+      position: { x: clusterX.get(e.service)! + PAD + e.sub * (NODE_W + SUB_GAP), y: e.row * ROW + PAD_TOP },
       width: NODE_W,
       height: NODE_H,
       ariaLabel: `${e.host}, external host, no SDK`,
@@ -199,32 +236,45 @@ export const mapToTraceCallGraph = (
 }
 
 // The path through a node (#6531 highlight): its callers up to the root and
-// everything it calls.
+// everything it calls. The edge index is built once per edge list, not per hover.
+type EdgeIndex = { into: Map<string, Edge[]>; out: Map<string, Edge[]> }
+const indexes = new WeakMap<Edge[], EdgeIndex>()
+const indexOf = (edges: Edge[]): EdgeIndex => {
+  let idx = indexes.get(edges)
+  if (!idx) {
+    idx = { into: new Map(), out: new Map() }
+    for (const e of edges) {
+      const into = idx.into.get(e.target)
+      if (into) into.push(e)
+      else idx.into.set(e.target, [e])
+      const out = idx.out.get(e.source)
+      if (out) out.push(e)
+      else idx.out.set(e.source, [e])
+    }
+    indexes.set(edges, idx)
+  }
+  return idx
+}
+
 export const pathThrough = (nodeId: string, edges: Edge[]): { nodes: Set<string>; edges: Set<string> } => {
+  const { into, out } = indexOf(edges)
   const nodes = new Set([nodeId])
   const onPath = new Set<string>()
-  const up = (id: string) => {
-    for (const e of edges) {
-      if (e.target !== id) continue
-      onPath.add(e.id)
-      if (!nodes.has(e.source)) {
-        nodes.add(e.source)
-        up(e.source)
-      }
-    }
-  }
-  const down = (id: string) => {
-    for (const e of edges) {
-      if (e.source === id) {
+  const walk = (start: string, next: Map<string, Edge[]>, end: (e: Edge) => string) => {
+    const stack = [start]
+    while (stack.length) {
+      const id = stack.pop()!
+      for (const e of next.get(id) ?? []) {
         onPath.add(e.id)
-        if (!nodes.has(e.target)) {
-          nodes.add(e.target)
-          down(e.target)
+        const other = end(e)
+        if (!nodes.has(other)) {
+          nodes.add(other)
+          stack.push(other)
         }
       }
     }
   }
-  up(nodeId)
-  down(nodeId)
+  walk(nodeId, into, (e) => e.source)
+  walk(nodeId, out, (e) => e.target)
   return { nodes, edges: onPath }
 }

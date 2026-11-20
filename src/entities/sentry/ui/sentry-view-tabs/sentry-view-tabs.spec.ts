@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import SentryViewTabs from './sentry-view-tabs.vue'
+import { tabIdOf } from './tab-id'
 
 const tabs = [
   { id: 'list', label: 'List', icon: 'list' as const },
@@ -24,6 +25,13 @@ describe('SentryViewTabs (#6543 B)', () => {
     expect(all.map((t) => t.attributes('tabindex'))).toEqual(['-1', '0', '-1'])
     expect(all[2].text()).toContain('2')
     expect(all[0].find('svg').exists()).toBe(true)
+  })
+
+  it('#6549: with a panel id, every tab controls that panel and has an id for its label', () => {
+    const w = mount(SentryViewTabs, { props: { tabs, current: 'map', label: 'Trace view', panelId: 'p1' } })
+    const all = w.findAll('[role="tab"]')
+    expect(all.map((t) => t.attributes('aria-controls'))).toEqual(['p1', 'p1', 'p1'])
+    expect(all[1].attributes('id')).toBe(tabIdOf('p1', 'map'))
   })
 
   it('arrows move focus without opening; a click opens', async () => {

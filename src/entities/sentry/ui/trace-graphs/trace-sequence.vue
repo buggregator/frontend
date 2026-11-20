@@ -45,8 +45,16 @@ const diagramWidth = computed(() => {
   for (const c of sequence.value.calls) lanes.add(c.from).add(c.to)
   return Math.max(MIN_WIDTH, SIDE * 2 + (lanes.size - 1) * LANE)
 })
+// A huge trace stays drawable: the first MAX_CALLS calls, with a line saying so.
+const MAX_CALLS = 300
+const shown = computed(() =>
+  sequence.value && sequence.value.calls.length > MAX_CALLS
+    ? { ...sequence.value, calls: sequence.value.calls.slice(0, MAX_CALLS) }
+    : sequence.value
+)
+const hiddenCalls = computed(() => (sequence.value?.calls.length ?? 0) - (shown.value?.calls.length ?? 0))
 const layout = computed(() =>
-  sequence.value ? layoutSequence(sequence.value, { width: diagramWidth.value, side: SIDE }) : null
+  shown.value ? layoutSequence(shown.value, { width: diagramWidth.value, side: SIDE }) : null
 )
 const box = ref<HTMLElement>()
 const contentSize = computed(() =>
@@ -67,6 +75,8 @@ const fit = (text: string, px: number) => {
 }
 // The line stops short of the lifeline so the arrowhead tip touches it.
 const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
+// A call inside one service (from === to): a loop out to the right and back.
+const selfLoop = (x: number, y: number) => `M ${x} ${y - 6} h 36 v 12 h -29`
 </script>
 
 <template>
@@ -78,6 +88,11 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
     <header class="trace-seq__head">
       <span class="trace-seq__title">Sequence of calls</span>
       <span class="trace-seq__muted">calls in time order · a solid line is a call, a dashed one its reply</span>
+      <span
+        v-if="hiddenCalls > 0"
+        class="trace-seq__muted"
+        data-test="seq-capped"
+      >· showing the first {{ MAX_CALLS }} of {{ sequence?.calls.length }} calls</span>
     </header>
 
     <div
@@ -265,7 +280,15 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
             v-for="(a, i) in layout.arrows"
             :key="`arrow-${i}`"
           >
+            <path
+              v-if="a.fromX === a.toX"
+              :d="selfLoop(a.fromX, a.y)"
+              fill="none"
+              :class="['trace-seq__arrow', `trace-seq__arrow--${a.kind}`, { 'trace-seq__arrow--err': a.isError }]"
+              :marker-end="`url(#${a.kind === 'call' ? (a.isError ? mk.err : mk.call) : a.isError ? mk.replyErr : mk.reply})`"
+            />
             <line
+              v-else
               :x1="a.fromX"
               :y1="a.y"
               :x2="a.kind === 'call' ? tip(a.fromX, a.toX) : a.toX"
@@ -274,10 +297,10 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
               :marker-end="`url(#${a.kind === 'call' ? (a.isError ? mk.err : mk.call) : a.isError ? mk.replyErr : mk.reply})`"
             />
             <text
-              :x="Math.min(a.fromX, a.toX) + 12"
+              :x="Math.min(a.fromX, a.toX) + (a.fromX === a.toX ? 46 : 12)"
               :y="a.y - 7"
               :class="['trace-seq__label', { 'trace-seq__label--err': a.isError, 'trace-seq__label--late': a.late }]"
-            >{{ fit(a.label, Math.abs(a.toX - a.fromX) - 24) }}<title>{{ a.label }}</title></text>
+            >{{ fit(a.label, a.fromX === a.toX ? LANE - 60 : Math.abs(a.toX - a.fromX) - 24) }}<title>{{ a.label }}</title></text>
           </g>
 
           <text

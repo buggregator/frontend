@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, useId } from 'vue'
+import { computed, nextTick, ref, useId, watch } from 'vue'
 import type { MapNode } from '../../lib/service-map/service-map-model'
 
 // «Service: All services ▾» (#6540, like Zipkin's picker): picking a service
@@ -28,6 +28,10 @@ const options = computed<Option[]>(() => {
 })
 const current = computed(() => props.nodes.find((n) => n.id === props.selected)?.label ?? 'All services')
 const optionId = (i: number) => `${uid}-opt-${i}`
+// The active option stays in view while the arrows move it (#6549).
+watch(active, (i) =>
+  nextTick(() => document.getElementById(optionId(i))?.scrollIntoView?.({ block: 'nearest' }))
+)
 
 const show = async () => {
   open.value = true
