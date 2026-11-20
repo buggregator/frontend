@@ -310,6 +310,8 @@ const hasDetails = computed(
 .log-row__attr-key {
   @apply w-1/4 font-medium text-gray-500 dark:text-gray-400 flex-shrink-0;
   @apply border-r border-gray-200 dark:border-gray-700 pr-3;
+  // Long dotted keys wrap inside their column instead of running into the value.
+  overflow-wrap: anywhere;
 }
 
 .log-row__attr-val {
