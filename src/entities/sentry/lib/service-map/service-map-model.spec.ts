@@ -117,6 +117,12 @@ describe('service map model', () => {
     expect(m.nodes.find((n) => n.id === 'payments-worker')!.hot).toBe(true)
   })
 
+  it('#6549: a service\'s rate counts the same calls as «in N» beside it', () => {
+    const m = buildServiceMap({ ...fanOut, nodes: [...fanOut.nodes.slice(0, 5), { ...node('postgres', 0, 0, 'external'), rpm: 0 }] })
+    // 1500 calls in over 15 minutes, though the server counts 0 transactions there.
+    expect(m.nodes.find((n) => n.id === 'postgres')).toMatchObject({ inCount: 1500, rpm: 100 })
+  })
+
   it('marks the three hot spots', () => {
     const m = buildServiceMap(fanOut)
     const of = (k: string) => m.hotSpots.find((h) => h.kind === k)?.edgeId

@@ -211,7 +211,8 @@ export const buildServiceMap = (data: SentryServiceMap): ServiceMapModel => {
       h: NODE_H,
       inCount: count,
       outCount: outCount.get(n.id) ?? 0,
-      rpm: n.rpm ?? count / (seconds / 60),
+      // Same count as «in N» beside it (#6549): the server's rpm counts transactions only.
+      rpm: count / (seconds / 60),
       errorCount: n.error_count,
       errorRate,
       p95: n.p95_duration_ms ?? null,

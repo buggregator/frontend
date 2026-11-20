@@ -46,6 +46,20 @@ describe('useSentryView (#6543)', () => {
     expect(v.current.value).toBe('map')
   })
 
+  it('#6549: without ?view the current view goes into the URL, so Back from the map returns to it', async () => {
+    useSentryFilters().tracesView = 'list'
+    const router = makeRouter()
+    const v = await withRouter(router, '/sentry/traces', () => useSentryView('traces'))
+    await new Promise((r) => setTimeout(r))
+    expect(router.currentRoute.value.query.view).toBe('list')
+    v.select('map')
+    await new Promise((r) => setTimeout(r))
+    router.back()
+    await new Promise((r) => setTimeout(r, 10))
+    expect(router.currentRoute.value.query.view).toBe('list')
+    expect(v.current.value).toBe('list')
+  })
+
   it('?service= (the map «Traces» button) opens the list', async () => {
     useSentryFilters().tracesView = 'map'
     const v = await withRouter(makeRouter(), '/sentry/traces?service=checkout-api', () => useSentryView('traces'))
