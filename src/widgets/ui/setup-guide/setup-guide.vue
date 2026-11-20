@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, useId } from 'vue'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { fillSegments, usedPorts } from './fill'
+import { fillSegments, fillText, usedPorts } from './fill'
 import SetupCodeBlock from './setup-code-block.vue'
 import SetupExternalIcon from './setup-external-icon.vue'
 import content from './setup-help.json'
@@ -67,9 +67,12 @@ const current = computed(
   () => section.value?.stacks.find((s) => s.id === stack.value) ?? section.value?.stacks[0]
 )
 
+// A stack may bring its own steps (OpenTelemetry has no DSN to set).
+const steps = computed(() => current.value?.steps ?? section.value?.steps ?? [])
+
 const portsUsed = computed(() => {
   if (!current.value || !section.value) return []
-  return usedPorts([current.value.code, ...section.value.steps].join('\n'))
+  return usedPorts([current.value.code, ...steps.value].join('\n'))
 })
 // No ports from the server at all (an old server): every one is a guess.
 const portsUnknown = computed(() =>
@@ -258,7 +261,7 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
 
     <ol class="setup-guide__steps">
       <li
-        v-for="(step, i) in section.steps"
+        v-for="(step, i) in steps"
         :key="i"
       >
         <template
@@ -295,7 +298,7 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
         v-if="current.hint"
         class="setup-guide__hint setup-guide__stack-hint"
       >
-        {{ current.hint }}
+        {{ fillText(current.hint, values) }}
       </p>
       <p class="setup-guide__legend">
         Underlined values come from this server and project. Copy takes the text as shown.

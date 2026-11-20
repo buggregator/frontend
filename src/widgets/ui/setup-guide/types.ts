@@ -7,6 +7,8 @@ export type SetupStack = {
   code: string
   // Shown under the code; `note` in the file is internal and never shown.
   hint: string | null
+  // Replaces the section's steps for this stack (OpenTelemetry tabs of Sentry, #6523).
+  steps?: string[]
 }
 
 export type SetupSection = {

@@ -74,6 +74,34 @@ describe('SetupGuide', () => {
     )
   })
 
+  it('Sentry › OpenTelemetry SDK: its own steps, the project filled into the env and the hint', async () => {
+    useSettingsStore().ports = { http: 8000 }
+    useSetupStack().setStack('otel-sdk')
+    const wrapper = render('sentry')
+    await flushPromises()
+
+    const code = wrapper.get('[data-test="setup-code"]').text()
+    expect(code).toContain('OTEL_EXPORTER_OTLP_HEADERS=X-Buggregator-Project=iris-app')
+    expect(code).not.toContain('{http_port}')
+    const steps = wrapper.get('.setup-guide__steps').text()
+    expect(steps).toContain('/v1/traces')
+    expect(steps).not.toContain('Install the Sentry SDK')
+    expect(wrapper.get('.setup-guide__stack-hint').text()).toContain('/api/iris-app/integration/otlp/v1/traces')
+  })
+
+  it('Sentry › OTel Collector: an otlphttp exporter with the header; SDK tabs keep the section steps', async () => {
+    useSetupStack().setStack('otel-collector')
+    const wrapper = render('sentry')
+    await flushPromises()
+
+    expect(wrapper.get('[data-test="setup-code"]').text()).toContain('otlphttp/buggregator')
+    expect(wrapper.get('[data-test="setup-code"]').text()).toContain('X-Buggregator-Project: iris-app')
+
+    useSetupStack().setStack('laravel')
+    await flushPromises()
+    expect(wrapper.get('.setup-guide__steps').text()).toContain('Install the Sentry SDK')
+  })
+
   const atPage = (href: string) => {
     const url = new URL(href)
     vi.stubGlobal('location', { ...window.location, href, protocol: url.protocol, hostname: url.hostname, port: url.port })
