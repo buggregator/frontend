@@ -91,6 +91,19 @@ describe('layoutSequence (#6533 C)', () => {
     expect(l.notes[0].text).toBe('payments-worker kept working +600 ms after checkout-api gave up')
   })
 
+  it('reviewer #361: the note on the rightmost lane reads leftwards', () => {
+    const last = layoutSequence({ ...seq, services: ['shop-web', 'payments-worker', 'checkout-api'] }, { width: 900 })
+    expect(last.notes[0]).toMatchObject({ anchor: 'start' })
+    expect(layoutSequence({ ...seq, calls: [seq.calls[1]] }, { width: 900 }).notes[0].anchor).toBe('end')
+  })
+
+  it('reviewer #361: a short overrun is no note; a successful caller «stopped waiting»', () => {
+    const short = layoutSequence({ ...seq, calls: [{ ...seq.calls[1], late_ms: 5 }] }, { width: 900 })
+    expect(short.notes).toEqual([])
+    const ok = layoutSequence({ ...seq, calls: [{ ...seq.calls[1], is_error: false }] }, { width: 900 })
+    expect(ok.notes[0].text).toBe('payments-worker kept working +600 ms after checkout-api stopped waiting')
+  })
+
   it('no late reply or note when the callee finished in time (late_ms ≤ 0 or null)', () => {
     const inTime = layoutSequence(
       { ...seq, calls: [{ ...seq.calls[1], late_ms: -1 }, { ...seq.calls[2], late_ms: null }] },

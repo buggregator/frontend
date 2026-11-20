@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
+import { useEventsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
 import type { SentryServiceMap } from '../../types'
 import ServiceMap from './service-map.vue'
@@ -134,6 +135,63 @@ describe('ServiceMap (#6533 B, V1 from #6540)', () => {
     await drawer.get('.svc-drawer__more').trigger('click')
     await flushPromises()
     expect(getServiceMapEdge).toHaveBeenCalledWith(expect.objectContaining({ source: 'checkout-api', target: 'payments-worker', offset: '20' }))
+    expect(w.findAll('.svc-drawer__trace')).toHaveLength(21)
+  })
+
+  it('reviewer #361: an older map reply that lands last does not replace the newer one', async () => {
+    const w = await render()
+    const deferred = () => {
+      let resolve!: (v: SentryServiceMap) => void
+      return { promise: new Promise<SentryServiceMap>((r) => (resolve = r)), resolve: (v: SentryServiceMap) => resolve(v) }
+    }
+    const slow = deferred()
+    const fast = deferred()
+    getServiceMap.mockReturnValueOnce(slow.promise).mockReturnValueOnce(fast.promise)
+    const store = useEventsStore()
+    store.setPeriod('7d')
+    await flushPromises()
+    store.setPeriod('15m')
+    await flushPromises()
+
+    const only = { ...stand, nodes: [node('fresh-api', 5)], edges: [] }
+    fast.resolve(only)
+    await flushPromises()
+    slow.resolve(stand)
+    await flushPromises()
+    expect(w.find('[data-test="svc-node-fresh-api"]').exists()).toBe(true)
+    expect(w.find('[data-test="svc-node-shop-web"]').exists()).toBe(false)
+  })
+
+  it('reviewer #361: «Show more» for one line never lands in another, and survives a map refresh', async () => {
+    let resolveMore!: (v: unknown) => void
+    getServiceMapEdge.mockReturnValueOnce(new Promise((r) => (resolveMore = r)))
+    const w = await render()
+    await w.get('[data-test="svc-edge-checkout-api-payments-worker"]').trigger('click')
+    await w.get('.svc-drawer__more').trigger('click')
+    // Pick another line before the reply.
+    await w.get('[data-test="svc-edge-shop-web-checkout-api"]').trigger('click')
+    resolveMore({ total: 45, traces: [{ trace_id: 'late'.padEnd(32, '0'), start_ts: '2026-11-20T18:06:00Z', duration_ms: 10, is_error: false }] })
+    await flushPromises()
+    expect(w.findAll('.svc-drawer__trace')).toHaveLength(20)
+    expect(w.text()).not.toContain('late00000000')
+
+    // Back on the long line: one page more, a duplicate skipped, then a refresh keeps it.
+    getServiceMapEdge.mockResolvedValueOnce({
+      total: 46,
+      traces: [
+        { trace_id: 'tcheckout-api0'.padEnd(32, '0'), start_ts: '2026-11-20T18:05:00Z', duration_ms: 300, is_error: true },
+        { trace_id: 'more'.padEnd(32, '0'), start_ts: '2026-11-20T18:06:00Z', duration_ms: 10, is_error: false }
+      ]
+    })
+    await w.get('[data-test="svc-edge-checkout-api-payments-worker"]').trigger('click')
+    await w.get('.svc-drawer__more').trigger('click')
+    await flushPromises()
+    expect(w.findAll('.svc-drawer__trace')).toHaveLength(21)
+    expect(w.find('.svc-drawer__more').exists()).toBe(false)
+
+    getServiceMap.mockResolvedValueOnce(structuredClone(stand))
+    useEventsStore().setPeriod('1h')
+    await flushPromises()
     expect(w.findAll('.svc-drawer__trace')).toHaveLength(21)
   })
 

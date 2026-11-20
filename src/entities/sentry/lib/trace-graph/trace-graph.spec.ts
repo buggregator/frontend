@@ -7,7 +7,7 @@ import {
   timeByOperation,
   timeByService,
   toFlameNodes,
-  traceInsight
+  overrunText, traceInsight
 } from './trace-graph'
 
 const span = (
@@ -141,6 +141,20 @@ describe('traceInsight', () => {
 
   it('is null when no service outlives its caller', () => {
     expect(traceInsight(checkout.slice(0, 6))).toBeNull()
+  })
+
+  it('reviewer #361: a few ms past a successful caller is no insight (PHP ends after the response)', () => {
+    expect(
+      traceInsight([span('p', null, 'web', 'GET /x', 0, 300), span('c', 'p', 'api', 'GET /y', 10, 300)])
+    ).toBeNull()
+  })
+
+  it('reviewer #361: a long overrun of a caller that did not fail is «stopped waiting»', () => {
+    const i = traceInsight([span('p', null, 'web', 'GET /x', 0, 300), span('c', 'p', 'api', 'GET /y', 10, 500)])
+    expect(i).toMatchObject({ overrunMs: 210, callerFailed: false })
+    expect(overrunText(i!.service, i!.caller, '210 ms', i!.callerFailed)).toBe(
+      'api kept working 210 ms after web stopped waiting'
+    )
   })
 
   it('ignores overruns inside one service', () => {

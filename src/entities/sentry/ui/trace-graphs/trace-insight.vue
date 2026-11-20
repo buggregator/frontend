@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { traceInsight } from '../../lib/trace-graph/trace-graph'
+import { overrunText, traceInsight } from '../../lib/trace-graph/trace-graph'
 import type { SentrySpan } from '../../types'
 
 // One line the graphs show and the waterfall hides (#6533 A): a service that
@@ -22,7 +22,7 @@ const ms = (n: number) => `${Math.round(n)} ms`
     data-test="trace-insight"
   >
     <strong class="trace-insight__main">
-      {{ insight.service }} kept working {{ ms(insight.overrunMs) }} after {{ insight.caller }} gave up.
+      {{ overrunText(insight.service, insight.caller, ms(insight.overrunMs), insight.callerFailed) }}.
     </strong>
     <span class="trace-insight__detail">
       {{ insight.caller }} waited {{ ms(insight.callerWaitedMs) }}{{ insight.callerFailed ? ' and failed' : '' }};

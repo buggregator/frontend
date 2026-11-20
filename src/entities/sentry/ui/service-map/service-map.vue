@@ -36,15 +36,20 @@ const data = ref<SentryServiceMap | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
+// Only the latest request may write: a slow «7 days» reply must not replace
+// a newer «15 min» one, nor one project's map another's.
+let lastRequest = 0
 const load = async () => {
+  const id = ++lastRequest
   loading.value = true
   error.value = null
   try {
-    data.value = await getServiceMap()
+    const res = await getServiceMap()
+    if (id === lastRequest) data.value = res
   } catch (e) {
-    error.value = e instanceof Error ? e.message : String(e)
+    if (id === lastRequest) error.value = e instanceof Error ? e.message : String(e)
   } finally {
-    loading.value = false
+    if (id === lastRequest) loading.value = false
   }
 }
 onMounted(load)

@@ -1,4 +1,4 @@
-import { useDocumentVisibility } from '@vueuse/core'
+import { useDocumentVisibility, useMutationObserver } from '@vueuse/core'
 import { onBeforeUnmount, watch, type Ref } from 'vue'
 import type { Pt, ServiceMapModel } from '../../lib/service-map/service-map-model'
 import { createTraffic, placeOn } from '../../lib/service-map/traffic'
@@ -21,13 +21,36 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
   const visibility = useDocumentVisibility()
   let traffic: ReturnType<typeof createTraffic> | null = null
   let geometry = new Map<string, Geometry>()
+  let streamCount = 0
   let frame = 0
+  let syncFrame = 0
   let last = 0
+  let disposed = false
+  // Colours come from the theme tokens: read on a model or theme change, not per frame.
+  let colors: { dot: string; err: string; ring: string } | null = null
+  const readColors = (el: HTMLCanvasElement) => {
+    const css = getComputedStyle(el)
+    return {
+      dot: css.getPropertyValue('--tg-dot').trim() || '#fff',
+      err: css.getPropertyValue('--tg-edge-err').trim() || '#f87171',
+      ring: css.getPropertyValue('--tg-canvas').trim() || '#111827'
+    }
+  }
+  useMutationObserver(
+    () => document.documentElement,
+    () => {
+      colors = null
+      if (!frame) draw()
+    },
+    { attributes: true, attributeFilter: ['class'] }
+  )
 
   const rebuild = () => {
     const m = model.value
+    colors = null
     if (!m) {
       traffic = null
+      streamCount = 0
       geometry = new Map()
       return
     }
@@ -39,6 +62,7 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
       ...m.edges.map((e) => [e.id, { samples: e.samples, band: e.band }] as const),
       ...m.entries.map((e) => [e.id, { samples: e.samples, band: e.band }] as const)
     ])
+    streamCount = streams.length
     traffic = createTraffic(streams)
     traffic.fill()
   }
@@ -56,10 +80,8 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
     }
     const ctx = el.getContext('2d')
     if (!ctx) return
-    const css = getComputedStyle(el)
-    const dot = css.getPropertyValue('--tg-dot').trim() || '#fff'
-    const err = css.getPropertyValue('--tg-edge-err').trim() || '#f87171'
-    const ring = css.getPropertyValue('--tg-canvas').trim() || '#111827'
+    colors ??= readColors(el)
+    const { dot, err, ring } = colors
     const litSet = lit.value
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -89,7 +111,8 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
 
   const tick = (now: number) => {
     frame = 0
-    if (!traffic) return
+    // Nothing to move (no canvas, an empty map, unmounted): no idle 60 fps loop.
+    if (disposed || !traffic || !streamCount || !canvas.value) return
     traffic.step(last ? (now - last) / 1000 : 0)
     last = now
     draw()
@@ -98,13 +121,16 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
 
   const stop = () => {
     if (frame) cancelAnimationFrame(frame)
+    if (syncFrame) cancelAnimationFrame(syncFrame)
     frame = 0
+    syncFrame = 0
     last = 0
   }
 
   const sync = () => {
     stop()
-    if (running.value && visibility.value === 'visible') frame = requestAnimationFrame(tick)
+    if (disposed) return
+    if (running.value && streamCount && canvas.value && visibility.value === 'visible') frame = requestAnimationFrame(tick)
     else draw()
   }
 
@@ -113,7 +139,11 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
     () => {
       rebuild()
       // The canvas mounts with the map: draw on the next frame.
-      requestAnimationFrame(sync)
+      if (syncFrame) cancelAnimationFrame(syncFrame)
+      syncFrame = requestAnimationFrame(() => {
+        syncFrame = 0
+        sync()
+      })
     },
     { immediate: true }
   )
@@ -123,7 +153,10 @@ export const useTrafficCanvas = ({ canvas, model, lit, running }: Options) => {
   })
   watch(canvas, sync)
 
-  onBeforeUnmount(stop)
+  onBeforeUnmount(() => {
+    disposed = true
+    stop()
+  })
 
   return { redraw: draw }
 }

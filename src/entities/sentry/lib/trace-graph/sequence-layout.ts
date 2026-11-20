@@ -1,4 +1,5 @@
 import type { SentrySequence } from '../../types'
+import { isNotableOverrun, overrunText } from './trace-graph'
 
 // A trace's calls as a sequence diagram (#6533, trace page «Sequence» tab).
 
@@ -13,7 +14,7 @@ export type SequenceArrow = {
   late: boolean
 }
 export type SequenceActivation = { service: string; x: number; y1: number; y2: number; isError: boolean }
-export type SequenceNote = { x: number; y: number; text: string }
+export type SequenceNote = { x: number; y: number; text: string; anchor: 'start' | 'end' }
 export type SequenceLayout = {
   lifelines: SequenceLifeline[]
   arrows: SequenceArrow[]
@@ -38,6 +39,7 @@ export const layoutSequence = (seq: SentrySequence, box: SequenceBox): SequenceL
   const gap = services.length > 1 ? (box.width - side * 2) / (services.length - 1) : 0
   const lifelines = services.map((service, i) => ({ service, x: services.length > 1 ? side + i * gap : box.width / 2 }))
   const xOf = new Map(lifelines.map((l) => [l.service, l.x]))
+  const rightmost = Math.max(...lifelines.map((l) => l.x))
 
   const events: SeqEvent[] = []
   seq.calls.forEach((c, i) => {
@@ -100,11 +102,14 @@ export const layoutSequence = (seq: SentrySequence, box: SequenceBox): SequenceL
     const y1 = callRow.get(i)!
     const y2 = lastReplyRow.get(i) ?? y1 + row
     activations.push({ service: c.to, x: xOf.get(c.to)!, y1, y2, isError: !!c.callee?.is_error })
-    if ((c.late_ms ?? 0) > 0) {
+    if (c.late_ms && isNotableOverrun(c.late_ms, c.duration_ms ?? 0)) {
+      const x = xOf.get(c.to)!
       notes.push({
-        x: xOf.get(c.to)!,
+        x,
         y: y2 - row / 2,
-        text: `${c.to} kept working +${ms(c.late_ms)} after ${c.from} gave up`
+        // On the rightmost lane the note reads leftwards, inside the diagram.
+        anchor: x === rightmost ? 'end' : 'start',
+        text: overrunText(c.to, c.from, `+${ms(c.late_ms)}`, c.is_error)
       })
     }
   })

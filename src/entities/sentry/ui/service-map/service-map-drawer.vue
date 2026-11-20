@@ -33,16 +33,26 @@ const calls = computed(() => (node.value ? serviceCalls(props.model, node.value.
 // A line's traces: the first 20 come with the map, the rest on demand.
 const { getServiceMapEdge } = useSentryRequests()
 const traces = ref<SentryServiceMapTrace[]>([])
+const total = ref(0)
+const exhausted = ref(false)
 const loadingMore = ref(false)
 const moreError = ref<string | null>(null)
+const PAGE = 50
+// Keyed by the line's id: the map refreshes every few seconds with new edge
+// objects, and pages loaded with «Show more» must stay.
 watch(
-  edge,
-  (e) => {
+  () => edge.value?.id,
+  () => {
+    const e = edge.value
     traces.value = e ? [...e.traces] : []
+    total.value = e?.traceCount ?? 0
+    exhausted.value = false
+    loadingMore.value = false
     moreError.value = null
   },
   { immediate: true }
 )
+const hasMore = computed(() => !exhausted.value && traces.value.length < total.value)
 const loadMore = async () => {
   const e = edge.value
   if (!e) return
@@ -53,14 +63,20 @@ const loadMore = async () => {
       source: e.source,
       target: e.target,
       op_type: e.opType,
-      limit: '50',
+      limit: String(PAGE),
       offset: String(traces.value.length)
     })
-    traces.value = [...traces.value, ...res.traces]
+    // Another line was picked meanwhile: this reply is not for it.
+    if (edge.value?.id !== e.id) return
+    // New traces shift the offsets: skip the ones already listed.
+    const seen = new Set(traces.value.map((t) => t.trace_id))
+    traces.value = [...traces.value, ...res.traces.filter((t) => !seen.has(t.trace_id))]
+    total.value = res.total
+    if (res.traces.length < PAGE) exhausted.value = true
   } catch (err) {
-    moreError.value = err instanceof Error ? err.message : String(err)
+    if (edge.value?.id === e.id) moreError.value = err instanceof Error ? err.message : String(err)
   } finally {
-    loadingMore.value = false
+    if (edge.value?.id === e.id) loadingMore.value = false
   }
 }
 
@@ -271,13 +287,13 @@ const isErr = (rate: number) => rate >= ERROR_LINE
           Could not load more: {{ moreError }}
         </p>
         <button
-          v-if="traces.length < edge.traceCount"
+          v-if="hasMore"
           type="button"
           class="svc-drawer__more"
           :disabled="loadingMore"
           @click="loadMore"
         >
-          {{ loadingMore ? 'Loading…' : `Show more (${edge.traceCount - traces.length} left)` }}
+          {{ loadingMore ? 'Loading…' : `Show more (${total - traces.length} left)` }}
         </button>
       </section>
     </div>

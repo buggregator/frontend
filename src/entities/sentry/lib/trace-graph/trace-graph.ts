@@ -134,16 +134,25 @@ export const toFlameNodes = (spans: SentrySpan[], colors: Map<string, string>): 
   return buildSpanTree(spans).map(toNode)
 }
 
+// An overrun worth a line: a few ms past the caller is normal (PHP ends its
+// transaction after the response is sent), so at least 50 ms and 10 % of the wait.
+export const isNotableOverrun = (overrunMs: number, callerWaitedMs: number) =>
+  overrunMs >= Math.max(50, callerWaitedMs * 0.1)
+
+// «gave up» only when the caller failed; otherwise it simply stopped waiting.
+export const overrunText = (service: string, caller: string, overrun: string, callerFailed: boolean) =>
+  `${service} kept working ${overrun} after ${caller} ${callerFailed ? 'gave up' : 'stopped waiting'}`
+
 // The largest overrun of a span past the end of its caller in another service:
 // the callee kept working after the caller stopped waiting.
-export const traceInsight = (spans: SentrySpan[], minOverrunMs = 1): TraceInsight | null => {
+export const traceInsight = (spans: SentrySpan[]): TraceInsight | null => {
   const parents = parentMap(spans)
   let best: TraceInsight | null = null
   for (const s of spans) {
     const caller = parents.get(s.span_id)
     if (!caller || serviceOf(caller) === serviceOf(s)) continue
     const overrun = round(endOf(s) - endOf(caller))
-    if (overrun < minOverrunMs || (best && overrun <= best.overrunMs)) continue
+    if (!isNotableOverrun(overrun, caller.duration_ms) || (best && overrun <= best.overrunMs)) continue
     best = {
       service: serviceOf(s),
       caller: serviceOf(caller),

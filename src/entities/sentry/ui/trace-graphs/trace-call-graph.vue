@@ -131,7 +131,7 @@ watch(
       <span
         v-else
         class="trace-cg__hint"
-      >node = service · operation · hover or Tab to a node to light its path</span>
+      >node = span, grouped by service · hover or Tab to a node to light its path</span>
     </header>
 
     <svg

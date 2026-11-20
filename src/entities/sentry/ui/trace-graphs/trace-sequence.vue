@@ -283,8 +283,9 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
           <text
             v-for="(n, i) in layout.notes"
             :key="`note-${i}`"
-            :x="n.x + 12"
+            :x="n.anchor === 'end' ? n.x - 12 : n.x + 12"
             :y="n.y"
+            :text-anchor="n.anchor"
             class="trace-seq__note"
           >{{ n.text }}</text>
         </g>
