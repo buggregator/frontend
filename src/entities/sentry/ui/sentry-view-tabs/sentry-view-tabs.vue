@@ -105,7 +105,7 @@ const onKey = (e: KeyboardEvent, i: number) => {
   border-bottom: 1px solid var(--vt-line);
 }
 
-:global(.dark) .sentry-view-tabs {
+.dark .sentry-view-tabs {
   --vt-off: #9ca3af;
   --vt-on: #f3f4f6;
   --vt-line: #374151;
