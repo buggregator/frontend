@@ -116,7 +116,9 @@ export const mapToTraceCallGraph = (
   const childrenOf = new Map<string, SentrySpan[]>()
   for (const sp of spans) {
     if (sp.parent_span_id && sp.parent_span_id !== sp.span_id) {
-      childrenOf.set(sp.parent_span_id, [...(childrenOf.get(sp.parent_span_id) ?? []), sp])
+      const list = childrenOf.get(sp.parent_span_id)
+      if (list) list.push(sp)
+      else childrenOf.set(sp.parent_span_id, [sp])
     }
   }
   for (const sp of [...spans].sort((a, b) => a.start_offset_ms - b.start_offset_ms)) {
@@ -242,8 +244,12 @@ const indexOf = (edges: Edge[]): EdgeIndex => {
   if (!idx) {
     idx = { into: new Map(), out: new Map() }
     for (const e of edges) {
-      idx.into.set(e.target, [...(idx.into.get(e.target) ?? []), e])
-      idx.out.set(e.source, [...(idx.out.get(e.source) ?? []), e])
+      const into = idx.into.get(e.target)
+      if (into) into.push(e)
+      else idx.into.set(e.target, [e])
+      const out = idx.out.get(e.source)
+      if (out) out.push(e)
+      else idx.out.set(e.source, [e])
     }
     indexes.set(edges, idx)
   }
