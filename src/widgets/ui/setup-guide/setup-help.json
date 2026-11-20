@@ -111,10 +111,10 @@
           "label": "OTel Collector",
           "file": "otel-collector.yaml",
           "lang": "yaml",
-          "code": "exporters:\n  otlphttp/buggregator:\n    endpoint: http://{host}:{http_port}\n    headers:\n      X-Buggregator-Project: {project}\n\nservice:\n  pipelines:\n    traces:\n      exporters: [otlphttp/buggregator]\n    logs:\n      exporters: [otlphttp/buggregator]",
+          "code": "exporters:\n  otlp_http/buggregator:\n    endpoint: http://{host}:{http_port}\n    headers:\n      X-Buggregator-Project: {project}\n\nservice:\n  pipelines:\n    traces:\n      exporters: [otlp_http/buggregator]\n    logs:\n      exporters: [otlp_http/buggregator]",
           "hint": "Add the exporter to your existing pipelines next to the ones you have. The project comes from the X-Buggregator-Project header; without it events land in default.",
           "steps": [
-            "Add an otlphttp exporter pointing at Buggregator, port {http_port}. The otlp (gRPC) exporter is not supported.",
+            "Add an otlp_http exporter pointing at Buggregator, port {http_port}. Collectors older than 0.145 call it otlphttp. The otlp (gRPC) exporter is not supported.",
             "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator.",
             "Restart the Collector: traces show up under Traces, logs under Logs."
           ],

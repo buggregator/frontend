@@ -89,12 +89,12 @@ describe('SetupGuide', () => {
     expect(wrapper.get('.setup-guide__stack-hint').text()).toContain('/api/iris-app/integration/otlp/v1/traces')
   })
 
-  it('Sentry › OTel Collector: an otlphttp exporter with the header; SDK tabs keep the section steps', async () => {
+  it('Sentry › OTel Collector: an otlp_http exporter with the header; SDK tabs keep the section steps', async () => {
     useSetupStack().setStack('otel-collector')
     const wrapper = render('sentry')
     await flushPromises()
 
-    expect(wrapper.get('[data-test="setup-code"]').text()).toContain('otlphttp/buggregator')
+    expect(wrapper.get('[data-test="setup-code"]').text()).toContain('otlp_http/buggregator')
     expect(wrapper.get('[data-test="setup-code"]').text()).toContain('X-Buggregator-Project: iris-app')
 
     useSetupStack().setStack('laravel')
