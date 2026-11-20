@@ -108,15 +108,15 @@ export const timeByOperation = (spans: SentrySpan[], limit = 8): OperationRow[] 
     .slice(0, limit)
 }
 
-export const serviceColors = (spans: SentrySpan[]): Map<string, string> => {
+// A colour per name, in the order given (the flow view's lanes, #6533 C).
+export const paletteColors = (names: string[]): Map<string, string> => {
   const colors = new Map<string, string>()
-  const ordered = [...spans].sort((a, b) => a.start_offset_ms - b.start_offset_ms)
-  for (const s of ordered) {
-    const name = serviceOf(s)
-    if (!colors.has(name)) colors.set(name, PALETTE[colors.size % PALETTE.length])
-  }
+  for (const name of names) if (!colors.has(name)) colors.set(name, PALETTE[colors.size % PALETTE.length])
   return colors
 }
+
+export const serviceColors = (spans: SentrySpan[]): Map<string, string> =>
+  paletteColors([...spans].sort((a, b) => a.start_offset_ms - b.start_offset_ms).map(serviceOf))
 
 export const ERROR_BADGE = '#ef4444'
 

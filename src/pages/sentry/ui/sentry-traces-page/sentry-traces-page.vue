@@ -7,6 +7,7 @@ import {
   onSentryEvent,
   SentryEmptyState,
   ServiceMap,
+  TraceFlow,
   TracePreviewCard,
   useSentryFilters
 } from '@/entities/sentry'
@@ -52,7 +53,14 @@ onSentryEvent(() => {
 <template>
   <div class="sentry-traces-page">
     <div
-      v-if="sentryFilters.tracesView !== 'map'"
+      v-if="sentryFilters.tracesView === 'flow'"
+      class="sentry-traces-page__flow"
+    >
+      <TraceFlow />
+    </div>
+
+    <div
+      v-else-if="sentryFilters.tracesView !== 'map'"
       class="sentry-traces-page__list"
     >
       <div
@@ -118,6 +126,9 @@ onSentryEvent(() => {
 }
 .sentry-traces-page__map {
   @apply flex-1;
+}
+.sentry-traces-page__flow {
+  @apply flex-1 overflow-auto p-4 md:p-5 bg-white dark:bg-gray-800;
 }
 .sentry-traces-page__loading,
 .sentry-traces-page__empty {

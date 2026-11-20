@@ -12,6 +12,8 @@ import type {
   SentryMetric,
   SentryServiceMap,
   SentryCounts,
+  SentryFlow,
+  SentrySequence,
 } from '../types'
 
 const BASE = `${REST_API_URL}/api/sentry`
@@ -80,6 +82,16 @@ export const useSentryRequests = () => {
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
   }
 
+  // Request flow over the header period (#6533 C).
+  const getFlow = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
+    return fetchJSON<SentryFlow>(`${BASE}/flow${qs ? `?${qs}` : ''}`)
+  }
+
+  // A trace's calls in time order; no project, as for the trace detail.
+  const getTraceSequence = (traceId: string) =>
+    fetchJSON<SentrySequence>(`${BASE}/traces/${traceId}/sequence`)
+
   const getServiceMap = (windowMinutes?: number) => {
     const qs = new URLSearchParams(
       withProject(windowMinutes ? { window: String(windowMinutes) } : {})
@@ -102,6 +114,8 @@ export const useSentryRequests = () => {
     getLogs,
     getMetrics,
     getServiceMap,
+    getFlow,
+    getTraceSequence,
     getCounts,
   }
 }

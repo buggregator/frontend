@@ -169,6 +169,76 @@ export interface SentryServiceMap {
   window_minutes: number
 }
 
+// Request flow over a period (#6532/#6533 view C): GET /api/sentry/flow.
+export interface SentryFlowBucket {
+  t: string
+  count: number
+  errors: number
+}
+
+export interface SentryFlowRequestService {
+  service: string
+  start_ts: string
+  end_ts: string
+  is_error: boolean
+}
+
+export interface SentryFlowRequest {
+  trace_id: string
+  name: string
+  start_ts: string
+  end_ts: string
+  duration_ms: number
+  is_error: boolean
+  services: SentryFlowRequestService[]
+}
+
+export interface SentryFlow {
+  from: string
+  to: string
+  bucket_seconds: number
+  total: number
+  truncated: boolean
+  // Callers before callees.
+  services: string[]
+  buckets: SentryFlowBucket[]
+  // Newest first.
+  requests: SentryFlowRequest[]
+}
+
+// One trace's calls in time order: GET /api/sentry/traces/{id}/sequence.
+export interface SentrySequenceCallee {
+  service: string
+  start_ts: string
+  end_ts: string
+  duration_ms: number | null
+  is_error: boolean
+  transaction_id: string | null
+}
+
+export interface SentrySequenceCall {
+  span_id: string
+  from: string
+  to: string
+  op_type: string
+  description: string
+  start_ts: string
+  end_ts: string
+  duration_ms: number | null
+  is_error: boolean
+  status: string
+  callee: SentrySequenceCallee | null
+  // The callee kept working this long after the caller stopped waiting (> 0);
+  // null without a callee, ≤ 0 when it finished in time.
+  late_ms: number | null
+}
+
+export interface SentrySequence {
+  trace_id: string
+  services: string[]
+  calls: SentrySequenceCall[]
+}
+
 export interface SentryCounts {
   exceptions: number
   traces: number

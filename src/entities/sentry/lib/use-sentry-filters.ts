@@ -50,7 +50,7 @@ const STORAGE: Record<Key, string> = {
 
 const ALLOWED: Partial<Record<Key, string[]>> = {
   exceptionsView: ['timeline', 'grouped'],
-  tracesView: ['list', 'map'],
+  tracesView: ['list', 'map', 'flow'],
   source: ['', 'sentry', 'otel']
 }
 
@@ -97,7 +97,8 @@ export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
       view: true,
       options: [
         { value: 'list', label: 'Waterfall list' },
-        { value: 'map', label: 'Service map' }
+        { value: 'map', label: 'Service map' },
+        { value: 'flow', label: 'Flow' }
       ]
     },
     SOURCE_GROUP
