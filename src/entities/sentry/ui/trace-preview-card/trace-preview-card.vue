@@ -3,6 +3,7 @@ import moment from 'moment'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouteName } from '@/shared/types'
+import { SOURCE_LABEL, servicesChain } from '../../lib/otel'
 import type { SentryTrace } from '../../types'
 import { MiniWaterfall } from '../mini-waterfall'
 
@@ -12,6 +13,10 @@ type Props = {
 
 const props = defineProps<Props>()
 const router = useRouter()
+
+// Which services the trace went through and what sent it (#6523).
+const services = computed(() => servicesChain(props.trace.services))
+const sources = computed(() => (props.trace.sources ?? []).map((s) => SOURCE_LABEL[s] ?? s))
 
 const formattedTime = computed(() => moment(props.trace.received_at).fromNow())
 
@@ -50,6 +55,18 @@ const navigateToDetail = () => {
         {{ trace.status }}
       </span>
 
+      <span
+        v-if="services"
+        class="trace-card__services"
+        :title="trace.services?.join(' → ')"
+        data-test="trace-services"
+      >{{ services }}</span>
+      <span
+        v-for="source in sources"
+        :key="source"
+        class="trace-card__source"
+        data-test="trace-source"
+      >{{ source }}</span>
       <span class="trace-card__time">{{ formattedTime }}</span>
     </div>
 
@@ -133,6 +150,18 @@ const navigateToDetail = () => {
 .trace-card__label--warn {
   @apply text-amber-600 dark:text-amber-400;
   @apply bg-amber-50 dark:bg-amber-500/10;
+}
+
+.trace-card__services {
+  @apply text-2xs font-mono truncate min-w-0 max-w-full;
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+.trace-card__source {
+  @apply inline-flex items-center px-1.5 py-0.5 rounded;
+  @apply text-2xs font-mono whitespace-nowrap;
+  @apply text-gray-600 dark:text-gray-300;
+  @apply border border-gray-200 dark:border-gray-600;
 }
 
 .trace-card__time {

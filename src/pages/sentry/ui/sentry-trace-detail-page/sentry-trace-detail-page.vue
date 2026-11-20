@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import moment from 'moment'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSentryTraces, TraceWaterfall } from '@/entities/sentry'
+import { SOURCE_LABEL, spansWithRoot, useSentryTraces, TraceWaterfall } from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
@@ -20,6 +20,14 @@ const { fetchDetail } = useSentryTraces()
 const detail = ref<SentryTraceDetail | null>(null)
 const loading = ref(false)
 const activeTab = ref<'spans' | 'errors' | 'logs'>('spans')
+
+// Spans, services and sources of the trace (#6523): a trace may run through
+// a Sentry SDK service and OpenTelemetry ones.
+const waterfallSpans = computed(() => (detail.value ? spansWithRoot(detail.value) : []))
+const serviceCount = computed(
+  () => new Set(waterfallSpans.value.map((s) => s.service_name).filter(Boolean)).size
+)
+const sources = computed(() => (detail.value?.transaction.sources ?? []).map((s) => SOURCE_LABEL[s] ?? s))
 
 onMounted(async () => {
   loading.value = true
@@ -56,6 +64,18 @@ onMounted(async () => {
             detail.transaction.op
           }}</span>
           <span class="trace-detail__badge">{{ detail.transaction.duration_ms }}ms</span>
+          <span class="trace-detail__badge">{{ detail.spans.length }} spans</span>
+          <span
+            v-if="serviceCount"
+            class="trace-detail__badge"
+            data-test="trace-service-count"
+          >{{ serviceCount }} service{{ serviceCount !== 1 ? 's' : '' }}</span>
+          <span
+            v-for="source in sources"
+            :key="source"
+            class="trace-detail__badge trace-detail__badge--source"
+            data-test="trace-detail-source"
+          >{{ source }}</span>
           <span
             class="trace-detail__badge"
             :class="
@@ -99,8 +119,9 @@ onMounted(async () => {
       <div class="trace-detail__content">
         <TraceWaterfall
           v-if="activeTab === 'spans'"
-          :spans="detail.spans"
+          :spans="waterfallSpans"
           :total-ms="detail.transaction.duration_ms"
+          :trace-id="detail.trace_id"
         />
 
         <div
@@ -174,6 +195,10 @@ onMounted(async () => {
   @apply inline-flex items-center px-1.5 py-0.5 rounded;
   @apply text-2xs font-medium;
   @apply bg-gray-100 dark:bg-gray-600/50 text-gray-600 dark:text-gray-300;
+}
+
+.trace-detail__badge--source {
+  @apply font-mono bg-transparent dark:bg-transparent border border-gray-200 dark:border-gray-600;
 }
 
 .trace-detail__badge--op {

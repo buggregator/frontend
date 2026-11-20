@@ -13,7 +13,7 @@
     {
       "id": "sentry",
       "title": "Send your first exception",
-      "lead": "Buggregator accepts events from the official Sentry SDKs. Point the SDK's DSN here: errors, traces and logs show up on these pages.",
+      "lead": "Buggregator accepts events from the official Sentry SDKs and, over OTLP, traces and logs from OpenTelemetry SDKs and the Collector. Errors, traces and logs show up on these pages.",
       "docs": "https://docs.buggregator.dev/config/sentry.html",
       "steps": [
         "Install the Sentry SDK for your stack.",
@@ -90,6 +90,36 @@
           "hint": "The project key goes before @. A key with no such project lands in default.",
           "checked": false,
           "note": "Not run against server master."
+        },
+        {
+          "id": "otel-sdk",
+          "label": "OpenTelemetry SDK",
+          "file": ".env (any OTel SDK)",
+          "lang": "bash",
+          "code": "OTEL_EXPORTER_OTLP_ENDPOINT=http://{host}:{http_port}\nOTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf\nOTEL_EXPORTER_OTLP_HEADERS=X-Buggregator-Project={project}\nOTEL_SERVICE_NAME=checkout-api",
+          "hint": "The project comes from the X-Buggregator-Project header or the path /api/{project}/integration/otlp/v1/traces; without either it lands in default.",
+          "steps": [
+            "Traces go to /v1/traces, logs to /v1/logs on port {http_port}: no extra port. gRPC (4317) is not supported, use HTTP.",
+            "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator.",
+            "Set OTEL_SERVICE_NAME to your service: it shows in the Service column."
+          ],
+          "checked": false,
+          "note": "Paths and header from #6522 (server OTLP build); check against the merged server."
+        },
+        {
+          "id": "otel-collector",
+          "label": "OTel Collector",
+          "file": "otel-collector.yaml",
+          "lang": "yaml",
+          "code": "exporters:\n  otlphttp/buggregator:\n    endpoint: http://{host}:{http_port}\n    headers:\n      X-Buggregator-Project: {project}\n\nservice:\n  pipelines:\n    traces:\n      exporters: [otlphttp/buggregator]\n    logs:\n      exporters: [otlphttp/buggregator]",
+          "hint": "Add the exporter to your existing pipelines next to the ones you have. The project comes from the X-Buggregator-Project header; without it events land in default.",
+          "steps": [
+            "Add an otlphttp exporter pointing at Buggregator, port {http_port}. The otlp (gRPC) exporter is not supported.",
+            "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator.",
+            "Restart the Collector: traces show up under Traces, logs under Logs."
+          ],
+          "checked": false,
+          "note": "Paths and header from #6522 (server OTLP build); check against the merged server."
         }
       ]
     },

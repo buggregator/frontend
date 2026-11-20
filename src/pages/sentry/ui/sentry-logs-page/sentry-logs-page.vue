@@ -28,11 +28,21 @@ const levelsOfChip: Record<string, string | null> = {
 const sentryFilters = useSentryFilters()
 const toQuery = (level: string) => (level in levelsOfChip ? levelsOfChip[level] : level)
 filters.level = toQuery(sentryFilters.logsLevel || 'all')
+filters.source = sentryFilters.source || null
 
 watch(
   () => sentryFilters.logsLevel,
   (level) => {
     filters.level = toQuery(level || 'all')
+    page.value = 1
+    fetchList()
+  }
+)
+
+watch(
+  () => sentryFilters.source,
+  (source) => {
+    filters.source = source || null
     page.value = 1
     fetchList()
   }
@@ -72,7 +82,7 @@ onSentryEvent(() => {
     <!-- The list and its filters stay under an error: a retry may need
          another filter. -->
     <SentryEmptyState
-      v-if="!error && !isInitialLoading && logs.length === 0 && !sentryFilters.logsLevel"
+      v-if="!error && !isInitialLoading && logs.length === 0 && !sentryFilters.logsLevel && !sentryFilters.source"
       type="logs"
     />
 

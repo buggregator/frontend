@@ -10,6 +10,8 @@ export type SentryFilterState = {
   exceptionsLevel: string
   tracesView: string
   logsLevel: string
+  // Traces and logs: Sentry SDK, OpenTelemetry or both (#6523). One choice for both tabs.
+  source: string
   metricsType: string
   metricsName: string
 }
@@ -30,6 +32,7 @@ const DEFAULTS: SentryFilterState = {
   exceptionsLevel: '',
   tracesView: 'list',
   logsLevel: '',
+  source: '',
   metricsType: '',
   metricsName: ''
 }
@@ -40,16 +43,28 @@ const STORAGE: Record<Key, string> = {
   exceptionsLevel: 'sentry_exceptions_level',
   tracesView: 'sentry_traces_view_mode',
   logsLevel: 'sentry_logs_level',
+  source: 'sentry_source',
   metricsType: 'sentry_metrics_type',
   metricsName: 'sentry_metrics_name'
 }
 
 const ALLOWED: Partial<Record<Key, string[]>> = {
   exceptionsView: ['timeline', 'grouped'],
-  tracesView: ['list', 'map']
+  tracesView: ['list', 'map'],
+  source: ['', 'sentry', 'otel']
 }
 
 const level = (value: string, label: string): SentryFilterOption => ({ value, label, level: value })
+
+const SOURCE_GROUP: SentryFilterGroup = {
+  key: 'source',
+  title: 'Source',
+  options: [
+    { value: '', label: 'All sources' },
+    { value: 'sentry', label: 'Sentry SDK' },
+    { value: 'otel', label: 'OpenTelemetry', hint: 'OTLP' }
+  ]
+}
 
 export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
   exceptions: [
@@ -84,7 +99,8 @@ export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
         { value: 'list', label: 'Waterfall list' },
         { value: 'map', label: 'Service map' }
       ]
-    }
+    },
+    SOURCE_GROUP
   ],
   logs: [
     {
@@ -98,7 +114,8 @@ export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
         level('info', 'Info'),
         level('debug', 'Debug')
       ]
-    }
+    },
+    SOURCE_GROUP
   ],
   metrics: [
     {

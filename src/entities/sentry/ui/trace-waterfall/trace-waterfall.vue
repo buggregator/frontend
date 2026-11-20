@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import type { SentrySpan } from '../../types'
+
+// Loaded when a span is opened: keeps its styles out of the first load (bundle budget).
+const SpanDetails = defineAsyncComponent(() => import('./span-details.vue'))
 
 type Props = {
   spans: SentrySpan[]
   totalMs: number
+  traceId?: string
 }
 
 const props = defineProps<Props>()
@@ -53,6 +57,17 @@ const toggleExpand = (spanId: string) => {
   }
 }
 
+// Closed from the details (the phone sheet, Esc): focus goes back to its row.
+const labels = ref<Record<string, HTMLElement>>({})
+const closeDetails = async (spanId: string) => {
+  expandedSpans.value.delete(spanId)
+  await nextTick()
+  labels.value[spanId]?.focus()
+}
+
+// The Service column shows once any span knows its service (OTel, #6523).
+const hasServices = computed(() => props.spans.some((s) => !!s.service_name))
+
 const barStyle = (span: SentrySpan) => {
   if (!props.totalMs || props.totalMs <= 0) return {}
   const left = Math.max(0, (span.start_offset_ms / props.totalMs) * 100)
@@ -92,6 +107,12 @@ const truncate = (text: string, max: number) => {
   <div class="trace-wf">
     <!-- Column header -->
     <div class="trace-wf__header">
+      <div
+        v-if="hasServices"
+        class="trace-wf__col-service"
+      >
+        Service
+      </div>
       <div class="trace-wf__col-label">
         Operation
       </div>
@@ -114,12 +135,28 @@ const truncate = (text: string, max: number) => {
         'trace-wf__row--expanded': expandedSpans.has(span.span_id)
       }"
     >
+      <div
+        v-if="hasServices"
+        class="trace-wf__service"
+        :title="span.service_name ?? undefined"
+        data-test="wf-service"
+      >
+        {{ span.service_name ?? '' }}
+      </div>
+
       <!-- Label cell -->
       <div
+        :ref="(el) => { if (el) labels[span.span_id] = el as HTMLElement }"
         class="trace-wf__label"
         :style="{ paddingLeft: `${span.indent * 16 + 8}px` }"
         :title="span.description || span.op"
+        role="button"
+        tabindex="0"
+        :aria-expanded="expandedSpans.has(span.span_id)"
+        data-test="wf-label"
         @click="toggleExpand(span.span_id)"
+        @keydown.enter.prevent="toggleExpand(span.span_id)"
+        @keydown.space.prevent="toggleExpand(span.span_id)"
       >
         <!-- Expand indicator -->
         <svg
@@ -164,64 +201,16 @@ const truncate = (text: string, max: number) => {
         {{ span.duration_ms }}ms
       </div>
 
-      <!-- Expanded details -->
+      <!-- Expanded details (#6523): exception, Attributes / Events / Links / Resource -->
       <div
         v-if="expandedSpans.has(span.span_id)"
         class="trace-wf__details"
       >
-        <div
-          class="trace-wf__attrs-container"
-          :style="{ marginLeft: `${span.indent * 16 + 28}px` }"
-        >
-          <div class="trace-wf__attrs-title">
-            Span attributes
-          </div>
-          <div class="trace-wf__attrs-table">
-            <div
-              v-if="span.span_id"
-              class="trace-wf__attr-row"
-            >
-              <span class="trace-wf__attr-key">span_id</span>
-              <span class="trace-wf__attr-val">{{ span.span_id }}</span>
-            </div>
-            <div
-              v-if="span.parent_span_id"
-              class="trace-wf__attr-row"
-            >
-              <span class="trace-wf__attr-key">parent_span_id</span>
-              <span class="trace-wf__attr-val">{{ span.parent_span_id }}</span>
-            </div>
-            <div
-              v-if="span.status"
-              class="trace-wf__attr-row"
-            >
-              <span class="trace-wf__attr-key">status</span>
-              <span class="trace-wf__attr-val">{{ span.status }}</span>
-            </div>
-            <div
-              v-if="span.peer_type"
-              class="trace-wf__attr-row"
-            >
-              <span class="trace-wf__attr-key">peer_type</span>
-              <span class="trace-wf__attr-val">{{ span.peer_type }}</span>
-            </div>
-            <div
-              v-if="span.peer_address"
-              class="trace-wf__attr-row"
-            >
-              <span class="trace-wf__attr-key">peer_address</span>
-              <span class="trace-wf__attr-val">{{ span.peer_address }}</span>
-            </div>
-            <div class="trace-wf__attr-row">
-              <span class="trace-wf__attr-key">start_offset_ms</span>
-              <span class="trace-wf__attr-val">{{ span.start_offset_ms }}</span>
-            </div>
-            <div class="trace-wf__attr-row">
-              <span class="trace-wf__attr-key">duration_ms</span>
-              <span class="trace-wf__attr-val">{{ span.duration_ms }}</span>
-            </div>
-          </div>
-        </div>
+        <SpanDetails
+          :span="span"
+          :trace-id="traceId"
+          @close="closeDetails(span.span_id)"
+        />
       </div>
     </div>
 
@@ -247,6 +236,22 @@ const truncate = (text: string, max: number) => {
   @apply bg-gray-50 dark:bg-gray-900;
   @apply text-2xs font-mono font-semibold uppercase tracking-wider;
   @apply text-gray-500 dark:text-gray-400;
+}
+
+.trace-wf__col-service,
+.trace-wf__service {
+  @apply w-28 flex-shrink-0 truncate;
+}
+
+.trace-wf__service {
+  @apply font-mono text-2xs text-gray-600 dark:text-gray-400;
+}
+
+@media (max-width: 639px) {
+  .trace-wf__col-service,
+  .trace-wf__service {
+    @apply hidden;
+  }
 }
 
 .trace-wf__col-label {
@@ -295,7 +300,8 @@ const truncate = (text: string, max: number) => {
 }
 
 .trace-wf__label {
-  @apply w-72 flex-shrink-0 truncate cursor-pointer flex items-center gap-1.5;
+  @apply w-72 flex-shrink-0 truncate cursor-pointer flex items-center gap-1.5 rounded-sm;
+  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
 }
 
 .trace-wf__expand-icon {
@@ -365,40 +371,6 @@ const truncate = (text: string, max: number) => {
 /* Expanded attributes panel */
 .trace-wf__details {
   @apply w-full py-2;
-}
-
-.trace-wf__attrs-container {
-  @apply rounded overflow-hidden;
-  @apply border border-gray-200 dark:border-gray-700;
-}
-
-.trace-wf__attrs-title {
-  @apply px-3 py-1.5;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply text-2xs font-medium text-gray-500 dark:text-gray-400;
-}
-
-.trace-wf__attrs-table {
-  @apply divide-y divide-gray-200 dark:divide-gray-700;
-}
-
-.trace-wf__attr-row {
-  @apply flex items-center py-1.5 px-3 text-2xs;
-  @apply bg-white dark:bg-gray-800;
-
-  &:nth-child(even) {
-    @apply bg-gray-50 dark:bg-gray-800/50;
-  }
-}
-
-.trace-wf__attr-key {
-  @apply w-1/4 font-medium text-gray-500 dark:text-gray-400;
-  @apply border-r border-gray-200 dark:border-gray-700 pr-3;
-}
-
-.trace-wf__attr-val {
-  @apply w-3/4 font-mono text-gray-700 dark:text-gray-200 pl-3 break-all;
 }
 
 .trace-wf__empty {
