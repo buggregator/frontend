@@ -1,5 +1,5 @@
-import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { SentrySpan } from '../../types'
 import TraceWaterfall from './trace-waterfall.vue'
 
@@ -47,6 +47,12 @@ const otelSpan = span({
   }
 })
 
+// SpanDetails is an async component: let its import resolve.
+const opened = async (w: { find: (s: string) => { exists: () => boolean } }) => {
+  await vi.waitFor(() => expect(w.find('[data-test="span-details"]').exists()).toBe(true))
+  await flushPromises()
+}
+
 const render = (spans: SentrySpan[]) =>
   mount(TraceWaterfall, { props: { spans, totalMs: 412, traceId: 'trace-1' }, attachTo: document.body })
 
@@ -68,6 +74,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     const w = render([span({}), otelSpan])
     const label = w.findAll('[data-test="wf-label"]')[1]
     await label.trigger('keydown', { key: 'Enter' })
+    await opened(w)
 
     expect(label.attributes('aria-expanded')).toBe('true')
     expect(w.get('[data-test="span-exception"]').text()).toContain('context.deadlineExceededError')
@@ -83,6 +90,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
   it('arrow keys move between the tabs; Resource lists every key', async () => {
     const w = render([otelSpan])
     await w.get('[data-test="wf-label"]').trigger('click')
+    await opened(w)
     await w.get('[data-test="span-tab-overview"]').trigger('keydown', { key: 'End' })
 
     expect(w.get('[data-test="span-tab-resource"]').attributes('aria-selected')).toBe('true')
@@ -93,6 +101,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
   it('a Sentry SDK span: no Events / Links / Resource tabs, no exception block', async () => {
     const w = render([span({ source: 'sentry', attributes: { 'db.system': 'mysql' } })])
     await w.get('[data-test="wf-label"]').trigger('click')
+    await opened(w)
 
     expect(w.find('[data-test="span-tab-events"]').exists()).toBe(false)
     expect(w.find('[data-test="span-exception"]').exists()).toBe(false)
@@ -103,6 +112,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     const w = render([otelSpan])
     const label = w.get('[data-test="wf-label"]')
     await label.trigger('click')
+    await opened(w)
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     await w.vm.$nextTick()
     await w.vm.$nextTick()
@@ -116,6 +126,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     const attrs = { ...otelSpan.attributes, 'otel.events': [{ name: 'exception', time: null, attributes: { 'exception.type': 'E', 'exception.stacktrace': long } }] }
     const w = render([{ ...otelSpan, attributes: attrs }])
     await w.get('[data-test="wf-label"]').trigger('click')
+    await opened(w)
 
     expect(w.get('[data-test="span-stack"]').text().split('\n')).toHaveLength(8)
     await w.get('[data-test="span-exception"] button').trigger('click')

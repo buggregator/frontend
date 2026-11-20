@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import type { SentrySpan } from '../../types'
-import SpanDetails from './span-details.vue'
+
+// Loaded when a span is opened: keeps its styles out of the first load (bundle budget).
+const SpanDetails = defineAsyncComponent(() => import('./span-details.vue'))
 
 type Props = {
   spans: SentrySpan[]
