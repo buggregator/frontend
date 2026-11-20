@@ -11,3 +11,6 @@ export * from './sentry-logs-list';
 export * from './sentry-metrics-list';
 export * from './sentry-empty-state';
 export * from './sentry-filter-button';
+export * from './trace-graphs';
+export * from './trace-related-logs';
+export * from './sentry-view-tabs';

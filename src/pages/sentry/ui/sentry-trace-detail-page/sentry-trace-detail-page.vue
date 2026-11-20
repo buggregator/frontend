@@ -3,7 +3,21 @@ import { useTitle } from '@vueuse/core'
 import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { SOURCE_LABEL, spansWithRoot, useSentryTraces, TraceWaterfall } from '@/entities/sentry'
+import {
+  SOURCE_LABEL,
+  SentryViewTabs,
+  serviceColors,
+  spansWithRoot,
+  useSentryTraces,
+  useTraceView,
+  TraceCallGraph,
+  TraceFlameGraph,
+  TraceInsight,
+  TraceRelatedLogs,
+  TraceSequence,
+  TraceWaterfall,
+  type SentryViewTab
+} from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
@@ -19,7 +33,35 @@ const formatTime = (ts: string) => (ts ? moment(ts).fromNow() : '')
 const { fetchDetail } = useSentryTraces()
 const detail = ref<SentryTraceDetail | null>(null)
 const loading = ref(false)
-const activeTab = ref<'spans' | 'errors' | 'logs'>('spans')
+// Waterfall, the trace graphs (#6533 A) and the related lists in one row of
+// view tabs (#6543 B), the view in the URL (?view=…).
+const { view, select: selectView } = useTraceView()
+
+// Flame graph and call graph share the selected span; «Show in waterfall»
+// opens that span in the waterfall.
+const selectedSpanId = ref<string | null>(null)
+const openSpanId = ref<string | null>(null)
+const showInWaterfall = (spanId: string) => {
+  selectedSpanId.value = spanId
+  openSpanId.value = spanId
+  selectView('waterfall')
+}
+const viewTabs = computed<SentryViewTab[]>(() => [
+  { id: 'waterfall', label: 'Waterfall', icon: 'waterfall' },
+  { id: 'flame', label: 'Flame graph', icon: 'flame' },
+  { id: 'graph', label: 'Call graph', icon: 'graph' },
+  { id: 'sequence', label: 'Sequence', icon: 'sequence' },
+  ...(detail.value?.related_errors.length
+    ? [{ id: 'errors', label: 'Related errors', count: detail.value.related_errors.length }]
+    : []),
+  ...(detail.value?.related_log_count ? [{ id: 'logs', label: 'Related logs', count: detail.value.related_log_count }] : [])
+])
+// A related list the trace does not have (an old link): the waterfall.
+const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'waterfall'))
+const colors = computed(() => serviceColors(waterfallSpans.value))
+const spanIds = computed(() => new Set(waterfallSpans.value.map((s) => s.span_id)))
+// The graphs fill the page under the tabs (#6533 «fullheight»).
+const isGraphTab = computed(() => ['flame', 'graph', 'sequence'].includes(activeTab.value))
 
 // Spans, services and sources of the trace (#6523): a trace may run through
 // a Sentry SDK service and OpenTelemetry ones.
@@ -90,38 +132,48 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="trace-detail__tabs">
-        <button
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'spans' }"
-          @click="activeTab = 'spans'"
-        >
-          Spans ({{ detail.spans.length }})
-        </button>
-        <button
-          v-if="detail.related_errors.length > 0"
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'errors' }"
-          @click="activeTab = 'errors'"
-        >
-          Related Errors ({{ detail.related_errors.length }})
-        </button>
-        <button
-          v-if="detail.related_log_count > 0"
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'logs' }"
-          @click="activeTab = 'logs'"
-        >
-          Related Logs ({{ detail.related_log_count }})
-        </button>
-      </div>
+      <SentryViewTabs
+        :tabs="viewTabs"
+        :current="activeTab"
+        label="Trace view"
+        @select="selectView"
+      />
 
-      <div class="trace-detail__content">
+      <div
+        class="trace-detail__content"
+        :class="{ 'trace-detail__content--graph': isGraphTab }"
+      >
         <TraceWaterfall
-          v-if="activeTab === 'spans'"
+          v-if="activeTab === 'waterfall'"
           :spans="waterfallSpans"
           :total-ms="detail.transaction.duration_ms"
           :trace-id="detail.trace_id"
+          :open-span-id="openSpanId"
+        />
+
+        <TraceInsight
+          v-if="activeTab === 'flame' || activeTab === 'graph'"
+          :spans="waterfallSpans"
+          @select="selectedSpanId = $event"
+        />
+        <TraceFlameGraph
+          v-if="activeTab === 'flame'"
+          :spans="waterfallSpans"
+          :selected-span-id="selectedSpanId"
+          @select="selectedSpanId = $event"
+          @show-in-waterfall="showInWaterfall"
+        />
+        <TraceCallGraph
+          v-if="activeTab === 'graph'"
+          :spans="waterfallSpans"
+          :selected-span-id="selectedSpanId"
+          @select="selectedSpanId = $event"
+          @show-in-waterfall="showInWaterfall"
+        />
+        <TraceSequence
+          v-if="activeTab === 'sequence'"
+          :trace-id="detail.trace_id"
+          :colors="colors"
         />
 
         <div
@@ -143,18 +195,12 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div
+        <TraceRelatedLogs
           v-if="activeTab === 'logs'"
-          class="trace-detail__logs-info"
-        >
-          {{ detail.related_log_count }} log entries linked to this trace.
-          <RouterLink
-            :to="{ name: RouteName.SentryLogs, query: { trace_id: detail.trace_id } }"
-            class="trace-detail__logs-link"
-          >
-            View logs &rarr;
-          </RouterLink>
-        </div>
+          :trace-id="detail.trace_id"
+          :span-ids="spanIds"
+          @span="showInWaterfall"
+        />
       </div>
     </template>
 
@@ -221,30 +267,14 @@ onMounted(async () => {
   @apply text-2xs font-mono text-gray-500 dark:text-gray-400 ml-auto;
 }
 
-.trace-detail__tabs {
-  @apply flex items-center gap-1 px-4 py-2;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-800;
-}
-
-.trace-detail__tab {
-  @apply inline-flex items-center gap-1.5;
-  @apply px-3 py-1.5 rounded-md;
-  @apply text-xs font-medium cursor-pointer;
-  @apply text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50;
-  @apply transition-colors duration-100;
-}
-
-.trace-detail__tab--active {
-  @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white;
-}
-
 .trace-detail__content {
   @apply flex-1 overflow-auto p-5;
   @apply bg-white dark:bg-gray-800;
+}
+
+// Edge to edge, down to the bottom of the screen; the graph scrolls itself.
+.trace-detail__content--graph {
+  @apply p-0 flex flex-col overflow-hidden min-h-[420px];
 }
 
 .trace-detail__errors {
@@ -266,16 +296,5 @@ onMounted(async () => {
 
 .trace-detail__error-time {
   @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
-}
-
-.trace-detail__logs-info {
-  @apply p-4 text-sm text-gray-500 dark:text-gray-400;
-  @apply rounded;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border border-gray-200 dark:border-gray-700;
-}
-
-.trace-detail__logs-link {
-  @apply text-blue-600 dark:text-blue-400 hover:underline ml-1 font-medium;
 }
 </style>

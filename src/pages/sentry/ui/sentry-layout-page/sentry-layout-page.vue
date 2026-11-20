@@ -3,7 +3,7 @@ import { useMediaQuery, useTitle } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
-import { SentryFilterButton, SentrySubNav, type SentryTab } from '@/entities/sentry'
+import { SentryFilterButton, SentryListViews, SentrySubNav, type SentryTab } from '@/entities/sentry'
 import { useEvents } from '@/shared/lib/use-events'
 import { EventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PeriodSelect } from '@/shared/ui'
@@ -29,6 +29,8 @@ const heading = computed(() => HEADINGS[String(route.name)] ?? '')
 const tab = computed(() => TAB_OF_ROUTE[String(route.name)] ?? '')
 // The filters belong to a list: none on the trace page.
 const filterTab = computed(() => (route.name === RouteName.SentryTraceDetail ? '' : tab.value))
+// Lists with more than one view get the view tabs under the header (#6543 B).
+const viewTab = computed(() => (filterTab.value === 'traces' || filterTab.value === 'exceptions' ? filterTab.value : null))
 
 // «How to set up» on every Sentry tab once Sentry has events (#5941).
 const { getItemsCount } = useEvents()
@@ -100,6 +102,11 @@ const isWide = useMediaQuery('(min-width: 640px)')
       v-if="!isWide"
       :current="tab"
       class="sentry-layout__phone-tabs"
+    />
+    <SentryListViews
+      v-if="viewTab"
+      :key="viewTab"
+      :tab="viewTab"
     />
     <RouterView />
   </LayoutBase>

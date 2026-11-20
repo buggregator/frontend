@@ -35,15 +35,16 @@ describe('SentryFilterButton', () => {
     const panel = wrapper.get('[data-test="sentry-filter-panel"]')
     expect(panel.attributes('role')).toBe('dialog')
     expect(btn.attributes('aria-expanded')).toBe('true')
-    expect(panel.findAll('[role="radiogroup"]')).toHaveLength(2)
-    expect(document.activeElement?.textContent).toContain('Timeline')
+    // The view is a row of tabs under the header now (#6543): only filters here.
+    expect(panel.findAll('[role="radiogroup"]')).toHaveLength(1)
+    expect(panel.find('[data-value="grouped"]').exists()).toBe(false)
+    expect(document.activeElement?.textContent).toContain('All levels')
   })
 
-  it('a choice applies at once; the badge counts the level, not the view', async () => {
+  it('a choice applies at once and shows in the badge; the view does not count', async () => {
+    useSentryFilters().exceptionsView = 'grouped'
     const wrapper = render('exceptions')
     await openPanel(wrapper)
-    await wrapper.get('[data-value="grouped"]').trigger('click')
-    expect(useSentryFilters().exceptionsView).toBe('grouped')
     expect(wrapper.find('[data-test="sentry-filter-badge"]').exists()).toBe(false)
 
     await wrapper.get('[data-value="error"]').trigger('click')
@@ -74,7 +75,7 @@ describe('SentryFilterButton', () => {
     const reset = () => wrapper.get('[data-test="sentry-filter-reset"]')
     expect(reset().attributes('disabled')).toBeDefined()
 
-    await wrapper.get('[data-value="grouped"]').trigger('click')
+    useSentryFilters().exceptionsView = 'grouped'
     await wrapper.get('[data-value="fatal"]').trigger('click')
     expect(reset().attributes('disabled')).toBeUndefined()
     await reset().trigger('click')

@@ -7,9 +7,15 @@ import type { SentryLog } from '../../types'
 
 type Props = {
   log: SentryLog
+  // Inside a trace page (#6533 related-logs): its spans; a log of one of them
+  // gets a «span» button instead of the link to the same trace.
+  traceSpans?: Set<string> | null
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { traceSpans: null })
+const emit = defineEmits<{ span: [spanId: string] }>()
+const inTrace = computed(() => props.traceSpans !== null)
+const spanInTrace = computed(() => !!props.log.span_id && !!props.traceSpans?.has(props.log.span_id))
 
 const expanded = ref(false)
 
@@ -49,7 +55,12 @@ const hasDetails = computed(
     }"
     @click="expanded = !expanded"
   >
-    <div class="log-row__main">
+    <div
+      class="log-row__main"
+      tabindex="0"
+      @keydown.enter.self.prevent="expanded = !expanded"
+      @keydown.space.self.prevent="expanded = !expanded"
+    >
       <span
         class="log-row__level"
         :class="levelClass"
@@ -67,8 +78,18 @@ const hasDetails = computed(
 
       <span class="log-row__time">{{ formattedTime }}</span>
 
+      <button
+        v-if="spanInTrace"
+        type="button"
+        class="log-row__trace-link"
+        title="Show this span in the waterfall"
+        data-test="log-span"
+        @click.stop="emit('span', log.span_id!)"
+      >
+        span &rarr;
+      </button>
       <RouterLink
-        v-if="log.trace_id && log.trace_exists"
+        v-else-if="!inTrace && log.trace_id && log.trace_exists"
         :to="{ name: RouteName.SentryTraceDetail, params: { traceId: log.trace_id } }"
         class="log-row__trace-link"
         @click.stop
@@ -181,6 +202,11 @@ const hasDetails = computed(
   @apply flex items-center gap-2;
 }
 
+.log-row__main:focus-visible {
+  outline: 2px solid #f43f5e;
+  outline-offset: 2px;
+}
+
 .log-row__level {
   @apply inline-flex items-center px-2 py-0.5 rounded;
   @apply text-2xs font-bold uppercase tracking-wide;
@@ -282,6 +308,8 @@ const hasDetails = computed(
 .log-row__attr-key {
   @apply w-1/4 font-medium text-gray-500 dark:text-gray-400 flex-shrink-0;
   @apply border-r border-gray-200 dark:border-gray-700 pr-3;
+  // Long dotted keys wrap inside their column instead of running into the value.
+  overflow-wrap: anywhere;
 }
 
 .log-row__attr-val {

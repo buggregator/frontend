@@ -2,7 +2,7 @@ import { reactive, watch } from 'vue'
 
 // What each Sentry tab shows, set from the filter button in the header
 // (#5980) and read by the tab's page. One state for the whole app, kept in
-// this browser.
+// this browser. The view keys are set by the view tabs (#6543), not the panel.
 export type SentryTab = 'exceptions' | 'traces' | 'logs' | 'metrics'
 
 export type SentryFilterState = {
@@ -21,8 +21,6 @@ export type SentryFilterOption = { value: string; label: string; hint?: string; 
 export type SentryFilterGroup = {
   key: Key
   title: string
-  // A view mode changes the layout, not what is shown: not counted, kept by Reset.
-  view?: boolean
   // No options: a text box.
   options?: SentryFilterOption[]
 }
@@ -69,15 +67,6 @@ const SOURCE_GROUP: SentryFilterGroup = {
 export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
   exceptions: [
     {
-      key: 'exceptionsView',
-      title: 'View',
-      view: true,
-      options: [
-        { value: 'timeline', label: 'Timeline', hint: 'each event' },
-        { value: 'grouped', label: 'Group by type', hint: 'like Issues' }
-      ]
-    },
-    {
       key: 'exceptionsLevel',
       title: 'Level',
       options: [
@@ -90,18 +79,7 @@ export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
       ]
     }
   ],
-  traces: [
-    {
-      key: 'tracesView',
-      title: 'View',
-      view: true,
-      options: [
-        { value: 'list', label: 'Waterfall list' },
-        { value: 'map', label: 'Service map' }
-      ]
-    },
-    SOURCE_GROUP
-  ],
+  traces: [SOURCE_GROUP],
   logs: [
     {
       key: 'logsLevel',
@@ -164,7 +142,7 @@ for (const key of Object.keys(DEFAULTS) as Key[]) {
   )
 }
 
-const narrowing = (tab: SentryTab) => SENTRY_FILTER_GROUPS[tab].filter((g) => !g.view)
+const narrowing = (tab: SentryTab) => SENTRY_FILTER_GROUPS[tab]
 
 // How many filters of the tab narrow what is shown (the button's badge).
 export const activeSentryFilters = (tab: SentryTab) =>

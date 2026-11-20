@@ -9,3 +9,6 @@ export * from "./use-sentry-events-bus";
 export * from "./resolve-exceptions";
 export * from "./use-sentry-filters";
 export * from "./otel";
+export * from "./use-sentry-view";
+export * from "./view-icons";
+export { serviceColors } from './trace-graph/trace-graph';

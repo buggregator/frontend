@@ -11,7 +11,9 @@ import type {
   SentryLog,
   SentryMetric,
   SentryServiceMap,
+  SentryServiceMapEdgeTraces,
   SentryCounts,
+  SentrySequence,
 } from '../types'
 
 const BASE = `${REST_API_URL}/api/sentry`
@@ -75,16 +77,32 @@ export const useSentryRequests = () => {
     return fetchJSON<PaginatedResponse<SentryLog>>(`${BASE}/logs${qs ? `?${qs}` : ''}`)
   }
 
+  // A trace's logs, all of them: no project and no header period, as for the
+  // trace detail whose related_log_count names the tab (#6533 related-logs).
+  const getTraceLogs = (traceId: string, page: number) =>
+    fetchJSON<PaginatedResponse<SentryLog>>(
+      `${BASE}/logs?${new URLSearchParams({ trace_id: traceId, page: String(page) }).toString()}`
+    )
+
   const getMetrics = (params: Record<string, string> = {}) => {
     const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
   }
 
-  const getServiceMap = (windowMinutes?: number) => {
-    const qs = new URLSearchParams(
-      withProject(windowMinutes ? { window: String(windowMinutes) } : {})
-    ).toString()
+  // A trace's calls in time order; no project, as for the trace detail.
+  const getTraceSequence = (traceId: string) =>
+    fetchJSON<SentrySequence>(`${BASE}/traces/${traceId}/sequence`)
+
+  // Services and the calls between them over the header period (#6533 B).
+  const getServiceMap = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<SentryServiceMap>(`${BASE}/service-map${qs ? `?${qs}` : ''}`)
+  }
+
+  // Traces through one edge of the map, errors first; same scope as the map.
+  const getServiceMapEdge = (params: { source: string; target: string; op_type?: string; limit?: string; offset?: string }) => {
+    const qs = new URLSearchParams(withScope({ ...params })).toString()
+    return fetchJSON<SentryServiceMapEdgeTraces>(`${BASE}/service-map/edge?${qs}`)
   }
 
   // The badges label the lists, so they take the same scope.
@@ -100,8 +118,11 @@ export const useSentryRequests = () => {
     getTraces,
     getTraceDetail,
     getLogs,
+    getTraceLogs,
     getMetrics,
     getServiceMap,
+    getServiceMapEdge,
+    getTraceSequence,
     getCounts,
   }
 }

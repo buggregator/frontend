@@ -49,6 +49,12 @@ describe('useSentryFilters', () => {
     expect(useSentryFilters().tracesView).toBe('list')
   })
 
+  it('a saved Flow view (removed, #6547) opens the list', () => {
+    window.localStorage.setItem('sentry_traces_view_mode', 'flow')
+    reloadSentryFilters()
+    expect(useSentryFilters().tracesView).toBe('list')
+  })
+
   it('the badge counts narrowing filters only, not the view mode', () => {
     const f = useSentryFilters()
     f.exceptionsView = 'grouped'

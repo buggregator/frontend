@@ -2,6 +2,7 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import {
   useSentryTraces,
   onSentryEvent,
@@ -17,8 +18,25 @@ useTitle('Sentry Traces | Buggregator')
 
 const { traces, hasLoaded, error, isInitialLoading, total, filters, fetchList } = useSentryTraces()
 
-// Waterfall list or service map: the filter button in the Sentry header (#5980).
+// List or service map: the view tabs under the header (#6543).
 const sentryFilters = useSentryFilters()
+
+// ?service=: traces through one service, from the map's «Traces» button (#6544).
+const route = useRoute()
+const router = useRouter()
+const serviceOf = () => (typeof route.query.service === 'string' && route.query.service ? route.query.service : null)
+filters.service = serviceOf()
+watch(serviceOf, (service) => {
+  if (service === filters.service) return
+  filters.service = service
+  hasLoaded.value = false
+  fetchList()
+})
+const clearService = () => {
+  const query = { ...route.query }
+  delete query.service
+  router.push({ query })
+}
 // Sentry SDK / OpenTelemetry / both: the same filter button (#6523).
 filters.source = sentryFilters.source || null
 watch(
@@ -56,6 +74,23 @@ onSentryEvent(() => {
       class="sentry-traces-page__list"
     >
       <div
+        v-if="filters.service"
+        class="sentry-traces-page__chip-row"
+      >
+        <span
+          class="sentry-traces-page__chip"
+          data-test="traces-service-filter"
+        >
+          Service <b>{{ filters.service }}</b>
+          <button
+            type="button"
+            class="sentry-traces-page__chip-x"
+            :aria-label="`Show traces of all services, not only ${filters.service}`"
+            @click="clearService"
+          >×</button>
+        </span>
+      </div>
+      <div
         v-if="isInitialLoading"
         class="sentry-traces-page__loading"
       >
@@ -78,6 +113,14 @@ onSentryEvent(() => {
           :trace="trace"
         />
       </template>
+
+      <div
+        v-else-if="filters.service"
+        class="sentry-traces-page__loading"
+        data-test="traces-none-for-service"
+      >
+        No traces through {{ filters.service }} in this period.
+      </div>
 
       <div
         v-else-if="sentryFilters.source"
@@ -104,7 +147,7 @@ onSentryEvent(() => {
       v-else
       class="sentry-traces-page__map"
     >
-      <ServiceMap :window-minutes="60" />
+      <ServiceMap />
     </div>
   </div>
 </template>
@@ -118,6 +161,39 @@ onSentryEvent(() => {
 }
 .sentry-traces-page__map {
   @apply flex-1;
+}
+.sentry-traces-page__chip-row {
+  @apply flex px-4 py-2;
+}
+// Plain CSS: dark variants would double these rules in the first load.
+.sentry-traces-page__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-left: 0.625rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  background: rgb(107 114 128 / 0.15);
+
+  b {
+    font: 500 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+}
+.sentry-traces-page__chip-x {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+  }
 }
 .sentry-traces-page__loading,
 .sentry-traces-page__empty {

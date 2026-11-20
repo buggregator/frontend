@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
 import type { SentrySpan } from '../../types'
 
 // Loaded when a span is opened: keeps its styles out of the first load (bundle budget).
@@ -9,6 +9,8 @@ type Props = {
   spans: SentrySpan[]
   totalMs: number
   traceId?: string
+  // A span to open and focus, e.g. from «Show in waterfall» on the graphs (#6533).
+  openSpanId?: string | null
 }
 
 const props = defineProps<Props>()
@@ -64,6 +66,19 @@ const closeDetails = async (spanId: string) => {
   await nextTick()
   labels.value[spanId]?.focus()
 }
+
+watch(
+  () => props.openSpanId,
+  async (id) => {
+    if (!id) return
+    expandedSpans.value.add(id)
+    await nextTick()
+    const label = labels.value[id]
+    label?.focus()
+    label?.scrollIntoView?.({ block: 'center' })
+  },
+  { immediate: true, flush: 'post' }
+)
 
 // The Service column shows once any span knows its service (OTel, #6523).
 const hasServices = computed(() => props.spans.some((s) => !!s.service_name))

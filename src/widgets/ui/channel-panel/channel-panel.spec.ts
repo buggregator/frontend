@@ -105,6 +105,9 @@ describe('ChannelPanel', () => {
   })
 
   it('shows the update pill on the status line while the server updates, not otherwise', async () => {
+    // The pill is a lazy chunk: load it first, so a busy full run does not
+    // outlast waitFor's second.
+    await import('../update-progress')
     useServerUpdateStore().setStatus(availableStatus)
     const wrapper = await render()
     expect(wrapper.find('[data-test="update-pill"]').exists()).toBe(false)

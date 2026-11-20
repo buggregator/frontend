@@ -146,27 +146,94 @@ export interface SentryMetric {
   attributes: Record<string, SentryMetricAttribute | unknown> | null
 }
 
-export interface SentryServiceMapNode {
-  id: string
-  label: string
-  request_count: number
-  error_count: number
-  avg_duration_ms: number | null
+// Calls per time bucket of the period (service map and flow).
+export interface SentryGraphBucket {
+  t: string
+  count: number
+  errors: number
 }
 
-export interface SentryServiceMapEdge {
+// One trace through a service-map edge, errors first then newest.
+export interface SentryServiceMapTrace {
+  trace_id: string
+  start_ts: string
+  duration_ms: number
+  is_error: boolean
+}
+
+// Requests, errors and speed of a node or an edge over the period (#6532).
+export interface SentryServiceMapStats {
+  request_count: number
+  error_count: number
+  error_rate?: number
+  rpm?: number
+  avg_duration_ms: number | null
+  p95_duration_ms?: number | null
+  buckets?: SentryGraphBucket[]
+}
+
+export interface SentryServiceMapNode extends SentryServiceMapStats {
+  id: string
+  label: string
+  // service: sends traces; external: a host or database it calls.
+  kind?: 'service' | 'external' | string
+}
+
+export interface SentryServiceMapEdge extends SentryServiceMapStats {
   source: string
   target: string
   op_type: string
-  request_count: number
-  error_count: number
-  avg_duration_ms: number | null
+  trace_count?: number
+  // The first 20; the rest from GET /api/sentry/service-map/edge.
+  traces?: SentryServiceMapTrace[]
 }
 
 export interface SentryServiceMap {
+  from?: string
+  to?: string
+  bucket_seconds?: number
+  window_minutes: number
   nodes: SentryServiceMapNode[]
   edges: SentryServiceMapEdge[]
-  window_minutes: number
+}
+
+export interface SentryServiceMapEdgeTraces {
+  total: number
+  traces: SentryServiceMapTrace[]
+}
+
+
+// One trace's calls in time order: GET /api/sentry/traces/{id}/sequence.
+export interface SentrySequenceCallee {
+  service: string
+  start_ts: string
+  end_ts: string
+  duration_ms: number | null
+  is_error: boolean
+  transaction_id: string | null
+}
+
+export interface SentrySequenceCall {
+  span_id: string
+  from: string
+  to: string
+  op_type: string
+  description: string
+  start_ts: string
+  end_ts: string
+  duration_ms: number | null
+  is_error: boolean
+  status: string
+  callee: SentrySequenceCallee | null
+  // The callee kept working this long after the caller stopped waiting (> 0);
+  // null without a callee, ≤ 0 when it finished in time.
+  late_ms: number | null
+}
+
+export interface SentrySequence {
+  trace_id: string
+  services: string[]
+  calls: SentrySequenceCall[]
 }
 
 export interface SentryCounts {
