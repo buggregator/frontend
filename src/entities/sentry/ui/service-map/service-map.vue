@@ -64,8 +64,17 @@ const colors = computed(() =>
 // Selection: a service or a line; the rest dims (V1).
 const selection = ref<MapSelection>(null)
 const lit = computed(() => (model.value ? litPart(model.value, selection.value) : null))
+// Focus goes back to what opened the panel when it closes (#6549).
+let opener: HTMLElement | null = null
 const select = (sel: MapSelection) => {
+  if (!selection.value && sel) opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
   selection.value = sel && selection.value?.kind === sel.kind && selection.value.id === sel.id ? null : sel
+}
+const closePanel = () => {
+  selection.value = null
+  const back = opener
+  opener = null
+  if (back?.isConnected) nextTick(() => back.focus())
 }
 watch(model, (m) => {
   // A refresh keeps the selection while it is still on the map.
@@ -151,7 +160,7 @@ watch(selection, async (sel) => {
 
 const onKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && selection.value) {
-    selection.value = null
+    closePanel()
     e.preventDefault()
   }
 }
@@ -417,7 +426,7 @@ const serviceCount = computed(() => model.value?.nodes.length ?? 0)
           :model="model"
           :selection="selection"
           :colors="colors"
-          @close="selection = null"
+          @close="closePanel"
           @select="select"
         />
       </div>
