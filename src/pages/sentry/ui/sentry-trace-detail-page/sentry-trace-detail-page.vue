@@ -3,7 +3,7 @@ import { useTitle } from '@vueuse/core'
 import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { SOURCE_LABEL, useSentryTraces, TraceWaterfall } from '@/entities/sentry'
+import { SOURCE_LABEL, spansWithRoot, useSentryTraces, TraceWaterfall } from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
@@ -23,8 +23,9 @@ const activeTab = ref<'spans' | 'errors' | 'logs'>('spans')
 
 // Spans, services and sources of the trace (#6523): a trace may run through
 // a Sentry SDK service and OpenTelemetry ones.
+const waterfallSpans = computed(() => (detail.value ? spansWithRoot(detail.value) : []))
 const serviceCount = computed(
-  () => new Set((detail.value?.spans ?? []).map((s) => s.service_name).filter(Boolean)).size
+  () => new Set(waterfallSpans.value.map((s) => s.service_name).filter(Boolean)).size
 )
 const sources = computed(() => (detail.value?.transaction.sources ?? []).map((s) => SOURCE_LABEL[s] ?? s))
 
@@ -118,7 +119,7 @@ onMounted(async () => {
       <div class="trace-detail__content">
         <TraceWaterfall
           v-if="activeTab === 'spans'"
-          :spans="detail.spans"
+          :spans="waterfallSpans"
           :total-ms="detail.transaction.duration_ms"
           :trace-id="detail.trace_id"
         />

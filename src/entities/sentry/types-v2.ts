@@ -81,6 +81,9 @@ export interface SentrySpan {
   service_name?: string | null
   // Sentry span data, or OTel attributes with the otel.* extras (see lib/otel.ts).
   attributes?: Record<string, unknown> | null
+  // The entry span of another service's transaction (#6522).
+  is_transaction?: boolean
+  transaction_id?: string
 }
 
 export interface SentryTraceDetail {
@@ -94,6 +97,10 @@ export interface SentryTraceDetail {
     end_ts: string
     duration_ms: number
     sources?: TelemetrySource[]
+    // The root's own span: its children point at it (#6522).
+    span_id?: string
+    source?: TelemetrySource
+    service_name?: string | null
   }
   spans: SentrySpan[]
   related_errors: SentryRelatedError[]

@@ -18,6 +18,14 @@ type Tab = 'overview' | 'attributes' | 'events' | 'links' | 'resource'
 
 const parts = computed(() => splitOtelAttributes(props.span.attributes))
 const exception = computed(() => otelException(parts.value.events))
+// Go and Java stacks run to dozens of lines: the first few, the rest on demand.
+const STACK_PREVIEW = 8
+const stackLines = computed(() => (exception.value?.stacktrace ?? '').split('\n'))
+const fullStack = ref(false)
+const stackShown = computed(() =>
+  fullStack.value ? stackLines.value.join('\n') : stackLines.value.slice(0, STACK_PREVIEW).join('\n')
+)
+
 const sourceLabel = computed(() => (props.span.source ? SOURCE_LABEL[props.span.source] : ''))
 
 const attrEntries = computed(() => Object.entries(parts.value.attributes))
@@ -195,7 +203,17 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             <pre
               v-if="exception.stacktrace"
               class="span-details__ex-stack"
-            >{{ exception.stacktrace }}</pre>
+              data-test="span-stack"
+            >{{ stackShown }}</pre>
+            <button
+              v-if="stackLines.length > STACK_PREVIEW"
+              type="button"
+              class="span-details__more"
+              :aria-expanded="fullStack"
+              @click="fullStack = !fullStack"
+            >
+              {{ fullStack ? 'Show less' : `Show full stack (${stackLines.length} lines)` }}
+            </button>
             <div class="span-details__ex-note">
               span event «exception»
             </div>

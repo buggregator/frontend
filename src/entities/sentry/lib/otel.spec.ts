@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { formatAttrValue, otelException, servicesChain, splitOtelAttributes } from './otel'
+import type { SentryTraceDetail } from '../types'
+import { formatAttrValue, otelException, servicesChain, spansWithRoot, splitOtelAttributes } from './otel'
 
 describe('splitOtelAttributes', () => {
   it('takes the otel.* extras out of the attributes', () => {
@@ -66,5 +67,25 @@ describe('formatAttrValue', () => {
     expect(formatAttrValue(91)).toBe('91')
     expect(formatAttrValue({ type: 'integer', value: 502 })).toBe('502')
     expect(formatAttrValue({ type: 'string', value: 'shop-web', unit: 'x' })).toBe('{"type":"string","value":"shop-web","unit":"x"}')
+  })
+})
+
+describe('spansWithRoot', () => {
+  const detail = (span_id?: string): SentryTraceDetail => ({
+    trace_id: 't',
+    transaction: { id: 'tx', transaction_name: 'POST /cart/checkout', op: 'http.server', status: 'internal_error', start_ts: '', end_ts: '', duration_ms: 387, span_id, source: 'sentry', service_name: 'shop-web' },
+    spans: [{ span_id: 'c1', parent_span_id: 'r1', op: 'db', description: 'SELECT', status: 'ok', start_offset_ms: 3, duration_ms: 12, peer_type: 'db', peer_address: null, is_error: false }],
+    related_errors: [],
+    related_log_count: 0
+  })
+
+  it('puts the root transaction first, so its children hang under it', () => {
+    const spans = spansWithRoot(detail('r1'))
+    expect(spans[0]).toMatchObject({ span_id: 'r1', parent_span_id: null, description: 'POST /cart/checkout', service_name: 'shop-web', is_error: true, duration_ms: 387 })
+    expect(spans).toHaveLength(2)
+  })
+
+  it('an older server without transaction.span_id: spans as they are', () => {
+    expect(spansWithRoot(detail())).toHaveLength(1)
   })
 })

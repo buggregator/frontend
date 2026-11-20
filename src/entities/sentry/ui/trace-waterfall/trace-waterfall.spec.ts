@@ -110,4 +110,16 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     expect(w.find('[data-test="span-details"]').exists()).toBe(false)
     expect(document.activeElement).toBe(label.element)
   })
+
+  it('a long stack shows 8 lines until «Show full stack»', async () => {
+    const long = Array.from({ length: 30 }, (_, i) => `frame ${i}`).join('\n')
+    const attrs = { ...otelSpan.attributes, 'otel.events': [{ name: 'exception', time: null, attributes: { 'exception.type': 'E', 'exception.stacktrace': long } }] }
+    const w = render([{ ...otelSpan, attributes: attrs }])
+    await w.get('[data-test="wf-label"]').trigger('click')
+
+    expect(w.get('[data-test="span-stack"]').text().split('\n')).toHaveLength(8)
+    await w.get('[data-test="span-exception"] button').trigger('click')
+    expect(w.get('[data-test="span-stack"]').text()).toContain('frame 29')
+  })
 })
+

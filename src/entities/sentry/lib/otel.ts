@@ -1,4 +1,4 @@
-import type { TelemetrySource } from '../types'
+import type { SentrySpan, SentryTraceDetail, TelemetrySource } from '../types'
 
 // OpenTelemetry data inside Sentry Traces/Logs (#6523, server #6522).
 // The server puts the OTLP-only parts into `attributes` under `otel.*` keys;
@@ -86,4 +86,29 @@ export const formatAttrValue = (val: unknown): string => {
   if (val === null || val === undefined) return '—'
   if (typeof val === 'object') return JSON.stringify(val)
   return String(val)
+}
+
+// The trace's root transaction is the page header, not one of `spans`; the
+// waterfall draws it as its first row so the tree is whole (A-2).
+export const spansWithRoot = (detail: SentryTraceDetail): SentrySpan[] => {
+  const t = detail.transaction
+  if (!t.span_id || detail.spans.some((s) => s.span_id === t.span_id)) return detail.spans
+  const root: SentrySpan = {
+    span_id: t.span_id,
+    parent_span_id: null,
+    op: t.op,
+    description: t.transaction_name,
+    status: t.status,
+    start_offset_ms: 0,
+    duration_ms: t.duration_ms,
+    peer_type: null,
+    peer_address: null,
+    is_error: !!t.status && !['ok', 'unset'].includes(t.status),
+    source: t.source,
+    service_name: t.service_name ?? null,
+    attributes: null,
+    is_transaction: true,
+    transaction_id: t.id
+  }
+  return [root, ...detail.spans]
 }
