@@ -24,8 +24,9 @@ const seq = {
   calls: [call('a', 'shop-web', 'checkout-api'), call('b', 'checkout-api', 'payments-worker')]
 } as unknown as SentrySequence
 
+let current: SentrySequence = seq
 vi.mock('../../lib', () => ({
-  useSentryRequests: () => ({ getTraceSequence: () => Promise.resolve(seq) })
+  useSentryRequests: () => ({ getTraceSequence: () => Promise.resolve(current) })
 }))
 
 describe('TraceSequence zoom (#6533 seq-zoom)', () => {
@@ -51,5 +52,26 @@ describe('TraceSequence zoom (#6533 seq-zoom)', () => {
     const w = mount(TraceSequence, { props: { traceId: 't1', colors: new Map() } })
     await flushPromises()
     expect(w.findAll('.trace-seq__lifeline')).toHaveLength(3)
+  })
+
+  it('#6549: a call inside one service is a loop, not a zero-length line', async () => {
+    current = { ...seq, calls: [call('a', 'shop-web', 'shop-web')] } as unknown as SentrySequence
+    const w = mount(TraceSequence, { props: { traceId: 't1', colors: new Map() } })
+    await flushPromises()
+    expect(w.findAll('path.trace-seq__arrow')).toHaveLength(2)
+    expect(w.get('[data-test="seq-view"]').findAll('line.trace-seq__arrow')).toHaveLength(0)
+    current = seq
+  })
+
+  it('#6549: a huge trace draws the first 300 calls and says so', async () => {
+    current = {
+      ...seq,
+      calls: Array.from({ length: 450 }, (_, i) => call(`s${i}`, 'shop-web', 'checkout-api'))
+    } as unknown as SentrySequence
+    const w = mount(TraceSequence, { props: { traceId: 't1', colors: new Map() } })
+    await flushPromises()
+    expect(w.get('[data-test="seq-capped"]').text()).toContain('first 300 of 450 calls')
+    expect(w.findAll('.trace-seq__arrow--call')).toHaveLength(300)
+    current = seq
   })
 })
