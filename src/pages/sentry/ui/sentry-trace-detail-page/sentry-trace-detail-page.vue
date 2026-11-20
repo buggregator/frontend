@@ -13,6 +13,7 @@ import {
   TraceCallGraph,
   TraceFlameGraph,
   TraceInsight,
+  TraceRelatedLogs,
   TraceSequence,
   TraceWaterfall,
   type SentryViewTab
@@ -58,6 +59,7 @@ const viewTabs = computed<SentryViewTab[]>(() => [
 // A related list the trace does not have (an old link): the waterfall.
 const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'waterfall'))
 const colors = computed(() => serviceColors(waterfallSpans.value))
+const spanIds = computed(() => new Set(waterfallSpans.value.map((s) => s.span_id)))
 // The graphs fill the page under the tabs (#6533 «fullheight»).
 const isGraphTab = computed(() => ['flame', 'graph', 'sequence'].includes(activeTab.value))
 
@@ -193,18 +195,12 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div
+        <TraceRelatedLogs
           v-if="activeTab === 'logs'"
-          class="trace-detail__logs-info"
-        >
-          {{ detail.related_log_count }} log entries linked to this trace.
-          <RouterLink
-            :to="{ name: RouteName.SentryLogs, query: { trace_id: detail.trace_id } }"
-            class="trace-detail__logs-link"
-          >
-            View logs &rarr;
-          </RouterLink>
-        </div>
+          :trace-id="detail.trace_id"
+          :span-ids="spanIds"
+          @span="showInWaterfall"
+        />
       </div>
     </template>
 
@@ -300,16 +296,5 @@ onMounted(async () => {
 
 .trace-detail__error-time {
   @apply text-2xs font-mono text-gray-500 dark:text-gray-400;
-}
-
-.trace-detail__logs-info {
-  @apply p-4 text-sm text-gray-500 dark:text-gray-400;
-  @apply rounded;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border border-gray-200 dark:border-gray-700;
-}
-
-.trace-detail__logs-link {
-  @apply text-blue-600 dark:text-blue-400 hover:underline ml-1 font-medium;
 }
 </style>
