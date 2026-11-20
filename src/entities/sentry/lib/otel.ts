@@ -22,9 +22,19 @@ export type OtelParts = {
   events: OtelEvent[]
   links: OtelLink[]
   kind: string | null
+  // otel.status_code / otel.status_description: shown with the span, not as attributes.
+  status: { code: string | null; description: string | null }
 }
 
-const EXTRA_KEYS = ['otel.resource', 'otel.scope', 'otel.events', 'otel.links', 'otel.kind']
+const EXTRA_KEYS = [
+  'otel.resource',
+  'otel.scope',
+  'otel.events',
+  'otel.links',
+  'otel.kind',
+  'otel.status_code',
+  'otel.status_description'
+]
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v)
@@ -54,7 +64,11 @@ export const splitOtelAttributes = (attrs: Record<string, unknown> | null | unde
       span_id: str(l.span_id),
       attributes: isRecord(l.attributes) ? l.attributes : {}
     })),
-    kind: all['otel.kind'] ? str(all['otel.kind']) : null
+    kind: all['otel.kind'] ? str(all['otel.kind']) : null,
+    status: {
+      code: all['otel.status_code'] ? str(all['otel.status_code']) : null,
+      description: all['otel.status_description'] ? str(all['otel.status_description']) : null
+    }
   }
 }
 

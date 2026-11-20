@@ -190,15 +190,18 @@ const truncate = (text: string, max: number) => {
           :class="{ 'trace-wf__bar--error': span.is_error }"
           :style="barStyle(span)"
         />
+      </div>
+
+      <!-- Duration cell: the error label sits before the value, with a gap -->
+      <div
+        class="trace-wf__dur"
+        data-test="wf-dur"
+      >
         <span
           v-if="span.is_error"
           class="trace-wf__error-tag"
         >error</span>
-      </div>
-
-      <!-- Duration cell -->
-      <div class="trace-wf__dur">
-        {{ span.duration_ms }}ms
+        <span>{{ span.duration_ms }}ms</span>
       </div>
 
       <!-- Expanded details (#6523): exception, Attributes / Events / Links / Resource -->
@@ -261,7 +264,7 @@ const truncate = (text: string, max: number) => {
   @apply flex-1 min-w-0;
 }
 .trace-wf__col-dur {
-  @apply w-20 text-right flex-shrink-0;
+  @apply w-24 text-right flex-shrink-0;
 }
 
 .trace-wf__row {
@@ -358,14 +361,13 @@ const truncate = (text: string, max: number) => {
 }
 
 .trace-wf__error-tag {
-  @apply absolute text-2xs font-semibold whitespace-nowrap;
+  @apply text-2xs font-semibold whitespace-nowrap;
   @apply text-red-600 dark:text-red-400;
-  top: 0;
-  right: -36px;
 }
 
 .trace-wf__dur {
-  @apply w-16 text-right flex-shrink-0 font-mono text-gray-500 dark:text-gray-400;
+  @apply w-24 flex-shrink-0 inline-flex items-center justify-end gap-1.5;
+  @apply font-mono text-gray-500 dark:text-gray-400;
 }
 
 /* Expanded attributes panel */

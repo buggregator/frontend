@@ -14,7 +14,8 @@ describe('splitOtelAttributes', () => {
       'otel.links': [{ trace_id: 't', span_id: 's', attributes: {} }]
     })
 
-    expect(parts.attributes).toEqual({ 'http.request.method': 'POST', 'otel.status_code': 'ERROR' })
+    expect(parts.attributes).toEqual({ 'http.request.method': 'POST' })
+    expect(parts.status).toEqual({ code: 'ERROR', description: null })
     expect(parts.kind).toBe('client')
     expect(parts.resource).toEqual({ 'service.name': 'checkout-api' })
     expect(parts.scope).toEqual({ name: 'net/http', version: '0.1' })
@@ -23,7 +24,15 @@ describe('splitOtelAttributes', () => {
   })
 
   it('a Sentry span (no extras, or null): empty parts, attributes as they are', () => {
-    expect(splitOtelAttributes(null)).toEqual({ attributes: {}, resource: {}, scope: null, events: [], links: [], kind: null })
+    expect(splitOtelAttributes(null)).toEqual({
+      attributes: {},
+      resource: {},
+      scope: null,
+      events: [],
+      links: [],
+      kind: null,
+      status: { code: null, description: null }
+    })
     expect(splitOtelAttributes({ 'db.system': 'mysql' }).attributes).toEqual({ 'db.system': 'mysql' })
   })
 

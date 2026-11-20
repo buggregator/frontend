@@ -80,7 +80,7 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     expect(w.get('[data-test="span-exception"]').text()).toContain('context.deadlineExceededError')
     expect(w.get('[data-test="span-exception"]').text()).toContain('context deadline exceeded')
     expect(w.get('[data-test="span-source"]').text()).toBe('OTel')
-    expect(w.get('[data-test="span-tab-attributes"]').text()).toMatch(/^Attributes\s*2$/)
+    expect(w.get('[data-test="span-tab-attributes"]').text()).toMatch(/^Attributes\s*1$/)
     expect(w.get('[data-test="span-tab-events"]').text()).toMatch(/^Events\s*1$/)
     expect(w.get('[data-test="span-tab-resource"]').text()).toMatch(/^Resource\s*5$/)
     expect(w.get('[data-test="span-details"]').text()).toContain('+1 more in Resource')
@@ -131,6 +131,21 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     expect(w.get('[data-test="span-stack"]').text().split('\n')).toHaveLength(8)
     await w.get('[data-test="span-exception"] button').trigger('click')
     expect(w.get('[data-test="span-stack"]').text()).toContain('frame 29')
+  })
+
+  it('reviewer #359: status with the span, a real minus for skewed clocks, a gap before the duration', async () => {
+    const w = render([{ ...otelSpan, start_offset_ms: -13800 }])
+    // Two items of a flex cell with a gap, not one run of text.
+    expect(w.get('[data-test="wf-dur"]').findAll('span').map((x) => x.text())).toEqual(['error', '300ms'])
+    await w.get('[data-test="wf-label"]').trigger('click')
+    await opened(w)
+
+    const details = w.get('[data-test="span-details"]').text()
+    expect(details).toContain('\u221213800 ms')
+    expect(details).not.toContain('+-')
+    expect(details).toContain('status_code')
+    await w.get('[data-test="span-tab-attributes"]').trigger('click')
+    expect(w.get('[role="tabpanel"]').text()).not.toContain('otel.status_code')
   })
 })
 
