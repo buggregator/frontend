@@ -4,7 +4,9 @@ import type { SentryLog } from '../../types'
 import TraceRelatedLogs from './trace-related-logs.vue'
 
 const getLogs = vi.fn()
-vi.mock('../../lib/use-sentry-requests', () => ({ useSentryRequests: () => ({ getLogs }) }))
+vi.mock('../../lib/use-sentry-requests', () => ({
+  useSentryRequests: () => ({ getTraceLogs: (trace_id: string, page: number) => getLogs({ trace_id, page: String(page) }) })
+}))
 
 const log = (id: string, ts: string, span_id: string | null, over: Partial<SentryLog> = {}): SentryLog => ({
   id,

@@ -57,9 +57,7 @@ const hasDetails = computed(
   >
     <div
       class="log-row__main"
-      role="button"
       tabindex="0"
-      :aria-expanded="hasDetails ? expanded : undefined"
       @keydown.enter.self.prevent="expanded = !expanded"
       @keydown.space.self.prevent="expanded = !expanded"
     >

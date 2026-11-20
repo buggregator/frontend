@@ -13,7 +13,7 @@ type Props = { traceId: string; spanIds: Set<string> }
 const props = defineProps<Props>()
 const emit = defineEmits<{ span: [spanId: string] }>()
 
-const { getLogs } = useSentryRequests()
+const { getTraceLogs } = useSentryRequests()
 const logs = ref<SentryLog[]>([])
 const total = ref(0)
 const page = ref(0)
@@ -27,7 +27,7 @@ const loadPage = async (next: number) => {
   loading.value = true
   error.value = ''
   try {
-    const res = await getLogs({ trace_id: traceId, page: String(next) })
+    const res = await getTraceLogs(traceId, next)
     if (id !== lastRequest) return
     const seen = new Set(next === 1 ? [] : logs.value.map((l) => l.id))
     logs.value = [...(next === 1 ? [] : logs.value), ...res.data.filter((l) => !seen.has(l.id))]

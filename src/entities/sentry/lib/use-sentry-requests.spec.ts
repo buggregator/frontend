@@ -57,6 +57,14 @@ describe('useSentryRequests: scope', () => {
     expect(query()).not.toHaveProperty('project')
   })
 
+  // reviewer #361: related_log_count on the trace detail counts every log of
+  // the trace; with the header on 15 min an older log must still be listed.
+  it('lists a trace\'s logs without the project and the header period', async () => {
+    useEventsStore().setPeriod('15m')
+    await useSentryRequests().getTraceLogs('abc', 2)
+    expect(query()).toEqual({ trace_id: 'abc', page: '2' })
+  })
+
   // The tab badges label the lists, so /counts takes the same scope.
   it('counts by project and period', async () => {
     await useSentryRequests().getCounts()

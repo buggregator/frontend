@@ -77,6 +77,13 @@ export const useSentryRequests = () => {
     return fetchJSON<PaginatedResponse<SentryLog>>(`${BASE}/logs${qs ? `?${qs}` : ''}`)
   }
 
+  // A trace's logs, all of them: no project and no header period, as for the
+  // trace detail whose related_log_count names the tab (#6533 related-logs).
+  const getTraceLogs = (traceId: string, page: number) =>
+    fetchJSON<PaginatedResponse<SentryLog>>(
+      `${BASE}/logs?${new URLSearchParams({ trace_id: traceId, page: String(page) }).toString()}`
+    )
+
   const getMetrics = (params: Record<string, string> = {}) => {
     const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
@@ -111,6 +118,7 @@ export const useSentryRequests = () => {
     getTraces,
     getTraceDetail,
     getLogs,
+    getTraceLogs,
     getMetrics,
     getServiceMap,
     getServiceMapEdge,
