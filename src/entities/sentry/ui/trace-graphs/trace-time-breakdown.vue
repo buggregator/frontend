@@ -149,7 +149,7 @@ const fmt = (ms: number) => (ms >= 10 ? Math.round(ms) : Math.round(ms * 10) / 1
 
 <style lang="scss" scoped>
 .trace-time {
-  @apply rounded-md border border-gray-200 dark:border-gray-700 text-xs;
+  @apply text-xs;
   @apply bg-white dark:bg-gray-800;
 }
 

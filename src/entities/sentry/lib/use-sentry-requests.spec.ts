@@ -39,9 +39,14 @@ describe('useSentryRequests: scope', () => {
     expect(query()).toMatchObject({ project: 'shop', window: '7d', page: '1' })
   })
 
-  it('scopes the service map by project and keeps its window', async () => {
-    await useSentryRequests().getServiceMap(15)
-    expect(query()).toEqual({ project: 'shop', window: '15' })
+  it('scopes the service map by project and the header period', async () => {
+    await useSentryRequests().getServiceMap()
+    expect(query()).toEqual({ project: 'shop', window: '7d' })
+  })
+
+  it('lists the traces of a map edge in the same scope', async () => {
+    await useSentryRequests().getServiceMapEdge({ source: 'a', target: 'b', limit: '50', offset: '20' })
+    expect(query()).toEqual({ project: 'shop', window: '7d', source: 'a', target: 'b', limit: '50', offset: '20' })
   })
 
   // A trace can span several projects, and with ?project the server answers 404

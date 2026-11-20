@@ -146,65 +146,62 @@ export interface SentryMetric {
   attributes: Record<string, SentryMetricAttribute | unknown> | null
 }
 
-export interface SentryServiceMapNode {
-  id: string
-  label: string
-  request_count: number
-  error_count: number
-  avg_duration_ms: number | null
-}
-
-export interface SentryServiceMapEdge {
-  source: string
-  target: string
-  op_type: string
-  request_count: number
-  error_count: number
-  avg_duration_ms: number | null
-}
-
-export interface SentryServiceMap {
-  nodes: SentryServiceMapNode[]
-  edges: SentryServiceMapEdge[]
-  window_minutes: number
-}
-
-// Request flow over a period (#6532/#6533 view C): GET /api/sentry/flow.
-export interface SentryFlowBucket {
+// Calls per time bucket of the period (service map and flow).
+export interface SentryGraphBucket {
   t: string
   count: number
   errors: number
 }
 
-export interface SentryFlowRequestService {
-  service: string
-  start_ts: string
-  end_ts: string
-  is_error: boolean
-}
-
-export interface SentryFlowRequest {
+// One trace through a service-map edge, errors first then newest.
+export interface SentryServiceMapTrace {
   trace_id: string
-  name: string
   start_ts: string
-  end_ts: string
   duration_ms: number
   is_error: boolean
-  services: SentryFlowRequestService[]
 }
 
-export interface SentryFlow {
-  from: string
-  to: string
-  bucket_seconds: number
-  total: number
-  truncated: boolean
-  // Callers before callees.
-  services: string[]
-  buckets: SentryFlowBucket[]
-  // Newest first.
-  requests: SentryFlowRequest[]
+// Requests, errors and speed of a node or an edge over the period (#6532).
+export interface SentryServiceMapStats {
+  request_count: number
+  error_count: number
+  error_rate?: number
+  rpm?: number
+  avg_duration_ms: number | null
+  p95_duration_ms?: number | null
+  buckets?: SentryGraphBucket[]
 }
+
+export interface SentryServiceMapNode extends SentryServiceMapStats {
+  id: string
+  label: string
+  // service: sends traces; external: a host or database it calls.
+  kind?: 'service' | 'external' | string
+}
+
+export interface SentryServiceMapEdge extends SentryServiceMapStats {
+  source: string
+  target: string
+  op_type: string
+  trace_count?: number
+  // The first 20; the rest from GET /api/sentry/service-map/edge.
+  traces?: SentryServiceMapTrace[]
+}
+
+export interface SentryServiceMap {
+  from?: string
+  to?: string
+  bucket_seconds?: number
+  window_minutes: number
+  nodes: SentryServiceMapNode[]
+  edges: SentryServiceMapEdge[]
+}
+
+export interface SentryServiceMapEdgeTraces {
+  total: number
+  traces: SentryServiceMapTrace[]
+}
+
 
 // One trace's calls in time order: GET /api/sentry/traces/{id}/sequence.
 export interface SentrySequenceCallee {

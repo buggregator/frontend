@@ -43,3 +43,18 @@ describe('useSentryTraces: source filter (#6523)', () => {
     expect(getTraces).toHaveBeenLastCalledWith({ page: '1', source: 'otel' })
   })
 })
+
+describe('useSentryTraces: service filter (#6544)', () => {
+  beforeEach(() => {
+    getTraces.mockReset()
+    getTraces.mockResolvedValue({ data: [], meta: { total: 0 } })
+  })
+
+  it('sends service with the source when set', async () => {
+    const traces = useSentryTraces()
+    traces.filters.service = 'checkout-api'
+    traces.filters.source = 'otel'
+    await traces.fetchList()
+    expect(getTraces).toHaveBeenLastCalledWith({ page: '1', source: 'otel', service: 'checkout-api' })
+  })
+})

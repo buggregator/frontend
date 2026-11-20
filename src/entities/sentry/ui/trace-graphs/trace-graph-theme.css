@@ -16,6 +16,9 @@
   --tg-err: #dc2626;
   --tg-cluster: 7%;
   --tg-flow-dot: #ffffff;
+  /* Service map particles (#6540) */
+  --tg-dot: #111827;
+  --tg-band-op: 0.45;
 }
 
 .dark .tg-scope {
@@ -33,6 +36,7 @@
   --tg-err: #f87171;
   --tg-cluster: 10%;
   --tg-flow-dot: #111827;
+  --tg-dot: #ffffff;
 }
 
 .tg-canvas {

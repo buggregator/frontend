@@ -42,11 +42,17 @@ const isDark = () => document.documentElement.classList.contains('dark')
 const box = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 let chart: FlameChart | null = null
-let onResize: (() => void) | null = null
+let observer: ResizeObserver | null = null
+
+// Fills the box under the tabs (#6533 «fullheight»); taller content scrolls.
+const size = () => {
+  const r = box.value!.getBoundingClientRect()
+  return { width: Math.max(1, r.width), height: Math.max(chartHeight.value, Math.floor(r.height)) }
+}
 
 const destroy = () => {
-  if (onResize) window.removeEventListener('resize', onResize)
-  onResize = null
+  observer?.disconnect()
+  observer = null
   if (chart) {
     chart.interactionsEngine.destroy()
     chart.removeAllListeners()
@@ -57,9 +63,9 @@ const destroy = () => {
 const render = () => {
   if (!box.value || !canvas.value) return
   destroy()
-  const { width } = box.value.getBoundingClientRect()
-  canvas.value.width = Math.max(1, width)
-  canvas.value.height = chartHeight.value
+  const { width, height } = size()
+  canvas.value.width = width
+  canvas.value.height = height
   const dark = isDark()
   chart = new FlameChart({
     canvas: canvas.value,
@@ -95,10 +101,13 @@ const render = () => {
     const id = d?.node?.source?.type
     if (id) emit('select', id)
   })
-  onResize = debounce(() => {
-    if (box.value && chart) chart.resize(box.value.getBoundingClientRect().width, chartHeight.value)
+  const onResize = debounce(() => {
+    if (!box.value || !chart) return
+    const { width, height } = size()
+    chart.resize(width, height)
   }, 30)
-  window.addEventListener('resize', onResize)
+  observer = new ResizeObserver(onResize)
+  observer.observe(box.value)
 }
 
 // Browser only: the canvas is drawn after mount.
@@ -120,7 +129,7 @@ onBeforeUnmount(destroy)
       <div
         ref="box"
         class="trace-flame__canvas-box"
-        :style="{ height: `${chartHeight}px` }"
+        :style="{ minHeight: `${chartHeight}px` }"
       >
         <canvas
           ref="canvas"
@@ -147,12 +156,16 @@ onBeforeUnmount(destroy)
 
 <style lang="scss" scoped>
 .trace-flame {
-  @apply grid gap-4 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_18rem] items-start;
+  @apply flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_18rem] overflow-auto lg:overflow-hidden;
 }
 
 .trace-flame__chart-card {
-  @apply min-w-0 rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden;
+  @apply min-w-0 flex flex-col lg:overflow-auto;
   @apply bg-white dark:bg-gray-800;
+}
+
+.trace-flame__side {
+  @apply border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 lg:overflow-auto;
 }
 
 .trace-flame__head {
@@ -168,7 +181,7 @@ onBeforeUnmount(destroy)
 }
 
 .trace-flame__canvas-box {
-  @apply w-full;
+  @apply w-full flex-1 overflow-hidden;
 
   canvas {
     @apply block;

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { VueFlow, useVueFlow, type NodeMouseEvent } from '@vue-flow/core'
+import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { computed, nextTick, provide, ref, useId, watch } from 'vue'
 import '@vue-flow/core/dist/style.css'
 import { mapToTraceCallGraph, pathThrough } from '../../lib/vue-flow/map-to-trace-call-graph'
@@ -102,13 +103,13 @@ const onKeydown = (e: KeyboardEvent) => {
 
 const selected = computed(() => props.spans.find((s) => s.span_id === pinned.value) ?? null)
 
-const { fitView, setViewport, onNodesInitialized } = useVueFlow(`trace-call-graph-${uid}`)
-// Phone: the graph does not fit at a readable zoom; start at the root and pan.
-const fit = () =>
-  window.matchMedia('(max-width: 639px)').matches
-    ? setViewport({ x: 8, y: 8, zoom: 0.6 })
-    : fitView({ padding: 0.08, minZoom: 0.6, maxZoom: 1 })
+const { fitView, onNodesInitialized } = useVueFlow(`trace-call-graph-${uid}`)
+// The whole graph in view on open and when the box changes size (#6533: on a
+// 540 px window the old phone start at the root showed an empty area).
+const fit = () => fitView({ padding: 0.06, minZoom: 0.2, maxZoom: 1 })
 onNodesInitialized(fit)
+const canvasBox = ref<HTMLElement>()
+useResizeObserver(canvasBox, useDebounceFn(fit, 60))
 watch(
   () => graph.value.nodes.length,
   () => nextTick(fit)
@@ -161,6 +162,7 @@ watch(
     </svg>
 
     <div
+      ref="canvasBox"
       class="trace-cg__canvas tg-canvas"
       @mouseover="onOver"
       @mouseleave="onLeave"
@@ -175,7 +177,7 @@ watch(
         :nodes-draggable="false"
         :nodes-connectable="false"
         :elements-selectable="false"
-        :min-zoom="0.6"
+        :min-zoom="0.2"
         :max-zoom="1.5"
         @node-click="onNodeClick"
       >
@@ -290,12 +292,12 @@ watch(
 
 <style lang="scss" scoped>
 .trace-cg {
-  @apply rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden;
+  @apply flex-1 min-h-0 flex flex-col overflow-hidden;
   @apply bg-white dark:bg-gray-800;
 }
 
 .trace-cg__head {
-  @apply flex flex-wrap items-baseline gap-2 px-3 py-2 border-b border-gray-200 dark:border-gray-700;
+  @apply flex flex-none flex-wrap items-baseline gap-2 px-4 py-2 border-b border-gray-200 dark:border-gray-700;
 }
 
 .trace-cg__title {
@@ -315,11 +317,11 @@ watch(
 }
 
 .trace-cg__canvas {
-  @apply w-full h-[440px] md:h-[600px];
+  @apply w-full flex-1 min-h-[320px];
 }
 
 .trace-cg__foot {
-  @apply px-3 py-2 space-y-2 border-t border-gray-200 dark:border-gray-700;
+  @apply flex-none px-4 py-2 space-y-2 border-t border-gray-200 dark:border-gray-700;
 }
 
 .trace-cg__swatch {

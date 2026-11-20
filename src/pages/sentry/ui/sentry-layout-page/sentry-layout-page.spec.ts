@@ -32,7 +32,8 @@ const render = () =>
         RouterLink: RouterLinkStub,
         SentrySubNav: { props: ['current'], template: '<nav class="tabs-stub" :data-current="current" />' },
         SentryFilterButton: { props: ['tab'], template: '<button class="filter-stub" :data-tab="tab" />' },
-        PeriodSelect: { template: '<select class="period-stub" />' }
+        PeriodSelect: { template: '<select class="period-stub" />' },
+        SentryListViews: { props: ['tab'], template: '<div class="views-stub" :data-tab="tab" />' }
       }
     }
   })
@@ -74,5 +75,16 @@ describe('SentryLayoutPage header (#5980)', () => {
     expect(header.find('.help-stub').exists()).toBe(false)
     expect(header.find('.filter-stub').exists()).toBe(false)
     expect(header.find('.tabs-stub').attributes('data-current')).toBe('traces')
+  })
+
+  it('view tabs under the header (#6543 B) on Traces and Exceptions, none on Logs or the trace page', () => {
+    routeName.value = 'sentry-traces'
+    expect(render().get('.views-stub').attributes('data-tab')).toBe('traces')
+    routeName.value = 'sentry-exceptions'
+    expect(render().get('.views-stub').attributes('data-tab')).toBe('exceptions')
+    routeName.value = 'sentry-logs'
+    expect(render().find('.views-stub').exists()).toBe(false)
+    routeName.value = 'sentry-trace-detail'
+    expect(render().find('.views-stub').exists()).toBe(false)
   })
 })

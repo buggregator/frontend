@@ -5,12 +5,17 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   SOURCE_LABEL,
+  SentryViewTabs,
+  serviceColors,
   spansWithRoot,
   useSentryTraces,
+  useTraceView,
   TraceCallGraph,
   TraceFlameGraph,
   TraceInsight,
-  TraceWaterfall
+  TraceSequence,
+  TraceWaterfall,
+  type SentryViewTab
 } from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
@@ -27,24 +32,34 @@ const formatTime = (ts: string) => (ts ? moment(ts).fromNow() : '')
 const { fetchDetail } = useSentryTraces()
 const detail = ref<SentryTraceDetail | null>(null)
 const loading = ref(false)
-type Tab = 'spans' | 'flame' | 'callgraph' | 'errors' | 'logs'
-const activeTab = ref<Tab>('spans')
+// Waterfall, the trace graphs (#6533 A) and the related lists in one row of
+// view tabs (#6543 B), the view in the URL (?view=…).
+const { view, select: selectView } = useTraceView()
 
-// Flame graph and call graph of the trace (#6533 A) share the selected span;
-// «Show in waterfall» opens that span in the waterfall.
+// Flame graph and call graph share the selected span; «Show in waterfall»
+// opens that span in the waterfall.
 const selectedSpanId = ref<string | null>(null)
 const openSpanId = ref<string | null>(null)
 const showInWaterfall = (spanId: string) => {
   selectedSpanId.value = spanId
   openSpanId.value = spanId
-  activeTab.value = 'spans'
+  selectView('waterfall')
 }
-const graphTabs: { id: Tab; label: string }[] = [
-  { id: 'spans', label: 'Waterfall' },
-  { id: 'flame', label: 'Flame graph' },
-  { id: 'callgraph', label: 'Call graph' }
-]
-const isGraphTab = computed(() => activeTab.value === 'flame' || activeTab.value === 'callgraph')
+const viewTabs = computed<SentryViewTab[]>(() => [
+  { id: 'waterfall', label: 'Waterfall', icon: 'waterfall' },
+  { id: 'flame', label: 'Flame graph', icon: 'flame' },
+  { id: 'graph', label: 'Call graph', icon: 'graph' },
+  { id: 'sequence', label: 'Sequence', icon: 'sequence' },
+  ...(detail.value?.related_errors.length
+    ? [{ id: 'errors', label: 'Related errors', count: detail.value.related_errors.length }]
+    : []),
+  ...(detail.value?.related_log_count ? [{ id: 'logs', label: 'Related logs', count: detail.value.related_log_count }] : [])
+])
+// A related list the trace does not have (an old link): the waterfall.
+const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'waterfall'))
+const colors = computed(() => serviceColors(waterfallSpans.value))
+// The graphs fill the page under the tabs (#6533 «fullheight»).
+const isGraphTab = computed(() => ['flame', 'graph', 'sequence'].includes(activeTab.value))
 
 // Spans, services and sources of the trace (#6523): a trace may run through
 // a Sentry SDK service and OpenTelemetry ones.
@@ -115,42 +130,19 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="trace-detail__tabs">
-        <button
-          v-for="tab in graphTabs"
-          :key="tab.id"
-          type="button"
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === tab.id }"
-          :aria-pressed="activeTab === tab.id"
-          :data-test="`trace-tab-${tab.id}`"
-          @click="activeTab = tab.id"
-        >
-          {{ tab.label }}
-        </button>
-        <button
-          v-if="detail.related_errors.length > 0"
-          type="button"
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'errors' }"
-          @click="activeTab = 'errors'"
-        >
-          Related Errors ({{ detail.related_errors.length }})
-        </button>
-        <button
-          v-if="detail.related_log_count > 0"
-          type="button"
-          class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'logs' }"
-          @click="activeTab = 'logs'"
-        >
-          Related Logs ({{ detail.related_log_count }})
-        </button>
-      </div>
+      <SentryViewTabs
+        :tabs="viewTabs"
+        :current="activeTab"
+        label="Trace view"
+        @select="selectView"
+      />
 
-      <div class="trace-detail__content">
+      <div
+        class="trace-detail__content"
+        :class="{ 'trace-detail__content--graph': isGraphTab }"
+      >
         <TraceWaterfall
-          v-if="activeTab === 'spans'"
+          v-if="activeTab === 'waterfall'"
           :spans="waterfallSpans"
           :total-ms="detail.transaction.duration_ms"
           :trace-id="detail.trace_id"
@@ -158,7 +150,7 @@ onMounted(async () => {
         />
 
         <TraceInsight
-          v-if="isGraphTab"
+          v-if="activeTab === 'flame' || activeTab === 'graph'"
           :spans="waterfallSpans"
           @select="selectedSpanId = $event"
         />
@@ -170,11 +162,16 @@ onMounted(async () => {
           @show-in-waterfall="showInWaterfall"
         />
         <TraceCallGraph
-          v-if="activeTab === 'callgraph'"
+          v-if="activeTab === 'graph'"
           :spans="waterfallSpans"
           :selected-span-id="selectedSpanId"
           @select="selectedSpanId = $event"
           @show-in-waterfall="showInWaterfall"
+        />
+        <TraceSequence
+          v-if="activeTab === 'sequence'"
+          :trace-id="detail.trace_id"
+          :colors="colors"
         />
 
         <div
@@ -274,30 +271,14 @@ onMounted(async () => {
   @apply text-2xs font-mono text-gray-500 dark:text-gray-400 ml-auto;
 }
 
-.trace-detail__tabs {
-  @apply flex items-center gap-1 px-4 py-2 overflow-x-auto;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-800;
-}
-
-.trace-detail__tab {
-  @apply inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap;
-  @apply px-3 py-1.5 rounded-md;
-  @apply text-xs font-medium cursor-pointer;
-  @apply text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50;
-  @apply transition-colors duration-100;
-}
-
-.trace-detail__tab--active {
-  @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white;
-}
-
 .trace-detail__content {
   @apply flex-1 overflow-auto p-5;
   @apply bg-white dark:bg-gray-800;
+}
+
+// Edge to edge, down to the bottom of the screen; the graph scrolls itself.
+.trace-detail__content--graph {
+  @apply p-0 flex flex-col overflow-hidden min-h-[420px];
 }
 
 .trace-detail__errors {

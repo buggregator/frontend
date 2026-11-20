@@ -11,8 +11,8 @@ import type {
   SentryLog,
   SentryMetric,
   SentryServiceMap,
+  SentryServiceMapEdgeTraces,
   SentryCounts,
-  SentryFlow,
   SentrySequence,
 } from '../types'
 
@@ -82,21 +82,20 @@ export const useSentryRequests = () => {
     return fetchJSON<PaginatedResponse<SentryMetric>>(`${BASE}/metrics${qs ? `?${qs}` : ''}`)
   }
 
-  // Request flow over the header period (#6533 C).
-  const getFlow = (params: Record<string, string> = {}) => {
-    const qs = new URLSearchParams(withScope(params)).toString()
-    return fetchJSON<SentryFlow>(`${BASE}/flow${qs ? `?${qs}` : ''}`)
-  }
-
   // A trace's calls in time order; no project, as for the trace detail.
   const getTraceSequence = (traceId: string) =>
     fetchJSON<SentrySequence>(`${BASE}/traces/${traceId}/sequence`)
 
-  const getServiceMap = (windowMinutes?: number) => {
-    const qs = new URLSearchParams(
-      withProject(windowMinutes ? { window: String(windowMinutes) } : {})
-    ).toString()
+  // Services and the calls between them over the header period (#6533 B).
+  const getServiceMap = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
     return fetchJSON<SentryServiceMap>(`${BASE}/service-map${qs ? `?${qs}` : ''}`)
+  }
+
+  // Traces through one edge of the map, errors first; same scope as the map.
+  const getServiceMapEdge = (params: { source: string; target: string; op_type?: string; limit?: string; offset?: string }) => {
+    const qs = new URLSearchParams(withScope({ ...params })).toString()
+    return fetchJSON<SentryServiceMapEdgeTraces>(`${BASE}/service-map/edge?${qs}`)
   }
 
   // The badges label the lists, so they take the same scope.
@@ -114,7 +113,7 @@ export const useSentryRequests = () => {
     getLogs,
     getMetrics,
     getServiceMap,
-    getFlow,
+    getServiceMapEdge,
     getTraceSequence,
     getCounts,
   }
