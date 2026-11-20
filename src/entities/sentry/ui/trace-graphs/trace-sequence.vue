@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useElementSize } from '@vueuse/core'
 import { computed, ref, useId, watch } from 'vue'
+import { usePanZoom } from '@/shared/lib/use-pan-zoom'
 import { useSentryRequests } from '../../lib'
 import { layoutSequence } from '../../lib/trace-graph/sequence-layout'
 import { paletteColors } from '../../lib/trace-graph/trace-graph'
@@ -34,11 +34,25 @@ const load = async () => {
 }
 watch(() => props.traceId, load, { immediate: true })
 
-const box = ref<HTMLElement>()
-const { width } = useElementSize(box)
+// The diagram has its own width (a lane every LANE px), the view zooms and pans
+// over it like the Call graph and fits it on open (seq-zoom, #6533).
 const MIN_WIDTH = 640
-const svgWidth = computed(() => Math.max(MIN_WIDTH, Math.floor(width.value)))
-const layout = computed(() => (sequence.value ? layoutSequence(sequence.value, { width: svgWidth.value }) : null))
+const LANE = 240
+const SIDE = 90
+const diagramWidth = computed(() => {
+  if (!sequence.value) return MIN_WIDTH
+  const lanes = new Set(sequence.value.services)
+  for (const c of sequence.value.calls) lanes.add(c.from).add(c.to)
+  return Math.max(MIN_WIDTH, SIDE * 2 + (lanes.size - 1) * LANE)
+})
+const layout = computed(() =>
+  sequence.value ? layoutSequence(sequence.value, { width: diagramWidth.value, side: SIDE }) : null
+)
+const box = ref<HTMLElement>()
+const contentSize = computed(() =>
+  layout.value?.arrows.length ? { width: diagramWidth.value, height: layout.value.height + 8 } : null
+)
+const { transform, percent, dragging, zoomIn, zoomOut, fit: fitView, onKeydown } = usePanZoom(box, contentSize)
 // External hosts get colours after the services.
 const colorOf = computed(() =>
   paletteColors([...props.colors.keys(), ...(layout.value?.lifelines.map((l) => l.service) ?? [])])
@@ -69,7 +83,52 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
     <div
       ref="box"
       class="trace-seq__canvas tg-canvas"
+      :class="{ 'is-dragging': dragging }"
+      :tabindex="contentSize ? 0 : undefined"
+      :aria-label="contentSize ? 'Sequence diagram: drag or arrow keys to move, wheel or + and − to zoom, 0 to fit' : undefined"
+      data-test="seq-canvas"
+      @keydown="onKeydown"
     >
+      <div
+        v-if="contentSize"
+        class="trace-seq__zoom"
+        role="toolbar"
+        aria-label="Zoom"
+      >
+        <button
+          type="button"
+          class="trace-seq__zoom-btn"
+          aria-label="Zoom out"
+          title="Zoom out (−)"
+          data-test="seq-zoom-out"
+          @click="zoomOut"
+        >
+          −
+        </button>
+        <span
+          class="trace-seq__zoom-value"
+          data-test="seq-zoom-value"
+        >{{ percent }}%</span>
+        <button
+          type="button"
+          class="trace-seq__zoom-btn"
+          aria-label="Zoom in"
+          title="Zoom in (+)"
+          data-test="seq-zoom-in"
+          @click="zoomIn"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          class="trace-seq__zoom-btn trace-seq__zoom-btn--fit"
+          title="Fit to view (0)"
+          data-test="seq-zoom-fit"
+          @click="fitView"
+        >
+          Fit
+        </button>
+      </div>
       <p
         v-if="loading && !layout"
         class="trace-seq__state"
@@ -97,8 +156,7 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
       </p>
       <svg
         v-else-if="layout"
-        :width="svgWidth"
-        :height="layout.height"
+        class="trace-seq__svg"
         role="img"
         :aria-label="`Sequence of ${sequence?.calls.length ?? 0} calls`"
       >
@@ -162,69 +220,74 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
         </defs>
 
         <g
-          v-for="l in layout.lifelines"
-          :key="l.service"
+          :transform="transform"
+          data-test="seq-view"
         >
-          <line
-            :x1="l.x"
-            :x2="l.x"
-            y1="30"
-            :y2="layout.height"
-            class="trace-seq__lifeline"
-          />
-          <foreignObject
-            :x="l.x - 80"
-            y="2"
-            width="160"
-            height="26"
+          <g
+            v-for="l in layout.lifelines"
+            :key="l.service"
           >
-            <div class="trace-seq__actor">
-              <span
-                class="trace-seq__swatch"
-                :style="{ background: colorOf.get(l.service) }"
-              />{{ l.service }}
-            </div>
-          </foreignObject>
-        </g>
+            <line
+              :x1="l.x"
+              :x2="l.x"
+              y1="30"
+              :y2="layout.height"
+              class="trace-seq__lifeline"
+            />
+            <foreignObject
+              :x="l.x - 80"
+              y="2"
+              width="160"
+              height="26"
+            >
+              <div class="trace-seq__actor">
+                <span
+                  class="trace-seq__swatch"
+                  :style="{ background: colorOf.get(l.service) }"
+                />{{ l.service }}
+              </div>
+            </foreignObject>
+          </g>
 
-        <rect
-          v-for="(a, i) in layout.activations"
-          :key="`act-${i}`"
-          :x="a.x - 5"
-          :y="a.y1"
-          width="10"
-          :height="Math.max(6, a.y2 - a.y1)"
-          rx="2"
-          class="trace-seq__activation"
-          :style="{ '--svc': colorOf.get(a.service) }"
-        />
-
-        <g
-          v-for="(a, i) in layout.arrows"
-          :key="`arrow-${i}`"
-        >
-          <line
-            :x1="a.fromX"
-            :y1="a.y"
-            :x2="a.kind === 'call' ? tip(a.fromX, a.toX) : a.toX"
-            :y2="a.y"
-            :class="['trace-seq__arrow', `trace-seq__arrow--${a.kind}`, { 'trace-seq__arrow--err': a.isError }]"
-            :marker-end="`url(#${a.kind === 'call' ? (a.isError ? mk.err : mk.call) : a.isError ? mk.replyErr : mk.reply})`"
+          <rect
+            v-for="(a, i) in layout.activations"
+            :key="`act-${i}`"
+            :x="a.x - 5"
+            :y="a.y1"
+            width="10"
+            :height="Math.max(6, a.y2 - a.y1)"
+            rx="2"
+            class="trace-seq__activation"
+            :style="{ '--svc': colorOf.get(a.service) }"
           />
-          <text
-            :x="Math.min(a.fromX, a.toX) + 12"
-            :y="a.y - 7"
-            :class="['trace-seq__label', { 'trace-seq__label--err': a.isError, 'trace-seq__label--late': a.late }]"
-          >{{ fit(a.label, Math.abs(a.toX - a.fromX) - 24) }}<title>{{ a.label }}</title></text>
-        </g>
 
-        <text
-          v-for="(n, i) in layout.notes"
-          :key="`note-${i}`"
-          :x="n.x + 12"
-          :y="n.y"
-          class="trace-seq__note"
-        >{{ n.text }}</text>
+          <g
+            v-for="(a, i) in layout.arrows"
+            :key="`arrow-${i}`"
+          >
+            <line
+              :x1="a.fromX"
+              :y1="a.y"
+              :x2="a.kind === 'call' ? tip(a.fromX, a.toX) : a.toX"
+              :y2="a.y"
+              :class="['trace-seq__arrow', `trace-seq__arrow--${a.kind}`, { 'trace-seq__arrow--err': a.isError }]"
+              :marker-end="`url(#${a.kind === 'call' ? (a.isError ? mk.err : mk.call) : a.isError ? mk.replyErr : mk.reply})`"
+            />
+            <text
+              :x="Math.min(a.fromX, a.toX) + 12"
+              :y="a.y - 7"
+              :class="['trace-seq__label', { 'trace-seq__label--err': a.isError, 'trace-seq__label--late': a.late }]"
+            >{{ fit(a.label, Math.abs(a.toX - a.fromX) - 24) }}<title>{{ a.label }}</title></text>
+          </g>
+
+          <text
+            v-for="(n, i) in layout.notes"
+            :key="`note-${i}`"
+            :x="n.x + 12"
+            :y="n.y"
+            class="trace-seq__note"
+          >{{ n.text }}</text>
+        </g>
       </svg>
     </div>
 
@@ -300,11 +363,41 @@ const tip = (fromX: number, toX: number) => toX + (toX > fromX ? -7 : 7)
 }
 
 .trace-seq__canvas {
-  @apply flex-1 overflow-auto;
+  @apply relative flex-1 min-h-[320px] overflow-hidden cursor-grab select-none;
+  touch-action: none;
 
-  svg {
-    @apply block;
+  &.is-dragging {
+    @apply cursor-grabbing;
   }
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-inset ring-rose-500/60;
+  }
+}
+
+.trace-seq__svg {
+  @apply absolute inset-0 block w-full h-full;
+}
+
+.trace-seq__zoom {
+  @apply absolute top-2 right-2 z-10 flex items-center gap-0.5 p-0.5 rounded-md shadow-sm cursor-default;
+  border: 1px solid var(--tg-node-line);
+  background: var(--tg-node);
+  color: var(--tg-strong);
+}
+
+.trace-seq__zoom-btn {
+  @apply min-w-[28px] h-7 px-1.5 rounded text-sm leading-none hover:bg-gray-100 dark:hover:bg-gray-700;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/60;
+}
+
+.trace-seq__zoom-btn--fit {
+  @apply text-2xs font-semibold;
+}
+
+.trace-seq__zoom-value {
+  @apply w-10 text-center font-mono text-2xs tabular-nums;
+  color: var(--tg-muted);
 }
 
 .trace-seq__state {
