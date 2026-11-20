@@ -147,5 +147,15 @@ describe('TraceWaterfall with OpenTelemetry spans (#6523)', () => {
     await w.get('[data-test="span-tab-attributes"]').trigger('click')
     expect(w.get('[role="tabpanel"]').text()).not.toContain('otel.status_code')
   })
-})
 
+  it('opens and focuses the span asked by «Show in waterfall» (#6533)', async () => {
+    const w = mount(TraceWaterfall, {
+      props: { spans: [span({}), otelSpan], totalMs: 412, openSpanId: 's2' },
+      attachTo: document.body
+    })
+    await opened(w)
+    const labels = w.findAll('[data-test="wf-label"]')
+    expect(labels[1].attributes('aria-expanded')).toBe('true')
+    expect(document.activeElement).toBe(labels[1].element)
+  })
+})

@@ -3,7 +3,15 @@ import { useTitle } from '@vueuse/core'
 import moment from 'moment'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { SOURCE_LABEL, spansWithRoot, useSentryTraces, TraceWaterfall } from '@/entities/sentry'
+import {
+  SOURCE_LABEL,
+  spansWithRoot,
+  useSentryTraces,
+  TraceCallGraph,
+  TraceFlameGraph,
+  TraceInsight,
+  TraceWaterfall
+} from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
@@ -19,7 +27,24 @@ const formatTime = (ts: string) => (ts ? moment(ts).fromNow() : '')
 const { fetchDetail } = useSentryTraces()
 const detail = ref<SentryTraceDetail | null>(null)
 const loading = ref(false)
-const activeTab = ref<'spans' | 'errors' | 'logs'>('spans')
+type Tab = 'spans' | 'flame' | 'callgraph' | 'errors' | 'logs'
+const activeTab = ref<Tab>('spans')
+
+// Flame graph and call graph of the trace (#6533 A) share the selected span;
+// «Show in waterfall» opens that span in the waterfall.
+const selectedSpanId = ref<string | null>(null)
+const openSpanId = ref<string | null>(null)
+const showInWaterfall = (spanId: string) => {
+  selectedSpanId.value = spanId
+  openSpanId.value = spanId
+  activeTab.value = 'spans'
+}
+const graphTabs: { id: Tab; label: string }[] = [
+  { id: 'spans', label: 'Waterfall' },
+  { id: 'flame', label: 'Flame graph' },
+  { id: 'callgraph', label: 'Call graph' }
+]
+const isGraphTab = computed(() => activeTab.value === 'flame' || activeTab.value === 'callgraph')
 
 // Spans, services and sources of the trace (#6523): a trace may run through
 // a Sentry SDK service and OpenTelemetry ones.
@@ -92,14 +117,20 @@ onMounted(async () => {
 
       <div class="trace-detail__tabs">
         <button
+          v-for="tab in graphTabs"
+          :key="tab.id"
+          type="button"
           class="trace-detail__tab"
-          :class="{ 'trace-detail__tab--active': activeTab === 'spans' }"
-          @click="activeTab = 'spans'"
+          :class="{ 'trace-detail__tab--active': activeTab === tab.id }"
+          :aria-pressed="activeTab === tab.id"
+          :data-test="`trace-tab-${tab.id}`"
+          @click="activeTab = tab.id"
         >
-          Spans ({{ detail.spans.length }})
+          {{ tab.label }}
         </button>
         <button
           v-if="detail.related_errors.length > 0"
+          type="button"
           class="trace-detail__tab"
           :class="{ 'trace-detail__tab--active': activeTab === 'errors' }"
           @click="activeTab = 'errors'"
@@ -108,6 +139,7 @@ onMounted(async () => {
         </button>
         <button
           v-if="detail.related_log_count > 0"
+          type="button"
           class="trace-detail__tab"
           :class="{ 'trace-detail__tab--active': activeTab === 'logs' }"
           @click="activeTab = 'logs'"
@@ -122,6 +154,27 @@ onMounted(async () => {
           :spans="waterfallSpans"
           :total-ms="detail.transaction.duration_ms"
           :trace-id="detail.trace_id"
+          :open-span-id="openSpanId"
+        />
+
+        <TraceInsight
+          v-if="isGraphTab"
+          :spans="waterfallSpans"
+          @select="selectedSpanId = $event"
+        />
+        <TraceFlameGraph
+          v-if="activeTab === 'flame'"
+          :spans="waterfallSpans"
+          :selected-span-id="selectedSpanId"
+          @select="selectedSpanId = $event"
+          @show-in-waterfall="showInWaterfall"
+        />
+        <TraceCallGraph
+          v-if="activeTab === 'callgraph'"
+          :spans="waterfallSpans"
+          :selected-span-id="selectedSpanId"
+          @select="selectedSpanId = $event"
+          @show-in-waterfall="showInWaterfall"
         />
 
         <div
@@ -222,13 +275,13 @@ onMounted(async () => {
 }
 
 .trace-detail__tabs {
-  @apply flex items-center gap-1 px-4 py-2;
+  @apply flex items-center gap-1 px-4 py-2 overflow-x-auto;
   @apply border-b border-gray-200 dark:border-gray-700;
   @apply bg-white dark:bg-gray-800;
 }
 
 .trace-detail__tab {
-  @apply inline-flex items-center gap-1.5;
+  @apply inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap;
   @apply px-3 py-1.5 rounded-md;
   @apply text-xs font-medium cursor-pointer;
   @apply text-gray-500 dark:text-gray-400;
