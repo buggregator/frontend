@@ -95,6 +95,41 @@ describe('mapToTraceCallGraph layout (#6531)', () => {
     expect(nodes.filter((n) => n.type === 'traceExternal')).toHaveLength(1)
   })
 
+  it('#6549: an external host does not sit on a sibling\'s child', () => {
+    // a calls out (b, external) and in-service (c → d): d and the host both want row 2.
+    const g = mapToTraceCallGraph([
+      span('a', null, 'svc', 0, 100),
+      span('b', 'a', 'svc', 10, 20, { op: 'http.client', peer_type: 'http', peer_address: 'api.example' }),
+      span('c', 'a', 'svc', 40, 30, { op: 'internal' }),
+      span('d', 'c', 'svc', 45, 10, { op: 'db' })
+    ])
+    const hit = (p: { x: number; y: number }, q: { x: number; y: number }) =>
+      Math.abs(p.x - q.x) < NODE_W && Math.abs(p.y - q.y) < NODE_H
+    for (const [i, n] of g.nodes.entries()) {
+      for (const m of g.nodes.slice(i + 1)) expect(hit(n.position, m.position), `${n.id} over ${m.id}`).toBe(false)
+    }
+    const box = g.clusters[0]
+    for (const n of g.nodes) {
+      expect(n.position.x + NODE_W).toBeLessThanOrEqual(box.x + box.width)
+      expect(n.position.y + NODE_H).toBeLessThanOrEqual(box.y + box.height)
+    }
+  })
+
+  it('#6549: spans no root reaches (a parent cycle) and duplicate ids still get finite places', () => {
+    const g = mapToTraceCallGraph([
+      span('root', null, 'web', 0, 100),
+      span('x', 'y', 'api', 10, 20),
+      span('y', 'x', 'api', 12, 10),
+      span('root', null, 'web', 0, 100)
+    ])
+    expect(g.nodes.map((n) => n.id).sort()).toEqual(['root', 'x', 'y'])
+    for (const n of g.nodes) {
+      expect(Number.isFinite(n.position.x)).toBe(true)
+      expect(Number.isFinite(n.position.y)).toBe(true)
+    }
+    expect(g.clusters.every((c) => Number.isFinite(c.height) && Number.isFinite(c.width))).toBe(true)
+  })
+
   it('names each node for screen readers', () => {
     expect(nodes.find((n) => n.id === 'orders')!.ariaLabel).toBe('ORDERS, checkout-api, 317 ms, error')
   })
