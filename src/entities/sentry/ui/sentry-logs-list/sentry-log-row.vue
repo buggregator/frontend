@@ -2,6 +2,7 @@
 import moment from 'moment'
 import { computed, ref } from 'vue'
 import { RouteName } from '@/shared/types'
+import { SOURCE_LABEL, formatAttrValue, splitOtelAttributes } from '../../lib/otel'
 import type { SentryLog } from '../../types'
 
 type Props = {
@@ -30,11 +31,13 @@ const truncate = (text: string, max: number) => {
   return text.length > max ? text.substring(0, max) + '...' : text
 }
 
-const formatAttrValue = (val: unknown): string => {
-  if (val === null || val === undefined) return 'null'
-  if (typeof val === 'object') return JSON.stringify(val)
-  return String(val)
-}
+// OTel logs carry otel.resource / otel.scope in attributes: shown apart (#6523).
+const parts = computed(() => splitOtelAttributes(props.log.attributes))
+const hasResource = computed(() => Object.keys(parts.value.resource).length > 0)
+const sourceLabel = computed(() => (props.log.source ? SOURCE_LABEL[props.log.source] : ''))
+const hasDetails = computed(
+  () => Object.keys(parts.value.attributes).length > 0 || hasResource.value || !!props.log.trace_id
+)
 </script>
 
 <template>
@@ -54,6 +57,12 @@ const formatAttrValue = (val: unknown): string => {
         {{ log.level.toUpperCase() }}
       </span>
 
+      <span
+        class="log-row__service"
+        :title="log.service_name ?? undefined"
+        data-test="log-service"
+      >{{ log.service_name ?? '' }}</span>
+
       <span class="log-row__body">{{ truncate(log.body, 120) }}</span>
 
       <span class="log-row__time">{{ formattedTime }}</span>
@@ -68,22 +77,80 @@ const formatAttrValue = (val: unknown): string => {
       </RouterLink>
     </div>
 
-    <!-- Expandable attributes block -->
+    <!-- Expandable details: attributes; resource and trace for OTel logs -->
     <div
-      v-if="expanded && log.attributes"
-      class="log-row__attrs"
+      v-if="expanded && hasDetails"
+      class="log-row__details"
+      :class="{ 'log-row__details--split': hasResource }"
+      data-test="log-details"
+      @click.stop
     >
-      <div class="log-row__attrs-header">
-        Attributes
+      <div
+        v-if="Object.keys(parts.attributes).length"
+        class="log-row__attrs"
+      >
+        <div class="log-row__attrs-header">
+          Attributes
+        </div>
+        <div class="log-row__attrs-body">
+          <div
+            v-for="(val, key) in parts.attributes"
+            :key="String(key)"
+            class="log-row__attr-row"
+          >
+            <span class="log-row__attr-key">{{ key }}</span>
+            <span class="log-row__attr-val">{{ formatAttrValue(val) }}</span>
+          </div>
+        </div>
       </div>
-      <div class="log-row__attrs-body">
+
+      <div
+        v-if="hasResource || log.trace_id"
+        class="log-row__side"
+      >
         <div
-          v-for="(val, key) in log.attributes"
-          :key="String(key)"
-          class="log-row__attr-row"
+          v-if="hasResource"
+          class="log-row__attrs"
+          data-test="log-resource"
         >
-          <span class="log-row__attr-key">{{ key }}</span>
-          <span class="log-row__attr-val">{{ formatAttrValue(val) }}</span>
+          <div class="log-row__attrs-header">
+            Resource
+            <span
+              v-if="sourceLabel"
+              class="log-row__source"
+            >{{ sourceLabel }}</span>
+          </div>
+          <div class="log-row__attrs-body">
+            <div
+              v-for="(val, key) in parts.resource"
+              :key="String(key)"
+              class="log-row__attr-row"
+            >
+              <span class="log-row__attr-key">{{ key }}</span>
+              <span class="log-row__attr-val">{{ formatAttrValue(val) }}</span>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="log.trace_id"
+          class="log-row__attrs"
+        >
+          <div class="log-row__attrs-header">
+            Trace
+          </div>
+          <div class="log-row__attrs-body">
+            <div class="log-row__attr-row">
+              <span class="log-row__attr-key">trace_id</span>
+              <span class="log-row__attr-val">{{ log.trace_id }}</span>
+            </div>
+            <div
+              v-if="log.span_id"
+              class="log-row__attr-row"
+            >
+              <span class="log-row__attr-key">span_id</span>
+              <span class="log-row__attr-val">{{ log.span_id }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -157,9 +224,38 @@ const formatAttrValue = (val: unknown): string => {
   @apply transition-colors duration-100;
 }
 
+.log-row__service {
+  @apply w-28 flex-shrink-0 truncate text-2xs font-mono;
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+@media (max-width: 639px) {
+  .log-row__service {
+    @apply w-20;
+  }
+}
+
+.log-row__details {
+  @apply mt-2 grid gap-2 cursor-auto;
+}
+
+@media (min-width: 768px) {
+  .log-row__details--split {
+    @apply grid-cols-2;
+  }
+}
+
+.log-row__side {
+  @apply flex flex-col gap-2 min-w-0;
+}
+
+.log-row__source {
+  @apply ml-1 font-mono normal-case text-gray-500 dark:text-gray-400;
+}
+
 /* Expandable attributes block - follows monolog block pattern */
 .log-row__attrs {
-  @apply mt-2 rounded overflow-hidden;
+  @apply rounded overflow-hidden min-w-0;
   @apply border border-gray-200 dark:border-gray-700;
 }
 

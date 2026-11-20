@@ -26,3 +26,20 @@ describe('useSentryTraces: load error', () => {
     expect(traces.error.value).toBe('')
   })
 })
+
+describe('useSentryTraces: source filter (#6523)', () => {
+  beforeEach(() => {
+    getTraces.mockReset()
+    getTraces.mockResolvedValue({ data: [], meta: { total: 0 } })
+  })
+
+  it('sends source only when one is chosen', async () => {
+    const traces = useSentryTraces()
+    await traces.fetchList()
+    expect(getTraces).toHaveBeenLastCalledWith({ page: '1' })
+
+    traces.filters.source = 'otel'
+    await traces.fetchList()
+    expect(getTraces).toHaveBeenLastCalledWith({ page: '1', source: 'otel' })
+  })
+})

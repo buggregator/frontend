@@ -7,6 +7,7 @@ export type {
   SentryTraceSummary,
   SentrySpanPreview,
   SentryTrace,
+  TelemetrySource,
   SentrySpan,
   SentryTraceDetail,
   SentryRelatedError,

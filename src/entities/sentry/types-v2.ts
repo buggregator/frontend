@@ -46,6 +46,9 @@ export interface SentrySpanPreview {
   is_error: boolean
 }
 
+// Where the data came from: a Sentry SDK or OpenTelemetry over OTLP (#6522/#6523).
+export type TelemetrySource = 'sentry' | 'otel'
+
 export interface SentryTrace {
   trace_id: string
   transaction_id: string
@@ -57,6 +60,10 @@ export interface SentryTrace {
   error_count: number
   received_at: string
   preview_spans: SentrySpanPreview[]
+  // A trace may mix both (Sentry SDK in one service, OTel in the next).
+  sources?: TelemetrySource[]
+  // Distinct service.name, in the order the services started.
+  services?: string[]
 }
 
 export interface SentrySpan {
@@ -70,6 +77,10 @@ export interface SentrySpan {
   peer_type: string | null
   peer_address: string | null
   is_error: boolean
+  source?: TelemetrySource
+  service_name?: string | null
+  // Sentry span data, or OTel attributes with the otel.* extras (see lib/otel.ts).
+  attributes?: Record<string, unknown> | null
 }
 
 export interface SentryTraceDetail {
@@ -82,6 +93,7 @@ export interface SentryTraceDetail {
     start_ts: string
     end_ts: string
     duration_ms: number
+    sources?: TelemetrySource[]
   }
   spans: SentrySpan[]
   related_errors: SentryRelatedError[]
@@ -104,6 +116,8 @@ export interface SentryLog {
   log_ts: string
   attributes: Record<string, unknown> | null
   trace_exists?: boolean
+  source?: TelemetrySource
+  service_name?: string | null
 }
 
 export type SentryMetricType = 'counter' | 'gauge' | 'distribution'

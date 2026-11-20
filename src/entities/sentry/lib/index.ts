@@ -8,3 +8,4 @@ export * from "./use-sentry-counts";
 export * from "./use-sentry-events-bus";
 export * from "./resolve-exceptions";
 export * from "./use-sentry-filters";
+export * from "./otel";

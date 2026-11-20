@@ -15,10 +15,20 @@ import { StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Traces | Buggregator')
 
-const { traces, hasLoaded, error, isInitialLoading, total, fetchList } = useSentryTraces()
+const { traces, hasLoaded, error, isInitialLoading, total, filters, fetchList } = useSentryTraces()
 
 // Waterfall list or service map: the filter button in the Sentry header (#5980).
 const sentryFilters = useSentryFilters()
+// Sentry SDK / OpenTelemetry / both: the same filter button (#6523).
+filters.source = sentryFilters.source || null
+watch(
+  () => sentryFilters.source,
+  (source) => {
+    filters.source = source || null
+    hasLoaded.value = false
+    fetchList()
+  }
+)
 
 // The period is mixed into the request in use-sentry-requests and does not
 // trigger reactivity on its own, so refetch the list explicitly. The project
@@ -68,6 +78,14 @@ onSentryEvent(() => {
           :trace="trace"
         />
       </template>
+
+      <div
+        v-else-if="sentryFilters.source"
+        class="sentry-traces-page__loading"
+        data-test="traces-none-for-source"
+      >
+        No traces from this source.
+      </div>
 
       <SentryEmptyState
         v-else

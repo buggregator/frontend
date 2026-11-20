@@ -8,9 +8,11 @@ export const useSentryLogs = () => {
 
   const logs = ref<SentryLog[]>([])
   // level: one level or several, comma-separated ("warn,warning")
-  const filters = reactive<{ level: string | null; traceId: string | null }>({
+  // source: 'sentry' | 'otel' (#6523); null for both.
+  const filters = reactive<{ level: string | null; traceId: string | null; source: string | null }>({
     level: null,
     traceId: null,
+    source: null,
   })
 
   const list = useSentryPagedList(
@@ -18,6 +20,7 @@ export const useSentryLogs = () => {
       const params: Record<string, string> = { page: String(page) }
       if (filters.level) params.level = filters.level
       if (filters.traceId) params.trace_id = filters.traceId
+      if (filters.source) params.source = filters.source
       return getLogs(params)
     },
     (res) => { logs.value = res.data },

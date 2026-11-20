@@ -19,6 +19,7 @@ describe('useSentryFilters', () => {
       exceptionsLevel: '',
       tracesView: 'list',
       logsLevel: '',
+      source: '',
       metricsType: '',
       metricsName: ''
     })
@@ -72,5 +73,18 @@ describe('useSentryFilters', () => {
     expect(f.exceptionsLevel).toBe('')
     expect(f.exceptionsView).toBe('grouped')
     expect(f.logsLevel).toBe('warn')
+  })
+
+  it('Source (#6523): one choice for Traces and Logs, counted on both, an unknown saved value falls back to all', () => {
+    const f = useSentryFilters()
+    f.source = 'otel'
+    expect(activeSentryFilters('traces')).toBe(1)
+    expect(activeSentryFilters('logs')).toBe(1)
+    resetSentryFilters('traces')
+    expect(f.source).toBe('')
+
+    window.localStorage.setItem('sentry_source', 'jaeger')
+    reloadSentryFilters()
+    expect(f.source).toBe('')
   })
 })
