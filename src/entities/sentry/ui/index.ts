@@ -15,3 +15,4 @@ export * from './trace-graphs';
 export * from './trace-related-logs';
 export * from './sentry-view-tabs';
 export * from './sentry-feedback';
+export * from './sentry-crons';

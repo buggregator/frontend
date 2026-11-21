@@ -15,6 +15,8 @@ import type {
   SentryCounts,
   SentryFeedback,
   SentrySequence,
+  CronMonitor,
+  CronCheckIn,
 } from '../types'
 
 const BASE = `${REST_API_URL}/api/sentry`
@@ -118,6 +120,25 @@ export const useSentryRequests = () => {
       `${BASE}/feedback?${new URLSearchParams({ event_id: eventId, limit: '50' }).toString()}`
     )
 
+  // Cron monitors of the project with their recent runs (#6617). Not in a
+  // period: a monitor lives until it is deleted.
+  const getCronMonitors = (project = '') => {
+    const qs = new URLSearchParams(withProject(project ? { project } : {})).toString()
+    return fetchJSON<{ data: CronMonitor[] }>(`${REST_API_URL}/api/crons${qs ? `?${qs}` : ''}`)
+  }
+
+  // One monitor's runs, newest first; 404 for a slug the project has not.
+  const getCronCheckIns = (slug: string, params: { project: string; page?: number; limit?: number }) => {
+    const qs = new URLSearchParams({
+      project: params.project,
+      page: String(params.page ?? 1),
+      limit: String(params.limit ?? 50)
+    }).toString()
+    return fetchJSON<PaginatedResponse<CronCheckIn>>(
+      `${REST_API_URL}/api/crons/${encodeURIComponent(slug)}/checkins?${qs}`
+    )
+  }
+
   // The badges label the lists, so they take the same scope.
   const getCounts = () => {
     const qs = new URLSearchParams(withScope()).toString()
@@ -139,5 +160,7 @@ export const useSentryRequests = () => {
     getCounts,
     getFeedback,
     getEventFeedback,
+    getCronMonitors,
+    getCronCheckIns,
   }
 }

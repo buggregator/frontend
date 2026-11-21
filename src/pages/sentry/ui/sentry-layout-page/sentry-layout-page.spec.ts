@@ -15,7 +15,7 @@ vi.mock('vue-router', () => ({ useRoute: () => ({ get name() { return routeName.
 // The real button is an async wrapper: replaced so the test sees it at once.
 vi.mock('@/widgets/ui', async (orig) => ({
   ...(await orig<object>()),
-  SetupHelpButton: { template: '<button class="help-stub" />' },
+  SetupHelpButton: { props: ['sectionId'], template: '<button class="help-stub" :data-section="sectionId" />' },
 }))
 vi.mock('@vueuse/core', async (orig) => ({
   ...(await orig<object>()),
@@ -86,5 +86,15 @@ describe('SentryLayoutPage header (#5980)', () => {
     expect(render().find('.views-stub').exists()).toBe(false)
     routeName.value = 'sentry-trace-detail'
     expect(render().find('.views-stub').exists()).toBe(false)
+  })
+
+  it('Crons and a cron job: the Crons tab, its own setup help even before any Sentry event, no filters', () => {
+    for (const name of ['sentry-crons', 'sentry-cron-job']) {
+      routeName.value = name
+      const header = render().get('header')
+      expect(header.find('.tabs-stub').attributes('data-current')).toBe('crons')
+      expect(header.get('.help-stub').attributes('data-section')).toBe('crons')
+      expect(header.find('.filter-stub').exists()).toBe(false)
+    }
   })
 })

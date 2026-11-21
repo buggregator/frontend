@@ -2,6 +2,7 @@
 // the guide's own chunk). A test keeps this in step with setup-help.json.
 export const SETUP_SECTION_IDS = [
   'sentry',
+  'crons',
   'profiler',
   'inspector',
   'smtp',

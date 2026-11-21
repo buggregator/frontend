@@ -1,0 +1,46 @@
+// Colours of cron statuses (#6600 design, variant A). Colour is only on top
+// of the icon and the word. Plain CSS: these files are not scanned by
+// Tailwind, so nothing here adds to the first-load CSS.
+@mixin tokens {
+  --cr-ok: #15803d;
+  --cr-err: #dc2626;
+  --cr-miss: #b45309;
+  --cr-run: #2563eb;
+  --cr-wait: #6b7280;
+  --cr-track: #f3f4f6;
+  --cr-future: #d1d5db;
+
+  .dark & {
+    --cr-ok: #4ade80;
+    --cr-err: #f87171;
+    --cr-miss: #fbbf24;
+    --cr-run: #60a5fa;
+    --cr-wait: #9ca3af;
+    --cr-track: #111827;
+    --cr-future: #4b5563;
+  }
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 3px;
+
+    .dark & {
+      outline-color: #60a5fa;
+    }
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

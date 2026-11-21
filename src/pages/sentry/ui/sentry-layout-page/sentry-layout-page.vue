@@ -16,7 +16,9 @@ const HEADINGS: Partial<Record<string, string>> = {
   [RouteName.SentryTraces]: 'Sentry traces',
   [RouteName.SentryLogs]: 'Sentry logs',
   [RouteName.SentryMetrics]: 'Sentry metrics',
-  [RouteName.SentryFeedback]: 'Sentry user feedback'
+  [RouteName.SentryFeedback]: 'Sentry user feedback',
+  [RouteName.SentryCrons]: 'Sentry cron jobs',
+  [RouteName.SentryCronJob]: 'Sentry cron job'
 }
 const TAB_OF_ROUTE: Partial<Record<string, SentryTab>> = {
   [RouteName.SentryExceptions]: 'exceptions',
@@ -24,14 +26,16 @@ const TAB_OF_ROUTE: Partial<Record<string, SentryTab>> = {
   [RouteName.SentryTraceDetail]: 'traces',
   [RouteName.SentryLogs]: 'logs',
   [RouteName.SentryMetrics]: 'metrics',
-  [RouteName.SentryFeedback]: 'feedback'
+  [RouteName.SentryFeedback]: 'feedback',
+  [RouteName.SentryCrons]: 'crons',
+  [RouteName.SentryCronJob]: 'crons'
 }
 const route = useRoute()
 const heading = computed(() => HEADINGS[String(route.name)] ?? '')
 const tab = computed(() => TAB_OF_ROUTE[String(route.name)] ?? '')
-// The filters belong to a list: none on the trace page, and Feedback has none.
+// The filters belong to a list: none on the trace page; Feedback and Crons have none.
 const filterTab = computed(() =>
-  route.name === RouteName.SentryTraceDetail || tab.value === 'feedback' ? '' : tab.value
+  route.name === RouteName.SentryTraceDetail || tab.value === 'feedback' || tab.value === 'crons' ? '' : tab.value
 )
 // Lists with more than one view get the view tabs under the header (#6543 B).
 const viewTab = computed(() => (filterTab.value === 'traces' || filterTab.value === 'exceptions' ? filterTab.value : null))
@@ -39,6 +43,10 @@ const viewTab = computed(() => (filterTab.value === 'traces' || filterTab.value 
 // «How to set up» on every Sentry tab once Sentry has events (#5941).
 const { getItemsCount } = useEvents()
 const hasSentryEvents = computed(() => getItemsCount.value(EventTypes.Sentry) > 0)
+// The Crons tab has its own setup help (SDK check-ins, ping URL), always there.
+const setupSection = computed(() =>
+  tab.value === 'crons' ? { id: 'crons', title: 'Crons' } : { id: 'sentry', title: 'Sentry' }
+)
 
 // One row from sm up (crumbs, tabs | Period, filters, #5980); on a phone the
 // tabs are a second row under the bar. One instance of the tabs at a time:
@@ -93,9 +101,10 @@ const isWide = useMediaQuery('(min-width: 640px)')
             :tab="filterTab"
           />
           <SetupHelpButton
-            v-if="hasSentryEvents"
-            section-id="sentry"
-            section-title="Sentry"
+            v-if="hasSentryEvents || tab === 'crons'"
+            :key="setupSection.id"
+            :section-id="setupSection.id"
+            :section-title="setupSection.title"
           />
         </template>
       </AppHeader>
