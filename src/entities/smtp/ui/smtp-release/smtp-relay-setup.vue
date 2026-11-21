@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { CodeSnippet } from '@/shared/ui'
 import type { SmtpRelayInfo } from '../../lib/smtp-relay'
 
 // How to turn release on, for the dialog and Settings: the config lines that
@@ -37,11 +38,17 @@ const env = computed(() =>
         <code>buggregator.yaml</code>:
       </template>
     </p>
-    <pre class="relay-setup__code">{{ yaml }}</pre>
+    <CodeSnippet
+      :code="yaml"
+      language="yaml"
+    />
     <p class="relay-setup__text">
       Or as environment variables:
     </p>
-    <pre class="relay-setup__code">{{ env }}</pre>
+    <CodeSnippet
+      :code="env"
+      language="bash"
+    />
     <p class="relay-setup__text">
       Then restart Buggregator. Without auth, sending works only to the allowed addresses, and only
       when Buggregator runs directly on this machine and you open it on localhost. In Docker or
@@ -61,10 +68,5 @@ const env = computed(() =>
   code {
     @apply font-mono text-xs;
   }
-}
-
-.relay-setup__code {
-  @apply p-2 rounded text-xs font-mono whitespace-pre-wrap break-all;
-  @apply bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300;
 }
 </style>

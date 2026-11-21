@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
+import { SkeletonLoader, TableBase, TableBaseRow } from '@/shared/ui'
 import { relayAddress, relaySender, useSmtpRelay } from '../../lib/smtp-relay'
 import SmtpRelaySetup from './smtp-relay-setup.vue'
 
@@ -38,12 +39,14 @@ const rows = computed(() => {
     class="relay-status"
     data-test="smtp-relay-status"
   >
-    <p
+    <div
       v-if="state === 'loading' || state === 'idle'"
-      class="relay-status__text"
+      role="status"
+      aria-label="Loading the email relay"
+      data-test="smtp-relay-loading"
     >
-      Loading…
-    </p>
+      <SkeletonLoader variant="text" />
+    </div>
     <p
       v-else-if="state === 'unavailable' || !info"
       class="relay-status__text"
@@ -70,22 +73,18 @@ const rows = computed(() => {
       >
         {{ info.reason }}
       </p>
-      <dl
+      <TableBase
         v-if="rows.length"
-        class="relay-status__list"
+        data-test="smtp-relay-rows"
       >
-        <template
+        <TableBaseRow
           v-for="row in rows"
           :key="row.label"
+          :title="row.label"
         >
-          <dt class="relay-status__label">
-            {{ row.label }}
-          </dt>
-          <dd class="relay-status__value">
-            {{ row.value }}
-          </dd>
-        </template>
-      </dl>
+          {{ row.value }}
+        </TableBaseRow>
+      </TableBase>
       <SmtpRelaySetup
         v-if="!info.enabled"
         :info="info"
@@ -121,19 +120,5 @@ const rows = computed(() => {
 
 .relay-status__reason {
   @apply text-xs p-2 rounded bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300;
-}
-
-.relay-status__list {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  @apply gap-x-4 gap-y-1 text-xs;
-}
-
-.relay-status__label {
-  @apply text-gray-500 dark:text-gray-400;
-}
-
-.relay-status__value {
-  @apply text-gray-900 dark:text-gray-100 break-all;
 }
 </style>

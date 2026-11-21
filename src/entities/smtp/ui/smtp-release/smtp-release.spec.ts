@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { TableBaseRow } from '@/shared/ui'
 import type { SmtpRelayInfo } from '../../lib/smtp-relay'
 import { useSmtpRelay } from '../../lib/smtp-relay'
 import SmtpRelayStatus from './smtp-relay-status.vue'
@@ -92,7 +93,11 @@ describe('SmtpRelease', () => {
 
     expect(wrapper.text()).toContain('Relay not set up')
     await wrapper.get('[data-test="smtp-release-open"]').trigger('click')
-    expect(wrapper.find('[data-test="smtp-relay-setup"]').text()).toContain('SMTP_RELAY_HOST')
+    const setup = wrapper.get('[data-test="smtp-relay-setup"]')
+    expect(setup.text()).toContain('SMTP_RELAY_HOST')
+    // The YAML and env blocks are the shared code snippet, each with Copy.
+    expect(setup.findAll('.code-snippet')).toHaveLength(2)
+    expect(setup.findAll('[aria-label="Copy code"]')).toHaveLength(2)
     expect(wrapper.find('[data-test="smtp-release-send"]').exists()).toBe(false)
     wrapper.unmount()
   })
@@ -184,6 +189,14 @@ describe('SmtpRelayStatus', () => {
     expect(wrapper.text()).toContain('*@ex.com')
     expect(wrapper.text()).toContain('Run directly on this machine, opened on localhost')
     expect(wrapper.text()).toContain("The message's own From")
+    const rows = wrapper.findAllComponents(TableBaseRow)
+    expect(rows.map((r) => r.props('title'))).toEqual([
+      'Server',
+      'From',
+      'Allowed recipients',
+      'At most',
+      'Works from'
+    ])
     expect(wrapper.text().toLowerCase()).not.toContain('password')
   })
 
@@ -193,6 +206,16 @@ describe('SmtpRelayStatus', () => {
     expect(wrapper.get('[data-test="smtp-relay-pill"]').text()).toBe('Off')
     expect(wrapper.get('[data-test="smtp-relay-reason"]').text()).toBe(needsList.reason)
     expect(wrapper.find('[data-test="smtp-relay-setup"]').exists()).toBe(true)
+  })
+
+  it('shows a skeleton while the relay info loads', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})))
+    void useSmtpRelay().load(true) // the relay answer is shared: start a load that never ends
+    const wrapper = mount(SmtpRelayStatus)
+    await flushPromises()
+
+    expect(wrapper.find('[data-test="smtp-relay-loading"]').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Loading')
   })
 
   it('says the server cannot send on an older server', async () => {
