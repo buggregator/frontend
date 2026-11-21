@@ -448,6 +448,60 @@
       ]
     },
     {
+      "id": "broadcast",
+      "title": "Catch the broadcasts your app sends",
+      "lead": "Laravel Reverb, Pusher and soketi clients send each broadcast to the server over its HTTP API. Point that API here: every event lands on this page with its channels and data.",
+      "docs": "",
+      "steps": [
+        "Point the app's server-side REVERB_HOST and REVERB_PORT (or PUSHER_HOST and PUSHER_PORT) at Buggregator. Without BROADCAST_UPSTREAM any app id, key and secret work; with it, keep your Reverb app's values.",
+        "Keep VITE_REVERB_* on your Reverb: the browsers still connect there. Set BROADCAST_UPSTREAM on Buggregator to your Reverb (e.g. http://127.0.0.1:8080) and each event is also forwarded, so live updates keep working.",
+        "To check request signatures, give Buggregator the app secrets: BROADCAST_APPS=key:secret.",
+        "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
+      ],
+      "stacks": [
+        {
+          "id": "laravel",
+          "label": "Laravel Reverb",
+          "file": ".env",
+          "lang": "dotenv",
+          "code": "BROADCAST_CONNECTION=reverb\nREVERB_APP_ID=app-id\nREVERB_APP_KEY=app-key\nREVERB_APP_SECRET=app-secret\nREVERB_HOST={host}\nREVERB_PORT={http_port}\nREVERB_SCHEME=http",
+          "hint": "Laravel's .env derives VITE_REVERB_HOST and VITE_REVERB_PORT from these: set them to your Reverb by hand. Buggregator records each broadcast; without BROADCAST_UPSTREAM it does not deliver them, so live updates in your app stop while it points here. Set BROADCAST_UPSTREAM to your Reverb to have both.",
+          "checked": false,
+          "note": "Values from server modules/broadcast (handler.go, pusher-http-php 7.3.0 test data); no Laravel app was run."
+        },
+        {
+          "id": "laravel-pusher",
+          "label": "Laravel Pusher",
+          "file": ".env",
+          "lang": "dotenv",
+          "code": "BROADCAST_CONNECTION=pusher\nPUSHER_APP_ID=app-id\nPUSHER_APP_KEY=app-key\nPUSHER_APP_SECRET=app-secret\nPUSHER_HOST={host}\nPUSHER_PORT={http_port}\nPUSHER_SCHEME=http",
+          "hint": "Buggregator records each broadcast; without BROADCAST_UPSTREAM it does not deliver them, so live updates in your app stop while it points here. Set BROADCAST_UPSTREAM to your Reverb or Pusher to have both.",
+          "checked": false,
+          "note": "Values from server modules/broadcast; no Laravel app was run."
+        },
+        {
+          "id": "php",
+          "label": "Pusher PHP",
+          "file": "broadcast.php",
+          "lang": "php",
+          "code": "$pusher = new Pusher\\Pusher('app-key', 'app-secret', 'app-id', [\n    'host' => '{host}',\n    'port' => {http_port},\n    'scheme' => 'http',\n    'useTLS' => false,\n]);\n\n$pusher->trigger('orders', 'OrderShipped', ['id' => 42]);",
+          "hint": null,
+          "checked": true,
+          "note": "pusher-http-php 7.3.0 requests are the server's test data."
+        },
+        {
+          "id": "curl",
+          "label": "curl",
+          "file": "terminal",
+          "lang": "bash",
+          "code": "curl -X POST 'http://{host}:{http_port}/apps/app-id/events?auth_key=app-key&auth_signature=any' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"name\":\"OrderShipped\",\"channel\":\"orders\",\"data\":\"{\\\"id\\\":42}\"}'",
+          "hint": "auth_key and auth_signature must be there; the signature is checked only for keys in BROADCAST_APPS.",
+          "checked": true,
+          "note": null
+        }
+      ]
+    },
+    {
       "id": "csp",
       "title": "Catch the browser's CSP and Reporting API reports",
       "lead": "Point your Content-Security-Policy report address here. Every violation the browser reports lands on this page, with the directive, the blocked resource and the line.",

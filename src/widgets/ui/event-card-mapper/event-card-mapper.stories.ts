@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import type { ComponentProps } from "vue-component-type-helpers";
+import { broadcastInvalidJsonMock, broadcastMultiChannelMock } from '@/entities/broadcast/mocks';
 import { httpDumpMock } from '@/entities/http-dump/mocks';
 import { inspectorMock } from '@/entities/inspector/mocks';
 import { monologMock } from '@/entities/monolog/mocks';
@@ -75,12 +76,25 @@ export const SmsWithWarnings: StoryObj<typeof EventCardMapper> = {
   }
 };
 
+export const Broadcast: StoryObj<typeof EventCardMapper> = {
+  args: {
+    event: broadcastMultiChannelMock,
+  }
+};
+
+export const BroadcastWithProblems: StoryObj<typeof EventCardMapper> = {
+  args: {
+    event: broadcastInvalidJsonMock,
+  }
+};
+
 const eventsList = [
   monologMock,
   sentrySpiralMock,
   smtpWelcomeMock,
   smsTwilioMock,
   smsTwilioWarningsMock,
+  broadcastMultiChannelMock,
   varDumpObjectMock,
   profilerMock,
   inspectorMock,
