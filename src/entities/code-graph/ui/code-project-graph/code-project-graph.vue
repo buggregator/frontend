@@ -119,7 +119,9 @@ const fitOpened = () => {
   const inside = g
     ? (p.layout.value?.nodes ?? []).filter((n) => n.x > g.x && n.x < g.x + g.width && n.y > g.y && n.y < g.y + g.height).map((n) => n.id)
     : []
-  if (inside.length) fitView({ nodes: inside, padding: 0.12, minZoom: 0.15, maxZoom: 1, duration: 250 })
+  // Never so far out that the names cannot be read: a big frame is shown in
+  // part, the rest is a drag away.
+  if (inside.length) fitView({ nodes: inside, padding: 0.12, minZoom: 0.55, maxZoom: 1, duration: 250 })
   else fit()
 }
 onNodesInitialized(fitOpened)
