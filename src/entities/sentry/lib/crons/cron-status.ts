@@ -1,5 +1,6 @@
+import { formatDuration } from '@/shared/lib/formats/format-duration'
 import type { CronCheckIn, CronMonitor, CronRunStatus } from '../../types'
-import { formatClock, formatDuration, formatRelative } from './cron-format'
+import { formatClock, formatRelative } from './cron-format'
 
 // Statuses of cron monitors and their runs (#6617): an icon and a word,
 // colour only on top. «late» is the client's own: the expected run is past
@@ -182,7 +183,9 @@ export const checkInNote = (c: CronCheckIn, m: CronMonitor, now: number): string
 
 /** The four numbers of the job page, from the loaded check-ins. */
 export const runStats = (checkins: CronCheckIn[]) => {
-  const done = checkins.filter((c) => c.status !== 'in_progress')
+  // A run not finished yet, or a slot of unknown fate («Missed?»: Buggregator
+  // was down), is neither OK nor not: left out of the count.
+  const done = checkins.filter((c) => c.status !== 'in_progress' && c.status !== 'unknown')
   const ok = done.filter((c) => c.status === 'ok').length
   const durations = checkins
     .filter((c) => (c.status === 'ok' || c.status === 'error') && c.duration_ms !== null)
@@ -214,7 +217,7 @@ export const durationBars = (checkins: CronCheckIn[], m: CronMonitor, now: numbe
     let height: number | null = null
     if (!noRun) height = c.duration_ms === null ? 8 : Math.max(4, Math.round((c.duration_ms / max) * 100))
     let duration = ''
-    if (!noRun && status !== 'running') duration = c.duration_ms === null ? ' · no duration' : ` · ${formatDuration(c.duration_ms)}`
+    if (!noRun && status !== 'running') duration = c.duration_ms === null ? ' · no duration' : ` · ${formatDuration(c.duration_ms, { unit: 'ms', style: 'compact' })}`
     return {
       key: c.id,
       status,
@@ -256,7 +259,7 @@ export const explainMonitor = (m: CronMonitor, now: number): CronExplain | null 
       return {
         tone: 'miss',
         title: `Missed the run expected at ${at}.`,
-        text: `No check-in came within the ${m.checkin_margin} min margin while Buggregator was running, so the job did not start. Check that the scheduler runs.`
+        text: `No check-in came within the ${m.checkin_margin} min margin while Buggregator was running, so the job did not start, or its check-in did not reach Buggregator. Check the scheduler and the DSN / ping URL.`
       }
     case 'late':
       return {

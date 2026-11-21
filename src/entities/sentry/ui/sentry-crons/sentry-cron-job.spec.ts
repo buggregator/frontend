@@ -101,8 +101,26 @@ describe('SentryCronJob', () => {
 
   it('four numbers', () => {
     const text = render().get('.cron-job__kpis').text()
+    expect(text).toContain('runs OK (last 2)')
     expect(text).toContain('1 / 2')
+    expect(text).toContain('8.4 s')
     expect(text).toContain('in 3 min')
+  })
+
+  it('runs OK leaves «Missed?» slots out, the label names what is loaded', () => {
+    const text = render({
+      checkins: [checkIn('1'), checkIn('2', { status: 'unknown', duration_ms: null, server_made: true })]
+    })
+      .get('.cron-job__kpis')
+      .text()
+    expect(text).toContain('runs OK (last 2)')
+    expect(text).toContain('1 / 1')
+  })
+
+  it('no check-ins yet: a compact status panel', () => {
+    const panel = render({ checkins: [] }).get('[data-test="cron-no-checkins"]')
+    expect(panel.classes()).toContain('status-panel--compact')
+    expect(panel.text()).toContain('No check-ins yet')
   })
 
   it('«Show older check-ins» asks for more', async () => {
@@ -114,7 +132,7 @@ describe('SentryCronJob', () => {
 
   it('a ping job without a schedule: how to give it one, and its ping URLs', () => {
     const w = render({ monitor: monitor({ source: 'ping', schedule: null, next_expected_at: null }) })
-    expect(w.get('[data-test="cron-no-schedule"]').text()).toContain('?schedule=')
+    expect(w.get('[data-test="cron-no-schedule"]').text()).toContain('?schedule=*%2F5%20*%20*%20*%20*&margin=1&max_runtime=30')
     const ping = w.get('[data-test="cron-ping-urls"]')
     expect(ping.classes()).toContain('code-snippet')
     expect(ping.text()).toContain('/ping/orders-sync/start?project=shop')

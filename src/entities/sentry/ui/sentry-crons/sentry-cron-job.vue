@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { formatDuration } from '@/shared/lib/formats/format-duration'
 import { RouteName } from '@/shared/types'
-import { CodeSnippet, EventDetailSection } from '@/shared/ui'
+import { CodeSnippet, EventDetailSection, StatusPanel } from '@/shared/ui'
 import {
   checkInNote,
   CRON_STATUS,
@@ -9,7 +10,6 @@ import {
   durationBars,
   explainMonitor,
   formatClock,
-  formatDuration,
   knownTimeZone,
   monitorStatus,
   nextRun,
@@ -30,6 +30,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{ loadOlder: [] }>()
+
+// «8.4 s», «4 min 12 s»; «—» without a duration.
+const duration = (ms: number | null) => (ms === null || ms < 0 ? '—' : formatDuration(ms, { unit: 'ms', style: 'compact' }))
+
+// The ping URL query, written as it must be sent (encoded, like the setup guide).
+const scheduleExample = `?schedule=${encodeURIComponent('*/5 * * * *')}&margin=1&max_runtime=30`
 
 const m = computed(() => props.monitor)
 const tz = computed(() => knownTimeZone(m.value.timezone))
@@ -64,7 +70,7 @@ const rows = computed(() =>
       bad: CRON_STATUS[s].tone === 'err',
       // A row the server wrote is a slot, not a start.
       when: formatClock(c.server_made ? (c.expected_at ?? c.started_at) : c.started_at, tz.value, props.now, !c.server_made),
-      duration: c.server_made || c.status === 'in_progress' ? '—' : formatDuration(c.duration_ms),
+      duration: c.server_made || c.status === 'in_progress' ? '—' : duration(c.duration_ms),
       note: checkInNote(c, m.value, props.now),
       output: c.status !== 'error' || c.body.trim().split(/\r?\n/).length > 1 ? c.body.trim() : ''
     }
@@ -127,7 +133,7 @@ const rows = computed(() =>
     >
       No schedule: runs are recorded, but none is ever marked missed.
       <template v-if="isPing">
-        Add one to the ping URL, e.g. <code class="cron-job__mono">?schedule=*/5 * * * *&amp;margin=1&amp;max_runtime=30</code>.
+        Add one to the ping URL, e.g. <code class="cron-job__mono">{{ scheduleExample }}</code>.
       </template>
       <template v-else>
         Send a monitor config with the check-in (schedule, check-in margin, max runtime).
@@ -136,16 +142,16 @@ const rows = computed(() =>
 
     <dl class="cron-job__kpis">
       <div class="cron-job__kpi">
-        <dt>runs OK</dt>
+        <dt>runs OK (last {{ checkins.length }})</dt>
         <dd>{{ stats.ok }} / {{ stats.total }}</dd>
       </div>
       <div class="cron-job__kpi">
         <dt>usual duration</dt>
-        <dd>{{ formatDuration(stats.median) }}</dd>
+        <dd>{{ duration(stats.median) }}</dd>
       </div>
       <div class="cron-job__kpi">
         <dt>slowest</dt>
-        <dd>{{ formatDuration(stats.slowest) }}</dd>
+        <dd>{{ duration(stats.slowest) }}</dd>
       </div>
       <div class="cron-job__kpi">
         <dt>{{ next.clock ? `next expected, ${next.clock}` : 'next expected' }}</dt>
@@ -184,12 +190,12 @@ const rows = computed(() =>
       <template #actions>
         <span class="cron-job__faint">newest first · {{ tz }}</span>
       </template>
-      <p
+      <StatusPanel
         v-if="!rows.length"
-        class="cron-job__empty"
-      >
-        No check-ins yet.
-      </p>
+        compact
+        title="No check-ins yet"
+        data-test="cron-no-checkins"
+      />
       <div
         v-else
         class="cron-job__scroll"
@@ -571,18 +577,17 @@ const rows = computed(() =>
   margin-top: 4px;
   max-height: 240px;
   overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+
+  // Long output lines wrap: the snippet's own <pre> keeps them on one line.
+  :deep(pre),
+  :deep(code) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
 }
 
 .cron-job__hidden {
   @include cr.visually-hidden;
-}
-
-.cron-job__empty {
-  @apply text-gray-500 dark:text-gray-400;
-
-  margin: 0;
 }
 
 .cron-job__more {

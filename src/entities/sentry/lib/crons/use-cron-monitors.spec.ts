@@ -74,6 +74,19 @@ describe('useCronMonitors', () => {
     expect(error.value).toBe('The server answered 500.')
   })
 
+  it('a failed refresh keeps the list and reports the error', async () => {
+    fetchMock.mockResolvedValueOnce(json({ data: [monitor('a')] }))
+    const { monitors, error } = run(() => useCronMonitors())
+    await flushPromises()
+
+    fetchMock.mockResolvedValueOnce(new Response('', { status: 500 }))
+    vi.mocked(onSentryEvent).mock.calls[0][0]()
+    await flushPromises()
+
+    expect(monitors.value.map((m) => m.slug)).toEqual(['a'])
+    expect(error.value).toBe('The server answered 500.')
+  })
+
   it('refreshes on a cron check-in over the socket and on a project change', async () => {
     fetchMock.mockImplementation(() => Promise.resolve(json({ data: [] })))
     run(() => useCronMonitors())
@@ -146,6 +159,32 @@ describe('useCronJob', () => {
     await job.loadOlder()
     expect(job.checkins.value).toHaveLength(51)
     expect(job.hasOlder.value).toBe(false)
+  })
+
+  it('an older page of the previous job is dropped after a switch', async () => {
+    const first = Array.from({ length: 50 }, (_, i) => checkIn(`a${i}`))
+    let answerOlder!: (r: Response) => void
+    fetchMock.mockImplementation((u: string) => {
+      if (!u.includes('/checkins')) return Promise.resolve(json({ data: [monitor('a'), monitor('b')] }))
+      if (u.includes('/crons/a/') && u.includes('page=2')) return new Promise<Response>((r) => (answerOlder = r))
+      return Promise.resolve(u.includes('/crons/a/') ? page(first, 51) : page([checkIn('b1')], 1))
+    })
+    const slug = ref('a')
+    const job = run(() => useCronJob(slug, 'shop'))
+    await flushPromises()
+
+    const older = job.loadOlder()
+    await flushPromises()
+    slug.value = 'b'
+    await flushPromises()
+    answerOlder(page([checkIn('a-old')], 51))
+    await older
+    await flushPromises()
+
+    expect(job.monitor.value?.slug).toBe('b')
+    expect(job.checkins.value.map((c) => c.id)).toEqual(['b1'])
+    expect(job.total.value).toBe(1)
+    expect(job.loadingOlder.value).toBe(false)
   })
 
   it('a new slug starts afresh', async () => {

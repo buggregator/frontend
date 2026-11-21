@@ -84,21 +84,6 @@ export const describeSchedule = (schedule: CronSchedule | null | undefined): { w
   return { words: describeCrontab(schedule.value) ?? 'Custom schedule', expr: schedule.value }
 }
 
-/** «340 ms», «8.4 s», «4 min 12 s», «2 h 5 min»; «—» without a duration. */
-export const formatDuration = (ms: number | null | undefined): string => {
-  if (ms === null || ms === undefined || !Number.isFinite(ms) || ms < 0) return '—'
-  if (ms < 1000) return `${Math.round(ms)} ms`
-  const s = ms / 1000
-  if (s < 60) return `${s < 10 ? s.toFixed(1) : Math.round(s)} s`
-  const total = Math.round(s)
-  const m = Math.floor(total / 60)
-  const sec = total % 60
-  if (m < 60) return sec ? `${m} min ${sec} s` : `${m} min`
-  const h = Math.floor(m / 60)
-  const mm = m % 60
-  return mm ? `${h} h ${mm} min` : `${h} h`
-}
-
 /** «2 min ago», «in 3 min», «just now». */
 export const formatRelative = (iso: string | null | undefined, now: number): string => {
   if (!iso) return ''

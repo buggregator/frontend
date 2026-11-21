@@ -4,7 +4,8 @@ import type { CronMonitor } from '../../types'
 import SentryCronTable from './sentry-cron-table.vue'
 
 const push = vi.fn()
-vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
+const resolve = vi.fn(() => ({ href: '/sentry/crons/backup?project=shop' }))
+vi.mock('vue-router', () => ({ useRouter: () => ({ push, resolve }) }))
 
 const now = Date.parse('2026-11-21T14:12:00Z')
 const ago = (min: number) => new Date(now - min * 60_000).toISOString()
@@ -72,5 +73,27 @@ describe('SentryCronTable', () => {
     const w = render([monitor('backup')])
     await w.get('.cron-table__schedule').trigger('click')
     expect(push).toHaveBeenCalledWith({ name: 'sentry-cron-job', params: { slug: 'backup' }, query: { project: 'shop' } })
+  })
+
+  it.each([
+    ['Ctrl', { ctrlKey: true }, 'click'],
+    ['Cmd', { metaKey: true }, 'click'],
+    ['Shift', { shiftKey: true }, 'click'],
+    ['the middle button', { button: 1 }, 'auxclick']
+  ] as const)('%s on the row opens the job in a new tab, not here', async (_, init, type) => {
+    push.mockClear()
+    const openTab = vi.spyOn(window, 'open').mockReturnValue(null)
+    const w = render([monitor('backup')])
+    await w.get('.cron-table__schedule').trigger(type, init)
+    expect(push).not.toHaveBeenCalled()
+    expect(openTab).toHaveBeenCalledWith('/sentry/crons/backup?project=shop', '_blank', 'noopener')
+    openTab.mockRestore()
+  })
+
+  it('the right button does nothing', async () => {
+    push.mockClear()
+    const w = render([monitor('backup')])
+    await w.get('.cron-table__schedule').trigger('auxclick', { button: 2 })
+    expect(push).not.toHaveBeenCalled()
   })
 })

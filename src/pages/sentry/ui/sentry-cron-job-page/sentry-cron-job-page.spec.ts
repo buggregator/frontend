@@ -44,7 +44,11 @@ describe('SentryCronJobPage', () => {
   it('loading first', () => {
     fetchMock.mockReturnValue(new Promise(() => {}))
     const w = mount(SentryCronJobPage, { global: { stubs: { RouterLink: RouterLinkStub } } })
-    expect(w.get('[data-test="cron-job-loading"]').text()).toContain('Loading the cron job')
+    const loading = w.get('[data-test="cron-job-loading"]')
+    // The shared skeleton, announced as loading.
+    expect(loading.attributes('role')).toBe('status')
+    expect(loading.attributes('aria-label')).toBe('Loading the cron job')
+    expect(loading.findAll('.skeleton').length).toBeGreaterThan(0)
   })
 
   it('the job of the project in the link', async () => {

@@ -53,11 +53,14 @@ export const useCronMonitors = () => {
       unsupported.value = false
     } catch (e) {
       if (current !== last) return
-      monitors.value = []
       if (isNotFound(e)) {
+        // No crons on this server: nothing to keep.
+        monitors.value = []
         unsupported.value = true
         error.value = ''
       } else {
+        // A failed refresh keeps the list it had: the page shows it with
+        // a «Could not refresh» line over it.
         error.value = describeLoadError(e)
       }
     } finally {
@@ -98,6 +101,9 @@ export const useCronJob = (slug: MaybeRefOrGetter<string>, project: MaybeRefOrGe
   const error = ref('')
   const notFound = ref(false)
   let last = 0
+  // Bumped on a switch to another job: an older page asked for the previous
+  // one is dropped when it comes.
+  let job = 0
 
   const load = async () => {
     const current = ++last
@@ -132,25 +138,29 @@ export const useCronJob = (slug: MaybeRefOrGetter<string>, project: MaybeRefOrGe
   const loadOlder = async () => {
     if (loadingOlder.value || checkins.value.length >= total.value) return
     loadingOlder.value = true
+    const asked = job
     const p = toValue(project) || 'default'
     try {
       // Pages of PAGE rows: the next one after what is shown.
       const page = Math.floor(checkins.value.length / PAGE) + 1
       const res = await getCronCheckIns(toValue(slug), { project: p, page, limit: PAGE })
+      if (asked !== job) return
       const seen = new Set(checkins.value.map((c) => c.id))
       checkins.value = [...checkins.value, ...(res.data ?? []).filter((c) => !seen.has(c.id))]
       total.value = res.meta?.total ?? total.value
     } catch (e) {
-      error.value = describeLoadError(e)
+      if (asked === job) error.value = describeLoadError(e)
     } finally {
-      loadingOlder.value = false
+      if (asked === job) loadingOlder.value = false
     }
   }
 
   watch(
     () => [toValue(slug), toValue(project)],
     () => {
+      job++
       hasLoaded.value = false
+      loadingOlder.value = false
       notFound.value = false
       monitor.value = null
       checkins.value = []

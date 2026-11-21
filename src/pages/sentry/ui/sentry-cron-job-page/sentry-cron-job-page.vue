@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router'
 import { SentryCronJob, useCronClock, useCronJob } from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
-import { StatusPanel } from '@/shared/ui'
+import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 
 // One cron job and its runs (#6617). The project comes with the link from
 // the table; a bare URL uses the selected project.
@@ -52,14 +52,12 @@ const now = useCronClock()
     <div
       v-else-if="!hasLoaded || !monitor"
       class="cron-job-page__loading"
+      role="status"
+      aria-label="Loading the cron job"
       data-test="cron-job-loading"
     >
-      <p
-        class="cron-job-page__faint"
-        role="status"
-      >
-        Loading the cron job…
-      </p>
+      <SkeletonLoader variant="text" />
+      <SkeletonLoader variant="text" />
     </div>
 
     <template v-else>
@@ -95,13 +93,6 @@ const now = useCronClock()
 
 .cron-job-page__loading {
   padding: 16px;
-}
-
-.cron-job-page__faint {
-  @apply text-gray-500 dark:text-gray-400;
-
-  margin: 0;
-  font-size: 12px;
 }
 
 .cron-job-page__back {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { describeCrontab, describeSchedule, formatClock, formatDuration, formatRelative, knownTimeZone } from './cron-format'
+import { describeCrontab, describeSchedule, formatClock, formatRelative, knownTimeZone } from './cron-format'
 
 describe('describeCrontab', () => {
   it.each([
@@ -52,22 +52,6 @@ describe('describeSchedule', () => {
   it('no schedule (a ping job before it gets one)', () => {
     expect(describeSchedule(null)).toEqual({ words: 'No schedule', expr: '' })
     expect(describeSchedule({ type: '', value: '' })).toEqual({ words: 'No schedule', expr: '' })
-  })
-})
-
-describe('formatDuration', () => {
-  it.each([
-    [null, '—'],
-    [-1, '—'],
-    [340, '340 ms'],
-    [8400, '8.4 s'],
-    [41_000, '41 s'],
-    [252_000, '4 min 12 s'],
-    [300_000, '5 min'],
-    [7_500_000, '2 h 5 min'],
-    [7_200_000, '2 h']
-  ])('%s → %s', (ms, text) => {
-    expect(formatDuration(ms)).toBe(text)
   })
 })
 

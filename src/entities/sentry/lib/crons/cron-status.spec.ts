@@ -175,8 +175,10 @@ describe('check-ins', () => {
       checkIn({ duration_ms: 3000 }),
       checkIn({ status: 'error', duration_ms: 8000 }),
       checkIn({ status: 'missed', duration_ms: null }),
-      checkIn({ status: 'in_progress', duration_ms: null })
+      checkIn({ status: 'in_progress', duration_ms: null }),
+      checkIn({ status: 'unknown', duration_ms: null })
     ])
+    // A «Missed?» slot (Buggregator was down) counts neither way.
     expect(stats).toEqual({ ok: 2, total: 4, median: 3000, slowest: 8000 })
     expect(runStats([])).toEqual({ ok: 0, total: 0, median: null, slowest: null })
   })
@@ -195,6 +197,7 @@ describe('check-ins', () => {
     expect(bars.map((b) => b.height)).toEqual([100, null, 25, 8])
     expect(bars[1].tone).toBe('miss')
     expect(bars[3]).toMatchObject({ tone: 'err', title: expect.stringContaining('Failed · no duration') })
+    expect(bars[2].title).toContain('OK · 1.0 s')
   })
 })
 
@@ -225,6 +228,9 @@ describe('explainMonitor', () => {
       now
     )
     expect(missed).toMatchObject({ tone: 'miss', title: 'Missed the run expected at 02:30.' })
+    // Honest: the run may have happened with its check-in lost on the way.
+    expect(missed?.text).toContain('or its check-in did not reach Buggregator')
+    expect(missed?.text).toContain('Check the scheduler and the DSN / ping URL.')
     const unknown = explainMonitor(
       monitor({ last_status: 'unknown', recent: [{ status: 'unknown', started_at: '2026-11-21T02:30:00.000Z' }] }),
       now

@@ -50,9 +50,17 @@ const groups = computed(() => {
 })
 
 const open = (event: MouseEvent, to: RouteLocationRaw) => {
-  // The link handles its own click; text being selected is not a click.
+  // The link handles its own click (new tab included); text being selected
+  // is not a click; the right button opens the menu.
   if ((event.target as HTMLElement).closest('a')) return
   if (window.getSelection()?.toString()) return
+  if (event.button !== 0 && event.button !== 1) return
+  // Ctrl/Cmd/Shift or the middle button on the row: a new tab, as on the link.
+  if (event.button === 1 || event.ctrlKey || event.metaKey || event.shiftKey) {
+    window.open(router.resolve(to).href, '_blank', 'noopener')
+    return
+  }
+  if (event.altKey) return
   router.push(to)
 }
 </script>
@@ -113,6 +121,7 @@ const open = (event: MouseEvent, to: RouteLocationRaw) => {
           class="cron-table__row"
           data-test="cron-row"
           @click="open($event, r.to)"
+          @auxclick="open($event, r.to)"
         >
           <td>
             <div class="cron-table__job">
