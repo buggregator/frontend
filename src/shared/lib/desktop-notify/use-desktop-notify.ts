@@ -10,7 +10,15 @@ export const useDesktopNotify = (): DesktopNotifier => {
       Notification: window.isSecureContext && 'Notification' in window ? window.Notification : undefined,
       document: window.document,
       focusWindow: () => window.focus(),
-      now: () => Date.now()
+      now: () => Date.now(),
+      storage: (() => {
+        try {
+          return window.localStorage
+        } catch {
+          return undefined
+        }
+      })(),
+      onWindow: (type, fn) => window.addEventListener(type, fn)
     })
   }
 

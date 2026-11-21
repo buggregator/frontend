@@ -3,7 +3,8 @@ import { computed, ref } from 'vue'
 import type { DesktopNotifier, NotifyPermission } from '@/shared/lib/desktop-notify'
 import { useSettingsStore } from '@/shared/stores'
 
-export type DesktopNotificationsState = 'unsupported' | 'blocked' | 'off' | 'on'
+// refused: the browser has the API but would not show a notice (Chrome on Android).
+export type DesktopNotificationsState = 'unsupported' | 'refused' | 'blocked' | 'off' | 'on'
 
 /**
  * The «Desktop notifications» switch: on only with the person's choice and
@@ -16,8 +17,10 @@ export const useDesktopNotificationsSetting = (notifier: DesktopNotifier) => {
 
   const permission = ref<NotifyPermission>(notifier.permission())
   const isAsking = ref(false)
+  const isRefused = ref(false)
 
   const state = computed<DesktopNotificationsState>(() => {
+    if (isRefused.value) return 'refused'
     if (!notifier.isSupported()) return 'unsupported'
     if (permission.value === 'denied') return 'blocked'
     return isDesktopNotificationsEnabled.value && permission.value === 'granted' ? 'on' : 'off'
@@ -28,7 +31,7 @@ export const useDesktopNotificationsSetting = (notifier: DesktopNotifier) => {
       store.setDesktopNotifications(false)
       return
     }
-    if (state.value === 'unsupported' || isAsking.value) return
+    if (state.value === 'unsupported' || state.value === 'refused' || isAsking.value) return
 
     isAsking.value = true
     try {
@@ -40,7 +43,10 @@ export const useDesktopNotificationsSetting = (notifier: DesktopNotifier) => {
 
     if (permission.value === 'granted') {
       store.setDesktopNotifications(true)
-      notifier.showTest()
+      if (!notifier.showTest()) {
+        store.setDesktopNotifications(false)
+        isRefused.value = true
+      }
     }
   }
 
