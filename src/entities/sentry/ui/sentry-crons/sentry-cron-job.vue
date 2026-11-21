@@ -245,7 +245,6 @@ const rows = computed(() =>
                   <summary>Output</summary>
                   <CodeSnippet
                     class="cron-job__output-code"
-                    language="bash"
                     :code="r.output"
                   />
                 </details>
