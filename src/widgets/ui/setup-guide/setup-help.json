@@ -124,6 +124,71 @@
       ]
     },
     {
+      "id": "crons",
+      "title": "Watch your cron jobs",
+      "lead": "Buggregator takes Sentry Crons check-ins and a plain ping URL. The Crons tab of Sentry shows every job: when it ran, how long it took, and which runs failed, did not come or hung.",
+      "docs": "",
+      "steps": [
+        "Use the same DSN as for errors: check-ins go to the same address.",
+        "A job shows up on the Crons tab with its first check-in.",
+        "Give it a schedule (the monitor config, or ?schedule= on the ping URL). A run that does not come within the margin is marked Missed; one that starts and does not finish within the max runtime, Timed out. Margin and max runtime are in minutes.",
+        "While Buggregator is not running, a run it could not see is shown as «Missed?», not Missed.",
+        "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
+      ],
+      "stacks": [
+        {
+          "id": "laravel",
+          "label": "Laravel",
+          "file": "routes/console.php",
+          "lang": "php",
+          "code": "// .env: SENTRY_LARAVEL_DSN=http://sentry@{host}:{http_port}/{project}\n\nSchedule::command('reports:send')\n    ->dailyAt('03:00')\n    ->sentryMonitor(checkInMargin: 5, maxRuntime: 30);",
+          "hint": "sentry/sentry-laravel. The schedule comes from the scheduler, the job's name from the command.",
+          "checked": false,
+          "note": "Laravel app not run; the PHP SDK check-in shape was recorded on server #483 (crons-php)."
+        },
+        {
+          "id": "php",
+          "label": "PHP",
+          "file": "job.php",
+          "lang": "php",
+          "code": "\\Sentry\\init(['dsn' => 'http://sentry@{host}:{http_port}/{project}']);\n\n$id = \\Sentry\\captureCheckIn(\n    slug: 'reports-send',\n    status: \\Sentry\\CheckInStatus::inProgress(),\n    monitorConfig: new \\Sentry\\MonitorConfig(\n        \\Sentry\\MonitorSchedule::crontab('0 3 * * *'),\n        checkinMargin: 5,\n        maxRuntime: 30,\n        timezone: 'UTC',\n    ),\n);\n\n// the job\n\n\\Sentry\\captureCheckIn(\n    slug: 'reports-send',\n    status: \\Sentry\\CheckInStatus::ok(),\n    checkInId: $id,\n);",
+          "hint": "On failure send CheckInStatus::error() with the same checkInId.",
+          "checked": true,
+          "note": "Same calls as testdata/sdk/recorder/crons-php.php on server #483."
+        },
+        {
+          "id": "javascript",
+          "label": "Node.js",
+          "file": "job.js",
+          "lang": "javascript",
+          "code": "Sentry.init({ dsn: \"http://{project_js}@{host}:{http_port}/1\" });\n\nawait Sentry.withMonitor(\"reports-send\", () => sendReports(), {\n  schedule: { type: \"crontab\", value: \"0 3 * * *\" },\n  checkinMargin: 5,\n  maxRuntime: 30,\n  timezone: \"UTC\",\n});",
+          "hint": "withMonitor sends «started», then «finished» or «failed» if the callback throws. The project key goes before @, with «_» for «-».",
+          "checked": true,
+          "note": "Same calls as testdata/sdk/recorder/crons-node.js on server #483."
+        },
+        {
+          "id": "python",
+          "label": "Python",
+          "file": "jobs.py",
+          "lang": "python",
+          "code": "import sentry_sdk\nfrom sentry_sdk.crons import monitor\n\nsentry_sdk.init(dsn=\"http://{project}@{host}:{http_port}/1\")\n\n@monitor(monitor_slug=\"reports-send\", monitor_config={\n    \"schedule\": {\"type\": \"crontab\", \"value\": \"0 3 * * *\"},\n    \"checkin_margin\": 5,\n    \"max_runtime\": 30,\n    \"timezone\": \"UTC\",\n})\ndef send_reports():\n    pass",
+          "hint": "The decorator sends «started», then «finished» or «failed» if the function raises.",
+          "checked": false,
+          "note": "Not run against server master."
+        },
+        {
+          "id": "ping",
+          "label": "Any script (ping URL)",
+          "file": "crontab / shell",
+          "lang": "bash",
+          "code": "# at the end of the job, in any language\ncurl -fsS \"http://{host}:{http_port}/ping/reports-send?project={project}\"\n\n# optional: when it starts, and when it fails\ncurl -fsS \"http://{host}:{http_port}/ping/reports-send/start?project={project}\"\ncurl -fsS \"http://{host}:{http_port}/ping/reports-send/fail?project={project}\"\n\n# keep the job's output (its last 10 KB) with the run\n./backup.sh 2>&1 | curl -fsS --data-binary @- \"http://{host}:{http_port}/ping/reports-send?project={project}\"\n\n# a schedule turns a run that did not come into Missed\ncurl -fsS \"http://{host}:{http_port}/ping/reports-send?project={project}&schedule=0%203%20*%20*%20*&margin=5&max_runtime=30\"",
+          "hint": "The first ping creates the job. GET and POST both work; schedule is a crontab (URL-encoded), tz= sets its time zone.",
+          "checked": true,
+          "note": "Routes from server #483 cron_ingest.go; checked live against a local build."
+        }
+      ]
+    },
+    {
       "id": "profiler",
       "title": "Profile your first request",
       "lead": "Buggregator receives XHProf profiles from PHP and shows the call graph, the flame graph and the top functions.",

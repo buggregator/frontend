@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useEventsStore } from '@/shared/stores'
 import { useSentryCounts } from '../../lib'
+import { useCronMonitors } from '../../lib/crons'
 import { onSentryEvent } from '../../lib/use-sentry-events-bus'
 import type { SentryTab } from '../../lib/use-sentry-filters'
 
@@ -32,15 +33,31 @@ const TABS: { id: SentryTab; label: string; to: string }[] = [
   { id: 'traces', label: 'Traces', to: '/sentry/traces' },
   { id: 'logs', label: 'Logs', to: '/sentry/logs' },
   { id: 'metrics', label: 'Metrics', to: '/sentry/metrics' },
-  { id: 'feedback', label: 'Feedback', to: '/sentry/feedback' }
+  { id: 'feedback', label: 'Feedback', to: '/sentry/feedback' },
+  { id: 'crons', label: 'Crons', to: '/sentry/crons' }
 ]
 
-const countOf = (id: SentryTab) => counts.value[id] ?? 0
+// Cron monitors are not in /counts and not in the period: the tab counts the
+// monitors of the project (#6617). It shows on every server with /api/crons,
+// also with no monitors (its empty state has the setup help); an older
+// server answers 404: no tab.
+const {
+  monitors: cronMonitors,
+  unsupported: cronsUnsupported,
+  hasLoaded: cronsLoaded,
+  error: cronsError
+} = useCronMonitors()
+const hasCrons = computed(() => cronsLoaded.value && !cronsUnsupported.value && !cronsError.value)
+
+const countOf = (id: SentryTab) => (id === 'crons' ? cronMonitors.value.length : (counts.value[id] ?? 0))
 
 // Tabs without data stay hidden; Exceptions and the open tab always show.
-const tabs = computed(() =>
-  TABS.filter((t) => t.id === 'exceptions' || t.id === props.current || countOf(t.id) > 0)
-)
+const isShown = (id: SentryTab) => {
+  if (id === 'exceptions') return true
+  if (id === 'crons') return !cronsUnsupported.value && (hasCrons.value || id === props.current)
+  return id === props.current || countOf(id) > 0
+}
+const tabs = computed(() => TABS.filter((t) => isShown(t.id)))
 
 // Sideways scroll when the row is too narrow: an edge fades where more tabs hide.
 const nav = ref<HTMLElement | null>(null)

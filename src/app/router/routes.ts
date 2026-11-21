@@ -24,6 +24,8 @@ const SentryTraceDetailPage = () => sentryPages().then((m) => m.SentryTraceDetai
 const SentryLogsPage = () => sentryPages().then((m) => m.SentryLogsPage)
 const SentryMetricsPage = () => sentryPages().then((m) => m.SentryMetricsPage)
 const SentryFeedbackPage = () => sentryPages().then((m) => m.SentryFeedbackPage)
+const SentryCronsPage = () => sentryPages().then((m) => m.SentryCronsPage)
+const SentryCronJobPage = () => sentryPages().then((m) => m.SentryCronJobPage)
 
 export const routes = [
   {
@@ -64,6 +66,8 @@ export const routes = [
       { path: 'logs', name: RouteName.SentryLogs, component: SentryLogsPage },
       { path: 'metrics', name: RouteName.SentryMetrics, component: SentryMetricsPage },
       { path: 'feedback', name: RouteName.SentryFeedback, component: SentryFeedbackPage },
+      { path: 'crons', name: RouteName.SentryCrons, component: SentryCronsPage },
+      { path: 'crons/:slug', name: RouteName.SentryCronJob, component: SentryCronJobPage },
       { path: ':id', redirect: (to: RouteLocation) => `/sentry/event/${to.params.id}` },
     ]
   },

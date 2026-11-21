@@ -1,0 +1,12 @@
+// Shared bits of the Crons pages. Plain CSS and @apply only: these
+// directories are not scanned by Tailwind (first-load CSS budget).
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+
+    .dark & {
+      outline-color: #60a5fa;
+    }
+  }
+}
