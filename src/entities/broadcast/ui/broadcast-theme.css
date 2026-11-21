@@ -1,13 +1,9 @@
-/* Broadcast console tokens (#6614, design #6598 «Токены»): JSON colours, the
-   change highlight and the Live dot, light and dark. Plain CSS: this folder is
+/* Broadcast console tokens (#6614, design #6598 «Токены»): the change
+   highlight, the problem tones and the Live dot, light and dark. Plain CSS: this folder is
    not scanned by Tailwind, so nothing here reaches the first-load CSS. */
 
 .bc-scope {
   --bc-key: #1f2937;
-  --bc-str: #047857;
-  --bc-num: #1d4ed8;
-  --bc-null: #b91c1c;
-  --bc-punct: #4b5563;
   --bc-chg: #fef3c7;
   --bc-chg-mark: #b45309;
   --bc-add: #dcfce7;
@@ -23,10 +19,6 @@
 .dark .bc-scope,
 .dark.bc-scope {
   --bc-key: #e5e7eb;
-  --bc-str: #6ee7b7;
-  --bc-num: #93c5fd;
-  --bc-null: #fca5a5;
-  --bc-punct: #9ca3af;
   --bc-chg: rgba(251, 191, 36, 0.14);
   --bc-chg-mark: #fbbf24;
   --bc-add: rgba(74, 222, 128, 0.12);

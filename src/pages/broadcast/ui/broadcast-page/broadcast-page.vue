@@ -7,13 +7,11 @@ import {
   LayoutBase,
   LayoutSidebar,
   PageHeader,
-  SetupHelpPanel,
-  useSetupValues
+  SetupGuide
 } from '@/widgets/ui'
 import {
   ALL_CHANNELS,
   BroadcastChannelList,
-  BroadcastEmpty,
   BroadcastEventDetail,
   BroadcastEventRow,
   channelKindLabel,
@@ -39,7 +37,6 @@ const router = useRouter()
 const { events, cachedEvents } = useEvents()
 const { searchQuery, listState, listError } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
-const { values } = useSetupValues()
 
 // An event a link opened that the loaded list does not have (older than the
 // list, or another period): fetched by uuid and kept here.
@@ -148,18 +145,22 @@ const streamNote = computed(() => {
   return parts.join(' · ')
 })
 
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+const pickText = computed(
+  () =>
+    `${plural(channels.value.length, 'channel')} got ${plural(shown.value.length, 'event')}. ` +
+    'Pick one to see its events in order, each with what changed since the previous one of its name.'
+)
+
 const liveText = computed(() => (!isConnectedWS.value ? 'Offline' : isPaused.value ? 'Paused' : 'Live'))
 
 const detailId = (uuid: string) => `bc-detail-${uuid}`
-
-// ---- empty state help ------------------------------------------------------------
-const isHelpOpen = ref(false)
 
 // Esc folds the open event back and returns the focus to its row. Not an Esc
 // a field or a dialog already took (search, filter, shortcuts overlay).
 const TEXT_FIELDS = new Set(['INPUT', 'TEXTAREA', 'SELECT'])
 const onKey = async (e: KeyboardEvent) => {
-  if (e.key !== 'Escape' || e.defaultPrevented || !expandedId.value || isHelpOpen.value) return
+  if (e.key !== 'Escape' || e.defaultPrevented || !expandedId.value) return
   const target = e.target as HTMLElement | null
   if (target && (TEXT_FIELDS.has(target.tagName) || target.isContentEditable)) return
   const id = expandedId.value
@@ -203,20 +204,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
         @action="events.getAll()"
       />
 
-      <template v-else-if="view === 'empty'">
-        <BroadcastEmpty
-          :host="values.host"
-          :port="values.http_port"
-          :connected="isConnectedWS"
-          @help="isHelpOpen = true"
-        />
-        <SetupHelpPanel
-          v-if="isHelpOpen"
-          section-id="broadcast"
-          :section-title="TITLE"
-          @close="isHelpOpen = false"
-        />
-      </template>
+      <!-- No broadcast yet: how to send the first one, like every section. -->
+      <SetupGuide
+        v-else-if="view === 'empty'"
+        section-id="broadcast"
+        :section-title="TITLE"
+      />
 
       <template v-else>
         <StatusPanel
@@ -285,27 +278,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
             class="bc-page__stream"
             aria-label="Events"
           >
-            <div
+            <StatusPanel
               v-if="!hasSelection"
-              class="bc-page__pick"
+              title="Pick a channel"
+              :text="pickText"
+              action-label="Show all channels"
               data-test="bc-no-channel"
-            >
-              <h2 class="bc-page__empty-title">
-                Pick a channel
-              </h2>
-              <p class="bc-page__muted">
-                {{ channels.length }} channel{{ channels.length === 1 ? '' : 's' }} got
-                {{ shown.length }} event{{ shown.length === 1 ? '' : 's' }}. Pick one to see its events in
-                order, each with what changed since the previous one of its name.
-              </p>
-              <button
-                type="button"
-                class="bc-page__btn"
-                @click="pick(ALL_CHANNELS)"
-              >
-                Show all channels
-              </button>
-            </div>
+              @action="pick(ALL_CHANNELS)"
+            />
 
             <template v-else>
               <div class="bc-page__toolbar">
@@ -362,12 +342,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
                     :channel="comparedChannel(e)"
                   />
                 </template>
-                <p
+                <StatusPanel
                   v-if="!stream.length"
-                  class="bc-page__muted bc-page__pad"
-                >
-                  No event here matches “{{ query.trim() }}”.
-                </p>
+                  compact
+                  :title="`No event here matches “${query.trim()}”`"
+                  data-test="bc-no-match"
+                />
               </div>
             </template>
           </section>
@@ -445,10 +425,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   @apply text-xs text-gray-600 dark:text-gray-400;
 }
 
-.bc-page__pad {
-  @apply p-4;
-}
-
 .bc-page__live {
   @apply inline-flex items-center gap-1.5 text-xs text-gray-800 dark:text-gray-200 whitespace-nowrap;
 
@@ -524,34 +500,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
   @media (max-width: 767px) {
     display: none;
-  }
-}
-
-.bc-page__pick {
-  @apply flex flex-col items-start gap-3 px-6 py-10;
-  max-width: 680px;
-
-  @media (max-width: 639px) {
-    @apply px-4 py-6;
-  }
-}
-
-.bc-page__empty-title {
-  @apply text-lg font-semibold text-gray-900 dark:text-gray-100;
-}
-
-.bc-page__btn {
-  @apply inline-flex items-center h-8 px-3 rounded border text-sm font-medium;
-  @apply bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200;
-  @apply hover:bg-gray-50 dark:hover:bg-gray-700;
-
-  &:focus-visible {
-    outline: 2px solid var(--bc-focus);
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 639px) {
-    @apply h-11;
   }
 }
 </style>

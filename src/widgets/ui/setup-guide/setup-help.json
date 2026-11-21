@@ -465,7 +465,7 @@
           "file": ".env",
           "lang": "dotenv",
           "code": "BROADCAST_CONNECTION=reverb\nREVERB_APP_ID=app-id\nREVERB_APP_KEY=app-key\nREVERB_APP_SECRET=app-secret\nREVERB_HOST={host}\nREVERB_PORT={http_port}\nREVERB_SCHEME=http",
-          "hint": "Laravel's .env derives VITE_REVERB_HOST and VITE_REVERB_PORT from these: set them to your Reverb by hand.",
+          "hint": "Laravel's .env derives VITE_REVERB_HOST and VITE_REVERB_PORT from these: set them to your Reverb by hand. Buggregator records each broadcast; without BROADCAST_UPSTREAM it does not deliver them, so live updates in your app stop while it points here. Set BROADCAST_UPSTREAM to your Reverb to have both.",
           "checked": false,
           "note": "Values from server modules/broadcast (handler.go, pusher-http-php 7.3.0 test data); no Laravel app was run."
         },
@@ -475,7 +475,7 @@
           "file": ".env",
           "lang": "dotenv",
           "code": "BROADCAST_CONNECTION=pusher\nPUSHER_APP_ID=app-id\nPUSHER_APP_KEY=app-key\nPUSHER_APP_SECRET=app-secret\nPUSHER_HOST={host}\nPUSHER_PORT={http_port}\nPUSHER_SCHEME=http",
-          "hint": null,
+          "hint": "Buggregator records each broadcast; without BROADCAST_UPSTREAM it does not deliver them, so live updates in your app stop while it points here. Set BROADCAST_UPSTREAM to your Reverb or Pusher to have both.",
           "checked": false,
           "note": "Values from server modules/broadcast; no Laravel app was run."
         },

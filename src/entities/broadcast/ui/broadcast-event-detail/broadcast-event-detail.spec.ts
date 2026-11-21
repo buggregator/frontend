@@ -28,11 +28,13 @@ describe('BroadcastEventDetail', () => {
   it('the first event of its name: the payload, nothing to compare', () => {
     const wrapper = render(broadcastOrderStatusPrevMock)
     expect(wrapper.find('[data-test="bc-first"]').text()).toContain('The first OrderStatusUpdated on private-orders.42')
-    expect(wrapper.find('.bc-json').text()).toContain('"status": "packed"')
-    expect(wrapper.find('.bc-json__line--chg').exists()).toBe(false)
+    const code = wrapper.find('[data-test="bc-payload"]')
+    expect(code.classes()).toContain('code-snippet')
+    expect(code.text()).toContain('"status": "packed"')
+    expect(wrapper.find('[data-test="bc-changes"]').exists()).toBe(false)
   })
 
-  it('lists what changed since the previous one and marks it in the payload', () => {
+  it('lists what changed since the previous one, the payload in the shared viewer', () => {
     const wrapper = render(broadcastOrderStatusMock, broadcastOrderStatusPrevMock)
     const changes = wrapper.findAll('[data-test="bc-changes"] li').map((li) => li.text().replace(/\s+/g, ' '))
     expect(changes).toEqual([
@@ -40,15 +42,15 @@ describe('BroadcastEventDetail', () => {
       '~order.tracking: null → "1Z999AA10123456784"'
     ])
     expect(wrapper.find('.bc-detail__lost').text()).toContain('e.order.status')
-    const marked = wrapper.findAll('.bc-json__line--chg').map((l) => l.text())
-    expect(marked[0]).toMatch(/~\s+"status": null,\s*was "packed"/)
-    expect(wrapper.text()).toContain('Except socket')
+    expect(wrapper.find('[data-test="bc-payload"]').text()).toContain('"status": null')
+    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(false)
+    expect(wrapper.findAll('.table-row__name').map((r) => r.text())).toContain('Except socket')
     expect(getItem).not.toHaveBeenCalled()
   })
 
   it('shows data that is not JSON as it came, with the warning', () => {
     const wrapper = render(broadcastInvalidJsonMock)
-    expect(wrapper.find('.bc-detail__raw').text()).toBe(broadcastInvalidJsonMock.payload.data)
+    expect(wrapper.find('[data-test="bc-payload"] code').text()).toBe(broadcastInvalidJsonMock.payload.data)
     expect(wrapper.find('.bc-problems__item--error').text()).toContain('not JSON')
     expect(wrapper.find('.bc-detail__bad').text()).toContain('does not match')
   })
@@ -84,11 +86,13 @@ describe('BroadcastEventDetail', () => {
     // the load starts in setup: no «not JSON» flash before it
     expect(wrapper.text()).not.toContain('not JSON')
     expect(wrapper.text()).toContain('Loading the full events')
-    expect(wrapper.findAll('.bc-detail__btn').every((b) => b.attributes('disabled') !== undefined)).toBe(true)
+    expect(wrapper.find('.bc-detail__btn').attributes('disabled')).toBeDefined()
+    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(true)
     await flushPromises()
     expect(wrapper.find('[data-test="bc-load-failed"]').text()).toContain('Could not load the full event')
     expect(wrapper.text()).not.toContain('not JSON')
-    expect(wrapper.findAll('.bc-detail__btn').every((b) => b.attributes('disabled') !== undefined)).toBe(true)
+    expect(wrapper.find('.bc-detail__btn').attributes('disabled')).toBeDefined()
+    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(true)
   })
 
   it('counts the shown part of a cut payload in bytes', async () => {
@@ -98,7 +102,7 @@ describe('BroadcastEventDetail', () => {
     await flushPromises()
     const bytes = new TextEncoder().encode(cut.payload.data).length
     expect(bytes).not.toBe(cut.payload.data.length)
-    expect(wrapper.text()).toContain(`The first ${(bytes / 1024).toFixed(1)} KB of`)
+    expect(wrapper.text()).toContain(`The first ${(bytes / 1024).toFixed(1)} Kb of`)
   })
 
   it('loads the full events again when the event or the previous one changes', async () => {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { formatBytes, formatClock } from '../../lib/format'
+import { formatFileSize } from '@/shared/lib/formats/format-file-size'
+import { formatClock } from '../../lib/format'
 import { broadcastProblems, PROBLEM_ICON } from '../../lib/payload'
 import type { BroadcastEvent } from '../../types'
 import { BroadcastChannelTag } from '../broadcast-channel-tag'
@@ -69,7 +70,7 @@ const shortName = computed(() => p.value.name.split('\\').pop() || p.value.name)
     <span
       class="bc-row__size"
       :class="{ 'bc-row__size--over': p.size > LIMIT }"
-    >{{ formatBytes(p.size) }}</span>
+    >{{ formatFileSize(p.size) }}</span>
   </button>
 </template>
 

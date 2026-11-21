@@ -11,6 +11,3 @@ export const BroadcastEventRow = defineAsyncComponent(() =>
 export const BroadcastEventDetail = defineAsyncComponent(() =>
   import('./broadcast-event-detail').then((m) => m.BroadcastEventDetail)
 )
-export const BroadcastEmpty = defineAsyncComponent(() =>
-  import('./broadcast-empty').then((m) => m.BroadcastEmpty)
-)

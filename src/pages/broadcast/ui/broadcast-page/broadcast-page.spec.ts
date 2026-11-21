@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import type { BroadcastEvent } from '@/entities/broadcast'
 import { broadcastMocks, broadcastOrderStatusMock } from '@/entities/broadcast/mocks'
 import { useEventsStore } from '@/shared/stores'
@@ -24,8 +24,10 @@ vi.mock('@/widgets/ui', () => ({
   LayoutBase: { template: '<div><slot name="header" /><slot /></div>' },
   LayoutSidebar: { template: '<nav />' },
   PageHeader: { template: '<header class="header-stub" />' },
-  SetupHelpPanel: { props: ['sectionId'], template: '<div class="help-stub" :data-section="sectionId" />' },
-  useSetupValues: () => ({ values: computed(() => ({ host: 'localhost', http_port: '8000' })) })
+  SetupGuide: {
+    props: ['sectionId', 'sectionTitle'],
+    template: '<div class="guide-stub" :data-section="sectionId" :data-title="sectionTitle" />'
+  }
 }))
 
 // The console's parts are async components.
@@ -67,7 +69,7 @@ describe('BroadcastPage (channel console)', () => {
     useEventsStore().listState = 'loading'
     const wrapper = await render()
     expect(wrapper.find('[aria-label="Loading broadcasts"]').exists()).toBe(true)
-    expect(wrapper.find('[data-test="bc-empty"]').exists()).toBe(false)
+    expect(wrapper.find('.guide-stub').exists()).toBe(false)
   })
 
   it('error: says so and loads again on request', async () => {
@@ -79,14 +81,11 @@ describe('BroadcastPage (channel console)', () => {
     expect(getAll).toHaveBeenCalled()
   })
 
-  it('empty: where to point the app, and the setup help', async () => {
+  it('empty: the shared setup guide of the broadcast section', async () => {
     const wrapper = await render()
-    const empty = wrapper.find('[data-test="bc-empty"]')
-    expect(empty.text()).toContain('No broadcasts yet')
-    expect(empty.text()).toContain('Waiting for broadcasts on http://localhost:8000')
-    expect(empty.find('pre').text()).toContain('REVERB_PORT=8000')
-    await wrapper.find('[data-test="bc-setup-help"]').trigger('click')
-    expect(wrapper.find('.help-stub').attributes('data-section')).toBe('broadcast')
+    const guide = wrapper.find('.guide-stub')
+    expect(guide.attributes('data-section')).toBe('broadcast')
+    expect(guide.attributes('data-title')).toBe('Broadcast')
   })
 
   it('no channel selected: a hint and a way to all channels', async () => {
@@ -169,7 +168,7 @@ describe('BroadcastPage (channel console)', () => {
     items.value = broadcastMocks
     const wrapper = await render()
     await openFirst(wrapper)
-    const input = wrapper.find('.bc-channels__input').element
+    const input = wrapper.find('.bc-channels__input input').element
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
     const handled = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })
     handled.preventDefault()

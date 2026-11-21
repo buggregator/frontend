@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
+import { SearchBar } from '@/shared/ui'
 import type { BroadcastChannel } from '../../lib/channels'
 import { formatClock } from '../../lib/format'
 import { broadcastProblems, channelKindLabel, PROBLEM_ICON } from '../../lib/payload'
@@ -60,13 +61,12 @@ const lastLine = (c: BroadcastChannel) => {
     aria-label="Channels"
   >
     <div class="bc-channels__filter">
-      <input
+      <SearchBar
         v-model="filter"
-        type="search"
         class="bc-channels__input"
         placeholder="Filter channels"
-        aria-label="Filter channels"
-      >
+        label="Filter channels"
+      />
     </div>
     <div
       ref="list"
@@ -137,17 +137,7 @@ const lastLine = (c: BroadcastChannel) => {
 }
 
 .bc-channels__input {
-  @apply w-full h-8 px-2.5 rounded border font-mono text-xs;
-  @apply bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100;
-
-  &::placeholder {
-    @apply font-sans text-gray-500 dark:text-gray-400;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--bc-focus);
-    outline-offset: 1px;
-  }
+  @apply h-8;
 }
 
 .bc-channels__list {

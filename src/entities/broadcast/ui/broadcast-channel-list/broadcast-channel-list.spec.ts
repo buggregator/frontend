@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { buildChannelList } from '../../lib'
 import { broadcastMocks } from '../../mocks'
 import BroadcastChannelList from './broadcast-channel-list.vue'
@@ -13,6 +14,18 @@ const render = (selectedId: string | null = null) =>
   })
 
 describe('BroadcastChannelList', () => {
+  // The filter is the shared SearchBar: it reads the shortcut settings.
+  beforeEach(() => setActivePinia(createPinia()))
+
+  it('filters with the shared search box, named «Filter channels»', async () => {
+    const wrapper = render()
+    const input = wrapper.find('input[aria-label="Filter channels"]')
+    expect(input.attributes('placeholder')).toBe('Filter channels')
+    await input.setValue('cart')
+    expect(wrapper.emitted('update:filter')?.at(-1)).toEqual(['cart'])
+    wrapper.unmount()
+  })
+
   it('lists All channels, then each channel with its kind, count and last event', () => {
     const wrapper = render()
     const rows = wrapper.findAll('[data-channel-row]')

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { computed, reactive, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
+import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
-import { formatBytes, formatClock } from '../../lib/format'
-import { jsonShort } from '../../lib/json-lines'
+import { CodeSnippet, EventDetailSection, TableBase, TableBaseRow } from '@/shared/ui'
+import { formatClock } from '../../lib/format'
 import { buildBroadcastCurl, dataBytes, hasJsonData, isDataCut } from '../../lib/payload'
-import { diffPayload, lostValuePaths } from '../../lib/payload-diff'
+import { diffPayload, jsonShort, lostValuePaths } from '../../lib/payload-diff'
 import type { BroadcastEvent, BroadcastPayload } from '../../types'
 import { BroadcastChannelTag } from '../broadcast-channel-tag'
-import { BroadcastJson } from '../broadcast-json'
 import { BroadcastProblems } from '../broadcast-problems'
 import '../broadcast-theme.css'
 
@@ -60,12 +60,15 @@ const isLoading = computed(
 const loadFailed = computed(
   () => full[props.event.uuid] === 'failed' || (!!props.previous && full[props.previous.uuid] === 'failed')
 )
-// Only the whole data is copied: not the 2 KB of a preview.
-const canCopy = computed(() => !isDataCut(payload.value))
-
 const payload = computed(() => payloadOf(props.event))
 const isJson = computed(() => hasJsonData(payload.value))
 const isCut = computed(() => isDataCut(payload.value))
+// Only the whole data is copied: not the 2 KB of a preview.
+const canCopy = computed(() => !isCut.value)
+// The shared viewer: pretty JSON, or the data as it came.
+const code = computed(() =>
+  isJson.value ? JSON.stringify(payload.value.data_json, null, 2) : `${payload.value.data}${isCut.value ? '…' : ''}`
+)
 
 const previousPayload = computed(() => (props.previous ? payloadOf(props.previous) : null))
 const canCompare = computed(
@@ -94,11 +97,6 @@ const upstreamText = computed(() => {
   return `${u.url}: ${u.status ?? '?'}, ${u.time_ms} ms`
 })
 
-const copyPayload = () =>
-  copyTextToClipboard(
-    isJson.value ? JSON.stringify(payload.value.data_json, null, 2) : payload.value.data
-  ).then(() => showToast('Payload copied'))
-
 const copyCurl = () =>
   copyTextToClipboard(buildBroadcastCurl(REST_API_URL || window.location.origin, payload.value)).then(() =>
     showToast('cURL copied')
@@ -107,41 +105,43 @@ const copyCurl = () =>
 
 <template>
   <div class="bc-detail">
-    <section class="bc-detail__col">
-      <h4 class="bc-detail__title">
-        Payload <span class="bc-detail__faint">{{ formatBytes(payload.size) }}</span>
-      </h4>
+    <EventDetailSection
+      class="bc-detail__col"
+      title="Payload"
+    >
+      <template #actions>
+        <span class="bc-detail__faint">{{ formatFileSize(payload.size) }}</span>
+      </template>
       <BroadcastProblems
         class="bc-detail__problems"
         :payload="payload"
       />
-      <BroadcastJson
-        v-if="isJson"
-        :value="payload.data_json"
-        :changes="changes"
-        :label="`Payload of ${name}`"
+      <!-- A cut preview is not copied: its copy button is hidden. -->
+      <CodeSnippet
+        class="bc-detail__code"
+        :class="{ 'bc-detail__code--cut': isCut }"
+        :code="code"
+        :language="isJson ? 'json' : 'plaintext'"
+        data-test="bc-payload"
       />
-      <pre
-        v-else
-        class="bc-detail__raw"
-      >{{ payload.data }}<template v-if="isCut">…</template></pre>
       <p
         v-if="isCut && !isLoading"
         class="bc-detail__faint"
       >
-        The first {{ formatBytes(dataBytes(payload.data)) }} of {{ formatBytes(payload.size) }}: the full event did not load.
+        The first {{ formatFileSize(dataBytes(payload.data)) }} of {{ formatFileSize(payload.size) }}: the full event did not load.
       </p>
-    </section>
+    </EventDetailSection>
 
-    <section class="bc-detail__col">
-      <h4 class="bc-detail__title">
-        Changes
-        <span
-          v-if="previous && channel"
-          class="bc-detail__faint"
-        >vs the previous {{ name }} on {{ channel }}, {{ formatClock(previous.timestamp) }}</span>
-      </h4>
-
+    <EventDetailSection
+      class="bc-detail__col"
+      title="Changes"
+    >
+      <p
+        v-if="previous && channel"
+        class="bc-detail__faint"
+      >
+        vs the previous {{ name }} on {{ channel }}, {{ formatClock(previous.timestamp) }}
+      </p>
       <p
         v-if="isLoading"
         class="bc-detail__note"
@@ -219,58 +219,13 @@ const copyCurl = () =>
             gets nothing to show.</span>
         </p>
       </template>
-    </section>
+    </EventDetailSection>
 
-    <div class="bc-detail__full">
-      <dl class="bc-detail__meta">
-        <template v-if="payload.channels.length > 1">
-          <dt>Sent to</dt>
-          <dd class="bc-detail__tags">
-            <BroadcastChannelTag
-              v-for="c in payload.channels"
-              :key="c"
-              :channel="c"
-            />
-          </dd>
-        </template>
-        <template v-if="payload.socket_id">
-          <dt>Except socket</dt>
-          <dd>{{ payload.socket_id }} <span class="bc-detail__faint">(toOthers)</span></dd>
-        </template>
-        <template v-if="payload.batch_size">
-          <dt>Batch</dt>
-          <dd>one of {{ payload.batch_size }} events of one batch_events call</dd>
-        </template>
-        <dt>Signature</dt>
-        <dd :class="{ 'bc-detail__bad': payload.signature === 'invalid' }">
-          {{ signature }}
-        </dd>
-        <dt>App / key</dt>
-        <dd>{{ payload.app_id }} / {{ payload.auth_key || '—' }}</dd>
-        <template v-if="payload.library">
-          <dt>Sent by</dt>
-          <dd>{{ payload.library }}</dd>
-        </template>
-        <template v-if="payload.info">
-          <dt>Info</dt>
-          <dd>{{ payload.info }}</dd>
-        </template>
-        <template v-if="payload.upstream">
-          <dt>Forwarded</dt>
-          <dd :class="{ 'bc-detail__bad': !!payload.upstream.error }">
-            {{ upstreamText }}
-          </dd>
-        </template>
-      </dl>
-      <div class="bc-detail__actions">
-        <button
-          type="button"
-          class="bc-detail__btn"
-          :disabled="!canCopy"
-          @click="copyPayload"
-        >
-          Copy payload
-        </button>
+    <EventDetailSection
+      class="bc-detail__full"
+      title="Details"
+    >
+      <template #actions>
         <button
           type="button"
           class="bc-detail__btn"
@@ -279,8 +234,58 @@ const copyCurl = () =>
         >
           Copy as cURL
         </button>
-      </div>
-    </div>
+      </template>
+      <TableBase class="bc-detail__meta">
+        <TableBaseRow
+          v-if="payload.channels.length > 1"
+          title="Sent to"
+        >
+          <span class="bc-detail__tags">
+            <BroadcastChannelTag
+              v-for="c in payload.channels"
+              :key="c"
+              :channel="c"
+            />
+          </span>
+        </TableBaseRow>
+        <TableBaseRow
+          v-if="payload.socket_id"
+          title="Except socket"
+        >
+          {{ payload.socket_id }} <span class="bc-detail__faint">(toOthers)</span>
+        </TableBaseRow>
+        <TableBaseRow
+          v-if="payload.batch_size"
+          title="Batch"
+        >
+          one of {{ payload.batch_size }} events of one batch_events call
+        </TableBaseRow>
+        <TableBaseRow title="Signature">
+          <span :class="{ 'bc-detail__bad': payload.signature === 'invalid' }">{{ signature }}</span>
+        </TableBaseRow>
+        <TableBaseRow title="App / key">
+          {{ payload.app_id }} / {{ payload.auth_key || '—' }}
+        </TableBaseRow>
+        <TableBaseRow
+          v-if="payload.library"
+          title="Sent by"
+        >
+          {{ payload.library }}
+        </TableBaseRow>
+        <TableBaseRow
+          v-if="payload.info"
+          title="Info"
+        >
+          {{ payload.info }}
+        </TableBaseRow>
+        <TableBaseRow
+          v-if="payload.upstream"
+          title="Forwarded"
+        >
+          <span :class="{ 'bc-detail__bad': !!payload.upstream.error }">{{ upstreamText }}</span>
+        </TableBaseRow>
+      </TableBase>
+    </EventDetailSection>
   </div>
 </template>
 
@@ -297,11 +302,11 @@ const copyCurl = () =>
 }
 
 .bc-detail__col {
-  @apply flex flex-col gap-2 min-w-0;
-}
+  @apply min-w-0;
 
-.bc-detail__title {
-  @apply text-xs font-semibold text-gray-900 dark:text-gray-100 flex flex-wrap gap-x-2 items-baseline;
+  :deep(.event-section__content) {
+    @apply gap-2;
+  }
 }
 
 .bc-detail__faint {
@@ -312,14 +317,14 @@ const copyCurl = () =>
   @apply text-xs text-gray-600 dark:text-gray-400;
 }
 
-.bc-detail__raw {
-  @apply font-mono rounded border px-3 py-2 overflow-auto;
-  @apply bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200;
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-all;
+.bc-detail__code :deep(pre) {
   max-height: 420px;
+  overflow: auto;
+}
+
+// The 2 KB of a preview are not copied.
+.bc-detail__code--cut :deep(.code-snippet__copy) {
+  display: none;
 }
 
 .bc-detail__changes {
@@ -385,22 +390,8 @@ const copyCurl = () =>
 }
 
 .bc-detail__full {
-  @apply flex flex-wrap items-start justify-between gap-3;
+  @apply min-w-0;
   grid-column: 1 / -1;
-}
-
-.bc-detail__meta {
-  @apply grid gap-x-3 gap-y-1 text-xs min-w-0;
-  grid-template-columns: max-content minmax(0, 1fr);
-
-  dt {
-    @apply text-gray-600 dark:text-gray-400;
-  }
-
-  dd {
-    @apply font-mono text-gray-800 dark:text-gray-200 min-w-0;
-    word-break: break-all;
-  }
 }
 
 .bc-detail__tags {
@@ -408,11 +399,7 @@ const copyCurl = () =>
 }
 
 .bc-detail__bad {
-  color: var(--bc-err) !important;
-}
-
-.bc-detail__actions {
-  @apply flex flex-wrap gap-2;
+  color: var(--bc-err);
 }
 
 .bc-detail__btn {

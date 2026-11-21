@@ -1,6 +1,5 @@
 export * from './channels'
 export * from './format'
-export * from './json-lines'
 export * from './normalize-broadcast-event'
 export * from './payload'
 export * from './payload-diff'

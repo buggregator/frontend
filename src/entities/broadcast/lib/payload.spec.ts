@@ -5,8 +5,7 @@ import {
   broadcastMultiChannelMock,
   broadcastUpstreamDownMock
 } from '../mocks'
-import { formatBytes, formatClock } from './format'
-import { jsonLines } from './json-lines'
+import { formatClock } from './format'
 import {
   broadcastProblems,
   buildBroadcastCurl,
@@ -15,7 +14,7 @@ import {
   hasJsonData,
   isDataCut
 } from './payload'
-import { diffPayload } from './payload-diff'
+import { jsonShort } from './payload-diff'
 
 describe('broadcast payload helpers', () => {
   it('tells a cut preview from a full event', () => {
@@ -52,34 +51,18 @@ describe('broadcast payload helpers', () => {
     expect(curl).toContain('"name":"OrderShipped"')
   })
 
-  it('formats sizes and times', () => {
-    expect(formatBytes(188)).toBe('188 B')
-    expect(formatBytes(14540)).toBe('14.2 KB')
+  it('formats times', () => {
     const t = new Date(2026, 10, 21, 14, 2, 11, 482).getTime() / 1000
     expect(formatClock(t)).toBe('14:02:11.482')
     expect(formatClock(0)).toBe('')
   })
 })
 
-describe('jsonLines', () => {
-  it('prints JSON lines and marks changed and added values', () => {
-    const before = { order: { status: 'packed' }, list: [1] }
-    const after = { order: { status: null }, list: [1, 2] }
-    const lines = jsonLines(after, diffPayload(before, after))
-    const text = lines.map((l) => '  '.repeat(l.indent) + l.tokens.map((t) => t.text).join(''))
-    expect(text).toEqual(['{', '  "order": {', '    "status": null', '  },', '  "list": [', '    1,', '    2', '  ]', '}'])
-    expect(lines[2]).toMatchObject({ mark: '~', was: '"packed"' })
-    expect(lines[6]).toMatchObject({ mark: '+' })
-    expect(lines.filter((l) => l.mark)).toHaveLength(2)
-  })
-
-  it('prints a scalar and empty containers on one line', () => {
-    expect(jsonLines('x').map((l) => l.tokens)).toEqual([[{ kind: 'str', text: '"x"' }]])
-    expect(jsonLines({ a: [], b: {} }).map((l) => l.tokens.map((t) => t.text).join(''))).toEqual([
-      '{',
-      '"a": [],',
-      '"b": {}',
-      '}'
-    ])
+describe('jsonShort', () => {
+  it('prints a value of the Changes list as JSON, cut to its length', () => {
+    expect(jsonShort('packed')).toBe('"packed"')
+    expect(jsonShort(null)).toBe('null')
+    expect(jsonShort(undefined)).toBe('undefined')
+    expect(jsonShort('x'.repeat(100), 10)).toBe(`"${'x'.repeat(8)}…`)
   })
 })

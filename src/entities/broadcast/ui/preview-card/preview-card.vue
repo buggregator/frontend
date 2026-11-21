@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard } from '@/shared/ui'
-import { formatBytes } from '../../lib/format'
 import { broadcastProblems, PROBLEM_ICON } from '../../lib/payload'
 import type { BroadcastPayload } from '../../types'
 import { BroadcastChannelTag } from '../broadcast-channel-tag'
@@ -73,7 +73,7 @@ const forwarded = computed(() => {
       >{{ data }}</span>
 
       <span class="bc-card__foot">
-        <span>{{ formatBytes(p.size) }}</span>
+        <span>{{ formatFileSize(p.size) }}</span>
         <span v-if="p.socket_id">except socket {{ p.socket_id }}</span>
         <span v-if="p.batch_size">batch of {{ p.batch_size }}</span>
         <span v-if="p.library">{{ p.library }}</span>

@@ -68,3 +68,9 @@ export const lostValuePaths = (changes: PayloadChange[]): string[] =>
   changes
     .filter((c) => c.path && (c.kind === 'removed' || (c.kind === 'changed' && c.after === null)))
     .map((c) => c.path)
+
+// A value for one line of the Changes list: JSON, cut to `max` characters.
+export const jsonShort = (v: unknown, max = 60): string => {
+  const s = JSON.stringify(v) ?? 'undefined'
+  return s.length > max ? `${s.slice(0, max - 1)}…` : s
+}
