@@ -451,7 +451,7 @@
       "id": "broadcast",
       "title": "Catch the broadcasts your app sends",
       "lead": "Laravel Reverb, Pusher and soketi clients send each broadcast to the server over its HTTP API. Point that API here: every event lands on this page with its channels and data.",
-      "docs": "https://docs.buggregator.dev/config/broadcast.html",
+      "docs": "",
       "steps": [
         "Point the app's server-side REVERB_HOST and REVERB_PORT (or PUSHER_HOST and PUSHER_PORT) at Buggregator. Any app id, key and secret work.",
         "Keep VITE_REVERB_* on your Reverb: the browsers still connect there. Set BROADCAST_UPSTREAM on Buggregator to your Reverb (e.g. http://127.0.0.1:8080) and each event is also forwarded, so live updates keep working.",
