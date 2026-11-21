@@ -38,6 +38,18 @@ describe('eventsStore', () => {
       expect(useEventsStore().cachedIds[PAGE_TYPES.Smtp]).toEqual([])
     })
 
+    // #6604 review: a map saved before CSP existed has no csp key, and
+    // pausing the CSP page threw.
+    it('fills in types missing from a map an older version saved', () => {
+      sessionStorage.setItem('cached_events', JSON.stringify({ [PAGE_TYPES.Smtp]: ['x'] }))
+      const store = useEventsStore()
+      store.addList([event('c', 'csp')])
+
+      expect(() => store.addCachedByType(PAGE_TYPES.Csp)).not.toThrow()
+      expect(store.cachedIds[PAGE_TYPES.Smtp]).toEqual(['x'])
+      expect(store.cachedIds[PAGE_TYPES.Csp]).toEqual(['c'])
+    })
+
     it('ends the pause on Clear even when pinned events stay', () => {
       const store = useEventsStore()
       store.addList([event('a', 'smtp'), event('b', 'smtp')])

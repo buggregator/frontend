@@ -197,8 +197,8 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     const wrapper = mount(SettingsPageContent)
 
     const links = wrapper.findAll('nav[aria-label="Settings sections"] a')
-    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Menu', 'Keyboard', 'Editor', 'About & updates'])
-    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#menu', '#keyboard', '#editor', '#updates'])
+    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Notifications', 'Menu', 'Keyboard', 'Editor', 'Email relay', 'About & updates'])
+    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#notifications', '#menu', '#keyboard', '#editor', '#email', '#updates'])
     expect(links[0].attributes('aria-current')).toBe('true')
   })
 
@@ -210,7 +210,8 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     expect(wrapper.get('[data-setting="single-key-shortcuts"]').classes()).not.toContain('settings-row--dim')
     expect(wrapper.get('[data-setting="single-key-shortcuts"] mark').text()).toBe('sho')
     expect(wrapper.get('[data-setting="pin-header"]').classes()).toContain('settings-row--dim')
-    expect(wrapper.get('[role="status"]').text()).toBe('4 settings match.')
+    // «Desktop notifications» matches too: its long text says it «shows» a notification.
+    expect(wrapper.get('[role="status"]').text()).toBe('5 settings match.')
   })
 
   it('says when nothing matches', async () => {
@@ -219,7 +220,7 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     await wrapper.get('input[aria-label="Search settings"]').setValue('zzz')
 
     expect(wrapper.text()).toContain('No settings match «zzz».')
-    expect(wrapper.findAll('.settings-row--dim').length).toBe(8)
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(10)
 
     await wrapper.get('.settings__empty button').trigger('click')
 

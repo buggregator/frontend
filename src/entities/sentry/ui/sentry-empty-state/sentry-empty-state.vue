@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 type Props = {
-  type: 'exceptions' | 'traces' | 'logs' | 'metrics'
+  type: 'exceptions' | 'traces' | 'logs' | 'metrics' | 'feedback'
 }
 
 const props = defineProps<Props>()
@@ -36,6 +36,14 @@ const content = computed(() => {
         description: 'Counters, gauges and distributions recorded with the Sentry metrics API appear here.',
         snippet: `# PHP SDK\n\\Sentry\\traceMetrics()->count('orders.created', 1);\n\n# JavaScript SDK\nSentry.metrics.count('orders.created', 1)`,
         docsUrl: ''
+      }
+    case 'feedback':
+      return {
+        title: 'No user feedback yet',
+        description:
+          'What people send with the Sentry feedback widget or Sentry.captureFeedback() appears here and on its error.',
+        snippet: `// JavaScript SDK\nSentry.init({\n  integrations: [Sentry.feedbackIntegration()]\n})\n\n// or from your own form\nSentry.captureFeedback({ message: 'The button does nothing' })`,
+        docsUrl: 'https://docs.sentry.io/platforms/javascript/user-feedback/'
       }
     default:
       return {

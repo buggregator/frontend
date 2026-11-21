@@ -1,7 +1,8 @@
 import { storeToRefs } from "pinia";
-import {useEventsStore, useConnectionStore, useProfileStore} from "../../stores";
+import {useEventsStore, useConnectionStore, useProfileStore, useSettingsStore} from "../../stores";
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
+import { useDesktopNotify } from "../desktop-notify";
 import { type DeleteOptions, REST_API_URL, describeLoadError, useCentrifuge, useEventsRequests } from "../io";
 import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
@@ -37,6 +38,8 @@ export const useApiTransport = () => {
   const eventsStore = useEventsStore()
   const connectionStore = useConnectionStore()
   const appBadge = useAppBadge()
+  const desktopNotify = useDesktopNotify()
+  const settingsStore = useSettingsStore()
   const {
     getAll,
     getSingle,
@@ -71,6 +74,8 @@ export const useApiTransport = () => {
         : connectionStore.removeWSConnection()),
       onReceived: (event) => {
         detectProject(event)
+        // Errors of every project: the person may be looking at another one.
+        desktopNotify.onEventReceived(event, settingsStore.isDesktopNotificationsEnabled)
         if (event.project === project.value) {
           appBadge.onEventsReceived()
         }

@@ -13,6 +13,7 @@ import type {
   SentryServiceMap,
   SentryServiceMapEdgeTraces,
   SentryCounts,
+  SentryFeedback,
   SentrySequence,
 } from '../types'
 
@@ -105,6 +106,18 @@ export const useSentryRequests = () => {
     return fetchJSON<SentryServiceMapEdgeTraces>(`${BASE}/service-map/edge?${qs}`)
   }
 
+  // All feedback in the project and period, newest first (#6604).
+  const getFeedback = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
+    return fetchJSON<PaginatedResponse<SentryFeedback>>(`${BASE}/feedback${qs ? `?${qs}` : ''}`)
+  }
+
+  // One error's feedback: no project or period, as for the error itself.
+  const getEventFeedback = (eventId: string) =>
+    fetchJSON<PaginatedResponse<SentryFeedback>>(
+      `${BASE}/feedback?${new URLSearchParams({ event_id: eventId, limit: '50' }).toString()}`
+    )
+
   // The badges label the lists, so they take the same scope.
   const getCounts = () => {
     const qs = new URLSearchParams(withScope()).toString()
@@ -124,5 +137,7 @@ export const useSentryRequests = () => {
     getServiceMapEdge,
     getTraceSequence,
     getCounts,
+    getFeedback,
+    getEventFeedback,
   }
 }

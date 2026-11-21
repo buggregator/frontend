@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { computed, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
+import { SmtpRelayStatus } from '@/entities/smtp'
 import {
   IDE_KEYS,
   IDE_TITLES_TO_KEYS_MAP,
@@ -17,6 +18,7 @@ import { EventDetailLayout, EventDetailSection, IconSvg, SearchBar } from '@/sha
 import { version } from '../../../../../package.json' with { type: 'json' }
 import { SETTINGS_SEARCH, useSettingsSearch } from '../../lib/settings-search'
 import { useSectionSpy } from '../../lib/use-section-spy'
+import { SettingsDesktopNotifications } from '../settings-desktop-notifications'
 import { SettingsMenuItems } from '../settings-menu-items'
 import { SettingsRow } from '../settings-row'
 import { SettingsSwitch } from '../settings-switch'
@@ -273,6 +275,17 @@ useTitle('Settings | Buggregator')
         </EventDetailSection>
 
         <EventDetailSection
+          id="notifications"
+          class="settings__section"
+          title="Notifications"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsDesktopNotifications />
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
           id="menu"
           class="settings__section"
           title="Menu"
@@ -430,6 +443,21 @@ useTitle('Settings | Buggregator')
                     </button>
                   </div>
                 </div>
+              </template>
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="email"
+          class="settings__section"
+          title="Email relay"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow :item="SETTINGS_ITEMS.emailRelay">
+              <template #extra>
+                <SmtpRelayStatus />
               </template>
             </SettingsRow>
           </div>

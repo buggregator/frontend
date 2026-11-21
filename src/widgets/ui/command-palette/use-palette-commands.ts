@@ -19,6 +19,7 @@ const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
   smtp: ['mail', 'email'],
   sms: ['text message', 'phone'],
   broadcast: ['pusher', 'reverb', 'websocket', 'echo', 'channels'],
+  csp: ['content security policy', 'report-uri', 'reporting api', 'violation', 'browser report'],
   'http-dump': ['request', 'webhook'],
   'var-dump': ['dump', 'symfony'],
   monolog: ['logs', 'logging'],

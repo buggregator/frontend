@@ -59,6 +59,17 @@ export const SETTINGS_ITEMS = {
       'for the full list (also a single-key shortcut).',
     keywords: ['keyboard', 'badges', 'help']
   },
+  desktopNotifications: {
+    id: 'desktop-notifications',
+    label: 'Desktop notifications',
+    hint: 'A notification on a new error while you work in another window.',
+    more:
+      'Buggregator shows a browser notification when a new error (a Sentry exception, or a message ' +
+      'at level error or fatal) arrives in any project while this tab is in the background. Several ' +
+      'errors in a row make one notification. A click opens the error. The browser asks for ' +
+      'permission once; it works on localhost and https only.',
+    keywords: ['notification', 'alert', 'popup', 'desktop', 'browser', 'error', 'exception', 'push']
+  },
   menuItems: {
     id: 'menu-items',
     label: 'Menu items',
@@ -83,6 +94,17 @@ export const SETTINGS_ITEMS = {
       'to open files outside your project root or with different path prefixes.',
     keywords: ['docker', 'path', 'source', 'target', 'mapping', 'editor']
   },
+  emailRelay: {
+    id: 'email-relay',
+    label: 'Email relay',
+    hint: 'Send a caught email to a real inbox.',
+    more:
+      'Buggregator can pass a caught email on to an outgoing SMTP server (your mail provider, ' +
+      'or Mailpit for a test), to see it on a phone or in a real mail client. The relay is set in ' +
+      'the server config (smtp_relay in buggregator.yaml or SMTP_RELAY_* variables); here it is ' +
+      'read-only. Then use «Send to inbox» on an email page.',
+    keywords: ['smtp', 'mail', 'email', 'relay', 'release', 'inbox', 'send', 'forward', 'outgoing']
+  },
   about: {
     id: 'about',
     label: 'About & updates',
@@ -98,6 +120,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     items: [SETTINGS_ITEMS.theme, SETTINGS_ITEMS.pinHeader, SETTINGS_ITEMS.eventCounts]
   },
   {
+    id: 'notifications',
+    title: 'Notifications',
+    items: [SETTINGS_ITEMS.desktopNotifications]
+  },
+  {
     id: 'menu',
     title: 'Menu',
     items: [SETTINGS_ITEMS.menuItems]
@@ -111,6 +138,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'editor',
     title: 'Editor',
     items: [SETTINGS_ITEMS.codeEditor, SETTINGS_ITEMS.pathMapping]
+  },
+  {
+    id: 'email',
+    title: 'Email relay',
+    items: [SETTINGS_ITEMS.emailRelay]
   },
   // The id stays «updates»: the header pill and the menu dot link to #updates.
   {

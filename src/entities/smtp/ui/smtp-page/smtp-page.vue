@@ -17,6 +17,7 @@ import {
 import { useSmtpAnalytics, type MimeNode } from '../../lib/use-smtp-analytics'
 import type { SMTP } from '../../types'
 import { SmtpInsights } from '../smtp-insights'
+import { SmtpRelease } from '../smtp-release'
 
 type Props = {
   event: NormalizedEvent<SMTP>
@@ -144,6 +145,7 @@ onMounted(getAttachmentsRequest)
             {{ date }}
             <span class="smtp-header__relative">({{ relativeDate }})</span>
           </span>
+          <SmtpRelease :event-id="event.id" />
         </div>
       </div>
     </template>
