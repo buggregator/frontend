@@ -106,6 +106,15 @@ describe('useProjectGraph', () => {
     expect(api.getGraph).toHaveBeenLastCalledWith('shop', expect.objectContaining({ expand: ['ns:App\\Service'] }))
   })
 
+  it('opens the only box of a one-package root', async () => {
+    const one: CodeGraph = { nodes: [whole.nodes[1]], edges: [], truncated: false }
+    api.getGraph.mockResolvedValueOnce(one).mockResolvedValueOnce(opened)
+    const p = useProjectGraph(ref('solo'))
+    await flushPromises()
+    expect(p.expanded.value).toEqual(['ns:App\\Service'])
+    expect(api.getGraph).toHaveBeenLastCalledWith('solo', expect.objectContaining({ expand: ['ns:App\\Service'] }))
+  })
+
   it('reports a failed load', async () => {
     api.getGraph.mockRejectedValueOnce(new Error('boom'))
     const p = useProjectGraph(ref('shop'))

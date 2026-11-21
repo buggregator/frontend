@@ -1,7 +1,7 @@
 import { computed, ref, shallowRef, watch, type Ref } from 'vue'
 import type { CodeGraph } from '../types'
 import { DIR_PREFIX, foldFolders } from './fold-folders'
-import { projectLayout, type ProjectGroupInfo } from './project-layout'
+import { isExpandable, projectLayout, type ProjectGroupInfo } from './project-layout'
 import { useCodeGraphRequests } from './use-code-graph-requests'
 
 // The whole graph of a root and which boxes are open (#6577 «whole»). Not in
@@ -47,6 +47,9 @@ export const useProjectGraph = (root: Ref<string | null | undefined>) => {
       graph.value = g
       error.value = null
       state.value = 'ready'
+      // One box says nothing: a root of one package opens it at once.
+      const only = folded.value?.graph.nodes
+      if (!expanded.value.length && !openDirs.value.size && only?.length === 1 && isExpandable(only[0])) expand(only[0].id)
     } catch (e) {
       if (mine !== seq) return
       error.value = e instanceof Error ? e.message : String(e)
@@ -62,7 +65,7 @@ export const useProjectGraph = (root: Ref<string | null | undefined>) => {
     }
   }
 
-  const folded = computed(() => (graph.value ? foldFolders(graph.value, openDirs.value) : null))
+  const folded = computed(() => (graph.value ? foldFolders(graph.value, openDirs.value, undefined, groupInfo.value) : null))
 
   const layout = computed(() => {
     const f = folded.value
@@ -139,6 +142,8 @@ export const useProjectGraph = (root: Ref<string | null | undefined>) => {
       openDirs.value = new Set(kept?.openDirs)
       groupInfo.value = new Map(kept?.groupInfo)
       lastOpened.value = null
+      // A click on the old root's boxes must not open ids under the new root.
+      graph.value = null
       load()
     },
     { immediate: true }

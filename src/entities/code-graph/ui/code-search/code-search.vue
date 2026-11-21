@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useDebounceFn, useEventListener } from '@vueuse/core'
-import { computed, ref, useId, useTemplateRef } from 'vue'
+import { computed, ref, useId, useTemplateRef, watch } from 'vue'
 import { symbolLabel } from '../../lib/symbol-label'
 import { useCodeGraphRequests } from '../../lib/use-code-graph-requests'
 import type { CodeSymbol } from '../../types'
@@ -60,6 +60,18 @@ const onInput = () => {
   results.value = []
   run(q.value)
 }
+
+// Another root: the old text and results go, a late reply is dropped.
+watch(
+  () => props.root,
+  () => {
+    seq++
+    q.value = ''
+    results.value = []
+    loading.value = false
+    open.value = false
+  }
+)
 
 const pick = (s: CodeSymbol | undefined) => {
   if (!s) return

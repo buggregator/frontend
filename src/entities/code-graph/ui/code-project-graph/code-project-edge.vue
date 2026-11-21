@@ -6,7 +6,7 @@ import { CODE_GRAPH_MARKERS } from '../code-focus-graph/code-graph-markers'
 // Calls between two boxes of the whole graph (#6531 V1): wider with more
 // calls, the count above the line; dashed when only guessed by method name.
 
-type Props = EdgeProps<{ count: number; width: number; guessed?: boolean; hi?: boolean; dim?: boolean }>
+type Props = EdgeProps<{ label: string; width: number; guessed?: boolean; hi?: boolean; dim?: boolean }>
 
 const props = defineProps<Props>()
 const markers = inject(CODE_GRAPH_MARKERS)
@@ -47,13 +47,13 @@ const labelStyle = computed(() => ({
     :marker-end="marker"
     fill="none"
   />
-  <EdgeLabelRenderer v-if="data?.count">
+  <EdgeLabelRenderer v-if="data?.label">
     <div
       class="tg-edge-label cg-project-edge__label nodrag nopan"
       :class="{ 'tg-edge-label--dim': data.dim }"
       :style="labelStyle"
     >
-      {{ data.count }}
+      {{ data.label }}
     </div>
   </EdgeLabelRenderer>
 </template>

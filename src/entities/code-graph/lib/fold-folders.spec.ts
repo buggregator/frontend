@@ -80,4 +80,21 @@ describe('foldFolders', () => {
     const { graph: out } = foldFolders(g([ns('App'), ns('App\\Models'), ns('App\\Http'), ns('Tests'), ns('Tests\\Feature')]), new Set(), 2)
     expect(out.nodes.map((n) => n.id).sort()).toEqual(['dir:App', 'dir:Tests'])
   })
+
+  it('still folds when a package is open (the server leaves it out)', () => {
+    const a = `ns:${M}/internal/a`
+    const info = new Map([[a, { id: a, kind: 'package', name: 'a', fqn: `${M}/internal/a` }]])
+    const opened = g([
+      ...graph.nodes.filter((n) => n.id !== a),
+      { id: 's:5', kind: 'struct', name: 'S', fqn: `${M}/internal/a.S`, depth: 0, symbol_id: 5, group: a }
+    ])
+    // Folder open: the package frame sits in it.
+    const inOpen = foldFolders(opened, new Set([`dir:${M}/internal`]), 3, info)
+    expect(inOpen.graph.nodes.find((n) => n.id === 's:5')?.group).toBe(a)
+    expect(inOpen.groups.get(a)).toMatchObject({ name: 'a', parent: `dir:${M}/internal` })
+    // Folder closed: what came from it is drawn as the folder.
+    const inClosed = foldFolders(opened, new Set(), 3, info)
+    expect(inClosed.graph.nodes.map((n) => n.id)).not.toContain('s:5')
+    expect(inClosed.graph.nodes.map((n) => n.id)).toContain(`dir:${M}/internal`)
+  })
 })

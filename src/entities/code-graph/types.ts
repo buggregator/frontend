@@ -15,17 +15,50 @@ export type CodeRootStatus = {
   files_parsed?: number
   files_skipped?: number
   truncated?: boolean
+  // #6585: `ui` roots were added on the Code page and can be removed there;
+  // `config` ones come from buggregator.yaml (read-only).
+  source?: 'config' | 'ui'
   started_at?: string
   indexed_at?: string
   duration_ms?: number
   error?: string
 }
 
+// Adding folders from the UI (#6585). `can_manage` false: no browse, add or
+// remove (not an admin, or not from this machine); `hint` says why, shown as is.
+export type CodeFolderPicker = {
+  enabled: boolean
+  base_dir?: string
+  can_manage: boolean
+  hint?: string
+}
+
 export type CodeGraphRoots = {
-  // False when `code_graph.roots` is empty: the other routes are absent.
+  // False when the code graph is off: the other routes are absent.
   enabled: boolean
   snippets: boolean
   roots: CodeRootStatus[]
+  // Absent on servers before #6585.
+  picker?: CodeFolderPicker
+}
+
+export type CodeFolder = {
+  name: string
+  // Relative to the base dir; passed back to go deeper or to add.
+  path: string
+  hidden: boolean
+  // vendor, node_modules and the like: skipped by the index.
+  excluded: boolean
+  // Already a root under this name.
+  root?: string
+}
+
+export type CodeFolderList = {
+  base_dir: string
+  path: string
+  parent: string | null
+  root?: string
+  folders: CodeFolder[]
 }
 
 export type CodeSymbolKind =

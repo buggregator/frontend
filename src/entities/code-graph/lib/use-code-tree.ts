@@ -36,9 +36,9 @@ export const useCodeTree = (root: Ref<string | null | undefined>) => {
       dirs.value = new Map(dirs.value).set(path, entries)
       failed.value = null
     } catch (e) {
-      failed.value = e instanceof Error ? e.message : String(e)
+      if (root.value === name) failed.value = e instanceof Error ? e.message : String(e)
     } finally {
-      setLoading(`d:${path}`, false)
+      if (root.value === name) setLoading(`d:${path}`, false)
     }
   }
 
@@ -54,9 +54,9 @@ export const useCodeTree = (root: Ref<string | null | undefined>) => {
       if (root.value !== name) return
       outlines.value = new Map(outlines.value).set(path, items.filter((s) => CALLABLE_OR_TYPE.has(s.kind)))
     } catch (e) {
-      failed.value = e instanceof Error ? e.message : String(e)
+      if (root.value === name) failed.value = e instanceof Error ? e.message : String(e)
     } finally {
-      setLoading(`f:${path}`, false)
+      if (root.value === name) setLoading(`f:${path}`, false)
     }
   }
 
@@ -103,6 +103,8 @@ export const useCodeTree = (root: Ref<string | null | undefined>) => {
       dirs.value = new Map()
       outlines.value = new Map()
       open.value = new Set()
+      loading.value = new Set()
+      failed.value = null
       loadDir('')
     },
     { immediate: true }

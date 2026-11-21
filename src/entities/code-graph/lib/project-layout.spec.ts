@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CodeGraph, CodeGraphNode } from '../types'
-import { edgeWidth, highlightCounts, mergeEdges, nodeForSymbol, projectLayout } from './project-layout'
+import { edgeLabel, edgeWidth, highlightCounts, mergeEdges, nodeForSymbol, projectLayout } from './project-layout'
 
 const node = (id: string, over: Partial<CodeGraphNode> = {}): CodeGraphNode => ({
   id,
@@ -33,6 +33,15 @@ describe('mergeEdges', () => {
     const e = (confidence: 'exact' | 'name') => ({ from: 'ns:A', to: 'ns:B', kind: 'calls' as const, confidence, count: 1 })
     expect(mergeEdges(graph([], [e('name'), e('name')]))[0].guessed).toBe(true)
     expect(mergeEdges(graph([], [e('name'), e('exact')]))[0].guessed).toBe(false)
+  })
+
+  it('keeps guessed calls apart in the number', () => {
+    const e = (confidence: 'exact' | 'name', count: number) => ({ from: 'ns:A', to: 'ns:B', kind: 'calls' as const, confidence, count })
+    const [m] = mergeEdges(graph([], [e('exact', 3), e('name', 5)]))
+    expect(m).toMatchObject({ count: 8, guessedCount: 5 })
+    expect(edgeLabel(m)).toBe('3 · ≈5')
+    expect(edgeLabel({ count: 2, guessedCount: 2 })).toBe('≈2')
+    expect(edgeLabel({ count: 4, guessedCount: 0 })).toBe('4')
   })
 })
 

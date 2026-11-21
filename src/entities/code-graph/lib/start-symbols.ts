@@ -8,8 +8,10 @@ export type StartSymbol = { node: CodeGraphNode; links: number; entry: boolean }
 
 const CALLABLE = new Set(['function', 'method'])
 
-const isTest = (n: CodeGraphNode) =>
-  /(_test\.go|Test\.php|\/tests?\/)/i.test(n.file ?? '') || /^Test[A-Z_]/.test(n.name)
+// Go *_test.go, PHP *Test.php (case matters: latest.php is no test), and
+// anything under a test/ or tests/ folder, top level included.
+export const isTest = (n: Pick<CodeGraphNode, 'file' | 'name'>) =>
+  /(_test\.go|Test\.php)$/.test(n.file ?? '') || /(^|\/)tests?\//i.test(n.file ?? '') || /^Test[A-Z_]/.test(n.name)
 
 // Entry points read as such by their names: main, controllers, HTTP handlers, commands.
 export const isEntryPoint = (n: CodeGraphNode) =>

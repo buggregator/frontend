@@ -14,7 +14,7 @@ import {
 } from '@/entities/code-graph'
 import { RouteName } from '@/shared/types'
 import { AppHeader } from '@/shared/ui'
-import { useCodeFocus, useRootsStatus, type FocusDirection, type FocusTarget } from '../../lib'
+import { pickedRoot, rootStamp, useCodeFocus, useRootsStatus, type FocusDirection, type FocusTarget } from '../../lib'
 import { CodeLanding } from '../code-landing'
 
 // Code page (#6573 variant A): one symbol in focus, callers left, callees
@@ -47,7 +47,9 @@ const frameTarget = computed<FocusTarget>(() =>
 const from = computed(() => q('from'))
 const back = computed(() => q('back'))
 
-const { roots, busy } = useRootsStatus()
+const { roots, busy, failed: rootsFailed, reload: reloadRoots } = useRootsStatus()
+// The landing is drawn again when its folder finishes (re)indexing.
+const landingKey = computed(() => rootStamp(pickedRoot(roots.value, target.value.root)))
 const f = useCodeFocus(frameTarget)
 
 const focusName = computed(() => (f.focus.value ? symbolLabel(f.focus.value).name : null))
@@ -130,6 +132,9 @@ const onRow = (n: FocusNode) => {
       <p>
         Point Buggregator at your source folders and it shows who calls what, and jumps from a stack frame
         straight to the function.
+      </p>
+      <p v-if="roots.picker?.hint">
+        {{ roots.picker.hint }}
       </p>
       <RouterLink
         :to="{ name: RouteName.Settings, hash: '#code-graph' }"
@@ -244,8 +249,28 @@ const onRow = (n: FocusNode) => {
 
       <CodeLanding
         v-if="f.state.value === 'idle' && roots"
+        :key="landingKey"
         :roots="roots"
+        @changed="reloadRoots"
       />
+      <div
+        v-else-if="f.state.value === 'idle' && rootsFailed"
+        class="code-page__empty"
+        role="alert"
+      >
+        <h2 class="code-page__empty-title">
+          Could not load the indexed folders
+        </h2>
+        <p>You can still find a symbol by name.</p>
+        <CodeSearch @pick="goTo" />
+        <button
+          type="button"
+          class="code-page__btn"
+          @click="reloadRoots()"
+        >
+          Try again
+        </button>
+      </div>
       <div
         v-else-if="f.state.value === 'not-found'"
         class="code-page__empty"

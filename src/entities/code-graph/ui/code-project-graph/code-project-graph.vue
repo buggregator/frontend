@@ -4,7 +4,7 @@ import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { computed, nextTick, provide, ref, toRef, useId, watch } from 'vue'
 import '@vue-flow/core/dist/style.css'
 import '@/shared/ui/graph-theme/graph-theme.css'
-import { highlightCounts, PROJECT_NODE_H, PROJECT_NODE_W, type ProjectNode } from '../../lib/project-layout'
+import { edgeLabel, highlightCounts, PROJECT_NODE_H, PROJECT_NODE_W, type ProjectNode } from '../../lib/project-layout'
 import { useProjectGraph } from '../../lib/use-project-graph'
 import type { CodeGraphNode, CodeSymbol } from '../../types'
 import { CODE_GRAPH_MARKERS } from '../code-focus-graph/code-graph-markers'
@@ -17,7 +17,11 @@ import CodeProjectNode from './code-project-node.vue'
 // box in place.
 
 const props = defineProps<{ root: string; found?: readonly Pick<CodeSymbol, 'id' | 'fqn'>[] | null }>()
-const emit = defineEmits<{ (e: 'open', node: CodeGraphNode): void }>()
+const emit = defineEmits<{
+  (e: 'open', node: CodeGraphNode): void
+  // Found symbols that sit in a drawn box.
+  (e: 'matched', count: number): void
+}>()
 
 const uid = useId()
 const markers = { edge: `cp-${uid}-edge`, hi: `cp-${uid}-hi`, guess: `cp-${uid}-guess` }
@@ -26,7 +30,13 @@ provide(CODE_GRAPH_MARKERS, markers)
 const p = useProjectGraph(toRef(props, 'root'))
 
 const hovered = ref<string | null>(null)
-const matches = computed(() => (props.found && p.layout.value ? highlightCounts(p.layout.value.nodes, props.found) : null))
+// Nothing found in the drawn boxes: nothing dims.
+const matches = computed(() => {
+  if (!props.found || !p.layout.value) return null
+  const m = highlightCounts(p.layout.value.nodes, props.found)
+  return m.size ? m : null
+})
+watch(matches, (m) => emit('matched', m ? [...m.values()].reduce((a, b) => a + b, 0) : 0))
 
 // Hover: the box and the lines in and out of it; search: the found boxes.
 const near = computed(() => {
@@ -67,7 +77,7 @@ const edges = computed(() =>
       target: e.target,
       type: 'project',
       class: dim ? 'is-dim' : '',
-      data: { count: e.count, width: e.width, guessed: e.guessed, hi, dim }
+      data: { label: edgeLabel(e), width: e.width, guessed: e.guessed, hi, dim }
     }
   })
 )
@@ -275,7 +285,7 @@ watch(
 
     <footer class="tg-key code-project-graph__key">
       <span class="tg-key__item"><span class="code-project-graph__swatch" />calls, the number on the line</span>
-      <span class="tg-key__item"><span class="code-project-graph__swatch code-project-graph__swatch--guess" />only guessed by method name</span>
+      <span class="tg-key__item"><span class="code-project-graph__swatch code-project-graph__swatch--guess" />only guessed by method name (≈ on the number)</span>
       <span class="tg-key__item">click a box to open it, a function to see its calls</span>
       <button
         v-if="p.anyOpen.value"

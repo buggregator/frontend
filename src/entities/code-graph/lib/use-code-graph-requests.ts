@@ -3,6 +3,7 @@ import { REST_API_URL } from '@/shared/lib/io'
 import { useProfileStore } from '@/shared/stores'
 import type {
   CodeFileEntry,
+  CodeFolderList,
   CodeGraph,
   CodeGraphRoots,
   CodeOutlineItem,
@@ -16,6 +17,9 @@ const BASE = `${REST_API_URL}/api/code`
 
 // Server error codes: `unknown_root`, `not_found` (404), `bad_id`, `bad_level`,
 // `bad_direction`, `root_required`, `path_required`, `file_and_line_required` (400).
+// Folder picker (#6585): `outside_base`, `not_dir`, `bad_name`, `base_root` (400),
+// `root_exists`, `root_busy` (409), `no_such_folder`, `picker_off` (404),
+// `not_admin`, `not_local`, `cross_origin`, `config_root` (403).
 export class CodeGraphApiError extends Error {
   constructor(
     message: string,
@@ -40,7 +44,7 @@ export const useCodeGraphRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
   const request = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
-    const res = await fetch(`${BASE}${path}`, { ...init, headers: { 'X-Auth-Token': token.value } })
+    const res = await fetch(`${BASE}${path}`, { ...init, headers: { ...init.headers, 'X-Auth-Token': token.value } })
     const body = await res.json().catch(() => null)
     if (!res.ok) {
       throw new CodeGraphApiError(body?.error || `Request failed: ${res.status}`, res.status, body?.code || 'http_error')
@@ -58,6 +62,17 @@ export const useCodeGraphRequests = () => {
     })
   const getRoot = (name: string) => request<CodeRootStatus>(root(name))
   const reindex = (name: string) => request<CodeRootStatus>(`${root(name)}/reindex`, { method: 'POST' })
+
+  // Folder picker (#6585): browse below the base dir, add a folder as a root
+  // (indexing starts), remove a root added here.
+  const getFolders = (path = '') => request<CodeFolderList>(`/folders${qs({ path })}`)
+  const addRoot = (path: string, name?: string) =>
+    request<CodeRootStatus>('/roots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(name ? { path, name } : { path })
+    })
+  const removeRoot = (name: string) => request<null>(root(name), { method: 'DELETE' })
 
   const search = (q: string, opts: { root?: string; kind?: string; limit?: number } = {}) =>
     request<{ symbols: CodeSymbol[] }>(`/search${qs({ q, ...opts })}`).then((r) => r?.symbols ?? [])
@@ -98,5 +113,5 @@ export const useCodeGraphRequests = () => {
   const resolve = (file: string, line: number, rootName?: string) =>
     request<CodeSymbol>(`/resolve${qs({ file, line, root: rootName })}`)
 
-  return { getRoots, getRoot, reindex, search, getSymbol, getCallers, getCallees, getFiles, getOutline, getGraph, getTop, resolve }
+  return { getRoots, getRoot, reindex, getFolders, addRoot, removeRoot, search, getSymbol, getCallers, getCallees, getFiles, getOutline, getGraph, getTop, resolve }
 }

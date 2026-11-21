@@ -35,7 +35,9 @@ export type ProjectEdge = {
   id: string
   source: string
   target: string
+  // All calls on the line; `guessedCount` of them matched by method name only.
   count: number
+  guessedCount: number
   // Every call on it was matched by method name only.
   guessed: boolean
   width: number
@@ -54,6 +56,13 @@ const CALLABLE = new Set(['function', 'method'])
 // V1 (#6531): line width grows with the calls on it, 2 to 6 px.
 export const edgeWidth = (count: number) => Math.min(6, 2 + count / 12)
 
+// The number on a line: exact calls, and the guessed ones apart («3 · ≈5»).
+export const edgeLabel = (e: Pick<ProjectEdge, 'count' | 'guessedCount'>) => {
+  const exact = e.count - e.guessedCount
+  if (!e.guessedCount) return String(exact)
+  return exact ? `${exact} · ≈${e.guessedCount}` : `≈${e.guessedCount}`
+}
+
 const isExternal = (n: CodeGraphNode) => !!n.external || n.kind === 'external'
 
 export const isExpandable = (n: CodeGraphNode) =>
@@ -68,11 +77,13 @@ export const mergeEdges = (graph: CodeGraph): ProjectEdge[] => {
     if (e.from === e.to) continue
     const id = `${e.from}->${e.to}`
     const cur = byPair.get(id)
+    const guess = e.confidence === 'name' ? e.count : 0
     if (cur) {
       cur.count += e.count
+      cur.guessedCount += guess
       cur.guessed = cur.guessed && e.confidence === 'name'
     } else {
-      byPair.set(id, { id, source: e.from, target: e.to, count: e.count, guessed: e.confidence === 'name', width: 0 })
+      byPair.set(id, { id, source: e.from, target: e.to, count: e.count, guessedCount: guess, guessed: e.confidence === 'name', width: 0 })
     }
   }
   const out = [...byPair.values()]

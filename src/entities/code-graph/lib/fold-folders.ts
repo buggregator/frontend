@@ -31,9 +31,35 @@ export type FoldedGraph = {
 
 const isTop = (n: CodeGraphNode) => !n.group && (n.kind === 'namespace' || n.kind === 'package')
 
-export const foldFolders = (graph: CodeGraph, open: ReadonlySet<string>, above = FOLD_ABOVE): FoldedGraph => {
+// `info`: what the page knows of opened boxes. The server leaves an opened
+// package out of its answer; it still counts as a package here, so opening
+// one does not undo the folding.
+export const foldFolders = (
+  graph: CodeGraph,
+  open: ReadonlySet<string>,
+  above = FOLD_ABOVE,
+  info: ReadonlyMap<string, ProjectGroupInfo> = new Map()
+): FoldedGraph => {
   const groups = new Map<string, ProjectGroupInfo>()
-  const tops = graph.nodes.filter(isTop)
+  const shown = new Set(graph.nodes.map((n) => n.id))
+  // The opened top-level box a drawn node came from (following nested frames).
+  const topOf = (n: CodeGraphNode): string | null => {
+    let g = n.group
+    for (let hops = 0; g && hops < 8; hops++) {
+      if (!shown.has(g) && g.startsWith('ns:')) return g
+      g = info.get(g)?.parent
+    }
+    return null
+  }
+  const opened = new Map<string, CodeGraphNode>()
+  for (const n of graph.nodes) {
+    const t = topOf(n)
+    if (t && !opened.has(t)) {
+      const i = info.get(t)
+      opened.set(t, { id: t, kind: 'package', name: i?.name ?? t.slice(3), fqn: i?.fqn ?? t.slice(3), depth: 0 })
+    }
+  }
+  const tops = [...graph.nodes.filter(isTop), ...opened.values()]
   if (tops.length <= above) return { graph, groups }
 
   // Top-level package id → the id it is drawn as (itself or a folder).
@@ -94,6 +120,12 @@ export const foldFolders = (graph: CodeGraph, open: ReadonlySet<string>, above =
 
   // A node drawn from an opened package keeps its own id; its frame (the
   // package) now sits in the folder frame.
+  // Inside an opened package in a closed folder: drawn as that folder.
+  for (const n of graph.nodes) {
+    const t = topOf(n)
+    const r = t ? rep.get(t) : undefined
+    if (t && r && r !== t) rep.set(n.id, r)
+  }
   const nodes: CodeGraphNode[] = []
   for (const n of graph.nodes) {
     const r = rep.get(n.id)
@@ -102,7 +134,8 @@ export const foldFolders = (graph: CodeGraph, open: ReadonlySet<string>, above =
   }
   nodes.push(...folders.values())
   for (const [pkg, frame] of frameOf) {
-    groups.set(pkg, { ...(groups.get(pkg) ?? { id: pkg, kind: 'package', name: pkg, fqn: pkg }), parent: frame })
+    const base = info.get(pkg) ?? opened.get(pkg)
+    groups.set(pkg, { id: pkg, kind: base?.kind ?? 'package', name: base?.name ?? pkg, fqn: base?.fqn ?? pkg, parent: frame })
   }
 
   // Lines between folded boxes: re-pointed, summed per kind, self lines dropped.
@@ -112,12 +145,11 @@ export const foldFolders = (graph: CodeGraph, open: ReadonlySet<string>, above =
     const from = to(e.from)
     const target = to(e.to)
     if (from === target) continue
-    const key = `${from}|${target}|${e.kind}`
+    // Exact and guessed calls stay apart: the line says how many of each.
+    const key = `${from}|${target}|${e.kind}|${e.confidence}`
     const cur = merged.get(key)
-    if (cur) {
-      cur.count += e.count
-      if (e.confidence === 'exact') cur.confidence = 'exact'
-    } else merged.set(key, { ...e, from, to: target })
+    if (cur) cur.count += e.count
+    else merged.set(key, { ...e, from, to: target })
   }
 
   return { graph: { ...graph, nodes, edges: [...merged.values()] }, groups }

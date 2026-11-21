@@ -158,7 +158,7 @@ const ariaLabel = computed(() =>
   padding: 0 6px;
   border-radius: 3px;
   background: var(--tg-edge-hi);
-  color: #fff;
+  color: var(--tg-canvas);
   font-size: 10px;
   line-height: 18px;
 }

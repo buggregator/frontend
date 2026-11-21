@@ -3,6 +3,7 @@ import { useMediaQuery } from '@vueuse/core'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
+  CodeAddFolder,
   CodeProjectGraph,
   CodeSearch,
   startSymbols,
@@ -10,35 +11,77 @@ import {
   useCodeGraphRequests,
   useCodeTree,
   type CodeGraphRoots,
+  type CodeRootStatus,
   type CodeSymbol,
   type TreeRow
 } from '@/entities/code-graph'
 import { RouteName } from '@/shared/types'
+import { pickedRoot } from '../../lib'
 
 // The Code page without a symbol (#6577 «whole»): pick an indexed folder at
 // the top and its whole graph is there at once. Left: «Start here» and the
-// folder tree; both open the focus view of a function.
+// folder tree; both open the focus view of a function. «Add folder» (#6586)
+// adds a folder below the server's base dir; one added here can be removed.
 
 const props = defineProps<{ roots: CodeGraphRoots }>()
+const emit = defineEmits<{ (e: 'changed'): void }>()
 
 const route = useRoute()
 const router = useRouter()
 const isPhone = useMediaQuery('(max-width: 767px)')
 const api = useCodeGraphRequests()
 
-const ready = computed(() => props.roots.roots.filter((r) => r.state === 'ready' || (r.symbols ?? 0) > 0))
 const asked = computed(() => (typeof route.query.root === 'string' ? route.query.root : null))
-const root = computed(() => {
-  const all = props.roots.roots
-  if (asked.value && all.some((r) => r.name === asked.value)) return asked.value
-  return ready.value[0]?.name ?? all[0]?.name ?? null
-})
-const rootStatus = computed(() => props.roots.roots.find((r) => r.name === root.value) ?? null)
+const rootStatus = computed(() => pickedRoot(props.roots, asked.value))
+const root = computed(() => rootStatus.value?.name ?? null)
 const pickRoot = (name: string) => {
   if (name !== root.value) router.replace({ name: RouteName.Code, query: { root: name } })
 }
 
+// Adding and removing folders.
+const picker = computed(() => props.roots.picker)
+const canManage = computed(() => !!picker.value?.enabled && !!picker.value.can_manage)
+const pickerOpen = ref(false)
+const hintOpen = ref(false)
+const onAdd = () => {
+  if (canManage.value) pickerOpen.value = true
+  else hintOpen.value = !hintOpen.value
+}
+const onAdded = (r: CodeRootStatus) => {
+  pickerOpen.value = false
+  emit('changed')
+  router.replace({ name: RouteName.Code, query: { root: r.name } })
+}
+const removable = computed(() => canManage.value && rootStatus.value?.source === 'ui')
+const confirmRemove = ref(false)
+const removeError = ref<string | null>(null)
+watch(root, () => {
+  confirmRemove.value = false
+  removeError.value = null
+})
+const remove = async () => {
+  const name = root.value
+  if (!name) return
+  try {
+    await api.removeRoot(name)
+    confirmRemove.value = false
+    emit('changed')
+    router.replace({ name: RouteName.Code })
+  } catch (e) {
+    removeError.value = e instanceof Error ? e.message : String(e)
+  }
+}
+
 const found = ref<CodeSymbol[] | null>(null)
+// How many found symbols sit in a drawn box; search answers 20 at most.
+const matched = ref(0)
+const SEARCH_CAP = 20
+const foundText = computed(() => {
+  const n = found.value?.length ?? 0
+  if (!n) return 'Nothing found'
+  const total = n >= SEARCH_CAP ? `${SEARCH_CAP}+` : String(n)
+  return matched.value ? `${total} found, ${matched.value} in the graph` : `${total} found, none in the drawn graph`
+})
 watch(root, () => {
   found.value = null
 })
@@ -119,7 +162,7 @@ watch(isPhone, (p) => {
           role="radio"
           :aria-checked="r.name === root"
           class="code-landing__root"
-          :title="r.path"
+          :title="r.source === 'config' && picker?.enabled ? `${r.path} (set in the config file)` : r.path"
           @click="pickRoot(r.name)"
         >
           {{ r.name }}
@@ -133,6 +176,43 @@ watch(isPhone, (p) => {
           >{{ r.state }}</span>
         </button>
       </div>
+      <button
+        v-if="picker"
+        type="button"
+        class="code-landing__btn"
+        :aria-expanded="canManage ? undefined : hintOpen"
+        @click="onAdd"
+      >
+        + Add folder
+      </button>
+      <template v-if="removable">
+        <button
+          v-if="!confirmRemove"
+          type="button"
+          class="code-landing__btn"
+          @click="confirmRemove = true"
+        >
+          Remove {{ root }}
+        </button>
+        <span
+          v-else
+          class="code-landing__confirm"
+          role="group"
+          :aria-label="`Remove ${root}?`"
+        >
+          Remove «{{ root }}» from the graph? The folder stays on disk.
+          <button
+            type="button"
+            class="code-landing__btn"
+            @click="remove"
+          >Remove</button>
+          <button
+            type="button"
+            class="code-landing__btn"
+            @click="confirmRemove = false"
+          >Keep</button>
+        </span>
+      </template>
       <CodeSearch
         v-if="root"
         :root="root"
@@ -145,15 +225,49 @@ watch(isPhone, (p) => {
         class="code-landing__found"
         role="status"
       >
-        {{ found.length ? `${found.length} found, lit up in the graph` : 'Nothing found' }}
+        {{ foundText }}
       </p>
     </div>
+    <div
+      v-if="hintOpen && !canManage && picker"
+      class="code-landing__hint"
+      role="status"
+    >
+      <p v-if="picker.enabled && !picker.can_manage">
+        Only an admin can add folders here.
+      </p>
+      <p v-if="picker.hint">
+        {{ picker.hint }}
+      </p>
+      <p v-if="!picker.enabled">
+        For example, in <code>buggregator.yaml</code>:
+      </p>
+      <pre v-if="!picker.enabled">code_graph:
+  base_dir: ~/projects</pre>
+      <p v-if="!picker.enabled">
+        or the environment: <code>CODE_GRAPH_BASE_DIR=~/projects</code>
+      </p>
+    </div>
+    <p
+      v-if="removeError"
+      class="code-landing__hint"
+      role="alert"
+    >
+      {{ removeError }}
+    </p>
+    <CodeAddFolder
+      v-if="pickerOpen"
+      @close="pickerOpen = false"
+      @added="onAdded"
+    />
 
     <div
       v-if="!root"
       class="code-landing__empty"
     >
-      No folders to show yet.
+      No folders to show yet.<template v-if="canManage">
+        Add one with «+ Add folder».
+      </template>
     </div>
 
     <div
@@ -246,10 +360,16 @@ watch(isPhone, (p) => {
               </button>
             </li>
             <li
-              v-if="!rows.length && !tree.failed.value"
+              v-if="!tree.dirs.value.has('') && !tree.failed.value"
               class="code-landing__note"
             >
               Loading…
+            </li>
+            <li
+              v-else-if="!rows.length && !tree.failed.value"
+              class="code-landing__note"
+            >
+              No indexed files yet.
             </li>
           </ul>
         </section>
@@ -278,14 +398,16 @@ watch(isPhone, (p) => {
           Close the graph
         </button>
         <p
-          v-if="rootStatus && rootStatus.state !== 'ready'"
+          v-if="rootStatus && (rootStatus.state === 'indexing' || rootStatus.state === 'pending')"
           class="code-landing__note code-landing__note--top"
+          role="status"
         >
-          {{ root }} is {{ rootStatus.state }}: the graph fills in when it is done.
+          {{ root }} is still indexing: the graph fills in when it is done.
         </p>
         <CodeProjectGraph
           :root="root"
           :found="found"
+          @matched="matched = $event"
           @open="goTo({ id: $event.symbol_id!, fqn: $event.fqn })"
         />
       </div>
@@ -344,6 +466,33 @@ watch(isPhone, (p) => {
   font-size: 11px;
   font-weight: 400;
   opacity: 0.75;
+}
+
+.code-landing__confirm {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.code-landing__hint {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 13px;
+  @apply border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300;
+
+  p {
+    margin: 0 0 4px;
+  }
+
+  pre {
+    margin: 0 0 4px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
 }
 
 .code-landing__found {

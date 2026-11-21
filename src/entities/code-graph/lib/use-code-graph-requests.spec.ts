@@ -50,4 +50,29 @@ describe('useCodeGraphRequests', () => {
     expect(url().pathname).toBe('/api/code/resolve')
     expect(Object.fromEntries(url().searchParams)).toEqual({ file: '/var/www/html/app/A.php', line: '88' })
   })
+
+  it('adds a folder as JSON with the auth header kept', async () => {
+    fetchMock.mockReturnValue(reply({ name: 'shop', path: '/w/shop', state: 'indexing' }, 201))
+    await useCodeGraphRequests().addRoot('work/shop')
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(url().pathname).toBe('/api/code/roots')
+    expect(init.method).toBe('POST')
+    expect(JSON.parse(init.body as string)).toEqual({ path: 'work/shop' })
+    expect(init.headers).toMatchObject({ 'Content-Type': 'application/json', 'X-Auth-Token': expect.any(String) })
+  })
+
+  it('removes a root (204, no body) and passes on a refusal code', async () => {
+    fetchMock.mockReturnValueOnce(Promise.resolve(new Response(null, { status: 204 })))
+    await expect(useCodeGraphRequests().removeRoot('a b')).resolves.toBeNull()
+    expect(url().pathname).toBe('/api/code/roots/a%20b')
+    fetchMock.mockReturnValueOnce(reply({ code: 'config_root', error: 'set in the config file' }, 403))
+    await expect(useCodeGraphRequests().removeRoot('cfg')).rejects.toMatchObject({ status: 403, code: 'config_root' })
+  })
+
+  it('browses folders below the base dir', async () => {
+    fetchMock.mockReturnValue(reply({ base_dir: '/w', path: 'a', parent: '', folders: [] }))
+    await useCodeGraphRequests().getFolders('a')
+    expect(url().pathname).toBe('/api/code/folders')
+    expect(Object.fromEntries(url().searchParams)).toEqual({ path: 'a' })
+  })
 })

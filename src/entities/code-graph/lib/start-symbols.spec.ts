@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CodeGraph, CodeGraphNode } from '../types'
-import { isEntryPoint, startSymbols } from './start-symbols'
+import { isEntryPoint, startSymbols, isTest } from './start-symbols'
 
 const n = (id: number, fqn: string, extra: Partial<CodeGraphNode> = {}): CodeGraphNode => ({
   id: `s:${id}`,
@@ -50,5 +50,16 @@ describe('isEntryPoint', () => {
     ['App\\Services\\CheckoutService::placeOrder', false]
   ])('%s → %s', (fqn, want) => {
     expect(isEntryPoint(n(1, fqn, { name: fqn.split(/::|\./).pop()! }))).toBe(want)
+  })
+})
+
+describe('isTest', () => {
+  it('knows test files and test folders, top level too', () => {
+    expect(isTest({ file: 'internal/a/a_test.go', name: 'x' })).toBe(true)
+    expect(isTest({ file: 'src/CartTest.php', name: 'x' })).toBe(true)
+    expect(isTest({ file: 'tests/Feature/Cart.php', name: 'x' })).toBe(true)
+    expect(isTest({ file: 'app/test/helpers.php', name: 'x' })).toBe(true)
+    expect(isTest({ file: 'src/latest.php', name: 'x' })).toBe(false)
+    expect(isTest({ file: 'src/contests/a.php', name: 'x' })).toBe(false)
   })
 })
