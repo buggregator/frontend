@@ -84,6 +84,14 @@ export const setStoredSingleKeyShortcuts = (state: boolean) => {
   window?.localStorage?.setItem(LocalStorageKeys.SingleKeyShortcuts, String(state));
 }
 
+// Off unless the person turned them on (the browser asks for permission then).
+export const getStoredDesktopNotifications = (): boolean =>
+  window?.localStorage?.getItem(LocalStorageKeys.DesktopNotifications) === "true";
+
+export const setStoredDesktopNotifications = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.DesktopNotifications, String(state));
+}
+
 // Off unless the person turned them on.
 export const getStoredKeyHints = (): boolean =>
   window?.localStorage?.getItem(LocalStorageKeys.KeyHints) === "true";

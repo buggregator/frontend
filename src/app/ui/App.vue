@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, watch } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { useDesktopNotify } from '@/shared/lib/desktop-notify'
 import { useAppBadge } from '@/shared/lib/use-app-badge'
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
@@ -34,7 +35,12 @@ watch(token, (value) => {
   }
 })
 
-useRouter()
+const router = useRouter()
+
+// A click on a new-error notification opens that error.
+useDesktopNotify().setOpener((uuid) => router.push(`/sentry/event/${uuid}`))
+
+router
   .isReady()
   .then(() => {
     isRouterReady = true

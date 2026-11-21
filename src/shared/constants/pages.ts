@@ -62,6 +62,12 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     iconName: 'ray',
     eventType: EventTypes.RayDump,
   },
+  [PAGE_TYPES.Csp]: {
+    title: 'CSP reports',
+    sidebarTitle: 'CSP reports',
+    iconName: 'shield',
+    eventType: EventTypes.Csp,
+  },
   [PAGE_TYPES.Sms]: {
     title: 'SMS',
     sidebarTitle: 'SMS',
@@ -87,3 +93,12 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     eventType: EventTypes.XdebugTrace,
   }
 }
+
+// Types that wear another type's colours on their card (stripe, badge, shape):
+// CSP reports look like Sentry errors. A class name, not new CSS rules: the
+// first-load CSS is at its budget (#6604).
+const CARD_LOOK_OF: Partial<Record<string, string>> = {
+  [EventTypes.Csp]: EventTypes.Sentry,
+}
+
+export const cardLookOf = (type: string): string => CARD_LOOK_OF[type] ?? type

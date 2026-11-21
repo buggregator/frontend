@@ -18,6 +18,7 @@ import { EventDetailLayout, EventDetailSection, IconSvg, SearchBar } from '@/sha
 import { version } from '../../../../../package.json' with { type: 'json' }
 import { SETTINGS_SEARCH, useSettingsSearch } from '../../lib/settings-search'
 import { useSectionSpy } from '../../lib/use-section-spy'
+import { SettingsDesktopNotifications } from '../settings-desktop-notifications'
 import { SettingsMenuItems } from '../settings-menu-items'
 import { SettingsRow } from '../settings-row'
 import { SettingsSwitch } from '../settings-switch'
@@ -270,6 +271,17 @@ useTitle('Settings | Buggregator')
                 @toggle="changeEventCountsVisibility"
               />
             </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="notifications"
+          class="settings__section"
+          title="Notifications"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsDesktopNotifications />
           </div>
         </EventDetailSection>
 

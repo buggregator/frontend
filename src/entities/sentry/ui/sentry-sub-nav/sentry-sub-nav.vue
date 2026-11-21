@@ -31,12 +31,15 @@ const TABS: { id: SentryTab; label: string; to: string }[] = [
   { id: 'exceptions', label: 'Exceptions', to: '/sentry/exceptions' },
   { id: 'traces', label: 'Traces', to: '/sentry/traces' },
   { id: 'logs', label: 'Logs', to: '/sentry/logs' },
-  { id: 'metrics', label: 'Metrics', to: '/sentry/metrics' }
+  { id: 'metrics', label: 'Metrics', to: '/sentry/metrics' },
+  { id: 'feedback', label: 'Feedback', to: '/sentry/feedback' }
 ]
+
+const countOf = (id: SentryTab) => counts.value[id] ?? 0
 
 // Tabs without data stay hidden; Exceptions and the open tab always show.
 const tabs = computed(() =>
-  TABS.filter((t) => t.id === 'exceptions' || t.id === props.current || counts.value[t.id] > 0)
+  TABS.filter((t) => t.id === 'exceptions' || t.id === props.current || countOf(t.id) > 0)
 )
 
 // Sideways scroll when the row is too narrow: an edge fades where more tabs hide.
@@ -87,9 +90,9 @@ watch(
     >
       {{ tab.label }}
       <span
-        v-if="counts[tab.id] > 0"
+        v-if="countOf(tab.id) > 0"
         class="sentry-tabs__count"
-      >{{ counts[tab.id] }}</span>
+      >{{ countOf(tab.id) }}</span>
     </RouterLink>
   </nav>
 </template>

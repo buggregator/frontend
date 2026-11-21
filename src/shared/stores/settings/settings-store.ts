@@ -22,6 +22,7 @@ import {
   setStoredIsActiveCustomFilePathMapping, getStoredIsActiveCustomFilePathMapping,
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
   getStoredKeyHints, setStoredKeyHints,
+  getStoredDesktopNotifications, setStoredDesktopNotifications,
   getStoredHiddenMenuItems, setStoredHiddenMenuItems,
 } from "./local-storage-actions";
 import {toUpdateInfo, type UpdateInfo} from "./update-info";
@@ -50,6 +51,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
     // Small key badges: a hint bar on event pages, hints under inputs.
     isKeyHintsEnabled: getStoredKeyHints(),
+    // A browser notification on a new error while the window is away (#6604).
+    isDesktopNotificationsEnabled: getStoredDesktopNotifications(),
     // The types the server says it has. A newer server can list one this UI
     // does not know: its events still show, with the default card.
     availableEvents: [] as string[],
@@ -133,6 +136,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isSingleKeyShortcutsEnabled = !this.isSingleKeyShortcutsEnabled;
 
       setStoredSingleKeyShortcuts(this.isSingleKeyShortcutsEnabled)
+    },
+    setDesktopNotifications(state: boolean) {
+      this.isDesktopNotificationsEnabled = state;
+
+      setStoredDesktopNotifications(state)
     },
     changeKeyHints() {
       this.isKeyHintsEnabled = !this.isKeyHintsEnabled;

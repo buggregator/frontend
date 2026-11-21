@@ -29,7 +29,7 @@ const ids = (groups: ReturnType<typeof buildChannelGroups>) =>
 describe('buildChannelGroups', () => {
   it('follows the menu groups and order, tools last', () => {
     expect(ids(buildChannelGroups(input()))).toEqual([
-      ['Errors & performance', ['sentry', 'profiler', 'inspector']],
+      ['Errors & performance', ['sentry', 'profiler', 'inspector', 'csp']],
       ['Dumps', ['ray', 'http-dump', 'var-dump', 'xdebug-trace']],
       ['Mail & logs', ['smtp', 'sms', 'monolog']],
       ['Tools', ['http-proxy', 'mock-server', 'xdebug']]
@@ -114,6 +114,6 @@ describe('buildChannelGroups', () => {
     expect(to.smtp).toEqual({ name: 'event-list', params: { type: 'smtp' } })
     expect(to['mock-server']).toEqual({ name: 'mock-server' })
     expect(to['http-proxy']).toBeNull()
-    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(10)
+    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(11)
   })
 })

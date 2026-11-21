@@ -8,9 +8,9 @@ type SentryEventCallback = () => void
  * What arrived: an error event (its "event.received"), or structured rows the
  * server stored without a feed event ("sentry.stored", buggregator/server#359).
  */
-export type SentryKind = 'error' | 'log' | 'metric' | 'trace'
+export type SentryKind = 'error' | 'log' | 'metric' | 'trace' | 'feedback'
 
-const ALL_KINDS: readonly SentryKind[] = ['error', 'log', 'metric', 'trace']
+const ALL_KINDS: readonly SentryKind[] = ['error', 'log', 'metric', 'trace', 'feedback']
 
 const listeners = new Map<SentryEventCallback, readonly SentryKind[]>()
 const pendingKinds = new Set<SentryKind>()

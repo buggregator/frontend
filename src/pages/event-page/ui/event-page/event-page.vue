@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { KeyHintBar, LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
@@ -14,10 +14,11 @@ import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
 import { StatusPanel } from '@/shared/ui/status-panel'
 
 const route = useRoute()
-const { params } = route
 const router = useRouter()
 const { showHintBar } = useKeyHints()
-const eventId = params.id as EventId
+// The router keeps this page when only :id changes (a desktop notification
+// opens another error while one is open), so the id is read live.
+const eventId = computed(() => route.params.id as EventId)
 
 const {
   events: { getItem }
@@ -25,7 +26,7 @@ const {
 const isLoading = ref(false)
 const serverEvent = ref<ServerEvent<unknown> | null>(null)
 
-const paramsType = computed(() => (params?.type || undefined) as PageEventTypes | undefined)
+const paramsType = computed(() => (route.params.type || undefined) as PageEventTypes | undefined)
 
 // Determine the event type: from route params, or from the loaded event's type.
 const resolvedType = computed(() => {
@@ -38,7 +39,7 @@ const title = computed(
   () => (resolvedType.value ? PAGES_SETTINGS[resolvedType.value]?.title : '') || ''
 )
 // The type of /event/:id is known only after the event loads.
-useTitle(computed(() => `${title.value || 'Event'} > ${eventId} | Buggregator`))
+useTitle(computed(() => `${title.value || 'Event'} > ${eventId.value} | Buggregator`))
 
 // A missing event and a failed load are different answers: the first is
 // final (deleted, cleared, a wrong link), the second can be tried again.
@@ -51,12 +52,16 @@ const listPath = computed(() => {
 })
 
 const getEvent = async () => {
+  const id = eventId.value
   isLoading.value = true
   loadError.value = ''
   isMissing.value = false
 
   try {
-    serverEvent.value = await getItem(eventId)
+    const loaded = await getItem(id)
+    // A newer id was asked for meanwhile: its answer wins.
+    if (id !== eventId.value) return
+    serverEvent.value = loaded
     isMissing.value = !serverEvent.value
   } catch (error) {
     logger(['UI: Failed to load event page', error])
@@ -66,7 +71,17 @@ const getEvent = async () => {
   }
 }
 
-onMounted(getEvent)
+// Another id: drop the old event, so its page does not show under the new title.
+watch(
+  eventId,
+  (id, old) => {
+    // Leaving for another page also changes the route: nothing to load then.
+    if (!id) return
+    if (old !== undefined) serverEvent.value = null
+    getEvent()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

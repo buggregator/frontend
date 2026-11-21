@@ -40,4 +40,29 @@ describe('EventPage: tab title', () => {
 
     expect(document.title).toBe('Sentry > abc | Buggregator')
   })
+
+  // #6604 review: a desktop notification opens another error while an error
+  // page is open; the router reuses the page, so it must load the new one.
+  it('loads the new event when only the id in the route changes', async () => {
+    getItem.mockImplementation((id: string) => Promise.resolve({ uuid: id, type: 'sentry', payload: {} }))
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/sentry/event/:id', component: EventPage }],
+    })
+    await router.push('/sentry/event/abc')
+    await router.isReady()
+
+    mount(EventPage, {
+      global: {
+        plugins: [router],
+        stubs: { LayoutBase: stub, LayoutSidebar: stub, PageEventHeader: stub, EventPageMapper: stub },
+      },
+    })
+    await flushPromises()
+    await router.push('/sentry/event/def')
+    await flushPromises()
+
+    expect(getItem).toHaveBeenLastCalledWith('def')
+    expect(document.title).toBe('Sentry > def | Buggregator')
+  })
 })

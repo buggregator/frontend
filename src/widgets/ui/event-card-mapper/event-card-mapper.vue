@@ -1,5 +1,6 @@
 <script lang="ts" setup generic="T">
 import { computed, defineProps } from 'vue'
+import { normalizeCspEvent, PreviewCard as PreviewCsp } from '@/entities/csp'
 import { useHttpDump, PreviewCard as PreviewHttpDump } from '@/entities/http-dump'
 import { useInspector, PreviewCard as PreviewInspector } from '@/entities/inspector'
 import { useMonolog, PreviewCard as PreviewMonolog } from '@/entities/monolog'
@@ -85,6 +86,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.XdebugTrace]: {
     view: PreviewXdebugTrace,
     normalize: normalizeXdebugTraceEvent
+  },
+  [EventTypes.Csp]: {
+    view: PreviewCsp,
+    normalize: normalizeCspEvent
   },
   unknown: {
     view: PreviewCardDefault,

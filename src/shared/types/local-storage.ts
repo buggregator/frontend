@@ -13,6 +13,7 @@ export enum LocalStorageKeys {
   KeyHints = "key_hints",
   SeenEvents = "seen_events",
   HiddenMenuItems = "hidden_menu_items",
+  DesktopNotifications = "desktop_notifications",
 }
 
 export enum SessionStorageKeys {

@@ -448,6 +448,61 @@
       ]
     },
     {
+      "id": "csp",
+      "title": "Catch the browser's CSP and Reporting API reports",
+      "lead": "Point your Content-Security-Policy report address here. Every violation the browser reports lands on this page, with the directive, the blocked resource and the line.",
+      "docs": "",
+      "steps": [
+        "Add report-uri http://{host}:{http_port}/csp/{project} to your Content-Security-Policy (or Content-Security-Policy-Report-Only) header.",
+        "For the Reporting API, name the same address in a Reporting-Endpoints header and add report-to <name> to the policy. Name it default too to get deprecation and intervention reports: browsers send those only to the endpoint called default.",
+        "The Reporting API works only on secure pages: both your app and the Buggregator address must be https or localhost. On plain http the browser drops the reports without a word; use report-uri there.",
+        "Any POST with Content-Type application/csp-report or application/reports+json is caught on any path, so an existing report URL also works when it points at Buggregator.",
+        "{host} must be reachable from the browser that opens your app: usually localhost."
+      ],
+      "stacks": [
+        {
+          "id": "header",
+          "label": "HTTP header",
+          "file": "response header",
+          "lang": "http",
+          "code": "Content-Security-Policy-Report-Only: default-src 'self'; report-uri http://{host}:{http_port}/csp/{project}",
+          "hint": "Report-Only reports without blocking: safe to try on a working app.",
+          "checked": true,
+          "note": null
+        },
+        {
+          "id": "reporting-api",
+          "label": "Reporting API",
+          "file": "response headers",
+          "lang": "http",
+          "code": "Reporting-Endpoints: buggregator=\"http://{host}:{http_port}/csp/{project}\", default=\"http://{host}:{http_port}/csp/{project}\"\nContent-Security-Policy: default-src 'self'; report-to buggregator",
+          "hint": "Needs https or localhost on both sides. default catches deprecation and intervention reports.",
+          "checked": false,
+          "note": null
+        },
+        {
+          "id": "laravel",
+          "label": "Laravel (spatie/laravel-csp)",
+          "file": ".env",
+          "lang": "dotenv",
+          "code": "CSP_REPORT_URI=http://{host}:{http_port}/csp/{project}",
+          "hint": null,
+          "checked": false,
+          "note": null
+        },
+        {
+          "id": "curl",
+          "label": "curl",
+          "file": "terminal",
+          "lang": "bash",
+          "code": "curl -X POST http://{host}:{http_port}/csp/{project} \\\n  -H 'Content-Type: application/csp-report' \\\n  -d '{\"csp-report\":{\"document-uri\":\"http://localhost/\",\"violated-directive\":\"script-src\",\"blocked-uri\":\"inline\"}}'",
+          "hint": null,
+          "checked": false,
+          "note": null
+        }
+      ]
+    },
+    {
       "id": "xdebug-trace",
       "title": "Upload your first Xdebug trace",
       "lead": "Record a function trace with Xdebug and upload the file. Buggregator shows the calls, the slowest ones and their time.",

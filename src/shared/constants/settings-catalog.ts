@@ -59,6 +59,17 @@ export const SETTINGS_ITEMS = {
       'for the full list (also a single-key shortcut).',
     keywords: ['keyboard', 'badges', 'help']
   },
+  desktopNotifications: {
+    id: 'desktop-notifications',
+    label: 'Desktop notifications',
+    hint: 'A notification on a new error while you work in another window.',
+    more:
+      'Buggregator shows a browser notification when a new error (a Sentry exception, or a message ' +
+      'at level error or fatal) arrives in any project while this tab is in the background. Several ' +
+      'errors in a row make one notification. A click opens the error. The browser asks for ' +
+      'permission once; it works on localhost and https only.',
+    keywords: ['notification', 'alert', 'popup', 'desktop', 'browser', 'error', 'exception', 'push']
+  },
   menuItems: {
     id: 'menu-items',
     label: 'Menu items',
@@ -107,6 +118,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'appearance',
     title: 'Appearance',
     items: [SETTINGS_ITEMS.theme, SETTINGS_ITEMS.pinHeader, SETTINGS_ITEMS.eventCounts]
+  },
+  {
+    id: 'notifications',
+    title: 'Notifications',
+    items: [SETTINGS_ITEMS.desktopNotifications]
   },
   {
     id: 'menu',

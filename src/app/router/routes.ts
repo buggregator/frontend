@@ -22,6 +22,7 @@ const SentryTracesPage = () => sentryPages().then((m) => m.SentryTracesPage)
 const SentryTraceDetailPage = () => sentryPages().then((m) => m.SentryTraceDetailPage)
 const SentryLogsPage = () => sentryPages().then((m) => m.SentryLogsPage)
 const SentryMetricsPage = () => sentryPages().then((m) => m.SentryMetricsPage)
+const SentryFeedbackPage = () => sentryPages().then((m) => m.SentryFeedbackPage)
 
 export const routes = [
   {
@@ -61,6 +62,7 @@ export const routes = [
       { path: 'traces/:traceId', name: RouteName.SentryTraceDetail, component: SentryTraceDetailPage },
       { path: 'logs', name: RouteName.SentryLogs, component: SentryLogsPage },
       { path: 'metrics', name: RouteName.SentryMetrics, component: SentryMetricsPage },
+      { path: 'feedback', name: RouteName.SentryFeedback, component: SentryFeedbackPage },
       { path: ':id', redirect: (to: RouteLocation) => `/sentry/event/${to.params.id}` },
     ]
   },
