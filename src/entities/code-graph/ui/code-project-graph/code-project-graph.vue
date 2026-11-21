@@ -16,7 +16,8 @@ import CodeProjectNode from './code-project-node.vue'
 // a function or method opens the focus view. Found symbols light up their
 // box in place.
 
-const props = defineProps<{ root: string; found?: readonly Pick<CodeSymbol, 'id' | 'fqn'>[] | null }>()
+// `stamp`: changes when the root finishes (re)indexing; the graph loads again.
+const props = defineProps<{ root: string; found?: readonly Pick<CodeSymbol, 'id' | 'fqn'>[] | null; stamp?: string }>()
 const emit = defineEmits<{
   (e: 'open', node: CodeGraphNode): void
   // Found symbols that sit in a drawn box.
@@ -28,6 +29,12 @@ const markers = { edge: `cp-${uid}-edge`, hi: `cp-${uid}-hi`, guess: `cp-${uid}-
 provide(CODE_GRAPH_MARKERS, markers)
 
 const p = useProjectGraph(toRef(props, 'root'))
+watch(
+  () => props.stamp,
+  (now, before) => {
+    if (before && now && now !== before && now.split('|')[0] === before.split('|')[0]) p.reload()
+  }
+)
 
 const hovered = ref<string | null>(null)
 // Nothing found in the drawn boxes: nothing dims.

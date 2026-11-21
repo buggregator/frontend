@@ -26,7 +26,8 @@ const hiddenCount = computed(() => (b.list.value?.folders ?? []).filter((f) => f
 
 // Why the open folder cannot be added, if it cannot.
 const blocked = computed(() => {
-  if (!b.list.value) return 'Loading…'
+  if (b.loading.value) return 'Loading…'
+  if (!b.list.value) return b.error.value ? 'Pick another folder.' : 'Loading…'
   if (!here.value) return 'Open a folder inside the base folder to add it.'
   if (b.list.value.root) return `Already indexed as «${b.list.value.root}».`
   return null
@@ -39,9 +40,13 @@ const go = (path: string) => {
 const note = (f: CodeFolder) => (f.root ? `indexed as ${f.root}` : f.excluded ? 'skipped by the index' : null)
 
 const add = async () => {
-  if (blocked.value) return
+  if (blocked.value || b.adding.value) return
   const root = await b.add(here.value, name.value)
-  if (root) emit('added', root)
+  if (root) {
+    // Close first: focus goes back to «Add folder».
+    dialog.value?.close()
+    emit('added', root)
+  }
 }
 
 onMounted(() => {
@@ -293,7 +298,7 @@ onMounted(() => {
   @apply hover:bg-gray-100 dark:hover:bg-gray-700;
 }
 
-.cg-picker__row--dim {
+.cg-picker__row--dim .cg-picker__name {
   opacity: 0.6;
 }
 
@@ -352,6 +357,10 @@ onMounted(() => {
   margin: 0 16px;
   font-size: 12px;
   color: #dc2626;
+
+  .dark & {
+    color: #f87171;
+  }
 }
 
 .cg-picker__foot .cg-picker__err {

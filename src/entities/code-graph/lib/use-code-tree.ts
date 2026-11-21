@@ -97,18 +97,15 @@ export const useCodeTree = (root: Ref<string | null | undefined>) => {
     return out
   }
 
-  watch(
-    root,
-    () => {
-      dirs.value = new Map()
-      outlines.value = new Map()
-      open.value = new Set()
-      loading.value = new Set()
-      failed.value = null
-      loadDir('')
-    },
-    { immediate: true }
-  )
+  const reset = () => {
+    dirs.value = new Map()
+    outlines.value = new Map()
+    open.value = new Set()
+    loading.value = new Set()
+    failed.value = null
+    loadDir('')
+  }
+  watch(root, reset, { immediate: true })
 
-  return { rows, toggle, open, loading, failed, dirs, outlines }
+  return { rows, toggle, open, loading, failed, dirs, outlines, reload: reset }
 }

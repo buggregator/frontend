@@ -48,8 +48,8 @@ const from = computed(() => q('from'))
 const back = computed(() => q('back'))
 
 const { roots, busy, failed: rootsFailed, reload: reloadRoots } = useRootsStatus()
-// The landing is drawn again when its folder finishes (re)indexing.
-const landingKey = computed(() => rootStamp(pickedRoot(roots.value, target.value.root)))
+// Tells the landing when its folder finishes (re)indexing.
+const landingStamp = computed(() => rootStamp(pickedRoot(roots.value, target.value.root)))
 const f = useCodeFocus(frameTarget)
 
 const focusName = computed(() => (f.focus.value ? symbolLabel(f.focus.value).name : null))
@@ -249,7 +249,7 @@ const onRow = (n: FocusNode) => {
 
       <CodeLanding
         v-if="f.state.value === 'idle' && roots"
-        :key="landingKey"
+        :stamp="landingStamp"
         :roots="roots"
         @changed="reloadRoots"
       />

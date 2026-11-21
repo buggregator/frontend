@@ -23,7 +23,9 @@ import { pickedRoot } from '../../lib'
 // folder tree; both open the focus view of a function. «Add folder» (#6586)
 // adds a folder below the server's base dir; one added here can be removed.
 
-const props = defineProps<{ roots: CodeGraphRoots }>()
+// `stamp` changes when the shown folder finishes (re)indexing: graph, «Start
+// here» and tree load again (the page is not re-created: an open dialog stays).
+const props = defineProps<{ roots: CodeGraphRoots; stamp?: string }>()
 const emit = defineEmits<{ (e: 'changed'): void }>()
 
 const route = useRoute()
@@ -59,16 +61,23 @@ watch(root, () => {
   confirmRemove.value = false
   removeError.value = null
 })
+const removing = ref(false)
 const remove = async () => {
   const name = root.value
-  if (!name) return
+  if (!name || removing.value) return
+  removing.value = true
   try {
     await api.removeRoot(name)
     confirmRemove.value = false
+    // Go to another folder by name: the list still has the removed one
+    // until the reload lands.
+    const next = props.roots.roots.find((r) => r.name !== name)?.name
+    router.replace({ name: RouteName.Code, query: next ? { root: next } : {} })
     emit('changed')
-    router.replace({ name: RouteName.Code })
   } catch (e) {
     removeError.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    removing.value = false
   }
 }
 
@@ -97,8 +106,8 @@ const start = shallowRef<StartRow[] | null>(null)
 const startFailed = ref(false)
 let seq = 0
 watch(
-  root,
-  async (name) => {
+  [root, () => props.stamp],
+  async ([name]) => {
     const mine = ++seq
     start.value = null
     startFailed.value = false
@@ -128,6 +137,12 @@ watch(
 )
 
 const tree = useCodeTree(root)
+watch(
+  () => props.stamp,
+  (now, before) => {
+    if (before && now && now !== before && now.split('|')[0] === before.split('|')[0]) tree.reload()
+  }
+)
 const rows = computed(() => tree.rows())
 const rowOpen = (r: TreeRow) => tree.open.value.has(r.key)
 const rowHasKids = (r: TreeRow) => r.type !== 'symbol' || !!r.symbol.members?.length
@@ -204,6 +219,7 @@ watch(isPhone, (p) => {
           <button
             type="button"
             class="code-landing__btn"
+            :disabled="removing"
             @click="remove"
           >Remove</button>
           <button
@@ -233,9 +249,6 @@ watch(isPhone, (p) => {
       class="code-landing__hint"
       role="status"
     >
-      <p v-if="picker.enabled && !picker.can_manage">
-        Only an admin can add folders here.
-      </p>
       <p v-if="picker.hint">
         {{ picker.hint }}
       </p>
@@ -243,9 +256,9 @@ watch(isPhone, (p) => {
         For example, in <code>buggregator.yaml</code>:
       </p>
       <pre v-if="!picker.enabled">code_graph:
-  base_dir: ~/projects</pre>
+  base_dir: /home/you/projects</pre>
       <p v-if="!picker.enabled">
-        or the environment: <code>CODE_GRAPH_BASE_DIR=~/projects</code>
+        or the environment: <code>CODE_GRAPH_BASE_DIR=/home/you/projects</code>
       </p>
     </div>
     <p
@@ -406,6 +419,7 @@ watch(isPhone, (p) => {
         </p>
         <CodeProjectGraph
           :root="root"
+          :stamp="stamp"
           :found="found"
           @matched="matched = $event"
           @open="goTo({ id: $event.symbol_id!, fqn: $event.fqn })"
