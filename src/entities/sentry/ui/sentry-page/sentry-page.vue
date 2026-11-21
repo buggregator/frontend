@@ -7,6 +7,7 @@ import { resolveExceptionValues, sentryMessageText } from '../../lib/resolve-exc
 import { useSentryRequests } from '../../lib/use-sentry-requests'
 import type { Sentry, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
+import { SentryEventFeedback } from '../sentry-feedback'
 import { SentryPageApp } from '../sentry-page-app'
 import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
 import { SentryPageDevice } from '../sentry-page-device'
@@ -46,6 +47,9 @@ const isHandled = computed(() => {
   if (!mainException.value?.mechanism) return undefined
   return mainException.value.mechanism.handled
 })
+
+// The feedback API matches the error's Sentry event id.
+const feedbackEventId = computed(() => props.event.payload.event_id || props.event.id)
 
 // Tab visibility
 const hasException = computed(() => exceptionValues.value.length > 0)
@@ -213,6 +217,9 @@ watch(
         <span class="sentry-header__date">{{ formattedTimestamp }}</span>
       </div>
     </template>
+
+    <!-- What users wrote about this error (#6604); nothing when there is none. -->
+    <SentryEventFeedback :event-id="feedbackEventId" />
 
     <!-- Tabbed content -->
     <PageTabs class="sentry-tabs">

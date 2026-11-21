@@ -66,6 +66,7 @@ const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.SentryTrace]: [] as EventId[],
   [PAGE_TYPES.SentryLog]: [] as EventId[],
   [PAGE_TYPES.XdebugTrace]: [] as EventId[],
+  [PAGE_TYPES.Csp]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
 });
 
@@ -83,7 +84,8 @@ export const useEventsStore = defineStore("eventsStore", {
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
     countsMap: new Map<string, number>(),
-    cachedIds: getStoredCachedIds() || createInitialCachedIds(),
+    // Over the defaults: a map saved by an older version lacks the newer types (csp).
+    cachedIds: { ...createInitialCachedIds(), ...getStoredCachedIds() },
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],

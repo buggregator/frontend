@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import isString from 'lodash.isstring'
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
-import { PAGES_SETTINGS } from '../../constants'
+import { PAGES_SETTINGS, cardLookOf } from '../../constants'
 import { type EventType, type NormalizedEvent, RouteName } from '../../types'
 import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
@@ -90,11 +90,11 @@ const isKvLabel = (label: unknown): label is { title: string; value: string; con
       <!-- Type badge with icon + shape indicator -->
       <div
         class="pc-header__type"
-        :class="`pc-header__type--${eventType}`"
+        :class="`pc-header__type--${cardLookOf(eventType)}`"
       >
         <span
           class="pc-header__type-shape"
-          :class="`pc-header__type-shape--${eventType}`"
+          :class="`pc-header__type-shape--${cardLookOf(eventType)}`"
         />
         <IconSvg
           v-if="typeConfig"

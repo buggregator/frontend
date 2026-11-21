@@ -18,6 +18,7 @@ const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
   inspector: ['apm', 'performance'],
   smtp: ['mail', 'email'],
   sms: ['text message', 'phone'],
+  csp: ['content security policy', 'report-uri', 'reporting api', 'violation', 'browser report'],
   'http-dump': ['request', 'webhook'],
   'var-dump': ['dump', 'symfony'],
   monolog: ['logs', 'logging'],

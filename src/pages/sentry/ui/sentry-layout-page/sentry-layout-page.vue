@@ -15,20 +15,24 @@ const HEADINGS: Partial<Record<string, string>> = {
   [RouteName.SentryExceptions]: 'Sentry exceptions',
   [RouteName.SentryTraces]: 'Sentry traces',
   [RouteName.SentryLogs]: 'Sentry logs',
-  [RouteName.SentryMetrics]: 'Sentry metrics'
+  [RouteName.SentryMetrics]: 'Sentry metrics',
+  [RouteName.SentryFeedback]: 'Sentry user feedback'
 }
 const TAB_OF_ROUTE: Partial<Record<string, SentryTab>> = {
   [RouteName.SentryExceptions]: 'exceptions',
   [RouteName.SentryTraces]: 'traces',
   [RouteName.SentryTraceDetail]: 'traces',
   [RouteName.SentryLogs]: 'logs',
-  [RouteName.SentryMetrics]: 'metrics'
+  [RouteName.SentryMetrics]: 'metrics',
+  [RouteName.SentryFeedback]: 'feedback'
 }
 const route = useRoute()
 const heading = computed(() => HEADINGS[String(route.name)] ?? '')
 const tab = computed(() => TAB_OF_ROUTE[String(route.name)] ?? '')
-// The filters belong to a list: none on the trace page.
-const filterTab = computed(() => (route.name === RouteName.SentryTraceDetail ? '' : tab.value))
+// The filters belong to a list: none on the trace page, and Feedback has none.
+const filterTab = computed(() =>
+  route.name === RouteName.SentryTraceDetail || tab.value === 'feedback' ? '' : tab.value
+)
 // Lists with more than one view get the view tabs under the header (#6543 B).
 const viewTab = computed(() => (filterTab.value === 'traces' || filterTab.value === 'exceptions' ? filterTab.value : null))
 

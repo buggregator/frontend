@@ -578,6 +578,16 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'shield'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M12 1 3 4.5v6.3c0 5.4 3.8 10.4 9 11.7 5.2-1.3 9-6.3 9-11.7V4.5L12 1Zm7 9.8c0 4.4-3 8.5-7 9.6-4-1.1-7-5.2-7-9.6V5.9l7-2.7 7 2.7v4.9Zm-8.2 2.1-2.1-2.1-1.4 1.4 3.5 3.5 6-6-1.4-1.4-4.6 4.6Z"
+      />
+    </svg>
+
+    <svg
       v-else-if="name === 'sms'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"

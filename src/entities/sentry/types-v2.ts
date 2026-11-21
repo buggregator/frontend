@@ -241,6 +241,23 @@ export interface SentryCounts {
   traces: number
   logs: number
   metrics: number
+  // Servers before buggregator/server #475 do not send it.
+  feedback?: number
+}
+
+// What a person wrote in the feedback widget, or a legacy user report (#6604).
+export interface SentryFeedback {
+  id: string
+  project: string
+  // The error it is about; '' for feedback sent on its own.
+  event_id: string
+  feedback_id: string
+  name: string
+  email: string
+  message: string
+  url: string
+  source: 'feedback' | 'user_report'
+  received_at: string
 }
 
 export interface SentryExceptionDetail {
