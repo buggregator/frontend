@@ -66,6 +66,7 @@ const lastLine = (c: BroadcastChannel) => {
         class="bc-channels__input"
         placeholder="Filter channels"
         label="Filter channels"
+        :shortcut="false"
       />
     </div>
     <div

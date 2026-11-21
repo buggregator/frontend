@@ -43,7 +43,7 @@ describe('BroadcastEventDetail', () => {
     ])
     expect(wrapper.find('.bc-detail__lost').text()).toContain('e.order.status')
     expect(wrapper.find('[data-test="bc-payload"]').text()).toContain('"status": null')
-    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(false)
+    expect(wrapper.find('[data-test="bc-payload"] .code-snippet__copy').exists()).toBe(true)
     expect(wrapper.findAll('.table-row__name').map((r) => r.text())).toContain('Except socket')
     expect(getItem).not.toHaveBeenCalled()
   })
@@ -87,12 +87,12 @@ describe('BroadcastEventDetail', () => {
     expect(wrapper.text()).not.toContain('not JSON')
     expect(wrapper.text()).toContain('Loading the full events')
     expect(wrapper.find('.bc-detail__btn').attributes('disabled')).toBeDefined()
-    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(true)
+    expect(wrapper.find('[data-test="bc-payload"] .code-snippet__copy').exists()).toBe(false)
     await flushPromises()
     expect(wrapper.find('[data-test="bc-load-failed"]').text()).toContain('Could not load the full event')
     expect(wrapper.text()).not.toContain('not JSON')
     expect(wrapper.find('.bc-detail__btn').attributes('disabled')).toBeDefined()
-    expect(wrapper.find('.bc-detail__code--cut').exists()).toBe(true)
+    expect(wrapper.find('[data-test="bc-payload"] .code-snippet__copy').exists()).toBe(false)
   })
 
   it('counts the shown part of a cut payload in bytes', async () => {

@@ -116,11 +116,11 @@ const copyCurl = () =>
         class="bc-detail__problems"
         :payload="payload"
       />
-      <!-- A cut preview is not copied: its copy button is hidden. -->
+      <!-- A cut preview is not copied. -->
       <CodeSnippet
-        class="bc-detail__code"
-        :class="{ 'bc-detail__code--cut': isCut }"
         :code="code"
+        :copyable="!isCut"
+        max-height="420px"
         :language="isJson ? 'json' : 'plaintext'"
         data-test="bc-payload"
       />
@@ -315,16 +315,6 @@ const copyCurl = () =>
 
 .bc-detail__note {
   @apply text-xs text-gray-600 dark:text-gray-400;
-}
-
-.bc-detail__code :deep(pre) {
-  max-height: 420px;
-  overflow: auto;
-}
-
-// The 2 KB of a preview are not copied.
-.bc-detail__code--cut :deep(.code-snippet__copy) {
-  display: none;
 }
 
 .bc-detail__changes {

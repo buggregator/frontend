@@ -12,12 +12,20 @@ const CodeHighlight = highlightPlugin.component
 type Props = {
   code?: string | Record<string, unknown> | Array<unknown> | null
   language?: string
+  // false hides the Copy button, e.g. when only a part of the value is shown.
+  copyable?: boolean
+  // CSS length; long code scrolls inside the snippet instead of growing the page.
+  maxHeight?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   language: 'plaintext',
-  code: ''
+  code: '',
+  copyable: true,
+  maxHeight: undefined
 })
+
+const codeStyle = computed(() => (props.maxHeight ? { maxHeight: props.maxHeight, overflow: 'auto' } : undefined))
 
 const isCopied = ref(false)
 
@@ -45,6 +53,7 @@ const copyCode = (): void => {
 <template>
   <div class="code-snippet">
     <button
+      v-if="copyable"
       type="button"
       class="code-snippet__copy"
       :class="{ 'code-snippet__copy--active': isCopied }"
@@ -59,6 +68,7 @@ const copyCode = (): void => {
     </button>
 
     <CodeHighlight
+      :style="codeStyle"
       :language="highlightLanguage"
       :autodetect="false"
       :code="normalizedCode"
