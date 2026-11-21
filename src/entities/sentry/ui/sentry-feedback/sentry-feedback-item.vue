@@ -20,9 +20,9 @@ const who = computed(() => props.item.name || props.item.email || 'Anonymous')
 // Only web addresses become links: the text came from a browser form.
 const pageUrl = computed(() => (/^https?:\/\//i.test(props.item.url) ? props.item.url : ''))
 
-// The error page route takes the event id without dashes.
+// The id as the SDK sent it: the server keeps the error under that uuid.
 const errorLink = computed(() =>
-  props.item.event_id ? `/sentry/event/${props.item.event_id.replace(/-/g, '')}` : ''
+  props.item.event_id ? `/sentry/event/${encodeURIComponent(props.item.event_id)}` : ''
 )
 </script>
 

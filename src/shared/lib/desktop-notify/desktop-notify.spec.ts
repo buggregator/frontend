@@ -112,6 +112,39 @@ describe('createDesktopNotifier', () => {
     expect(shown[3].title).toBe('New error in shop')
   })
 
+  // #6604 review: the count is of errors not seen yet, so a click or coming
+  // back to the tab starts it again.
+  it('starts the count again after a click on the notice', () => {
+    const { env, shown, tick } = makeEnv()
+    const notifier = createDesktopNotifier(env)
+
+    notifier.onEventReceived(sentry(exception, 'shop', 'a'), true)
+    tick(1000)
+    notifier.onEventReceived(sentry(exception, 'shop', 'b'), true)
+    shown[1].n.onclick?.()
+    tick(1000)
+    notifier.onEventReceived(sentry(exception, 'shop', 'c'), true)
+
+    expect(shown.map((s) => s.title)).toEqual(['New error in shop', '2 new errors', 'New error in shop'])
+  })
+
+  it('starts the count again when the tab is shown', () => {
+    const { env, shown, tick } = makeEnv()
+    const listeners: Record<string, () => void> = {}
+    const doc = env.document as unknown as { visibilityState: string; addEventListener: unknown }
+    doc.addEventListener = (type: string, fn: () => void) => void (listeners[type] = fn)
+    const notifier = createDesktopNotifier(env)
+
+    notifier.onEventReceived(sentry(exception, 'shop', 'a'), true)
+    doc.visibilityState = 'visible'
+    listeners.visibilitychange?.()
+    doc.visibilityState = 'hidden'
+    tick(1000)
+    notifier.onEventReceived(sentry(exception, 'shop', 'b'), true)
+
+    expect(shown.map((s) => s.title)).toEqual(['New error in shop', 'New error in shop'])
+  })
+
   it('opens the error on click and focuses the window', () => {
     const { env, shown, focusWindow } = makeEnv()
     const notifier = createDesktopNotifier(env)
@@ -150,6 +183,17 @@ describe('createDesktopNotifier', () => {
   ] as const)('requestPermission %s', async (_, permission, answer, expected) => {
     const { env } = makeEnv({ permission, answer })
     expect(await createDesktopNotifier(env).requestPermission()).toBe(expected)
+  })
+
+  // Older Safari: requestPermission() takes a callback and returns nothing.
+  it('requestPermission reads the permission when the browser returns nothing', async () => {
+    const { env } = makeEnv({ permission: 'default', answer: 'granted' })
+    const N = env.Notification as unknown as { requestPermission: () => unknown; permission: string }
+    N.requestPermission = () => {
+      N.permission = 'granted'
+      return undefined
+    }
+    expect(await createDesktopNotifier(env).requestPermission()).toBe('granted')
   })
 
   it('requestPermission answers denied without the API', async () => {

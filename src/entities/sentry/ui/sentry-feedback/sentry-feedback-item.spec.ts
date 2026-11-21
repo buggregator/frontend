@@ -35,9 +35,10 @@ describe('SentryFeedbackItem', () => {
     expect(mountItem({ name: '', email: '' }).text()).toContain('Anonymous')
   })
 
-  it('links the error without dashes in the id on the Feedback tab', () => {
+  // The server keeps the error's uuid as the SDK sent it, dashes and all.
+  it('links the error with its id as sent on the Feedback tab', () => {
     const w = mountItem({}, true)
-    expect(w.findComponent(RouterLinkStub).props('to')).toBe('/sentry/event/aaaabbbb')
+    expect(w.findComponent(RouterLinkStub).props('to')).toBe('/sentry/event/aaaa-bbbb')
   })
 
   it('says when feedback came without an error', () => {

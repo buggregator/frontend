@@ -12,9 +12,9 @@ export type DesktopNotifyEnv = {
   Notification?: {
     new (title: string, options?: NotificationOptions): NotificationLike
     readonly permission: NotifyPermission
-    requestPermission: () => Promise<NotifyPermission>
+    requestPermission: () => Promise<NotifyPermission | undefined>
   }
-  document: Pick<Document, 'visibilityState' | 'hasFocus'>
+  document: Pick<Document, 'visibilityState' | 'hasFocus'> & Partial<Pick<Document, 'addEventListener'>>
   focusWindow: () => void
   now: () => number
 }
@@ -86,7 +86,8 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
     if (!N) return 'denied'
     if (N.permission !== 'default') return N.permission
     try {
-      return await N.requestPermission()
+      // Older Safari takes a callback and returns nothing: read the answer.
+      return (await N.requestPermission()) ?? N.permission
     } catch {
       return N.permission
     }
@@ -94,12 +95,23 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
 
   const isAway = () => env.document.visibilityState === 'hidden' || !env.document.hasFocus()
 
+  // «N new errors» counts errors not seen yet: back in the tab, or a click on
+  // the notice, starts the count again.
+  const resetBurst = () => {
+    burstCount = 0
+    lastShownAt = -Infinity
+  }
+  env.document.addEventListener?.('visibilitychange', () => {
+    if (env.document.visibilityState === 'visible') resetBurst()
+  })
+
   const show = (title: string, body: string, uuid?: string) => {
     if (!N) return
     try {
       // One tag: a newer notice replaces the older one instead of stacking up.
       const n = new N(title, { body, tag: TAG, icon: '/favicon/android-chrome-192x192.png' })
       n.onclick = () => {
+        resetBurst()
         env.focusWindow()
         if (uuid) open(uuid)
         n.close()

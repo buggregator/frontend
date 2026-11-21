@@ -84,7 +84,8 @@ export const useEventsStore = defineStore("eventsStore", {
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
     countsMap: new Map<string, number>(),
-    cachedIds: getStoredCachedIds() || createInitialCachedIds(),
+    // Over the defaults: a map saved by an older version lacks the newer types (csp).
+    cachedIds: { ...createInitialCachedIds(), ...getStoredCachedIds() },
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],

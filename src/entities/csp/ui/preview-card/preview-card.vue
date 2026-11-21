@@ -35,7 +35,7 @@ const page = computed(() => pageText(reports.value[0]?.url))
       <ul class="csp-card__list">
         <li
           v-for="(r, i) in shown"
-          :key="r.id || i"
+          :key="`${i}-${r.id}`"
           class="csp-card__row"
         >
           <span class="csp-card__title">{{ reportTitle(r) }}</span>

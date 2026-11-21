@@ -61,7 +61,7 @@ const bodyJson = (r: CspReport) => JSON.stringify(r.body ?? r, null, 2)
     <div class="csp-page__list">
       <section
         v-for="(r, i) in reports"
-        :key="r.id || i"
+        :key="`${i}-${r.id}`"
         class="csp-report"
         data-test="csp-report"
       >

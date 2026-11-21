@@ -454,7 +454,8 @@
       "docs": "",
       "steps": [
         "Add report-uri http://{host}:{http_port}/csp/{project} to your Content-Security-Policy (or Content-Security-Policy-Report-Only) header.",
-        "For the Reporting API, name the same address in a Reporting-Endpoints header and add report-to <name> to the policy. Deprecation and intervention reports land here too.",
+        "For the Reporting API, name the same address in a Reporting-Endpoints header and add report-to <name> to the policy. Name it default too to get deprecation and intervention reports: browsers send those only to the endpoint called default.",
+        "The Reporting API works only on secure pages: both your app and the Buggregator address must be https or localhost. On plain http the browser drops the reports without a word; use report-uri there.",
         "Any POST with Content-Type application/csp-report or application/reports+json is caught on any path, so an existing report URL also works when it points at Buggregator.",
         "{host} must be reachable from the browser that opens your app: usually localhost."
       ],
@@ -474,8 +475,8 @@
           "label": "Reporting API",
           "file": "response headers",
           "lang": "http",
-          "code": "Reporting-Endpoints: buggregator=\"http://{host}:{http_port}/csp/{project}\"\nContent-Security-Policy: default-src 'self'; report-to buggregator",
-          "hint": null,
+          "code": "Reporting-Endpoints: buggregator=\"http://{host}:{http_port}/csp/{project}\", default=\"http://{host}:{http_port}/csp/{project}\"\nContent-Security-Policy: default-src 'self'; report-to buggregator",
+          "hint": "Needs https or localhost on both sides. default catches deprecation and intervention reports.",
           "checked": false,
           "note": null
         },
