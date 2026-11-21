@@ -47,4 +47,16 @@ describe('BroadcastChannelList', () => {
     expect(wrapper.emitted('select')).toEqual([['*']])
     wrapper.unmount()
   })
+
+  it('roving tab stop: tabindex 0 follows the focused row', async () => {
+    const wrapper = render('private-orders.42')
+    const rows = () => wrapper.findAll<HTMLButtonElement>('[data-channel-row]')
+    await rows()[1].trigger('keydown', { key: 'ArrowDown' })
+    expect(rows().map((r) => r.attributes('tabindex'))).toEqual(['-1', '-1', '0', ...Array(channels.length - 2).fill('-1')])
+    // a new pick moves the tab stop to it
+    await wrapper.setProps({ selectedId: '*' })
+    expect(rows()[0].attributes('tabindex')).toBe('0')
+    expect(rows().filter((r) => r.attributes('tabindex') === '0')).toHaveLength(1)
+    wrapper.unmount()
+  })
 })

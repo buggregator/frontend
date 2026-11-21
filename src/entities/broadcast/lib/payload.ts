@@ -6,7 +6,9 @@ export const hasJsonData = (p: BroadcastPayload): boolean => 'data_json' in p
 
 // A preview keeps the first 2 KB of the data (server preview.go); the full
 // event has the rest.
-export const isDataCut = (p: BroadcastPayload): boolean => encoder.encode(p.data ?? '').length < p.size
+export const dataBytes = (data: string): number => encoder.encode(data ?? '').length
+
+export const isDataCut = (p: BroadcastPayload): boolean => dataBytes(p.data) < p.size
 
 export type BroadcastProblemTone = 'error' | 'warning' | 'info'
 

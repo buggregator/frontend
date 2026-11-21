@@ -60,12 +60,11 @@ const shortName = computed(() => p.value.name.split('\\').pop() || p.value.name)
       >+{{ moreChannels }}</span>
     </span>
     <span class="bc-row__data">
-      <span
-        v-if="worst"
+      <template v-if="worst"><span
         class="bc-row__problem"
         :class="`bc-row__problem--${worst}`"
-        :aria-label="worst"
-      >{{ PROBLEM_ICON[worst] }}</span>{{ preview }}
+        aria-hidden="true"
+      >{{ PROBLEM_ICON[worst] }}</span><span class="sr-only">{{ worst }}:</span></template>{{ preview }}
     </span>
     <span
       class="bc-row__size"

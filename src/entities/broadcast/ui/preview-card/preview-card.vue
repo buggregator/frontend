@@ -43,10 +43,7 @@ const forwarded = computed(() => {
           class="bc-card__name"
           :title="p.name"
         >{{ shortName }}</b>
-        <span
-          class="bc-card__arrow"
-          aria-label="to"
-        >→</span>
+        <span class="bc-card__arrow"><span aria-hidden="true">→</span><span class="sr-only">to</span></span>
         <BroadcastChannelTag
           v-for="c in channels"
           :key="c"

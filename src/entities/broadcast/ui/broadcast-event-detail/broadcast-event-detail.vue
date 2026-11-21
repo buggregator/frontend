@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
 import { formatBytes, formatClock } from '../../lib/format'
 import { jsonShort } from '../../lib/json-lines'
-import { buildBroadcastCurl, hasJsonData, isDataCut } from '../../lib/payload'
+import { buildBroadcastCurl, dataBytes, hasJsonData, isDataCut } from '../../lib/payload'
 import { diffPayload, lostValuePaths } from '../../lib/payload-diff'
 import type { BroadcastEvent, BroadcastPayload } from '../../types'
 import { BroadcastChannelTag } from '../broadcast-channel-tag'
@@ -39,13 +39,29 @@ const load = async (e: BroadcastEvent | null) => {
     full[e.uuid] = 'failed'
   }
 }
-onMounted(() => Promise.all([load(props.event), load(props.previous)]))
+// Started in setup (no first render that takes the cut data for the event),
+// and again for every event or previous one the row is given.
+watch(
+  () => [props.event, props.previous] as const,
+  ([event, previous]) => {
+    load(event)
+    load(previous)
+  },
+  { immediate: true }
+)
 
 const payloadOf = (e: BroadcastEvent): BroadcastPayload => {
   const f = full[e.uuid]
   return typeof f === 'object' ? f : e.payload
 }
-const isLoading = computed(() => full[props.event.uuid] === 'loading' || (props.previous && full[props.previous.uuid] === 'loading'))
+const isLoading = computed(
+  () => full[props.event.uuid] === 'loading' || (!!props.previous && full[props.previous.uuid] === 'loading')
+)
+const loadFailed = computed(
+  () => full[props.event.uuid] === 'failed' || (!!props.previous && full[props.previous.uuid] === 'failed')
+)
+// Only the whole data is copied: not the 2 KB of a preview.
+const canCopy = computed(() => !isDataCut(payload.value))
 
 const payload = computed(() => payloadOf(props.event))
 const isJson = computed(() => hasJsonData(payload.value))
@@ -113,7 +129,7 @@ const copyCurl = () =>
         v-if="isCut && !isLoading"
         class="bc-detail__faint"
       >
-        The first {{ formatBytes(payload.data.length) }} of {{ formatBytes(payload.size) }}: the full event did not load.
+        The first {{ formatBytes(dataBytes(payload.data)) }} of {{ formatBytes(payload.size) }}: the full event did not load.
       </p>
     </section>
 
@@ -140,6 +156,13 @@ const copyCurl = () =>
         The first {{ name }}<template v-if="channel">
           on {{ channel }}
         </template>: nothing to compare with yet.
+      </p>
+      <p
+        v-else-if="loadFailed"
+        class="bc-detail__note"
+        data-test="bc-load-failed"
+      >
+        Could not load the full event: only the first 2 KB are here, nothing to compare.
       </p>
       <p
         v-else-if="!canCompare"
@@ -243,6 +266,7 @@ const copyCurl = () =>
         <button
           type="button"
           class="bc-detail__btn"
+          :disabled="!canCopy"
           @click="copyPayload"
         >
           Copy payload
@@ -250,6 +274,7 @@ const copyCurl = () =>
         <button
           type="button"
           class="bc-detail__btn"
+          :disabled="!canCopy"
           @click="copyCurl"
         >
           Copy as cURL
@@ -398,6 +423,10 @@ const copyCurl = () =>
   &:focus-visible {
     outline: 2px solid var(--bc-focus);
     outline-offset: 2px;
+  }
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
   }
 
   @media (max-width: 639px) {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ref } from 'vue'
 import { broadcastMocks, broadcastMultiChannelMock, broadcastOrderStatusMock, broadcastOrderStatusPrevMock } from '../mocks'
+import type { BroadcastEvent } from '../types'
 import { ALL_CHANNELS, listKeyTarget, useBroadcastConsole } from './use-broadcast-console'
 
 describe('useBroadcastConsole', () => {
@@ -70,5 +71,39 @@ describe('listKeyTarget', () => {
     expect(listKeyTarget('End', 0, 3)).toBe(2)
     expect(listKeyTarget('Enter', 0, 3)).toBeNull()
     expect(listKeyTarget('ArrowDown', 0, 0)).toBeNull()
+  })
+})
+
+describe('useBroadcastConsole: folding keeps the pick (#367 review)', () => {
+  const ev = (uuid: string, t: number, channels: string[]): BroadcastEvent => ({
+    uuid,
+    type: 'broadcast',
+    project: null,
+    timestamp: t,
+    payload: { app_id: 'a', name: 'E', channels, channel_kinds: [], data: '{}', signature: 'not_checked', size: 2, warnings: [] }
+  })
+
+  it('a picked channel stays picked when its family folds into x.*', () => {
+    const events = ref<BroadcastEvent[]>([ev('1', 1, ['x.1'])])
+    const c = useBroadcastConsole(events)
+    c.select('x.1')
+    expect(c.selected.value?.id).toBe('x.1')
+    events.value = [...events.value, ...[2, 3, 4, 5].map((n) => ev(`e${n}`, n, [`x.${n}`]))]
+    expect(c.hasSelection.value).toBe(true)
+    expect(c.selected.value?.id).toBe('x.*')
+    expect(c.stream.value.length).toBe(5)
+    // unfolds again: back to the channel picked
+    events.value = events.value.filter((e) => e.uuid === '1' || e.uuid === 'e2')
+    expect(c.selected.value?.id).toBe('x.1')
+  })
+
+  it('a picked family falls back to its newest channel when it unfolds', () => {
+    const events = ref<BroadcastEvent[]>([1, 2, 3, 4, 5].map((n) => ev(`e${n}`, n, [`x.${n}`])))
+    const c = useBroadcastConsole(events)
+    c.select('x.*')
+    expect(c.stream.value.length).toBe(5)
+    events.value = events.value.slice(0, 2)
+    expect(c.hasSelection.value).toBe(true)
+    expect(c.selected.value?.id).toBe('x.2')
   })
 })

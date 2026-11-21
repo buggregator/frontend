@@ -11,12 +11,13 @@ import BroadcastPage from './broadcast-page.vue'
 const items = ref<BroadcastEvent[]>([])
 const idsByType = ref<Record<string, string[]>>({ broadcast: [] })
 const getAll = vi.fn()
+const getItem = vi.fn()
 const route = reactive<{ query: Record<string, string> }>({ query: {} })
 const replace = vi.fn()
 
 vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ replace }) }))
 vi.mock('@/shared/lib/use-events', () => ({
-  useEvents: () => ({ events: { items, getAll, getItem: vi.fn() }, cachedEvents: { idsByType } })
+  useEvents: () => ({ events: { items, getAll, getItem }, cachedEvents: { idsByType } })
 }))
 // The page's frame and the setup help have tests of their own.
 vi.mock('@/widgets/ui', () => ({
@@ -50,6 +51,7 @@ describe('BroadcastPage (channel console)', () => {
     route.query = {}
     replace.mockReset()
     getAll.mockReset()
+    getItem.mockReset()
     useEventsStore().listState = 'ready'
     useConnectionStore().addWSConnection()
     warn = vi.spyOn(console, 'warn')
@@ -144,5 +146,73 @@ describe('BroadcastPage (channel console)', () => {
     const wrapper = await render()
     expect(wrapper.findAll('.bc-row')).toHaveLength(1)
     expect(wrapper.find('.bc-page__live').text()).toBe('Paused')
+  })
+
+  const openFirst = async (wrapper: Awaited<ReturnType<typeof render>>) => {
+    await wrapper.findAll('[data-channel-row]').find((r) => r.text().includes('private-orders.42'))!.trigger('click')
+    await settle()
+    await wrapper.find('.bc-row').trigger('click')
+    await settle()
+  }
+
+  it('Esc folds the open event and gives the focus back to its row', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    await openFirst(wrapper)
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await settle()
+    expect(wrapper.find('.bc-row--open').exists()).toBe(false)
+    expect(document.activeElement).toBe(wrapper.find('.bc-row').element)
+  })
+
+  it('Esc in a text field or one already handled does not fold the event', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    await openFirst(wrapper)
+    const input = wrapper.find('.bc-channels__input').element
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    const handled = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })
+    handled.preventDefault()
+    window.dispatchEvent(handled)
+    await settle()
+    expect(wrapper.find('.bc-row--open').exists()).toBe(true)
+  })
+
+  it('?event= of an event not loaded: fetches it and opens it', async () => {
+    items.value = broadcastMocks.filter((e) => e.uuid !== broadcastOrderStatusMock.uuid)
+    route.query = { event: broadcastOrderStatusMock.uuid }
+    getItem.mockResolvedValue(broadcastOrderStatusMock)
+    const wrapper = await render()
+    await settle()
+    expect(getItem).toHaveBeenCalledWith(broadcastOrderStatusMock.uuid)
+    expect(wrapper.find('.bc-row--open .bc-row__name').text()).toBe('OrderStatusUpdated')
+  })
+
+  it('?event= that is not a broadcast, or gone: says so', async () => {
+    items.value = broadcastMocks
+    route.query = { event: 'nope' }
+    getItem.mockResolvedValue(null)
+    const wrapper = await render()
+    await settle()
+    expect(wrapper.find('[data-test="bc-event-missing"]').text()).toContain('not found')
+    expect(wrapper.find('[data-test="bc-no-channel"]').exists()).toBe(true)
+  })
+
+  it('a picked channel stays picked when its family folds (#367 review)', async () => {
+    const ev = (uuid: string, t: number, channel: string): BroadcastEvent => ({
+      ...broadcastOrderStatusMock,
+      uuid,
+      timestamp: t,
+      payload: { ...broadcastOrderStatusMock.payload, channels: [channel] }
+    })
+    items.value = [ev('u1', 1, 'private-App.Models.User.1')]
+    route.query = { channel: 'private-App.Models.User.1' }
+    const wrapper = await render()
+    items.value = [...items.value, ...[2, 3, 4, 5].map((n) => ev(`u${n}`, n, `private-App.Models.User.${n}`))]
+    await settle()
+    expect(wrapper.find('[data-test="bc-no-channel"]').exists()).toBe(false)
+    expect(wrapper.find('.bc-page__stream-title').text()).toBe('private-App.Models.User.*')
+    expect(wrapper.find('[aria-current="true"]').text()).toContain('private-App.Models.User.*')
+    expect(wrapper.findAll('.bc-row')).toHaveLength(5)
   })
 })

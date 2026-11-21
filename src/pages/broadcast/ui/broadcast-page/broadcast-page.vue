@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { refDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   LayoutBase,
@@ -41,9 +41,14 @@ const { searchQuery, listState, listError } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { values } = useSetupValues()
 
-const all = computed(
-  () => events.items.value.filter((e) => e.type === TYPE) as BroadcastEvent[]
-)
+// An event a link opened that the loaded list does not have (older than the
+// list, or another period): fetched by uuid and kept here.
+const fetched = ref<BroadcastEvent[]>([])
+const all = computed(() => {
+  const list = events.items.value.filter((e) => e.type === TYPE) as BroadcastEvent[]
+  const known = new Set(list.map((e) => e.uuid))
+  return [...list, ...fetched.value.filter((e) => !known.has(e.uuid))]
+})
 // Pause (the header's button) keeps the events that were on screen.
 const isPaused = computed(() => (cachedEvents.idsByType.value[TYPE]?.length ?? 0) > 0)
 const shown = computed(() => {
@@ -57,6 +62,7 @@ const consoleState = useBroadcastConsole(shown, query)
 const {
   selectedId,
   selected,
+  selectedRowId,
   isAll,
   hasSelection,
   channelFilter,
@@ -83,10 +89,35 @@ const view = computed(() => {
 const pendingEvent = ref(typeof route.query.event === 'string' ? route.query.event : '')
 if (typeof route.query.channel === 'string') selectedId.value = route.query.channel
 
-const tryOpenPending = () => {
-  if (pendingEvent.value && openEvent(pendingEvent.value)) pendingEvent.value = ''
+const missingEvent = ref('')
+let fetching = ''
+const fetchPending = async (uuid: string) => {
+  fetching = uuid
+  let found: BroadcastEvent | null = null
+  try {
+    const got = await events.getItem(uuid)
+    if (got?.type === TYPE) found = got as BroadcastEvent
+  } catch {
+    // a failed load reads as not found
+  }
+  if (pendingEvent.value !== uuid) return
+  if (found) fetched.value = [...fetched.value, found]
+  else {
+    missingEvent.value = uuid
+    pendingEvent.value = ''
+  }
 }
-watch(all, tryOpenPending, { immediate: true })
+const tryOpenPending = () => {
+  const uuid = pendingEvent.value
+  if (!uuid) return
+  if (openEvent(uuid)) {
+    pendingEvent.value = ''
+    return
+  }
+  // not among the loaded events once the list is in: ask the server
+  if (listState.value !== 'loading' && fetching !== uuid) fetchPending(uuid)
+}
+watch([all, listState], tryOpenPending, { immediate: true })
 
 watch(selectedId, (id) => {
   const channel = id ?? undefined
@@ -96,6 +127,7 @@ watch(selectedId, (id) => {
 
 const pick = (id: string | null) => {
   pendingEvent.value = ''
+  missingEvent.value = ''
   select(id)
 }
 
@@ -123,9 +155,17 @@ const detailId = (uuid: string) => `bc-detail-${uuid}`
 // ---- empty state help ------------------------------------------------------------
 const isHelpOpen = ref(false)
 
-// Esc folds the open event back.
-const onKey = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && expandedId.value && !isHelpOpen.value) expandedId.value = null
+// Esc folds the open event back and returns the focus to its row. Not an Esc
+// a field or a dialog already took (search, filter, shortcuts overlay).
+const TEXT_FIELDS = new Set(['INPUT', 'TEXTAREA', 'SELECT'])
+const onKey = async (e: KeyboardEvent) => {
+  if (e.key !== 'Escape' || e.defaultPrevented || !expandedId.value || isHelpOpen.value) return
+  const target = e.target as HTMLElement | null
+  if (target && (TEXT_FIELDS.has(target.tagName) || target.isContentEditable)) return
+  const id = expandedId.value
+  expandedId.value = null
+  await nextTick()
+  document.querySelector<HTMLElement>(`[aria-controls="${detailId(id)}"]`)?.focus()
 }
 onMounted(() => window.addEventListener('keydown', onKey))
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
@@ -189,6 +229,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           @action="events.getAll()"
         />
 
+        <p
+          v-if="missingEvent"
+          class="bc-page__missing"
+          role="status"
+          data-test="bc-event-missing"
+        >
+          Event {{ missingEvent }} not found among the broadcasts: deleted, or not a broadcast.
+        </p>
+
         <!-- Phones: the channels are a select above the stream. -->
         <div class="bc-page__phone-pick">
           <label
@@ -198,7 +247,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           <select
             id="bc-channel-select"
             class="bc-page__select"
-            :value="selectedId ?? ''"
+            :value="selectedRowId ?? ''"
             @change="onPhoneSelect"
           >
             <option
@@ -225,7 +274,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
             <BroadcastChannelList
               v-model:filter="channelFilter"
               :channels="visibleChannels"
-              :selected-id="selectedId"
+              :selected-id="selectedRowId"
               :total-events="shown.length"
               :total-channels="channels.length"
               @select="pick"
@@ -364,6 +413,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .bc-page__select {
   @apply w-full h-11 px-2 rounded border font-mono text-sm;
   @apply bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100;
+}
+
+.bc-page__missing {
+  @apply px-4 py-2 text-xs border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800;
 }
 
 .bc-page__stream {

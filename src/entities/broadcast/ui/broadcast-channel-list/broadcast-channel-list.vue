@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import type { BroadcastChannel } from '../../lib/channels'
 import { formatClock } from '../../lib/format'
 import { broadcastProblems, channelKindLabel, PROBLEM_ICON } from '../../lib/payload'
@@ -26,16 +26,19 @@ const rows = computed<Row[]>(() => [
   ...props.channels.map((channel) => ({ id: channel.id, channel }))
 ])
 
-const tabStop = computed(() => {
-  const i = rows.value.findIndex((r) => r.id === props.selectedId)
-  return i < 0 ? 0 : i
-})
+// The one tab stop follows the focus (roving tabindex); a new pick moves it
+// to the picked row.
+const pickedIndex = () => Math.max(0, rows.value.findIndex((r) => r.id === props.selectedId))
+const focusIndex = ref(pickedIndex())
+watch(() => props.selectedId, () => (focusIndex.value = pickedIndex()))
+const tabStop = computed(() => Math.min(focusIndex.value, rows.value.length - 1))
 
 const list = ref<HTMLElement | null>(null)
 const onKey = async (e: KeyboardEvent, index: number) => {
   const next = listKeyTarget(e.key, index, rows.value.length)
   if (next === null) return
   e.preventDefault()
+  focusIndex.value = next
   await nextTick()
   list.value?.querySelectorAll<HTMLElement>('[data-channel-row]')[next]?.focus()
 }
@@ -89,6 +92,7 @@ const lastLine = (c: BroadcastChannel) => {
           data-channel-row
           @click="emit('select', row.id)"
           @keydown="onKey($event, i)"
+          @focus="focusIndex = i"
         >
           <template v-if="row.channel">
             <span class="bc-channels__kind">{{ channelKindLabel(row.channel.kind) }}</span>

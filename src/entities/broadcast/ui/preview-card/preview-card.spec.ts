@@ -52,4 +52,11 @@ describe('broadcast PreviewCard', () => {
     ])
     expect(problems[0].text()).toBe('✕ data is not JSON: Laravel Echo cannot parse it')
   })
+
+  it('the arrow is read as words, not by an aria-label on a span', () => {
+    const arrow = render(broadcastMultiChannelMock).find('.bc-card__arrow')
+    expect(arrow.attributes('aria-label')).toBeUndefined()
+    expect(arrow.find('[aria-hidden="true"]').text()).toBe('→')
+    expect(arrow.find('.sr-only').text()).toBe('to')
+  })
 })

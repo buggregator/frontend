@@ -33,7 +33,26 @@ export const useBroadcastConsole = (events: Ref<BroadcastEvent[]>, query: Ref<st
   })
 
   const isAll = computed(() => selectedId.value === ALL_CHANNELS)
-  const selected = computed(() => channels.value.find((c) => c.id === selectedId.value) ?? null)
+  // The pick survives folding: a channel inside a folded family selects the
+  // family row; a picked family that unfolded selects its newest channel. The
+  // pick itself stays as made, so the row comes back when it unfolds again.
+  const selected = computed<BroadcastChannel | null>(() => {
+    const id = selectedId.value
+    if (!id || id === ALL_CHANNELS) return null
+    const list = channels.value
+    const exact = list.find((c) => c.id === id)
+    if (exact) return exact
+    const folded = list.find((c) => c.channels.includes(id))
+    if (folded) return folded
+    if (id.endsWith('*')) {
+      const prefix = id.slice(0, -1)
+      // newest first: the first match is the newest channel of the family
+      return list.find((c) => c.channels.some((n) => n.startsWith(prefix) && /^\d+$/.test(n.slice(prefix.length)))) ?? null
+    }
+    return null
+  })
+  // The row the list and the select show as picked.
+  const selectedRowId = computed(() => (isAll.value ? ALL_CHANNELS : (selected.value?.id ?? null)))
   // A channel that went away (cleared, deleted) is no selection.
   const hasSelection = computed(() => isAll.value || !!selected.value)
 
@@ -73,6 +92,7 @@ export const useBroadcastConsole = (events: Ref<BroadcastEvent[]>, query: Ref<st
   return {
     selectedId,
     selected,
+    selectedRowId,
     isAll,
     hasSelection,
     channelFilter,
