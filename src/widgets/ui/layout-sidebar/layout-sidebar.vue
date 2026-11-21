@@ -6,7 +6,7 @@ import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
-import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS } from '@/shared/constants'
+import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS, typePageLink } from '@/shared/constants'
 import { isCommandPaletteOpen, paletteKeyCaption } from '@/shared/lib/command-palette'
 import { useEvents } from '@/shared/lib/use-events'
 import { useMenuKeys } from '@/shared/lib/use-menu-keys'
@@ -451,11 +451,7 @@ const linkLabel = (type: EventType) =>
           <RouterLink
             v-for="type in group.types"
             :key="type"
-            :to="
-              type === 'sentry'
-                ? '/sentry/exceptions'
-                : { name: RouteName.EventList, params: { type } }
-            "
+            :to="typePageLink(type)"
             :class="{
               'layout-sidebar__link--active': isTypeActive(type),
               'layout-sidebar__link--empty': !hasEvents(type)

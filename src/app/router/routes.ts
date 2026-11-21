@@ -15,6 +15,7 @@ const ProfilerComparePage = () =>
   import('@/pages/profiler-compare').then((m) => m.ProfilerComparePage)
 const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
 const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
+const BroadcastPage = () => import('@/pages/broadcast').then((m) => m.BroadcastPage)
 const sentryPages = () => import('@/pages/sentry')
 const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
 const SentryExceptionsPage = () => sentryPages().then((m) => m.SentryExceptionsPage)
@@ -79,6 +80,21 @@ export const routes = [
     meta: {
       middleware: [auth]
     }
+  },
+  // The channel console (#6614). `type` stays a param so the menu marks it
+  // active; the regex ranks it above /:type.
+  {
+    path: '/:type(broadcast)',
+    name: RouteName.Broadcast,
+    component: BroadcastPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  // No page per broadcast: a feed card or a link opens the console on it.
+  {
+    path: '/:type(broadcast)/:id',
+    redirect: (to: RouteLocation) => ({ path: '/broadcast', query: { event: to.params.id } })
   },
   {
     path: '/:type',

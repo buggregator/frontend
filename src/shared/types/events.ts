@@ -10,6 +10,7 @@ export enum EventTypes {
   HttpDump = "http-dump",
   RayDump = "ray",
   Sms = "sms",
+  Broadcast = "broadcast",
   SentryTrace = "sentry-trace",
   SentryLog = "sentry-log",
   XdebugTrace = "xdebug-trace",

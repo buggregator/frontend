@@ -9,6 +9,7 @@ export enum RouteName {
   Metrics = 'metrics',
   MockServer = 'mock-server',
   Xdebug = 'xdebug',
+  Broadcast = 'broadcast',
   NotFound = 'not-found',
   SentryExceptions = 'sentry-exceptions',
   SentryExceptionDetail = 'sentry-exception-detail',

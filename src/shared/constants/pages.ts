@@ -1,4 +1,5 @@
-import { EventTypes, type OneOfValues } from "../types";
+import type { RouteLocationRaw } from 'vue-router'
+import { EventTypes, RouteName, type OneOfValues } from "../types";
 
 export const ALL_EVENT_TYPES = 'all-events' as const
 
@@ -68,6 +69,12 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     iconName: 'sms',
     eventType: EventTypes.Sms,
   },
+  [PAGE_TYPES.Broadcast]: {
+    title: 'Broadcast',
+    sidebarTitle: 'Broadcast',
+    iconName: 'broadcast',
+    eventType: EventTypes.Broadcast,
+  },
   [PAGE_TYPES.SentryTrace]: {
     title: 'Sentry Traces',
     sidebarTitle: 'Sentry traces',
@@ -86,4 +93,12 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     iconName: 'trace',
     eventType: EventTypes.XdebugTrace,
   }
+}
+
+// Where a type's menu entry leads. Sentry and Broadcast have pages of their
+// own; a named EventList link would open the plain feed for them.
+export const typePageLink = (type: string): RouteLocationRaw => {
+  if (type === EventTypes.Sentry) return '/sentry/exceptions'
+  if (type === EventTypes.Broadcast) return '/broadcast'
+  return { name: RouteName.EventList, params: { type } }
 }
