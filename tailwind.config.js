@@ -20,7 +20,11 @@ export default {
     './src/app.vue',
     // Setup help (#5941) loads on demand and styles only its own classes via
     // @apply: scanning it would add its utilities to the first-load CSS.
-    '!./src/widgets/ui/setup-guide/**'
+    '!./src/widgets/ui/setup-guide/**',
+    // The broadcast console and its feed card load on demand and style their
+    // own classes (#6614), the same way.
+    '!./src/entities/broadcast/ui/**',
+    '!./src/pages/broadcast/**'
   ],
   variants: {
     extend: {

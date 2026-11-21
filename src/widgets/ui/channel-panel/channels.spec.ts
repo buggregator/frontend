@@ -31,7 +31,7 @@ describe('buildChannelGroups', () => {
     expect(ids(buildChannelGroups(input()))).toEqual([
       ['Errors & performance', ['sentry', 'profiler', 'inspector']],
       ['Dumps', ['ray', 'http-dump', 'var-dump', 'xdebug-trace']],
-      ['Mail & logs', ['smtp', 'sms', 'monolog']],
+      ['Mail & logs', ['smtp', 'sms', 'broadcast', 'monolog']],
       ['Tools', ['http-proxy', 'mock-server', 'xdebug']]
     ])
   })
@@ -44,6 +44,7 @@ describe('buildChannelGroups', () => {
     expect(addr['var-dump']).toBe('tcp://localhost:9912')
     expect(addr.ray).toBe('ray:shop@localhost:8000')
     expect(addr['http-proxy']).toBe('http://localhost:8080')
+    expect(addr.broadcast).toBe('http://localhost:8000/apps/…/events')
   })
 
   it('leaves out sections hidden in Settings › Menu and types the server does not have', () => {
@@ -66,7 +67,7 @@ describe('buildChannelGroups', () => {
   })
 
   it('drops a group with no cards', () => {
-    const groups = buildChannelGroups(input({ hidden: ['smtp', 'sms', 'monolog'] }))
+    const groups = buildChannelGroups(input({ hidden: ['smtp', 'sms', 'broadcast', 'monolog'] }))
     expect(groups.map((g) => g.title)).not.toContain('Mail & logs')
   })
 
@@ -111,9 +112,11 @@ describe('buildChannelGroups', () => {
     const all = buildChannelGroups(input()).flatMap((g) => g.channels)
     const to = Object.fromEntries(all.map((c) => [c.id, c.to]))
     expect(to.sentry).toBe('/sentry/exceptions')
+    // the channel console is its own page (#6614)
+    expect(to.broadcast).toBe('/broadcast')
     expect(to.smtp).toEqual({ name: 'event-list', params: { type: 'smtp' } })
     expect(to['mock-server']).toEqual({ name: 'mock-server' })
     expect(to['http-proxy']).toBeNull()
-    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(10)
+    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(11)
   })
 })

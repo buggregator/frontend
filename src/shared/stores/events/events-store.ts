@@ -59,6 +59,7 @@ const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.Profiler]: [] as EventId[],
   [PAGE_TYPES.Smtp]: [] as EventId[],
   [PAGE_TYPES.Sms]: [] as EventId[],
+  [PAGE_TYPES.Broadcast]: [] as EventId[],
   [PAGE_TYPES.RayDump]: [] as EventId[],
   [PAGE_TYPES.VarDump]: [] as EventId[],
   [PAGE_TYPES.HttpDump]: [] as EventId[],
@@ -83,7 +84,8 @@ export const useEventsStore = defineStore("eventsStore", {
     events: [] as ServerEvent<unknown>[],
     searchQuery: '' as string,
     countsMap: new Map<string, number>(),
-    cachedIds: getStoredCachedIds() || createInitialCachedIds(),
+    // Merged: a map stored before a type was added lacks its key.
+    cachedIds: { ...createInitialCachedIds(), ...getStoredCachedIds() },
     lockedIds: getStoredLockedIds() || [],
     projects: {
       available: [] as TProjects['data'],

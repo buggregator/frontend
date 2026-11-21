@@ -9,11 +9,14 @@ import { KeyHints } from '../key-hints'
 type Props = {
   placeholder?: string
   label?: string
+  // false: a secondary filter box; «/» stays with the page's main search.
+  shortcut?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Search events...',
-  label: 'Search events'
+  label: 'Search events',
+  shortcut: true
 })
 
 const model = defineModel<string>({ default: '' })
@@ -46,10 +49,12 @@ const onInputKeydown = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
+  if (!props.shortcut) return
   document.addEventListener('keydown', onKeydown)
   mountedSearchBoxes.value++
 })
 onUnmounted(() => {
+  if (!props.shortcut) return
   document.removeEventListener('keydown', onKeydown)
   mountedSearchBoxes.value--
 })
@@ -90,13 +95,13 @@ onUnmounted(() => {
     />
 
     <kbd
-      v-if="!model && !isFocused"
+      v-if="shortcut && !model && !isFocused"
       class="search-bar__shortcut"
       title="Press / to search"
     >/</kbd>
 
     <button
-      v-else
+      v-else-if="model || isFocused"
       class="search-bar__clear"
       title="Clear search (Escape)"
       aria-label="Clear search"

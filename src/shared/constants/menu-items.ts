@@ -21,7 +21,7 @@ export const MENU_EVENT_GROUPS: { id: string; title: string; types: EventTypes[]
   {
     id: 'mail-logs',
     title: 'Mail & logs',
-    types: [EventTypes.Smtp, EventTypes.Sms, EventTypes.Monolog]
+    types: [EventTypes.Smtp, EventTypes.Sms, EventTypes.Broadcast, EventTypes.Monolog]
   }
 ]
 
