@@ -192,3 +192,16 @@ export const Disabled: StoryObj<typeof PauseButton> = {
 5. Для страниц: `parameters: { layout: "fullscreen" }`
 6. Для событий: `argTypes` с `action()` из `storybook/actions`
 7. Для сложных данных: использовать моки из `mocks/` директории entity
+
+## Переиспользование компонентов (правило для нового UI и для ревью)
+
+Сначала переиспользуй, потом пиши новое. Перед новым элементом проверь `src/shared/ui`, `src/widgets/ui` и `setup-help.json`.
+
+- JSON и код — через `CodeSnippet` или `JsonTreeView`, никогда голый `<pre>`.
+- Пустой экран раздела (первый запуск) — `<SetupGuide section-id="…">` из слоя страницы, как в Sentry Exceptions. Текст справки — в `setup-help.json`.
+- «Ничего не найдено» и ошибки — `StatusPanel`; загрузка — `SkeletonLoader`.
+- Списки «название — значение» — `TableBase` / `TableBaseRow`; блоки с заголовком — `EventDetailSection`; поле фильтра — `SearchBar`; шапка страницы события — `EventDetailLayout`.
+- Размеры и длительности — `formatFileSize`, `formatDuration`; фокус в диалоге — `useDialogFocus`.
+- Общему компоненту не хватает возможности — добавь ему проп (с тестом) и напиши об этом в PR. Копию в папку нового раздела не делай.
+
+Ревьюер проверяет это правило в каждом PR с новым UI.
