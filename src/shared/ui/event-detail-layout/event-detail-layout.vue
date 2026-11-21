@@ -4,11 +4,14 @@ import { computed } from 'vue'
 
 type Props = {
   title?: string
+  // A short line under the title, e.g. how the event was sent.
+  subtitle?: string
   date?: Date | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: '',
+  subtitle: '',
   date: null
 })
 
@@ -25,9 +28,19 @@ const formattedDate = computed(() =>
     >
       <slot name="header">
         <div class="event-detail__header-content">
-          <h2 class="event-detail__title">
-            {{ title }}
-          </h2>
+          <div>
+            <h2 class="event-detail__title">
+              {{ title }}
+            </h2>
+            <!-- Styled as the date: no new rules in the first-load CSS. -->
+            <p
+              v-if="subtitle"
+              class="event-detail__date mt-1"
+              data-test="event-detail-subtitle"
+            >
+              {{ subtitle }}
+            </p>
+          </div>
           <span
             v-if="formattedDate"
             class="event-detail__date"
