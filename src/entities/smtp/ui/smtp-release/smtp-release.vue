@@ -258,7 +258,10 @@ const send = async () => {
 }
 
 .smtp-release__dialog {
-  @apply w-full max-w-lg p-0 rounded-lg;
+  // A 16 px gutter on a phone; 32 rem at most on a desktop.
+  width: min(32rem, calc(100% - 2rem));
+  max-width: none;
+  @apply p-0 rounded-lg;
   @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
   @apply border border-gray-200 dark:border-gray-700;
 
