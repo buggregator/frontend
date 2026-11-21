@@ -115,6 +115,23 @@ describe('SentryCronJob', () => {
   it('a ping job without a schedule: how to give it one, and its ping URLs', () => {
     const w = render({ monitor: monitor({ source: 'ping', schedule: null, next_expected_at: null }) })
     expect(w.get('[data-test="cron-no-schedule"]').text()).toContain('?schedule=')
-    expect(w.text()).toContain('/ping/orders-sync/start?project=shop')
+    const ping = w.get('[data-test="cron-ping-urls"]')
+    expect(ping.classes()).toContain('code-snippet')
+    expect(ping.text()).toContain('/ping/orders-sync/start?project=shop')
+    expect(ping.find('button[aria-label="Copy code"]').exists()).toBe(true)
+  })
+
+  it('panels use the shared section heading', () => {
+    const titles = render({ monitor: monitor({ source: 'ping' }) })
+      .findAll('.event-section__title')
+      .map((t) => t.text())
+    expect(titles).toEqual(['Last 2 runs', 'Check-ins', 'Ping URLs of this job'])
+  })
+
+  it('a check-in output opens in a code snippet with Copy', () => {
+    const w = render({ checkins: [checkIn('o', { body: 'line one\nline two' })] })
+    const out = w.get('.cron-job__output .code-snippet')
+    expect(out.text()).toContain('line one')
+    expect(out.find('button[aria-label="Copy code"]').exists()).toBe(true)
   })
 })

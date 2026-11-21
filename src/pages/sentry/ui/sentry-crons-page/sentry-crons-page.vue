@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useTitle } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import { SetupHelpPanel } from '@/widgets/ui'
+import { SetupGuide } from '@/widgets/ui'
 import { SentryCronTable, monitorStatus, needsAttention, summarizeMonitors, useCronClock, useCronMonitors } from '@/entities/sentry'
-import { StatusPanel } from '@/shared/ui'
+import { SearchBar, SkeletonLoader, StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Crons | Buggregator')
 
@@ -24,9 +24,10 @@ const shown = computed(() => {
       (!onlyAttention.value || needsAttention(monitorStatus(m, now.value)))
   )
 })
-
-const isSetupOpen = ref(false)
-const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
+const clearFilter = () => {
+  query.value = ''
+  onlyAttention.value = false
+}
 </script>
 
 <template>
@@ -50,54 +51,23 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
     <div
       v-else-if="isInitialLoading"
       class="crons-page__loading"
+      role="status"
+      aria-label="Loading cron jobs"
       data-test="crons-loading"
     >
-      <div
-        v-for="i in 5"
-        :key="i"
-        class="crons-page__skeleton-row"
-        aria-hidden="true"
-      >
-        <span
-          v-for="j in 5"
-          :key="j"
-          class="crons-page__skeleton"
-        />
-      </div>
-      <p
-        class="crons-page__faint"
-        role="status"
-      >
-        Loading cron jobs…
-      </p>
+      <SkeletonLoader variant="text" />
+      <SkeletonLoader variant="text" />
     </div>
 
-    <section
+    <!-- No job yet: how to send the first check-in, same guide as the other
+         sections (ping URL, Sentry SDKs) with this server's values. -->
+    <SetupGuide
       v-else-if="!monitors.length"
-      class="crons-page__empty"
+      section-id="crons"
+      section-title="Crons"
+      kicker="Sentry · Crons"
       data-test="crons-empty"
-    >
-      <h2 class="crons-page__empty-title">
-        No cron jobs yet
-      </h2>
-      <p>
-        A job shows up here with its first check-in: when it ran, how long it took, whether it failed,
-        and whether it missed a run.
-      </p>
-      <p>
-        Send check-ins from the Sentry SDK (<code>captureCheckIn</code>, <code>withMonitor</code>,
-        Laravel <code>-&gt;sentryMonitor()</code>), or call the ping URL at the end of any script:
-      </p>
-      <pre class="crons-page__code">{{ pingExample }}</pre>
-      <button
-        type="button"
-        class="crons-page__button"
-        data-test="crons-setup"
-        @click="isSetupOpen = true"
-      >
-        How to set up cron monitoring
-      </button>
-    </section>
+    />
 
     <div
       v-else
@@ -117,13 +87,13 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
           </template>
           · {{ summary.ok }} OK
         </p>
-        <input
-          v-model="query"
-          type="search"
-          class="crons-page__filter"
-          placeholder="Filter jobs"
-          aria-label="Filter jobs"
-        >
+        <div class="crons-page__filter">
+          <SearchBar
+            v-model="query"
+            placeholder="Filter jobs"
+            label="Filter jobs"
+          />
+        </div>
         <div
           class="crons-page__seg"
           role="group"
@@ -162,25 +132,20 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
         :monitors="shown"
         :now="now"
       />
-      <p
+      <StatusPanel
         v-else
-        class="crons-page__faint"
-      >
-        No job matches.
-      </p>
+        compact
+        title="No job matches"
+        action-label="Clear filter"
+        data-test="crons-no-match"
+        @action="clearFilter"
+      />
 
       <p class="crons-page__faint">
         Times are in each job's time zone. A job appears with its first check-in; «Missed» is set when no
         check-in comes within the job's margin, «Missed?» when Buggregator was not running at that time.
       </p>
     </div>
-
-    <SetupHelpPanel
-      v-if="isSetupOpen"
-      section-id="crons"
-      section-title="Crons"
-      @close="isSetupOpen = false"
-    />
   </div>
 </template>
 
@@ -203,17 +168,6 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
   gap: 12px;
   padding: 16px;
   min-width: 0;
-}
-
-.crons-page__skeleton-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
-  gap: 24px;
-  padding: 12px;
-}
-
-.crons-page__skeleton {
-  @include cp.skeleton;
 }
 
 .crons-page__faint {
@@ -252,14 +206,8 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
 }
 
 .crons-page__filter {
-  @include cp.focus-ring;
-  @apply bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100;
-
-  height: 32px;
+  display: flex;
   width: 240px;
-  padding: 0 10px;
-  border-radius: 4px;
-  font-size: 13px;
 }
 
 .crons-page__seg {
@@ -290,82 +238,19 @@ const pingExample = `curl -fsS ${window.location.origin}/ping/my-job`
   }
 }
 
-.crons-page__empty {
-  @apply text-gray-600 dark:text-gray-400;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 760px;
-  padding: 24px 16px;
-
-  p {
-    margin: 0;
-  }
-
-  code {
-    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
-    font-variant-ligatures: none;
-    font-size: 12px;
-  }
-}
-
-.crons-page__empty-title {
-  @apply text-gray-900 dark:text-gray-100;
-
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.crons-page__code {
-  @apply bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700;
-
-  margin: 0;
-  padding: 10px 12px;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
-  font-variant-ligatures: none;
-  font-size: 12px;
-}
-
-.crons-page__button {
-  @include cp.focus-ring;
-  @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200;
-  @apply hover:bg-gray-50 dark:hover:bg-gray-700;
-
-  align-self: flex-start;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
 @media (max-width: 639px) {
   .crons-page__body,
   .crons-page__loading {
     padding: 12px;
   }
 
-  .crons-page__skeleton-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .crons-page__filter {
     width: 100%;
-    height: 44px;
   }
 
   .crons-page__seg button {
     padding: 10px 12px;
     font-size: 13px;
-  }
-
-  .crons-page__button {
-    height: 44px;
   }
 }
 </style>

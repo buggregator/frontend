@@ -10,22 +10,3 @@
     }
   }
 }
-
-@mixin skeleton {
-  @apply bg-gray-200 dark:bg-gray-700;
-
-  display: block;
-  height: 12px;
-  border-radius: 3px;
-  animation: crons-skeleton 1.4s ease-in-out infinite;
-
-  @keyframes crons-skeleton {
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}

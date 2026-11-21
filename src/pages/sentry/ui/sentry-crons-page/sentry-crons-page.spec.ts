@@ -7,7 +7,10 @@ import SentryCronsPage from './sentry-crons-page.vue'
 vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
 vi.mock('@/entities/sentry/lib/use-sentry-events-bus', () => ({ onSentryEvent: vi.fn() }))
 vi.mock('@/widgets/ui', () => ({
-  SetupHelpPanel: { props: ['sectionId'], template: '<div class="setup-stub" :data-section="sectionId" />' }
+  SetupGuide: {
+    props: ['sectionId', 'sectionTitle', 'kicker'],
+    template: '<div class="setup-stub" :data-section="sectionId" :data-kicker="kicker" />'
+  }
 }))
 
 const now = Date.now()
@@ -43,20 +46,21 @@ describe('SentryCronsPage', () => {
 
   afterEach(() => vi.unstubAllGlobals())
 
-  it('loading: skeleton rows with words', () => {
+  it('loading: the shared skeleton, announced', () => {
     fetchMock.mockReturnValue(new Promise(() => {}))
     const w = mount(SentryCronsPage, { global: { stubs: { RouterLink: RouterLinkStub } } })
-    expect(w.get('[data-test="crons-loading"]').text()).toContain('Loading cron jobs…')
+    const loading = w.get('[data-test="crons-loading"]')
+    expect(loading.attributes('role')).toBe('status')
+    expect(loading.attributes('aria-label')).toBe('Loading cron jobs')
+    expect(loading.findAll('.skeleton').length).toBeGreaterThan(0)
   })
 
-  it('empty: a short hint and the setup help', async () => {
+  it('empty: the shared setup guide of the Crons section', async () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ data: [] })))
     const w = await render()
-    expect(w.get('[data-test="crons-empty"]').text()).toContain('No cron jobs yet')
-    expect(w.text()).toContain('/ping/my-job')
-
-    await w.get('[data-test="crons-setup"]').trigger('click')
-    expect(w.get('.setup-stub').attributes('data-section')).toBe('crons')
+    const guide = w.get('[data-test="crons-empty"]')
+    expect(guide.attributes('data-section')).toBe('crons')
+    expect(guide.attributes('data-kicker')).toBe('Sentry · Crons')
   })
 
   it('error: what failed and a retry', async () => {
@@ -92,7 +96,20 @@ describe('SentryCronsPage', () => {
     expect(w.findAll('[data-test="cron-row"]').map((r) => r.get('a').text())).toEqual(['orders-sync'])
 
     await w.get('button[aria-pressed="false"]').trigger('click')
-    await w.get('input[type="search"]').setValue('site')
+    await w.get('.search-bar__input').setValue('site')
     expect(w.findAll('[data-test="cron-row"]').map((r) => r.get('a').text())).toEqual(['sitemap'])
+  })
+
+  it('no match: says so, and «Clear filter» brings every job back', async () => {
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({ data: [monitor('backup'), monitor('sitemap')] })))
+    const w = await render()
+    await w.get('[data-test="crons-only-attention"]').trigger('click')
+    await w.get('.search-bar__input').setValue('nothing')
+    expect(w.findAll('[data-test="cron-row"]')).toHaveLength(0)
+    expect(w.get('[data-test="crons-no-match"]').text()).toContain('No job matches')
+
+    await w.get('[data-test="crons-no-match"] .status-panel__action').trigger('click')
+    expect(w.findAll('[data-test="cron-row"]')).toHaveLength(2)
+    expect((w.get('.search-bar__input').element as HTMLInputElement).value).toBe('')
   })
 })

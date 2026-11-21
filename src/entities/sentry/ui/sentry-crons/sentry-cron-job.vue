@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { RouteName } from '@/shared/types'
+import { CodeSnippet, EventDetailSection } from '@/shared/ui'
 import {
   checkInNote,
   CRON_STATUS,
@@ -46,6 +47,13 @@ const pingBase = computed(() => {
   const base = `${window.location.origin}/ping/${encodeURIComponent(m.value.slug)}`
   return { ok: `${base}${project}`, start: `${base}/start${project}`, fail: `${base}/fail${project}` }
 })
+const pingCommands = computed(() =>
+  [
+    `curl -fsS "${pingBase.value.start}"   # started`,
+    `curl -fsS "${pingBase.value.ok}"   # finished`,
+    `curl -fsS "${pingBase.value.fail}"   # failed`
+  ].join('\n')
+)
 
 const rows = computed(() =>
   props.checkins.map((c) => {
@@ -145,13 +153,14 @@ const rows = computed(() =>
       </div>
     </dl>
 
-    <section
+    <EventDetailSection
       v-if="bars.length"
       class="cron-job__panel"
+      :title="`Last ${bars.length} runs`"
     >
-      <h3 class="cron-job__panel-head">
-        Last {{ bars.length }} runs <span class="cron-job__faint">bar height = duration · hollow box = no run · stub = no duration</span>
-      </h3>
+      <template #actions>
+        <span class="cron-job__faint">bar height = duration · hollow box = no run · stub = no duration</span>
+      </template>
       <div
         class="cron-job__bars"
         role="img"
@@ -166,12 +175,15 @@ const rows = computed(() =>
           :title="bar.title"
         />
       </div>
-    </section>
+    </EventDetailSection>
 
-    <section class="cron-job__panel">
-      <h3 class="cron-job__panel-head">
-        Check-ins <span class="cron-job__faint">newest first · {{ tz }}</span>
-      </h3>
+    <EventDetailSection
+      class="cron-job__panel"
+      title="Check-ins"
+    >
+      <template #actions>
+        <span class="cron-job__faint">newest first · {{ tz }}</span>
+      </template>
       <p
         v-if="!rows.length"
         class="cron-job__empty"
@@ -231,7 +243,11 @@ const rows = computed(() =>
                   class="cron-job__output"
                 >
                   <summary>Output</summary>
-                  <pre>{{ r.output }}</pre>
+                  <CodeSnippet
+                    class="cron-job__output-code"
+                    language="bash"
+                    :code="r.output"
+                  />
                 </details>
               </td>
               <td>
@@ -260,19 +276,19 @@ const rows = computed(() =>
           {{ loadingOlder ? 'Loading…' : 'Show older check-ins' }}
         </button>
       </div>
-    </section>
+    </EventDetailSection>
 
-    <section
+    <EventDetailSection
       v-if="isPing"
       class="cron-job__panel"
+      title="Ping URLs of this job"
     >
-      <h3 class="cron-job__panel-head">
-        Ping URLs of this job
-      </h3>
-      <pre class="cron-job__code">curl -fsS {{ pingBase.start }}   # started
-curl -fsS {{ pingBase.ok }}   # finished
-curl -fsS {{ pingBase.fail }}   # failed</pre>
-    </section>
+      <CodeSnippet
+        language="bash"
+        :code="pingCommands"
+        data-test="cron-ping-urls"
+      />
+    </EventDetailSection>
   </article>
 </template>
 
@@ -442,19 +458,8 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
 }
 
 .cron-job__panel {
-  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
-
-  border-radius: 6px;
   min-width: 0;
-}
-
-.cron-job__panel-head {
-  @apply text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700;
-
-  margin: 0;
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 600;
+  margin-top: 8px;
 }
 
 .cron-job__faint {
@@ -465,11 +470,14 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
 }
 
 .cron-job__bars {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+
   display: flex;
   align-items: flex-end;
   gap: 4px;
   height: 120px;
   padding: 10px 14px;
+  border-radius: 6px;
 }
 
 .cron-job__bar {
@@ -504,7 +512,10 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
 }
 
 .cron-job__scroll {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+
   overflow-x: auto;
+  border-radius: 6px;
 }
 
 .cron-job__table {
@@ -555,19 +566,14 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
     cursor: pointer;
     font-size: 12px;
   }
+}
 
-  pre {
-    @apply bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700;
-
-    margin: 4px 0 0;
-    padding: 8px 10px;
-    max-height: 240px;
-    overflow: auto;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
+.cron-job__output-code {
+  margin-top: 4px;
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .cron-job__hidden {
@@ -578,13 +584,10 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
   @apply text-gray-500 dark:text-gray-400;
 
   margin: 0;
-  padding: 12px 14px;
 }
 
 .cron-job__more {
-  @apply border-t border-gray-200 dark:border-gray-700;
-
-  padding: 8px 14px;
+  padding: 8px 0;
 }
 
 .cron-job__more-btn {
@@ -597,19 +600,6 @@ curl -fsS {{ pingBase.fail }}   # failed</pre>
     cursor: default;
     opacity: 0.6;
   }
-}
-
-.cron-job__code {
-  @apply bg-gray-50 dark:bg-gray-900;
-
-  margin: 0;
-  padding: 10px 14px;
-  overflow-x: auto;
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
-  font-variant-ligatures: none;
-  font-size: 12px;
-  line-height: 1.6;
-  border-radius: 0 0 6px 6px;
 }
 
 @media (max-width: 639px) {
