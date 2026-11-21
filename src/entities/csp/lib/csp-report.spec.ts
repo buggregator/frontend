@@ -47,6 +47,14 @@ describe('csp-report words', () => {
     expect(isCspViolation(report({ type: '', directive: 'img-src' }))).toBe(true)
   })
 
+  it('copes with the fields the server leaves out', () => {
+    const bare: CspReport = { type: 'csp-violation', directive: 'img-src', blocked: 'data' }
+    expect(reportTitle(bare)).toBe('img-src blocked data')
+    expect(sourceText(bare)).toBe('')
+    expect(isReportOnly(bare)).toBe(false)
+    expect(pageText(undefined)).toBe('')
+  })
+
   it('joins the source file with line and column', () => {
     expect(sourceText(report({ source_file: 'http://shop.test/app.js', line: 10, column: 4 }))).toBe('http://shop.test/app.js:10:4')
     expect(sourceText(report({ source_file: 'app.js', line: 3 }))).toBe('app.js:3')

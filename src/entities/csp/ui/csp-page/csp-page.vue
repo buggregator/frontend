@@ -22,14 +22,22 @@ type Row = { label: string; value: string; mono?: boolean; link?: boolean }
 
 const rowsOf = (r: CspReport): Row[] =>
   [
-    { label: 'Page', value: r.url, link: true },
-    { label: 'Directive', value: r.directive, mono: true },
-    { label: 'Blocked', value: r.blocked, mono: true },
+    { label: 'Page', value: r.url ?? '', link: true },
+    { label: 'Directive', value: r.directive ?? '', mono: true },
+    { label: 'Blocked', value: r.blocked ?? '', mono: true },
     { label: 'Source', value: sourceText(r), mono: true },
-    { label: 'Sample', value: r.sample, mono: true },
-    { label: 'Message', value: r.message },
-    { label: 'Browser', value: r.user_agent }
+    { label: 'Sample', value: r.sample ?? '', mono: true },
+    { label: 'Message', value: r.message ?? '' },
+    { label: 'Browser', value: r.user_agent ?? '' }
   ].filter((row) => row.value)
+
+// Blocked: red; reported only: amber; other report types: grey.
+const badgeClass = (r: CspReport) =>
+  !isCspViolation(r)
+    ? 'csp-report__badge--other'
+    : isReportOnly(r)
+      ? 'csp-report__badge--report'
+      : 'csp-report__badge--enforce'
 
 const isWebUrl = (v: string) => /^https?:\/\//i.test(v)
 
@@ -63,7 +71,7 @@ const bodyJson = (r: CspReport) => JSON.stringify(r.body ?? r, null, 2)
           </h3>
           <span
             class="csp-report__badge"
-            :class="isReportOnly(r) ? 'csp-report__badge--report' : 'csp-report__badge--enforce'"
+            :class="badgeClass(r)"
           >{{ isCspViolation(r) ? (isReportOnly(r) ? 'report-only' : 'blocked') : r.type }}</span>
         </header>
 
@@ -150,6 +158,10 @@ const bodyJson = (r: CspReport) => JSON.stringify(r.body ?? r, null, 2)
 
 .csp-report__badge--report {
   @apply bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300;
+}
+
+.csp-report__badge--other {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300;
 }
 
 .csp-report__rows {

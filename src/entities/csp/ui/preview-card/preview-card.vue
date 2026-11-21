@@ -17,7 +17,7 @@ const eventLink = computed(() => `/csp/${props.event.id}`)
 const reports = computed(() => props.event.payload.reports ?? [])
 const shown = computed(() => reports.value.slice(0, SHOWN))
 const more = computed(() => Math.max(0, reports.value.length - SHOWN))
-const page = computed(() => pageText(reports.value[0]?.url ?? ''))
+const page = computed(() => pageText(reports.value[0]?.url))
 </script>
 
 <template>

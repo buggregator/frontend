@@ -20,7 +20,8 @@ export const blockedText = (r: CspReport): string => {
 }
 
 // The page the report came from, without the scheme.
-export const pageText = (url: string): string => {
+export const pageText = (url = ''): string => {
+  if (!url) return ''
   try {
     const u = new URL(url)
     return `${u.host}${u.pathname}${u.search}`
@@ -41,6 +42,6 @@ export const reportTitle = (r: CspReport): string => {
 
 export const sourceText = (r: CspReport): string => {
   if (!r.source_file) return ''
-  const pos = [r.line, r.column].filter((n) => n > 0).join(':')
+  const pos = [r.line, r.column].filter((n): n is number => (n ?? 0) > 0).join(':')
   return pos ? `${r.source_file}:${pos}` : r.source_file
 }
