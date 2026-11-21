@@ -1,6 +1,7 @@
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCodeGraphEnabled } from '@/entities/code-graph/lib'
 import { useServerUpdateStore } from '@/entities/server-update'
 import { useXdebugEnabled } from '@/entities/xdebug'
 import { MENU_EVENT_GROUPS, PAGES_SETTINGS, SETTINGS_SECTIONS } from '@/shared/constants'
@@ -35,6 +36,7 @@ export const usePaletteCommands = () => {
   const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
   const updateStore = useServerUpdateStore()
   const xdebugEnabled = useXdebugEnabled()
+  const codeGraphEnabled = useCodeGraphEnabled()
   const { events, lockedIds } = useEvents()
   // Counts only: nothing on screen is marked as seen from here.
   const { newCount } = useSeenEvents(ref([]))
@@ -92,6 +94,17 @@ export const usePaletteCommands = () => {
             label: 'Xdebug',
             icon: 'bug',
             run: () => router.push({ name: RouteName.Xdebug })
+          } satisfies Command
+        ]
+      : []),
+    ...(codeGraphEnabled.value
+      ? [
+          {
+            id: 'page-code',
+            group: 'pages',
+            label: 'Code',
+            icon: 'code',
+            run: () => router.push({ name: RouteName.Code })
           } satisfies Command
         ]
       : []),

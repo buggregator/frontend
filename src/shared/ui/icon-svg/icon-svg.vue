@@ -620,6 +620,15 @@ defineProps<Props>()
     </svg>
 
     <svg
+      v-else-if="name === 'code'"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      class="fill-current"
+    >
+      <path d="M8.7 6.3a1 1 0 0 1 0 1.4L4.4 12l4.3 4.3a1 1 0 1 1-1.4 1.4l-5-5a1 1 0 0 1 0-1.4l5-5a1 1 0 0 1 1.4 0Zm6.6 0a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4l4.3-4.3-4.3-4.3a1 1 0 0 1 0-1.4Zm-1.1-3.3a1 1 0 0 1 .8 1.2l-3 16a1 1 0 1 1-2-.4l3-16a1 1 0 0 1 1.2-.8Z" />
+    </svg>
+
+    <svg
       v-else-if="name === 'search'"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"

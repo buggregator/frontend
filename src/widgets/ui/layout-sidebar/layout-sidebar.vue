@@ -4,6 +4,7 @@ import { onClickOutside, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useCodeGraphEnabled } from '@/entities/code-graph/lib'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS } from '@/shared/constants'
@@ -27,6 +28,7 @@ const { profile } = storeToRefs(profileStore)
 
 const { getItemsCount } = useEvents()
 const xdebugEnabled = useXdebugEnabled()
+const codeGraphEnabled = useCodeGraphEnabled()
 
 const route = useRoute()
 const router = useRouter()
@@ -253,6 +255,7 @@ const isMockServerShown = computed(
   () => isMockServerAvailable.value && isShown(MENU_TOOL_IDS.mockServer)
 )
 const isXdebugShown = computed(() => xdebugEnabled.value && isShown(MENU_TOOL_IDS.xdebug))
+const isCodeShown = computed(() => codeGraphEnabled.value && isShown(MENU_TOOL_IDS.code))
 const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 
 
@@ -488,7 +491,7 @@ const linkLabel = (type: EventType) =>
         </div>
 
         <div
-          v-if="isMockServerShown || isXdebugShown"
+          v-if="isMockServerShown || isXdebugShown || isCodeShown"
           role="group"
           aria-labelledby="nav-group-tools"
           class="layout-sidebar__group"
@@ -533,6 +536,24 @@ const linkLabel = (type: EventType) =>
               />
             </span>
             <span class="layout-sidebar__link-label">Xdebug</span>
+            <span class="layout-sidebar__new">new</span>
+          </RouterLink>
+
+          <RouterLink
+            v-if="isCodeShown"
+            :to="{ name: RouteName.Code }"
+            title="Code"
+            aria-label="Code"
+            class="layout-sidebar__link"
+            :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Code) }"
+          >
+            <span class="layout-sidebar__link-icon-wrap">
+              <IconSvg
+                class="layout-sidebar__link-icon"
+                name="code"
+              />
+            </span>
+            <span class="layout-sidebar__link-label">Code</span>
             <span class="layout-sidebar__new">new</span>
           </RouterLink>
         </div>
@@ -852,7 +873,8 @@ const linkLabel = (type: EventType) =>
   @apply relative cursor-pointer;
   @apply flex items-center justify-center w-full;
   @apply px-3 py-2;
-  @apply text-gray-500 dark:text-gray-400;
+  /* gray-600: 4.5:1 on the light sidebar (gray-500 was 4.39:1, #6573). */
+  @apply text-gray-600 dark:text-gray-400;
   @apply hover:text-gray-800 dark:hover:text-gray-200;
   @apply transition-colors duration-100;
 

@@ -18,6 +18,8 @@ vi.mock('@/shared/lib/use-seen-events', () => ({
   useSeenEvents: () => ({ newCount: (type: string) => fresh.value[type] ?? 0 }),
 }))
 vi.mock('@/entities/xdebug/lib', () => ({ useXdebugEnabled: () => ref(false) }))
+const codeGraph = ref(false)
+vi.mock('@/entities/code-graph/lib', () => ({ useCodeGraphEnabled: () => codeGraph }))
 
 const memoryStorage = () => {
   const items = new Map<string, string>()
@@ -38,6 +40,7 @@ const router = createRouter({
     { path: '/favorites', name: RouteName.Favorites, component: page },
     { path: '/mock-server', name: RouteName.MockServer, component: page },
     { path: '/xdebug', name: RouteName.Xdebug, component: page },
+    { path: '/code', name: RouteName.Code, component: page },
     { path: '/login', name: RouteName.Login, component: page },
     { path: '/:type', name: RouteName.EventList, component: page },
   ],
@@ -282,6 +285,14 @@ describe('LayoutSidebar: groups and «new» badges', () => {
     expect(names).toEqual(['Errors & performance', 'Dumps', 'Mail & logs', 'Tools'])
     expect(groups[0].findAll('a').map((a) => a.attributes('title'))).toEqual(['Sentry', 'Profiler', 'Inspector'])
     expect(groups[3].find('a[title="Mock server"]').exists()).toBe(true)
+  })
+
+  it('shows Code under Tools only when the server has code graph roots', () => {
+    codeGraph.value = false
+    expect(expanded().find('a[title="Code"]').exists()).toBe(false)
+    codeGraph.value = true
+    expect(expanded().get('a[title="Code"]').attributes('href')).toBe('/code')
+    codeGraph.value = false
   })
 
   // The server serves mocks from the http-dump module (#6019).

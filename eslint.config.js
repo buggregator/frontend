@@ -36,8 +36,16 @@ export default withVueTs(
     // also pulls the debugger components, and their CSS into the first load.
     // The app shell, the sidebar and the header read the self-update state
     // the same way: the Settings update block stays in the Settings chunk.
+    // The app loads the code graph frame link alone: the slice index also
+    // pulls the Code page graph (vue-flow).
     publicApi: {
-      ignoreImports: ['@/entities/*/mocks', '@/entities/xdebug/lib', '@/entities/server-update/lib']
+      ignoreImports: [
+        '@/entities/*/mocks',
+        '@/entities/xdebug/lib',
+        '@/entities/code-graph/lib',
+        '@/entities/server-update/lib',
+        '@/entities/code-graph/ui/code-graph-frame-link'
+      ]
     }
   }),
   {

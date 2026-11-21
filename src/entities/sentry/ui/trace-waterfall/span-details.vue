@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue'
-import { SOURCE_LABEL, formatAttrValue, otelException, splitOtelAttributes } from '../../lib/otel'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue'
+import { CODE_LOCATION_LINK } from '@/shared/lib/code-location-link'
+import { SOURCE_LABEL, formatAttrValue, otelException, spanCodeLocation, splitOtelAttributes } from '../../lib/otel'
 import type { SentrySpan } from '../../types'
 
 // One span opened in the waterfall (#6523, design A-2 / A-5 / A-6): the
@@ -25,6 +26,10 @@ const fullStack = ref(false)
 const stackShown = computed(() =>
   fullStack.value ? stackLines.value.join('\n') : stackLines.value.slice(0, STACK_PREVIEW).join('\n')
 )
+
+// «Code» into the code graph (#6573 A) when the span says where its code is.
+const codeLocationLink = inject(CODE_LOCATION_LINK, null)
+const codeLocation = computed(() => spanCodeLocation(props.span.attributes))
 
 const sourceLabel = computed(() => (props.span.source ? SOURCE_LABEL[props.span.source] : ''))
 
@@ -149,6 +154,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           class="span-details__error"
         >Error</span>
       </div>
+      <component
+        :is="codeLocationLink"
+        v-if="codeLocationLink && codeLocation"
+        :file="codeLocation.file"
+        :line="codeLocation.line"
+        :origin="title"
+        label="Code"
+      />
       <span
         v-if="sourceLabel"
         class="span-details__source"

@@ -1,4 +1,4 @@
-/* Trace graphs readability tokens and parts (#6531, style V1). Shared by A/B/C. */
+/* Graph readability tokens and parts (#6531, style V1): trace graphs, service map, code graph. */
 
 .tg-scope {
   --tg-canvas: #f9fafb;

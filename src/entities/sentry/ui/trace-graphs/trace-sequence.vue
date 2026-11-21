@@ -5,7 +5,7 @@ import { useSentryRequests } from '../../lib'
 import { layoutSequence } from '../../lib/trace-graph/sequence-layout'
 import { paletteColors } from '../../lib/trace-graph/trace-graph'
 import type { SentrySequence } from '../../types'
-import '../trace-graphs/trace-graph-theme.css'
+import '@/shared/ui/graph-theme/graph-theme.css'
 
 // A trace's calls as a sequence diagram (trace page «Sequence» tab, #6533, #6531): lifelines in
 // call order, a call is a solid line with a filled arrowhead, a reply a dashed

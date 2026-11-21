@@ -9,7 +9,7 @@ import TraceCallEdge from './trace-call-edge.vue'
 import TraceExternalNode from './trace-external-node.vue'
 import { TRACE_GRAPH_MARKERS } from './trace-graph-markers'
 import TraceSpanNode from './trace-span-node.vue'
-import './trace-graph-theme.css'
+import '@/shared/ui/graph-theme/graph-theme.css'
 
 // Call graph of one trace (#6533 A, style V1 from #6531): node = span, a column
 // group per service, calls go down inside a service and right into the next.

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, ref, reactive, useId } from 'vue'
+import { computed, inject, ref, reactive, useId } from 'vue'
+import { CODE_LOCATION_LINK } from '@/shared/lib/code-location-link'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import { IconSvg } from '@/shared/ui'
 import type { SentryFrame } from '../../types'
@@ -7,6 +8,8 @@ import type { SentryFrame } from '../../types'
 type Props = {
   frame: SentryFrame
   isOpen: boolean
+  // The exception type, for «Opened from …» on the Code page.
+  origin?: string
 }
 
 type CodeSegment = {
@@ -18,6 +21,10 @@ type CodeSegment = {
 const props = defineProps<Props>()
 const isFrameOpen = ref(props.isOpen)
 const { buildLink } = useIdeLink()
+
+// «Graph» into the code graph (#6573 A), when the app provides it.
+const codeLocationLink = inject(CODE_LOCATION_LINK, null)
+const codeFile = computed(() => props.frame.abs_path || props.frame.filename || '')
 
 const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
 
@@ -216,6 +223,19 @@ const toggleOpen = () => {
       </div>
 
       <div class="frame__head-right">
+        <span
+          v-if="codeLocationLink && codeFile && frame.lineno"
+          class="frame__code-link"
+          @click.stop
+        >
+          <component
+            :is="codeLocationLink"
+            :file="codeFile"
+            :line="frame.lineno"
+            :origin="origin"
+            label="Graph"
+          />
+        </span>
         <span
           v-if="hasVars"
           class="frame__vars-hint"

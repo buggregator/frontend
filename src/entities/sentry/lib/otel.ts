@@ -126,3 +126,14 @@ export const spansWithRoot = (detail: SentryTraceDetail): SentrySpan[] => {
   }
   return [root, ...detail.spans]
 }
+
+// Where the span's code is (OTel semconv: `code.file.path` + `code.line.number`,
+// older `code.filepath` + `code.lineno`), for the «Code» link (#6573 A).
+export const spanCodeLocation = (
+  attrs: Record<string, unknown> | null | undefined
+): { file: string; line: number } | null => {
+  const a = attrs ?? {}
+  const file = str(a['code.file.path'] ?? a['code.filepath'])
+  const line = Number(a['code.line.number'] ?? a['code.lineno'])
+  return file && Number.isInteger(line) && line > 0 ? { file, line } : null
+}
