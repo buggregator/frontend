@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { SentryTraceDetail } from '../types'
-import { formatAttrValue, otelException, servicesChain, spansWithRoot, splitOtelAttributes } from './otel'
+import { formatAttrValue, otelException, servicesChain, spanCodeLocation, spansWithRoot, splitOtelAttributes } from './otel'
 
 describe('splitOtelAttributes', () => {
   it('takes the otel.* extras out of the attributes', () => {
@@ -96,5 +96,20 @@ describe('spansWithRoot', () => {
 
   it('an older server without transaction.span_id: spans as they are', () => {
     expect(spansWithRoot(detail())).toHaveLength(1)
+  })
+})
+
+describe('spanCodeLocation', () => {
+  it('reads the current semconv keys', () => {
+    expect(spanCodeLocation({ 'code.file.path': '/app/a.go', 'code.line.number': 42 })).toEqual({ file: '/app/a.go', line: 42 })
+  })
+
+  it('reads the older keys, the line as a string', () => {
+    expect(spanCodeLocation({ 'code.filepath': '/app/A.php', 'code.lineno': '7' })).toEqual({ file: '/app/A.php', line: 7 })
+  })
+
+  it('needs both a file and a line', () => {
+    expect(spanCodeLocation({ 'code.filepath': '/app/A.php' })).toBeNull()
+    expect(spanCodeLocation(null)).toBeNull()
   })
 })

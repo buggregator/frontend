@@ -6,6 +6,9 @@ import { availableStatus, checkOffStatus } from '@/entities/server-update/mocks'
 import { useSettingsStore } from '@/shared/stores'
 import SettingsPageContent from './settings-page-content.vue'
 
+// Its own spec covers it; here it would ask the server.
+vi.mock('../settings-code-graph', () => ({ SettingsCodeGraph: { template: '<div data-test="code-graph-settings" />' } }))
+
 const memoryStorage = () => {
   const items = new Map<string, string>()
   return {
@@ -197,8 +200,8 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     const wrapper = mount(SettingsPageContent)
 
     const links = wrapper.findAll('nav[aria-label="Settings sections"] a')
-    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Menu', 'Keyboard', 'Editor', 'About & updates'])
-    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#menu', '#keyboard', '#editor', '#updates'])
+    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Menu', 'Keyboard', 'Editor', 'Code graph', 'About & updates'])
+    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#menu', '#keyboard', '#editor', '#code-graph', '#updates'])
     expect(links[0].attributes('aria-current')).toBe('true')
   })
 

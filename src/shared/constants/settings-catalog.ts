@@ -83,6 +83,12 @@ export const SETTINGS_ITEMS = {
       'to open files outside your project root or with different path prefixes.',
     keywords: ['docker', 'path', 'source', 'target', 'mapping', 'editor']
   },
+  codeGraph: {
+    id: 'code-graph-folders',
+    label: 'Source folders',
+    hint: 'Folders the server parses into a graph of who calls what.',
+    keywords: ['code', 'graph', 'index', 'reindex', 'callers', 'callees', 'source', 'folders', 'php', 'go', 'tree-sitter']
+  },
   about: {
     id: 'about',
     label: 'About & updates',
@@ -111,6 +117,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'editor',
     title: 'Editor',
     items: [SETTINGS_ITEMS.codeEditor, SETTINGS_ITEMS.pathMapping]
+  },
+  {
+    id: 'code-graph',
+    title: 'Code graph',
+    items: [SETTINGS_ITEMS.codeGraph]
   },
   // The id stays «updates»: the header pill and the menu dot link to #updates.
   {

@@ -15,6 +15,7 @@ const ProfilerComparePage = () =>
   import('@/pages/profiler-compare').then((m) => m.ProfilerComparePage)
 const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
 const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
+const CodePage = () => import('@/pages/code').then((m) => m.CodePage)
 const sentryPages = () => import('@/pages/sentry')
 const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
 const SentryExceptionsPage = () => sentryPages().then((m) => m.SentryExceptionsPage)
@@ -76,6 +77,14 @@ export const routes = [
     path: '/xdebug',
     name: RouteName.Xdebug,
     component: XdebugPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  {
+    path: '/code',
+    name: RouteName.Code,
+    component: CodePage,
     meta: {
       middleware: [auth]
     }

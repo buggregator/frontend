@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, watch } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, provide, watch } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { CODE_LOCATION_LINK } from '@/shared/lib/code-location-link'
 import { useAppBadge } from '@/shared/lib/use-app-badge'
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
+
+// «Graph»/«Code» links from stack frames and spans into the code graph
+// (#6573 A). Loaded with the first frame that shows one, not with the feed.
+provide(
+  CODE_LOCATION_LINK,
+  defineAsyncComponent(() =>
+    import('@/entities/code-graph/ui/code-graph-frame-link').then((m) => m.CodeGraphFrameLink)
+  )
+)
 
 const { initialize } = useEventsStore()
 const { token } = storeToRefs(useProfileStore())

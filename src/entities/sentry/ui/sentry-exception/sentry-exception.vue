@@ -77,6 +77,7 @@ const openFrameIndex = computed(() => {
         <SentryExceptionFrame
           :frame="frame"
           :is-open="index === openFrameIndex"
+          :origin="exception.type"
         />
       </template>
     </div>

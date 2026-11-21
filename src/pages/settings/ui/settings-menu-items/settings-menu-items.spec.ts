@@ -7,6 +7,8 @@ import SettingsMenuItems from './settings-menu-items.vue'
 
 const xdebug = ref(false)
 vi.mock('@/entities/xdebug/lib', () => ({ useXdebugEnabled: () => xdebug }))
+const codeGraph = ref(false)
+vi.mock('@/entities/code-graph/lib', () => ({ useCodeGraphEnabled: () => codeGraph }))
 
 const memoryStorage = () => {
   const items = new Map<string, string>()
@@ -28,6 +30,7 @@ describe('SettingsMenuItems', () => {
     setActivePinia(createPinia())
     useSettingsStore().availableEvents = ['sentry', 'ray', 'http-dump', 'smtp']
     xdebug.value = false
+    codeGraph.value = false
   })
 
   afterEach(() => {
@@ -49,6 +52,12 @@ describe('SettingsMenuItems', () => {
   it('shows Xdebug only when the server has it', () => {
     xdebug.value = true
     expect(mount(SettingsMenuItems).find('[data-menu-item="xdebug"]').exists()).toBe(true)
+  })
+
+  it('shows Code only when the server has code graph roots', () => {
+    expect(mount(SettingsMenuItems).find('[data-menu-item="code"]').exists()).toBe(false)
+    codeGraph.value = true
+    expect(mount(SettingsMenuItems).find('[data-menu-item="code"]').exists()).toBe(true)
   })
 
   // The server serves mocks from the http-dump module (#6019).

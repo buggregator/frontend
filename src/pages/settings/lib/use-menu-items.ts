@@ -1,5 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useCodeGraphEnabled } from '@/entities/code-graph/lib'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { MENU_ITEMS, MENU_TOOL_IDS, type MenuItem } from '@/shared/constants'
 import { useSettingsStore } from '@/shared/stores'
@@ -12,11 +13,13 @@ export const useMenuItems = () => {
   const settingsStore = useSettingsStore()
   const { availableEvents, hiddenMenuItems, isMockServerAvailable } = storeToRefs(settingsStore)
   const xdebugEnabled = useXdebugEnabled()
+  const codeGraphEnabled = useCodeGraphEnabled()
 
   const available = computed(() =>
     MENU_ITEMS.filter((item) => {
       if (item.id === MENU_TOOL_IDS.mockServer) return isMockServerAvailable.value
       if (item.id === MENU_TOOL_IDS.xdebug) return xdebugEnabled.value
+      if (item.id === MENU_TOOL_IDS.code) return codeGraphEnabled.value
       return availableEvents.value.includes(item.id)
     })
   )
