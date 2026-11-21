@@ -56,8 +56,13 @@ describe('SentrySubNav: tabs', () => {
     setActivePinia(createPinia())
     vi.stubGlobal(
       'fetch',
-      vi.fn(() =>
-        Promise.resolve(new Response(JSON.stringify({ exceptions: 21, traces: 0, logs: 66, metrics: 0 })))
+      // A server without crons: its tab (shown even with no monitors) stays out.
+      vi.fn((url: string) =>
+        Promise.resolve(
+          url.includes('/api/crons')
+            ? new Response('', { status: 404 })
+            : new Response(JSON.stringify({ exceptions: 21, traces: 0, logs: 66, metrics: 0 }))
+        )
       )
     )
   })
@@ -118,12 +123,20 @@ describe('SentrySubNav: Crons tab', () => {
     expect(wrapper.get('[data-test="sentry-tab-crons"]').text()).toBe('Crons 2')
   })
 
-  it('hidden with no monitors, like the other tabs, unless open', async () => {
+  it('shows with no monitors yet, without a count: a new user finds the setup help there', async () => {
     vi.stubGlobal('fetch', crons(new Response(JSON.stringify({ data: [] }))))
-    expect((await render()).find('[data-test="sentry-tab-crons"]').exists()).toBe(false)
+    expect((await render()).get('[data-test="sentry-tab-crons"]').text()).toBe('Crons')
+  })
 
-    vi.stubGlobal('fetch', crons(new Response(JSON.stringify({ data: [] }))))
-    expect((await render('crons')).find('[data-test="sentry-tab-crons"]').exists()).toBe(true)
+  it('not before the server answered', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})))
+    const wrapper = mount(SentrySubNav, { global: { stubs: { RouterLink: RouterLinkStub } } })
+    expect(wrapper.find('[data-test="sentry-tab-crons"]').exists()).toBe(false)
+  })
+
+  it('a failed load (500): hidden until the server answers', async () => {
+    vi.stubGlobal('fetch', crons(new Response('', { status: 500 })))
+    expect((await render()).find('[data-test="sentry-tab-crons"]').exists()).toBe(false)
   })
 
   it('an older server without /api/crons (404): no tab', async () => {

@@ -38,15 +38,23 @@ const TABS: { id: SentryTab; label: string; to: string }[] = [
 ]
 
 // Cron monitors are not in /counts and not in the period: the tab counts the
-// monitors of the project (#6617). An older server answers 404: no tab.
-const { monitors: cronMonitors, unsupported: cronsUnsupported } = useCronMonitors()
+// monitors of the project (#6617). It shows on every server with /api/crons,
+// also with no monitors (its empty state has the setup help); an older
+// server answers 404: no tab.
+const {
+  monitors: cronMonitors,
+  unsupported: cronsUnsupported,
+  hasLoaded: cronsLoaded,
+  error: cronsError
+} = useCronMonitors()
+const hasCrons = computed(() => cronsLoaded.value && !cronsUnsupported.value && !cronsError.value)
 
 const countOf = (id: SentryTab) => (id === 'crons' ? cronMonitors.value.length : (counts.value[id] ?? 0))
 
 // Tabs without data stay hidden; Exceptions and the open tab always show.
 const isShown = (id: SentryTab) => {
   if (id === 'exceptions') return true
-  if (id === 'crons' && cronsUnsupported.value) return false
+  if (id === 'crons') return !cronsUnsupported.value && (hasCrons.value || id === props.current)
   return id === props.current || countOf(id) > 0
 }
 const tabs = computed(() => TABS.filter((t) => isShown(t.id)))
