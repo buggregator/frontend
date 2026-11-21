@@ -17,6 +17,11 @@ export type DesktopNotifyEnv = {
   document: Pick<Document, 'visibilityState' | 'hasFocus'> & Partial<Pick<Document, 'addEventListener'>>
   focusWindow: () => void
   now: () => number
+  // Shared by the tabs of this origin (localStorage): which tab is looking.
+  storage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
+  tabId?: string
+  // window.addEventListener for focus, blur and pagehide.
+  onWindow?: (type: 'focus' | 'blur' | 'pagehide', fn: () => void) => void
 }
 
 export type ErrorNotice = { title: string; body: string; uuid: string }
@@ -26,6 +31,9 @@ export const BURST_MS = 10_000
 
 const BODY_MAX = 160
 const TAG = 'buggregator-new-error'
+const WATCH_KEY = 'desktop_notify_watch'
+// A record older than this is from a tab that died while looking.
+export const WATCH_STALE_MS = 30 * 60_000
 
 const clip = (text: string) => (text.length > BODY_MAX ? `${text.slice(0, BODY_MAX - 1)}…` : text)
 
@@ -68,8 +76,8 @@ export type DesktopNotifier = {
   requestPermission: () => Promise<NotifyPermission>
   /** Call for every received event; shows a notification when on, allowed and the window is away. */
   onEventReceived: (event: ServerEvent<unknown>, enabled: boolean) => void
-  /** A notification that says it works, right after turning it on. */
-  showTest: () => void
+  /** A notification that says it works, right after turning it on. False: the browser refused it. */
+  showTest: () => boolean
   /** What a click on a notification opens. */
   setOpener: (open: (uuid: string) => void) => void
 }
@@ -80,7 +88,9 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
   let burstCount = 0
   let lastShownAt = -Infinity
 
-  const isSupported = () => typeof N === 'function'
+  // Chrome on Android has the API, but `new Notification` throws there.
+  let refused = false
+  const isSupported = () => typeof N === 'function' && !refused
   const permission = (): NotifyPermission => (N ? N.permission : 'denied')
   const requestPermission = async (): Promise<NotifyPermission> => {
     if (!N) return 'denied'
@@ -101,12 +111,52 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
     burstCount = 0
     lastShownAt = -Infinity
   }
+  // Tabs tell each other who is looking: a hidden tab stays quiet about an
+  // error another Buggregator tab shows right now.
+  const tabId = env.tabId ?? Math.random().toString(36).slice(2)
+  const readWatch = (): { tab: string; at: number } | null => {
+    try {
+      return JSON.parse(env.storage?.getItem(WATCH_KEY) ?? 'null')
+    } catch {
+      return null
+    }
+  }
+  const syncWatch = () => {
+    if (!env.storage) return
+    try {
+      if (!isAway()) {
+        env.storage.setItem(WATCH_KEY, JSON.stringify({ tab: tabId, at: env.now() }))
+      } else if (readWatch()?.tab === tabId) {
+        env.storage.removeItem(WATCH_KEY)
+      }
+    } catch {
+      // Storage off: every tab decides for itself.
+    }
+  }
+  const leave = () => {
+    try {
+      if (readWatch()?.tab === tabId) env.storage?.removeItem(WATCH_KEY)
+    } catch {
+      // As above.
+    }
+  }
+  const otherTabLooking = () => {
+    const w = readWatch()
+    return !!w && w.tab !== tabId && env.now() - w.at < WATCH_STALE_MS
+  }
+
   env.document.addEventListener?.('visibilitychange', () => {
     if (env.document.visibilityState === 'visible') resetBurst()
+    syncWatch()
   })
+  env.onWindow?.('focus', syncWatch)
+  env.onWindow?.('blur', syncWatch)
+  env.onWindow?.('pagehide', leave)
+  syncWatch()
 
-  const show = (title: string, body: string, uuid?: string) => {
-    if (!N) return
+  /** False when the browser refused to show it. */
+  const show = (title: string, body: string, uuid?: string): boolean => {
+    if (!N || refused) return false
     try {
       // One tag: a newer notice replaces the older one instead of stacking up.
       const n = new N(title, { body, tag: TAG, icon: '/favicon/android-chrome-192x192.png' })
@@ -116,13 +166,17 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
         if (uuid) open(uuid)
         n.close()
       }
+      return true
     } catch {
-      // Chrome on Android throws for `new Notification`: no notification there.
+      refused = true
+      return false
     }
   }
 
   const onEventReceived = (event: ServerEvent<unknown>, enabled: boolean) => {
-    if (!enabled || !N || N.permission !== 'granted' || !isAway()) return
+    // The looking tab keeps its record fresh, so a long stay is not taken as stale.
+    if (!isAway()) syncWatch()
+    if (!enabled || !N || N.permission !== 'granted' || !isAway() || otherTabLooking()) return
     const notice = errorNotice(event)
     if (!notice) return
 
@@ -137,11 +191,9 @@ export const createDesktopNotifier = (env: DesktopNotifyEnv): DesktopNotifier =>
     }
   }
 
-  const showTest = () => {
-    if (N?.permission === 'granted') {
-      show('Notifications are on', 'Buggregator will tell you about new errors while you work elsewhere.')
-    }
-  }
+  const showTest = (): boolean =>
+    N?.permission === 'granted' &&
+    show('Notifications are on', 'Buggregator will tell you about new errors while you work elsewhere.')
 
   return {
     isSupported,

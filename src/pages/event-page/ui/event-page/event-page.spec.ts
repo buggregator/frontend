@@ -65,4 +65,33 @@ describe('EventPage: tab title', () => {
     expect(getItem).toHaveBeenLastCalledWith('def')
     expect(document.title).toBe('Sentry > def | Buggregator')
   })
+
+  // #6607: an older id that fails late must not show its error over the new event.
+  it('ignores a failure of an older id that answers late', async () => {
+    let failOld: (e: Error) => void = () => {}
+    getItem.mockImplementation((id: string) =>
+      id === 'old'
+        ? new Promise((_, reject) => (failOld = reject))
+        : Promise.resolve({ uuid: id, type: 'sentry', payload: {} })
+    )
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/sentry/event/:id', component: EventPage }],
+    })
+    await router.push('/sentry/event/old')
+    await router.isReady()
+
+    const wrapper = mount(EventPage, {
+      global: {
+        plugins: [router],
+        stubs: { LayoutBase: stub, LayoutSidebar: stub, PageEventHeader: stub, EventPageMapper: stub },
+      },
+    })
+    await router.push('/sentry/event/new')
+    await flushPromises()
+    failOld(new Error('boom'))
+    await flushPromises()
+
+    expect(wrapper.text()).not.toContain('Could not load the event')
+  })
 })

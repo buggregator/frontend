@@ -199,4 +199,85 @@ describe('createDesktopNotifier', () => {
   it('requestPermission answers denied without the API', async () => {
     expect(await createDesktopNotifier(makeEnv({ supported: false }).env).requestPermission()).toBe('denied')
   })
+
+  // #6607: tabs share who is looking, so a hidden tab stays quiet about an
+  // error another tab of Buggregator shows right now.
+  describe('several tabs', () => {
+    const memory = () => {
+      const items = new Map<string, string>()
+      return {
+        getItem: (k: string) => items.get(k) ?? null,
+        setItem: (k: string, v: string) => void items.set(k, v),
+        removeItem: (k: string) => void items.delete(k)
+      }
+    }
+    const tab = (storage: ReturnType<typeof memory>, id: string, away: boolean) => {
+      const made = makeEnv({ away })
+      const listeners: Record<string, () => void> = {}
+      const doc = made.env.document as unknown as { visibilityState: string; hasFocus: () => boolean; addEventListener: unknown }
+      doc.addEventListener = (type: string, fn: () => void) => void (listeners[type] = fn)
+      const win = (type: string, fn: () => void) => void (listeners[type] = fn)
+      const notifier = createDesktopNotifier({ ...made.env, storage, tabId: id, onWindow: win })
+      const setAway = (a: boolean) => {
+        doc.visibilityState = a ? 'hidden' : 'visible'
+        doc.hasFocus = () => !a
+        listeners.visibilitychange?.()
+        listeners[a ? 'blur' : 'focus']?.()
+      }
+      return { ...made, notifier, setAway, listeners }
+    }
+
+    it('a hidden tab stays quiet while another tab is looking', () => {
+      const storage = memory()
+      const a = tab(storage, 'a', true)
+      const b = tab(storage, 'b', true)
+      a.setAway(false)
+
+      b.notifier.onEventReceived(sentry(exception), true)
+      expect(b.shown).toHaveLength(0)
+
+      a.setAway(true)
+      b.notifier.onEventReceived(sentry(exception, 'shop', 'e2'), true)
+      expect(b.shown).toHaveLength(1)
+    })
+
+    it('a closed tab stops counting as looking', () => {
+      const storage = memory()
+      const a = tab(storage, 'a', true)
+      const b = tab(storage, 'b', true)
+      a.setAway(false)
+      a.listeners.pagehide?.()
+
+      b.notifier.onEventReceived(sentry(exception), true)
+      expect(b.shown).toHaveLength(1)
+    })
+
+    it('a stale record left by a crashed tab is ignored', () => {
+      const storage = memory()
+      const a = tab(storage, 'a', true)
+      const b = tab(storage, 'b', true)
+      a.setAway(false)
+      b.tick(31 * 60_000)
+
+      b.notifier.onEventReceived(sentry(exception), true)
+      expect(b.shown).toHaveLength(1)
+    })
+  })
+
+  // #6607: Chrome on Android has the API, but `new Notification` throws.
+  it('turns unsupported when the browser refuses to show one', () => {
+    const { env } = makeEnv()
+    class Throwing {
+      static permission: NotifyPermission = 'granted'
+      static requestPermission = async () => 'granted' as const
+      constructor() {
+        throw new TypeError('Illegal constructor. Use ServiceWorkerRegistration.showNotification() instead.')
+      }
+    }
+    const notifier = createDesktopNotifier({ ...env, Notification: Throwing as never })
+    expect(notifier.isSupported()).toBe(true)
+
+    expect(notifier.showTest()).toBe(false)
+    expect(notifier.isSupported()).toBe(false)
+  })
 })
