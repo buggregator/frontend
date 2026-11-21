@@ -65,9 +65,10 @@ const getEvent = async () => {
     isMissing.value = !serverEvent.value
   } catch (error) {
     logger(['UI: Failed to load event page', error])
-    loadError.value = describeLoadError(error)
+    if (id === eventId.value) loadError.value = describeLoadError(error)
   } finally {
-    isLoading.value = false
+    // The newer request owns the spinner.
+    if (id === eventId.value) isLoading.value = false
   }
 }
 

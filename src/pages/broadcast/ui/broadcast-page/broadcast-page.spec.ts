@@ -1,0 +1,217 @@
+import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { reactive, ref } from 'vue'
+import type { BroadcastEvent } from '@/entities/broadcast'
+import { broadcastMocks, broadcastOrderStatusMock } from '@/entities/broadcast/mocks'
+import { useEventsStore } from '@/shared/stores'
+import { useConnectionStore } from '@/shared/stores/connections'
+import BroadcastPage from './broadcast-page.vue'
+
+const items = ref<BroadcastEvent[]>([])
+const idsByType = ref<Record<string, string[]>>({ broadcast: [] })
+const getAll = vi.fn()
+const getItem = vi.fn()
+const route = reactive<{ query: Record<string, string> }>({ query: {} })
+const replace = vi.fn()
+
+vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ replace }) }))
+vi.mock('@/shared/lib/use-events', () => ({
+  useEvents: () => ({ events: { items, getAll, getItem }, cachedEvents: { idsByType } })
+}))
+// The page's frame and the setup help have tests of their own.
+vi.mock('@/widgets/ui', () => ({
+  LayoutBase: { template: '<div><slot name="header" /><slot /></div>' },
+  LayoutSidebar: { template: '<nav />' },
+  PageHeader: { template: '<header class="header-stub" />' },
+  SetupGuide: {
+    props: ['sectionId', 'sectionTitle'],
+    template: '<div class="guide-stub" :data-section="sectionId" :data-title="sectionTitle" />'
+  }
+}))
+
+// The console's parts are async components.
+const settle = async () => {
+  await flushPromises()
+  await vi.dynamicImportSettled()
+  await flushPromises()
+}
+
+const render = async () => {
+  const wrapper = mount(BroadcastPage, { attachTo: document.body })
+  await settle()
+  return wrapper
+}
+
+describe('BroadcastPage (channel console)', () => {
+  let warn: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    items.value = []
+    idsByType.value = { broadcast: [] }
+    route.query = {}
+    replace.mockReset()
+    getAll.mockReset()
+    getItem.mockReset()
+    useEventsStore().listState = 'ready'
+    useConnectionStore().addWSConnection()
+    warn = vi.spyOn(console, 'warn')
+  })
+
+  afterEach(() => {
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+    document.body.innerHTML = ''
+  })
+
+  it('loading: a skeleton while the first list loads', async () => {
+    useEventsStore().listState = 'loading'
+    const wrapper = await render()
+    expect(wrapper.find('[aria-label="Loading broadcasts"]').exists()).toBe(true)
+    expect(wrapper.find('.guide-stub').exists()).toBe(false)
+  })
+
+  it('error: says so and loads again on request', async () => {
+    useEventsStore().listState = 'error'
+    useEventsStore().listError = 'HTTP 500'
+    const wrapper = await render()
+    expect(wrapper.text()).toContain('Could not load broadcasts')
+    await wrapper.find('button').trigger('click')
+    expect(getAll).toHaveBeenCalled()
+  })
+
+  it('empty: the shared setup guide of the broadcast section', async () => {
+    const wrapper = await render()
+    const guide = wrapper.find('.guide-stub')
+    expect(guide.attributes('data-section')).toBe('broadcast')
+    expect(guide.attributes('data-title')).toBe('Broadcast')
+  })
+
+  it('no channel selected: a hint and a way to all channels', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    expect(wrapper.find('[data-test="bc-no-channel"]').text()).toContain('Pick a channel')
+    await wrapper.find('[data-test="bc-no-channel"] button').trigger('click')
+    await settle()
+    expect(wrapper.findAll('.bc-row')).toHaveLength(broadcastMocks.length)
+    expect(replace).toHaveBeenLastCalledWith({ query: { channel: '*', event: undefined } })
+  })
+
+  it('a picked channel streams its events; a row unfolds with its changes', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    const row = wrapper.findAll('[data-channel-row]').find((r) => r.text().includes('private-orders.42'))!
+    await row.trigger('click')
+    await settle()
+
+    const rows = wrapper.findAll('.bc-row')
+    expect(rows.map((r) => r.find('.bc-row__name').text())).toEqual([
+      'OrderStatusUpdated',
+      'OrderShipped',
+      'OrderStatusUpdated'
+    ])
+    expect(wrapper.find('.bc-page__toolbar').text()).toContain('private · 3 events · 1 sent with toOthers')
+
+    await rows[0].trigger('click')
+    await settle()
+    expect(rows[0].attributes('aria-expanded')).toBe('true')
+    expect(wrapper.find('[data-test="bc-changes"]').text()).toContain('order.status')
+  })
+
+  it('?event= opens the console on that event, unfolded', async () => {
+    items.value = broadcastMocks
+    route.query = { event: broadcastOrderStatusMock.uuid }
+    const wrapper = await render()
+    await settle()
+    expect(wrapper.find('.bc-page__stream-title').text()).toBe('private-orders.42')
+    expect(wrapper.find('.bc-row--open .bc-row__name').text()).toBe('OrderStatusUpdated')
+    expect(wrapper.find(`#bc-detail-${broadcastOrderStatusMock.uuid}`).exists()).toBe(true)
+  })
+
+  it('phone: the select picks a channel too', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    await wrapper.find('#bc-channel-select').setValue('private-cart.9f2c1a')
+    await settle()
+    expect(wrapper.find('.bc-page__stream-title').text()).toBe('private-cart.9f2c1a')
+    expect(wrapper.findAll('.bc-row')).toHaveLength(1)
+  })
+
+  it('paused: shows only the events kept when the pause began', async () => {
+    items.value = broadcastMocks
+    idsByType.value = { broadcast: [broadcastOrderStatusMock.uuid] }
+    route.query = { channel: '*' }
+    const wrapper = await render()
+    expect(wrapper.findAll('.bc-row')).toHaveLength(1)
+    expect(wrapper.find('.bc-page__live').text()).toBe('Paused')
+  })
+
+  const openFirst = async (wrapper: Awaited<ReturnType<typeof render>>) => {
+    await wrapper.findAll('[data-channel-row]').find((r) => r.text().includes('private-orders.42'))!.trigger('click')
+    await settle()
+    await wrapper.find('.bc-row').trigger('click')
+    await settle()
+  }
+
+  it('Esc folds the open event and gives the focus back to its row', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    await openFirst(wrapper)
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    await settle()
+    expect(wrapper.find('.bc-row--open').exists()).toBe(false)
+    expect(document.activeElement).toBe(wrapper.find('.bc-row').element)
+  })
+
+  it('Esc in a text field or one already handled does not fold the event', async () => {
+    items.value = broadcastMocks
+    const wrapper = await render()
+    await openFirst(wrapper)
+    const input = wrapper.find('.bc-channels__input input').element
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    const handled = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })
+    handled.preventDefault()
+    window.dispatchEvent(handled)
+    await settle()
+    expect(wrapper.find('.bc-row--open').exists()).toBe(true)
+  })
+
+  it('?event= of an event not loaded: fetches it and opens it', async () => {
+    items.value = broadcastMocks.filter((e) => e.uuid !== broadcastOrderStatusMock.uuid)
+    route.query = { event: broadcastOrderStatusMock.uuid }
+    getItem.mockResolvedValue(broadcastOrderStatusMock)
+    const wrapper = await render()
+    await settle()
+    expect(getItem).toHaveBeenCalledWith(broadcastOrderStatusMock.uuid)
+    expect(wrapper.find('.bc-row--open .bc-row__name').text()).toBe('OrderStatusUpdated')
+  })
+
+  it('?event= that is not a broadcast, or gone: says so', async () => {
+    items.value = broadcastMocks
+    route.query = { event: 'nope' }
+    getItem.mockResolvedValue(null)
+    const wrapper = await render()
+    await settle()
+    expect(wrapper.find('[data-test="bc-event-missing"]').text()).toContain('not found')
+    expect(wrapper.find('[data-test="bc-no-channel"]').exists()).toBe(true)
+  })
+
+  it('a picked channel stays picked when its family folds (#367 review)', async () => {
+    const ev = (uuid: string, t: number, channel: string): BroadcastEvent => ({
+      ...broadcastOrderStatusMock,
+      uuid,
+      timestamp: t,
+      payload: { ...broadcastOrderStatusMock.payload, channels: [channel] }
+    })
+    items.value = [ev('u1', 1, 'private-App.Models.User.1')]
+    route.query = { channel: 'private-App.Models.User.1' }
+    const wrapper = await render()
+    items.value = [...items.value, ...[2, 3, 4, 5].map((n) => ev(`u${n}`, n, `private-App.Models.User.${n}`))]
+    await settle()
+    expect(wrapper.find('[data-test="bc-no-channel"]').exists()).toBe(false)
+    expect(wrapper.find('.bc-page__stream-title').text()).toBe('private-App.Models.User.*')
+    expect(wrapper.find('[aria-current="true"]').text()).toContain('private-App.Models.User.*')
+    expect(wrapper.findAll('.bc-row')).toHaveLength(5)
+  })
+})

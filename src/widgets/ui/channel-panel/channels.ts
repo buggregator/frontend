@@ -1,5 +1,5 @@
 import type { RouteLocationRaw } from 'vue-router'
-import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS } from '@/shared/constants'
+import { MENU_EVENT_GROUPS, MENU_TOOL_IDS, PAGES_SETTINGS, typePageLink } from '@/shared/constants'
 import { EventTypes, RouteName } from '@/shared/types'
 import { fillText } from '../setup-guide'
 
@@ -50,6 +50,7 @@ const ADDRESS: Record<string, string> = {
   [EventTypes.XdebugTrace]: 'header X-Buggregator-Event: xdebug-trace',
   [EventTypes.Smtp]: 'smtp://{host}:{smtp_port}',
   [EventTypes.Sms]: 'http://{host}:{http_port}/sms/{project}',
+  [EventTypes.Broadcast]: 'http://{host}:{http_port}/apps/…/events',
   [EventTypes.Csp]: 'report-uri http://{host}:{http_port}/csp/{project}',
   [EventTypes.Monolog]: 'tcp://{host}:{monolog_port}',
   'http-proxy': 'http://{host}:{proxy_port}',
@@ -126,7 +127,7 @@ export const buildChannelGroups = (input: ChannelInput): ChannelGroup[] => {
           title: PAGES_SETTINGS[type].sidebarTitle,
           icon: PAGES_SETTINGS[type].iconName,
           eventType: type,
-          to: type === EventTypes.Sentry ? '/sentry/exceptions' : { name: RouteName.EventList, params: { type } }
+          to: typePageLink(type)
         })
       )
   }))

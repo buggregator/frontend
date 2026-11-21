@@ -26,7 +26,11 @@ export default {
     '!./src/entities/sentry/lib/crons/**',
     '!./src/entities/sentry/ui/sentry-crons/**',
     '!./src/pages/sentry/ui/sentry-crons-page/**',
-    '!./src/pages/sentry/ui/sentry-cron-job-page/**'
+    '!./src/pages/sentry/ui/sentry-cron-job-page/**',
+    // The broadcast console and its feed card load on demand and style their
+    // own classes (#6614), the same way.
+    '!./src/entities/broadcast/ui/**',
+    '!./src/pages/broadcast/**'
   ],
   variants: {
     extend: {

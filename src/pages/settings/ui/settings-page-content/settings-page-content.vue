@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { computed, provide, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { UpdatePanel, useServerUpdateStore } from '@/entities/server-update'
+import { SmtpRelayStatus } from '@/entities/smtp'
 import {
   IDE_KEYS,
   IDE_TITLES_TO_KEYS_MAP,
@@ -442,6 +443,21 @@ useTitle('Settings | Buggregator')
                     </button>
                   </div>
                 </div>
+              </template>
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="email"
+          class="settings__section"
+          title="Email relay"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow :item="SETTINGS_ITEMS.emailRelay">
+              <template #extra>
+                <SmtpRelayStatus />
               </template>
             </SettingsRow>
           </div>

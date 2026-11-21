@@ -59,6 +59,7 @@ const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.Profiler]: [] as EventId[],
   [PAGE_TYPES.Smtp]: [] as EventId[],
   [PAGE_TYPES.Sms]: [] as EventId[],
+  [PAGE_TYPES.Broadcast]: [] as EventId[],
   [PAGE_TYPES.RayDump]: [] as EventId[],
   [PAGE_TYPES.VarDump]: [] as EventId[],
   [PAGE_TYPES.HttpDump]: [] as EventId[],

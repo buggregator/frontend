@@ -19,7 +19,7 @@ useEventListener(window, 'focus', refresh)
     <template #default="{ labelId, hintId }">
       <SettingsSwitch
         :checked="state === 'on'"
-        :disabled="state === 'unsupported' || isAsking"
+        :disabled="state === 'unsupported' || state === 'refused' || isAsking"
         :aria-labelledby="labelId"
         :aria-describedby="`${hintId} desktop-notify-status`"
         data-test="desktop-notify-switch"
@@ -38,6 +38,10 @@ useEventListener(window, 'focus', refresh)
         <template v-if="state === 'unsupported'">
           Not available on this address: browsers show notifications only on localhost and https.
           Open Buggregator at http://localhost:8000 (or behind https) to use them.
+        </template>
+        <template v-else-if="state === 'refused'">
+          This browser does not show notifications from a page (Chrome on Android does this). Use
+          Buggregator on a computer to get them.
         </template>
         <template v-else-if="state === 'blocked'">
           Blocked by the browser. Allow notifications for this site (the icon left of the address),
@@ -71,7 +75,8 @@ useEventListener(window, 'focus', refresh)
 }
 
 .desktop-notify__status--blocked,
-.desktop-notify__status--unsupported {
+.desktop-notify__status--unsupported,
+.desktop-notify__status--refused {
   @apply text-amber-700 dark:text-amber-300;
 }
 

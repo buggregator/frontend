@@ -197,8 +197,8 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     const wrapper = mount(SettingsPageContent)
 
     const links = wrapper.findAll('nav[aria-label="Settings sections"] a')
-    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Notifications', 'Menu', 'Keyboard', 'Editor', 'About & updates'])
-    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#notifications', '#menu', '#keyboard', '#editor', '#updates'])
+    expect(links.map((a) => a.text())).toEqual(['Appearance', 'Notifications', 'Menu', 'Keyboard', 'Editor', 'Email relay', 'About & updates'])
+    expect(links.map((a) => a.attributes('href'))).toEqual(['#appearance', '#notifications', '#menu', '#keyboard', '#editor', '#email', '#updates'])
     expect(links[0].attributes('aria-current')).toBe('true')
   })
 
@@ -220,7 +220,7 @@ describe('SettingsPageContent: theme, search, sections (#5874)', () => {
     await wrapper.get('input[aria-label="Search settings"]').setValue('zzz')
 
     expect(wrapper.text()).toContain('No settings match «zzz».')
-    expect(wrapper.findAll('.settings-row--dim').length).toBe(9)
+    expect(wrapper.findAll('.settings-row--dim').length).toBe(10)
 
     await wrapper.get('.settings__empty button').trigger('click')
 

@@ -11,6 +11,7 @@ export const SETUP_SECTION_IDS = [
   'ray',
   'http-dump',
   'sms',
+  'broadcast',
   'csp',
   'xdebug-trace',
   'mock-server',

@@ -74,4 +74,14 @@ describe('SearchBar keys', () => {
     expect(wrapper.find('.key-hints').text()).toContain('Escclear')
     wrapper.unmount()
   })
+
+  it('a secondary box (shortcut off) leaves / to the main search and shows no / hint', () => {
+    const wrapper = mount(SearchBar, { props: { modelValue: '', shortcut: false }, attachTo: document.body })
+
+    press('/')
+
+    expect(document.activeElement).not.toBe(wrapper.find('input').element)
+    expect(wrapper.find('.search-bar__shortcut').exists()).toBe(false)
+    wrapper.unmount()
+  })
 })

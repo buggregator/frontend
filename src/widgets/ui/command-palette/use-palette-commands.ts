@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update'
 import { useXdebugEnabled } from '@/entities/xdebug'
-import { MENU_EVENT_GROUPS, PAGES_SETTINGS, SETTINGS_SECTIONS } from '@/shared/constants'
+import { MENU_EVENT_GROUPS, PAGES_SETTINGS, SETTINGS_SECTIONS, typePageLink } from '@/shared/constants'
 import type { Command } from '@/shared/lib/command-palette'
 import { useEvents } from '@/shared/lib/use-events'
 import { isShortcutsOverlayOpen } from '@/shared/lib/use-global-shortcuts'
@@ -18,6 +18,7 @@ const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
   inspector: ['apm', 'performance'],
   smtp: ['mail', 'email'],
   sms: ['text message', 'phone'],
+  broadcast: ['pusher', 'reverb', 'websocket', 'echo', 'channels'],
   csp: ['content security policy', 'report-uri', 'reporting api', 'violation', 'browser report'],
   'http-dump': ['request', 'webhook'],
   'var-dump': ['dump', 'symfony'],
@@ -60,10 +61,7 @@ export const usePaletteCommands = () => {
           note: n > 0 ? `${n > 99 ? '99+' : n} new` : undefined,
           keywords: [PAGES_SETTINGS[type].title, type, ...(TYPE_KEYWORDS[type] ?? [])],
           icon: PAGES_SETTINGS[type].iconName,
-          run: () =>
-            router.push(
-              type === 'sentry' ? '/sentry/exceptions' : { name: RouteName.EventList, params: { type } }
-            )
+          run: () => router.push(typePageLink(type))
         }
       }),
     {

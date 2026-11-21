@@ -94,6 +94,17 @@ export const SETTINGS_ITEMS = {
       'to open files outside your project root or with different path prefixes.',
     keywords: ['docker', 'path', 'source', 'target', 'mapping', 'editor']
   },
+  emailRelay: {
+    id: 'email-relay',
+    label: 'Email relay',
+    hint: 'Send a caught email to a real inbox.',
+    more:
+      'Buggregator can pass a caught email on to an outgoing SMTP server (your mail provider, ' +
+      'or Mailpit for a test), to see it on a phone or in a real mail client. The relay is set in ' +
+      'the server config (smtp_relay in buggregator.yaml or SMTP_RELAY_* variables); here it is ' +
+      'read-only. Then use «Send to inbox» on an email page.',
+    keywords: ['smtp', 'mail', 'email', 'relay', 'release', 'inbox', 'send', 'forward', 'outgoing']
+  },
   about: {
     id: 'about',
     label: 'About & updates',
@@ -127,6 +138,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'editor',
     title: 'Editor',
     items: [SETTINGS_ITEMS.codeEditor, SETTINGS_ITEMS.pathMapping]
+  },
+  {
+    id: 'email',
+    title: 'Email relay',
+    items: [SETTINGS_ITEMS.emailRelay]
   },
   // The id stays «updates»: the header pill and the menu dot link to #updates.
   {
