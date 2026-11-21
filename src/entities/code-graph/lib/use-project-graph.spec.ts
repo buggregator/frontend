@@ -45,7 +45,7 @@ describe('useProjectGraph', () => {
     api.getGraph.mockResolvedValue(whole)
     const p = useProjectGraph(ref('shop'))
     await flushPromises()
-    expect(api.getGraph).toHaveBeenCalledWith('shop', { kinds: 'calls,instantiates', limit: 300, expand: [] })
+    expect(api.getGraph).toHaveBeenCalledWith('shop', { kinds: 'calls,instantiates', limit: 300, expand: [], confidence: 'all' })
     expect(p.state.value).toBe('ready')
     expect(p.layout.value?.nodes).toHaveLength(2)
   })

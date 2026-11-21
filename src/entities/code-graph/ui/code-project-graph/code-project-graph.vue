@@ -275,6 +275,7 @@ watch(
 
     <footer class="tg-key code-project-graph__key">
       <span class="tg-key__item"><span class="code-project-graph__swatch" />calls, the number on the line</span>
+      <span class="tg-key__item"><span class="code-project-graph__swatch code-project-graph__swatch--guess" />only guessed by method name</span>
       <span class="tg-key__item">click a box to open it, a function to see its calls</span>
       <button
         v-if="p.anyOpen.value"
@@ -443,5 +444,9 @@ watch(
   display: inline-block;
   width: 24px;
   border-top: 3px solid var(--tg-edge);
+}
+
+.code-project-graph__swatch--guess {
+  border-top-style: dashed;
 }
 </style>

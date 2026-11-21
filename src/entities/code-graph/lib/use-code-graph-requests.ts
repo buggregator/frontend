@@ -77,7 +77,14 @@ export const useCodeGraphRequests = () => {
   // they hold, the rest stays folded.
   const getGraph = (
     rootName: string,
-    opts: { level?: 'symbol' | 'class' | 'package'; limit?: number; kinds?: string; expand?: string[] } = {}
+    opts: {
+      level?: 'symbol' | 'class' | 'package'
+      limit?: number
+      kinds?: string
+      expand?: string[]
+      // Whole root (#6577): `all` adds calls matched by method name only.
+      confidence?: 'exact' | 'all'
+    } = {}
   ) => {
     const { expand, ...rest } = opts
     return request<CodeGraph>(`/graph${qs({ root: rootName, ...rest, expand: expand?.length ? expand.join(',') : undefined })}`)

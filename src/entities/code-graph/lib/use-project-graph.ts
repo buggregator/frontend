@@ -42,7 +42,7 @@ export const useProjectGraph = (root: Ref<string | null | undefined>) => {
     }
     state.value = 'loading'
     try {
-      const g = await api.getGraph(name, { kinds: PROJECT_KINDS, limit: PROJECT_LIMIT, expand: expanded.value })
+      const g = await api.getGraph(name, { kinds: PROJECT_KINDS, limit: PROJECT_LIMIT, expand: expanded.value, confidence: 'all' })
       if (mine !== seq) return
       graph.value = g
       error.value = null
