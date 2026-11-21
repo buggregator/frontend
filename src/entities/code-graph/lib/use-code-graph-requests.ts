@@ -8,7 +8,8 @@ import type {
   CodeOutlineItem,
   CodeRootStatus,
   CodeSymbol,
-  CodeSymbolDetail
+  CodeSymbolDetail,
+  CodeTopSymbol
 } from '../types'
 
 const BASE = `${REST_API_URL}/api/code`
@@ -71,10 +72,24 @@ export const useCodeGraphRequests = () => {
   const getOutline = (rootName: string, path: string) =>
     request<{ symbols: CodeOutlineItem[] }>(`/files/outline${qs({ root: rootName, path })}`).then((r) => r?.symbols ?? [])
 
+  // A drawable graph of a root; without a target, above `limit` the server
+  // keeps the most connected nodes. `expand` (#6582): node ids drawn as what
+  // they hold, the rest stays folded.
+  const getGraph = (
+    rootName: string,
+    opts: { level?: 'symbol' | 'class' | 'package'; limit?: number; kinds?: string; expand?: string[] } = {}
+  ) => {
+    const { expand, ...rest } = opts
+    return request<CodeGraph>(`/graph${qs({ root: rootName, ...rest, expand: expand?.length ? expand.join(',') : undefined })}`)
+  }
+
+  const getTop = (rootName: string, limit = 20) =>
+    request<{ symbols: CodeTopSymbol[] }>(`/top${qs({ root: rootName, limit })}`).then((r) => r?.symbols ?? [])
+
   // The innermost function, method or type at a file and line; `file` may be
   // absolute (the server applies `code_graph.path_map`).
   const resolve = (file: string, line: number, rootName?: string) =>
     request<CodeSymbol>(`/resolve${qs({ file, line, root: rootName })}`)
 
-  return { getRoots, getRoot, reindex, search, getSymbol, getCallers, getCallees, getFiles, getOutline, resolve }
+  return { getRoots, getRoot, reindex, search, getSymbol, getCallers, getCallees, getFiles, getOutline, getGraph, getTop, resolve }
 }

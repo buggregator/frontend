@@ -15,6 +15,7 @@ import {
 import { RouteName } from '@/shared/types'
 import { AppHeader } from '@/shared/ui'
 import { useCodeFocus, useRootsStatus, type FocusDirection, type FocusTarget } from '../../lib'
+import { CodeLanding } from '../code-landing'
 
 // Code page (#6573 variant A): one symbol in focus, callers left, callees
 // right, depth 1–3; a side panel for the picked node. A way in from a stack
@@ -143,7 +144,16 @@ const onRow = (n: FocusNode) => {
       class="code-page"
       :class="{ 'code-page--phone': isPhone }"
     >
-      <div class="code-page__bar">
+      <div
+        v-if="f.state.value !== 'idle'"
+        class="code-page__bar"
+      >
+        <RouterLink
+          :to="{ name: RouteName.Code, query: { root: f.focus.value?.root ?? target.root } }"
+          class="code-page__btn"
+        >
+          ← Whole project
+        </RouterLink>
         <CodeSearch @pick="goTo" />
         <template v-if="f.focus.value">
           <h2 class="code-page__focus">
@@ -232,18 +242,10 @@ const onRow = (n: FocusNode) => {
         </RouterLink>
       </p>
 
-      <div
-        v-if="f.state.value === 'idle'"
-        class="code-page__empty"
-      >
-        <h2 class="code-page__empty-title">
-          Find a symbol to start
-        </h2>
-        <p>
-          Type a class, method or function name above (press <kbd>/</kbd>), or open the graph from a stack frame
-          with «Graph».
-        </p>
-      </div>
+      <CodeLanding
+        v-if="f.state.value === 'idle' && roots"
+        :roots="roots"
+      />
       <div
         v-else-if="f.state.value === 'not-found'"
         class="code-page__empty"

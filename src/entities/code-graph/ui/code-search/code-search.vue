@@ -6,10 +6,14 @@ import { useCodeGraphRequests } from '../../lib/use-code-graph-requests'
 import type { CodeSymbol } from '../../types'
 
 // Find a symbol by name (`/` focuses the field): a combobox, arrows move,
-// Enter picks, Esc closes.
+// Enter picks, Esc closes. `found` passes the results on while typing (the
+// whole graph lights them up in place); null when the field is cleared.
 
-const props = defineProps<{ root?: string }>()
-const emit = defineEmits<{ (e: 'pick', symbol: CodeSymbol): void }>()
+const props = defineProps<{ root?: string; placeholder?: string }>()
+const emit = defineEmits<{
+  (e: 'pick', symbol: CodeSymbol): void
+  (e: 'found', symbols: CodeSymbol[] | null): void
+}>()
 
 const uid = useId()
 const input = useTemplateRef<HTMLInputElement>('input')
@@ -27,6 +31,7 @@ const run = useDebounceFn(async (text: string) => {
   if (text.trim().length < 2) {
     results.value = []
     loading.value = false
+    emit('found', null)
     return
   }
   loading.value = true
@@ -37,10 +42,12 @@ const run = useDebounceFn(async (text: string) => {
     if (mine !== seq) return
     results.value = found
     active.value = 0
+    emit('found', found)
   } catch {
     if (mine === seq) {
       failed.value = true
       results.value = []
+      emit('found', null)
     }
   } finally {
     if (mine === seq) loading.value = false
@@ -57,6 +64,7 @@ const onInput = () => {
 const pick = (s: CodeSymbol | undefined) => {
   if (!s) return
   emit('pick', s)
+  emit('found', null)
   open.value = false
   q.value = ''
   results.value = []
@@ -101,7 +109,7 @@ const label = (s: CodeSymbol) => symbolLabel(s)
       v-model="q"
       type="search"
       class="cg-search__input"
-      placeholder="Find a class, method or function"
+      :placeholder="placeholder ?? 'Find a class, method or function'"
       aria-label="Find a symbol"
       role="combobox"
       :aria-expanded="showList"

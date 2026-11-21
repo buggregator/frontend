@@ -80,7 +80,8 @@ export type CodeGraphNode = {
   // s:<symbol id>, ns:<namespace>, x:<name> (outside the index), f:<file>.
   id: string
   symbol_id?: number
-  kind: CodeSymbolKind | 'external' | 'file'
+  // folder: drawn by the page (packages of one folder folded together).
+  kind: CodeSymbolKind | 'external' | 'file' | 'folder'
   name: string
   fqn: string
   file?: string
@@ -88,6 +89,10 @@ export type CodeGraphNode = {
   external?: boolean
   // Hops from the start; 0 for the start.
   depth: number
+  // Whole-root graph (#6582): symbols folded into this node, and the opened
+  // node it was drawn from (`expand`).
+  size?: number
+  group?: string
 }
 
 export type CodeGraphEdge = {
@@ -117,3 +122,6 @@ export type CodeFileEntry = {
 }
 
 export type CodeOutlineItem = CodeSymbol & { members: CodeOutlineItem[] }
+
+// GET /api/code/top: functions and methods by exact incoming calls, tests left out.
+export type CodeTopSymbol = CodeSymbol & { callers: number }
