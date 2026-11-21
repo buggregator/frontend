@@ -4,7 +4,9 @@ import type { DesktopNotifier, NotifyPermission } from '@/shared/lib/desktop-not
 import { useSettingsStore } from '@/shared/stores'
 import { useDesktopNotificationsSetting } from './use-desktop-notifications-setting'
 
-const notifier = (opts: { supported?: boolean; permission?: NotifyPermission; answer?: NotifyPermission } = {}) => {
+const notifier = (
+  opts: { supported?: boolean; permission?: NotifyPermission; answer?: NotifyPermission; refuses?: boolean } = {}
+) => {
   let permission = opts.permission ?? 'default'
   return {
     isSupported: () => opts.supported ?? true,
@@ -14,7 +16,7 @@ const notifier = (opts: { supported?: boolean; permission?: NotifyPermission; an
       return permission
     }),
     onEventReceived: vi.fn(),
-    showTest: vi.fn(),
+    showTest: vi.fn(() => !opts.refuses),
     setOpener: vi.fn()
   } satisfies DesktopNotifier
 }
@@ -43,6 +45,16 @@ describe('useDesktopNotificationsSetting', () => {
     const s = useDesktopNotificationsSetting(notifier({ answer: 'denied' }))
     await s.toggle()
     expect(s.state.value).toBe('blocked')
+    expect(useSettingsStore().isDesktopNotificationsEnabled).toBe(false)
+  })
+
+  // #6607: Chrome on Android grants the permission, then refuses to show one.
+  it('turns back off and says so when the browser refuses the test notice', async () => {
+    const s = useDesktopNotificationsSetting(notifier({ refuses: true }))
+
+    await s.toggle()
+
+    expect(s.state.value).toBe('refused')
     expect(useSettingsStore().isDesktopNotificationsEnabled).toBe(false)
   })
 
