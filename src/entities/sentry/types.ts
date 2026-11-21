@@ -23,6 +23,7 @@ export type {
   SentryServiceMapStats,
   SentryGraphBucket,
   SentryCounts,
+  SentryFeedback,
   SentrySequence,
   SentrySequenceCall,
   SentrySequenceCallee,

@@ -2,6 +2,7 @@
 import download from 'downloadjs'
 import { toBlob, toPng } from 'html-to-image'
 import { ref, computed } from 'vue'
+import { cardLookOf } from '../../constants'
 import { copyBlobToClipboard } from '../../lib/clipboard'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
@@ -145,7 +146,7 @@ const copyCode = () => {
     ref="eventRef"
     class="preview-card"
     :class="[
-      `preview-card--type-${event.type}`,
+      `preview-card--type-${cardLookOf(event.type)}`,
       {
         'preview-card--initialized': !isDeleting,
         'preview-card--deleting': isDeleting

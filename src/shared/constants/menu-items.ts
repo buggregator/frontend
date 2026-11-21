@@ -11,7 +11,7 @@ export const MENU_EVENT_GROUPS: { id: string; title: string; types: EventTypes[]
   {
     id: 'errors',
     title: 'Errors & performance',
-    types: [EventTypes.Sentry, EventTypes.Profiler, EventTypes.Inspector]
+    types: [EventTypes.Sentry, EventTypes.Profiler, EventTypes.Inspector, EventTypes.Csp]
   },
   {
     id: 'dumps',

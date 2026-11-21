@@ -50,6 +50,7 @@ const ADDRESS: Record<string, string> = {
   [EventTypes.XdebugTrace]: 'header X-Buggregator-Event: xdebug-trace',
   [EventTypes.Smtp]: 'smtp://{host}:{smtp_port}',
   [EventTypes.Sms]: 'http://{host}:{http_port}/sms/{project}',
+  [EventTypes.Csp]: 'report-uri http://{host}:{http_port}/csp/{project}',
   [EventTypes.Monolog]: 'tcp://{host}:{monolog_port}',
   'http-proxy': 'http://{host}:{proxy_port}',
   [MENU_TOOL_IDS.mockServer]: 'http://mock:{project}@{host}:{http_port}/mock/…',
