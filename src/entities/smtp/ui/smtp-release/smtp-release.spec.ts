@@ -127,6 +127,7 @@ describe('SmtpRelease', () => {
     expect(url).toContain('/api/smtp/release/ev-1')
     expect(JSON.parse(String(init.body))).toEqual({ to: ['Me@ex.com'], rewrite_to: true })
     expect(wrapper.get('[data-test="smtp-release-ok"]').text()).toContain('me@ex.com')
+    expect(wrapper.get('[data-test="smtp-release-local"]').text()).toContain('In Docker or behind a proxy, turn auth on')
     expect(localStorage.getItem('smtp_release_to')).toBe('Me@ex.com')
     wrapper.unmount()
   })
@@ -181,7 +182,8 @@ describe('SmtpRelayStatus', () => {
     expect(wrapper.get('[data-test="smtp-relay-pill"]').text()).toBe('On')
     expect(wrapper.text()).toContain('mailpit:1025 · no TLS · no login')
     expect(wrapper.text()).toContain('*@ex.com')
-    expect(wrapper.text()).toContain('This machine only')
+    expect(wrapper.text()).toContain('Run directly on this machine, opened on localhost')
+    expect(wrapper.text()).toContain("The message's own From")
     expect(wrapper.text().toLowerCase()).not.toContain('password')
   })
 

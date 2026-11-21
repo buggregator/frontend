@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, ref, useId } from 'vue'
 import {
+  LOCAL_ONLY_TEXT,
   ReleaseError,
   getStoredRecipients,
   parseRecipients,
   relayAddress,
+  relaySender,
   setStoredRecipients,
   useSmtpRelay
 } from '../../lib/smtp-relay'
@@ -139,7 +141,7 @@ const send = async () => {
           <p class="smtp-release__via">
             The message goes as caught through
             <strong>{{ relayAddress(info) }}</strong>, from
-            <strong>{{ info.from || "the message's own From" }}</strong>.
+            <strong>{{ relaySender(info) }}</strong>.
           </p>
 
           <label
@@ -193,8 +195,9 @@ const send = async () => {
           <p
             v-if="info.local_only"
             class="smtp-release__note"
+            data-test="smtp-release-local"
           >
-            Auth is off, so sending works only with Buggregator opened on this machine (localhost).
+            {{ LOCAL_ONLY_TEXT }}
           </p>
 
           <p

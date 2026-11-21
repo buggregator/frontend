@@ -43,8 +43,9 @@ const env = computed(() =>
     </p>
     <pre class="relay-setup__code">{{ env }}</pre>
     <p class="relay-setup__text">
-      Then restart Buggregator. Without auth, sending works only from this machine and only to the
-      allowed addresses.
+      Then restart Buggregator. Without auth, sending works only to the allowed addresses, and only
+      when Buggregator runs directly on this machine and you open it on localhost. In Docker or
+      behind a proxy, turn auth on.
     </p>
   </div>
 </template>

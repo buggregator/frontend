@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
-import { relayAddress, useSmtpRelay } from '../../lib/smtp-relay'
+import { relayAddress, relaySender, useSmtpRelay } from '../../lib/smtp-relay'
 import SmtpRelaySetup from './smtp-relay-setup.vue'
 
 // Settings › Email relay (#6605): what the server's outgoing SMTP relay is set
@@ -20,13 +20,15 @@ const rows = computed(() => {
   if (!i?.configured) return []
   return [
     { label: 'Server', value: relayAddress(i) },
-    { label: 'From', value: i.from || "The message's own From" },
+    { label: 'From', value: i.from || relaySender(i).replace(/^./, (c) => c.toUpperCase()) },
     {
       label: 'Allowed recipients',
       value: i.allowed_recipients?.length ? i.allowed_recipients.join(', ') : 'Any address'
     },
     { label: 'At most', value: `${i.max_recipients || 20} addresses per send` },
-    ...(i.local_only ? [{ label: 'Works from', value: 'This machine only (auth is off)' }] : [])
+    ...(i.local_only
+      ? [{ label: 'Works from', value: 'Run directly on this machine, opened on localhost (auth is off; not in Docker)' }]
+      : [])
   ]
 })
 </script>

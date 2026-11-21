@@ -2,7 +2,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useProfileStore } from '@/shared/stores'
-import { ReleaseError, parseRecipients, relayAddress, useSmtpRelay } from './smtp-relay'
+import { ReleaseError, parseRecipients, relayAddress, relaySender, useSmtpRelay } from './smtp-relay'
 
 const json = (body: unknown, status = 200) =>
   Promise.resolve(new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }))
@@ -30,6 +30,17 @@ describe('relayAddress', () => {
       .toBe('smtp.ex.com:587 · STARTTLS · with login')
     expect(relayAddress({ enabled: true, configured: true, host: 'mailpit', port: 1025, tls: 'none', auth: false }))
       .toBe('mailpit:1025 · no TLS · no login')
+  })
+})
+
+// #365 review: with an empty `from` the server sends as the login when it is
+// an address, else as the message's own From.
+describe('relaySender', () => {
+  it('names the set sender, else what the server falls back to', () => {
+    expect(relaySender({ enabled: true, configured: true, from: 'qa@ex.com', auth: true })).toBe('qa@ex.com')
+    expect(relaySender({ enabled: true, configured: true, from: '', auth: true }))
+      .toBe("your login (when it is an address), else the message's own From")
+    expect(relaySender({ enabled: true, configured: true, from: '', auth: false })).toBe("the message's own From")
   })
 })
 
@@ -85,12 +96,12 @@ describe('useSmtpRelay', () => {
     expect(JSON.parse(String(call().body))).toEqual({ to: ['Me@ex.com'], rewrite_to: true })
   })
 
-  it('throws the server message with its status and code', async () => {
-    fetchMock.mockImplementationOnce(() => json({ code: 'forbidden_recipient', message: 'x@ex.com is not allowed' }, 422))
+  it('throws the server message with its status', async () => {
+    fetchMock.mockImplementationOnce(() => json({ code: 422, message: 'x@ex.com is not allowed' }, 422))
 
     const err = await useSmtpRelay().release('id', ['x@ex.com'], false).catch((e) => e)
     expect(err).toBeInstanceOf(ReleaseError)
-    expect(err).toMatchObject({ message: 'x@ex.com is not allowed', status: 422, code: 'forbidden_recipient' })
+    expect(err).toMatchObject({ message: 'x@ex.com is not allowed', status: 422 })
   })
 
   it('says the status when the answer has no message, and names a network failure', async () => {
@@ -98,6 +109,6 @@ describe('useSmtpRelay', () => {
     await expect(useSmtpRelay().release('id', ['a@ex.com'], false)).rejects.toThrow('The server answered 502.')
 
     fetchMock.mockImplementationOnce(() => Promise.reject(new TypeError('Failed to fetch')))
-    await expect(useSmtpRelay().release('id', ['a@ex.com'], false)).rejects.toMatchObject({ code: 'network' })
+    await expect(useSmtpRelay().release('id', ['a@ex.com'], false)).rejects.toMatchObject({ status: 0, message: 'The server cannot be reached.' })
   })
 })

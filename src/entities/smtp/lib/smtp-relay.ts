@@ -21,7 +21,8 @@ export type SmtpRelayInfo = {
   from?: string
   allowed_recipients?: string[]
   max_recipients?: number
-  // Auth is off: release works only from this machine (localhost).
+  // Auth is off: release works only for a browser on the server's own machine
+  // (loopback). In Docker the peer is the bridge gateway, so it never works there.
   local_only?: boolean
 }
 
@@ -31,8 +32,7 @@ export type SmtpRelayState = 'idle' | 'loading' | 'ready' | 'unavailable'
 export class ReleaseError extends Error {
   constructor(
     message: string,
-    readonly status: number,
-    readonly code: string
+    readonly status: number
   ) {
     super(message)
   }
@@ -81,6 +81,20 @@ export const relayAddress = (info: SmtpRelayInfo): string => {
   return parts.filter(Boolean).join(' · ')
 }
 
+/**
+ * Who the mail goes out as. An empty `from`: the server takes the login when it
+ * is an address, else the message's own From (relay.go envelopeFrom).
+ */
+export const relaySender = (info: SmtpRelayInfo): string => {
+  if (info.from) return info.from
+  return info.auth ? "your login (when it is an address), else the message's own From" : "the message's own From"
+}
+
+/** Auth off: the one place that says where release works (#365 review). */
+export const LOCAL_ONLY_TEXT =
+  'Auth is off: sending works only when Buggregator runs directly on this machine and you open it ' +
+  'on localhost. In Docker or behind a proxy, turn auth on.'
+
 // One answer per page load: the relay is set in the config, it does not
 // change while the server runs.
 const info = ref<SmtpRelayInfo | null>(null)
@@ -121,18 +135,16 @@ export const useSmtpRelay = () => {
         body: JSON.stringify({ to, rewrite_to: rewriteTo })
       })
     } catch {
-      throw new ReleaseError('The server cannot be reached.', 0, 'network')
+      throw new ReleaseError('The server cannot be reached.', 0)
     }
     const body = (await res.json().catch(() => ({}))) as {
       to?: string[]
       message?: string
-      code?: string
     }
     if (!res.ok) {
       throw new ReleaseError(
         body.message || `The server answered ${res.status}.`,
-        res.status,
-        body.code || ''
+        res.status
       )
     }
     return body.to ?? to
