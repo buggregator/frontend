@@ -307,3 +307,50 @@ export interface PaginatedResponse<T> {
     limit: number
   }
 }
+
+// Cron monitoring (#6617, buggregator/server #483: modules/sentry/cron_api.go).
+// Statuses the SDK or a ping sends, and the ones the server writes itself:
+// missed (no check-in in the margin), timeout (in_progress past max_runtime),
+// unknown (the slot fell while Buggregator was down).
+export type CronRunStatus = 'in_progress' | 'ok' | 'error' | 'missed' | 'timeout' | 'unknown'
+
+export interface CronSchedule {
+  type: 'crontab' | 'interval' | string
+  // A crontab expression, or the number of an interval as text.
+  value: string
+  unit?: string
+}
+
+export interface CronMonitor {
+  project: string
+  slug: string
+  source: 'sentry' | 'ping' | string
+  schedule: CronSchedule | null
+  timezone: string
+  // Minutes.
+  checkin_margin: number
+  max_runtime: number
+  // '' until the first run.
+  last_status: CronRunStatus | ''
+  last_checkin_at: string | null
+  next_expected_at: string | null
+  created_at: string
+  // Newest first, at most 20.
+  recent: { status: CronRunStatus; started_at: string }[]
+}
+
+export interface CronCheckIn {
+  id: string
+  status: CronRunStatus
+  started_at: string
+  finished_at: string | null
+  duration_ms: number | null
+  environment: string
+  trace_id: string
+  source: string
+  // The tail of a ping's body (the job's output).
+  body: string
+  // A row the server wrote (missed, unknown); expected_at is its slot.
+  server_made: boolean
+  expected_at: string | null
+}

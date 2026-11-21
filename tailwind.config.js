@@ -20,7 +20,13 @@ export default {
     './src/app.vue',
     // Setup help (#5941) loads on demand and styles only its own classes via
     // @apply: scanning it would add its utilities to the first-load CSS.
-    '!./src/widgets/ui/setup-guide/**'
+    '!./src/widgets/ui/setup-guide/**',
+    // The Crons tab (#6617) is async and styles only its own BEM classes:
+    // plain CSS and @apply, no utility in a template.
+    '!./src/entities/sentry/lib/crons/**',
+    '!./src/entities/sentry/ui/sentry-crons/**',
+    '!./src/pages/sentry/ui/sentry-crons-page/**',
+    '!./src/pages/sentry/ui/sentry-cron-job-page/**'
   ],
   variants: {
     extend: {
