@@ -34,7 +34,14 @@ export const useCodeFocus = (target: Ref<FocusTarget>) => {
   const selected = shallowRef<CodeSymbolDetail | null>(null)
 
   const findSymbol = async (t: FocusTarget): Promise<CodeSymbol | null> => {
-    if (t.symbol) return api.getSymbol(t.symbol)
+    if (t.symbol) {
+      try {
+        return await api.getSymbol(t.symbol)
+      } catch (e) {
+        // Ids change on re-index: a stale id falls back to the full name.
+        if ((e as { status?: number }).status !== 404 || !t.fqn) throw e
+      }
+    }
     if (t.fqn) {
       const found = await api.search(t.fqn, { root: t.root, limit: 20 })
       return found.find((s) => s.fqn === t.fqn) ?? null
@@ -77,22 +84,24 @@ export const useCodeFocus = (target: Ref<FocusTarget>) => {
     }
   }
 
+  let edgeRun = 0
   const loadEdges = async () => {
     const f = focus.value
     if (!f) return
-    const mine = run
+    const mine = ++edgeRun
+    const current = () => mine === edgeRun && focus.value?.id === f.id
     state.value = 'loading'
     try {
       const [inn, out] = await Promise.all([
         direction.value !== 'callees' ? api.getCallers(f.id, depth.value, LIMIT) : Promise.resolve(null),
         direction.value !== 'callers' ? api.getCallees(f.id, depth.value, LIMIT) : Promise.resolve(null)
       ])
-      if (mine !== run) return
+      if (!current()) return
       callers.value = inn
       callees.value = out
       state.value = 'ready'
     } catch (e) {
-      if (mine !== run) return
+      if (!current()) return
       state.value = 'error'
       error.value = e instanceof Error ? e.message : String(e)
     }

@@ -32,10 +32,10 @@ export const rootProgress = (root: CodeRootStatus): number | null => {
 }
 
 export const rootSize = (root: CodeRootStatus) => {
-  if (isRootBusy(root) && root.files) return `${num(root.files_seen ?? 0)} / ${num(root.files)} files`
+  if (isRootBusy(root) && root.files) return `${num(root.files_seen ?? 0)} / ${num(root.files)} ${root.files === 1 ? 'file' : 'files'}`
   if (root.files === undefined) return '—'
-  const parts = [`${num(root.files)} files`]
-  if (root.symbols !== undefined) parts.push(`${num(root.symbols)} symbols`)
+  const parts = [`${num(root.files)} ${root.files === 1 ? 'file' : 'files'}`]
+  if (root.symbols !== undefined) parts.push(`${num(root.symbols)} ${root.symbols === 1 ? 'symbol' : 'symbols'}`)
   return parts.join(' · ')
 }
 

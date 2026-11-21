@@ -351,6 +351,7 @@ const onRow = (n: FocusNode) => {
             :is-focus="true"
             :root-path="rootPath"
             :mark-line="markLine"
+            :snippets="!!roots?.snippets"
           />
         </div>
 
@@ -392,6 +393,7 @@ const onRow = (n: FocusNode) => {
             :is-focus="panelIsFocus"
             :root-path="rootPath"
             :mark-line="markLine"
+            :snippets="!!roots?.snippets"
             :focus-name="focusName"
             @make-focus="makeFocus"
             @back="f.select(null)"

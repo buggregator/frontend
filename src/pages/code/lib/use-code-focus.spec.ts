@@ -104,4 +104,30 @@ describe('useCodeFocus', () => {
     await f.select('s:3')
     expect(f.selected.value?.id).toBe(3)
   })
+  it('falls back to the full name when the id is stale', async () => {
+    api.getSymbol.mockImplementation((id: number) =>
+      id === 99 ? Promise.reject(Object.assign(new Error('gone'), { status: 404 })) : Promise.resolve(detail(id))
+    )
+    api.search.mockResolvedValue([{ id: 5, fqn: 'App\\S::m5' }])
+    const f = useCodeFocus(ref<FocusTarget>({ symbol: 99, fqn: 'App\\S::m5' }))
+    await flushPromises()
+    expect(f.state.value).toBe('ready')
+    expect(f.focus.value?.id).toBe(5)
+  })
+
+  it('keeps the edges of the last depth asked when answers come out of order', async () => {
+    const f = useCodeFocus(ref<FocusTarget>({ symbol: 1 }))
+    await flushPromises()
+    let slow: (g: CodeGraph) => void = () => {}
+    api.getCallers.mockImplementationOnce(() => new Promise((r) => (slow = r)))
+    f.depth.value = 3
+    await flushPromises()
+    api.getCallers.mockResolvedValueOnce(g(1, 7, 'in'))
+    f.depth.value = 1
+    await flushPromises()
+    slow(g(1, 8, 'in'))
+    await flushPromises()
+    expect(f.layout.value?.nodes.map((n) => n.id)).toContain('s:7')
+    expect(f.layout.value?.nodes.map((n) => n.id)).not.toContain('s:8')
+  })
 })

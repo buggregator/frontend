@@ -50,7 +50,10 @@ export type FocusLayoutInput = {
 
 type Side = { sign: -1 | 1; graph: CodeGraph | null; total?: number }
 
-const edgeId = (e: { source: string; target: string }) => `${e.source}->${e.target}`
+// One edge per pair, kind and confidence (as the server keys them): a caller can
+// both call and instantiate, or call exactly and by name.
+const edgeId = (e: { source: string; target: string; kind?: string; guessed?: boolean }) =>
+  `${e.source}->${e.target}${e.kind && e.kind !== 'calls' ? `:${e.kind}` : ''}${e.guessed ? ':name' : ''}`
 
 export const layoutFocusGraph = ({
   focus,
@@ -170,11 +173,11 @@ export const layoutFocusGraph = ({
   const drawn = new Set(edges.map((e) => e.id))
   for (const graph of [callers, callees]) {
     for (const e of graph?.edges ?? []) {
-      const out = { source: e.from, target: e.to }
+      const out = { source: e.from, target: e.to, kind: e.kind, guessed: e.confidence === 'name' }
       const id = edgeId(out)
       if (drawn.has(id) || !placed.has(e.from) || !placed.has(e.to)) continue
       drawn.add(id)
-      edges.push({ id, ...out, kind: e.kind, count: e.count, guessed: e.confidence === 'name' })
+      edges.push({ id, ...out, count: e.count })
     }
   }
 

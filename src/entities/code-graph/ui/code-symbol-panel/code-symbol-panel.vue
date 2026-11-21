@@ -15,6 +15,8 @@ const props = defineProps<{
   // The line to mark in the code (a stack frame's line).
   markLine?: number | null
   focusName?: string | null
+  // `code_graph.snippets` on the server.
+  snippets?: boolean
 }>()
 defineEmits<{
   (e: 'make-focus'): void
@@ -122,6 +124,12 @@ const relations = computed(() => props.symbol.relations.filter((r) => r.kind ===
         <span class="cg-panel__ln">{{ l.n }}</span><span class="cg-panel__text">{{ l.text }}</span>
       </div>
     </div>
+    <p
+      v-else-if="snippets"
+      class="cg-panel__note"
+    >
+      The server could not read the lines of this file.
+    </p>
     <p
       v-else
       class="cg-panel__note"

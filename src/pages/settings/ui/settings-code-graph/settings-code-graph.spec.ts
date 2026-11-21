@@ -35,7 +35,7 @@ describe('SettingsCodeGraph', () => {
         snippets: true,
         roots: [
           { name: 'shop-web', path: '/code/shop-web', state: 'ready', files: 418, symbols: 6912, duration_ms: 1900 },
-          { name: 'payments', path: '/code/payments', state: 'error', error: 'Folder not found' }
+          { name: 'payments', path: '/code/payments', state: 'error', error: 'read /code/payments: no such file or directory' }
         ]
       })
     )

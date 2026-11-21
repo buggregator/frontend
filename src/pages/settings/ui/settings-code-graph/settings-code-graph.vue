@@ -197,7 +197,7 @@ const DOCKER_EXAMPLE = '-v $PWD:/code:ro -e CODE_GRAPH_ROOTS=/code'
                       :style="{ width: `${progress ?? 30}%` }"
                     />
                   </div>
-                  <template v-if="root.state === 'error'">
+                  <template v-if="root.state === 'error' && /^(read|open|stat|lstat)\b/i.test(root.error ?? '')">
                     <p class="s-cg__muted">
                       Nothing is readable at this path. Mount it read only:
                     </p>

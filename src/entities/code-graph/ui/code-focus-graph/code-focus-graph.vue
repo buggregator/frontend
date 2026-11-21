@@ -102,7 +102,11 @@ const canvasBox = ref<HTMLElement>()
 useResizeObserver(canvasBox, useDebounceFn(fit, 60))
 watch(
   () => props.layout,
-  () => nextTick(fit)
+  () => {
+    // A node that was under the pointer may be gone (a «more» node opened).
+    hovered.value = null
+    nextTick(fit)
+  }
 )
 </script>
 

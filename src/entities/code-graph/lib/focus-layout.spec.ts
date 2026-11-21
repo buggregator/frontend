@@ -105,6 +105,17 @@ describe('layoutFocusGraph', () => {
   })
 })
 
+describe('layoutFocusGraph: edge ids', () => {
+  it('keeps an exact and a by-name link of the same pair apart', () => {
+    const callers = graph(
+      [node(F, 0), node('s:2', 1)],
+      [edge('s:2', F), edge('s:2', F, { confidence: 'name' }), edge('s:2', F, { kind: 'instantiates' })]
+    )
+    const ids = layoutFocusGraph({ focus: F, callers, callees: null }).edges.map((e) => e.id)
+    expect(new Set(ids).size).toBe(3)
+  })
+})
+
 describe('pathToFocus', () => {
   const callers = graph(
     [node(F, 0), node('s:2', 1), node('s:3', 1), node('s:4', 2)],

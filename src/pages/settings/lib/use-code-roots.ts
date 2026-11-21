@@ -42,12 +42,15 @@ export const useCodeRoots = ({ interval = 2000 } = {}) => {
   const reindex = async (names: string[]) => {
     sending.value = [...sending.value, ...names]
     try {
-      const updated = await Promise.all(names.map((name) => api.reindex(name)))
+      // One failed POST must not hide the roots that did start.
+      const results = await Promise.allSettled(names.map((name) => api.reindex(name)))
+      const updated = results.flatMap((r) => (r.status === 'fulfilled' ? [r.value] : []))
+      const failed = results.find((r): r is PromiseRejectedResult => r.status === 'rejected')
       if (data.value) {
         const byName = new Map(updated.map((r) => [r.name, r]))
         data.value = { ...data.value, roots: data.value.roots.map((r) => byName.get(r.name) ?? r) }
       }
-      error.value = null
+      error.value = failed ? (failed.reason instanceof Error ? failed.reason.message : 'Could not start indexing') : null
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Could not start indexing'
     } finally {

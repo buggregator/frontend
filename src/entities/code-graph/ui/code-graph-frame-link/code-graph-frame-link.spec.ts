@@ -80,10 +80,10 @@ describe('CodeGraphFrameLink (#6573 A)', () => {
     expect(wrapper.get('[data-test="code-graph-reason"]').text()).toBe('vendor · not in the code graph')
   })
 
-  it('says why a line outside any function has no link', async () => {
-    state.value = { state: 'no-symbol', line: 18 }
+  it('says why a frame outside the graph has no link', async () => {
+    state.value = { state: 'not-indexed' }
     const { wrapper } = await mountLink()
-    expect(wrapper.get('[data-test="code-graph-reason"]').text()).toBe('no symbol on line 18')
+    expect(wrapper.get('[data-test="code-graph-reason"]').text()).toBe('not in the code graph')
   })
 
   it.each(['off', 'loading', 'unknown'] as const)('shows nothing while %s', async (s) => {

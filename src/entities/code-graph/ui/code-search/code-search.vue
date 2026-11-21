@@ -31,13 +31,17 @@ const run = useDebounceFn(async (text: string) => {
   }
   loading.value = true
   failed.value = false
+  results.value = []
   try {
     const found = await api.search(text.trim(), { root: props.root, limit: 20 })
     if (mine !== seq) return
     results.value = found
     active.value = 0
   } catch {
-    if (mine === seq) failed.value = true
+    if (mine === seq) {
+      failed.value = true
+      results.value = []
+    }
   } finally {
     if (mine === seq) loading.value = false
   }
@@ -45,6 +49,8 @@ const run = useDebounceFn(async (text: string) => {
 
 const onInput = () => {
   open.value = true
+  // Enter must not pick a result of the previous text.
+  results.value = []
   run(q.value)
 }
 
