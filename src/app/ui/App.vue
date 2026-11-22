@@ -7,6 +7,7 @@ import { useDesktopNotify } from '@/shared/lib/desktop-notify'
 import { useAppBadge } from '@/shared/lib/use-app-badge'
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { StatusPanel } from '@/shared/ui'
+import { useSettingsSync } from '../lib/settings-sync'
 
 const { initialize } = useEventsStore()
 const { token } = storeToRefs(useProfileStore())
@@ -15,6 +16,9 @@ const settingsStore = useSettingsStore()
 const { fetchError: settingsError } = storeToRefs(settingsStore)
 // Theme «System» follows the system while the app is open.
 settingsStore.watchSystemTheme()
+// Signed in: preferences follow the person (#6772); signed out or auth off,
+// they stay in this browser only.
+useSettingsSync()
 
 const reload = () => window.location.reload()
 

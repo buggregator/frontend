@@ -23,7 +23,7 @@ const eventsStore = useEventsStore()
 const { availableProjects, isMultipleProjects, activeProject, lockedIds } = storeToRefs(eventsStore)
 
 const profileStore = useProfileStore()
-const { profile } = storeToRefs(profileStore)
+const { profile, isAdmin } = storeToRefs(profileStore)
 
 const { getItemsCount } = useEvents()
 const xdebugEnabled = useXdebugEnabled()
@@ -165,11 +165,12 @@ const avatar = computed(() => {
   return profile.value.avatar
 })
 
-// Shown at the top of the user menu; some providers send no email.
+// Who is signed in, at the top of the user menu. Some providers send no
+// email, some no name: the line that would repeat the other is left out.
+const profileName = computed(() => profile.value?.username || profile.value?.email || '')
 const profileEmail = computed(() => {
-  if (!profile.value) return null
-
-  return profile.value.email || profile.value.username || null
+  const email = profile.value?.email || ''
+  return email && email !== profileName.value ? email : ''
 })
 
 const connectionText = computed(() =>
@@ -188,8 +189,26 @@ const connectionLabel = computed(() => {
   return isConnectedWS.value ? 'Connected' : 'Disconnected'
 })
 
-const toggleProfileDropdown = () => {
-  isVisibleProfile.value = !isVisibleProfile.value
+const userTrigger = ref<HTMLElement | undefined>()
+
+const closeProfile = async (returnFocus = true) => {
+  isVisibleProfile.value = false
+  if (returnFocus) {
+    await nextTick()
+    userTrigger.value?.focus()
+  }
+}
+
+const { onKeydown: onUserMenuKeydown, focusCurrent: focusFirstUserItem } = useMenuKeys(
+  userMenu,
+  () => closeProfile()
+)
+
+const toggleProfileDropdown = async () => {
+  if (isVisibleProfile.value) return closeProfile()
+  isVisibleProfile.value = true
+  await nextTick()
+  focusFirstUserItem()
 }
 
 const { onKeydown: onProjectMenuKeydown, focusCurrent: focusCurrentProject } = useMenuKeys(
@@ -212,8 +231,9 @@ const toggleProjects = async () => {
   focusCurrentProject()
 }
 
-const logout = () => {
-  profileStore.removeToken()
+const logout = async () => {
+  isVisibleProfile.value = false
+  await profileStore.logout()
   router.push('/login')
 }
 
@@ -681,15 +701,35 @@ const linkLabel = (type: EventType) =>
           aria-label="User menu"
           class="layout-sidebar__dropdown-items"
           :style="userDdStyles"
+          @keydown="onUserMenuKeydown"
         >
-          <button
-            v-if="profileEmail"
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
+          <div
+            v-if="profileName"
+            class="layout-sidebar__user-who"
+            data-test="user-menu-who"
           >
-            {{ profileEmail }}
-          </button>
+            <span class="layout-sidebar__user-name">{{ profileName }}</span>
+            <span
+              v-if="profileEmail"
+              class="layout-sidebar__user-email"
+            >{{ profileEmail }}</span>
+          </div>
+          <RouterLink
+            v-if="isAdmin"
+            role="menuitem"
+            class="layout-sidebar__dropdown-item"
+            :to="{ name: RouteName.Audit }"
+            @click="closeProfile(false)"
+          >
+            <IconSvg
+              class="layout-sidebar__dropdown-item-icon"
+              name="lock"
+            />
+            Audit log
+          </RouterLink>
           <button
-            class="layout-sidebar__dropdown-item layout-sidebar__dropdown-item--active"
+            role="menuitem"
+            class="layout-sidebar__dropdown-item"
             @click="logout"
           >
             <IconSvg
@@ -702,6 +742,7 @@ const linkLabel = (type: EventType) =>
 
         <div
           v-if="profile"
+          ref="userTrigger"
           class="layout-sidebar__dropdown-avatar"
           role="button"
           tabindex="0"
@@ -1145,6 +1186,20 @@ const linkLabel = (type: EventType) =>
 
 .layout-sidebar__dropdown-item-text-key {
   @apply text-2xs uppercase font-normal -mt-0.5;
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.layout-sidebar__user-who {
+  @apply flex flex-col gap-0.5 px-4 py-2.5 max-w-72;
+}
+
+.layout-sidebar__user-name {
+  @apply text-sm font-medium truncate;
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+.layout-sidebar__user-email {
+  @apply text-xs truncate;
   @apply text-gray-500 dark:text-gray-400;
 }
 

@@ -18,6 +18,7 @@ import {
 import { paletteColors } from '../../lib/trace-graph/trace-graph'
 import { onSentryEvent } from '../../lib/use-sentry-events-bus'
 import { useSentryRequests } from '../../lib/use-sentry-requests'
+import { SERVICE_MAP_PAUSE_STORAGE } from '../../lib/use-sentry-view'
 import type { SentryServiceMap } from '../../types'
 import '../trace-graphs/trace-graph-theme.css'
 import ServiceMapDrawer from './service-map-drawer.vue'
@@ -85,7 +86,7 @@ const dimEdge = (id: string) => !!lit.value && !lit.value.edges.has(id)
 
 // Motion: on by default on this view (#6540), Pause remembered per browser;
 // reduced motion shows one still frame.
-const PAUSE_KEY = 'sentry_service_map_paused'
+const PAUSE_KEY = SERVICE_MAP_PAUSE_STORAGE
 const readPaused = () => {
   try {
     return window.localStorage.getItem(PAUSE_KEY) === '1'

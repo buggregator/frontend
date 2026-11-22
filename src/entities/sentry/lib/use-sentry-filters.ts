@@ -176,4 +176,7 @@ export const resetSentryFilters = (tab: SentryTab) => {
 // For tests: the state as a fresh page would read it.
 export const reloadSentryFilters = () => Object.assign(state, load())
 
+// The localStorage keys of these choices (settings sync, #6772).
+export const SENTRY_FILTER_STORAGE_KEYS: readonly string[] = Object.values(STORAGE)
+
 export const useSentryFilters = () => state

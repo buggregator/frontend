@@ -1,7 +1,7 @@
 import type { RouteLocation } from 'vue-router'
 import {EventsListPage} from "@/pages/events-list-page";
 import {RouteName} from "@/shared/types";
-import {auth, checkType} from "./middlewares";
+import {auth, checkType, requireAuthOn} from "./middlewares";
 
 // The feed is the first screen, so it stays in the main chunk. Every other
 // page loads on first visit: Sentry, the profiler and vue-flow are not needed
@@ -16,6 +16,7 @@ const ProfilerComparePage = () =>
 const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
 const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
 const LogsPage = () => import('@/pages/logs').then((m) => m.LogsPage)
+const AuditPage = () => import('@/pages/audit').then((m) => m.AuditPage)
 const BroadcastPage = () => import('@/pages/broadcast').then((m) => m.BroadcastPage)
 const sentryPages = () => import('@/pages/sentry')
 const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
@@ -85,6 +86,14 @@ export const routes = [
     }
   },
   // Monolog records as one stream with search, filters and a chart (#6701).
+  {
+    path: '/audit',
+    name: RouteName.Audit,
+    component: AuditPage,
+    meta: {
+      middleware: [requireAuthOn, auth]
+    }
+  },
   {
     path: '/logs',
     name: RouteName.Logs,

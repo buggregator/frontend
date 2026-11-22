@@ -8,7 +8,7 @@ import type { Command } from '@/shared/lib/command-palette'
 import { useEvents } from '@/shared/lib/use-events'
 import { isShortcutsOverlayOpen } from '@/shared/lib/use-global-shortcuts'
 import { useSeenEvents } from '@/shared/lib/use-seen-events'
-import { useEventsStore, useSettingsStore } from '@/shared/stores'
+import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { EventTypes, RouteName } from '@/shared/types'
 
 // Words people look for an event type by: not shown.
@@ -32,7 +32,8 @@ const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
 export const usePaletteCommands = () => {
   const router = useRouter()
   const settingsStore = useSettingsStore()
-  const { availableEvents, themeMode, isMockServerAvailable } = storeToRefs(settingsStore)
+  const { availableEvents, themeMode, isMockServerAvailable, isAuthEnabled } = storeToRefs(settingsStore)
+  const { isAdmin } = storeToRefs(useProfileStore())
   const eventsStore = useEventsStore()
   const { availableProjects, isMultipleProjects, activeProject } = storeToRefs(eventsStore)
   const updateStore = useServerUpdateStore()
@@ -112,7 +113,19 @@ export const usePaletteCommands = () => {
       label: 'Settings',
       icon: 'settings',
       run: () => router.push({ name: RouteName.Settings })
-    }
+    },
+    ...(isAuthEnabled.value && isAdmin.value
+      ? [
+          {
+            id: 'page-audit',
+            group: 'pages',
+            label: 'Audit log',
+            keywords: ['who', 'sign-in', 'login', 'history', 'security'],
+            icon: 'lock',
+            run: () => router.push({ name: RouteName.Audit })
+          } satisfies Command
+        ]
+      : [])
   ])
 
   const projects = computed<Command[]>(() =>

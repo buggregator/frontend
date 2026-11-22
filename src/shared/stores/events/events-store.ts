@@ -425,6 +425,10 @@ export const useEventsStore = defineStore("eventsStore", {
       this.filters = filters;
       this.hiddenNew = {};
     },
+    // The period written to localStorage from elsewhere (settings sync, #6772).
+    reloadStoredPeriod() {
+      this.period = getStoredPeriod() || DEFAULT_PERIOD;
+    },
     setPeriod(period: string) {
       this.period = period;
 

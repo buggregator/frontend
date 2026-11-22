@@ -60,6 +60,8 @@ export type TraceView = 'request' | 'waterfall' | 'flame' | 'graph' | 'sequence'
 const TRACE_VIEWS: TraceView[] = ['request', 'waterfall', 'flame', 'graph', 'sequence', 'errors', 'logs']
 const REMEMBERED: TraceView[] = ['request', 'waterfall', 'flame', 'graph', 'sequence']
 export const TRACE_VIEW_STORAGE = 'sentry_trace_view_mode'
+// Pause of the service map's motion (#6540), per browser.
+export const SERVICE_MAP_PAUSE_STORAGE = 'sentry_service_map_paused'
 
 const isTraceView = (v: unknown): v is TraceView => typeof v === 'string' && TRACE_VIEWS.includes(v as TraceView)
 

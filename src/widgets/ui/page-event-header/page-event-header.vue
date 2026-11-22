@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import { RouteName, type Uuid } from '@/shared/types'
@@ -38,6 +39,24 @@ const onDelete = async () => {
 }
 
 const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
+
+// The address of this event for a teammate. With sign-in on, opening it while
+// signed out goes through the login page and comes back here (return_to).
+const isLinkCopied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+const copyLink = async () => {
+  const link = new URL(router.resolve(router.currentRoute.value.fullPath).href, window.location.origin).toString()
+  try {
+    await copyTextToClipboard(link)
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  isLinkCopied.value = true
+  clearTimeout(copiedTimer)
+  copiedTimer = setTimeout(() => (isLinkCopied.value = false), 2000)
+}
+onBeforeUnmount(() => clearTimeout(copiedTimer))
 </script>
 
 <template>
@@ -74,6 +93,23 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
     </span>
 
     <template #controls>
+      <button
+        class="action-btn"
+        title="Copy link to this event"
+        aria-label="Copy link to this event"
+        @click="copyLink"
+      >
+        <IconSvg
+          name="copy"
+          class="action-btn__icon"
+        />
+        <span class="action-btn__text">{{ isLinkCopied ? 'Copied' : 'Link' }}</span>
+      </button>
+      <span
+        role="status"
+        class="sr-only"
+      >{{ isLinkCopied ? 'Link copied' : '' }}</span>
+
       <a
         v-if="eventUrl"
         :href="eventUrl"

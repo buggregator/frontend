@@ -55,3 +55,53 @@ describe('profileStore.getProfile', () => {
     expect(await useProfileStore().getProfile()).toBeUndefined()
   })
 })
+
+// #6772: logout ends the session on the server (POST /api/auth/logout) before
+// the token is dropped; a failed call still signs the person out here.
+describe('profileStore.logout', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('tells the server with the token, then drops token and profile', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response(null, { status: 204 })))
+    vi.stubGlobal('fetch', fetchMock)
+    const store = useProfileStore()
+    store.setToken('tok')
+    store.setProfile({ username: 'ann', email: '', avatar: '' })
+
+    await store.logout()
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+    expect(url).toMatch(/\/api\/auth\/logout$/)
+    expect(init.method).toBe('POST')
+    expect((init.headers as Record<string, string>)['X-Auth-Token']).toBe('tok')
+    expect(store.token).toBe('')
+    expect(store.profile).toBeUndefined()
+    expect(localStorage.getItem('token')).toBeNull()
+  })
+
+  it('signs out here even when the server cannot be reached', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new TypeError('Failed to fetch'))))
+    const store = useProfileStore()
+    store.setToken('tok')
+
+    await store.logout()
+
+    expect(store.token).toBe('')
+  })
+
+  it('does not call the server without a token', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    await useProfileStore().logout()
+
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+})
