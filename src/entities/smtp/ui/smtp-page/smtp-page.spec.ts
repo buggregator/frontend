@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useSmtp } from '../../lib'
@@ -98,6 +98,11 @@ describe('SmtpPage: other parts and the invite', () => {
   })
 
   const tabNames = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[role="tab"]').map((t) => t.text())
+  // The invite card and the part view are async components: wait for their chunks, then for the render.
+  const settle = async () => {
+    await vi.dynamicImportSettled()
+    await flushPromises()
+  }
 
   it('an Apple Watch part is a tab before Raw, with a Watch badge', () => {
     const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWatchMock) } })
@@ -110,6 +115,7 @@ describe('SmtpPage: other parts and the invite', () => {
     const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpAmpMock) }, attachTo: document.body })
     const amp = wrapper.findAll('[role="tab"]').find((t) => t.text() === 'AMP')!
     await amp.trigger('click')
+    await settle()
 
     const frame = wrapper.get('iframe[title="AMP preview"]')
     expect(frame.isVisible()).toBe(true)
@@ -121,6 +127,7 @@ describe('SmtpPage: other parts and the invite', () => {
 
   it('an invite shows a card: what, when, where, who, and a Calendar tab with the source', async () => {
     const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpInviteMock) } })
+    await settle()
     const card = wrapper.get('.smtp-invite')
     expect(card.text()).toContain('Invitation')
     expect(card.text()).toContain('Release sync')
@@ -130,8 +137,9 @@ describe('SmtpPage: other parts and the invite', () => {
     expect(wrapper.findAll('[data-test="smtp-part-badge"]').map((b) => b.text())).toEqual(['Invite'])
   })
 
-  it('a cancelled invite is marked cancelled, its time in the sender zone', () => {
+  it('a cancelled invite is marked cancelled, its time in the sender zone', async () => {
     const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpCancelMock) } })
+    await settle()
     const card = wrapper.get('.smtp-invite')
     expect(card.classes()).toContain('smtp-invite--cancelled')
     expect(card.text()).toContain('Cancelled')

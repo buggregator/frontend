@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moment from 'moment'
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useAttachments } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
@@ -18,9 +18,12 @@ import { listBadges, partTabId, partTabs } from '../../lib/smtp-parts'
 import { useSmtpAnalytics, type MimeNode } from '../../lib/use-smtp-analytics'
 import type { SMTP, SMTPPart } from '../../types'
 import { SmtpInsights } from '../smtp-insights'
-import { SmtpInviteCard } from '../smtp-invite-card'
-import { SmtpPartView } from '../smtp-part-view'
 import { SmtpRelease } from '../smtp-release'
+
+// Only mails with other parts or an invite need these (#6829): their code and
+// CSS load then, not with the app (first-load budget).
+const SmtpInviteCard = defineAsyncComponent(() => import('../smtp-invite-card/smtp-invite-card.vue'))
+const SmtpPartView = defineAsyncComponent(() => import('../smtp-part-view/smtp-part-view.vue'))
 
 type Props = {
   event: NormalizedEvent<SMTP>
