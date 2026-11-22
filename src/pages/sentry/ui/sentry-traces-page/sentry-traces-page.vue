@@ -12,7 +12,7 @@ import {
   useSentryFilters
 } from '@/entities/sentry'
 import { useEventsStore } from '@/shared/stores'
-import { StatusPanel } from '@/shared/ui'
+import { FilterChip, StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Traces | Buggregator')
 
@@ -77,18 +77,13 @@ onSentryEvent(() => {
         v-if="filters.service"
         class="sentry-traces-page__chip-row"
       >
-        <span
-          class="sentry-traces-page__chip"
+        <FilterChip
+          name="Service"
+          :value="filters.service"
+          :remove-label="`Show traces of all services, not only ${filters.service}`"
           data-test="traces-service-filter"
-        >
-          Service <b>{{ filters.service }}</b>
-          <button
-            type="button"
-            class="sentry-traces-page__chip-x"
-            :aria-label="`Show traces of all services, not only ${filters.service}`"
-            @click="clearService"
-          >×</button>
-        </span>
+          @remove="clearService"
+        />
       </div>
       <div
         v-if="isInitialLoading"
@@ -164,36 +159,6 @@ onSentryEvent(() => {
 }
 .sentry-traces-page__chip-row {
   @apply flex px-4 py-2;
-}
-// Plain CSS: dark variants would double these rules in the first load.
-.sentry-traces-page__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding-left: 0.625rem;
-  border-radius: 9999px;
-  font-size: 12px;
-  background: rgb(107 114 128 / 0.15);
-
-  b {
-    font: 500 12px ui-monospace, SFMono-Regular, Menlo, monospace;
-  }
-}
-.sentry-traces-page__chip-x {
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 9999px;
-  font-size: 1rem;
-  line-height: 1;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #2563eb;
-  }
 }
 .sentry-traces-page__loading,
 .sentry-traces-page__empty {

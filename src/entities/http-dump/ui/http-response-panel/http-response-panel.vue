@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { ref, toRef } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
-import { TableBase, TableBaseRow, EventDetailSection } from '@/shared/ui'
+import { TableBase, TableBaseRow, EventDetailSection, SegmentedControl } from '@/shared/ui'
 import { useHttpDumpEvent } from '../../lib'
 import type { HttpDump } from '../../types'
-import { HttpBodyView } from '../http-body-view'
-import HttpBodyViewToggle from '../http-body-view/http-body-view-toggle.vue'
+import { HTML_MODES, HttpBodyView, JSON_MODES } from '../http-body-view'
 
 type Props = {
   event: NormalizedEvent<HttpDump>
@@ -59,17 +58,21 @@ const bodyViewRef = ref<InstanceType<typeof HttpBodyView> | null>(null)
       title="Response Body"
     >
       <template #actions>
-        <HttpBodyViewToggle
+        <SegmentedControl
           v-if="bodyViewRef?.isJson"
-          :modes="['raw', 'pretty', 'tree']"
-          :active="bodyViewRef.viewMode"
-          @update:active="bodyViewRef.viewMode = $event as typeof bodyViewRef.viewMode"
+          :options="JSON_MODES"
+          :model-value="bodyViewRef.viewMode"
+          label="Body view"
+          size="sm"
+          @update:model-value="bodyViewRef.viewMode = $event"
         />
-        <HttpBodyViewToggle
+        <SegmentedControl
           v-if="bodyViewRef?.isHtml"
-          :modes="['preview', 'source']"
-          :active="bodyViewRef.htmlMode"
-          @update:active="bodyViewRef.htmlMode = $event as typeof bodyViewRef.htmlMode"
+          :options="HTML_MODES"
+          :model-value="bodyViewRef.htmlMode"
+          label="Body view"
+          size="sm"
+          @update:model-value="bodyViewRef.htmlMode = $event"
         />
       </template>
 

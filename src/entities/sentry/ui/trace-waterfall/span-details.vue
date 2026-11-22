@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useId } from 'vue'
+import { Tabs, tabIdOf } from '@/shared/ui/tabs'
 import { SOURCE_LABEL, formatAttrValue, otelException, splitOtelAttributes } from '../../lib/otel'
 import type { SentrySpan } from '../../types'
 
@@ -73,25 +74,9 @@ const tabs = computed(() => {
 
 const active = ref<Tab>('overview')
 const uid = useId()
-const tabButtons = ref<HTMLButtonElement[]>([])
 
 const select = (id: Tab) => {
   active.value = id
-}
-
-// Arrow keys move between tabs, as in the setup help tabs.
-const onTabKey = async (e: KeyboardEvent, i: number) => {
-  const n = tabs.value.length
-  let next = -1
-  if (e.key === 'ArrowRight') next = (i + 1) % n
-  else if (e.key === 'ArrowLeft') next = (i - 1 + n) % n
-  else if (e.key === 'Home') next = 0
-  else if (e.key === 'End') next = n - 1
-  if (next < 0) return
-  e.preventDefault()
-  select(tabs.value[next].id)
-  await nextTick()
-  tabButtons.value[next]?.focus()
 }
 
 const title = computed(() => props.span.description || props.span.op)
@@ -156,38 +141,20 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
       >{{ sourceLabel }}</span>
     </header>
 
-    <div
+    <Tabs
       class="span-details__tabs"
-      role="tablist"
-      aria-label="Span details"
-    >
-      <button
-        v-for="(tab, i) in tabs"
-        :id="`${uid}-tab-${tab.id}`"
-        :key="tab.id"
-        ref="tabButtons"
-        type="button"
-        role="tab"
-        class="span-details__tab"
-        :class="{ 'span-details__tab--active': active === tab.id }"
-        :aria-selected="active === tab.id"
-        :aria-controls="`${uid}-panel`"
-        :tabindex="active === tab.id ? 0 : -1"
-        :data-test="`span-tab-${tab.id}`"
-        @click="select(tab.id)"
-        @keydown="onTabKey($event, i)"
-      >
-        {{ tab.label }}<span
-          v-if="tab.count !== undefined"
-          class="span-details__count"
-        >{{ tab.count }}</span>
-      </button>
-    </div>
+      :tabs="tabs"
+      :current="active"
+      label="Span details"
+      :panel-id="`${uid}-panel`"
+      test-prefix="span-tab-"
+      @select="select($event as Tab)"
+    />
 
     <div
       :id="`${uid}-panel`"
       role="tabpanel"
-      :aria-labelledby="`${uid}-tab-${active}`"
+      :aria-labelledby="tabIdOf(`${uid}-panel`, active)"
       class="span-details__panel"
     >
       <!-- Overview: the exception large, then attributes | span + resource -->
@@ -430,23 +397,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 }
 
 .span-details__tabs {
-  @apply flex gap-1 px-2 overflow-x-auto;
-  @apply border-b border-gray-200 dark:border-gray-700;
-}
-
-.span-details__tab {
-  @apply px-2 py-2 -mb-px whitespace-nowrap border-b-2 border-transparent;
-  @apply text-gray-600 dark:text-gray-400;
-  @apply hover:text-gray-900 dark:hover:text-gray-100;
-  @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500;
-}
-
-.span-details__tab--active {
-  @apply border-blue-500 text-gray-900 dark:text-gray-100 font-medium;
-}
-
-.span-details__count {
-  @apply ml-1 text-gray-600 dark:text-gray-400 font-normal;
+  @apply px-3 pt-2;
 }
 
 .span-details__panel {

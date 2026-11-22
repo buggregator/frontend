@@ -14,7 +14,14 @@ import {
 import { pathToIDEFilePath } from '@/shared/lib/helpers/pathToIDEFilePath'
 import { useSettingsStore } from '@/shared/stores'
 import type { FilePathMapping } from '@/shared/types'
-import { EventDetailLayout, EventDetailSection, IconSvg, SearchBar } from '@/shared/ui'
+import {
+  EventDetailLayout,
+  EventDetailSection,
+  IconSvg,
+  SearchBar,
+  SegmentedControl,
+  type SegmentedOption
+} from '@/shared/ui'
 import { version } from '../../../../../package.json' with { type: 'json' }
 import { SETTINGS_SEARCH, useSettingsSearch } from '../../lib/settings-search'
 import { useSectionSpy } from '../../lib/use-section-spy'
@@ -63,11 +70,11 @@ const {
 // «Last checked 2 h ago» and the Check now countdown move on while the page is open.
 const now = useNow({ interval: 1000 })
 
-const THEME_OPTIONS = [
-  { mode: 'light', label: 'Light', icon: 'sun' },
-  { mode: 'dark', label: 'Dark', icon: 'moon' },
-  { mode: 'system', label: 'System', icon: '' }
-] as const
+const THEME_OPTIONS: SegmentedOption<'light' | 'dark' | 'system'>[] = [
+  { value: 'light', label: 'Light', icon: 'sun' },
+  { value: 'dark', label: 'Dark', icon: 'moon' },
+  { value: 'system', label: 'System' }
+]
 
 // «About & updates» needs GET /api/update; older servers show «About».
 const sections = computed(() =>
@@ -225,29 +232,13 @@ useTitle('Settings | Buggregator')
               v-slot="{ labelId, hintId }"
               :item="SETTINGS_ITEMS.theme"
             >
-              <div
-                class="s-segmented"
-                role="group"
+              <SegmentedControl
+                :model-value="themeMode"
+                :options="THEME_OPTIONS"
                 :aria-labelledby="labelId"
                 :aria-describedby="hintId"
-              >
-                <button
-                  v-for="option in THEME_OPTIONS"
-                  :key="option.mode"
-                  type="button"
-                  class="s-segmented__opt"
-                  :class="{ 's-segmented__opt--active': themeMode === option.mode }"
-                  :aria-pressed="themeMode === option.mode"
-                  @click="settingsStore.setThemeMode(option.mode)"
-                >
-                  <IconSvg
-                    v-if="option.icon"
-                    :name="option.icon"
-                    class="s-segmented__icon"
-                  />
-                  {{ option.label }}
-                </button>
-              </div>
+                @update:model-value="settingsStore.setThemeMode"
+              />
             </SettingsRow>
 
             <SettingsRow
@@ -692,31 +683,6 @@ useTitle('Settings | Buggregator')
   @apply mt-3;
 }
 
-/* Segmented control */
-.s-segmented {
-  @apply inline-flex rounded-lg p-0.5 flex-shrink-0;
-  @apply bg-gray-100 dark:bg-gray-700;
-}
-
-.s-segmented__opt {
-  @apply px-3 py-1.5 text-xs font-medium rounded-md;
-  @apply text-gray-600 dark:text-gray-300;
-  @apply transition-all duration-150 cursor-pointer;
-  @apply flex items-center gap-1.5;
-
-  &:hover {
-    @apply text-gray-800 dark:text-gray-200;
-  }
-}
-
-.s-segmented__opt--active {
-  @apply bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm;
-}
-
-.s-segmented__icon {
-  @apply w-3.5 h-3.5;
-}
-
 /* Select */
 .s-select {
   @apply text-sm rounded-md px-3 py-1.5;
@@ -783,10 +749,6 @@ useTitle('Settings | Buggregator')
 @media (max-width: 639px) {
   .settings__search {
     @apply h-11;
-  }
-
-  .s-segmented__opt {
-    @apply min-h-[44px] px-4;
   }
 
   .s-select,

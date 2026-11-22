@@ -7,6 +7,7 @@ import { useEventsRequests } from '@/shared/lib/io'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
 import type { PageEventTypes } from '@/shared/types'
+import { FilterChip } from '@/shared/ui'
 
 // Feed filters for a shared dev server (frontend#225, design A of #6679):
 // the active filters as chips, «Add filter» with values and counts from the
@@ -27,8 +28,6 @@ const isOpen = ref(false)
 const addButton = ref<HTMLButtonElement | null>(null)
 const chipsList = ref<HTMLElement | null>(null)
 
-const describe = (f: FeedFilter) => `${facetLabel(f.key)} ${f.not ? 'is not' : 'is'} ${f.value}`
-
 const close = async () => {
   isOpen.value = false
   await nextTick()
@@ -44,7 +43,7 @@ const add = (filter: FeedFilter) => {
 const remove = async (filter: FeedFilter, index: number) => {
   store.setFilters(withoutFilter(filters.value, filter))
   await nextTick()
-  const buttons = chipsList.value?.querySelectorAll<HTMLButtonElement>('.ffb__remove')
+  const buttons = chipsList.value?.querySelectorAll<HTMLButtonElement>('.filter-chip__remove')
   const next = buttons?.[Math.min(index, buttons.length - 1)]
   ;(next ?? addButton.value)?.focus()
 }
@@ -75,22 +74,13 @@ const copyLink = () => {
           v-for="(f, i) in filters"
           :key="`${f.not}|${f.key}|${f.value}`"
           class="ffb__chip"
-          :class="{ 'ffb__chip--not': f.not }"
         >
-          <span class="ffb__key">{{ facetLabel(f.key) }}</span>
-          <span
-            class="ffb__op"
-            :aria-label="f.not ? 'is not' : 'is'"
-          >{{ f.not ? '≠' : '=' }}</span>
-          <span class="ffb__value">{{ f.value }}</span>
-          <button
-            type="button"
-            class="ffb__remove"
-            :aria-label="`Remove filter: ${describe(f)}`"
-            @click="remove(f, i)"
-          >
-            ✕
-          </button>
+          <FilterChip
+            :name="facetLabel(f.key)"
+            :value="f.value"
+            :not="f.not"
+            @remove="remove(f, i)"
+          />
         </li>
       </ul>
 
@@ -159,7 +149,6 @@ const copyLink = () => {
   --ffb-key-bg: theme('colors.gray.100');
   --ffb-text: theme('colors.gray.800');
   --ffb-faint: theme('colors.gray.600');
-  --ffb-neg: #b91c1c;
   --ffb-link: theme('colors.blue.600');
 
   padding: 8px 12px;
@@ -172,7 +161,6 @@ const copyLink = () => {
     --ffb-key-bg: theme('colors.gray.800');
     --ffb-text: theme('colors.gray.100');
     --ffb-faint: theme('colors.gray.400');
-    --ffb-neg: #fca5a5;
     --ffb-link: theme('colors.blue.300');
   }
 }
@@ -195,58 +183,8 @@ const copyLink = () => {
 }
 
 .ffb__chip {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  border: 1px solid var(--ffb-border);
-  border-radius: 3px;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.ffb__key {
-  align-self: stretch;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 8px;
-  background: var(--ffb-key-bg);
-  color: var(--ffb-faint);
-}
-
-.ffb__op {
-  padding: 0 6px;
-  color: var(--ffb-faint);
-}
-
-.ffb__value {
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  font-variant-ligatures: none;
-}
-
-.ffb__chip--not .ffb__op,
-.ffb__chip--not .ffb__value {
-  color: var(--ffb-neg);
-}
-
-.ffb__chip--not .ffb__value {
-  text-decoration: line-through;
-}
-
-.ffb__remove {
-  align-self: stretch;
-  width: 28px;
-  margin-left: 4px;
-  color: var(--ffb-faint);
-}
-
-.ffb__remove:hover {
-  background: var(--ffb-key-bg);
-  color: var(--ffb-text);
+  display: flex;
+  min-width: 0;
 }
 
 .ffb__add-wrap {
@@ -307,14 +245,9 @@ const copyLink = () => {
     overflow-x: auto;
   }
 
-  .ffb__chip,
   .ffb__add,
   .ffb__action {
     height: 36px;
-  }
-
-  .ffb__remove {
-    width: 36px;
   }
 }
 </style>

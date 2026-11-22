@@ -31,7 +31,7 @@ import {
   XdebugVarTree,
   XdebugWatches
 } from '@/entities/xdebug'
-import { AppHeader } from '@/shared/ui'
+import { AppHeader, Tabs } from '@/shared/ui'
 import { XdebugSettingsButton } from '../xdebug-settings-button'
 
 useTitle('Xdebug | Buggregator')
@@ -140,6 +140,10 @@ const modeText = computed(() => xdebugModeText(config.value?.mode, port(config.v
 const settingsButton = useTemplateRef<InstanceType<typeof XdebugSettingsButton>>('settingsButton')
 
 const contextLabel = (name: string) => (name === 'User defined constants' ? 'User constants' : name)
+// Variable scopes as tabs; they wait while the script runs.
+const scopeTabs = computed(() =>
+  dbg.contexts.value.map((c) => ({ id: String(c.id), label: contextLabel(c.name), disabled: !dbg.paused.value }))
+)
 
 const dismiss = async (id: string) => {
   try {
@@ -375,23 +379,13 @@ watch(selectedId, (id) => {
                   class="xdebug-sec__count"
                 >frame #{{ dbg.frame.value }}</span>
               </summary>
-              <div
+              <Tabs
                 class="xdebug-tabs"
-                role="tablist"
-                aria-label="Variable scope"
-              >
-                <button
-                  v-for="c in dbg.contexts.value"
-                  :key="c.id"
-                  type="button"
-                  role="tab"
-                  :aria-selected="c.id === dbg.contextId.value"
-                  :disabled="!dbg.paused.value"
-                  @click="dbg.selectContext(c.id)"
-                >
-                  {{ contextLabel(c.name) }}
-                </button>
-              </div>
+                :tabs="scopeTabs"
+                :current="String(dbg.contextId.value)"
+                label="Variable scope"
+                @select="dbg.selectContext(Number($event))"
+              />
               <p
                 v-if="dbg.varsState.value === 'error'"
                 class="xdebug-page__err"
@@ -739,16 +733,7 @@ watch(selectedId, (id) => {
 }
 
 .xdebug-tabs {
-  @apply flex gap-0.5 px-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto;
-
-  button {
-    @apply h-7 px-2.5 border-b-2 border-transparent text-xs font-medium whitespace-nowrap text-gray-600 dark:text-gray-300;
-    @apply disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500;
-
-    &[aria-selected='true'] {
-      @apply border-blue-500 text-gray-900 dark:text-white;
-    }
-  }
+  @apply px-2 py-1.5 border-b border-gray-200 dark:border-gray-700;
 }
 
 .xdebug-page__mid {

@@ -29,7 +29,7 @@ import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import { useConnectionStore, useEventsStore } from '@/shared/stores'
-import { AppHeader, SkeletonLoader } from '@/shared/ui'
+import { AppHeader, FilterChip, SegmentedControl, SkeletonLoader } from '@/shared/ui'
 
 useTitle('Mock server | Buggregator')
 
@@ -62,6 +62,14 @@ const filterRuleId = ref<string | null>(null)
 const onlyNoMatch = ref(false)
 // narrow screens show one pane at a time
 const mobilePane = ref<'rules' | 'requests'>('requests')
+const PANE_OPTIONS = computed(() => [
+  { value: 'rules' as const, label: 'Rules', count: rules.value.length },
+  { value: 'requests' as const, label: 'Requests', count: requests.value.length }
+])
+const SHOW_OPTIONS = computed(() => [
+  { value: false, label: 'All' },
+  { value: true, label: 'No match', count: noMatchCount.value }
+])
 
 const ruleNumber = (id: string | null) => rules.value.findIndex((r) => r.id === id) + 1
 const ruleLabel = (id: string | null) => {
@@ -477,27 +485,13 @@ onBeforeUnmount(() => {
       </div>
 
       <template v-else>
-        <div
-          class="mock-page__seg"
-          role="tablist"
-          aria-label="Pane"
-        >
-          <button
-            role="tab"
-            type="button"
-            :aria-selected="mobilePane === 'rules'"
-            @click="mobilePane = 'rules'"
-          >
-            Rules <span class="mock-page__count">{{ rules.length }}</span>
-          </button>
-          <button
-            role="tab"
-            type="button"
-            :aria-selected="mobilePane === 'requests'"
-            @click="mobilePane = 'requests'"
-          >
-            Requests <span class="mock-page__count">{{ requests.length }}</span>
-          </button>
+        <div class="mock-page__seg">
+          <SegmentedControl
+            v-model="mobilePane"
+            :options="PANE_OPTIONS"
+            label="Pane"
+            block
+          />
         </div>
 
         <div
@@ -630,42 +624,22 @@ onBeforeUnmount(() => {
                   :class="{ 'mock-page__live--off': liveText !== 'Live' }"
                 ><span class="mock-page__dot" />{{ liveText }}</span>
                 <span class="mock-page__spacer" />
-                <span
+                <FilterChip
                   v-if="filterRuleId"
-                  class="mock-page__filter"
-                >
-                  Rule {{ ruleLabel(filterRuleId) }}
-                  <button
-                    type="button"
-                    class="mock-page__icon"
-                    aria-label="Clear rule filter"
-                    @click="filterRuleId = null"
-                  >
-                    ×
-                  </button>
-                </span>
+                  name="Rule"
+                  :value="ruleLabel(filterRuleId) ?? ''"
+                  @remove="filterRuleId = null"
+                />
                 <span
                   v-else
                   class="mock-page__chips"
-                  role="group"
-                  aria-label="Show"
                 >
-                  <button
-                    type="button"
-                    class="mock-page__chip"
-                    :aria-pressed="!onlyNoMatch"
-                    @click="onlyNoMatch = false"
-                  >
-                    All
-                  </button>
-                  <button
-                    type="button"
-                    class="mock-page__chip"
-                    :aria-pressed="onlyNoMatch"
-                    @click="onlyNoMatch = true"
-                  >
-                    No match {{ noMatchCount }}
-                  </button>
+                  <SegmentedControl
+                    v-model="onlyNoMatch"
+                    :options="SHOW_OPTIONS"
+                    label="Show"
+                    size="sm"
+                  />
                 </span>
                 <button
                   type="button"
@@ -1017,15 +991,7 @@ onBeforeUnmount(() => {
 }
 
 .mock-page__seg {
-  @apply flex lg:hidden m-3 p-0.5 rounded bg-gray-100 dark:bg-gray-900;
-
-  button {
-    @apply flex-1 h-10 sm:h-8 rounded text-xs font-medium text-gray-600 dark:text-gray-300;
-
-    &[aria-selected='true'] {
-      @apply bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow;
-    }
-  }
+  @apply flex lg:hidden m-3;
 }
 
 .mock-page__ph {
@@ -1120,20 +1086,8 @@ onBeforeUnmount(() => {
   @apply bg-gray-400 animate-none;
 }
 
-.mock-page__filter {
-  @apply inline-flex items-center gap-1 pl-2 rounded text-xs bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
-}
-
 .mock-page__chips {
   @apply hidden sm:inline-flex gap-1;
-}
-
-.mock-page__chip {
-  @apply h-7 px-2 rounded text-xs border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200;
-
-  &[aria-pressed='true'] {
-    @apply border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
-  }
 }
 
 .mock-page__pending {

@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce'
 import { ref, onMounted, nextTick, onBeforeUnmount, computed, watch } from 'vue'
 import { useFormats } from '@/shared/lib/formats'
 import { type EventId, GraphTypes } from '@/shared/types'
+import { SegmentedControl, type SegmentedOption } from '@/shared/ui'
 import { useProfiler } from '../../lib'
 import type { CallStackHoverData, ProfileFlameChart, StatBoardCost } from '../../types'
 import { CallStatBoard } from '../../ui/call-stat-board'
@@ -33,15 +34,11 @@ let flameChartInstance: FlameChart | null = null
 let resizeHandler: (() => void) | null = null
 let flameData: ProfileFlameChart[] = []
 
-const toolbar = [
-  { label: 'Wall time', metric: GraphTypes.WALL_TIME, description: 'Wall time in ms.' },
-  { label: 'CPU', metric: GraphTypes.CPU, description: 'CPU time in ms.' },
-  { label: 'Memory', metric: GraphTypes.MEMORY, description: 'Memory usage in bytes.' },
-  {
-    label: 'Memory peak',
-    metric: GraphTypes.MEMORY_CHANGE,
-    description: 'Memory peak usage in bytes.'
-  }
+const toolbar: SegmentedOption<GraphTypes>[] = [
+  { label: 'Wall time', value: GraphTypes.WALL_TIME, title: 'Wall time in ms.' },
+  { label: 'CPU', value: GraphTypes.CPU, title: 'CPU time in ms.' },
+  { label: 'Memory', value: GraphTypes.MEMORY, title: 'Memory usage in bytes.' },
+  { label: 'Memory peak', value: GraphTypes.MEMORY_CHANGE, title: 'Memory peak usage in bytes.' }
 ]
 
 // --- Tooltip ---
@@ -353,16 +350,12 @@ onBeforeUnmount(() => {
   <div class="flame-wrapper">
     <!-- Toolbar (above canvas) -->
     <div class="flame-toolbar">
-      <button
-        v-for="tool in toolbar"
-        :key="tool.metric"
-        class="flame-toolbar__action"
-        :class="{ 'flame-toolbar__action--active': metric === tool.metric }"
-        :title="tool.description"
-        @click="metric = tool.metric"
-      >
-        {{ tool.label }}
-      </button>
+      <SegmentedControl
+        v-model="metric"
+        :options="toolbar"
+        label="Metric"
+        size="sm"
+      />
 
       <span class="flame-toolbar__separator" />
 
@@ -534,14 +527,6 @@ onBeforeUnmount(() => {
 
 .flame-canvas {
   @apply w-full h-full;
-}
-
-.flame-toolbar__action {
-  @apply text-xs uppercase text-gray-600 dark:text-gray-300 cursor-pointer px-2 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors whitespace-nowrap;
-}
-
-.flame-toolbar__action--active {
-  @apply font-bold;
 }
 
 .flame-toolbar__separator {

@@ -27,15 +27,18 @@ describe('FeedFilterBar', () => {
     getFacets.mockReset().mockResolvedValue(counts)
   })
 
-  it('shows each filter as a chip, an exclude crossed out with ≠', () => {
+  it('shows each filter as a chip, an exclude with ≠ read as «is not»', () => {
     useEventsStore().setFilters([
       { key: 'host', value: 'anna-mbp', not: false },
       { key: 'channel', value: 'doctrine', not: true },
     ])
     const chips = mountBar().findAll('.ffb__chip')
 
-    expect(chips.map((c) => c.findAll('span').map((s) => s.text()).join(' '))).toEqual(['Host = anna-mbp', 'Monolog channel ≠ doctrine'])
-    expect(chips[1]!.classes()).toContain('ffb__chip--not')
+    const visible = (c: (typeof chips)[number]) =>
+      ['name', 'op', 'value'].map((part) => c.get(`.filter-chip__${part}`).text()).join(' ')
+    expect(chips.map(visible)).toEqual(['Host = anna-mbp', 'Monolog channel ≠ doctrine'])
+    expect(chips[1]!.get('.sr-only').text()).toBe('is not')
+    expect(chips[1]!.find('.filter-chip--not').exists()).toBe(true)
   })
 
   it('removes one filter with its ✕ and all with Clear', async () => {
@@ -46,7 +49,7 @@ describe('FeedFilterBar', () => {
     ])
     const bar = mountBar()
 
-    await bar.get('[aria-label="Remove filter: Host is anna-mbp"]').trigger('click')
+    await bar.get('[aria-label="Remove filter Host = anna-mbp"]').trigger('click')
     expect(store.filters).toEqual([{ key: 'channel', value: 'doctrine', not: true }])
 
     await bar.findAll('.ffb__action').find((b) => b.text() === 'Clear')!.trigger('click')
