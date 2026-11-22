@@ -13,9 +13,12 @@ const levelColorMap: Record<string, LabelColor> = {
   EMERGENCY: 'red',
 }
 
+// The colour of a Monolog level, for any screen that shows one.
+export const monologLevelColor = (levelName: string | undefined): LabelColor => levelColorMap[levelName || 'DEBUG'] || 'gray'
+
 export const normalizeMonolog = (event: ServerEvent<Monolog>): NormalizedEvent<Monolog> => {
   const levelName = event.payload.level_name || 'DEBUG'
-  const levelColor = levelColorMap[levelName] || 'gray'
+  const levelColor = monologLevelColor(levelName)
 
   return normalizeEvent(event, {
     type: EventTypes.Monolog,

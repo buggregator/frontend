@@ -105,6 +105,20 @@ export interface SentryTraceDetail {
   spans: SentrySpan[]
   related_errors: SentryRelatedError[]
   related_log_count: number
+  // Repeated queries of one transaction (#6714): most repeated first.
+  n_plus_one?: SentryNPlusOne[]
+}
+
+// One N+1 pattern: the same normalized query run `count` times in one
+// transaction. `origin` (file:line) is often empty: sentry-laravel sends it
+// only for slow queries.
+export interface SentryNPlusOne {
+  transaction_id: string
+  query: string
+  count: number
+  total_ms: number
+  origin: string | null
+  span_ids: string[]
 }
 
 export interface SentryRelatedError {

@@ -26,6 +26,7 @@ type TUseEventsRequests = () => {
   getFacets: () => Promise<FacetCounts>,
   hasAny: () => Promise<boolean>,
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
+  getByTrace: (traceId: string) => Promise<ServerEvent<unknown>[]>,
   deleteAll: (options?: DeleteOptions) => Promise<void | Response>,
   deleteList: (uuids: EventId[]) => Promise<void | Response>,
   deleteSingle: (id: EventId) => Promise<void | Response>,
@@ -112,6 +113,29 @@ export const useEventsRequests: TUseEventsRequests = () => {
       })
   }
 
+  // Events of other modules that belong to one request (#6714): Monolog
+  // records, mails and HTTP dumps that carry its trace id. Previews: the
+  // timeline needs their headline only.
+  const getByTrace = (traceId: string) => {
+    // window=all: the server's default window (UI_DEFAULT_WINDOW) would
+    // hide the events of an older request.
+    const params = new URLSearchParams({ trace: traceId, window: 'all' })
+    if (project.value) {
+      params.set('project', project.value)
+    }
+    return fetch(`${REST_API_URL}/api/events/preview?${params}`, { headers: headers() })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new EventsLoadError(response.status)
+        }
+        const body = await response.json()
+        if (!Array.isArray(body?.data)) {
+          throw new EventsLoadError(response.status, 'Unexpected answer from the server')
+        }
+        return body.data as ServerEvent<unknown>[]
+      })
+  }
+
   // null: the server has no such event (deleted, cleared, a wrong link).
   // Any other failure throws, so the page can tell the two apart.
   const getSingle = (id: EventId) => fetch(getEventRestUrl(id), { headers: headers() })
@@ -193,6 +217,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
     getFacets,
     hasAny,
     getSingle,
+    getByTrace,
     deleteAll,
     deleteList,
     deleteSingle,

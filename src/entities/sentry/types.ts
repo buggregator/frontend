@@ -10,6 +10,7 @@ export type {
   TelemetrySource,
   SentrySpan,
   SentryTraceDetail,
+  SentryNPlusOne,
   SentryRelatedError,
   SentryLog,
   SentryMetric,
