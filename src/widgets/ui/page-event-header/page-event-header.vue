@@ -9,9 +9,11 @@ import { AppHeader, IconSvg } from '@/shared/ui'
 type Props = {
   title: string
   eventId: Uuid
+  // Row 2 for the event's tabs, which the event page puts there (EventTabs).
+  tabs?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { tabs: false })
 
 const { events } = useEvents()
 const router = useRouter()
@@ -100,6 +102,11 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
         <span class="action-btn__text">Delete</span>
       </button>
     </template>
+
+    <template
+      v-if="tabs"
+      #toolbar
+    />
   </AppHeader>
 </template>
 

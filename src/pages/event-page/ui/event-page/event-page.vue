@@ -3,13 +3,14 @@ import { useTitle } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { KeyHintBar, LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
-import { EventPageMapper } from '@/widgets/ui/event-page-mapper'
+import { EventPageMapper, hasEventTabs } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
 import { describeLoadError } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
 import { type EventId, type PageEventTypes, type ServerEvent, isEventType } from '@/shared/types'
+import { provideHeaderToolbar } from '@/shared/ui/app-header'
 import { SkeletonLoader } from '@/shared/ui/skeleton-loader'
 import { StatusPanel } from '@/shared/ui/status-panel'
 
@@ -40,6 +41,12 @@ const title = computed(
 )
 // The type of /event/:id is known only after the event loads.
 useTitle(computed(() => `${title.value || 'Event'} > ${eventId.value} | Buggregator`))
+
+// Row 1: crumbs and actions; row 2: the event's tabs, which the event's own
+// page puts there (design #6737 A). Shown with the event, so it never waits
+// empty under a load error.
+provideHeaderToolbar()
+const withTabs = computed(() => !!serverEvent.value && hasEventTabs(resolvedType.value))
 
 // A missing event and a failed load are different answers: the first is
 // final (deleted, cleared, a wrong link), the second can be tried again.
@@ -98,6 +105,7 @@ watch(
       <PageEventHeader
         :title="title"
         :event-id="eventId"
+        :tabs="withTabs"
       />
     </template>
 

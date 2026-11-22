@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
-import { PageTabs, PageTab } from '@/shared/ui'
+import { EventTabs, type TabItem } from '@/shared/ui'
 import type { Profiler } from '../../types'
 import { CallGraph } from '../call-graph'
 import { FlameGraph } from '../flame-graph'
@@ -13,11 +12,12 @@ type Props = {
 
 defineProps<Props>()
 
-const activeTab = ref('')
-
-const tabChange = (selectedTab: { tab: { name: string } }) => {
-  activeTab.value = selectedTab.tab.name
-}
+// Only the open view is mounted: each draws a large graph.
+const tabs: TabItem[] = [
+  { id: 'call-graph', label: 'Call graph' },
+  { id: 'flamechart', label: 'Flamechart' },
+  { id: 'top-functions', label: 'Top functions' }
+]
 </script>
 
 <template>
@@ -28,35 +28,29 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
         class="profiler-page__stat"
       >
         <section class="profiler-page__stat-tabs">
-          <PageTabs @changed="tabChange">
-            <PageTab name="Call graph">
-              <CallGraph
-                v-if="activeTab === 'Call graph'"
-                :id="event.id"
-                :key="activeTab"
-                :payload="event.payload"
-              />
-            </PageTab>
+          <EventTabs
+            v-slot="{ tab }"
+            :tabs="tabs"
+            class="profiler-page__panel"
+          >
+            <CallGraph
+              v-if="tab === 'call-graph'"
+              :id="event.id"
+              :payload="event.payload"
+            />
 
-            <PageTab name="Flamechart">
-              <FlameGraph
-                v-if="activeTab === 'Flamechart'"
-                :id="event.id"
-                :key="activeTab"
-                :data-key="activeTab"
-                :payload="event.payload"
-              />
-            </PageTab>
+            <FlameGraph
+              v-else-if="tab === 'flamechart'"
+              :id="event.id"
+              :payload="event.payload"
+            />
 
-            <PageTab name="Top functions">
-              <TopFunctions
-                v-if="activeTab === 'Top functions'"
-                :id="event.id"
-                :key="activeTab"
-                :payload="event.payload"
-              />
-            </PageTab>
-          </PageTabs>
+            <TopFunctions
+              v-else-if="tab === 'top-functions'"
+              :id="event.id"
+              :payload="event.payload"
+            />
+          </EventTabs>
         </section>
       </div>
     </div>
@@ -78,20 +72,12 @@ const tabChange = (selectedTab: { tab: { name: string } }) => {
 
 .profiler-page__stat-tabs {
   @apply bg-gray-50 dark:bg-gray-900 dark:text-gray-300 flex-1 flex flex-col overflow-hidden;
-
-  :deep(.tabs-component-tabs) {
-    @apply bg-white dark:bg-gray-800 px-4;
-  }
 }
 
-/* The panels are flex children: without min-h-0 they grow to their content
-   (a long Top functions table) and the parent clips them, so nothing scrolls.
-   Bounded here, the tab's own content scrolls (server#428). */
-.profiler-page__stat-tabs :deep(.tabs-component-panels) {
-  @apply min-h-0;
-}
-
-.profiler-page__stat-tabs :deep(.tabs-component-panel) {
+/* The panel is a flex child: without min-h-0 it grows to its content (a long
+   Top functions table) and the parent clips it, so nothing scrolls. Bounded
+   here, the view's own content scrolls (server#428). */
+.profiler-page__panel {
   @apply flex-1 min-h-0 overflow-hidden;
 }
 </style>

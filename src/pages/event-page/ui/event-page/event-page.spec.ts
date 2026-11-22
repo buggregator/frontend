@@ -94,4 +94,35 @@ describe('EventPage: tab title', () => {
 
     expect(wrapper.text()).not.toContain('Could not load the event')
   })
+
+  // #6737 A: row 2 of the header holds the tabs of the event pages that have
+  // them, once the event is there.
+  it.each([
+    ['sentry', true],
+    ['smtp', true],
+    ['http-dump', true],
+    ['profiler', true],
+    ['xdebug-trace', true],
+    ['monolog', false],
+    ['ray', false],
+  ])('%s: header row 2 for tabs = %s', async (type, tabs) => {
+    getItem.mockResolvedValue({ uuid: 'abc', type, payload: {} })
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:type/:id', component: EventPage }],
+    })
+    await router.push(`/${type}/abc`)
+    await router.isReady()
+
+    const header = { props: ['tabs'], template: '<div class="header-stub" :data-tabs="String(tabs)" />' }
+    const w = mount(EventPage, {
+      global: {
+        plugins: [router],
+        stubs: { LayoutBase: stub, LayoutSidebar: stub, PageEventHeader: header, EventPageMapper: stub },
+      },
+    })
+    expect(w.get('.header-stub').attributes('data-tabs')).toBe('false')
+    await flushPromises()
+    expect(w.get('.header-stub').attributes('data-tabs')).toBe(String(tabs))
+  })
 })

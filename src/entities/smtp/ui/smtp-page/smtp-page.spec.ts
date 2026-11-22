@@ -59,4 +59,16 @@ describe('SmtpPage: HTML preview', () => {
     const withId = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) } })
     expect(withId.text()).toContain('Message ID')
   })
+
+  it('the body views are a tablist of the shared Tabs, HTML preview first (#6737 A)', async () => {
+    const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) } })
+    const list = wrapper.get('[role="tablist"]')
+    expect(list.attributes('aria-label')).toBe('Email body')
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.map((t) => t.text())).toEqual(['HTML Preview', 'Text', 'HTML Source', 'Raw'])
+    expect(wrapper.find('iframe').exists()).toBe(true)
+    await tabs[3].trigger('click')
+    expect(wrapper.find('iframe').exists()).toBe(false)
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe(tabs[3].attributes('id'))
+  })
 })

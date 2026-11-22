@@ -11,8 +11,8 @@ import {
   EmailPreviewDevice,
   EmailPreview,
   EventDetailLayout,
-  PageTabs,
-  PageTab
+  EventTabs,
+  type TabItem
 } from '@/shared/ui'
 import { useSmtpAnalytics, type MimeNode } from '../../lib/use-smtp-analytics'
 import type { SMTP } from '../../types'
@@ -66,6 +66,15 @@ const isHtml = computed(
 const isText = computed(
   () => props.event.payload?.text !== undefined && props.event.payload?.text !== ''
 )
+
+// The views of the email body, in the header's row 2 (#6737 A); the HTML
+// preview first.
+const bodyTabs = computed<TabItem[]>(() => [
+  ...(isHtml.value ? [{ id: 'html', label: 'HTML Preview' }] : []),
+  ...(isText.value ? [{ id: 'text', label: 'Text' }] : []),
+  ...(isHtml.value ? [{ id: 'source', label: 'HTML Source' }] : []),
+  { id: 'raw', label: 'Raw' }
+])
 
 const date = computed(() => moment(props.event.date).format('DD.MM.YYYY HH:mm:ss'))
 const relativeDate = computed(() => moment(props.event.date).fromNow())
@@ -314,46 +323,37 @@ onMounted(getAttachmentsRequest)
       <!-- Right: preview -->
       <div class="smtp-layout__preview">
         <div class="smtp-preview-card">
-          <PageTabs>
-            <!-- HTML preview (default) -->
-            <PageTab
-              v-if="isHtml"
-              name="HTML Preview"
+          <EventTabs
+            v-slot="{ tab }"
+            :tabs="bodyTabs"
+            label="Email body"
+          >
+            <EmailPreview
+              v-if="tab === 'html'"
+              :device="EmailPreviewDevice.Desktop"
             >
-              <EmailPreview :device="EmailPreviewDevice.Desktop">
-                <div class="smtp-preview-frame">
-                  <EmailHtmlFrame :html="event.payload.html" />
-                </div>
-              </EmailPreview>
-            </PageTab>
+              <div class="smtp-preview-frame">
+                <EmailHtmlFrame :html="event.payload.html" />
+              </div>
+            </EmailPreview>
 
-            <!-- Text -->
-            <PageTab
-              v-if="isText"
-              name="Text"
-            >
-              <pre class="smtp-text-preview">{{ event.payload.text }}</pre>
-            </PageTab>
+            <pre
+              v-else-if="tab === 'text'"
+              class="smtp-text-preview"
+            >{{ event.payload.text }}</pre>
 
-            <!-- HTML source -->
-            <PageTab
-              v-if="isHtml"
-              name="HTML Source"
-            >
-              <CodeSnippet
-                language="html"
-                :code="event.payload.html"
-              />
-            </PageTab>
+            <CodeSnippet
+              v-else-if="tab === 'source'"
+              language="html"
+              :code="event.payload.html"
+            />
 
-            <!-- Raw -->
-            <PageTab name="Raw">
-              <CodeSnippet
-                language="plaintext"
-                :code="event.payload.raw"
-              />
-            </PageTab>
-          </PageTabs>
+            <CodeSnippet
+              v-else
+              language="plaintext"
+              :code="event.payload.raw"
+            />
+          </EventTabs>
         </div>
       </div>
     </div>
@@ -448,15 +448,6 @@ onMounted(getAttachmentsRequest)
 .smtp-preview-card {
   @apply rounded-lg overflow-hidden;
   @apply border border-gray-200 dark:border-gray-700;
-
-  :deep(.tabs-component-tabs) {
-    @apply px-4;
-    @apply bg-gray-50 dark:bg-gray-900;
-  }
-
-  :deep(.tabs-component-panel) {
-    @apply p-0;
-  }
 }
 
 .smtp-preview-frame {

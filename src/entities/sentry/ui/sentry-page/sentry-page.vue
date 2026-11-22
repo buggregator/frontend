@@ -2,7 +2,7 @@
 import moment from 'moment'
 import { computed, ref, watch } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
-import { EventDetailLayout, PageTabs, PageTab } from '@/shared/ui'
+import { EventDetailLayout, EventTabs, type TabItem } from '@/shared/ui'
 import { resolveExceptionValues, sentryMessageText } from '../../lib/resolve-exceptions'
 import { useSentryRequests } from '../../lib/use-sentry-requests'
 import type { Sentry, SentryTraceSummary } from '../../types'
@@ -73,6 +73,23 @@ const hasContextTab = computed(
     props.event.payload.contexts?.os
 )
 const hasSdk = computed(() => !!props.event.payload.sdk)
+
+// The tabs of the page, in the header's row 2 (#6737 A), with their counts.
+const tabs = computed<TabItem[]>(() =>
+  [
+    hasException.value && { id: 'exceptions', label: 'Exceptions', count: exceptionsLength.value },
+    hasBreadcrumbs.value && {
+      id: 'breadcrumbs',
+      label: 'Breadcrumbs',
+      count: props.event.payload.breadcrumbs!.values.length
+    },
+    hasRequest.value && { id: 'request', label: 'Request' },
+    hasContextTab.value && { id: 'context', label: 'Context' },
+    hasSdk.value && { id: 'sdk', label: 'SDK' },
+    hasModules.value && { id: 'modules', label: 'Modules', count: Object.keys(props.event.payload.modules!).length },
+    hasExtra.value && { id: 'extra', label: 'Extra' }
+  ].filter((t): t is TabItem => !!t)
+)
 
 const exceptionRefs = ref<HTMLElement[]>([])
 
@@ -222,12 +239,12 @@ watch(
     <SentryEventFeedback :event-id="feedbackEventId" />
 
     <!-- Tabbed content -->
-    <PageTabs class="sentry-tabs">
-      <PageTab
-        v-if="hasException"
-        name="Exceptions"
-        :suffix="`<span class='tab-badge'>${exceptionsLength}</span>`"
-      >
+    <EventTabs
+      v-slot="{ tab }"
+      :tabs="tabs"
+      class="sentry-tabs"
+    >
+      <template v-if="tab === 'exceptions'">
         <div class="sentry-tab-content">
           <div class="sentry-exceptions">
             <div
@@ -290,31 +307,21 @@ watch(
             </div>
           </div>
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasBreadcrumbs"
-        name="Breadcrumbs"
-        :suffix="`<span class='tab-badge'>${event.payload.breadcrumbs!.values.length}</span>`"
-      >
+      <template v-if="tab === 'breadcrumbs'">
         <div class="sentry-tab-content">
           <SentryPageBreadcrumbs :breadcrumbs="event.payload.breadcrumbs!.values" />
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasRequest"
-        name="Request"
-      >
+      <template v-if="tab === 'request'">
         <div class="sentry-tab-content">
           <SentryPageRequest :request="event.payload.request!" />
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasContextTab"
-        name="Context"
-      >
+      <template v-if="tab === 'context'">
         <div class="sentry-tab-content sentry-tab-content--sections">
           <SentryPageTags :payload="event.payload" />
 
@@ -333,39 +340,29 @@ watch(
             :device="event.payload.contexts!.device!"
           />
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasSdk"
-        name="SDK"
-      >
+      <template v-if="tab === 'sdk'">
         <div class="sentry-tab-content">
           <SentryPageSdk :sdk="event.payload.sdk!" />
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasModules"
-        name="Modules"
-        :suffix="`<span class='tab-badge'>${Object.keys(event.payload.modules!).length}</span>`"
-      >
+      <template v-if="tab === 'modules'">
         <div class="sentry-tab-content">
           <SentryPageModules
             :modules="event.payload.modules!"
             :platform="platform"
           />
         </div>
-      </PageTab>
+      </template>
 
-      <PageTab
-        v-if="hasExtra"
-        name="Extra"
-      >
+      <template v-if="tab === 'extra'">
         <div class="sentry-tab-content">
           <SentryPageExtra :extra="event.payload.extra" />
         </div>
-      </PageTab>
-    </PageTabs>
+      </template>
+    </EventTabs>
   </EventDetailLayout>
 </template>
 
@@ -438,10 +435,6 @@ watch(
 /* Tabs */
 .sentry-tabs {
   @apply -mx-5 md:-mx-6 lg:-mx-8;
-
-  :deep(.tabs-component-tabs) {
-    @apply px-5 md:px-6 lg:px-8;
-  }
 }
 
 .sentry-tab-content {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
-import { CodeSnippet, EventDetailLayout, EventDetailSection, PageTabs, PageTab } from '@/shared/ui'
+import { CodeSnippet, EventDetailLayout, EventDetailSection, EventTabs, type TabItem } from '@/shared/ui'
 import { useHttpDumpEvent } from '../../lib'
 import type { HttpDump } from '../../types'
 import { HttpDumpHeader } from '../http-dump-header'
@@ -18,6 +18,13 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { hasResponse, curlCommand, rawHttp } = useHttpDumpEvent(toRef(props, 'event'))
+
+// A proxied request opens on its response.
+const tabs = computed<TabItem[]>(() => [
+  ...(hasResponse.value ? [{ id: 'response', label: 'Response' }] : []),
+  { id: 'request', label: 'Request' },
+  { id: 'raw', label: 'Raw' }
+])
 </script>
 
 <template>
@@ -26,61 +33,48 @@ const { hasResponse, curlCommand, rawHttp } = useHttpDumpEvent(toRef(props, 'eve
       <HttpDumpHeader :event="event" />
     </template>
 
-    <div class="http-dump-tabs">
-      <PageTabs :use-url-fragment="useUrlFragment">
-        <!-- Proxy: RESPONSE tab first (default) -->
-        <PageTab
-          v-if="hasResponse"
-          name="Response"
-        >
-          <div class="http-dump-tabs__panel">
-            <HttpResponsePanel :event="event" />
-          </div>
-        </PageTab>
+    <EventTabs
+      v-slot="{ tab }"
+      :tabs="tabs"
+      :url-fragment="useUrlFragment"
+      class="http-dump-tabs"
+    >
+      <div class="http-dump-tabs__panel">
+        <HttpResponsePanel
+          v-if="tab === 'response'"
+          :event="event"
+        />
 
-        <PageTab name="Request">
-          <div class="http-dump-tabs__panel">
-            <HttpRequestPanel :event="event" />
-          </div>
-        </PageTab>
+        <HttpRequestPanel
+          v-else-if="tab === 'request'"
+          :event="event"
+        />
 
-        <PageTab name="Raw">
-          <div class="http-dump-tabs__panel">
-            <EventDetailSection title="cURL">
-              <CodeSnippet
-                language="bash"
-                :code="curlCommand"
-              />
-            </EventDetailSection>
+        <template v-else>
+          <EventDetailSection title="cURL">
+            <CodeSnippet
+              language="bash"
+              :code="curlCommand"
+            />
+          </EventDetailSection>
 
-            <EventDetailSection title="Raw HTTP">
-              <CodeSnippet
-                language="plaintext"
-                :code="rawHttp"
-              />
-            </EventDetailSection>
-          </div>
-        </PageTab>
-      </PageTabs>
-    </div>
+          <EventDetailSection title="Raw HTTP">
+            <CodeSnippet
+              language="plaintext"
+              :code="rawHttp"
+            />
+          </EventDetailSection>
+        </template>
+      </div>
+    </EventTabs>
   </EventDetailLayout>
 </template>
 
 <style lang="scss" scoped>
-/* Pull tabs to the edges — counteract the parent body padding */
+/* The panel reaches the edges — counteract the parent body padding */
 .http-dump-tabs {
   @apply -mx-5 md:-mx-6 lg:-mx-8 -mb-5 -mt-1;
   @apply flex-grow flex flex-col;
-
-  /* Override tabs h-full so background extends with content */
-  :deep(.tabs-component) {
-    @apply h-auto flex-grow;
-  }
-
-  /* Add left padding to tab bar to align with content */
-  :deep(.tabs-component-tabs) {
-    @apply px-5 md:px-6 lg:px-8;
-  }
 }
 
 /* Restore padding inside each tab panel */
