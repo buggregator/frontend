@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { computed, defineAsyncComponent, ref } from 'vue'
+import { useEvents } from '@/shared/lib/use-events'
+import { useSettingsStore } from '@/shared/stores'
 import type { NormalizedEvent } from '@/shared/types'
 import { PreviewCard, CodeSnippet } from '@/shared/ui'
-import { hasEntries } from '../../lib'
+import { useMonologInlineDetails } from '../../lib'
 import type { Monolog } from '../../types'
 
 type Props = {
@@ -28,14 +31,18 @@ const toggleView = () => {
   isFullMessage.value = !isFullMessage.value
 }
 
-const hasContext = computed(() => {
-  const ctx = props.event.payload.context
-  if (!ctx) return false
-  const keys = Object.keys(ctx).filter((k) => k !== 'source')
-  return keys.length > 0
-})
+// Loaded only when the setting is on: the feed's first load stays as it was.
+const JsonTreeView = defineAsyncComponent(() => import('@/shared/ui/json-tree-view').then((m) => m.JsonTreeView))
 
-const hasExtra = computed(() => hasEntries(props.event.payload.extra))
+// Context and extra under the message, only with the setting on (frontend#283).
+const { isMonologInlineContext } = storeToRefs(useSettingsStore())
+const { events } = useEvents()
+const { context, extra, isShown, isContextBig, isExtraBig } = useMonologInlineDetails(
+  props.event.id,
+  props.event.payload,
+  isMonologInlineContext,
+  (id) => events.getItem(id),
+)
 </script>
 
 <template>
@@ -50,31 +57,33 @@ const hasExtra = computed(() => hasEntries(props.event.payload.extra))
         />
       </div>
 
-      <div
-        v-if="hasContext"
-        class="monolog-block"
-      >
-        <div class="monolog-block__header">
-          context
+      <template v-if="isShown">
+        <div
+          v-if="context"
+          class="monolog-block"
+        >
+          <div class="monolog-block__header">
+            context
+          </div>
+          <JsonTreeView
+            :value="context"
+            :open-depth="isContextBig ? -1 : 1"
+          />
         </div>
-        <CodeSnippet
-          language="json"
-          :code="event.payload.context"
-        />
-      </div>
 
-      <div
-        v-if="hasExtra"
-        class="monolog-block"
-      >
-        <div class="monolog-block__header">
-          extra
+        <div
+          v-if="extra"
+          class="monolog-block"
+        >
+          <div class="monolog-block__header">
+            extra
+          </div>
+          <JsonTreeView
+            :value="extra"
+            :open-depth="isExtraBig ? -1 : 1"
+          />
         </div>
-        <CodeSnippet
-          language="json"
-          :code="event.payload.extra"
-        />
-      </div>
+      </template>
     </div>
   </PreviewCard>
 </template>

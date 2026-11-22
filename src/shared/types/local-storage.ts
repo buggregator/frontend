@@ -14,6 +14,7 @@ export enum LocalStorageKeys {
   SeenEvents = "seen_events",
   HiddenMenuItems = "hidden_menu_items",
   DesktopNotifications = "desktop_notifications",
+  MonologInlineContext = "monolog_inline_context",
 }
 
 export enum SessionStorageKeys {

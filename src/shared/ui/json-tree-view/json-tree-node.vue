@@ -7,16 +7,18 @@ type Props = {
   value: unknown
   depth: number
   path: string
+  // Nodes deeper than this start folded.
+  openDepth?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { openDepth: 1 })
 
 const isObject = computed(
   () => props.value !== null && typeof props.value === 'object' && !Array.isArray(props.value)
 )
 const isArray = computed(() => Array.isArray(props.value))
 const isExpandable = computed(() => isObject.value || isArray.value)
-const isCollapsed = ref(props.depth > 1)
+const isCollapsed = ref(props.depth > props.openDepth)
 const toggle = () => {
   isCollapsed.value = !isCollapsed.value
 }
@@ -151,6 +153,7 @@ const copyPath = () => {
         :value="child.value"
         :depth="depth + 1"
         :path="child.path"
+        :open-depth="openDepth"
       />
     </div>
 

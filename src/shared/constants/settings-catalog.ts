@@ -105,6 +105,15 @@ export const SETTINGS_ITEMS = {
       'read-only. Then use «Send to inbox» on an email page.',
     keywords: ['smtp', 'mail', 'email', 'relay', 'release', 'inbox', 'send', 'forward', 'outgoing']
   },
+  monologContext: {
+    id: 'monolog-context',
+    label: 'Show log context in the list',
+    hint: 'Context and extra under each log message.',
+    more:
+      'Monolog context and extra show under the message in the event list, folded where they ' +
+      'are deep. Off: the list shows the message only, and the event page has the rest.',
+    keywords: ['monolog', 'logs', 'log', 'context', 'extra', 'inline', 'json']
+  },
   about: {
     id: 'about',
     label: 'About & updates',
@@ -138,6 +147,11 @@ export const SETTINGS_SECTIONS: SettingsSection[] = [
     id: 'editor',
     title: 'Editor',
     items: [SETTINGS_ITEMS.codeEditor, SETTINGS_ITEMS.pathMapping]
+  },
+  {
+    id: 'logs',
+    title: 'Logs',
+    items: [SETTINGS_ITEMS.monologContext]
   },
   {
     id: 'email',

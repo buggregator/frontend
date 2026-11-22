@@ -29,6 +29,7 @@ const {
   changeEventCountsVisibility,
   changeSingleKeyShortcuts,
   changeKeyHints,
+  changeMonologInlineContext,
   changeActiveCodeEditor,
   setCustomFilePathMapping,
   changeIsActiveFilePathMapping
@@ -39,6 +40,7 @@ const {
   isVisibleEventCounts,
   isSingleKeyShortcutsEnabled,
   isKeyHintsEnabled,
+  isMonologInlineContext,
   customFilePathMapping,
   isActiveFilePathMapping,
   codeEditor,
@@ -444,6 +446,27 @@ useTitle('Settings | Buggregator')
                   </div>
                 </div>
               </template>
+            </SettingsRow>
+          </div>
+        </EventDetailSection>
+
+        <EventDetailSection
+          id="logs"
+          class="settings__section"
+          title="Logs"
+          tabindex="-1"
+        >
+          <div class="s-card">
+            <SettingsRow
+              v-slot="{ labelId, hintId }"
+              :item="SETTINGS_ITEMS.monologContext"
+            >
+              <SettingsSwitch
+                :checked="isMonologInlineContext"
+                :aria-labelledby="labelId"
+                :aria-describedby="hintId"
+                @toggle="changeMonologInlineContext"
+              />
             </SettingsRow>
           </div>
         </EventDetailSection>
