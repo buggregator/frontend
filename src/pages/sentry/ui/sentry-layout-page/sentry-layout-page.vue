@@ -153,7 +153,7 @@ const isWide = useMediaQuery('(min-width: 640px)')
 }
 
 .sentry-layout__phone-tabs {
-  @apply sticky top-0 z-10 h-11 px-4 flex-none;
+  @apply sticky top-0 z-10 px-4 py-1.5 flex-none;
   @apply bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700;
 }
 </style>

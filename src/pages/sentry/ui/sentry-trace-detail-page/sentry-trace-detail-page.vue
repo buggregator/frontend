@@ -5,8 +5,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   SOURCE_LABEL,
-  SentryViewTabs,
-  tabIdOf,
+  SentryViewIcon,
   serviceColors,
   spansWithRoot,
   useSentryTraces,
@@ -17,12 +16,12 @@ import {
   TraceInsight,
   TraceRelatedLogs,
   TraceSequence,
-  TraceWaterfall,
-  type SentryViewTab
+  TraceWaterfall
 } from '@/entities/sentry'
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
+import { Tabs, tabIdOf, type TabItem } from '@/shared/ui'
 import { useTraceMarkers } from '../../lib/use-trace-markers'
 
 const { params } = useRoute()
@@ -49,7 +48,7 @@ const showInWaterfall = (spanId: string) => {
   openSpanId.value = spanId
   selectView('waterfall')
 }
-const viewTabs = computed<SentryViewTab[]>(() => [
+const viewTabs = computed<TabItem[]>(() => [
   { id: 'request', label: 'Request', icon: 'timeline' },
   { id: 'waterfall', label: 'Waterfall', icon: 'waterfall' },
   { id: 'flame', label: 'Flame graph', icon: 'flame' },
@@ -138,13 +137,23 @@ onMounted(async () => {
         </div>
       </div>
 
-      <SentryViewTabs
-        :tabs="viewTabs"
-        :current="activeTab"
-        label="Trace view"
-        panel-id="trace-view-panel"
-        @select="selectView"
-      />
+      <div class="trace-detail__views">
+        <Tabs
+          :tabs="viewTabs"
+          :current="activeTab"
+          label="Trace view"
+          panel-id="trace-view-panel"
+          test-prefix="view-tab-"
+          @select="selectView"
+        >
+          <template #icon="{ tab }">
+            <SentryViewIcon
+              v-if="tab.icon"
+              :name="tab.icon"
+            />
+          </template>
+        </Tabs>
+      </div>
 
       <div
         id="trace-view-panel"
@@ -231,8 +240,14 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
+@use 'src/entities/sentry/ui/sentry-list-views/view-bar';
+
 .trace-detail {
   @apply flex flex-col h-full;
+}
+
+.trace-detail__views {
+  @include view-bar.bar;
 }
 
 .trace-detail__loading {

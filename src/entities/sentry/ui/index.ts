@@ -13,7 +13,7 @@ export * from './sentry-empty-state';
 export * from './sentry-filter-button';
 export * from './trace-graphs';
 export * from './trace-related-logs';
-export * from './sentry-view-tabs';
+export * from './sentry-list-views';
 export * from './sentry-feedback';
 export * from './sentry-crons';
 export * from './request-timeline';
