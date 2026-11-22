@@ -48,41 +48,45 @@ const { context, extra, isShown, isContextBig, isExtraBig } = useMonologInlineDe
 <template>
   <PreviewCard :event="event">
     <div class="monolog-body">
-      <div class="monolog-block">
-        <CodeSnippet
-          :class="{ 'monolog-body__snippet--clickable': !isFullMessage }"
-          :code="isFullMessage ? message : shortMessage"
-          title="Click to show full message"
-          @click="toggleView"
-        />
-      </div>
+      <!-- The snippet has its own frame: no second one around it. -->
+      <CodeSnippet
+        :class="{ 'monolog-body__snippet--clickable': !isFullMessage }"
+        :code="isFullMessage ? message : shortMessage"
+        title="Click to show full message"
+        @click="toggleView"
+      />
 
       <template v-if="isShown">
-        <div
+        <!-- Flat in the card: a label and the tree, no box of their own. -->
+        <section
           v-if="context"
-          class="monolog-block"
+          class="monolog-details"
+          aria-label="Context"
         >
-          <div class="monolog-block__header">
+          <div class="monolog-details__label">
             context
           </div>
           <JsonTreeView
+            class="monolog-details__tree"
             :value="context"
             :open-depth="isContextBig ? -1 : 1"
           />
-        </div>
+        </section>
 
-        <div
+        <section
           v-if="extra"
-          class="monolog-block"
+          class="monolog-details"
+          aria-label="Extra"
         >
-          <div class="monolog-block__header">
+          <div class="monolog-details__label">
             extra
           </div>
           <JsonTreeView
+            class="monolog-details__tree"
             :value="extra"
             :open-depth="isExtraBig ? -1 : 1"
           />
-        </div>
+        </section>
       </template>
     </div>
   </PreviewCard>
@@ -93,20 +97,21 @@ const { context, extra, isShown, isContextBig, isExtraBig } = useMonologInlineDe
   @apply flex flex-col gap-1.5 text-xs;
 }
 
-.monolog-block {
-  @apply rounded overflow-hidden;
-  @apply border border-gray-200 dark:border-gray-700;
-
-  :deep(.code-snippet) {
-    @apply rounded-none;
-  }
+.monolog-details {
+  @apply pt-1.5;
+  @apply border-t border-gray-200 dark:border-gray-700;
 }
 
-.monolog-block__header {
-  @apply flex items-center px-3 py-1.5;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border-b border-gray-200 dark:border-gray-700;
+.monolog-details__label {
   @apply text-2xs font-medium text-gray-500 dark:text-gray-400;
+}
+
+/* The shared tree draws a framed box by default; in the card it sits flat. */
+.monolog-details__tree.json-tree-view {
+  padding: 4px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .monolog-body__snippet--clickable {

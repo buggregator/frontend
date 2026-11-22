@@ -8,7 +8,8 @@ import {
   EventDetailLayout,
   EventDetailSection
 } from '@/shared/ui'
-import { hasEntries } from '../../lib'
+import { JsonTreeView } from '@/shared/ui/json-tree-view'
+import { hasEntries, jsonOpenDepth } from '../../lib'
 import { MonologLevel } from '../../types'
 import type { Monolog } from '../../types'
 
@@ -62,9 +63,9 @@ const levelBadgeClass = computed(() => {
       v-if="event.payload.context"
       title="Context"
     >
-      <CodeSnippet
-        language="json"
-        :code="event.payload.context"
+      <JsonTreeView
+        :value="event.payload.context"
+        :open-depth="jsonOpenDepth(event.payload.context)"
       />
     </EventDetailSection>
 
@@ -72,9 +73,9 @@ const levelBadgeClass = computed(() => {
       v-if="hasExtra"
       title="Extra"
     >
-      <CodeSnippet
-        language="json"
-        :code="event.payload.extra"
+      <JsonTreeView
+        :value="event.payload.extra"
+        :open-depth="jsonOpenDepth(event.payload.extra)"
       />
     </EventDetailSection>
 

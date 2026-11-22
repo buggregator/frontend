@@ -13,6 +13,10 @@ type Details = {
 const BIG_JSON_BYTES = 2048
 const isBig = (value: unknown) => value !== null && JSON.stringify(value).length > BIG_JSON_BYTES
 
+// How far a JSON tree of this value starts open: a big one starts folded to
+// its top-level keys (the feed card and the event page use the same rule).
+export const jsonOpenDepth = (value: unknown) => (isBig(value) ? -1 : 1)
+
 type FetchFull = (id: EventId) => Promise<{ payload: unknown } | null>
 
 // Monolog context and extra under the message in the feed, when the setting is

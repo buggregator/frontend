@@ -23,7 +23,7 @@ const render = (payload: Partial<Monolog> & Record<string, unknown>) =>
   })
 
 const headers = (wrapper: ReturnType<typeof render>) =>
-  wrapper.findAll('.monolog-block__header').map((h) => h.text())
+  wrapper.findAll('.monolog-details__label').map((h) => h.text())
 
 describe('monolog PreviewCard: context in the list (frontend#283)', () => {
   beforeEach(() => {
