@@ -9,7 +9,7 @@ describe('FilterChip', () => {
     expect(w.get('.filter-chip__op').attributes('aria-hidden')).toBe('true')
     expect(w.get('.sr-only').text()).toBe('is')
     const remove = w.get('button')
-    expect(remove.attributes('aria-label')).toBe('Remove filter host = anna-mbp')
+    expect(remove.attributes('aria-label')).toBe('Remove filter host is anna-mbp')
     await remove.trigger('click')
     expect(w.emitted('remove')).toHaveLength(1)
   })

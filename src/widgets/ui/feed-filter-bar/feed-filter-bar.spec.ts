@@ -49,7 +49,7 @@ describe('FeedFilterBar', () => {
     ])
     const bar = mountBar()
 
-    await bar.get('[aria-label="Remove filter Host = anna-mbp"]').trigger('click')
+    await bar.get('[aria-label="Remove filter Host is anna-mbp"]').trigger('click')
     expect(store.filters).toEqual([{ key: 'channel', value: 'doctrine', not: true }])
 
     await bar.findAll('.ffb__action').find((b) => b.text() === 'Clear')!.trigger('click')
