@@ -22,6 +22,7 @@ const state = computed(() => inviteState(props.calendar))
 const when = computed(() => formatInviteWhen(props.calendar))
 const repeats = computed(() => repeatLabel(props.calendar.rrule))
 const attendees = computed(() => props.calendar.attendees ?? [])
+// The invite is untrusted mail: only http(s) becomes a link (no javascript:).
 const isLink = (value?: string) => !!value && /^https?:\/\//i.test(value)
 </script>
 
@@ -121,11 +122,15 @@ const isLink = (value?: string) => !!value && /^https?:\/\//i.test(value)
           <dt>Link</dt>
           <dd>
             <a
+              v-if="isLink(calendar.url)"
               :href="calendar.url"
               target="_blank"
               rel="noopener noreferrer"
               class="smtp-invite__link"
             >{{ calendar.url }}</a>
+            <template v-else>
+              {{ calendar.url }}
+            </template>
           </dd>
         </div>
       </dl>

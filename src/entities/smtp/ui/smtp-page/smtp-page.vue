@@ -380,12 +380,16 @@ onMounted(getAttachmentsRequest)
               :code="event.payload.html"
             />
 
-            <SmtpPartView
+            <!-- v-if: a part (up to 1 MB, maybe a frame) is built only when its tab is open. -->
+            <template
               v-for="(part, index) in parts"
-              v-show="tab === partTabId(index)"
               :key="partTabId(index)"
-              :part="part"
-            />
+            >
+              <SmtpPartView
+                v-if="tab === partTabId(index)"
+                :part="part"
+              />
+            </template>
 
             <CodeSnippet
               v-show="tab === 'raw'"
