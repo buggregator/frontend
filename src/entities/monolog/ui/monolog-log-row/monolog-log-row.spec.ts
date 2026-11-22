@@ -72,7 +72,7 @@ describe('MonologLogRow', () => {
     const request = wrapper.get('[data-test="mlog-same-request"]')
     expect(request.text()).toContain('aca37ea6')
     const logs = wrapper.get('[data-test="mlog-trace-logs"]')
-    expect(logs.text()).toBe('All 9 lines of this request')
+    expect(logs.text()).toBe('All lines of this request (9 in this time)')
     expect(JSON.parse(logs.attributes('data-to')!)).toEqual({
       name: 'logs',
       query: { trace: 'aca37ea6', window: 'all' }

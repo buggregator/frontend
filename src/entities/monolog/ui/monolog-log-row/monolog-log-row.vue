@@ -48,7 +48,10 @@ const context = computed(() => (hasEntries(payload.value.context) ? payload.valu
 const extra = computed(() => (hasEntries(payload.value.extra) ? payload.value.extra : null))
 
 const linesLabel = computed(() =>
-  props.traceCount ? `All ${props.traceCount} lines of this request` : 'All lines of this request'
+  // The count is the current window's; the link opens all time.
+  props.traceCount
+    ? `All lines of this request (${props.traceCount} in this time)`
+    : 'All lines of this request'
 )
 
 const copied = ref<'idle' | 'done' | 'failed'>('idle')

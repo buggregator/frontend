@@ -25,9 +25,10 @@ describe('logsParams', () => {
     )
   })
 
-  it('without search: the window and the trace only; all time has no window', () => {
+  it('without search: the window and the trace only; all time sends window=all', () => {
+    // No window would let the server apply its ui.default_window (e.g. 24h).
     expect(logsParams({ ...f, window: 'all' }, undefined, { search: false }).toString()).toBe(
-      'type=monolog&trace=t1'
+      'type=monolog&window=all&trace=t1'
     )
   })
 })
@@ -73,7 +74,7 @@ describe('useLogsApi', () => {
   it('asks whether the project has any log, whatever the window', async () => {
     fetchMock.mockImplementationOnce(() => json({ data: [{}] }))
     expect(await useLogsApi().hasAny()).toBe(true)
-    expect(url()).toBe('/api/events/preview?type=monolog&limit=1&project=shop')
+    expect(url()).toBe('/api/events/preview?type=monolog&limit=1&window=all&project=shop')
   })
 
   it('a failed answer throws', async () => {

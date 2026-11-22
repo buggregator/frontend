@@ -23,6 +23,7 @@ import {
   matchesLog,
   searchWords,
   toLogBars,
+  barsLabel,
   useLogsData,
   useLogsQuery,
   useLogsStream,
@@ -257,7 +258,7 @@ const traceCount = (e: ServerEvent<Monolog>) => {
           class="logs-page__chart"
           :bars="bars"
           :series="LOG_SERIES"
-          label="Log lines per minute"
+          :label="barsLabel(bars)"
           :end-label="windowSeconds(filters.window) ? 'now' : ''"
         >
           <span

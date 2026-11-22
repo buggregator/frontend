@@ -1,5 +1,5 @@
 import { isMonologErrorLevel } from '@/entities/monolog'
-import { fillBuckets, type BarBucket, type BarSeries } from '@/shared/ui/bar-histogram'
+import { fillBuckets, MAX_BARS, type BarBucket, type BarSeries } from '@/shared/ui/bar-histogram'
 import { windowSeconds } from './logs-filters'
 
 // `GET /api/events/histogram`: lines per bucket with a count per level. Empty
@@ -35,5 +35,20 @@ export const toLogBars = (
   })
   const span = windowSeconds(window)
   const from = span ? now - span + reply.bucket : (points[0]?.t ?? now)
-  return fillBuckets(points, reply.bucket, from, now)
+  // The server sizes the bucket for first..last line; drawn up to now that can
+  // need more than MAX_BARS bars and the old lines would fall off. Widen it to
+  // a multiple of the server's bucket (fillBuckets adds up shared bars).
+  const bucket = Math.max(1, Math.ceil((now - from) / MAX_BARS / reply.bucket)) * reply.bucket
+  return fillBuckets(points, bucket, from, now)
+}
+
+const plural = (n: number, word: string) => (n === 1 ? word : `${n} ${word}s`)
+
+// What one bar counts, for screen readers: «Log lines per 7 minutes».
+export const barsLabel = (bars: BarBucket[]): string => {
+  const step = bars.length > 1 ? bars[1].t - bars[0].t : 0
+  if (step <= 0) return 'Log lines over time'
+  if (step % 3600 === 0) return `Log lines per ${plural(step / 3600, 'hour')}`
+  if (step % 60 === 0) return `Log lines per ${plural(step / 60, 'minute')}`
+  return `Log lines per ${plural(step, 'second')}`
 }

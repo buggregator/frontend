@@ -3,7 +3,9 @@ import type { ServerEvent } from '@/shared/types'
 import { searchWords, type LogsFilters } from './logs-filters'
 
 // The text a search looks in, lower case: message, channel, and the keys and
-// values of context and extra (the server's rule for `q`).
+// values of context and extra (the server's rule for `q`). The server indexes
+// only the first 4096 characters (event.MaxSearchTextLen): a live line that
+// matches past them here may be gone after a reload. Rare; left as it is.
 const haystack = (payload: Monolog): string => {
   const parts: string[] = [payload.message ?? '', payload.channel ?? '']
   const walk = (value: unknown, depth: number) => {

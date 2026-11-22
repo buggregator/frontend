@@ -4,7 +4,7 @@ import { REST_API_URL, type FacetCounts } from '@/shared/lib/io'
 import { useEventsStore, useProfileStore } from '@/shared/stores'
 import type { ServerEvent } from '@/shared/types'
 import type { LogsHistogram } from './log-bars'
-import { windowSeconds, type LogsFilters } from './logs-filters'
+import type { LogsFilters } from './logs-filters'
 
 // The server's log endpoints (buggregator/server: facets, q, histogram).
 // Every one takes the same filters: type=monolog, project, window, level,
@@ -32,7 +32,8 @@ export const logsParams = (
 ) => {
   const params = new URLSearchParams({ type: 'monolog' })
   if (project) params.set('project', project)
-  if (windowSeconds(f.window)) params.set('window', f.window)
+  // Always sent, «all» too: without it the server applies ui.default_window.
+  params.set('window', f.window)
   if (f.trace) params.append('trace', f.trace)
   if (search) {
     f.levels.forEach((l) => params.append('level', l))
@@ -70,7 +71,7 @@ export const useLogsApi = () => {
   // Whether the project has any log at all, whatever the window: «No logs
   // yet» only then.
   const hasAny = async () => {
-    const params = new URLSearchParams({ type: 'monolog', limit: '1' })
+    const params = new URLSearchParams({ type: 'monolog', limit: '1', window: 'all' })
     if (activeProjectKey.value) params.set('project', activeProjectKey.value)
     const body = await get<{ data?: unknown[] }>('/api/events/preview', params)
     return Array.isArray(body?.data) && body.data.length > 0
