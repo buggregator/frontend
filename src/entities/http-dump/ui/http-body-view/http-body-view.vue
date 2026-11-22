@@ -3,6 +3,7 @@ import { computed, ref, toRef } from 'vue'
 import { CodeSnippet } from '@/shared/ui'
 import { EMAIL_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
 import { JsonTreeView, useJsonTree } from '@/shared/ui/json-tree-view'
+import type { HtmlMode, ViewMode } from './modes'
 
 type Props = {
   body: string | null
@@ -15,8 +16,6 @@ const props = defineProps<Props>()
 
 const { parsed, isJson } = useJsonTree(toRef(props, 'body'))
 
-type ViewMode = 'raw' | 'pretty' | 'tree'
-type HtmlMode = 'preview' | 'source'
 
 const viewMode = ref<ViewMode>(isJson.value ? 'tree' : 'pretty')
 const htmlMode = ref<HtmlMode>('preview')

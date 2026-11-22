@@ -23,7 +23,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { EventTypes } from '@/shared/types'
-import { SkeletonLoader, StatusPanel } from '@/shared/ui'
+import { SegmentedControl, SkeletonLoader, StatusPanel, type SegmentedOption } from '@/shared/ui'
 
 // The broadcast type's page: the channel console (#6614, design #6598 B).
 // Channels on the left, the events of the picked one on the right; an event
@@ -31,6 +31,10 @@ import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 
 const TYPE = EventTypes.Broadcast
 const TITLE = PAGES_SETTINGS[TYPE].title
+const ORDER_OPTIONS: SegmentedOption<'newest' | 'oldest'>[] = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'oldest', label: 'Oldest first' }
+]
 
 const route = useRoute()
 const router = useRouter()
@@ -296,22 +300,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
                   class="bc-page__live"
                   :class="{ 'bc-page__live--off': liveText !== 'Live' }"
                 ><i aria-hidden="true" />{{ liveText }}</span>
-                <span
-                  class="bc-page__seg"
-                  role="group"
-                  aria-label="Order"
-                >
-                  <button
-                    type="button"
-                    :aria-pressed="order === 'newest'"
-                    @click="order = 'newest'"
-                  >Newest first</button>
-                  <button
-                    type="button"
-                    :aria-pressed="order === 'oldest'"
-                    @click="order = 'oldest'"
-                  >Oldest first</button>
-                </span>
+                <SegmentedControl
+                  v-model="order"
+                  :options="ORDER_OPTIONS"
+                  label="Order"
+                  size="sm"
+                />
               </div>
 
               <div
@@ -453,31 +447,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 @media (prefers-reduced-motion: reduce) {
   .bc-page__live i {
     animation: none;
-  }
-}
-
-.bc-page__seg {
-  @apply inline-flex rounded border border-gray-300 dark:border-gray-600 overflow-hidden;
-
-  button {
-    @apply px-2.5 py-1 text-xs text-gray-600 dark:text-gray-400;
-
-    & + button {
-      @apply border-l border-gray-300 dark:border-gray-600;
-    }
-
-    &[aria-pressed='true'] {
-      @apply font-semibold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-700;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--bc-focus);
-      outline-offset: -2px;
-    }
-
-    @media (max-width: 639px) {
-      @apply px-3 py-2.5;
-    }
   }
 }
 

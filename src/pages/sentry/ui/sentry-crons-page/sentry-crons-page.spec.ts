@@ -92,10 +92,10 @@ describe('SentryCronsPage', () => {
     )
     expect(w.findAll('[data-test="cron-row"]')).toHaveLength(3)
 
-    await w.get('[data-test="crons-only-attention"]').trigger('click')
+    await w.get('[data-test="crons-show-true"]').trigger('click')
     expect(w.findAll('[data-test="cron-row"]').map((r) => r.get('a').text())).toEqual(['orders-sync'])
 
-    await w.get('button[aria-pressed="false"]').trigger('click')
+    await w.get('[data-test="crons-show-false"]').trigger('click')
     await w.get('.search-bar__input').setValue('site')
     expect(w.findAll('[data-test="cron-row"]').map((r) => r.get('a').text())).toEqual(['sitemap'])
   })
@@ -103,7 +103,7 @@ describe('SentryCronsPage', () => {
   it('no match: says so, and «Clear filter» brings every job back', async () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ data: [monitor('backup'), monitor('sitemap')] })))
     const w = await render()
-    await w.get('[data-test="crons-only-attention"]').trigger('click')
+    await w.get('[data-test="crons-show-true"]').trigger('click')
     await w.get('.search-bar__input').setValue('nothing')
     expect(w.findAll('[data-test="cron-row"]')).toHaveLength(0)
     expect(w.get('[data-test="crons-no-match"]').text()).toContain('No job matches')

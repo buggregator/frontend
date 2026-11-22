@@ -3,7 +3,7 @@ import { useTitle } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { SetupGuide } from '@/widgets/ui'
 import { SentryCronTable, monitorStatus, needsAttention, summarizeMonitors, useCronClock, useCronMonitors } from '@/entities/sentry'
-import { SearchBar, SkeletonLoader, StatusPanel } from '@/shared/ui'
+import { SearchBar, SegmentedControl, SkeletonLoader, StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Crons | Buggregator')
 
@@ -16,6 +16,10 @@ const summary = computed(() => summarizeMonitors(monitors.value, now.value))
 
 const query = ref('')
 const onlyAttention = ref(false)
+const SHOW_OPTIONS = [
+  { value: false, label: 'All' },
+  { value: true, label: 'Needs attention' }
+]
 const shown = computed(() => {
   const q = query.value.trim().toLowerCase()
   return monitors.value.filter(
@@ -94,27 +98,13 @@ const clearFilter = () => {
             label="Filter jobs"
           />
         </div>
-        <div
-          class="crons-page__seg"
-          role="group"
-          aria-label="Show"
-        >
-          <button
-            type="button"
-            :aria-pressed="!onlyAttention"
-            @click="onlyAttention = false"
-          >
-            All
-          </button>
-          <button
-            type="button"
-            :aria-pressed="onlyAttention"
-            data-test="crons-only-attention"
-            @click="onlyAttention = true"
-          >
-            Needs attention
-          </button>
-        </div>
+        <SegmentedControl
+          v-model="onlyAttention"
+          :options="SHOW_OPTIONS"
+          label="Show"
+          size="sm"
+          test-prefix="crons-show-"
+        />
       </div>
 
       <StatusPanel
@@ -150,8 +140,6 @@ const clearFilter = () => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/pages/sentry/ui/sentry-crons-page/crons-page' as cp;
-
 .crons-page {
   @apply text-gray-800 dark:text-gray-200;
 
@@ -210,34 +198,6 @@ const clearFilter = () => {
   width: 240px;
 }
 
-.crons-page__seg {
-  @apply border border-gray-300 dark:border-gray-600;
-
-  display: inline-flex;
-  border-radius: 4px;
-  overflow: hidden;
-
-  button {
-    @include cp.focus-ring;
-    @apply text-gray-600 dark:text-gray-400 border-l border-gray-300 dark:border-gray-600;
-
-    padding: 4px 10px;
-    background: none;
-    font-size: 12px;
-    cursor: pointer;
-
-    &:first-child {
-      border-left: 0;
-    }
-
-    &[aria-pressed='true'] {
-      @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100;
-
-      font-weight: 600;
-    }
-  }
-}
-
 @media (max-width: 639px) {
   .crons-page__body,
   .crons-page__loading {
@@ -246,11 +206,6 @@ const clearFilter = () => {
 
   .crons-page__filter {
     width: 100%;
-  }
-
-  .crons-page__seg button {
-    padding: 10px 12px;
-    font-size: 13px;
   }
 }
 </style>
