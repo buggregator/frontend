@@ -3,11 +3,11 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, useId } from 'vue'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
+import { Tabs, tabIdOf } from '@/shared/ui'
 import { fillSegments, fillText, usedPorts } from './fill'
 import SetupCodeBlock from './setup-code-block.vue'
 import SetupExternalIcon from './setup-external-icon.vue'
 import content from './setup-help.json'
-import SetupStackTabs from './setup-stack-tabs.vue'
 import type { SetupContent } from './types'
 import { pageHost, useSetupHost, useSetupStack } from './use-setup-prefs'
 import { useSetupValues } from './use-setup-values'
@@ -106,7 +106,7 @@ const what = computed(() => {
   return 'event'
 })
 
-const tabs = ref<InstanceType<typeof SetupStackTabs> | null>(null)
+const tabs = ref<InstanceType<typeof Tabs> | null>(null)
 defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
 </script>
 
@@ -273,12 +273,14 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
       </li>
     </ol>
 
-    <SetupStackTabs
+    <Tabs
       v-if="current"
       ref="tabs"
-      :stacks="section.stacks"
-      :selected="current.id"
-      :id-prefix="uid"
+      class="setup-tabs"
+      :tabs="section.stacks"
+      :current="current.id"
+      label="Stack"
+      :panel-id="`${uid}-panel`"
       @select="setStack"
     />
 
@@ -286,7 +288,7 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
       v-if="current"
       :id="`${uid}-panel`"
       role="tabpanel"
-      :aria-labelledby="`${uid}-tab-${current.id}`"
+      :aria-labelledby="tabIdOf(`${uid}-panel`, current.id)"
       class="setup-guide__panel"
     >
       <SetupCodeBlock

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
+import { Tabs, tabIdOf } from '@/shared/ui'
 import type { UpdateCommand } from '../../types'
 import { UpdateIcon } from '../update-icon'
 
@@ -8,10 +9,10 @@ const props = defineProps<{ commands: UpdateCommand[] }>()
 
 const selected = ref(0)
 const copied = ref(false)
-const tabRefs = ref<HTMLButtonElement[]>([])
 const uid = `update-cmd-${Math.random().toString(36).slice(2, 8)}`
 
 const current = computed(() => props.commands[selected.value] ?? props.commands[0])
+const tabs = computed(() => props.commands.map((c) => ({ id: c.id, label: c.label })))
 
 watch(
   () => props.commands,
@@ -20,26 +21,12 @@ watch(
   }
 )
 
-const select = (index: number) => {
-  selected.value = index
+const select = (id: string) => {
+  selected.value = Math.max(
+    props.commands.findIndex((c) => c.id === id),
+    0
+  )
   copied.value = false
-}
-
-// Arrow keys move between tabs (WAI-ARIA tabs pattern).
-const onKeydown = async (event: KeyboardEvent, index: number) => {
-  const count = props.commands.length
-  const moves: Record<string, number> = {
-    ArrowRight: (index + 1) % count,
-    ArrowLeft: (index - 1 + count) % count,
-    Home: 0,
-    End: count - 1
-  }
-  const next = moves[event.key]
-  if (next === undefined) return
-  event.preventDefault()
-  select(next)
-  await nextTick()
-  tabRefs.value[next]?.focus()
 }
 
 const copy = async () => {
@@ -58,35 +45,21 @@ const copy = async () => {
     v-if="current"
     class="update-commands"
   >
-    <div
+    <Tabs
       v-if="commands.length > 1"
       class="update-commands__tabs"
-      role="tablist"
-      aria-label="How you run Buggregator"
-    >
-      <button
-        v-for="(command, index) in commands"
-        :id="`${uid}-tab-${index}`"
-        :key="command.id"
-        ref="tabRefs"
-        type="button"
-        role="tab"
-        class="update-commands__tab"
-        :aria-selected="index === selected ? 'true' : 'false'"
-        :aria-controls="`${uid}-panel`"
-        :tabindex="index === selected ? 0 : -1"
-        @click="select(index)"
-        @keydown="onKeydown($event, index)"
-      >
-        {{ command.label }}
-      </button>
-    </div>
+      :tabs="tabs"
+      :current="current.id"
+      label="How you run Buggregator"
+      :panel-id="`${uid}-panel`"
+      @select="select"
+    />
 
     <div
       :id="`${uid}-panel`"
       class="update-commands__box"
       :role="commands.length > 1 ? 'tabpanel' : undefined"
-      :aria-labelledby="commands.length > 1 ? `${uid}-tab-${selected}` : undefined"
+      :aria-labelledby="commands.length > 1 ? tabIdOf(`${uid}-panel`, current.id) : undefined"
     >
       <pre class="update-commands__pre"><code>{{ current.command }}</code></pre>
       <button
@@ -110,23 +83,7 @@ const copy = async () => {
 @use 'src/entities/server-update/ui/update-buttons' as b;
 
 .update-commands__tabs {
-  @apply flex gap-1 mb-2 overflow-x-auto;
-  @apply border-b border-gray-200 dark:border-gray-700;
-}
-
-.update-commands__tab {
-  @apply px-2.5 py-1.5 min-h-[32px] text-[13px] -mb-px;
-  @apply text-gray-500 dark:text-gray-400 border-b-2 border-transparent;
-  @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-400 rounded-t;
-
-  &[aria-selected='true'] {
-    @apply font-medium text-gray-900 dark:text-gray-100 border-blue-700 dark:border-blue-400;
-  }
-
-  @media (max-width: 639px) {
-    @apply min-h-[44px];
-  }
+  @apply mb-2;
 }
 
 .update-commands__box {
