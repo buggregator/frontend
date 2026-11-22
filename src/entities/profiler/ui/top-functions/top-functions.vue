@@ -62,10 +62,18 @@ const formatValue = (value: number, format: string) => {
   return value
 }
 
-// `order` asks the server for the lowest rows of the whole profile; rows are
-// sorted here as well, for a server that only knows biggest first.
+// The server returns the top rows by the metric, biggest first; `order` is for
+// a server that can pick the lowest rows of the whole profile (#6695). Rows are
+// sorted here too, so the order shown is right either way. Only the newest
+// request lands: a fast double click must not show the older reply.
+let requestSeq = 0
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: sort.value.key, order: sort.value.order })
+  const seq = ++requestSeq
+  const reply = await getTopFunctions(props.id, { metric: sort.value.key, order: sort.value.order })
+
+  if (seq === requestSeq) {
+    data.value = reply
+  }
 })
 </script>
 
@@ -177,20 +185,14 @@ thead {
   align-items: center;
   gap: 0.25rem;
   font: inherit;
+  color: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
-  color: inherit;
-  border-radius: 2px;
   cursor: pointer;
-  transition: color 0.15s;
 }
 
 .top-fn__sort:hover {
-  color: #374151;
-}
-
-.dark .top-fn__sort:hover {
-  color: #e5e7eb;
+  text-decoration: underline;
 }
 
 .top-fn__sort:focus-visible {
@@ -200,16 +202,15 @@ thead {
 
 .top-fn__sort-arrow {
   font-size: 9px;
-  opacity: 0;
+  visibility: hidden;
 }
 
-.top-fn__sort:hover .top-fn__sort-arrow {
-  opacity: 0.4;
+.top-fn__sort-arrow--shown {
+  visibility: visible;
 }
 
-.top-fn__sort-arrow--shown,
-.top-fn__sort:hover .top-fn__sort-arrow--shown {
-  opacity: 1;
+.top-fn__th--active {
+  @apply text-gray-800 dark:text-gray-100 border-x border-gray-300 dark:border-gray-600 bg-gray-200/50 dark:bg-gray-800/50;
 }
 
 /* Rows */

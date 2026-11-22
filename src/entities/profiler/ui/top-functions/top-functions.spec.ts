@@ -63,3 +63,24 @@ describe('TopFunctions: sorting (frontend#280)', () => {
     expect(header(wrapper, 'WT excl.').attributes('aria-sort')).toBe('descending')
   })
 })
+
+describe('TopFunctions: replies', () => {
+  it('ignores an older reply that lands after a newer one', async () => {
+    let resolveOld: (v: unknown) => void = () => {}
+    const base = { schema, overall_totals: { cpu: 0, wt: 0, mu: 0, pmu: 0, ct: 0 } }
+    getTopFunctions.mockReset()
+    getTopFunctions
+      .mockResolvedValueOnce({ ...base, functions })
+      .mockImplementationOnce(() => new Promise((r) => { resolveOld = r }))
+      .mockResolvedValueOnce({ ...base, functions: [{ function: 'newest', ct: 9, excl_wt: 9 }] })
+    const wrapper = await mountTable()
+
+    await header(wrapper, 'CT').find('button').trigger('click')
+    await header(wrapper, 'CT').find('button').trigger('click')
+    await flushPromises()
+    resolveOld({ ...base, functions })
+    await flushPromises()
+
+    expect(firstColumn(wrapper)).toEqual(['newest'])
+  })
+})
