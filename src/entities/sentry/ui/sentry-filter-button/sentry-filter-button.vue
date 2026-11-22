@@ -16,7 +16,8 @@ const NAMES: Record<SentryTab, string> = {
   logs: 'Logs',
   metrics: 'Metrics',
   feedback: 'Feedback',
-  crons: 'Crons'
+  crons: 'Crons',
+  queues: 'Queues'
 }
 
 const uid = useId()

@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { CRON_STATUS, type CronDisplayStatus } from '../../lib/crons'
+import { CRON_STATUS, type CronDisplayStatus, type CronStatusMeta } from '../../lib/crons'
 
 // A status as an icon and a word (#6600): ✓ OK, ✕ Failed, ! Missed …
-const props = defineProps<{ status: CronDisplayStatus }>()
-const meta = computed(() => CRON_STATUS[props.status])
+// `meta` shows a status of another kind in the same look (queue jobs, #6713).
+const props = defineProps<{ status: CronDisplayStatus | string; meta?: CronStatusMeta }>()
+const meta = computed(() => props.meta ?? CRON_STATUS[props.status as CronDisplayStatus] ?? CRON_STATUS.unknown)
 </script>
 
 <template>

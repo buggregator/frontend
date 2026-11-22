@@ -41,6 +41,13 @@ describe('SetupGuide', () => {
     expect(content.sections.map((s) => s.id)).toEqual([...SETUP_SECTION_IDS])
   })
 
+  it('a section without a docs page (Queues) has no docs link', () => {
+    const wrapper = render('queues')
+    expect(wrapper.find('.setup-guide__docs').exists()).toBe(false)
+    expect(wrapper.find('.setup-guide__footer').exists()).toBe(false)
+    expect(render('smtp').find('.setup-guide__docs').exists()).toBe(true)
+  })
+
   it('the content has no masked «…» where a value belongs (Copy would paste it)', () => {
     const codes = content.sections.flatMap((s) => s.stacks.map((st) => st.code))
     expect(codes.filter((code) => code.includes('…'))).toEqual([])

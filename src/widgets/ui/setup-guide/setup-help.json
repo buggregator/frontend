@@ -189,6 +189,32 @@
       ]
     },
     {
+      "id": "queues",
+      "title": "See your queue jobs",
+      "lead": "Buggregator shows the jobs your queue worker ran, from the Sentry SDK's queue tracing: which failed, how often they were retried, how long they took and waited, and the request that queued them.",
+      "docs": "",
+      "steps": [
+        "Use the same DSN as for errors, with tracing on: SENTRY_TRACES_SAMPLE_RATE=1.",
+        "Turn on queue job tracing: SENTRY_TRACE_QUEUE_ENABLED=true.",
+        "If your app has a published config/sentry.php, check that it reads the variable: 'queue_job_transactions' => env('SENTRY_TRACE_QUEUE_ENABLED', …).",
+        "Restart the queue worker so it reads the new settings. A job shows up here when its attempt ends.",
+        "Jobs on the sync driver do not show: they run inside the request, not on a worker.",
+        "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
+      ],
+      "stacks": [
+        {
+          "id": "laravel",
+          "label": "Laravel",
+          "file": ".env",
+          "lang": "dotenv",
+          "code": "SENTRY_LARAVEL_DSN=http://sentry@{host}:{http_port}/{project}\nSENTRY_TRACES_SAMPLE_RATE=1\nSENTRY_TRACE_QUEUE_ENABLED=true",
+          "hint": "sentry/sentry-laravel. Sentry sends a job when an attempt ends: running jobs and the job payload are not sent, and a failed job looks the same whether the worker will retry it or not.",
+          "checked": false,
+          "note": "Shape from server #493 (api_queues.go, queue.process transactions of sentry-laravel); not run against a live Laravel app from here."
+        }
+      ]
+    },
+    {
       "id": "profiler",
       "title": "Profile your first request",
       "lead": "Buggregator receives XHProf profiles from PHP and shows the call graph, the flame graph and the top functions.",

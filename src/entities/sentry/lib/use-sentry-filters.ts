@@ -3,7 +3,7 @@ import { reactive, watch } from 'vue'
 // What each Sentry tab shows, set from the filter button in the header
 // (#5980) and read by the tab's page. One state for the whole app, kept in
 // this browser. The view keys are set by the view tabs (#6543), not the panel.
-export type SentryTab = 'exceptions' | 'traces' | 'logs' | 'metrics' | 'feedback' | 'crons'
+export type SentryTab = 'exceptions' | 'traces' | 'logs' | 'metrics' | 'feedback' | 'crons' | 'queues'
 
 export type SentryFilterState = {
   exceptionsView: string
@@ -110,7 +110,9 @@ export const SENTRY_FILTER_GROUPS: Record<SentryTab, SentryFilterGroup[]> = {
   ],
   // No filters: the header shows no filter button there.
   feedback: [],
-  crons: []
+  crons: [],
+  // Queue and «Failed only» are on the page itself, by the summary.
+  queues: []
 }
 
 const read = (key: Key): string => {

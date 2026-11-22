@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useRouter, type RouteLocationRaw } from 'vue-router'
+import type { RouteLocationRaw } from 'vue-router'
 import { RouteName } from '@/shared/types'
 import {
   describeSchedule,
@@ -10,6 +10,7 @@ import {
   monitorStatus,
   nextRun
 } from '../../lib/crons'
+import { useRowLink } from '../../lib/use-row-link'
 import type { CronMonitor } from '../../types'
 import CronHistoryStrip from './cron-history-strip.vue'
 import CronStatusBadge from './cron-status-badge.vue'
@@ -18,8 +19,6 @@ import CronStatusBadge from './cron-status-badge.vue'
 // first. The job name is the row's link, so rows are reachable with Tab and
 // open with Enter; a click anywhere on the row opens it too.
 const props = defineProps<{ monitors: CronMonitor[]; now: number }>()
-
-const router = useRouter()
 
 type CronRow = {
   m: CronMonitor
@@ -49,20 +48,7 @@ const groups = computed(() => {
   ].filter((g) => g.rows.length)
 })
 
-const open = (event: MouseEvent, to: RouteLocationRaw) => {
-  // The link handles its own click (new tab included); text being selected
-  // is not a click; the right button opens the menu.
-  if ((event.target as HTMLElement).closest('a')) return
-  if (window.getSelection()?.toString()) return
-  if (event.button !== 0 && event.button !== 1) return
-  // Ctrl/Cmd/Shift or the middle button on the row: a new tab, as on the link.
-  if (event.button === 1 || event.ctrlKey || event.metaKey || event.shiftKey) {
-    window.open(router.resolve(to).href, '_blank', 'noopener')
-    return
-  }
-  if (event.altKey) return
-  router.push(to)
-}
+const open = useRowLink()
 </script>
 
 <template>

@@ -17,3 +17,4 @@ export * from './sentry-list-views';
 export * from './sentry-feedback';
 export * from './sentry-crons';
 export * from './request-timeline';
+export * from './sentry-queues';

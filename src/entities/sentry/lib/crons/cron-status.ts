@@ -18,7 +18,10 @@ export type CronDisplayStatus =
 
 export type CronTone = 'ok' | 'err' | 'miss' | 'run' | 'wait'
 
-export const CRON_STATUS: Record<CronDisplayStatus, { icon: string; label: string; tone: CronTone; hint: string }> = {
+// How a status shows: also the queue jobs' statuses (#6713) use it.
+export type CronStatusMeta = { icon: string; label: string; tone: CronTone; hint: string }
+
+export const CRON_STATUS: Record<CronDisplayStatus, CronStatusMeta> = {
   ok: { icon: '✓', label: 'OK', tone: 'ok', hint: 'The run finished without an error' },
   failed: { icon: '✕', label: 'Failed', tone: 'err', hint: 'The job reported a failure' },
   timeout: { icon: '⏱', label: 'Timed out', tone: 'err', hint: 'Started and did not finish within its max runtime' },

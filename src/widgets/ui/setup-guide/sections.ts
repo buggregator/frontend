@@ -3,6 +3,7 @@
 export const SETUP_SECTION_IDS = [
   'sentry',
   'crons',
+  'queues',
   'profiler',
   'inspector',
   'smtp',

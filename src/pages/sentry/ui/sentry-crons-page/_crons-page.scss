@@ -1,4 +1,4 @@
-// Shared bits of the Crons pages. Plain CSS and @apply only: these
+// Shared bits of the Crons and Queues pages. Plain CSS and @apply only: these
 // directories are not scanned by Tailwind (first-load CSS budget).
 @mixin focus-ring {
   &:focus-visible {
