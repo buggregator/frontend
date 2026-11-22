@@ -66,6 +66,23 @@ export const useProfileStore = defineStore("profileStore", {
 
       return token
     },
+    // Ends the session on the server (the token stops working there and in
+    // open sockets), then forgets it here. A failed call still signs out here.
+    async logout(): Promise<void> {
+      if (this.isAuthenticated) {
+        try {
+          await fetch(`${REST_API_URL}/api/auth/logout`, {
+            method: 'POST',
+            headers: {"X-Auth-Token": this.token}
+          })
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      this.removeToken();
+      this.setProfile(undefined);
+    },
     removeToken(): void {
       this.token = '';
       removeStoredToken();

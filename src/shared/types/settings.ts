@@ -4,6 +4,11 @@ export type TProfile =  {
   username: string,
   email: string,
   avatar: string,
+  // With SSO on servers from #6771: the server's user id, the provider name
+  // and whether the person may open the audit log.
+  id?: string,
+  provider?: string,
+  is_admin?: boolean,
 }
 
 export type TSettings = {

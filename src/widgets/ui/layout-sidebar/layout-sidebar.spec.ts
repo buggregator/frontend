@@ -368,6 +368,38 @@ describe('LayoutSidebar: logout', () => {
     expect(router.currentRoute.value.name).toBe(RouteName.Login)
   })
 
+  // #6772: who is signed in, at the top of the menu: name, then email.
+  it('names the person and their email at the top of the menu, not as buttons', async () => {
+    useSettingsStore().isAuthEnabled = true
+    useProfileStore().setProfile({ username: 'Ann Smith', email: 'ann@example.test', avatar: '' })
+    const wrapper = render()
+
+    await wrapper.get('[aria-label="User profile menu"]').trigger('click')
+    const who = wrapper.get('[data-test="user-menu-who"]')
+
+    expect(who.text()).toContain('Ann Smith')
+    expect(who.text()).toContain('ann@example.test')
+    expect(who.element.tagName).not.toBe('BUTTON')
+    expect(wrapper.findAll('[role="menuitem"]').map((i) => i.text())).toEqual(['Logout'])
+  })
+
+  it('ends the session on the server before going to the login page', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response(null, { status: 204 })))
+    vi.stubGlobal('fetch', fetchMock)
+    useSettingsStore().isAuthEnabled = true
+    useProfileStore().setToken('tok')
+    useProfileStore().setProfile({ username: 'ann', email: '', avatar: '' })
+    const wrapper = render()
+
+    await wrapper.get('[aria-label="User profile menu"]').trigger('click')
+    await wrapper.get('[role="menuitem"]').trigger('click')
+    await flushPromises()
+
+    expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith('/api/auth/logout'))).toBe(true)
+    expect(useProfileStore().token).toBe('')
+    expect(router.currentRoute.value.name).toBe(RouteName.Login)
+  })
+
   it('opens the menu and logs out without a picture: initials stand in', async () => {
     useSettingsStore().isAuthEnabled = true
     useProfileStore().setProfile({ username: 'Ann Smith', email: '', avatar: '' })
