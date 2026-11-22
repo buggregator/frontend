@@ -2,10 +2,10 @@ import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, ref } from 'vue'
+import { reloadSentryFilters, useSentryFilters } from '@/entities/sentry'
 import SentryLayoutPage from './sentry-layout-page.vue'
 
 const sentryCount = ref(0)
-const wide = ref(true)
 const routeName = ref('sentry-exceptions')
 
 vi.mock('@/shared/lib/use-events', () => ({
@@ -17,9 +17,17 @@ vi.mock('@/widgets/ui', async (orig) => ({
   ...(await orig<object>()),
   SetupHelpButton: { props: ['sectionId'], template: '<button class="help-stub" :data-section="sectionId" />' },
 }))
-vi.mock('@vueuse/core', async (orig) => ({
-  ...(await orig<object>()),
-  useMediaQuery: () => wide
+// The filter bar too: it shows what it is given.
+vi.mock('@/widgets/ui/feed-filter-bar', () => ({
+  FeedFilterBar: {
+    name: 'FeedFilterBar',
+    props: ['facets', 'extra'],
+    emits: ['remove-extra'],
+    template: `<div class="bar-stub" :data-facets="String(facets)">
+      <button v-for="c in extra" :key="c.id" class="chip-stub" @click="$emit('remove-extra', c.id)">{{ c.name }} = {{ c.value }}</button>
+      <slot name="add" />
+    </div>`
+  }
 }))
 
 const render = () =>
@@ -38,53 +46,92 @@ const render = () =>
     }
   })
 
-describe('SentryLayoutPage header (#5980)', () => {
+const flush = () => new Promise((r) => setTimeout(r))
+
+describe('SentryLayoutPage header (#6737 A)', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    localStorage.clear()
+    reloadSentryFilters()
     sentryCount.value = 0
-    wide.value = true
     routeName.value = 'sentry-exceptions'
   })
   afterEach(() => vi.clearAllMocks())
 
-  it('one row: tabs in the header, then Period, the filter button and «How to set up» last', () => {
+  it('row 1: crumbs, the sections, «How to set up»; row 2: view, filters, period once', async () => {
     sentryCount.value = 3
     const header = render().get('header')
+    await flush()
 
-    expect(header.find('.tabs-stub').attributes('data-current')).toBe('exceptions')
-    const controls = header.get('.header__actions').findAll('button, select').map((e) => e.classes()[0])
-    expect(controls).toEqual(['period-stub', 'filter-stub', 'help-stub'])
-    expect(header.find('.header__tabs-sep').attributes('aria-hidden')).toBe('true')
+    const row1 = header.get('.app-header__row')
+    expect(row1.find('.tabs-stub').attributes('data-current')).toBe('exceptions')
+    expect(row1.get('.app-header__actions').findAll('button, select').map((e) => e.classes()[0])).toEqual(['help-stub'])
+
+    const row2 = header.get('[data-test="app-header-toolbar"]')
+    expect(row2.findAll('.views-stub, .bar-stub, .period-stub').map((e) => e.classes()[0])).toEqual([
+      'views-stub',
+      'bar-stub',
+      'period-stub'
+    ])
+    expect(header.findAll('.period-stub')).toHaveLength(1)
+    // The level button adds the tab's own filters, inside the bar.
+    expect(row2.get('.bar-stub .filter-stub').attributes('data-tab')).toBe('exceptions')
   })
 
-  it('phone: the tabs leave the header for a second row; «How to set up» stays in the bar', () => {
-    sentryCount.value = 3
-    wide.value = false
-    const wrapper = render()
-
-    expect(wrapper.get('header').find('.tabs-stub').exists()).toBe(false)
-    expect(wrapper.find('.sentry-layout__phone-tabs').exists()).toBe(true)
-    expect(wrapper.get('header').find('.help-stub').exists()).toBe(true)
-    expect(wrapper.get('header').find('.nav__current').element.tagName).toBe('SPAN')
+  it('the sections stay in row 1 on every width (no second copy under the header)', () => {
+    const w = render()
+    expect(w.findAll('.tabs-stub')).toHaveLength(1)
+    expect(w.find('.sentry-layout__phone-tabs').exists()).toBe(false)
   })
 
-  it('no Sentry events: no «How to set up»; trace page: no filter button', () => {
+  it('feed filters only on the exceptions timeline (the event feed)', async () => {
+    const filters = useSentryFilters()
+    const w = render()
+    await flush()
+    expect(w.get('.bar-stub').attributes('data-facets')).toBe('true')
+
+    filters.exceptionsView = 'grouped'
+    await flush()
+    expect(w.get('.bar-stub').attributes('data-facets')).toBe('false')
+
+    routeName.value = 'sentry-traces'
+    await flush()
+    expect(w.get('.bar-stub').attributes('data-facets')).toBe('false')
+  })
+
+  it('traces: the source is a filter chip «source = OpenTelemetry»; ✕ shows all sources again', async () => {
+    routeName.value = 'sentry-traces'
+    const filters = useSentryFilters()
+    filters.source = 'otel'
+    const w = render()
+    await flush()
+
+    const chip = w.get('.chip-stub')
+    expect(chip.text()).toBe('source = OpenTelemetry')
+    await chip.trigger('click')
+    expect(filters.source).toBe('')
+    expect(w.text()).not.toContain('Source')
+  })
+
+  it('no Sentry events: no «How to set up»; trace page: row 2 is left to the trace page', async () => {
     routeName.value = 'sentry-trace-detail'
     const header = render().get('header')
+    await flush()
 
     expect(header.find('.help-stub').exists()).toBe(false)
     expect(header.find('.filter-stub').exists()).toBe(false)
+    expect(header.find('.views-stub').exists()).toBe(false)
+    expect(header.find('.period-stub').exists()).toBe(false)
+    expect(header.find('[data-test="app-header-toolbar"]').exists()).toBe(true)
     expect(header.find('.tabs-stub').attributes('data-current')).toBe('traces')
   })
 
-  it('view tabs under the header (#6543 B) on Traces and Exceptions, none on Logs or the trace page', () => {
+  it('view switch on Traces and Exceptions, none on Logs', () => {
     routeName.value = 'sentry-traces'
     expect(render().get('.views-stub').attributes('data-tab')).toBe('traces')
     routeName.value = 'sentry-exceptions'
     expect(render().get('.views-stub').attributes('data-tab')).toBe('exceptions')
     routeName.value = 'sentry-logs'
-    expect(render().find('.views-stub').exists()).toBe(false)
-    routeName.value = 'sentry-trace-detail'
     expect(render().find('.views-stub').exists()).toBe(false)
   })
 
@@ -95,6 +142,7 @@ describe('SentryLayoutPage header (#5980)', () => {
       expect(header.find('.tabs-stub').attributes('data-current')).toBe('crons')
       expect(header.get('.help-stub').attributes('data-section')).toBe('crons')
       expect(header.find('.filter-stub').exists()).toBe(false)
+      expect(header.find('.period-stub').exists()).toBe(true)
     }
   })
 

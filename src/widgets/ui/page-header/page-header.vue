@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { ALL_EVENT_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
 import { SetupHelpButton, hasSetupHelp } from '../setup-guide'
+
+// Its own chunk: the first load does not grow with it.
+const FeedFilterBar = defineAsyncComponent(() => import('../feed-filter-bar').then((m) => m.FeedFilterBar))
 
 const { events, cachedEvents, lockedIds } = useEvents()
 const eventsStore = useEventsStore()
@@ -91,7 +94,10 @@ const toggleUpdate = () => {
     </RouterLink>
 
     <template v-if="title">
-      <span class="nav__sep">/</span>
+      <span
+        class="nav__sep"
+        aria-hidden="true"
+      >/</span>
       <span class="nav__current">{{ title }}</span>
     </template>
 
@@ -103,8 +109,6 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
-      <PeriodSelect />
-
       <SearchBar v-model="searchQuery" />
 
       <PauseButton
@@ -134,22 +138,18 @@ const toggleUpdate = () => {
         :section-title="PAGES_SETTINGS[type].sidebarTitle"
       />
     </template>
+
+    <!-- Row 2 (design #6737 A): the feed filters, the period on the right. -->
+    <template #toolbar>
+      <FeedFilterBar class="page-header__filters" />
+      <PeriodSelect />
+    </template>
   </AppHeader>
 </template>
 
 <style lang="scss" scoped>
-.nav__crumb {
-  @apply text-sm text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply transition-colors;
-}
-
-.nav__sep {
-  @apply text-gray-300 dark:text-gray-700 mx-1.5 text-sm;
-}
-
-.nav__current {
-  @apply text-sm font-medium text-gray-800 dark:text-gray-200;
+.page-header__filters {
+  @apply flex-1;
 }
 
 .nav__count {
@@ -158,29 +158,5 @@ const toggleUpdate = () => {
   @apply bg-gray-100 dark:bg-gray-700;
   @apply text-gray-600 dark:text-gray-300;
   @apply self-center;
-}
-
-/* Action buttons */
-.action-btn {
-  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
-  @apply text-xs font-medium;
-  @apply text-gray-600 dark:text-gray-300;
-  @apply bg-gray-100 dark:bg-gray-700;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply transition-colors cursor-pointer;
-}
-
-.action-btn--danger {
-  @apply hover:text-red-600 dark:hover:text-red-400;
-  @apply hover:bg-red-50 dark:hover:bg-red-500/10;
-}
-
-.action-btn__icon {
-  @apply w-3.5 h-3.5;
-}
-
-.action-btn__text {
-  @apply hidden sm:inline;
 }
 </style>

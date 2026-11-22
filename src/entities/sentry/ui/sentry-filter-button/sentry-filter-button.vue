@@ -3,7 +3,7 @@ import { onClickOutside } from '@vueuse/core'
 import { computed, defineAsyncComponent, ref, useId, watch } from 'vue'
 import { activeSentryFilters, type SentryTab } from '../../lib/use-sentry-filters'
 
-// The funnel button of the Sentry header (#5980). Its popover holds the open
+// The funnel button of the Sentry header (#5980), in the filter bar of row 2 (#6737 A). Its popover holds the open
 // tab's own settings; changes apply at once. Loaded on first open: the Sentry
 // entity's styles are part of the first page load.
 const SentryFilterPanel = defineAsyncComponent(() => import('./sentry-filter-panel.vue'))
@@ -140,10 +140,10 @@ watch(
   line-height: 16px;
 }
 
-// Phone: a 44 px tap area with the 28 px look of the header bar (as Period).
+// Phone: a 44 px tap area with the 28 px look of the header row (as Period).
 @media (max-width: 639px) {
   .sentry-filter__btn {
-    @apply h-11 min-w-11 -mt-1 -mb-3 p-2 bg-clip-content;
+    @apply h-11 min-w-11 p-2 bg-clip-content;
   }
 }
 </style>

@@ -17,6 +17,8 @@ type Props = {
 }
 
 withDefaults(defineProps<Props>(), {
+  context: undefined,
+  extra: undefined,
   contextDepth: 1,
   extraDepth: 1,
   messageClickable: false,

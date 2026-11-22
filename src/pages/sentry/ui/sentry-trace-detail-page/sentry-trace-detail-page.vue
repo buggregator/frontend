@@ -21,7 +21,7 @@ import {
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
-import { Tabs, tabIdOf, type TabItem } from '@/shared/ui'
+import { HeaderToolbarPortal, SegmentedControl, type SegmentedOption } from '@/shared/ui'
 import { useTraceMarkers } from '../../lib/use-trace-markers'
 
 const { params } = useRoute()
@@ -35,8 +35,9 @@ const formatTime = (ts: string) => (ts ? moment(ts).fromNow() : '')
 const { fetchDetail } = useSentryTraces()
 const detail = ref<SentryTraceDetail | null>(null)
 const loading = ref(false)
-// Waterfall, the trace graphs (#6533 A) and the related lists in one row of
-// view tabs (#6543 B), the view in the URL (?view=…).
+// Waterfall, the trace graphs (#6533 A) and the related lists in one view
+// switch (#6543 B) in row 2 of the page header (#6737 A), the view in the
+// URL (?view=…).
 const { view, select: selectView } = useTraceView()
 
 // Flame graph and call graph share the selected span; «Show in waterfall»
@@ -48,7 +49,8 @@ const showInWaterfall = (spanId: string) => {
   openSpanId.value = spanId
   selectView('waterfall')
 }
-const viewTabs = computed<TabItem[]>(() => [
+// The views of a trace; the switch takes any list of them.
+const viewList = computed(() => [
   { id: 'request', label: 'Request', icon: 'timeline' },
   { id: 'waterfall', label: 'Waterfall', icon: 'waterfall' },
   { id: 'flame', label: 'Flame graph', icon: 'flame' },
@@ -59,8 +61,10 @@ const viewTabs = computed<TabItem[]>(() => [
     : []),
   ...(detail.value?.related_log_count ? [{ id: 'logs', label: 'Related logs', count: detail.value.related_log_count }] : [])
 ])
+const viewTabs = computed<SegmentedOption[]>(() => viewList.value.map((v) => ({ ...v, value: v.id })))
+const activeLabel = computed(() => viewList.value.find((t) => t.id === activeTab.value)?.label ?? '')
 // A related list the trace does not have (an old link): the request view.
-const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'request'))
+const activeTab = computed(() => (viewList.value.some((t) => t.id === view.value) ? view.value : 'request'))
 // Logs, mails and HTTP dumps with this trace id, Sentry errors and logs (#6715).
 const { markers, error: markersError } = useTraceMarkers(detail)
 const colors = computed(() => serviceColors(waterfallSpans.value))
@@ -137,29 +141,30 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="trace-detail__views">
-        <Tabs
-          :tabs="viewTabs"
-          :current="activeTab"
+      <HeaderToolbarPortal>
+        <SegmentedControl
+          :model-value="activeTab"
+          :options="viewTabs"
           label="Trace view"
-          panel-id="trace-view-panel"
+          size="sm"
+          icon-only-on-phone
+          class="trace-detail__views"
           test-prefix="view-tab-"
-          activation="manual"
-          @select="selectView"
+          @update:model-value="selectView"
         >
-          <template #icon="{ tab }">
+          <template #icon="{ option }">
             <SentryViewIcon
-              v-if="tab.icon"
-              :name="tab.icon"
+              v-if="option.icon"
+              :name="option.icon"
             />
           </template>
-        </Tabs>
-      </div>
+        </SegmentedControl>
+      </HeaderToolbarPortal>
 
       <div
         id="trace-view-panel"
-        role="tabpanel"
-        :aria-labelledby="tabIdOf('trace-view-panel', activeTab)"
+        role="region"
+        :aria-label="activeLabel"
         class="trace-detail__content"
         :class="{ 'trace-detail__content--graph': isGraphTab, 'trace-detail__content--request': activeTab === 'request' }"
       >
@@ -241,14 +246,14 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
-@use 'src/entities/sentry/ui/sentry-list-views/view-bar';
-
 .trace-detail {
   @apply flex flex-col h-full;
 }
 
 .trace-detail__views {
-  @include view-bar.bar;
+  // The row may be narrower than every view: it scrolls sideways.
+  @apply overflow-x-auto;
+  scrollbar-width: none;
 }
 
 .trace-detail__loading {

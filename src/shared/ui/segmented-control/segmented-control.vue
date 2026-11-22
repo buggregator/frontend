@@ -28,6 +28,10 @@ withDefaults(defineProps<Props>(), {
 })
 const emit = defineEmits<{ 'update:modelValue': [value: T] }>()
 
+// Icon-only: the name says the count too («Grouped, 12»).
+const nameOf = (option: SegmentedOption<T>) =>
+  option.count != null ? `${option.label}, ${option.count}` : option.label
+
 const pick = (option: SegmentedOption<T>) => {
   if (!option.disabled) emit('update:modelValue', option.value)
 }
@@ -51,7 +55,7 @@ const pick = (option: SegmentedOption<T>) => {
       class="ui-seg__opt"
       :aria-pressed="option.value === modelValue"
       :aria-disabled="option.disabled || undefined"
-      :aria-label="iconOnlyOnPhone ? option.label : undefined"
+      :aria-label="iconOnlyOnPhone ? nameOf(option) : undefined"
       :title="option.title"
       :data-test="testPrefix ? `${testPrefix}${option.value}` : undefined"
       @click="pick(option)"

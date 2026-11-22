@@ -37,7 +37,10 @@ if (!isReady.value) {
           Home
         </RouterLink>
 
-        <span class="nav__sep">/</span>
+        <span
+          class="nav__sep"
+          aria-hidden="true"
+        >/</span>
 
         <RouterLink
           :to="{ name: RouteName.EventList, params: { type: 'profiler' } }"
@@ -46,7 +49,10 @@ if (!isReady.value) {
           Profiler
         </RouterLink>
 
-        <span class="nav__sep">/</span>
+        <span
+          class="nav__sep"
+          aria-hidden="true"
+        >/</span>
 
         <span class="nav__current">Comparison</span>
 
@@ -74,41 +80,3 @@ if (!isReady.value) {
   </LayoutBase>
 </template>
 
-<style lang="scss" scoped>
-.nav__crumb {
-  @apply text-sm text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply transition-colors;
-}
-
-.nav__sep {
-  @apply text-gray-300 dark:text-gray-700 mx-1.5 text-sm;
-}
-
-.nav__current {
-  @apply text-sm font-medium text-gray-800 dark:text-gray-200;
-}
-
-.action-btn {
-  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
-  @apply text-xs font-medium;
-  @apply text-gray-600 dark:text-gray-300;
-  @apply bg-gray-100 dark:bg-gray-700;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply transition-colors cursor-pointer;
-}
-
-.action-btn--danger {
-  @apply hover:text-red-600 dark:hover:text-red-400;
-  @apply hover:bg-red-50 dark:hover:bg-red-500/10;
-}
-
-.action-btn__icon {
-  @apply w-3.5 h-3.5;
-}
-
-.action-btn__text {
-  @apply hidden sm:inline;
-}
-</style>

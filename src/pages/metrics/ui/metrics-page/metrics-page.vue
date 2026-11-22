@@ -66,7 +66,10 @@ function formatEventType(type: string): string {
         >
           Home
         </RouterLink>
-        <span class="nav__sep">/</span>
+        <span
+          class="nav__sep"
+          aria-hidden="true"
+        >/</span>
         <span class="nav__current">Metrics</span>
       </AppHeader>
     </template>
@@ -284,20 +287,6 @@ function formatEventType(type: string): string {
 <style lang="scss" scoped>
 .metrics-page {
   display: block;
-}
-
-.nav__crumb {
-  @apply text-sm text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply transition-colors;
-}
-
-.nav__sep {
-  @apply text-gray-300 dark:text-gray-700 mx-1.5 text-sm;
-}
-
-.nav__current {
-  @apply text-sm font-medium text-gray-800 dark:text-gray-200;
 }
 
 .metrics-page__content {

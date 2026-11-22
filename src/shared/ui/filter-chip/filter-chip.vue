@@ -7,7 +7,7 @@ type Props = {
   name: string
   value: string
   not?: boolean
-  // The name of ✕; by default «Remove filter host = anna-mbp».
+  // The name of ✕; by default «Remove filter host is anna-mbp».
   removeLabel?: string
 }
 
@@ -16,7 +16,7 @@ const emit = defineEmits<{ remove: [] }>()
 
 const sign = computed(() => (props.not ? '≠' : '='))
 const removeName = computed(
-  () => props.removeLabel ?? `Remove filter ${props.name} ${props.not ? 'is not' : '='} ${props.value}`
+  () => props.removeLabel ?? `Remove filter ${props.name} ${props.not ? 'is not' : 'is'} ${props.value}`
 )
 </script>
 

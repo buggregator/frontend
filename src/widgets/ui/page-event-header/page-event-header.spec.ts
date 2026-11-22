@@ -71,3 +71,23 @@ describe('PageEventHeader: Delete', () => {
     expect(router.currentRoute.value.path).toBe('/smtp/abc-123')
   })
 })
+
+describe('PageEventHeader: rows (#6737 A)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('row 1 only: crumbs and actions; with tabs a row 2 for the event page to fill', async () => {
+    const router = makeRouter()
+    await router.push('/smtp/abc-123')
+    const one = mount(PageEventHeader, { props: { title: 'SMTP', eventId: 'abc-123' }, global: { plugins: [router] } })
+    expect(one.find('[data-test="app-header-toolbar"]').exists()).toBe(false)
+    expect(one.get('.app-header__row').find('button[aria-label="Delete event"]').exists()).toBe(true)
+
+    const two = mount(PageEventHeader, {
+      props: { title: 'SMTP', eventId: 'abc-123', tabs: true },
+      global: { plugins: [router] },
+    })
+    expect(two.get('[data-test="app-header-toolbar"]').attributes('id')).toBe('app-header-toolbar')
+  })
+})

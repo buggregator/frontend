@@ -19,8 +19,11 @@ import { KeyHintBar } from '../key-hint-bar'
 import { PagePlaceholder } from '../page-placeholder'
 import { SetupGuide, hasSetupHelp } from '../setup-guide'
 
-// Its own chunk: the first load does not grow with it.
-const FeedFilterBar = defineAsyncComponent(() => import('../feed-filter-bar').then((m) => m.FeedFilterBar))
+// Its own chunk: the first load does not grow with it. The filters
+// themselves are in the page header (row 2).
+const FeedFilterHiddenNote = defineAsyncComponent(() =>
+  import('../feed-filter-bar').then((m) => m.FeedFilterHiddenNote)
+)
 
 type Props = {
   title?: string
@@ -227,7 +230,10 @@ const clearSearch = () => {
 
 <template>
   <div class="layout-preview-events">
-    <FeedFilterBar :type="type" />
+    <FeedFilterHiddenNote
+      v-if="feedFilters.length"
+      :type="type"
+    />
 
     <!-- Above the cards: live events keep coming after a failed load. -->
     <StatusPanel

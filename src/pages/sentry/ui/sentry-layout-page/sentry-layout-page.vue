@@ -1,12 +1,23 @@
 <script lang="ts" setup>
-import { useMediaQuery, useTitle } from '@vueuse/core'
-import { computed } from 'vue'
+import { useTitle } from '@vueuse/core'
+import { computed, defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutBase, LayoutSidebar, SetupHelpButton } from '@/widgets/ui'
-import { SentryFilterButton, SentryListViews, SentrySubNav, type SentryTab } from '@/entities/sentry'
+import {
+  SentryFilterButton,
+  SentryListViews,
+  SentrySubNav,
+  resetSentryFilter,
+  sentryFilterChips,
+  useSentryFilters,
+  type SentryTab
+} from '@/entities/sentry'
 import { useEvents } from '@/shared/lib/use-events'
 import { EventTypes, RouteName } from '@/shared/types'
-import { AppHeader, PeriodSelect } from '@/shared/ui'
+import { AppHeader, PeriodSelect, provideHeaderToolbar } from '@/shared/ui'
+
+// Its own chunk, as on the feeds.
+const FeedFilterBar = defineAsyncComponent(() => import('@/widgets/ui/feed-filter-bar').then((m) => m.FeedFilterBar))
 
 useTitle('Sentry | Buggregator')
 
@@ -42,8 +53,15 @@ const tab = computed(() => TAB_OF_ROUTE[String(route.name)] ?? '')
 const filterTab = computed(() =>
   route.name === RouteName.SentryTraceDetail || ['feedback', 'crons', 'queues'].includes(tab.value) ? '' : tab.value
 )
-// Lists with more than one view get the view tabs under the header (#6543 B).
+// Lists with more than one view get the view switch in row 2 (#6543 B, #6737 A).
 const viewTab = computed(() => (filterTab.value === 'traces' || filterTab.value === 'exceptions' ? filterTab.value : null))
+const isTrace = computed(() => route.name === RouteName.SentryTraceDetail)
+
+// The tab's own filters are chips of the filter bar; the feed filters apply
+// only to the exceptions timeline, which is the event feed.
+const sentryFilters = useSentryFilters()
+const chips = computed(() => (filterTab.value ? sentryFilterChips(filterTab.value) : []))
+const feedFacets = computed(() => tab.value === 'exceptions' && sentryFilters.exceptionsView === 'timeline')
 
 // «How to set up» on every Sentry tab once Sentry has events (#5941).
 const { getItemsCount } = useEvents()
@@ -56,10 +74,9 @@ const OWN_SETUP: Partial<Record<SentryTab, { id: string; title: string }>> = {
 const ownSetup = computed(() => (tab.value ? OWN_SETUP[tab.value] : undefined))
 const setupSection = computed(() => ownSetup.value ?? { id: 'sentry', title: 'Sentry' })
 
-// One row from sm up (crumbs, tabs | Period, filters, #5980); on a phone the
-// tabs are a second row under the bar. One instance of the tabs at a time:
-// they fetch their counts.
-const isWide = useMediaQuery('(min-width: 640px)')
+// Row 1: crumbs, the sections, help; row 2: view, filters, period — or the
+// trace page's views, which it puts there itself.
+provideHeaderToolbar()
 </script>
 
 <template>
@@ -69,10 +86,10 @@ const isWide = useMediaQuery('(min-width: 640px)')
     </template>
 
     <template #header>
-      <AppHeader keep-title>
+      <AppHeader>
         <RouterLink
           :to="{ name: RouteName.Home }"
-          class="nav__crumb nav__home"
+          class="nav__crumb"
         >
           Home
         </RouterLink>
@@ -83,31 +100,18 @@ const isWide = useMediaQuery('(min-width: 640px)')
         >/</span>
 
         <RouterLink
-          v-if="isWide"
           to="/sentry/exceptions"
           class="nav__crumb nav__current"
         >
           Sentry
         </RouterLink>
-        <!-- Phone: the page title, not a link (the Exceptions tab is right under it). -->
-        <span
-          v-else
-          class="nav__current"
-        >Sentry</span>
 
-        <template
-          v-if="isWide"
-          #tabs
-        >
+        <!-- The sections; on a phone they fill row 1 and scroll sideways. -->
+        <template #tabs>
           <SentrySubNav :current="tab" />
         </template>
 
         <template #controls>
-          <PeriodSelect />
-          <SentryFilterButton
-            v-if="filterTab"
-            :tab="filterTab"
-          />
           <SetupHelpButton
             v-if="hasSentryEvents || ownSetup"
             :key="setupSection.id"
@@ -115,53 +119,50 @@ const isWide = useMediaQuery('(min-width: 640px)')
             :section-title="setupSection.title"
           />
         </template>
+
+        <template #toolbar>
+          <template v-if="!isTrace">
+            <SentryListViews
+              v-if="viewTab"
+              :key="viewTab"
+              :tab="viewTab"
+            />
+            <span
+              v-if="viewTab && filterTab"
+              class="sentry-layout__sep"
+              aria-hidden="true"
+            />
+            <FeedFilterBar
+              v-if="filterTab"
+              class="sentry-layout__filters"
+              :facets="feedFacets"
+              :extra="chips"
+              @remove-extra="resetSentryFilter"
+            >
+              <template #add>
+                <SentryFilterButton :tab="filterTab" />
+              </template>
+            </FeedFilterBar>
+            <PeriodSelect class="sentry-layout__period" />
+          </template>
+        </template>
       </AppHeader>
     </template>
 
-    <!-- Siblings, not wrapped: the page stays the content's own child. -->
-    <SentrySubNav
-      v-if="!isWide"
-      :current="tab"
-      class="sentry-layout__phone-tabs"
-    />
-    <SentryListViews
-      v-if="viewTab"
-      :key="viewTab"
-      :tab="viewTab"
-    />
     <RouterView />
   </LayoutBase>
 </template>
 
 <style lang="scss" scoped>
-.nav__crumb {
-  @apply text-sm text-gray-600 dark:text-gray-400;
-  @apply hover:text-gray-900 dark:hover:text-gray-100;
-  @apply transition-colors;
+.sentry-layout__sep {
+  @apply hidden sm:block flex-none w-px h-5 bg-gray-200 dark:bg-gray-700;
 }
 
-.nav__current {
-  @apply font-medium text-gray-900 dark:text-gray-100;
+.sentry-layout__filters {
+  @apply flex-1;
 }
 
-.nav__sep {
-  @apply text-gray-500 mx-1.5 text-sm;
-}
-
-// Phone: «Sentry» alone, larger.
-@media (max-width: 639px) {
-  .nav__home,
-  .nav__sep {
-    @apply hidden;
-  }
-
-  .nav__current {
-    @apply text-base font-semibold pl-1;
-  }
-}
-
-.sentry-layout__phone-tabs {
-  @apply sticky top-0 z-10 px-4 py-1.5 flex-none;
-  @apply bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700;
+.sentry-layout__period {
+  @apply ml-auto;
 }
 </style>

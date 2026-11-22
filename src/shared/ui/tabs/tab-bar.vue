@@ -10,7 +10,7 @@ import { tabIdOf, type TabItem } from './types'
 //   to (activation "automatic"), "manual" waits for Enter or Space;
 // - as="link": a <nav> of router links, the current one aria-current="page".
 // Too many tabs scroll sideways: an edge fades where more hide, and the
-// selected tab is brought to the middle.
+// selected tab is scrolled into view when it is hidden.
 type Props = {
   tabs: TabItem[]
   // The selected tab: v-model, or `current` with @select.
@@ -72,18 +72,24 @@ const updateFades = () => {
 }
 useResizeObserver(list, updateFades)
 
-const centre = (smooth: boolean) => {
+// The selected tab is scrolled into view only when (part of) it is hidden,
+// past the edge fade: a click on a visible tab does not make the row jump.
+const FADE = 24
+const reveal = (smooth: boolean) => {
   const el = list.value
   const tab = el?.querySelector<HTMLElement>('[aria-selected="true"], [aria-current="page"]')
   if (!el || !tab || el.scrollWidth <= el.clientWidth) return
-  el.scrollTo({
-    left: tab.offsetLeft - (el.clientWidth - tab.offsetWidth) / 2,
-    behavior: smooth ? 'smooth' : 'auto'
-  })
+  const start = tab.offsetLeft - el.scrollLeft
+  const end = start + tab.offsetWidth
+  let left: number | null = null
+  if (start < FADE && el.scrollLeft > 0) left = tab.offsetLeft - FADE
+  else if (end > el.clientWidth - FADE) left = tab.offsetLeft + tab.offsetWidth - el.clientWidth + FADE
+  if (left === null) return
+  el.scrollTo({ left: Math.max(0, left), behavior: smooth ? 'smooth' : 'auto' })
 }
 
-onMounted(() => nextTick(() => centre(false)))
-watch([selected, () => props.tabs.length], () => nextTick(() => centre(true)))
+onMounted(() => nextTick(() => reveal(false)))
+watch([selected, () => props.tabs.length], () => nextTick(() => reveal(true)))
 
 defineExpose({ focusSelected: focusCurrent })
 </script>

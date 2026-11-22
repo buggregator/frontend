@@ -8,7 +8,8 @@ const AppHeaderMeta: Meta<typeof AppHeader> = {
   parameters: {
     slots: {
       default: 'Page title',
-      controls: ''
+      controls: '',
+      toolbar: ''
     },
   },
   render: (args: ComponentProps<typeof AppHeader>, { parameters }) => ({
@@ -25,6 +26,7 @@ const AppHeaderMeta: Meta<typeof AppHeader> = {
     >
       <template v-slot>${parameters.slots.default}</template>
       <template v-slot:controls>${parameters.slots.controls}</template>
+      <template v-if="parameters.slots.toolbar" v-slot:toolbar><span v-html="parameters.slots.toolbar" /></template>
     </AppHeader>
 `,
   }),
@@ -48,6 +50,16 @@ export const WithActions: StoryObj<typeof AppHeader> = {
         `<button class="flex mr-3 rounded-sm bg-blue-500 text-xs p-1">
           Additional button
         </button>`,
+    }
+  }
+};
+
+export const TwoRows: StoryObj<typeof AppHeader> = {
+  parameters: {
+    slots: {
+      default: `<span class="nav__crumb">Home</span><span class="nav__sep" aria-hidden="true">/</span><span class="nav__current">Monolog</span>`,
+      controls: `<button class="action-btn">Clear</button>`,
+      toolbar: `<button class="action-btn">+ Add filter</button>`
     }
   }
 };

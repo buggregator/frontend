@@ -290,6 +290,33 @@ watch(
 </style>
 
 <style lang="scss">
+// The header's rows (design #6737 A): row 1 36/40/56 px; a header with a
+// toolbar (AppHeader #toolbar) adds row 2, 44 px (52 on a phone, where row 1
+// grows to 48 for 44 px targets). --hdr-pad is the header's side padding.
+.layout-base {
+  --hdr-row: 2.25rem;
+  --hdr-bar: 0px;
+  --hdr-pad: 0.5rem;
+
+  @media (min-width: 640px) {
+    --hdr-row: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    --hdr-row: 3.5rem;
+    --hdr-pad: 1rem;
+  }
+}
+
+.layout-base:has(.app-header--two-rows) {
+  --hdr-row: 3rem;
+  --hdr-bar: 44px;
+
+  @media (max-width: 639px) {
+    --hdr-bar: 52px;
+  }
+}
+
 .action-toast {
   position: fixed;
   bottom: 24px;

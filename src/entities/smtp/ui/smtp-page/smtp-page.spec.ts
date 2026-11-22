@@ -59,4 +59,28 @@ describe('SmtpPage: HTML preview', () => {
     const withId = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) } })
     expect(withId.text()).toContain('Message ID')
   })
+
+  it('the body views are a tablist of the shared Tabs, HTML preview first (#6737 A)', async () => {
+    const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) } })
+    const list = wrapper.get('[role="tablist"]')
+    expect(list.attributes('aria-label')).toBe('Email body')
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.map((t) => t.text())).toEqual(['HTML Preview', 'Text', 'HTML Source', 'Raw'])
+    expect(wrapper.find('iframe').exists()).toBe(true)
+    await tabs[3].trigger('click')
+    expect(wrapper.get('iframe').isVisible()).toBe(false)
+    expect(wrapper.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe(tabs[3].attributes('id'))
+  })
+
+  // The HTML preview stays mounted: the frame does not reload on a tab switch.
+  it('keeps the same HTML frame across tab switches', async () => {
+    const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) }, attachTo: document.body })
+    const frame = wrapper.get('iframe').element
+    const tabs = wrapper.findAll('[role="tab"]')
+    await tabs[3].trigger('click')
+    await tabs[0].trigger('click')
+    expect(wrapper.get('iframe').element).toBe(frame)
+    expect(wrapper.get('iframe').isVisible()).toBe(true)
+    wrapper.unmount()
+  })
 })

@@ -11,7 +11,7 @@ export * from './pause-button';
 export * from './badge-number';
 export * from './app-header';
 export * from './event-detail-layout';
-export * from './page-tabs';
+export * from './event-tabs';
 export * from './skeleton-loader';
 export * from './status-panel';
 export * from './search-bar';

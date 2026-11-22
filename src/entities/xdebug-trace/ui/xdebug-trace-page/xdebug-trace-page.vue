@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import type { NormalizedEvent } from '@/shared/types'
-import { EventDetailLayout, PageTab, PageTabs } from '@/shared/ui'
+import { EventDetailLayout, EventTabs, type TabItem } from '@/shared/ui'
 import { formatSeconds, traceSubtitle, traceTitle } from '../../lib/trace-format'
 import { useTraceSearch } from '../../lib/use-trace-search'
 import { useTraceTree } from '../../lib/use-trace-tree'
@@ -63,6 +63,11 @@ const stats = computed(() => {
 })
 
 const reveal = (hit: XdebugTraceNode) => tree.reveal(hit)
+
+const tabs: TabItem[] = [
+  { id: 'tree', label: 'Call tree' },
+  { id: 'top', label: 'Slowest & top' }
+]
 </script>
 
 <template>
@@ -99,46 +104,52 @@ const reveal = (hit: XdebugTraceNode) => tree.reveal(hit)
       </div>
     </template>
 
-    <PageTabs class="trace-page__tabs">
-      <PageTab name="Call tree">
-        <div class="trace-page__panel">
-          <TraceSearch
-            :search="search"
-            @reveal="reveal"
-          />
-          <TraceTree :tree="tree" />
-        </div>
-      </PageTab>
-      <PageTab name="Slowest & top">
-        <div class="trace-page__panel">
-          <p
-            v-if="summaryLoading"
-            class="trace-page__state"
-            role="status"
+    <EventTabs
+      v-slot="{ tab }"
+      :tabs="tabs"
+    >
+      <!-- v-show: the open nodes and the search stay when the tab changes. -->
+      <div
+        v-show="tab === 'tree'"
+        class="trace-page__panel"
+      >
+        <TraceSearch
+          :search="search"
+          @reveal="reveal"
+        />
+        <TraceTree :tree="tree" />
+      </div>
+      <div
+        v-show="tab === 'top'"
+        class="trace-page__panel"
+      >
+        <p
+          v-if="summaryLoading"
+          class="trace-page__state"
+          role="status"
+        >
+          Loading the summary…
+        </p>
+        <p
+          v-else-if="summaryError"
+          class="trace-page__state trace-page__state--error"
+          role="alert"
+        >
+          Could not load the summary: {{ summaryError }}
+          <button
+            type="button"
+            class="trace-page__retry"
+            @click="loadSummary"
           >
-            Loading the summary…
-          </p>
-          <p
-            v-else-if="summaryError"
-            class="trace-page__state trace-page__state--error"
-            role="alert"
-          >
-            Could not load the summary: {{ summaryError }}
-            <button
-              type="button"
-              class="trace-page__retry"
-              @click="loadSummary"
-            >
-              Retry
-            </button>
-          </p>
-          <TraceSummary
-            v-else-if="summary"
-            :summary="summary"
-          />
-        </div>
-      </PageTab>
-    </PageTabs>
+            Retry
+          </button>
+        </p>
+        <TraceSummary
+          v-else-if="summary"
+          :summary="summary"
+        />
+      </div>
+    </EventTabs>
   </EventDetailLayout>
 </template>
 
