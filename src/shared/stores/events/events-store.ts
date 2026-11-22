@@ -105,11 +105,17 @@ export const useEventsStore = defineStore("eventsStore", {
     listState: 'idle' as 'idle' | 'loading' | 'ready' | 'error',
     listError: '' as string,
     // Feed filters (frontend#225): sent with every list load; live events
-    // that do not match are not added, only counted in hiddenNew.
+    // that do not match are not added, only remembered in hiddenNew
+    // (uuid → type): a re-broadcast of the same event counts once, and each
+    // page counts only its own type (hiddenCount).
     filters: [] as FeedFilter[],
-    hiddenNew: 0,
+    hiddenNew: {} as Record<EventId, string>,
   }),
   getters: {
+    hiddenCount: ({ hiddenNew }) => (type?: PageEventTypes): number => {
+      const types = Object.values(hiddenNew);
+      return !type || type === PAGE_TYPES.ALL_EVENT_TYPES ? types.length : types.filter((t) => t === type).length;
+    },
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
       if (!eventType) {
         return events.length;
@@ -172,9 +178,10 @@ export const useEventsStore = defineStore("eventsStore", {
         .filter((el) => inFeed(el.type))
         .filter((el) => {
           if (existingIds.has(el.uuid) || matchesFilters(el.facets, this.filters)) {
+            delete this.hiddenNew[el.uuid];
             return true;
           }
-          this.hiddenNew += 1;
+          this.hiddenNew[el.uuid] = el.type;
           return false;
         })
         .forEach((event) => {
@@ -201,6 +208,8 @@ export const useEventsStore = defineStore("eventsStore", {
       this.listLoad?.removed.push(...this.events.filter(({ uuid }) => !lockedSet.has(uuid)).map(({ uuid }) => uuid));
       this.events = this.events.filter(({ uuid }) => lockedSet.has(uuid));
       this.rebuildCountsMap();
+      // The server cleared the hidden ones too.
+      this.hiddenNew = {};
 
       this.removeCachedAll();
     },
@@ -414,7 +423,7 @@ export const useEventsStore = defineStore("eventsStore", {
         return;
       }
       this.filters = filters;
-      this.hiddenNew = 0;
+      this.hiddenNew = {};
     },
     setPeriod(period: string) {
       this.period = period;

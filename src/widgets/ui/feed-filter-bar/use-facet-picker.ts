@@ -31,7 +31,7 @@ export const useFacetPicker = (load: () => Promise<FacetCounts>) => {
     const tags = Object.keys(facets.value)
       .filter(isTagKey)
       .sort()
-      .map((key) => ({ key, label: `Tag: ${facetLabel(key)}`, sentBy: 'Sentry, Profiler, Inspector' }))
+      .map((key) => ({ key, label: `Tag: ${facetLabel(key)}`, sentBy: 'Sentry, Profiler' }))
     return [...FACET_FIELDS, ...tags].map((f) => ({ ...f, values: facets.value[f.key]?.length ?? 0 }))
   })
 

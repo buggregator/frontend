@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useEventsStore } from '@/shared/stores'
+import { EventTypes, type PageEventTypes } from '@/shared/types'
 import FeedFilterBar from './feed-filter-bar.vue'
 import FeedFilterPopover from './feed-filter-popover.vue'
 
@@ -13,7 +14,8 @@ const counts = {
   channel: [{ value: 'doctrine', count: 412 }],
 }
 
-const mountBar = () => mount(FeedFilterBar, {
+const mountBar = (props: { type?: PageEventTypes } = {}) => mount(FeedFilterBar, {
+  props,
   attachTo: document.body,
   global: { stubs: { FeedFilterPopover } },
 })
@@ -59,6 +61,20 @@ describe('FeedFilterBar', () => {
     const bar = mountBar()
 
     expect(bar.get('.ffb__hidden').text()).toContain('1 new event arrived and is hidden by this filter')
+  })
+
+  it('counts only the hidden events of its own page type', async () => {
+    const store = useEventsStore()
+    store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+    store.addList([{ uuid: 'x', type: 'sentry', project: null, timestamp: 1, payload: {}, facets: { host: ['max-xps'] } }])
+
+    const monolog = mountBar({ type: EventTypes.Monolog })
+    expect(monolog.find('.ffb__hidden').exists()).toBe(false)
+    monolog.unmount()
+
+    const sentry = mountBar({ type: EventTypes.Sentry })
+    expect(sentry.get('.ffb__hidden').text()).toContain('1 new event')
+    sentry.unmount()
   })
 
   it('adds a value from the list: Enter includes, Shift+Enter excludes', async () => {

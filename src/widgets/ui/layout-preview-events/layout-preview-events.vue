@@ -227,7 +227,7 @@ const clearSearch = () => {
 
 <template>
   <div class="layout-preview-events">
-    <FeedFilterBar />
+    <FeedFilterBar :type="type" />
 
     <!-- Above the cards: live events keep coming after a failed load. -->
     <StatusPanel

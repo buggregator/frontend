@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { defineAsyncComponent, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { facetLabel, withFilter, withoutFilter, type FeedFilter } from '@/shared/lib/feed-filters'
 import { useEventsRequests } from '@/shared/lib/io'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
+import type { PageEventTypes } from '@/shared/types'
 
 // Feed filters for a shared dev server (frontend#225, design A of #6679):
 // the active filters as chips, «Add filter» with values and counts from the
@@ -14,8 +15,12 @@ const FeedFilterPopover = defineAsyncComponent(() =>
   import('./feed-filter-popover.vue').then((m) => m.default)
 )
 
+// The page's event type: the hidden count is about what this page would show.
+const props = defineProps<{ type?: PageEventTypes }>()
+
 const store = useEventsStore()
-const { filters, hiddenNew } = storeToRefs(store)
+const { filters } = storeToRefs(store)
+const hiddenNew = computed(() => store.hiddenCount(props.type))
 const { getFacets } = useEventsRequests()
 
 const isOpen = ref(false)

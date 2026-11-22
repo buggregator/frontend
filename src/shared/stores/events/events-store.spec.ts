@@ -229,7 +229,39 @@ describe('eventsStore', () => {
       store.addList([event('a', 'sentry', anna), event('b', 'sentry', max), event('c', 'smtp')])
 
       expect(ids(store.events)).toEqual(['a'])
-      expect(store.hiddenNew).toBe(2)
+      expect(store.hiddenCount()).toBe(2)
+    })
+
+    it('counts a hidden event once, however often it is sent again', () => {
+      const store = useEventsStore()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+      const ray = event('r', 'ray', max)
+      store.addList([ray])
+      store.addList([ray])
+      store.addList([ray])
+
+      expect(store.hiddenCount()).toBe(1)
+    })
+
+    it('counts hidden events per page type; all events count them all', () => {
+      const store = useEventsStore()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+      store.addList([event('s', 'sentry', max), event('m', 'monolog', max), event('m2', 'monolog', max)])
+
+      expect(store.hiddenCount(EventTypes.Monolog)).toBe(2)
+      expect(store.hiddenCount(EventTypes.Sentry)).toBe(1)
+      expect(store.hiddenCount(EventTypes.Smtp)).toBe(0)
+      expect(store.hiddenCount(PAGE_TYPES.ALL_EVENT_TYPES)).toBe(3)
+    })
+
+    it('a hidden event that matches when sent again is shown and no longer counted', () => {
+      const store = useEventsStore()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+      store.addList([event('r', 'ray', max)])
+      store.addList([event('r', 'ray', anna)])
+
+      expect(ids(store.events)).toEqual(['r'])
+      expect(store.hiddenCount()).toBe(0)
     })
 
     it('a new filter starts the hidden count again', () => {
@@ -238,7 +270,7 @@ describe('eventsStore', () => {
       store.addList([event('b', 'sentry', max)])
       store.setFilters([])
 
-      expect(store.hiddenNew).toBe(0)
+      expect(store.hiddenCount()).toBe(0)
       store.addList([event('b', 'sentry', max)])
       expect(ids(store.events)).toEqual(['b'])
     })
