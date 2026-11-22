@@ -127,7 +127,7 @@
       "id": "crons",
       "title": "Watch your cron jobs",
       "lead": "Buggregator takes Sentry Crons check-ins and a plain ping URL. The Crons tab of Sentry shows every job: when it ran, how long it took, and which runs failed, did not come or hung.",
-      "docs": "",
+      "docs": "https://docs.buggregator.dev/config/crons.html",
       "steps": [
         "Use the same DSN as for errors: check-ins go to the same address.",
         "A job shows up on the Crons tab with its first check-in.",
@@ -192,7 +192,7 @@
       "id": "queues",
       "title": "See your queue jobs",
       "lead": "Buggregator shows the jobs your queue worker ran, from the Sentry SDK's queue tracing: which failed, how often they were retried, how long they took and waited, and the request that queued them.",
-      "docs": "",
+      "docs": "https://docs.buggregator.dev/config/queues.html",
       "steps": [
         "Use the same DSN as for errors, with tracing on: SENTRY_TRACES_SAMPLE_RATE=1.",
         "Turn on queue job tracing: SENTRY_TRACE_QUEUE_ENABLED=true.",
@@ -542,7 +542,7 @@
       "id": "broadcast",
       "title": "Catch the broadcasts your app sends",
       "lead": "Laravel Reverb, Pusher and soketi clients send each broadcast to the server over its HTTP API. Point that API here: every event lands on this page with its channels and data.",
-      "docs": "",
+      "docs": "https://docs.buggregator.dev/config/broadcast.html",
       "steps": [
         "Point the app's server-side REVERB_HOST and REVERB_PORT (or PUSHER_HOST and PUSHER_PORT) at Buggregator. Without BROADCAST_UPSTREAM any app id, key and secret work; with it, keep your Reverb app's values.",
         "Keep VITE_REVERB_* on your Reverb: the browsers still connect there. Set BROADCAST_UPSTREAM on Buggregator to your Reverb (e.g. http://127.0.0.1:8080) and each event is also forwarded, so live updates keep working.",
@@ -596,7 +596,7 @@
       "id": "csp",
       "title": "Catch the browser's CSP and Reporting API reports",
       "lead": "Point your Content-Security-Policy report address here. Every violation the browser reports lands on this page, with the directive, the blocked resource and the line.",
-      "docs": "",
+      "docs": "https://docs.buggregator.dev/config/csp.html",
       "steps": [
         "Add report-uri http://{host}:{http_port}/csp/{project} to your Content-Security-Policy (or Content-Security-Policy-Report-Only) header.",
         "For the Reporting API, name the same address in a Reporting-Endpoints header and add report-to <name> to the policy. Name it default too to get deprecation and intervention reports: browsers send those only to the endpoint called default.",
