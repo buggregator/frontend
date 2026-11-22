@@ -1204,8 +1204,11 @@ const linkLabel = (type: EventType) =>
   @apply text-gray-500 dark:text-gray-400;
 }
 
+/* Who is signed in: a plain label, not an action (#6798) — no hand cursor,
+   no hover, no tab stop; the text can be selected and copied. */
 .layout-sidebar__user-who {
   @apply flex flex-col gap-0.5 px-4 py-2.5 max-w-72;
+  @apply cursor-default select-text;
 }
 
 .layout-sidebar__user-name {

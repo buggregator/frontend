@@ -393,6 +393,10 @@ describe('LayoutSidebar: logout', () => {
     expect(who.text()).toContain('Ann Smith')
     expect(who.text()).toContain('ann@example.test')
     expect(who.element.tagName).not.toBe('BUTTON')
+    // #6798: a label, not something to click or tab to.
+    expect(who.attributes('tabindex')).toBeUndefined()
+    expect(who.attributes('role')).toBeUndefined()
+    expect(who.find('a, button, [tabindex]').exists()).toBe(false)
     expect(inPage().findAll('[role="menuitem"]').map((i) => i.text())).toEqual(['Logout'])
   })
 
