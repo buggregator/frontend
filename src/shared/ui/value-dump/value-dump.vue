@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import isString from 'lodash.isstring'
-import { computed, onMounted } from 'vue'
+import { computed, onBeforeUnmount, onMounted } from 'vue'
 import { sanitizeHtml } from '../../lib/helpers'
 import { callSfDump } from '../../lib/vendor/sf-dumper'
 import { CodeSnippet } from '../code-snippet'
@@ -35,10 +35,19 @@ const dumpBody = computed(() => {
 
 const baseSanitizedHtml = computed(() => sanitizeHtml(String(props.value)))
 
+// The dumper leaves a menu in <body> and listeners on document and window;
+// they hold this dump in memory after the card is gone unless disposed (frontend#242).
+let disposeDump: (() => void) | null = null
+
 onMounted(() => {
   if (dumpId) {
-    callSfDump(dumpId)
+    disposeDump = callSfDump(dumpId)
   }
+})
+
+onBeforeUnmount(() => {
+  disposeDump?.()
+  disposeDump = null
 })
 </script>
 

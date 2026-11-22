@@ -207,8 +207,25 @@ export function SfdumpWrap(doc) {
     }
   }
 
+  // Renders one dump and returns its dispose(): the context menu lives in
+  // <body> and some listeners sit on document and window, so they outlive the
+  // dump's own DOM and keep it in memory until removed (frontend#242).
   return function (root, x) {
+    var cleanups = []
+    function dispose() {
+      while (cleanups.length) cleanups.pop()()
+    }
+    function addGlobalListener(target, eventName, callback) {
+      addEventListener(target, eventName, callback)
+      cleanups.push(function () {
+        target.removeEventListener(eventName, callback, false)
+      })
+    }
+
     root = doc.getElementById(root)
+    if (!root) {
+      return dispose
+    }
     var indentRx = new RegExp(
         '^(' + (root.getAttribute('data-indent-pad') || ' ').replace(rxEsc, '\\$1') + ')+',
         'm'
@@ -493,6 +510,9 @@ export function SfdumpWrap(doc) {
 
       ctxMenu.innerHTML = menuHtml
       doc.body.appendChild(ctxMenu)
+      cleanups.push(function () {
+        ctxMenu.remove()
+      })
 
       function hideCtxMenu() {
         ctxMenu.style.display = 'none'
@@ -518,11 +538,11 @@ export function SfdumpWrap(doc) {
         })
       })
 
-      addEventListener(doc, 'click', hideCtxMenu)
-      addEventListener(doc, 'contextmenu', function (e) {
+      addGlobalListener(doc, 'click', hideCtxMenu)
+      addGlobalListener(doc, 'contextmenu', function (e) {
         if (!root.contains(e.target)) hideCtxMenu()
       })
-      addEventListener(window, 'scroll', hideCtxMenu)
+      addGlobalListener(window, 'scroll', hideCtxMenu)
 
       addEventListener(ctxMenu, 'click', function (e) {
         var btn = e.target.closest ? e.target.closest('[data-action], [data-depth]') : e.target
@@ -705,7 +725,7 @@ export function SfdumpWrap(doc) {
     }
 
     if (0 >= options.maxStringLength) {
-      return
+      return dispose
     }
     try {
       elt = root.querySelectorAll('.sf-dump-str')
@@ -738,5 +758,7 @@ export function SfdumpWrap(doc) {
         }
       }
     } catch (e) {}
+
+    return dispose
   }
 }

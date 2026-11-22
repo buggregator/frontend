@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import ValueDump from './value-dump.vue'
 
-vi.mock('../../lib/vendor/sf-dumper', () => ({ callSfDump: vi.fn() }))
+const { disposeDump } = vi.hoisted(() => ({ disposeDump: vi.fn() }))
+vi.mock('../../lib/vendor/sf-dumper', () => ({ callSfDump: vi.fn(() => disposeDump) }))
 
 // A real Symfony VarDumper dump, as Ray sends it (src/entities/ray/mocks/ray-dump.json).
 const SF_DUMP = "<pre class=sf-dump id=sf-dump-875970284 data-indent-pad=\"  \"><span class=sf-dump-note>array:2</span> [<samp data-depth=1 class=sf-dump-expanded>\n  \"<span class=sf-dump-key>a</span>\" => <span class=sf-dump-num>1</span>\n  \"<span class=sf-dump-key>b</span>\" => <span class=sf-dump-note>array:1</span> [<samp data-depth=2 class=sf-dump-compact>\n    \"<span class=sf-dump-key>c</span>\" => <span class=sf-dump-num>3</span>\n  </samp>]\n</samp>]\n</pre><script>Sfdump(\"sf-dump-875970284\")</script>\n"
@@ -55,5 +56,18 @@ describe('ValueDump: HTML values', () => {
     expect(html).toContain('data-indent-pad="  "')
     expect(html).toContain('id="sf-dump-875970284"')
     expect(html).toContain('data-depth="1"')
+  })
+})
+
+describe('ValueDump: cleanup', () => {
+  // The dumper hangs a menu on <body> and listeners on document and window;
+  // without this a cleared feed keeps every old dump in memory (frontend#242).
+  it('disposes the sf-dump when the card goes away', () => {
+    disposeDump.mockClear()
+    const wrapper = mount(ValueDump, { props: { value: SF_DUMP } })
+
+    expect(disposeDump).not.toHaveBeenCalled()
+    wrapper.unmount()
+    expect(disposeDump).toHaveBeenCalledTimes(1)
   })
 })
