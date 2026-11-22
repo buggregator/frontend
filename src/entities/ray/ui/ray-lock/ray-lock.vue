@@ -22,12 +22,14 @@ const released = ref<RayLockStatus | null>(null)
 
 const status = computed<RayLockStatus>(() => props.state ?? released.value ?? 'active')
 const disabled = computed(() => pending.value || status.value !== 'active')
+// A failed click matters only while the pause still waits for one.
+const showError = computed(() => failed.value && status.value === 'active')
 
 const STATUS_TEXT: Record<RayLockStatus, string> = {
-  active: 'Paused. The script waits for you.',
+  active: 'Paused. Continue or stop the script.',
   continued: 'Continued. The script went on.',
   stopped: 'Stopped. The script was told to stop.',
-  gone: 'This pause is no longer active: the server was restarted, the script does not wait.',
+  gone: 'The server no longer knows this pause (restarted, or older than a day). The script does not wait.',
 }
 
 const release = async (asked: RayLockState) => {
@@ -87,10 +89,10 @@ const release = async (asked: RayLockState) => {
     </div>
     <p
       class="ray-lock__status"
-      :class="`ray-lock__status--${failed ? 'error' : status}`"
+      :class="`ray-lock__status--${showError ? 'error' : status}`"
       role="status"
     >
-      {{ failed ? 'Could not reach the server. Try again.' : STATUS_TEXT[status] }}
+      {{ showError ? 'The click did not go through. Try again.' : STATUS_TEXT[status] }}
     </p>
   </div>
 </template>
