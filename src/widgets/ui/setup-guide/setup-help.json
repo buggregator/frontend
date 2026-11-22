@@ -192,7 +192,7 @@
       "id": "queues",
       "title": "See your queue jobs",
       "lead": "Buggregator shows the jobs your queue worker ran, from the Sentry SDK's queue tracing: which failed, how often they were retried, how long they took and waited, and the request that queued them.",
-      "docs": "",
+      "docs": "https://docs.buggregator.dev/config/queues.html",
       "steps": [
         "Use the same DSN as for errors, with tracing on: SENTRY_TRACES_SAMPLE_RATE=1.",
         "Turn on queue job tracing: SENTRY_TRACE_QUEUE_ENABLED=true.",

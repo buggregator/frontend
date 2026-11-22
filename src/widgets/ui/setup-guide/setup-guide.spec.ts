@@ -41,11 +41,17 @@ describe('SetupGuide', () => {
     expect(content.sections.map((s) => s.id)).toEqual([...SETUP_SECTION_IDS])
   })
 
-  it('a section without a docs page (Queues) has no docs link', () => {
-    const wrapper = render('queues')
+  it('a section without a docs page (Crons) has no docs link', () => {
+    const wrapper = render('crons')
     expect(wrapper.find('.setup-guide__docs').exists()).toBe(false)
     expect(wrapper.find('.setup-guide__footer').exists()).toBe(false)
     expect(render('smtp').find('.setup-guide__docs').exists()).toBe(true)
+  })
+
+  it('Queues links to its docs page', () => {
+    expect(render('queues').get('.setup-guide__docs').attributes('href')).toBe(
+      'https://docs.buggregator.dev/config/queues.html'
+    )
   })
 
   it('the content has no masked «…» where a value belongs (Copy would paste it)', () => {
