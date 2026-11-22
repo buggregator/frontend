@@ -59,4 +59,23 @@ describe('LoginPage', () => {
 
     expect(assign).toHaveBeenCalledWith(expect.stringMatching(/\/auth\/sso\/login\?return_to=%2Fsentry%2Fabc$/))
   })
+
+  // #6827: the owner's picture fills the left column, light on the first paint.
+  it('left column shows the picture: WebP sizes, JPEG fallback, lazy, with alt', async () => {
+    const { wrapper } = await open('/login')
+    const hero = wrapper.get('.login-hero')
+
+    const source = hero.get('picture source')
+    expect(source.attributes('type')).toBe('image/webp')
+    expect(source.attributes('srcset')).toMatch(/640w.*960w.*1122w/)
+    expect(source.attributes('sizes')).toBeTruthy()
+
+    const img = hero.get('picture img')
+    expect(img.attributes('src')).toMatch(/\.jpg/)
+    expect(img.attributes('alt')).toMatch(/beetle/i)
+    expect(img.attributes('loading')).toBe('lazy')
+    expect(img.attributes('decoding')).toBe('async')
+    expect(img.attributes('width')).toBe('1122')
+    expect(img.attributes('height')).toBe('1402')
+  })
 })

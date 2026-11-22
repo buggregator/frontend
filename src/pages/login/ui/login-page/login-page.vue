@@ -7,6 +7,14 @@ import { safeReturnTo, withReturnTo } from '@/shared/lib/return-to'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
+import beetle1122 from '../../assets/login-beetle-1122.webp'
+import beetle640 from '../../assets/login-beetle-640.webp'
+import beetleJpg from '../../assets/login-beetle-960.jpg'
+import beetle960 from '../../assets/login-beetle-960.webp'
+
+// The left column is 50% of the screen (55% from xl); it is hidden below lg.
+const heroSrcset = `${beetle640} 640w, ${beetle960} 960w, ${beetle1122} 1122w`
+const heroSizes = '(min-width: 1280px) 55vw, 50vw'
 
 useTitle('Login | Buggregator')
 
@@ -39,16 +47,27 @@ onMounted(() => {
   <div class="login-page">
     <!-- Left panel — fun bug character -->
     <div class="login-hero">
-      <!-- Animated background -->
+      <!-- Picture: lazy, so the hidden column (below lg) never loads it -->
+      <picture class="login-hero__picture">
+        <source
+          type="image/webp"
+          :srcset="heroSrcset"
+          :sizes="heroSizes"
+        >
+        <img
+          class="login-hero__img"
+          :src="beetleJpg"
+          alt="A mechanical beetle opened up under a microscope, more beetles on a shelf behind"
+          width="1122"
+          height="1402"
+          loading="lazy"
+          decoding="async"
+        >
+      </picture>
       <div
-        class="login-hero__bg"
+        class="login-hero__shade"
         aria-hidden="true"
-      >
-        <div class="login-hero__orb login-hero__orb--1" />
-        <div class="login-hero__orb login-hero__orb--2" />
-        <div class="login-hero__orb login-hero__orb--3" />
-        <div class="login-hero__grid" />
-      </div>
+      />
 
       <div class="login-hero__content">
         <h2
@@ -154,90 +173,23 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.login-hero__bg {
+.login-hero__picture {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
 
-.login-hero__orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.35;
-  will-change: transform;
+.login-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
 }
 
-.login-hero__orb--1 {
-  width: 500px;
-  height: 500px;
-  top: -10%;
-  right: -10%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%);
-  animation: orbDrift1 12s ease-in-out infinite;
-}
-
-.login-hero__orb--2 {
-  width: 400px;
-  height: 400px;
-  bottom: -5%;
-  left: -5%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
-  animation: orbDrift2 15s ease-in-out infinite;
-}
-
-.login-hero__orb--3 {
-  width: 300px;
-  height: 300px;
-  top: 40%;
-  left: 30%;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
-  animation: orbDrift3 18s ease-in-out infinite;
-}
-
-.login-hero__grid {
+/* Keeps the text readable at the bottom; the lens and the open beetle stay clear */
+.login-hero__shade {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 100%);
-}
-
-@keyframes orbDrift1 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(-30px, 20px) scale(1.05);
-  }
-  66% {
-    transform: translate(20px, -15px) scale(0.95);
-  }
-}
-
-@keyframes orbDrift2 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(25px, -20px) scale(1.08);
-  }
-  66% {
-    transform: translate(-15px, 25px) scale(0.92);
-  }
-}
-
-@keyframes orbDrift3 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-20px, -30px) scale(1.1);
-  }
+  background: linear-gradient(0deg, rgba(10, 10, 15, 0.96) 0%, rgba(10, 10, 15, 0.82) 30%, transparent 52%);
 }
 
 /* ── Hero content ─────────────────────────────────────────── */
@@ -247,14 +199,15 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-bottom: 24px;
   max-width: 520px;
 }
 
 .login-hero__headline {
   font-family: 'DM Sans Variable', sans-serif;
   font-weight: 700;
-  font-size: 3.5rem;
+  font-size: 2.75rem;
   line-height: 1.08;
   letter-spacing: -0.035em;
   color: #fff;
@@ -281,8 +234,9 @@ onMounted(() => {
 .login-hero__tagline {
   font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.3);
-  margin-top: 24px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 16px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
   opacity: 0;
   transform: translateY(12px);
   transition:
@@ -300,8 +254,9 @@ onMounted(() => {
   font-family: 'DM Sans Variable', sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 48px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 20px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
   opacity: 0;
   transform: translateY(12px);
   transition:
@@ -324,7 +279,7 @@ onMounted(() => {
   gap: 10px;
   font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
   opacity: 0;
   transition: opacity 0.5s ease;
   transition-delay: 0.7s;
@@ -337,16 +292,16 @@ onMounted(() => {
 .login-hero__bottom-logo {
   width: 24px;
   height: 24px;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .login-hero__bottom-link {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: color 150ms ease;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.6);
+    color: #fff;
   }
 }
 
@@ -485,7 +440,6 @@ onMounted(() => {
 
 /* ── Reduced motion ───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .login-hero__orb,
   .login-form__sso-btn {
     animation: none;
   }
