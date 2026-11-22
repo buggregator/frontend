@@ -23,6 +23,10 @@ export const useProfileStore = defineStore("profileStore", {
     isAuthenticated(): boolean {
       return !!this.token && this.token !== "null";
     },
+    // May open the audit log (servers from #6771 say so in /api/me).
+    isAdmin(): boolean {
+      return this.isAuthenticated && this.profile?.is_admin === true;
+    },
   },
   actions: {
     setToken(token: string): void {

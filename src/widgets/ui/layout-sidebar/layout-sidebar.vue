@@ -23,7 +23,7 @@ const eventsStore = useEventsStore()
 const { availableProjects, isMultipleProjects, activeProject, lockedIds } = storeToRefs(eventsStore)
 
 const profileStore = useProfileStore()
-const { profile } = storeToRefs(profileStore)
+const { profile, isAdmin } = storeToRefs(profileStore)
 
 const { getItemsCount } = useEvents()
 const xdebugEnabled = useXdebugEnabled()
@@ -714,6 +714,19 @@ const linkLabel = (type: EventType) =>
               class="layout-sidebar__user-email"
             >{{ profileEmail }}</span>
           </div>
+          <RouterLink
+            v-if="isAdmin"
+            role="menuitem"
+            class="layout-sidebar__dropdown-item"
+            :to="{ name: RouteName.Audit }"
+            @click="closeProfile(false)"
+          >
+            <IconSvg
+              class="layout-sidebar__dropdown-item-icon"
+              name="lock"
+            />
+            Audit log
+          </RouterLink>
           <button
             role="menuitem"
             class="layout-sidebar__dropdown-item"

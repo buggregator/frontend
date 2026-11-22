@@ -39,6 +39,7 @@ const router = createRouter({
     { path: '/mock-server', name: RouteName.MockServer, component: page },
     { path: '/xdebug', name: RouteName.Xdebug, component: page },
     { path: '/logs', name: RouteName.Logs, component: page },
+    { path: '/audit', name: RouteName.Audit, component: page },
     { path: '/login', name: RouteName.Login, component: page },
     { path: '/:type', name: RouteName.EventList, component: page },
   ],
@@ -398,6 +399,19 @@ describe('LayoutSidebar: logout', () => {
     expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith('/api/auth/logout'))).toBe(true)
     expect(useProfileStore().token).toBe('')
     expect(router.currentRoute.value.name).toBe(RouteName.Login)
+  })
+
+  it('gives admins the audit log in the menu', async () => {
+    useSettingsStore().isAuthEnabled = true
+    useProfileStore().setToken('tok')
+    useProfileStore().setProfile({ username: 'ann', email: '', avatar: '', is_admin: true })
+    const wrapper = render()
+
+    await wrapper.get('[aria-label="User profile menu"]').trigger('click')
+    const items = wrapper.findAll('[role="menuitem"]')
+
+    expect(items.map((i) => i.text())).toEqual(['Audit log', 'Logout'])
+    expect(items[0].attributes('href')).toBe('/audit')
   })
 
   it('opens the menu and logs out without a picture: initials stand in', async () => {

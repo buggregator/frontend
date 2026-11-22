@@ -11,6 +11,7 @@ export enum RouteName {
   Xdebug = 'xdebug',
   Broadcast = 'broadcast',
   Logs = 'logs',
+  Audit = 'audit',
   NotFound = 'not-found',
   SentryExceptions = 'sentry-exceptions',
   SentryExceptionDetail = 'sentry-exception-detail',
