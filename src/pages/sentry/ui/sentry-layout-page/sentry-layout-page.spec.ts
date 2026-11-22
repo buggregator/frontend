@@ -1,7 +1,7 @@
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, h, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { reloadSentryFilters, useSentryFilters } from '@/entities/sentry'
 import SentryLayoutPage from './sentry-layout-page.vue'
 
@@ -23,13 +23,10 @@ vi.mock('@/widgets/ui/feed-filter-bar', () => ({
     name: 'FeedFilterBar',
     props: ['facets', 'extra'],
     emits: ['remove-extra'],
-    setup(props: { facets: boolean; extra: { id: string; name: string; value: string }[] }, { slots, emit }: { slots: { add?: () => unknown }; emit: (e: 'remove-extra', id: string) => void }) {
-      return () =>
-        h('div', { class: 'bar-stub', 'data-facets': String(props.facets) }, [
-          ...props.extra.map((c) => h('button', { class: 'chip-stub', onClick: () => emit('remove-extra', c.id) }, `${c.name} = ${c.value}`)),
-          slots.add?.()
-        ])
-    }
+    template: `<div class="bar-stub" :data-facets="String(facets)">
+      <button v-for="c in extra" :key="c.id" class="chip-stub" @click="$emit('remove-extra', c.id)">{{ c.name }} = {{ c.value }}</button>
+      <slot name="add" />
+    </div>`
   }
 }))
 

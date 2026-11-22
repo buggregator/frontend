@@ -75,21 +75,26 @@ const hasContextTab = computed(
 const hasSdk = computed(() => !!props.event.payload.sdk)
 
 // The tabs of the page, in the header's row 2 (#6737 A), with their counts.
-const tabs = computed<TabItem[]>(() =>
-  [
+const tabs = computed<TabItem[]>(() => {
+  const list: (TabItem | false)[] = [
     hasException.value && { id: 'exceptions', label: 'Exceptions', count: exceptionsLength.value },
-    hasBreadcrumbs.value && {
+    !!hasBreadcrumbs.value && {
       id: 'breadcrumbs',
       label: 'Breadcrumbs',
       count: props.event.payload.breadcrumbs!.values.length
     },
     hasRequest.value && { id: 'request', label: 'Request' },
-    hasContextTab.value && { id: 'context', label: 'Context' },
+    !!hasContextTab.value && { id: 'context', label: 'Context' },
     hasSdk.value && { id: 'sdk', label: 'SDK' },
-    hasModules.value && { id: 'modules', label: 'Modules', count: Object.keys(props.event.payload.modules!).length },
+    !!hasModules.value && {
+      id: 'modules',
+      label: 'Modules',
+      count: Object.keys(props.event.payload.modules!).length
+    },
     hasExtra.value && { id: 'extra', label: 'Extra' }
-  ].filter((t): t is TabItem => !!t)
-)
+  ]
+  return list.filter((t): t is TabItem => !!t)
+})
 
 const exceptionRefs = ref<HTMLElement[]>([])
 
