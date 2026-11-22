@@ -153,6 +153,22 @@ const narrowing = (tab: SentryTab) => SENTRY_FILTER_GROUPS[tab]
 export const activeSentryFilters = (tab: SentryTab) =>
   narrowing(tab).filter((g) => state[g.key].trim() !== DEFAULTS[g.key]).length
 
+// The tab's filters that are on, as chips of the header's filter bar (#6742):
+// «source = OpenTelemetry». The id is the state key.
+export const sentryFilterChips = (tab: SentryTab) =>
+  narrowing(tab)
+    .filter((g) => state[g.key].trim() !== DEFAULTS[g.key])
+    .map((g) => ({
+      id: g.key,
+      name: g.title.toLowerCase(),
+      value: g.options?.find((o) => o.value === state[g.key])?.label ?? state[g.key]
+    }))
+
+// ✕ of a chip: the filter back to «all».
+export const resetSentryFilter = (key: string) => {
+  if (key in DEFAULTS) state[key as Key] = DEFAULTS[key as Key]
+}
+
 export const resetSentryFilters = (tab: SentryTab) => {
   for (const g of narrowing(tab)) state[g.key] = DEFAULTS[g.key]
 }

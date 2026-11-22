@@ -1,58 +1,34 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
-import { PERIOD_OPTIONS, useEventsStore } from '@/shared/stores'
-import { Tabs } from '@/shared/ui'
-import { useSentryFilters, useSentryView, type SentryViewTabName } from '../../lib'
+import { SegmentedControl, type SegmentedOption } from '@/shared/ui'
+import { useSentryView, type SentryViewTabName } from '../../lib'
 import SentryViewIcon from './sentry-view-icon.vue'
 
-// The view tabs of a Sentry list (#6543 B), with what the view uses on the right.
-
+// The view of a Sentry list (#6543), in row 2 of the header (design #6737 A):
+// a view switch, icon and label; on a phone the icon only.
 type Props = { tab: SentryViewTabName }
 
 const props = defineProps<Props>()
 
 const { views, current, select } = useSentryView(props.tab)
-const { period } = storeToRefs(useEventsStore())
-const filters = useSentryFilters()
-
-const periodLabel = computed(() => PERIOD_OPTIONS.find((p) => p.value === period.value)?.label ?? period.value)
-const SOURCES: Record<string, string> = { '': 'All', sentry: 'Sentry SDK', otel: 'OpenTelemetry' }
+const options = computed<SegmentedOption[]>(() => views.map((v) => ({ value: v.id, label: v.label, icon: v.icon })))
 </script>
 
 <template>
-  <div class="sentry-list-views">
-    <Tabs
-      :tabs="views"
-      :current="current"
-      :label="tab === 'traces' ? 'Traces view' : 'Exceptions view'"
-      test-prefix="view-tab-"
-      activation="manual"
-      @select="select"
-    >
-      <template #icon="{ tab: view }">
-        <SentryViewIcon
-          v-if="view.icon"
-          :name="view.icon"
-        />
-      </template>
-      <template #info>
-        <span>Period <b class="sentry-list-views__value">{{ periodLabel }}</b></span>
-        <span v-if="tab === 'traces'">Source <b class="sentry-list-views__value">{{ SOURCES[filters.source] ?? filters.source }}</b></span>
-      </template>
-    </Tabs>
-  </div>
+  <SegmentedControl
+    :model-value="current"
+    :options="options"
+    :label="tab === 'traces' ? 'Traces view' : 'Exceptions view'"
+    size="sm"
+    icon-only-on-phone
+    test-prefix="view-tab-"
+    @update:model-value="select"
+  >
+    <template #icon="{ option }">
+      <SentryViewIcon
+        v-if="option.icon"
+        :name="option.icon"
+      />
+    </template>
+  </SegmentedControl>
 </template>
-
-<style lang="scss" scoped>
-@use 'src/entities/sentry/ui/sentry-list-views/view-bar';
-
-.sentry-list-views {
-  @include view-bar.bar;
-}
-
-.sentry-list-views__value {
-  font-weight: 500;
-  color: var(--vb-strong);
-}
-</style>
