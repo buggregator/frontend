@@ -29,7 +29,7 @@ import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { REST_API_URL } from '@/shared/lib/io'
 import { useEvents } from '@/shared/lib/use-events'
 import { useConnectionStore, useEventsStore } from '@/shared/stores'
-import { AppHeader, SegmentedControl, SkeletonLoader } from '@/shared/ui'
+import { AppHeader, FilterChip, SegmentedControl, SkeletonLoader } from '@/shared/ui'
 
 useTitle('Mock server | Buggregator')
 
@@ -624,20 +624,12 @@ onBeforeUnmount(() => {
                   :class="{ 'mock-page__live--off': liveText !== 'Live' }"
                 ><span class="mock-page__dot" />{{ liveText }}</span>
                 <span class="mock-page__spacer" />
-                <span
+                <FilterChip
                   v-if="filterRuleId"
-                  class="mock-page__filter"
-                >
-                  Rule {{ ruleLabel(filterRuleId) }}
-                  <button
-                    type="button"
-                    class="mock-page__icon"
-                    aria-label="Clear rule filter"
-                    @click="filterRuleId = null"
-                  >
-                    ×
-                  </button>
-                </span>
+                  name="Rule"
+                  :value="ruleLabel(filterRuleId) ?? ''"
+                  @remove="filterRuleId = null"
+                />
                 <span
                   v-else
                   class="mock-page__chips"
@@ -1092,10 +1084,6 @@ onBeforeUnmount(() => {
 
 .mock-page__dot--off {
   @apply bg-gray-400 animate-none;
-}
-
-.mock-page__filter {
-  @apply inline-flex items-center gap-1 pl-2 rounded text-xs bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
 }
 
 .mock-page__chips {
