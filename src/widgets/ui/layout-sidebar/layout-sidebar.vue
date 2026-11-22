@@ -14,7 +14,7 @@ import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, EventTypes, LocalStorageKeys, RouteName } from '@/shared/types'
-import { IconSvg, ProjectAvatar } from '@/shared/ui'
+import { IconSvg, ProjectAvatar, UserAvatar } from '@/shared/ui'
 import { navLinkLabel } from './nav-label'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
@@ -165,10 +165,11 @@ const avatar = computed(() => {
   return profile.value.avatar
 })
 
+// Shown at the top of the user menu; some providers send no email.
 const profileEmail = computed(() => {
   if (!profile.value) return null
 
-  return profile.value.email
+  return profile.value.email || profile.value.username || null
 })
 
 const connectionText = computed(() =>
@@ -700,7 +701,7 @@ const linkLabel = (type: EventType) =>
         </div>
 
         <div
-          v-if="avatar"
+          v-if="profile"
           class="layout-sidebar__dropdown-avatar"
           role="button"
           tabindex="0"
@@ -711,10 +712,12 @@ const linkLabel = (type: EventType) =>
           @keydown.enter="toggleProfileDropdown"
           @keydown.space.prevent="toggleProfileDropdown"
         >
-          <img
+          <UserAvatar
+            class="layout-sidebar__user-avatar"
             :src="avatar"
-            alt="profile"
-          >
+            :name="profile.username || profile.email"
+            :size="32"
+          />
         </div>
       </div>
 
@@ -1145,10 +1148,7 @@ const linkLabel = (type: EventType) =>
   @apply text-gray-500 dark:text-gray-400;
 }
 
-.layout-sidebar__dropdown-avatar img {
-  @apply w-full h-full;
-  @apply rounded-full;
-  @apply overflow-hidden;
+.layout-sidebar__user-avatar {
   @apply hover:opacity-75;
   @apply cursor-pointer;
 }

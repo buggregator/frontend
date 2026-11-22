@@ -367,4 +367,19 @@ describe('LayoutSidebar: logout', () => {
 
     expect(router.currentRoute.value.name).toBe(RouteName.Login)
   })
+
+  it('opens the menu and logs out without a picture: initials stand in', async () => {
+    useSettingsStore().isAuthEnabled = true
+    useProfileStore().setProfile({ username: 'Ann Smith', email: '', avatar: '' })
+    const wrapper = render()
+
+    expect(wrapper.get('[aria-label="User profile menu"] [data-test="user-avatar"]').text()).toBe('AS')
+    await wrapper.get('[aria-label="User profile menu"]').trigger('click')
+    expect(wrapper.get('[role="menu"]').text()).toContain('Ann Smith')
+    const logout = wrapper.findAll('button').find((b) => b.text().includes('Logout'))!
+    await logout.trigger('click')
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe(RouteName.Login)
+  })
 })
