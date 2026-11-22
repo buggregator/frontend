@@ -41,16 +41,29 @@ describe('SetupGuide', () => {
     expect(content.sections.map((s) => s.id)).toEqual([...SETUP_SECTION_IDS])
   })
 
-  it('a section without a docs page (Crons) has no docs link', () => {
-    const wrapper = render('crons')
-    expect(wrapper.find('.setup-guide__docs').exists()).toBe(false)
-    expect(wrapper.find('.setup-guide__footer').exists()).toBe(false)
+  it('a section without a docs page has no docs link', () => {
+    // Every real section has a page now: blank one for this test only.
+    const smtp = content.sections.find((section) => section.id === 'smtp')!
+    const docs = smtp.docs
+    smtp.docs = ''
+    try {
+      const wrapper = render('smtp')
+      expect(wrapper.find('.setup-guide__docs').exists()).toBe(false)
+      expect(wrapper.find('.setup-guide__footer').exists()).toBe(false)
+    } finally {
+      smtp.docs = docs
+    }
     expect(render('smtp').find('.setup-guide__docs').exists()).toBe(true)
   })
 
-  it('Queues links to its docs page', () => {
-    expect(render('queues').get('.setup-guide__docs').attributes('href')).toBe(
-      'https://docs.buggregator.dev/config/queues.html'
+  it.each([
+    ['queues', 'queues'],
+    ['crons', 'crons'],
+    ['broadcast', 'broadcast'],
+    ['csp', 'csp']
+  ])('%s links to its docs page', (sectionId, page) => {
+    expect(render(sectionId).get('.setup-guide__docs').attributes('href')).toBe(
+      `https://docs.buggregator.dev/config/${page}.html`
     )
   })
 
