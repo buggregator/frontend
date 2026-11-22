@@ -89,6 +89,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onOutside))
       No filters: every event shows.
     </p>
     <div class="ffc__foot">
+      <slot name="add" />
       <button
         v-if="canAdd"
         type="button"

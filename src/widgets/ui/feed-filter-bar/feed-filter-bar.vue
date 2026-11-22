@@ -16,7 +16,8 @@ import type { BarChip } from './types'
 // - `facets`: the feed filters of the events store apply to this list (they
 //   do to the feeds, not to Sentry traces, logs or metrics);
 // - `extra`: the page's own filters as chips (✕ emits `remove-extra`);
-// - #add: the page's own way to add them, after «+ Add filter».
+// - #add: the page's own way to add them, after «+ Add filter» (on a phone
+//   inside the «Filters N» sheet).
 const FeedFilterPopover = defineAsyncComponent(() => import('./feed-filter-popover.vue').then((m) => m.default))
 const FeedFilterChips = defineAsyncComponent(() => import('./feed-filter-chips.vue').then((m) => m.default))
 
@@ -193,7 +194,7 @@ const copyLink = () => {
     <!-- Phone: one button for all the filters. -->
     <div class="ffb__wrap ffb__phone">
       <button
-        v-if="facets || chips.length"
+        v-if="facets || chips.length || $slots.add"
         ref="phoneButton"
         type="button"
         class="ffb__phone-btn"
@@ -230,7 +231,14 @@ const copyLink = () => {
         @copy="copyLink"
         @clear="clear"
         @close="close"
-      />
+      >
+        <template
+          v-if="$slots.add"
+          #add
+        >
+          <slot name="add" />
+        </template>
+      </FeedFilterChips>
       <!-- The value picker from the sheet: a sheet too. -->
       <FeedFilterPopover
         v-if="open === 'add' && opener === phoneButton"
@@ -241,7 +249,13 @@ const copyLink = () => {
       />
     </div>
 
-    <slot name="add" />
+    <!-- The page's own «add»; on a phone it is in the sheet. -->
+    <div
+      v-if="$slots.add"
+      class="ffb__wrap ffb__wide"
+    >
+      <slot name="add" />
+    </div>
   </div>
 </template>
 

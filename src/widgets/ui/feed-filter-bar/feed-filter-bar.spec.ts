@@ -126,9 +126,20 @@ describe('FeedFilterBar', () => {
     expect(bar.find('.ffb__add').exists()).toBe(false)
     bar.unmount()
 
-    const own = mount(FeedFilterBar, { props: { facets: false }, slots: { add: '<button class="own">Level</button>' } })
-    expect(own.find('.own').exists()).toBe(true)
-    expect(own.find('[data-test="feed-filter-phone"]').exists()).toBe(false)
+    const none = mount(FeedFilterBar, { props: { facets: false } })
+    expect(none.find('[data-test="feed-filter-phone"]').exists()).toBe(false)
+  })
+
+  it('#add: after the chips; on a phone inside the «Filters N» sheet', async () => {
+    const own = mount(FeedFilterBar, {
+      props: { facets: false },
+      slots: { add: '<button class="own">Level</button>' },
+      global: { stubs: { FeedFilterChips } },
+    })
+    expect(own.findAll('.own')).toHaveLength(1)
+    await own.get('[data-test="feed-filter-phone"]').trigger('click')
+    await flushPromises()
+    expect(own.get('[data-test="feed-filter-chips"]').find('.own').exists()).toBe(true)
   })
 
   it('phone: «Filters N» opens every chip as a sheet with «Add filter»', async () => {

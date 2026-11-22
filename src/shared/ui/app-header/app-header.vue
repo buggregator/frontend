@@ -104,6 +104,10 @@ defineProps<{ keepTitle?: boolean }>()
 // Phones: the bar's buttons are 28 px, each gets a 44 px tap area (as the
 // mock-server header buttons do).
 @media (max-width: 639px) {
+  .app-header__toolbar {
+    @apply gap-1.5;
+  }
+
   .app-header__actions :slotted(button) {
     @apply relative;
   }
@@ -154,6 +158,18 @@ defineProps<{ keepTitle?: boolean }>()
 
   .action-btn__text {
     @apply hidden sm:inline;
+  }
+
+  // Phones: a 44 px tap area around the 28 px button (links too).
+  @media (max-width: 639px) {
+    .action-btn {
+      @apply relative;
+    }
+
+    .action-btn::after {
+      content: '';
+      @apply absolute inset-x-0 -top-2 -bottom-2;
+    }
   }
 }
 </style>
