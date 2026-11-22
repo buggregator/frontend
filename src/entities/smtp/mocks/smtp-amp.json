@@ -1,0 +1,36 @@
+{
+  "uuid": "723a1847-dcde-43b1-8858-71f2e2809e8f",
+  "type": "smtp",
+  "payload": {
+    "id": null,
+    "subject": "Weekly poll",
+    "from": [
+      {
+        "email": "news@example.com",
+        "name": "News"
+      }
+    ],
+    "to": [
+      {
+        "email": "ann@example.com",
+        "name": ""
+      }
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [],
+    "text": "Vote in our poll.",
+    "html": "<p>Vote in our poll.</p>",
+    "raw": "From: News <news@example.com>\r\nTo: ann@example.com\r\nSubject: Weekly poll\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=\"amp\"\r\n\r\n--amp\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nVote in our poll.\r\n--amp\r\nContent-Type: text/x-amp-html; charset=utf-8\r\n\r\n<!doctype html><html ⚡4email><head><script async src=\"https://cdn.ampproject.org/v0.js\"></script></head><body><amp-form>Vote</amp-form></body></html>\r\n--amp\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Vote in our poll.</p>\r\n--amp--\r\n",
+    "parts": [
+      {
+        "type": "text/x-amp-html",
+        "label": "AMP",
+        "content": "<!doctype html><html ⚡4email><head><script async src=\"https://cdn.ampproject.org/v0.js\"></script></head><body><amp-form>Vote</amp-form></body></html>",
+        "size": 151
+      }
+    ]
+  },
+  "timestamp": 1795359726,
+  "project": null
+}

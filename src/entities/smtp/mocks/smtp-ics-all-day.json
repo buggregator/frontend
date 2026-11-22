@@ -1,0 +1,34 @@
+{
+  "uuid": "76b260b5-8efb-4ad3-ae16-145c8f7f22d7",
+  "type": "smtp",
+  "payload": {
+    "id": null,
+    "subject": "Your booking",
+    "from": [
+      {
+        "email": "app@example.com",
+        "name": "App"
+      }
+    ],
+    "to": [
+      {
+        "email": "ann@example.com",
+        "name": ""
+      }
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [],
+    "text": "",
+    "html": "<p>Booking confirmed.</p>",
+    "raw": "From: App <app@example.com>\r\nTo: ann@example.com\r\nSubject: Your booking\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"m\"\r\n\r\n--m\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<p>Booking confirmed.</p>\r\n--m\r\nContent-Type: text/calendar; charset=utf-8; name=booking.ics\r\nContent-Disposition: attachment; filename=booking.ics\r\n\r\nBEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nSUMMARY:Haircut\r\nDTSTART;VALUE=DATE:20261205\r\nDTEND;VALUE=DATE:20261206\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n--m--\r\n",
+    "calendar": {
+      "summary": "Haircut",
+      "start": "2026-12-05",
+      "end": "2026-12-06",
+      "all_day": true
+    }
+  },
+  "timestamp": 1795359726,
+  "project": null
+}

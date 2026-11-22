@@ -1,0 +1,48 @@
+{
+  "uuid": "a78cca6f-eceb-496e-ba84-c965fddc44fa",
+  "type": "smtp",
+  "payload": {
+    "id": null,
+    "subject": "Canceled: Planning",
+    "from": [
+      {
+        "email": "bob@example.com",
+        "name": "Bob"
+      }
+    ],
+    "to": [
+      {
+        "email": "ann@example.com",
+        "name": ""
+      }
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [],
+    "text": "BEGIN:VCALENDAR\r\nMETHOD:CANCEL\r\nBEGIN:VTIMEZONE\r\nTZID:W. Europe Standard Time\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nORGANIZER;CN=Bob:mailto:bob@example.com\r\nSUMMARY;LANGUAGE=en-US:Planning\r\nDTSTART;TZID=W. Europe Standard Time:20261203T140000\r\nDTEND;TZID=W. Europe Standard Time:20261203T150000\r\nSTATUS:CANCELLED\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+    "html": "",
+    "raw": "From: Bob <bob@example.com>\r\nTo: ann@example.com\r\nSubject: Canceled: Planning\r\nMIME-Version: 1.0\r\nContent-Type: text/calendar; charset=\"utf-8\"; method=CANCEL\r\n\r\nBEGIN:VCALENDAR\r\nMETHOD:CANCEL\r\nBEGIN:VTIMEZONE\r\nTZID:W. Europe Standard Time\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nORGANIZER;CN=Bob:mailto:bob@example.com\r\nSUMMARY;LANGUAGE=en-US:Planning\r\nDTSTART;TZID=W. Europe Standard Time:20261203T140000\r\nDTEND;TZID=W. Europe Standard Time:20261203T150000\r\nSTATUS:CANCELLED\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+    "parts": [
+      {
+        "type": "text/calendar",
+        "label": "Calendar",
+        "content": "BEGIN:VCALENDAR\r\nMETHOD:CANCEL\r\nBEGIN:VTIMEZONE\r\nTZID:W. Europe Standard Time\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nORGANIZER;CN=Bob:mailto:bob@example.com\r\nSUMMARY;LANGUAGE=en-US:Planning\r\nDTSTART;TZID=W. Europe Standard Time:20261203T140000\r\nDTEND;TZID=W. Europe Standard Time:20261203T150000\r\nSTATUS:CANCELLED\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+        "size": 333
+      }
+    ],
+    "calendar": {
+      "method": "CANCEL",
+      "summary": "Planning",
+      "start": "2026-12-03T14:00:00",
+      "end": "2026-12-03T15:00:00",
+      "tz": "W. Europe Standard Time",
+      "status": "CANCELLED",
+      "organizer": {
+        "name": "Bob",
+        "email": "bob@example.com"
+      }
+    }
+  },
+  "timestamp": 1795359726,
+  "project": null
+}
