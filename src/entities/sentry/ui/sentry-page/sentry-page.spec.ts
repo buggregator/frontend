@@ -29,8 +29,11 @@ describe('SentryPage: tabs (#6737 A)', () => {
     expect(w.find('.tabs-component').exists()).toBe(false)
 
     const request = w.findAll('[role="tab"]').find((t) => t.text() === 'Request')!
+    expect(w.get('sentry-page-request-stub').isVisible()).toBe(false)
     await request.trigger('click')
-    expect(w.find('sentry-page-request-stub').exists()).toBe(true)
+    expect(w.get('sentry-page-request-stub').isVisible()).toBe(true)
+    // The other panels stay mounted, hidden: their state survives a switch.
+    expect(w.get('.sentry-exceptions').isVisible()).toBe(false)
     expect(w.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe(request.attributes('id'))
     w.unmount()
   })

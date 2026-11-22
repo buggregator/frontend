@@ -68,7 +68,19 @@ describe('SmtpPage: HTML preview', () => {
     expect(tabs.map((t) => t.text())).toEqual(['HTML Preview', 'Text', 'HTML Source', 'Raw'])
     expect(wrapper.find('iframe').exists()).toBe(true)
     await tabs[3].trigger('click')
-    expect(wrapper.find('iframe').exists()).toBe(false)
+    expect(wrapper.get('iframe').isVisible()).toBe(false)
     expect(wrapper.get('[role="tabpanel"]').attributes('aria-labelledby')).toBe(tabs[3].attributes('id'))
+  })
+
+  // The HTML preview stays mounted: the frame does not reload on a tab switch.
+  it('keeps the same HTML frame across tab switches', async () => {
+    const wrapper = mount(SmtpPage, { props: { event: normalizeSmtpEvent(smtpWelcomeMock) }, attachTo: document.body })
+    const frame = wrapper.get('iframe').element
+    const tabs = wrapper.findAll('[role="tab"]')
+    await tabs[3].trigger('click')
+    await tabs[0].trigger('click')
+    expect(wrapper.get('iframe').element).toBe(frame)
+    expect(wrapper.get('iframe').isVisible()).toBe(true)
+    wrapper.unmount()
   })
 })

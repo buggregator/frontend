@@ -95,6 +95,8 @@ const tabs = computed<TabItem[]>(() => {
   ]
   return list.filter((t): t is TabItem => !!t)
 })
+// Every panel stays mounted (v-show): its scroll and open frames survive a tab switch.
+const has = (id: string) => tabs.value.some((t) => t.id === id)
 
 const exceptionRefs = ref<HTMLElement[]>([])
 
@@ -249,124 +251,138 @@ watch(
       :tabs="tabs"
       class="sentry-tabs"
     >
-      <template v-if="tab === 'exceptions'">
-        <div class="sentry-tab-content">
-          <div class="sentry-exceptions">
-            <div
-              v-for="(e, idx) in exceptionValues"
-              :ref="
-                (el) => {
-                  if (el) exceptionRefs[idx] = el as HTMLElement
-                }
-              "
-              :key="`exception-${e.value}-${e.type}`"
-              class="sentry-exceptions__item"
-            >
-              <!-- Rail -->
-              <div class="sentry-exceptions__rail">
-                <!-- Dot with arrow (clickable) or plain dot (last) -->
-                <button
-                  v-if="idx < exceptionValues.length - 1"
-                  class="sentry-exceptions__dot"
-                  :class="{ 'sentry-exceptions__dot--first': idx === 0 }"
-                  title="Scroll to next exception"
-                  @click="scrollToException(idx + 1)"
+      <div
+        v-if="has('exceptions')"
+        v-show="tab === 'exceptions'"
+        class="sentry-tab-content"
+      >
+        <div class="sentry-exceptions">
+          <div
+            v-for="(e, idx) in exceptionValues"
+            :ref="
+              (el) => {
+                if (el) exceptionRefs[idx] = el as HTMLElement
+              }
+            "
+            :key="`exception-${e.value}-${e.type}`"
+            class="sentry-exceptions__item"
+          >
+            <!-- Rail -->
+            <div class="sentry-exceptions__rail">
+              <!-- Dot with arrow (clickable) or plain dot (last) -->
+              <button
+                v-if="idx < exceptionValues.length - 1"
+                class="sentry-exceptions__dot"
+                :class="{ 'sentry-exceptions__dot--first': idx === 0 }"
+                title="Scroll to next exception"
+                @click="scrollToException(idx + 1)"
+              >
+                <svg
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  class="sentry-exceptions__dot-arrow"
                 >
-                  <svg
-                    viewBox="0 0 10 6"
-                    fill="none"
-                    class="sentry-exceptions__dot-arrow"
-                  >
-                    <path
-                      d="M1.5 1L5 4.5L8.5 1"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </button>
-                <span
-                  v-else
-                  class="sentry-exceptions__dot sentry-exceptions__dot--end"
-                />
+                  <path
+                    d="M1.5 1L5 4.5L8.5 1"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <span
+                v-else
+                class="sentry-exceptions__dot sentry-exceptions__dot--end"
+              />
 
-                <!-- Connecting line to next dot -->
-                <div
-                  v-if="idx < exceptionValues.length - 1"
-                  class="sentry-exceptions__line"
-                />
-              </div>
+              <!-- Connecting line to next dot -->
+              <div
+                v-if="idx < exceptionValues.length - 1"
+                class="sentry-exceptions__line"
+              />
+            </div>
 
-              <!-- Exception card -->
-              <div class="sentry-exceptions__card">
-                <span
-                  v-if="idx > 0"
-                  class="sentry-exceptions__caused"
-                >Caused by</span>
-                <SentryException
-                  :exception="e"
-                  :max-frames="250"
-                />
-              </div>
+            <!-- Exception card -->
+            <div class="sentry-exceptions__card">
+              <span
+                v-if="idx > 0"
+                class="sentry-exceptions__caused"
+              >Caused by</span>
+              <SentryException
+                :exception="e"
+                :max-frames="250"
+              />
             </div>
           </div>
         </div>
-      </template>
+      </div>
 
-      <template v-if="tab === 'breadcrumbs'">
-        <div class="sentry-tab-content">
-          <SentryPageBreadcrumbs :breadcrumbs="event.payload.breadcrumbs!.values" />
-        </div>
-      </template>
+      <div
+        v-if="has('breadcrumbs')"
+        v-show="tab === 'breadcrumbs'"
+        class="sentry-tab-content"
+      >
+        <SentryPageBreadcrumbs :breadcrumbs="event.payload.breadcrumbs!.values" />
+      </div>
 
-      <template v-if="tab === 'request'">
-        <div class="sentry-tab-content">
-          <SentryPageRequest :request="event.payload.request!" />
-        </div>
-      </template>
+      <div
+        v-if="has('request')"
+        v-show="tab === 'request'"
+        class="sentry-tab-content"
+      >
+        <SentryPageRequest :request="event.payload.request!" />
+      </div>
 
-      <template v-if="tab === 'context'">
-        <div class="sentry-tab-content sentry-tab-content--sections">
-          <SentryPageTags :payload="event.payload" />
+      <div
+        v-if="has('context')"
+        v-show="tab === 'context'"
+        class="sentry-tab-content sentry-tab-content--sections"
+      >
+        <SentryPageTags :payload="event.payload" />
 
-          <TraceContextBlock
-            v-if="hasTraceContext && traceSummary"
-            :trace-summary="traceSummary"
-          />
+        <TraceContextBlock
+          v-if="hasTraceContext && traceSummary"
+          :trace-summary="traceSummary"
+        />
 
-          <SentryPageApp
-            v-if="hasAppContext"
-            :app="event.payload.contexts!.app!"
-          />
+        <SentryPageApp
+          v-if="hasAppContext"
+          :app="event.payload.contexts!.app!"
+        />
 
-          <SentryPageDevice
-            v-if="hasDeviceContext"
-            :device="event.payload.contexts!.device!"
-          />
-        </div>
-      </template>
+        <SentryPageDevice
+          v-if="hasDeviceContext"
+          :device="event.payload.contexts!.device!"
+        />
+      </div>
 
-      <template v-if="tab === 'sdk'">
-        <div class="sentry-tab-content">
-          <SentryPageSdk :sdk="event.payload.sdk!" />
-        </div>
-      </template>
+      <div
+        v-if="has('sdk')"
+        v-show="tab === 'sdk'"
+        class="sentry-tab-content"
+      >
+        <SentryPageSdk :sdk="event.payload.sdk!" />
+      </div>
 
-      <template v-if="tab === 'modules'">
-        <div class="sentry-tab-content">
-          <SentryPageModules
-            :modules="event.payload.modules!"
-            :platform="platform"
-          />
-        </div>
-      </template>
+      <div
+        v-if="has('modules')"
+        v-show="tab === 'modules'"
+        class="sentry-tab-content"
+      >
+        <SentryPageModules
+          :modules="event.payload.modules!"
+          :platform="platform"
+        />
+      </div>
 
-      <template v-if="tab === 'extra'">
-        <div class="sentry-tab-content">
-          <SentryPageExtra :extra="event.payload.extra" />
-        </div>
-      </template>
+      <div
+        v-if="has('extra')"
+        v-show="tab === 'extra'"
+        class="sentry-tab-content"
+      >
+        <SentryPageExtra :extra="event.payload.extra" />
+      </div>
     </EventTabs>
   </EventDetailLayout>
 </template>

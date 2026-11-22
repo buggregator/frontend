@@ -328,8 +328,10 @@ onMounted(getAttachmentsRequest)
             :tabs="bodyTabs"
             label="Email body"
           >
+            <!-- v-show: the HTML frame does not reload on a tab switch. -->
             <EmailPreview
-              v-if="tab === 'html'"
+              v-if="isHtml"
+              v-show="tab === 'html'"
               :device="EmailPreviewDevice.Desktop"
             >
               <div class="smtp-preview-frame">
@@ -338,18 +340,20 @@ onMounted(getAttachmentsRequest)
             </EmailPreview>
 
             <pre
-              v-else-if="tab === 'text'"
+              v-if="isText"
+              v-show="tab === 'text'"
               class="smtp-text-preview"
             >{{ event.payload.text }}</pre>
 
             <CodeSnippet
-              v-else-if="tab === 'source'"
+              v-if="isHtml"
+              v-show="tab === 'source'"
               language="html"
               :code="event.payload.html"
             />
 
             <CodeSnippet
-              v-else
+              v-show="tab === 'raw'"
               language="plaintext"
               :code="event.payload.raw"
             />

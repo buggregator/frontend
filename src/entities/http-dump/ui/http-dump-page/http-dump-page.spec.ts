@@ -27,4 +27,15 @@ describe('HttpDumpPage: tabs (#6737 A)', () => {
     await w.findAll('[role="tab"]')[0].trigger('click')
     expect(window.location.hash).toBe('#request')
   })
+
+  it('keeps every panel mounted: a tab switch hides, not rebuilds', async () => {
+    const w = mount(HttpDumpPage, { props: { event: normalizeHttpDumpEvent(httpDumpMock as never), useUrlFragment: false }, global: { stubs }, attachTo: document.body })
+    const panel = w.get('http-request-panel-stub').element
+    await w.findAll('[role="tab"]')[1].trigger('click')
+    expect(w.get('http-request-panel-stub').isVisible()).toBe(false)
+    await w.findAll('[role="tab"]')[0].trigger('click')
+    expect(w.get('http-request-panel-stub').element).toBe(panel)
+    expect(w.get('http-request-panel-stub').isVisible()).toBe(true)
+    w.unmount()
+  })
 })

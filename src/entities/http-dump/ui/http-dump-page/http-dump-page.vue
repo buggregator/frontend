@@ -40,17 +40,22 @@ const tabs = computed<TabItem[]>(() => [
       class="http-dump-tabs"
     >
       <div class="http-dump-tabs__panel">
+        <!-- v-show: each panel keeps its state when the tab changes. -->
         <HttpResponsePanel
-          v-if="tab === 'response'"
+          v-if="hasResponse"
+          v-show="tab === 'response'"
           :event="event"
         />
 
         <HttpRequestPanel
-          v-else-if="tab === 'request'"
+          v-show="tab === 'request'"
           :event="event"
         />
 
-        <template v-else>
+        <div
+          v-show="tab === 'raw'"
+          class="http-dump-tabs__raw"
+        >
           <EventDetailSection title="cURL">
             <CodeSnippet
               language="bash"
@@ -64,7 +69,7 @@ const tabs = computed<TabItem[]>(() => [
               :code="rawHttp"
             />
           </EventDetailSection>
-        </template>
+        </div>
       </div>
     </EventTabs>
   </EventDetailLayout>
@@ -80,5 +85,9 @@ const tabs = computed<TabItem[]>(() => [
 /* Restore padding inside each tab panel */
 .http-dump-tabs__panel {
   @apply py-5 px-5 md:px-6 lg:px-8 flex flex-col gap-6;
+}
+
+.http-dump-tabs__raw {
+  @apply flex flex-col gap-6;
 }
 </style>
