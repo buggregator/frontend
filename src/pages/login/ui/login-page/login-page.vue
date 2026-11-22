@@ -2,7 +2,8 @@
 import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { safeReturnTo, withReturnTo } from '@/shared/lib/return-to'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
@@ -12,13 +13,18 @@ useTitle('Login | Buggregator')
 const store = useProfileStore()
 const { loginLinkUrl } = storeToRefs(useSettingsStore())
 const router = useRouter()
+const route = useRoute()
+
+// The page the person opened before sign-in (a shared event link): the server
+// hands it back with the token, and it is opened instead of the home page.
+const returnTo = safeReturnTo(route.query.return_to)
 
 if (store.isAuthenticated) {
-  router.replace({ name: RouteName.Home })
+  router.replace(returnTo ?? { name: RouteName.Home })
 }
 
 const redirect = () => {
-  window.location.href = loginLinkUrl.value
+  window.location.href = withReturnTo(loginLinkUrl.value, returnTo)
 }
 
 const ready = ref(false)

@@ -67,7 +67,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     hiddenMenuItems: getStoredHiddenMenuItems(),
   }),
   getters: {
-    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl}`,
+    // The server gives the path with or without its leading slash.
+    loginLinkUrl: ({ authLogicUrl }) => `${REST_API_URL}/${authLogicUrl.replace(/^\/+/, '')}`,
     // The server serves mocks from its http-dump module (#6019).
     isMockServerAvailable: ({ availableEvents }) => availableEvents.includes(EventTypes.HttpDump),
   },

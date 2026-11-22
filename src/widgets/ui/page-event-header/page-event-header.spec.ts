@@ -91,3 +91,27 @@ describe('PageEventHeader: rows (#6737 A)', () => {
     expect(two.get('[data-test="app-header-toolbar"]').attributes('id')).toBe('app-header-toolbar')
   })
 })
+
+// #6772: a link to this event for a teammate; with sign-in on, the login page
+// brings them back here (return_to).
+describe('PageEventHeader: Copy link', () => {
+  beforeEach(() => setActivePinia(createPinia()))
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('copies the address of this event and says so', async () => {
+    const writeText = vi.fn(() => Promise.resolve())
+    vi.stubGlobal('navigator', { clipboard: { writeText } })
+    const router = makeRouter()
+    await router.push('/smtp/abc-123?tab=html')
+    const wrapper = mount(PageEventHeader, {
+      props: { title: 'SMTP', eventId: 'abc-123' },
+      global: { plugins: [router] },
+    })
+
+    await wrapper.get('button[aria-label="Copy link to this event"]').trigger('click')
+    await flushPromises()
+
+    expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/smtp/abc-123?tab=html`)
+    expect(wrapper.get('[role="status"]').text()).toBe('Link copied')
+  })
+})

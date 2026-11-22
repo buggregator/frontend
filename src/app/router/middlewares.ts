@@ -1,9 +1,21 @@
 import {storeToRefs} from "pinia";
+import type {RouteLocationNormalized, RouteLocationRaw} from "vue-router";
 import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors";
+import {safeReturnTo} from "@/shared/lib/return-to";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
 import {RouteName, EventTypes} from "@/shared/types";
 import { type TRouterMiddleware} from "./types";
 
+
+// Where a page that needs sign-in sends the person: the login page, which
+// brings them back to that page afterwards (#6772: shared event links).
+export const loginRoute = (to: Pick<RouteLocationNormalized, 'fullPath'>): RouteLocationRaw => {
+  const returnTo = safeReturnTo(to.fullPath)
+
+  return returnTo
+    ? { name: RouteName.Login, query: { return_to: returnTo } }
+    : { name: RouteName.Login }
+}
 
 export const auth: TRouterMiddleware = async ({ to, next }) => {
   const settingsStore  = useSettingsStore()
