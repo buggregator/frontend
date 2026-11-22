@@ -1,8 +1,9 @@
-import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import type { NavigationGuardNext, RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 export type TRouterMiddleware = (params: {
   to: RouteLocationNormalized
   from: RouteLocationNormalized
   next: NavigationGuardNext
-}) => Promise<undefined>
+// A returned location ends the chain there: the navigation goes to it.
+}) => Promise<void | RouteLocationRaw>
 

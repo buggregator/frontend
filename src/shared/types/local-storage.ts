@@ -15,6 +15,8 @@ export enum LocalStorageKeys {
   HiddenMenuItems = "hidden_menu_items",
   DesktopNotifications = "desktop_notifications",
   MonologInlineContext = "monolog_inline_context",
+  // Whose synced settings this browser holds (user id from /api/me, #6772).
+  SettingsOwner = "settings_owner",
 }
 
 export enum SessionStorageKeys {

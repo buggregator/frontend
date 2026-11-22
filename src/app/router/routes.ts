@@ -1,7 +1,7 @@
 import type { RouteLocation } from 'vue-router'
 import {EventsListPage} from "@/pages/events-list-page";
 import {RouteName} from "@/shared/types";
-import {auth, checkType} from "./middlewares";
+import {auth, checkType, requireAuthOn} from "./middlewares";
 
 // The feed is the first screen, so it stays in the main chunk. Every other
 // page loads on first visit: Sentry, the profiler and vue-flow are not needed
@@ -91,7 +91,7 @@ export const routes = [
     name: RouteName.Audit,
     component: AuditPage,
     meta: {
-      middleware: [auth]
+      middleware: [requireAuthOn, auth]
     }
   },
   {

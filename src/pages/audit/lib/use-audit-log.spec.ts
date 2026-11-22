@@ -81,4 +81,15 @@ describe('createAuditLog', () => {
     expect(log.rows.value).toHaveLength(2)
     expect(log.moreError.value).toBe('The server answered 500.')
   })
+
+  // Review #1: an older server or auth off answers with the web page (200 HTML).
+  it('takes an answer that is not a log for an error, not for an empty log', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('<!doctype html>', { status: 200 }))))
+    const log = createAuditLog(() => 'tok', 'http://h')
+
+    await log.load()
+
+    expect(log.state.value).toBe('error')
+    expect(log.error.value).toBe('The server does not keep an audit log.')
+  })
 })

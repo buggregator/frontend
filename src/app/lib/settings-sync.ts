@@ -35,6 +35,22 @@ export const SYNCED_KEYS: readonly string[] = [
 // How often changes made here are looked for and sent.
 const PUSH_EVERY_MS = 2000
 
+const readOwner = (): string => {
+  try {
+    return window.localStorage.getItem(LocalStorageKeys.SettingsOwner) || ''
+  } catch {
+    return ''
+  }
+}
+
+const writeOwner = (owner: string) => {
+  try {
+    window.localStorage.setItem(LocalStorageKeys.SettingsOwner, owner)
+  } catch {
+    // Storage blocked: nothing is kept here anyway.
+  }
+}
+
 let sync: SettingsSync | null = null
 let syncedToken = ''
 
@@ -58,8 +74,16 @@ export const pullSyncedSettings = async (token: string): Promise<void> => {
     window.localStorage
   )
 
+  // A shared browser: the settings here may be someone else's. Then they are
+  // replaced by this person's, never sent to their account. The first
+  // sign-in in this browser still starts the account with them.
+  const owner = profileStore.profile?.id || profileStore.profile?.email || ''
+  const previousOwner = readOwner()
+  const replaceLocal = !!previousOwner && !!owner && previousOwner !== owner
+
   try {
-    if (await next.pull()) applyStoredPreferences()
+    if (await next.pull({ replaceLocal })) applyStoredPreferences()
+    if (owner) writeOwner(owner)
     sync = next
     syncedToken = token
   } catch (e) {

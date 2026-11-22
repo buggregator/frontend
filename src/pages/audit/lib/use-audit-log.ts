@@ -43,7 +43,9 @@ export const createAuditLog = (getToken: () => string, base: string = REST_API_U
     if (!response.ok) throw new AuditError(response.status)
 
     const body = (await response.json().catch(() => null)) as { data?: unknown } | null
-    const page = Array.isArray(body?.data) ? (body.data as AuditEntry[]) : []
+    // Auth off or an older server: the web page comes back, not a log.
+    if (!Array.isArray(body?.data)) throw new Error('The server does not keep an audit log.')
+    const page = body.data as AuditEntry[]
     hasMore.value = page.length === limit
     return page
   }

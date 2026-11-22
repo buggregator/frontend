@@ -92,4 +92,52 @@ describe('createSettingsSync', () => {
     expect(await createSettingsSync(KEYS, api, storage).pull()).toBe(false)
     expect(storage.dump()).toEqual({ theme: 'light' })
   })
+
+  // Review #2: a shared browser must not carry one person's settings into
+  // the next person's account.
+  it('for another person, drops this browser’s settings the account lacks instead of sending them', async () => {
+    const storage = memory({ theme: 'dark', navbar: 'false' })
+    const { api, put } = requests({ theme: 'light' })
+    const sync = createSettingsSync(KEYS, api, storage)
+
+    expect(await sync.pull({ replaceLocal: true })).toBe(true)
+    await sync.push()
+
+    expect(storage.dump()).toEqual({ theme: 'light' })
+    expect(put).not.toHaveBeenCalled()
+  })
+
+  // Review #3: a refused value must not hold back the others forever.
+  it('skips a key the server refuses and still saves the others', async () => {
+    const storage = memory()
+    const { api, put } = requests({})
+    put.mockImplementation((body) =>
+      'theme' in body ? Promise.reject(Object.assign(new Error('too big'), { status: 413 })) : Promise.resolve()
+    )
+    const sync = createSettingsSync(KEYS, api, storage)
+    await sync.pull()
+
+    storage.setItem('theme', 'x'.repeat(10))
+    storage.setItem('period', '24h')
+    await sync.push()
+    put.mockClear()
+    await sync.push()
+
+    expect(put).not.toHaveBeenCalled()
+  })
+
+  it('sends a skipped key again once it changes', async () => {
+    const storage = memory()
+    const { api, put } = requests({})
+    put.mockRejectedValueOnce(Object.assign(new Error('bad'), { status: 400 }))
+    const sync = createSettingsSync(KEYS, api, storage)
+    await sync.pull()
+
+    storage.setItem('theme', 'huge')
+    await sync.push()
+    storage.setItem('theme', 'dark')
+    await sync.push()
+
+    expect(put).toHaveBeenLastCalledWith({ theme: 'dark' })
+  })
 })

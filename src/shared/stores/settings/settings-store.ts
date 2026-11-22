@@ -129,7 +129,10 @@ export const useSettingsStore = defineStore("settingsStore", {
         customFilePathMapping: getStoredCustomFilePathMapping() || [],
         hiddenMenuItems: getStoredHiddenMenuItems(),
       })
-      this.setThemeMode(getStoredThemeMode())
+      // Shown, not written back: a missing key stays missing.
+      this.themeMode = getStoredThemeMode();
+      this.themeType = resolveTheme(this.themeMode);
+      applyTheme(this.themeType as 'light' | 'dark')
     },
     changeTheme() {
       this.setThemeMode(this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK)

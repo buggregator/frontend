@@ -28,7 +28,10 @@ export const createAppRouter = () => {
 
     for (const middleware of middlewares) {
       try {
-        await middleware({...context})
+        const redirect = await middleware({...context})
+        if (redirect) {
+          return next(redirect)
+        }
       } catch (e) {
         if (e instanceof RouteAuthAccessError) {
           next(loginRoute(to))

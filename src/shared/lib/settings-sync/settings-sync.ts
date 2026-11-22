@@ -11,6 +11,12 @@ export type SettingsRequests = {
   put: (changes: Values) => Promise<void>
 }
 
+// 400/413: this request will never pass as it is; anything else may.
+const isRefused = (e: unknown): boolean => {
+  const status = (e as { status?: unknown })?.status
+  return status === 400 || status === 413
+}
+
 type SyncStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 
 export const createSettingsSync = (
@@ -31,8 +37,10 @@ export const createSettingsSync = (
   }
 
   // Takes the saved settings into this browser. True when one changed here:
-  // the caller then lets the app pick them up.
-  const pull = async (): Promise<boolean> => {
+  // the caller then lets the app pick them up. replaceLocal: this browser
+  // holds someone else's settings; the ones the account lacks are dropped
+  // here instead of being sent to it.
+  const pull = async ({ replaceLocal = false }: { replaceLocal?: boolean } = {}): Promise<boolean> => {
     const data = await requests.get()
     let isChanged = false
     saved = {}
@@ -41,6 +49,14 @@ export const createSettingsSync = (
       const value = data[key]
       if (typeof value !== 'string') {
         saved[key] = null
+        if (replaceLocal && readLocal(key) !== null) {
+          try {
+            storage.removeItem(key)
+            isChanged = true
+          } catch {
+            // Storage blocked: nothing to drop.
+          }
+        }
         continue
       }
 
@@ -74,8 +90,26 @@ export const createSettingsSync = (
     try {
       await requests.put(changes)
       saved = { ...saved, ...changes }
+    } catch (e) {
+      if (!isRefused(e)) throw e
+      await sendOneByOne(changes)
     } finally {
       isWriting = false
+    }
+  }
+
+  // The server refused the batch (a value too big, too many keys): each key
+  // goes alone, and one it refuses is skipped until it changes again, so it
+  // does not hold back the rest.
+  const sendOneByOne = async (changes: Values) => {
+    for (const [key, value] of Object.entries(changes)) {
+      try {
+        await requests.put({ [key]: value })
+      } catch (e) {
+        if (!isRefused(e)) throw e
+        console.warn(`Settings sync: the server refused «${key}»; it stays in this browser only`)
+      }
+      if (saved) saved[key] = value
     }
   }
 

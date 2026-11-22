@@ -62,6 +62,17 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
   return;
 }
 
+// Pages that exist only with sign-in on (the audit log): home otherwise.
+export const requireAuthOn: TRouterMiddleware = async () => {
+  const settingsStore = useSettingsStore()
+
+  if (!settingsStore.isFetched) {
+    await settingsStore.fetchSettings()
+  }
+
+  return settingsStore.isAuthEnabled ? undefined : { name: RouteName.Home }
+}
+
 export const checkType: TRouterMiddleware = async ({ to, next }) => {
   const pageType = to.params.type
 

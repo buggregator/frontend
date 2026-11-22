@@ -62,4 +62,35 @@ describe('settings sync in the app', () => {
     await expect(pullSyncedSettings('tok')).resolves.toBeUndefined()
     await expect(pushSyncedSettings()).resolves.toBeUndefined()
   })
+
+  // Review #2: dev signs out, admin signs in on the same browser.
+  it('does not carry the previous person’s settings into another account', async () => {
+    localStorage.setItem(LocalStorageKeys.SettingsOwner, 'dev-id')
+    localStorage.setItem(LocalStorageKeys.CodeEditor, 'vscode')
+    const fetchMock = vi.fn((_url: string, _init?: RequestInit) => answer({ data: {} }))
+    vi.stubGlobal('fetch', fetchMock)
+    useProfileStore().setToken('tok')
+    useProfileStore().setProfile({ username: 'ann', email: 'ann@x', avatar: '', id: 'admin-id' })
+
+    await pullSyncedSettings('tok')
+    await pushSyncedSettings()
+
+    expect(localStorage.getItem(LocalStorageKeys.CodeEditor)).toBeNull()
+    expect(localStorage.getItem(LocalStorageKeys.SettingsOwner)).toBe('admin-id')
+    expect(fetchMock.mock.calls.map(([, init]) => init?.method ?? 'GET')).toEqual(['GET'])
+  })
+
+  it('the same person again: this browser’s changes are kept and sent', async () => {
+    localStorage.setItem(LocalStorageKeys.SettingsOwner, 'admin-id')
+    localStorage.setItem(LocalStorageKeys.CodeEditor, 'vscode')
+    const fetchMock = vi.fn((_url: string, _init?: RequestInit) => answer({ data: {} }))
+    vi.stubGlobal('fetch', fetchMock)
+    useProfileStore().setToken('tok')
+    useProfileStore().setProfile({ username: 'ann', email: 'ann@x', avatar: '', id: 'admin-id' })
+
+    await pullSyncedSettings('tok')
+    await pushSyncedSettings()
+
+    expect(JSON.parse(String(fetchMock.mock.calls[1][1]?.body))).toEqual({ [LocalStorageKeys.CodeEditor]: 'vscode' })
+  })
 })
