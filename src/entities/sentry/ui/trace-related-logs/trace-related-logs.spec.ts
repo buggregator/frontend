@@ -40,7 +40,7 @@ describe('TraceRelatedLogs (#6533 related-logs)', () => {
     expect(rows.map((r) => r.find('.log-row__body').text())).toEqual(['body a', 'body b'])
     expect(rows[0].text()).toContain('ERROR')
     expect(rows[0].text()).toContain('checkout-api')
-    await rows[0].get('.log-row__main').trigger('keydown', { key: 'Enter' })
+    await rows[0].get('[data-test="expandable-row-toggle"]').trigger('keydown', { key: 'Enter' })
     expect(w.text()).toContain('http.route')
     expect(w.find('[data-test="trace-logs-more"]').exists()).toBe(false)
   })

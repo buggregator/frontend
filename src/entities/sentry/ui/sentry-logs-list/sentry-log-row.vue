@@ -2,6 +2,7 @@
 import moment from 'moment'
 import { computed, ref } from 'vue'
 import { RouteName } from '@/shared/types'
+import { ExpandableRow } from '@/shared/ui/expandable-row'
 import { SOURCE_LABEL, formatAttrValue, splitOtelAttributes } from '../../lib/otel'
 import type { SentryLog } from '../../types'
 
@@ -15,7 +16,9 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), { traceSpans: null })
 const emit = defineEmits<{ span: [spanId: string] }>()
 const inTrace = computed(() => props.traceSpans !== null)
-const spanInTrace = computed(() => !!props.log.span_id && !!props.traceSpans?.has(props.log.span_id))
+const spanInTrace = computed(
+  () => !!props.log.span_id && !!props.traceSpans?.has(props.log.span_id)
+)
 
 const expanded = ref(false)
 
@@ -47,103 +50,73 @@ const hasDetails = computed(
 </script>
 
 <template>
-  <div
+  <ExpandableRow
+    v-model:expanded="expanded"
     class="log-row"
-    :class="{
-      'log-row--expanded': expanded,
-      'log-row--error': log.level === 'error' || log.level === 'fatal'
-    }"
-    @click="expanded = !expanded"
+    :class="{ 'log-row--error': log.level === 'error' || log.level === 'fatal' }"
   >
-    <div
-      class="log-row__main"
-      tabindex="0"
-      @keydown.enter.self.prevent="expanded = !expanded"
-      @keydown.space.self.prevent="expanded = !expanded"
+    <span
+      class="log-row__level"
+      :class="levelClass"
     >
-      <span
-        class="log-row__level"
-        :class="levelClass"
-      >
-        {{ log.level.toUpperCase() }}
-      </span>
+      {{ log.level.toUpperCase() }}
+    </span>
 
-      <span
-        class="log-row__service"
-        :title="log.service_name ?? undefined"
-        data-test="log-service"
-      >{{ log.service_name ?? '' }}</span>
+    <span
+      class="log-row__service"
+      :title="log.service_name ?? undefined"
+      data-test="log-service"
+    >{{
+      log.service_name ?? ''
+    }}</span>
 
-      <span class="log-row__body">{{ truncate(log.body, 120) }}</span>
+    <span class="log-row__body">{{ truncate(log.body, 120) }}</span>
 
-      <span class="log-row__time">{{ formattedTime }}</span>
+    <span class="log-row__time">{{ formattedTime }}</span>
 
+    <template
+      v-if="spanInTrace || (!inTrace && log.trace_id && log.trace_exists)"
+      #actions
+    >
       <button
         v-if="spanInTrace"
         type="button"
         class="log-row__trace-link"
         title="Show this span in the waterfall"
         data-test="log-span"
-        @click.stop="emit('span', log.span_id!)"
+        @click="emit('span', log.span_id!)"
       >
         span &rarr;
       </button>
       <RouterLink
-        v-else-if="!inTrace && log.trace_id && log.trace_exists"
+        v-else
         :to="{ name: RouteName.SentryTraceDetail, params: { traceId: log.trace_id } }"
         class="log-row__trace-link"
-        @click.stop
       >
         trace &rarr;
       </RouterLink>
-    </div>
+    </template>
 
     <!-- Expandable details: attributes; resource and trace for OTel logs -->
-    <div
-      v-if="expanded && hasDetails"
-      class="log-row__details"
-      :class="{ 'log-row__details--split': hasResource }"
-      data-test="log-details"
-      @click.stop
+    <template
+      v-if="hasDetails"
+      #details
     >
       <div
-        v-if="Object.keys(parts.attributes).length"
-        class="log-row__attrs"
-      >
-        <div class="log-row__attrs-header">
-          Attributes
-        </div>
-        <div class="log-row__attrs-body">
-          <div
-            v-for="(val, key) in parts.attributes"
-            :key="String(key)"
-            class="log-row__attr-row"
-          >
-            <span class="log-row__attr-key">{{ key }}</span>
-            <span class="log-row__attr-val">{{ formatAttrValue(val) }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-if="hasResource || log.trace_id"
-        class="log-row__side"
+        class="log-row__details"
+        :class="{ 'log-row__details--split': hasResource }"
+        data-test="log-details"
       >
         <div
-          v-if="hasResource"
+          v-if="Object.keys(parts.attributes).length"
           class="log-row__attrs"
-          data-test="log-resource"
         >
           <div class="log-row__attrs-header">
-            Resource
-            <span
-              v-if="sourceLabel"
-              class="log-row__source"
-            >{{ sourceLabel }}</span>
+            Attributes
           </div>
           <div class="log-row__attrs-body">
             <div
-              v-for="(val, key) in parts.resource"
+              v-for="(val, key) in parts.attributes"
               :key="String(key)"
               class="log-row__attr-row"
             >
@@ -152,59 +125,64 @@ const hasDetails = computed(
             </div>
           </div>
         </div>
+
         <div
-          v-if="log.trace_id"
-          class="log-row__attrs"
+          v-if="hasResource || log.trace_id"
+          class="log-row__side"
         >
-          <div class="log-row__attrs-header">
-            Trace
-          </div>
-          <div class="log-row__attrs-body">
-            <div class="log-row__attr-row">
-              <span class="log-row__attr-key">trace_id</span>
-              <span class="log-row__attr-val">{{ log.trace_id }}</span>
+          <div
+            v-if="hasResource"
+            class="log-row__attrs"
+            data-test="log-resource"
+          >
+            <div class="log-row__attrs-header">
+              Resource
+              <span
+                v-if="sourceLabel"
+                class="log-row__source"
+              >{{ sourceLabel }}</span>
             </div>
-            <div
-              v-if="log.span_id"
-              class="log-row__attr-row"
-            >
-              <span class="log-row__attr-key">span_id</span>
-              <span class="log-row__attr-val">{{ log.span_id }}</span>
+            <div class="log-row__attrs-body">
+              <div
+                v-for="(val, key) in parts.resource"
+                :key="String(key)"
+                class="log-row__attr-row"
+              >
+                <span class="log-row__attr-key">{{ key }}</span>
+                <span class="log-row__attr-val">{{ formatAttrValue(val) }}</span>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="log.trace_id"
+            class="log-row__attrs"
+          >
+            <div class="log-row__attrs-header">
+              Trace
+            </div>
+            <div class="log-row__attrs-body">
+              <div class="log-row__attr-row">
+                <span class="log-row__attr-key">trace_id</span>
+                <span class="log-row__attr-val">{{ log.trace_id }}</span>
+              </div>
+              <div
+                v-if="log.span_id"
+                class="log-row__attr-row"
+              >
+                <span class="log-row__attr-key">span_id</span>
+                <span class="log-row__attr-val">{{ log.span_id }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </ExpandableRow>
 </template>
 
 <style lang="scss" scoped>
-.log-row {
-  @apply px-3 py-2 cursor-pointer;
-  @apply bg-white dark:bg-gray-800;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply transition-colors duration-100;
-
-  &:hover {
-    @apply bg-gray-50 dark:bg-gray-900;
-  }
-}
-
-.log-row--expanded {
-  @apply bg-gray-50 dark:bg-gray-900;
-}
-
 .log-row--error {
   @apply border-l-2 border-l-red-500;
-}
-
-.log-row__main {
-  @apply flex items-center gap-2;
-}
-
-.log-row__main:focus-visible {
-  outline: 2px solid #f43f5e;
-  outline-offset: 2px;
 }
 
 .log-row__level {
@@ -262,7 +240,7 @@ const hasDetails = computed(
 }
 
 .log-row__details {
-  @apply mt-2 grid gap-2 cursor-auto;
+  @apply grid gap-2;
 }
 
 @media (min-width: 768px) {

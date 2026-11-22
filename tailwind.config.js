@@ -30,7 +30,12 @@ export default {
     // The broadcast console and its feed card load on demand and style their
     // own classes (#6614), the same way.
     '!./src/entities/broadcast/ui/**',
-    '!./src/pages/broadcast/**'
+    '!./src/pages/broadcast/**',
+    // The Logs page (#6701) and the parts only it loads, the same way.
+    '!./src/pages/logs/**',
+    '!./src/entities/monolog/ui/monolog-log-row/**',
+    '!./src/shared/ui/bar-histogram/**',
+    '!./src/shared/ui/facet-picker/**'
   ],
   variants: {
     extend: {

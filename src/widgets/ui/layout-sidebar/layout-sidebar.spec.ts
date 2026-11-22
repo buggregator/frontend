@@ -38,6 +38,7 @@ const router = createRouter({
     { path: '/favorites', name: RouteName.Favorites, component: page },
     { path: '/mock-server', name: RouteName.MockServer, component: page },
     { path: '/xdebug', name: RouteName.Xdebug, component: page },
+    { path: '/logs', name: RouteName.Logs, component: page },
     { path: '/login', name: RouteName.Login, component: page },
     { path: '/:type', name: RouteName.EventList, component: page },
   ],
@@ -284,6 +285,14 @@ describe('LayoutSidebar: groups and «new» badges', () => {
     expect(groups[3].find('a[title="Mock server"]').exists()).toBe(true)
   })
 
+  it('has the Logs page in Tools while the server takes Monolog records', () => {
+    const logs = expanded().get('a[title="Logs"]')
+    expect(logs.attributes('href')).toBe('/logs')
+
+    useSettingsStore().availableEvents = ['sentry', 'smtp']
+    expect(expanded().find('a[title="Logs"]').exists()).toBe(false)
+  })
+
   // The server serves mocks from the http-dump module (#6019).
   it('has no Mock server link when the server has http-dump off', () => {
     useSettingsStore().availableEvents = ['sentry', 'smtp']
@@ -314,7 +323,7 @@ describe('LayoutSidebar: groups and «new» badges', () => {
   })
 
   it('leaves out entries turned off in Settings › Menu, with their «new» badge and an emptied group', () => {
-    useSettingsStore().hiddenMenuItems = ['sentry', 'profiler', 'inspector', 'mock-server']
+    useSettingsStore().hiddenMenuItems = ['sentry', 'profiler', 'inspector', 'mock-server', 'logs']
     const wrapper = expanded()
 
     expect(wrapper.find('a[title="Sentry"]').exists()).toBe(false)

@@ -26,6 +26,7 @@ export const MENU_EVENT_GROUPS: { id: string; title: string; types: EventTypes[]
 ]
 
 export const MENU_TOOL_IDS = {
+  logs: 'logs',
   mockServer: 'mock-server',
   xdebug: 'xdebug'
 } as const
@@ -45,6 +46,7 @@ export const MENU_ITEMS: MenuItem[] = [
       groupTitle: group.title
     }))
   ),
+  { id: MENU_TOOL_IDS.logs, label: 'Logs', groupTitle: 'Tools' },
   { id: MENU_TOOL_IDS.mockServer, label: 'Mock server', groupTitle: 'Tools' },
   { id: MENU_TOOL_IDS.xdebug, label: 'Xdebug', groupTitle: 'Tools' }
 ]

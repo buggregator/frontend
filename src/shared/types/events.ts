@@ -42,7 +42,8 @@ export interface ServerEvent<T> {
   timestamp: number, // unavailable for some ray dump events
   searchable_text?: string,
   is_pinned?: boolean,
-  // Values the feed can be filtered by: {"host": ["web-1"], "tag:feature": ["checkout"]}.
+  // Values the feed can be filtered by: {"host": ["web-1"], "tag:feature": ["checkout"]};
+  // the Logs page also reads level, channel and trace.
   facets?: Record<string, string[]>,
 }
 
