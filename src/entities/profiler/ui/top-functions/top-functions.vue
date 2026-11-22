@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { formatDuration } from '@/shared/lib/formats/format-duration'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import { type EventId } from '@/shared/types'
-import { useProfiler } from '../../lib'
+import { nextSort, sortFunctions, type TopFunctionsSort, useProfiler } from '../../lib'
 import type { ProfilerTopFunctions } from '../../types'
 import { StatBoard } from '../../ui'
 
@@ -13,7 +13,7 @@ type Props = {
 
 const { getTopFunctions } = useProfiler()
 const props = defineProps<Props>()
-const metric = ref('excl_wt')
+const sort = ref<TopFunctionsSort>({ key: 'excl_wt', order: 'desc' })
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
@@ -27,11 +27,20 @@ const data = ref<ProfilerTopFunctions>({
   schema: []
 })
 
-const setMetric = (value: string | undefined) => {
-  if (value) {
-    metric.value = value
-  }
+// A click on the active column flips the order (frontend#280).
+const toggleSort = (key: string) => {
+  sort.value = nextSort(sort.value, key)
 }
+
+const ariaSort = (key: string) => {
+  if (sort.value.key !== key) {
+    return 'none'
+  }
+
+  return sort.value.order === 'asc' ? 'ascending' : 'descending'
+}
+
+const rows = computed(() => sortFunctions(data.value.functions, sort.value))
 
 const formatValue = (value: number, format: string) => {
   if (format === 'ms') {
@@ -53,8 +62,10 @@ const formatValue = (value: number, format: string) => {
   return value
 }
 
+// `order` asks the server for the lowest rows of the whole profile; rows are
+// sorted here as well, for a server that only knows biggest first.
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: metric.value })
+  data.value = await getTopFunctions(props.id, { metric: sort.value.key, order: sort.value.order })
 })
 </script>
 
@@ -73,25 +84,38 @@ watchEffect(async () => {
       <table class="top-fn__table">
         <thead>
           <tr>
-            <td
+            <th
               v-for="col in data.schema"
               :key="col.key"
+              scope="col"
               class="top-fn__th"
-              :class="{
-                'top-fn__th--sortable': col.sortable,
-                'top-fn__th--active': metric === col.key
-              }"
+              :class="{ 'top-fn__th--active': sort.key === col.key }"
               :title="col.description"
-              @click="setMetric(col.sortable ? col.key : undefined)"
+              :aria-sort="col.sortable ? ariaSort(col.key) : undefined"
             >
-              {{ col.label }}
-            </td>
+              <button
+                v-if="col.sortable"
+                type="button"
+                class="top-fn__sort"
+                @click="toggleSort(col.key)"
+              >
+                {{ col.label }}
+                <span
+                  class="top-fn__sort-arrow"
+                  :class="{ 'top-fn__sort-arrow--shown': sort.key === col.key }"
+                  aria-hidden="true"
+                >{{ sort.key === col.key && sort.order === 'asc' ? '▲' : '▼' }}</span>
+              </button>
+              <template v-else>
+                {{ col.label }}
+              </template>
+            </th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            v-for="item in data.functions"
+            v-for="item in rows"
             :key="item.function"
             class="top-fn__row"
           >
@@ -100,7 +124,7 @@ watchEffect(async () => {
               :key="col.key"
               class="top-fn__td"
               :class="{
-                'top-fn__td--active': metric === col.key,
+                'top-fn__td--active': sort.key === col.key,
                 'top-fn__td--fn': col.key === 'function'
               }"
             >
@@ -148,12 +172,44 @@ thead {
   @apply px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 whitespace-nowrap;
 }
 
-.top-fn__th--sortable {
-  @apply cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors;
+.top-fn__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: color 0.15s;
 }
 
-.top-fn__th--active {
-  @apply text-gray-800 dark:text-gray-100 border-x border-gray-300 dark:border-gray-600 bg-gray-200/50 dark:bg-gray-800/50;
+.top-fn__sort:hover {
+  color: #374151;
+}
+
+.dark .top-fn__sort:hover {
+  color: #e5e7eb;
+}
+
+.top-fn__sort:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.top-fn__sort-arrow {
+  font-size: 9px;
+  opacity: 0;
+}
+
+.top-fn__sort:hover .top-fn__sort-arrow {
+  opacity: 0.4;
+}
+
+.top-fn__sort-arrow--shown,
+.top-fn__sort:hover .top-fn__sort-arrow--shown {
+  opacity: 1;
 }
 
 /* Rows */
