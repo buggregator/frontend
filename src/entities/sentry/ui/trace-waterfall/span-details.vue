@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, useId } from 'vue'
-import { Tabs, tabIdOf } from '@/shared/ui'
+import { Tabs, tabIdOf } from '@/shared/ui/tabs'
 import { SOURCE_LABEL, formatAttrValue, otelException, splitOtelAttributes } from '../../lib/otel'
 import type { SentrySpan } from '../../types'
 
