@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { ALL_EVENT_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { useEvents } from '@/shared/lib/use-events'
 import { useEventsStore } from '@/shared/stores'
 import { type PageEventTypes, RouteName } from '@/shared/types'
 import { AppHeader, PauseButton, IconSvg, PeriodSelect, SearchBar } from '@/shared/ui'
 import { SetupHelpButton, hasSetupHelp } from '../setup-guide'
+
+// Its own chunk: the first load does not grow with it.
+const FeedFilterBar = defineAsyncComponent(() => import('../feed-filter-bar').then((m) => m.FeedFilterBar))
 
 const { events, cachedEvents, lockedIds } = useEvents()
 const eventsStore = useEventsStore()
@@ -106,8 +109,6 @@ const toggleUpdate = () => {
     </span>
 
     <template #controls>
-      <PeriodSelect />
-
       <SearchBar v-model="searchQuery" />
 
       <PauseButton
@@ -137,10 +138,20 @@ const toggleUpdate = () => {
         :section-title="PAGES_SETTINGS[type].sidebarTitle"
       />
     </template>
+
+    <!-- Row 2 (design #6737 A): the feed filters, the period on the right. -->
+    <template #toolbar>
+      <FeedFilterBar class="page-header__filters" />
+      <PeriodSelect />
+    </template>
   </AppHeader>
 </template>
 
 <style lang="scss" scoped>
+.page-header__filters {
+  @apply flex-1;
+}
+
 .nav__count {
   @apply text-2xs font-mono tabular-nums ml-2;
   @apply px-1.5 py-0.5 rounded-full;

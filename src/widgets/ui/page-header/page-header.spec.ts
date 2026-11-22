@@ -1,7 +1,7 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { ALL_EVENT_TYPES } from '@/shared/constants'
 import { EventTypes } from '@/shared/types'
@@ -29,6 +29,10 @@ vi.mock('@/shared/lib/use-events', () => ({
       runUpdatesByType: vi.fn(),
     },
   }),
+}))
+
+vi.mock('../feed-filter-bar', () => ({
+  FeedFilterBar: { name: 'FeedFilterBar', render: () => h('div', { 'data-test': 'feed-filter-bar' }) },
 }))
 
 const router = createRouter({
@@ -99,5 +103,31 @@ describe('PageHeader: Clear', () => {
       'Delete all events in this project? This cannot be undone. Pinned events stay.',
     )
     expect(removeAll).toHaveBeenCalledOnce()
+  })
+})
+
+describe('PageHeader: two rows (#6737 A)', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('row 1: title, search and actions; row 2: the feed filters and the period, once', async () => {
+    const w = mount(PageHeader, { props: { type: EventTypes.Monolog, title: 'Monolog' } as never, global: { plugins: [router] } })
+    await flushPromises()
+
+    const row1 = w.get('.app-header__row')
+    expect(row1.text()).toContain('Monolog')
+    expect(row1.find('button[aria-label="Clear all events"]').exists()).toBe(true)
+    expect(row1.find('select').exists()).toBe(false)
+
+    const row2 = w.get('[data-test="app-header-toolbar"]')
+    expect(row2.find('[data-test="feed-filter-bar"]').exists()).toBe(true)
+    expect(row2.findAll('select')).toHaveLength(1)
+    expect(w.findAll('select')).toHaveLength(1)
   })
 })
