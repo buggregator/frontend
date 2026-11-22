@@ -128,6 +128,7 @@ export const COMPONENT_TYPE_MAP: Record<RayEventTypes, {
     view: RayLock,
     getProps: (payload: RayPayload) => ({
       name: (payload.content as RayContentLock).name,
+      state: (payload.content as RayContentLock).state,
     }),
   },
   [RayEventTypes.Mailable]: {

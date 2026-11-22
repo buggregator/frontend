@@ -151,8 +151,12 @@ export interface RayContentEvent {
   class_based_event: boolean
 }
 
+/** Set by the server once the pause was released; absent while it waits. */
+export type RayLockState = 'continued' | 'stopped'
+
 export interface RayContentLock {
   name: string,
+  state?: RayLockState,
 }
 
 export interface RayContentCustom {
