@@ -115,15 +115,19 @@ describe('SentryQueuesPage', () => {
     answer(() => list([job('a')]))
     const w = await render()
     const buttons = w.get('[data-test="queues-filter"]').findAll('button')
-    expect(buttons.map((b) => b.text())).toEqual(['All', 'emails 2', 'reports 1'])
+    expect(buttons.map((b) => [b.get('.ui-seg__label').text(), b.findAll('.ui-seg__count').map((c) => c.text()).join('')])).toEqual([
+      ['All', ''],
+      ['emails', '2'],
+      ['reports', '1']
+    ])
 
-    await buttons[2].trigger('click')
+    await w.get('[data-test="queues-queue-reports"]').trigger('click')
     await settle()
     expect(calls().at(-1)!.searchParams.get('queue')).toBe('reports')
-    expect(w.get('[data-test="queues-filter"]').findAll('button')[2].attributes('aria-pressed')).toBe('true')
+    expect(w.get('[data-test="queues-queue-reports"]').attributes('aria-pressed')).toBe('true')
 
     answer(() => list([]))
-    await w.get('[data-test="queues-failed-only"]').trigger('click')
+    await w.get('[data-test="queues-failed-true"]').trigger('click')
     await settle()
     expect(calls().at(-1)!.searchParams.get('status')).toBe('failed')
     const none = w.get('[data-test="queues-no-match"]')

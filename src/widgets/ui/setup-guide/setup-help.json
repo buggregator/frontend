@@ -196,7 +196,7 @@
       "steps": [
         "Use the same DSN as for errors, with tracing on: SENTRY_TRACES_SAMPLE_RATE=1.",
         "Turn on queue job tracing: SENTRY_TRACE_QUEUE_ENABLED=true.",
-        "If your app has a published config/sentry.php, check that it reads the variable: 'queue_job_transactions' => env('SENTRY_TRACE_QUEUE_ENABLED', false).",
+        "If your app has a published config/sentry.php, check that it reads the variable: 'queue_job_transactions' => env('SENTRY_TRACE_QUEUE_ENABLED', …).",
         "Restart the queue worker so it reads the new settings. A job shows up here when its attempt ends.",
         "Jobs on the sync driver do not show: they run inside the request, not on a worker.",
         "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."

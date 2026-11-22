@@ -5,7 +5,7 @@ import { computed, ref } from 'vue'
 import { SetupGuide } from '@/widgets/ui'
 import { formatJobMs, SentryQueueTable, useCronClock, useQueueJobs, useQueueSummary } from '@/entities/sentry'
 import { PERIOD_OPTIONS, useEventsStore } from '@/shared/stores'
-import { SkeletonLoader, StatusPanel } from '@/shared/ui'
+import { SegmentedControl, SkeletonLoader, StatusPanel } from '@/shared/ui'
 
 useTitle('Sentry Queues | Buggregator')
 
@@ -29,6 +29,15 @@ const periodLabel = computed(
 )
 const filtered = computed(() => queue.value !== '' || failedOnly.value)
 const queues = computed(() => summary.value?.queues ?? [])
+const QUEUE_ALL = { value: '', label: 'All' }
+const queueOptions = computed(() => [
+  QUEUE_ALL,
+  ...queues.value.map((q) => ({ value: q.queue, label: q.queue || 'default', count: q.jobs }))
+])
+const STATUS_OPTIONS = [
+  { value: false, label: 'All' },
+  { value: true, label: 'Failed only' }
+]
 
 const clearFilter = () => {
   queue.value = ''
@@ -108,7 +117,7 @@ const showAllTime = () => eventsStore.setPeriod('all')
             {{ summary.failed }}
           </dd>
         </div>
-        <div>
+        <div title="Jobs with more than one attempt, failed ones included">
           <dt>retried</dt>
           <dd>{{ summary.retried }}</dd>
         </div>
@@ -119,44 +128,22 @@ const showAllTime = () => eventsStore.setPeriod('all')
       </dl>
 
       <div class="queues-page__toolbar">
-        <div
+        <SegmentedControl
           v-if="queues.length > 1 || queue"
-          class="queues-page__seg"
-          role="group"
-          aria-label="Queue"
+          v-model="queue"
+          :options="queueOptions"
+          label="Queue"
+          size="sm"
+          test-prefix="queues-queue-"
           data-test="queues-filter"
-        >
-          <button
-            type="button"
-            :aria-pressed="queue === ''"
-            @click="queue = ''"
-          >
-            All
-          </button>
-          <button
-            v-for="q in queues"
-            :key="q.queue"
-            type="button"
-            :aria-pressed="queue === q.queue"
-            @click="queue = q.queue"
-          >
-            {{ q.queue || 'default' }} <span class="queues-page__count">{{ q.jobs }}</span>
-          </button>
-        </div>
-        <div
-          class="queues-page__seg"
-          role="group"
-          aria-label="Status"
-        >
-          <button
-            type="button"
-            :aria-pressed="failedOnly"
-            data-test="queues-failed-only"
-            @click="failedOnly = !failedOnly"
-          >
-            Failed only
-          </button>
-        </div>
+        />
+        <SegmentedControl
+          v-model="failedOnly"
+          :options="STATUS_OPTIONS"
+          label="Status"
+          size="sm"
+          test-prefix="queues-failed-"
+        />
       </div>
 
       <StatusPanel
@@ -258,20 +245,6 @@ const showAllTime = () => eventsStore.setPeriod('all')
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
-}
-
-.queues-page__seg {
-  @include cp.seg;
-
-  flex-wrap: wrap;
-  max-width: 100%;
-}
-
-.queues-page__count {
-  @apply text-gray-500 dark:text-gray-400;
-
-  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
-  font-weight: 400;
 }
 
 .queues-page__more-btn {
