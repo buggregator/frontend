@@ -62,8 +62,16 @@ const duration = (item: TimelineItem) => {
 }
 
 .tl-list__row {
-  @apply w-full flex items-baseline gap-3 px-2 py-1.5 text-left;
-  @apply border-b border-gray-100 dark:border-gray-700/40;
+  @apply w-full px-2 py-1.5 text-left gap-x-3 gap-y-0.5;
+  // Phone: time, kind and duration on one line, the text under them.
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+
+  @media (min-width: 640px) {
+    display: flex;
+  }
+  @apply border-b border-gray-100 dark:border-gray-700/50;
   @apply hover:bg-gray-50 dark:hover:bg-gray-900;
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500;
 }
@@ -77,18 +85,24 @@ const duration = (item: TimelineItem) => {
 }
 
 .tl-list__at {
-  @apply w-16 flex-none font-mono text-gray-500 dark:text-gray-400;
+  @apply w-20 flex-none font-mono text-gray-500 dark:text-gray-400;
 }
 
 .tl-list__kind {
-  @apply w-16 flex-none font-mono text-gray-500 dark:text-gray-400;
+  @apply w-20 flex-none font-mono text-gray-500 dark:text-gray-400;
 }
 
 .tl-list__label {
-  @apply flex-1 min-w-0 font-mono text-gray-900 dark:text-gray-100 break-all sm:truncate;
+  @apply flex-1 min-w-0 font-mono text-gray-900 dark:text-gray-100 break-all;
+  grid-column: 1 / -1;
+  grid-row: 2;
+
+  @media (min-width: 640px) {
+    @apply truncate;
+  }
 }
 
 .tl-list__dur {
-  @apply w-16 flex-none text-right font-mono text-gray-500 dark:text-gray-400;
+  @apply w-20 flex-none text-right font-mono text-gray-500 dark:text-gray-400;
 }
 </style>

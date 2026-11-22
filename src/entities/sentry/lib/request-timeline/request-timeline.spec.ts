@@ -113,4 +113,12 @@ describe('timelineSummary', () => {
       { lane: 'events', text: '1 error', tone: 'error' }
     ])
   })
+
+  it('says errors, not failures, for logs', () => {
+    const t = buildRequestTimeline(detail([]), [
+      { id: 'a', lane: 'logs', atMs: 1, label: 'INFO ok' },
+      { id: 'b', lane: 'logs', atMs: 2, label: 'ERROR no', tone: 'error' }
+    ])
+    expect(timelineSummary(t)).toEqual([{ lane: 'logs', text: '2 logs · 1 error', tone: 'error' }])
+  })
 })

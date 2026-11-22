@@ -17,4 +17,3 @@ export * from './sentry-view-tabs';
 export * from './sentry-feedback';
 export * from './sentry-crons';
 export * from './request-timeline';
-export * from './trace-hint';

@@ -124,15 +124,16 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__tick {
-  @apply absolute top-0 -translate-x-1/2 font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap;
+  @apply absolute top-0 font-mono text-gray-500 dark:text-gray-400 whitespace-nowrap;
+  transform: translateX(-50%);
 
   &:first-child {
-    @apply translate-x-0;
+    transform: none;
   }
 }
 
 .tl-lanes__tick--end {
-  @apply -translate-x-full;
+  transform: translateX(-100%);
 }
 
 .tl-lanes__item {
@@ -140,12 +141,13 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__bar {
-  @apply top-0.5 bottom-0.5 rounded-sm overflow-hidden whitespace-nowrap px-1 leading-4;
+  @apply top-0.5 rounded-sm overflow-hidden whitespace-nowrap px-1 leading-4;
   @apply bg-gray-400 dark:bg-gray-500 text-gray-900 dark:text-gray-100;
+  bottom: 2px;
   min-width: 3px;
 
   &:hover {
-    @apply bg-gray-500 dark:bg-gray-400;
+    filter: brightness(0.9);
   }
 }
 
@@ -154,25 +156,35 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__marker {
-  @apply top-1/2 w-2.5 h-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45;
-  @apply bg-gray-500 dark:bg-gray-300;
+  @apply top-1/2 w-2.5 h-2.5;
+  @apply bg-gray-400;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
-.tl-lanes__item--error {
-  @apply bg-red-500 dark:bg-red-500 text-white;
+// Over the bar's own colours in both themes.
+.tl-lanes__item.tl-lanes__item--error {
+  @apply text-white;
+  background-color: #ef4444;
 }
 
-.tl-lanes__item--warning {
-  @apply bg-amber-500 dark:bg-amber-400;
+.tl-lanes__item.tl-lanes__item--warning {
+  background-color: #f59e0b;
 }
 
 .tl-lanes__item--n1 {
-  @apply bg-amber-300 dark:bg-amber-400 text-gray-900 font-semibold;
-  @apply outline-dashed outline-1 outline-offset-1 outline-amber-600 dark:outline-amber-300;
+  @apply dark:bg-amber-400 text-gray-900 font-semibold;
+  background-color: #fcd34d;
+  outline: 1px dashed #d97706;
+  outline-offset: 1px;
 }
 
 .tl-lanes__item--selected {
-  @apply ring-2 ring-blue-500 ring-offset-1 ring-offset-white dark:ring-offset-gray-800 z-10;
+  @apply z-10;
+  box-shadow: 0 0 0 1px #fff, 0 0 0 3px #3b82f6;
+
+  :global(.dark) & {
+    box-shadow: 0 0 0 1px #1f2937, 0 0 0 3px #60a5fa;
+  }
 }
 
 .tl-lanes__legend {
@@ -180,7 +192,11 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__key {
-  @apply inline-block w-3 h-2 rounded-sm ml-2 first:ml-0;
+  @apply inline-block w-3 h-2 rounded-sm ml-2;
+
+  &:first-child {
+    margin-left: 0;
+  }
 }
 
 .tl-lanes__key--bar {
@@ -188,7 +204,8 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__key--marker {
-  @apply w-2 h-2 rotate-45 bg-gray-500 dark:bg-gray-300;
+  @apply w-2 h-2 bg-gray-400;
+  transform: rotate(45deg);
 }
 
 .tl-lanes__key--error {
@@ -196,6 +213,7 @@ const itemClass = (item: TimelineItem) => ({
 }
 
 .tl-lanes__key--n1 {
-  @apply bg-amber-300 outline-dashed outline-1 outline-amber-600;
+  background-color: #fcd34d;
+  outline: 1px dashed #d97706;
 }
 </style>

@@ -239,7 +239,8 @@ export const timelineSummary = (timeline: RequestTimelineModel): SummaryPart[] =
     const n = count(lane)
     if (!n) return
     const errors = items(lane).filter((i) => i.isError).length
-    parts.push({ lane, text: plural(n, one, many) + (errors && lane !== 'events' ? ` · ${errors} failed` : ''), tone: errors ? 'error' : undefined })
+    const failed = lane === 'logs' ? plural(errors, 'error') : `${errors} failed`
+    parts.push({ lane, text: plural(n, one, many) + (errors && lane !== 'events' ? ` · ${failed}` : ''), tone: errors ? 'error' : undefined })
   }
   add('cache', 'cache call')
   add('http', 'outgoing call')

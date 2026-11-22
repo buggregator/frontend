@@ -117,7 +117,7 @@ export interface SentryNPlusOne {
   query: string
   count: number
   total_ms: number
-  origin: string
+  origin: string | null
   span_ids: string[]
 }
 

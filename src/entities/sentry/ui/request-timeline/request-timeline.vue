@@ -145,7 +145,11 @@ const close = async () => {
 }
 
 .request-timeline__body {
-  @apply flex flex-col lg:flex-row min-h-0 flex-1;
+  @apply flex flex-col min-h-0 flex-1;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
 }
 
 .request-timeline__main {
@@ -153,7 +157,11 @@ const close = async () => {
 }
 
 .request-timeline__aside {
-  @apply w-full lg:w-80 flex-none p-4 text-xs;
+  @apply w-full flex-none p-4 text-xs;
+
+  @media (min-width: 1024px) {
+    width: 20rem;
+  }
   @apply border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700/50;
 }
 
