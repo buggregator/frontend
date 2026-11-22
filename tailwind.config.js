@@ -27,6 +27,11 @@ export default {
     '!./src/entities/sentry/ui/sentry-crons/**',
     '!./src/pages/sentry/ui/sentry-crons-page/**',
     '!./src/pages/sentry/ui/sentry-cron-job-page/**',
+    // The Queues tab (#6713): the same, async, own BEM classes only.
+    '!./src/entities/sentry/lib/queues/**',
+    '!./src/entities/sentry/ui/sentry-queues/**',
+    '!./src/pages/sentry/ui/sentry-queues-page/**',
+    '!./src/pages/sentry/ui/sentry-queue-job-page/**',
     // The broadcast console and its feed card load on demand and style their
     // own classes (#6614), the same way.
     '!./src/entities/broadcast/ui/**',

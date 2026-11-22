@@ -5,6 +5,7 @@ import { useEventsStore } from '@/shared/stores'
 import { Tabs, type TabItem } from '@/shared/ui'
 import { useSentryCounts } from '../../lib'
 import { useCronMonitors } from '../../lib/crons'
+import { useQueueSummary } from '../../lib/queues'
 import { onSentryEvent } from '../../lib/use-sentry-events-bus'
 import type { SentryTab } from '../../lib/use-sentry-filters'
 
@@ -35,7 +36,8 @@ const TABS: { id: SentryTab; label: string; to: string }[] = [
   { id: 'logs', label: 'Logs', to: '/sentry/logs' },
   { id: 'metrics', label: 'Metrics', to: '/sentry/metrics' },
   { id: 'feedback', label: 'Feedback', to: '/sentry/feedback' },
-  { id: 'crons', label: 'Crons', to: '/sentry/crons' }
+  { id: 'crons', label: 'Crons', to: '/sentry/crons' },
+  { id: 'queues', label: 'Queues', to: '/sentry/queues' }
 ]
 
 // Cron monitors are not in /counts and not in the period: the tab counts the
@@ -50,12 +52,22 @@ const {
 } = useCronMonitors()
 const hasCrons = computed(() => cronsLoaded.value && !cronsUnsupported.value && !cronsError.value)
 
-const countOf = (id: SentryTab) => (id === 'crons' ? cronMonitors.value.length : (counts.value[id] ?? 0))
+// Queue jobs are not in /counts either: the tab counts the jobs of the
+// period from the queues summary (#6713). Like the other tabs it shows when
+// there are jobs or it is open; an older server answers 404: no tab.
+const { summary: queueSummary, unsupported: queuesUnsupported } = useQueueSummary()
+
+const countOf = (id: SentryTab) => {
+  if (id === 'crons') return cronMonitors.value.length
+  if (id === 'queues') return queueSummary.value?.jobs ?? 0
+  return counts.value[id] ?? 0
+}
 
 // Tabs without data stay hidden; Exceptions and the open tab always show.
 const isShown = (id: SentryTab) => {
   if (id === 'exceptions') return true
   if (id === 'crons') return !cronsUnsupported.value && (hasCrons.value || id === props.current)
+  if (id === 'queues') return !queuesUnsupported.value && (countOf(id) > 0 || id === props.current)
   return id === props.current || countOf(id) > 0
 }
 const tabs = computed<TabItem[]>(() =>

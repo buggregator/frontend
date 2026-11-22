@@ -144,3 +144,53 @@ describe('SentrySubNav: Crons tab', () => {
     expect((await render('crons')).find('[data-test="sentry-tab-crons"]').exists()).toBe(false)
   })
 })
+
+// Queue jobs are counted from the queues summary of the period (#6713).
+describe('SentrySubNav: Queues tab', () => {
+  const queues = (answer: () => Response) =>
+    vi.fn((url: string) =>
+      Promise.resolve(
+        url.includes('/api/sentry/queues/summary')
+          ? answer()
+          : url.includes('/api/crons')
+            ? new Response('', { status: 404 })
+            : new Response(JSON.stringify({ exceptions: 1, traces: 0, logs: 0, metrics: 0 }))
+      )
+    )
+  const summary = (jobs: number) => new Response(JSON.stringify({ jobs, failed: 0, retried: 0, attempts: jobs, avg_duration_ms: null, queues: [] }))
+
+  beforeEach(() => setActivePinia(createPinia()))
+  afterEach(() => vi.unstubAllGlobals())
+
+  const render = async (current = '') => {
+    const wrapper = mount(SentrySubNav, {
+      props: { current: current as never },
+      global: { stubs: { RouterLink: RouterLinkStub } }
+    })
+    await flushPromises()
+    return wrapper
+  }
+
+  it('shows with the number of jobs in the period, in the project and period', async () => {
+    const fetchMock = queues(() => summary(7))
+    vi.stubGlobal('fetch', fetchMock)
+    useEventsStore().setActiveProjectKey('shop')
+    useEventsStore().setPeriod('24h')
+    const wrapper = await render()
+    expect(wrapper.get('[data-test="sentry-tab-queues"]').text()).toBe('Queues 7')
+    const url = (fetchMock.mock.calls as unknown as [string][]).find(([u]) => u.includes('/queues/summary'))![0]
+    expect(url).toContain('project=shop')
+    expect(url).toContain('window=24h')
+  })
+
+  it('no jobs: hidden, unless it is the open tab', async () => {
+    vi.stubGlobal('fetch', queues(() => summary(0)))
+    expect((await render()).find('[data-test="sentry-tab-queues"]').exists()).toBe(false)
+    expect((await render('queues')).get('[data-test="sentry-tab-queues"]').text()).toBe('Queues')
+  })
+
+  it('an older server without queues (404): no tab, also when open', async () => {
+    vi.stubGlobal('fetch', queues(() => new Response('', { status: 404 })))
+    expect((await render('queues')).find('[data-test="sentry-tab-queues"]').exists()).toBe(false)
+  })
+})

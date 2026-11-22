@@ -97,4 +97,14 @@ describe('SentryLayoutPage header (#5980)', () => {
       expect(header.find('.filter-stub').exists()).toBe(false)
     }
   })
+
+  it('Queues and a queue job: the Queues tab, its own setup help, no filters in the header', () => {
+    for (const name of ['sentry-queues', 'sentry-queue-job']) {
+      routeName.value = name
+      const header = render().get('header')
+      expect(header.find('.tabs-stub').attributes('data-current')).toBe('queues')
+      expect(header.get('.help-stub').attributes('data-section')).toBe('queues')
+      expect(header.find('.filter-stub').exists()).toBe(false)
+    }
+  })
 })

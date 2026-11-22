@@ -15,3 +15,4 @@ export { serviceColors } from './trace-graph/trace-graph';
 export * from "./use-sentry-feedback";
 export * from "./crons";
 export * from "./request-timeline";
+export * from "./queues";

@@ -1,4 +1,4 @@
-// Shared bits of the Crons pages. Plain CSS and @apply only: these
+// Shared bits of the Crons and Queues pages. Plain CSS and @apply only: these
 // directories are not scanned by Tailwind (first-load CSS budget).
 @mixin focus-ring {
   &:focus-visible {
@@ -7,6 +7,43 @@
 
     .dark & {
       outline-color: #60a5fa;
+    }
+  }
+}
+
+// A row of toggle buttons (aria-pressed): Crons «All / Needs attention»,
+// Queues «All / each queue» (#6713).
+@mixin seg {
+  @apply border border-gray-300 dark:border-gray-600;
+
+  display: inline-flex;
+  border-radius: 4px;
+  overflow: hidden;
+
+  button {
+    @include focus-ring;
+    @apply text-gray-600 dark:text-gray-400 border-l border-gray-300 dark:border-gray-600;
+
+    padding: 4px 10px;
+    background: none;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:first-child {
+      border-left: 0;
+    }
+
+    &[aria-pressed='true'] {
+      @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100;
+
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 639px) {
+    button {
+      padding: 10px 12px;
+      font-size: 13px;
     }
   }
 }

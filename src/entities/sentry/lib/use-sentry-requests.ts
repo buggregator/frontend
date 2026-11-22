@@ -17,6 +17,9 @@ import type {
   SentrySequence,
   CronMonitor,
   CronCheckIn,
+  QueueJob,
+  QueueJobDetail,
+  QueueSummary,
 } from '../types'
 
 const BASE = `${REST_API_URL}/api/sentry`
@@ -139,6 +142,24 @@ export const useSentryRequests = () => {
     )
   }
 
+  // Queue jobs of the project and period, newest last attempt first (#6713).
+  // Filters: queue, job (class), status = ok | failed | retried.
+  const getQueueJobs = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
+    return fetchJSON<PaginatedResponse<QueueJob>>(`${BASE}/queues/jobs${qs ? `?${qs}` : ''}`)
+  }
+
+  // Totals and queues of the period; 404 on a server older than #493.
+  const getQueueSummary = (params: Record<string, string> = {}) => {
+    const qs = new URLSearchParams(withScope(params)).toString()
+    return fetchJSON<QueueSummary>(`${BASE}/queues/summary${qs ? `?${qs}` : ''}`)
+  }
+
+  // One job with its attempts. No project or period, as for a trace: the id
+  // is the message id, and a link from another project must still open.
+  const getQueueJob = (id: string) =>
+    fetchJSON<QueueJobDetail>(`${BASE}/queues/jobs/${encodeURIComponent(id)}`)
+
   // The badges label the lists, so they take the same scope.
   const getCounts = () => {
     const qs = new URLSearchParams(withScope()).toString()
@@ -162,5 +183,8 @@ export const useSentryRequests = () => {
     getEventFeedback,
     getCronMonitors,
     getCronCheckIns,
+    getQueueJobs,
+    getQueueSummary,
+    getQueueJob,
   }
 }

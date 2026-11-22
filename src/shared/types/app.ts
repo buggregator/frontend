@@ -21,4 +21,6 @@ export enum RouteName {
   SentryFeedback = 'sentry-feedback',
   SentryCrons = 'sentry-crons',
   SentryCronJob = 'sentry-cron-job',
+  SentryQueues = 'sentry-queues',
+  SentryQueueJob = 'sentry-queue-job',
 }

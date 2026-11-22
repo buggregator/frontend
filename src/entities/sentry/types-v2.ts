@@ -368,3 +368,72 @@ export interface CronCheckIn {
   server_made: boolean
   expected_at: string | null
 }
+
+// Queue jobs (#6713, buggregator/server #493: modules/sentry/api_queues.go),
+// from `queue.process` transactions. One row per job: attempts grouped by
+// the message id; the status is the last attempt's ("ok" or a failure).
+// Sentry sends an attempt only when it ends: no running jobs.
+export interface QueueJob {
+  // The message id, or the transaction id of a job without one.
+  id: string
+  message_id: string | null
+  job: string
+  queue: string
+  connection: string
+  status: string
+  failed: boolean
+  attempts: number
+  failed_attempts: number
+  retried: boolean
+  duration_ms: number | null
+  // Time the message waited in the queue before the last attempt.
+  latency_ms: number | null
+  started_at: string | null
+  finished_at: string | null
+  trace_id: string
+  transaction_id: string
+  project: string
+}
+
+export interface QueueSummary {
+  jobs: number
+  failed: number
+  retried: number
+  attempts: number
+  avg_duration_ms: number | null
+  queues: { queue: string; jobs: number; failed: number }[]
+}
+
+export interface QueueAttemptError {
+  // The error event id: the Sentry exception page.
+  id: string
+  exception_type: string | null
+  exception_value: string | null
+  event_ts: string
+}
+
+export interface QueueAttempt {
+  transaction_id: string
+  trace_id: string
+  attempt: number
+  status: string
+  failed: boolean
+  duration_ms: number | null
+  latency_ms: number | null
+  started_at: string | null
+  finished_at: string | null
+  // The pause before this attempt; null for the first.
+  gap_ms: number | null
+  errors: QueueAttemptError[]
+}
+
+export interface QueueJobDetail extends QueueJob {
+  attempt_list: QueueAttempt[]
+  // The request that queued the job, when its queue.publish span is stored.
+  dispatched_by: {
+    transaction_id: string
+    trace_id: string
+    transaction_name: string
+    start_ts: string | null
+  } | null
+}

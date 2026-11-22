@@ -44,3 +44,60 @@
   white-space: nowrap;
   border: 0;
 }
+
+// Shared by the Crons and the Queues pages (#6713): same boxes, same type.
+@mixin mono {
+  font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
+  font-variant-ligatures: none;
+}
+
+@mixin panel {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+
+  border-radius: 6px;
+}
+
+@mixin link {
+  @include focus-ring;
+  @apply text-blue-700 dark:text-blue-300;
+
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 12px;
+}
+
+// A row of number tiles: <dl> of <div><dt>label</dt><dd>number</dd></div>.
+@mixin kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+
+  > div {
+    @include panel;
+
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 8px 12px;
+    min-width: 0;
+  }
+
+  dt {
+    @apply text-gray-500 dark:text-gray-400;
+
+    font-size: 12px;
+  }
+
+  dd {
+    @include mono;
+    @apply text-gray-900 dark:text-gray-100;
+
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 639px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

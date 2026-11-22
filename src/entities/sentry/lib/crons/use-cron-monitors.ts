@@ -12,7 +12,8 @@ import { useSentryRequests } from '../use-sentry-requests'
 // (server modules/sentry/cron_ingest.go, cron_checker.go); the list also
 // refetches when the tab comes back into view, in case the socket was down.
 
-const isNotFound = (e: unknown) => (e as { status?: number })?.status === 404
+/** A 404: the route or the item is not there (also used by queue jobs, #6713). */
+export const isNotFound = (e: unknown) => (e as { status?: number })?.status === 404
 
 /** «now» for relative times, moving every 15 s. */
 export const useCronClock = () => {
@@ -21,7 +22,7 @@ export const useCronClock = () => {
 }
 
 // Refetch when the page is seen again after being hidden.
-const onVisibleAgain = (load: () => void) => {
+export const onVisibleAgain = (load: () => void) => {
   const visibility = useDocumentVisibility()
   watch(visibility, (v, old) => {
     if (v === 'visible' && old === 'hidden') load()

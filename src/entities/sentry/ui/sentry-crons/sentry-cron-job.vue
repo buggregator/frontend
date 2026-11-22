@@ -323,12 +323,7 @@ const rows = computed(() =>
 }
 
 .cron-job__link {
-  @include cr.focus-ring;
-  @apply text-blue-700 dark:text-blue-300;
-
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  font-size: 12px;
+  @include cr.link;
 }
 
 .cron-job__head {
@@ -431,35 +426,7 @@ const rows = computed(() =>
 }
 
 .cron-job__kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-}
-
-.cron-job__kpi {
-  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
-
-  display: flex;
-  flex-direction: column-reverse;
-  padding: 8px 12px;
-  border-radius: 6px;
-  min-width: 0;
-
-  dt {
-    @apply text-gray-500 dark:text-gray-400;
-
-    font-size: 12px;
-  }
-
-  dd {
-    @apply text-gray-900 dark:text-gray-100;
-
-    margin: 0;
-    font-family: 'JetBrains Mono Variable', ui-monospace, monospace;
-    font-size: 18px;
-    font-weight: 600;
-  }
+  @include cr.kpis;
 }
 
 .cron-job__panel {
@@ -609,10 +576,6 @@ const rows = computed(() =>
 @media (max-width: 639px) {
   .cron-job {
     padding: 12px;
-  }
-
-  .cron-job__kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .cron-job__table th,
