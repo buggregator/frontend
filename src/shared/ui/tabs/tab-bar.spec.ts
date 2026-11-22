@@ -1,5 +1,5 @@
 import { mount, RouterLinkStub } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Tabs from './tab-bar.vue'
 import { tabIdOf, type TabItem } from './types'
 
@@ -99,5 +99,48 @@ describe('Tabs', () => {
     expect(all[1].attributes('aria-current')).toBe('page')
     expect(all[0].attributes('aria-current')).toBeUndefined()
     expect(all[0].text()).toBe('Exceptions 21')
+  })
+
+  describe('a row too wide for its box', () => {
+    // jsdom has no layout: a 300 px track of 100 px tabs, scrolled to 0.
+    const geometry = (el: HTMLElement) => {
+      if (el.classList.contains('ui-tabs__track')) return { offsetLeft: 0, offsetWidth: 300, clientWidth: 300, scrollWidth: 400 }
+      const i = [...(el.parentElement?.children ?? [])].indexOf(el)
+      return { offsetLeft: i * 100, offsetWidth: 100, clientWidth: 100, scrollWidth: 100 }
+    }
+    const props = ['offsetLeft', 'offsetWidth', 'clientWidth', 'scrollWidth'] as const
+    const saved = props.map((p) => [p, Object.getOwnPropertyDescriptor(HTMLElement.prototype, p) ?? Object.getOwnPropertyDescriptor(Element.prototype, p)] as const)
+
+    const withLayout = () => {
+      for (const p of props) {
+        Object.defineProperty(HTMLElement.prototype, p, {
+          configurable: true,
+          get(this: HTMLElement) {
+            return geometry(this)[p]
+          }
+        })
+      }
+      const scrollTo = vi.fn()
+      HTMLElement.prototype.scrollTo = scrollTo as unknown as HTMLElement['scrollTo']
+      return scrollTo
+    }
+
+    afterEach(() => {
+      for (const [p, d] of saved) {
+        if (d) Object.defineProperty(HTMLElement.prototype, p, d)
+        else delete (HTMLElement.prototype as unknown as Record<string, unknown>)[p]
+      }
+    })
+
+    it('a visible current tab is left where it is; a hidden one is scrolled into view', async () => {
+      const scrollTo = withLayout()
+      const w = render({ modelValue: 'map' })
+      await settle()
+      expect(scrollTo).not.toHaveBeenCalled()
+
+      await w.setProps({ modelValue: 'errors' })
+      await settle()
+      expect(scrollTo).toHaveBeenCalledWith({ left: 124, behavior: 'smooth' })
+    })
   })
 })
