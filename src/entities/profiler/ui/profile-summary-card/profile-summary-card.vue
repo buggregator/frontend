@@ -182,7 +182,7 @@ onUnmounted(() => {
 
 /* Popover */
 .ps-popover {
-  @apply absolute top-full right-0 mt-1.5 z-50;
+  @apply absolute top-full right-0 mt-1.5 z-popover;
   @apply flex gap-2.5 p-3;
   @apply bg-white dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700;

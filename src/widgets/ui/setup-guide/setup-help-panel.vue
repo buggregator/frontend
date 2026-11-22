@@ -84,12 +84,12 @@ onMounted(() => nextTick(() => guide.value?.focusTabs()))
 
 <style lang="scss" scoped>
 .setup-panel__scrim {
-  @apply fixed inset-0 z-[60] bg-gray-900/45 dark:bg-gray-950/60;
+  @apply fixed inset-0 z-overlay bg-gray-900/45 dark:bg-gray-950/60;
   animation: setup-fade 0.2s ease-out;
 }
 
 .setup-panel {
-  @apply fixed top-0 right-0 bottom-0 z-[61] flex flex-col;
+  @apply fixed top-0 right-0 bottom-0 z-[calc(var(--z-overlay)+1)] flex flex-col;
   @apply bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700;
   width: min(560px, 100vw);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);

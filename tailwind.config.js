@@ -68,6 +68,19 @@ export default {
       fontSize: {
         '2xs': ['0.7rem', { lineHeight: '1.1rem' }]
       },
+      // The one stacking scale of the app (#6795); values in src/assets/index.css.
+      // Numbers 1–30 are for overlaps inside one component only.
+      zIndex: {
+        sticky: 'var(--z-sticky)',
+        sidebar: 'var(--z-sidebar)',
+        header: 'var(--z-header)',
+        banner: 'var(--z-banner)',
+        overlay: 'var(--z-overlay)',
+        popover: 'var(--z-popover)',
+        modal: 'var(--z-modal)',
+        toast: 'var(--z-toast)',
+        skip: 'var(--z-skip)'
+      },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in': 'fadeIn 0.3s ease-out',

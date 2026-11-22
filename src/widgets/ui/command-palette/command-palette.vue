@@ -203,7 +203,7 @@ const onKeydown = (e: KeyboardEvent) => {
 
 <style lang="scss" scoped>
 .palette-backdrop {
-  @apply fixed inset-0 z-[9999] flex justify-center items-start;
+  @apply fixed inset-0 z-modal flex justify-center items-start;
   @apply bg-gray-950/60;
   padding: 12vh 1rem 1rem;
 }

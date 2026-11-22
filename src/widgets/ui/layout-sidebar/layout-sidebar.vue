@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useFloating } from '@floating-ui/vue'
+import { flip, shift, useFloating } from '@floating-ui/vue'
 import { onClickOutside, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
@@ -131,12 +131,22 @@ onClickOutside(userMenu, () => {
   isVisibleProfile.value = false
 })
 
+// On a phone there is no room on the right: a menu opens below (the project
+// list, at the top) or above (the user menu, at the bottom), kept inside the
+// screen.
+const fitBelow = [flip({ fallbackPlacements: ['bottom-start'] }), shift({ padding: 8 })]
+const fitAbove = [flip({ fallbackPlacements: ['top-start'] }), shift({ padding: 8 })]
+
 const { floatingStyles: projectDdStyles } = useFloating(projectDd, projectMenu, {
-  placement: 'right-start'
+  placement: 'right-start',
+  strategy: 'fixed',
+  middleware: fitBelow
 })
 
 const { floatingStyles: userDdStyles } = useFloating(userDd, userMenu, {
-  placement: 'right'
+  placement: 'right',
+  strategy: 'fixed',
+  middleware: fitAbove
 })
 
 const connectionStatus = computed(() => (isConnectedWS.value ? 'connected' : 'disconnected'))
@@ -624,69 +634,72 @@ const linkLabel = (type: EventType) =>
       </div>
     </nav>
 
-    <!--  Need to place projectMenu out of nav because of overflow -->
-    <div
-      v-if="isVisibleProjects"
-      ref="projectMenu"
-      role="menu"
-      aria-label="Project list"
-      class="layout-sidebar__dropdown-items"
-      :style="projectDdStyles"
-      @keydown="onProjectMenuKeydown"
-    >
-      <button
-        v-for="project in availableProjects"
-        :key="project.key"
-        class="layout-sidebar__dropdown-item"
-        role="menuitemradio"
-        :title="project.name"
-        :aria-checked="activeProject.key === project.key ? 'true' : 'false'"
-        :aria-current="activeProject.key === project.key ? 'true' : undefined"
-        :class="{
-          'layout-sidebar__dropdown-item--active': activeProject.key === project.key
-        }"
-        tabindex="-1"
-        @click="setProject(project.key)"
+    <!-- The sidebar's menus live in <body>: above the page header whatever
+         the layout does (#6795), and out of the nav's overflow. -->
+    <Teleport to="body">
+      <div
+        v-if="isVisibleProjects"
+        ref="projectMenu"
+        role="menu"
+        aria-label="Project list"
+        class="layout-sidebar__dropdown-items"
+        :style="projectDdStyles"
+        @keydown="onProjectMenuKeydown"
       >
-        <ProjectAvatar
-          class="layout-sidebar__project"
-          :project-key="project.key"
-        />
+        <button
+          v-for="project in availableProjects"
+          :key="project.key"
+          class="layout-sidebar__dropdown-item"
+          role="menuitemradio"
+          :title="project.name"
+          :aria-checked="activeProject.key === project.key ? 'true' : 'false'"
+          :aria-current="activeProject.key === project.key ? 'true' : undefined"
+          :class="{
+            'layout-sidebar__dropdown-item--active': activeProject.key === project.key
+          }"
+          tabindex="-1"
+          @click="setProject(project.key)"
+        >
+          <ProjectAvatar
+            class="layout-sidebar__project"
+            :project-key="project.key"
+          />
 
-        <div class="layout-sidebar__dropdown-item-text">
-          <span
-            v-if="!keyRepeatsName(project)"
-            class="layout-sidebar__dropdown-item-text-key"
+          <div class="layout-sidebar__dropdown-item-text">
+            <span
+              v-if="!keyRepeatsName(project)"
+              class="layout-sidebar__dropdown-item-text-key"
+            >
+              {{ project.key }}
+            </span>
+            {{ project.name }}
+          </div>
+
+          <svg
+            v-if="activeProject.key === project.key"
+            class="layout-sidebar__dropdown-item-check"
+            data-test="project-current"
+            viewBox="0 0 16 16"
+            aria-hidden="true"
           >
-            {{ project.key }}
-          </span>
-          {{ project.name }}
-        </div>
-
-        <svg
-          v-if="activeProject.key === project.key"
-          class="layout-sidebar__dropdown-item-check"
-          data-test="project-current"
-          viewBox="0 0 16 16"
+            <path
+              d="M3.5 8.5l3 3 6-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <p
+          class="layout-sidebar__dropdown-hint"
           aria-hidden="true"
         >
-          <path
-            d="M3.5 8.5l3 3 6-7"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-      <p
-        class="layout-sidebar__dropdown-hint"
-        aria-hidden="true"
-      >
-        ↑↓ choose · Enter open · Esc close
-      </p>
-    </div>
+          ↑↓ choose · Enter open · Esc close
+        </p>
+      </div>
+    </Teleport>
 
     <div class="layout-sidebar__bottom">
       <div
@@ -694,51 +707,53 @@ const linkLabel = (type: EventType) =>
         ref="userDd"
         class="layout-sidebar__user"
       >
-        <div
-          v-if="isVisibleProfile"
-          ref="userMenu"
-          role="menu"
-          aria-label="User menu"
-          class="layout-sidebar__dropdown-items"
-          :style="userDdStyles"
-          @keydown="onUserMenuKeydown"
-        >
+        <Teleport to="body">
           <div
-            v-if="profileName"
-            class="layout-sidebar__user-who"
-            data-test="user-menu-who"
+            v-if="isVisibleProfile"
+            ref="userMenu"
+            role="menu"
+            aria-label="User menu"
+            class="layout-sidebar__dropdown-items"
+            :style="userDdStyles"
+            @keydown="onUserMenuKeydown"
           >
-            <span class="layout-sidebar__user-name">{{ profileName }}</span>
-            <span
-              v-if="profileEmail"
-              class="layout-sidebar__user-email"
-            >{{ profileEmail }}</span>
+            <div
+              v-if="profileName"
+              class="layout-sidebar__user-who"
+              data-test="user-menu-who"
+            >
+              <span class="layout-sidebar__user-name">{{ profileName }}</span>
+              <span
+                v-if="profileEmail"
+                class="layout-sidebar__user-email"
+              >{{ profileEmail }}</span>
+            </div>
+            <RouterLink
+              v-if="isAdmin"
+              role="menuitem"
+              class="layout-sidebar__dropdown-item"
+              :to="{ name: RouteName.Audit }"
+              @click="closeProfile(false)"
+            >
+              <IconSvg
+                class="layout-sidebar__dropdown-item-icon"
+                name="lock"
+              />
+              Audit log
+            </RouterLink>
+            <button
+              role="menuitem"
+              class="layout-sidebar__dropdown-item"
+              @click="logout"
+            >
+              <IconSvg
+                class="layout-sidebar__dropdown-item-icon"
+                name="logout"
+              />
+              Logout
+            </button>
           </div>
-          <RouterLink
-            v-if="isAdmin"
-            role="menuitem"
-            class="layout-sidebar__dropdown-item"
-            :to="{ name: RouteName.Audit }"
-            @click="closeProfile(false)"
-          >
-            <IconSvg
-              class="layout-sidebar__dropdown-item-icon"
-              name="lock"
-            />
-            Audit log
-          </RouterLink>
-          <button
-            role="menuitem"
-            class="layout-sidebar__dropdown-item"
-            @click="logout"
-          >
-            <IconSvg
-              class="layout-sidebar__dropdown-item-icon"
-              name="logout"
-            />
-            Logout
-          </button>
-        </div>
+        </Teleport>
 
         <div
           v-if="profile"
@@ -1140,7 +1155,7 @@ const linkLabel = (type: EventType) =>
 }
 
 .layout-sidebar__dropdown-items {
-  @apply z-10;
+  @apply z-popover;
   @apply divide-y divide-gray-100 dark:divide-gray-700;
   @apply rounded-lg shadow-xl;
   @apply min-w-60;
@@ -1189,8 +1204,11 @@ const linkLabel = (type: EventType) =>
   @apply text-gray-500 dark:text-gray-400;
 }
 
+/* Who is signed in: a plain label, not an action (#6798) — no hand cursor,
+   no hover, no tab stop; the text can be selected and copied. */
 .layout-sidebar__user-who {
   @apply flex flex-col gap-0.5 px-4 py-2.5 max-w-72;
+  @apply cursor-default select-text;
 }
 
 .layout-sidebar__user-name {

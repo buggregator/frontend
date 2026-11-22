@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, ref } from 'vue'
@@ -45,7 +45,21 @@ const router = createRouter({
   ],
 })
 
-const render = () => mount(LayoutSidebar, { global: { plugins: [router] } })
+// The sidebar's menus live in <body> (#6795): the component is attached to
+// the page and the menus are looked up there.
+const global = { plugins: [router] }
+const mounted: Array<{ unmount: () => void }> = []
+const render = () => {
+  const wrapper = mount(LayoutSidebar, { global, attachTo: document.body })
+  mounted.push(wrapper)
+  return wrapper
+}
+const inPage = () => new DOMWrapper(document.body)
+
+// Nothing of one test is left on the page for the next.
+afterEach(() => {
+  mounted.splice(0).forEach((w) => w.unmount())
+})
 const settingsLink = (wrapper: ReturnType<typeof render>) => wrapper.get('a[title="Settings"]')
 
 describe('LayoutSidebar: server update', () => {
@@ -117,7 +131,6 @@ describe('LayoutSidebar: menu and project switcher', () => {
   afterEach(() => {
     useServerUpdateStore().stop()
     vi.unstubAllGlobals()
-    document.body.innerHTML = ''
   })
 
   const withProjects = () => {
@@ -145,11 +158,11 @@ describe('LayoutSidebar: menu and project switcher', () => {
 
   it('opens the project list on the current project, moves with arrows, closes with Esc', async () => {
     withProjects()
-    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const wrapper = render()
     const button = wrapper.get('[data-test="project-switcher"]')
 
     await button.trigger('click')
-    const menu = wrapper.get('[role="menu"][aria-label="Project list"]')
+    const menu = inPage().get('[role="menu"][aria-label="Project list"]')
     expect(document.activeElement?.textContent).toContain('shop-api')
 
     press(document.activeElement!, 'ArrowDown')
@@ -157,7 +170,7 @@ describe('LayoutSidebar: menu and project switcher', () => {
 
     press(menu.element, 'Escape')
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('[aria-label="Project list"]').exists()).toBe(false)
+    expect(inPage().find('[aria-label="Project list"]').exists()).toBe(false)
     expect(document.activeElement).toBe(button.element)
     wrapper.unmount()
   })
@@ -176,7 +189,7 @@ describe('LayoutSidebar: menu and project switcher', () => {
 
   it('below 1280 px the expand button opens the menu over the page, and Esc closes it', async () => {
     narrowScreen(true)
-    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const wrapper = render()
     const aside = wrapper.get('aside')
     expect(aside.classes()).toContain('layout-sidebar--collapsed')
 
@@ -213,7 +226,6 @@ describe('LayoutSidebar: project list rows', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
-    document.body.innerHTML = ''
   })
 
   it('ticks the current project and shows the key only when it differs from the name', async () => {
@@ -223,10 +235,10 @@ describe('LayoutSidebar: project list rows', () => {
       { key: 'shop', name: 'shop-api', is_default: false },
     ])
     store.setActiveProjectKey('shop')
-    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const wrapper = render()
     await wrapper.get('[data-test="project-switcher"]').trigger('click')
 
-    const [def, shop] = wrapper.findAll('[role="menuitemradio"]')
+    const [def, shop] = inPage().findAll('[role="menuitemradio"]')
     expect(shop.attributes('aria-current')).toBe('true')
     expect(shop.find('[data-test="project-current"]').exists()).toBe(true)
     expect(def.attributes('aria-current')).toBeUndefined()
@@ -242,11 +254,11 @@ describe('LayoutSidebar: project list rows', () => {
     const store = useEventsStore()
     store.setAvailableProjects(projects)
     store.setActiveProjectKey('shop')
-    const wrapper = mount(LayoutSidebar, { global: { plugins: [router] }, attachTo: document.body })
+    const wrapper = render()
     const switcherBug = wrapper.get('[data-test="project-switcher"] [data-test="project-avatar"]').html()
     await wrapper.get('[data-test="project-switcher"]').trigger('click')
 
-    const rows = wrapper.findAll('[role="menuitemradio"]')
+    const rows = inPage().findAll('[role="menuitemradio"]')
     const bugs = rows.map((row) => row.get('[data-test="project-avatar"]').html())
     expect(bugs[1]).toBe(switcherBug)
     expect(new Set(bugs).size).toBe(3)
@@ -362,7 +374,7 @@ describe('LayoutSidebar: logout', () => {
     const wrapper = render()
 
     await wrapper.get('[aria-label="User profile menu"]').trigger('click')
-    const logout = wrapper.findAll('button').find((b) => b.text().includes('Logout'))!
+    const logout = inPage().findAll('[role="menuitem"]').find((b) => b.text().includes('Logout'))!
     await logout.trigger('click')
     await flushPromises()
 
@@ -376,12 +388,16 @@ describe('LayoutSidebar: logout', () => {
     const wrapper = render()
 
     await wrapper.get('[aria-label="User profile menu"]').trigger('click')
-    const who = wrapper.get('[data-test="user-menu-who"]')
+    const who = inPage().get('[data-test="user-menu-who"]')
 
     expect(who.text()).toContain('Ann Smith')
     expect(who.text()).toContain('ann@example.test')
     expect(who.element.tagName).not.toBe('BUTTON')
-    expect(wrapper.findAll('[role="menuitem"]').map((i) => i.text())).toEqual(['Logout'])
+    // #6798: a label, not something to click or tab to.
+    expect(who.attributes('tabindex')).toBeUndefined()
+    expect(who.attributes('role')).toBeUndefined()
+    expect(who.find('a, button, [tabindex]').exists()).toBe(false)
+    expect(inPage().findAll('[role="menuitem"]').map((i) => i.text())).toEqual(['Logout'])
   })
 
   it('ends the session on the server before going to the login page', async () => {
@@ -393,7 +409,7 @@ describe('LayoutSidebar: logout', () => {
     const wrapper = render()
 
     await wrapper.get('[aria-label="User profile menu"]').trigger('click')
-    await wrapper.get('[role="menuitem"]').trigger('click')
+    await inPage().get('[role="menuitem"]').trigger('click')
     await flushPromises()
 
     expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith('/api/auth/logout'))).toBe(true)
@@ -408,7 +424,7 @@ describe('LayoutSidebar: logout', () => {
     const wrapper = render()
 
     await wrapper.get('[aria-label="User profile menu"]').trigger('click')
-    const items = wrapper.findAll('[role="menuitem"]')
+    const items = inPage().findAll('[role="menuitem"]')
 
     expect(items.map((i) => i.text())).toEqual(['Audit log', 'Logout'])
     expect(items[0].attributes('href')).toBe('/audit')
@@ -421,11 +437,39 @@ describe('LayoutSidebar: logout', () => {
 
     expect(wrapper.get('[aria-label="User profile menu"] [data-test="user-avatar"]').text()).toBe('AS')
     await wrapper.get('[aria-label="User profile menu"]').trigger('click')
-    expect(wrapper.get('[role="menu"]').text()).toContain('Ann Smith')
-    const logout = wrapper.findAll('button').find((b) => b.text().includes('Logout'))!
+    expect(inPage().get('[role="menu"]').text()).toContain('Ann Smith')
+    const logout = inPage().findAll('[role="menuitem"]').find((b) => b.text().includes('Logout'))!
     await logout.trigger('click')
     await flushPromises()
 
     expect(router.currentRoute.value.name).toBe(RouteName.Login)
+  })
+})
+
+// #6795: the project list opened under the two-row page header.
+describe('LayoutSidebar: menus over the page header', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', memoryStorage())
+    narrowScreen(false)
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('puts the project list in <body>, on the popover layer', async () => {
+    useEventsStore().setAvailableProjects([
+      { key: 'default', name: 'Default', is_default: true },
+      { key: 'shop', name: 'Shop', is_default: false },
+    ] as never)
+    const wrapper = render()
+
+    await wrapper.get('[aria-label^="Project:"]').trigger('click')
+    const menu = document.body.querySelector<HTMLElement>(':scope > [role="menu"]')
+
+    expect(menu?.getAttribute('aria-label')).toBe('Project list')
+    expect(wrapper.element.contains(menu)).toBe(false)
+    wrapper.unmount()
   })
 })

@@ -131,7 +131,7 @@ const sections = SHORTCUT_GROUPS
 
 <style lang="scss" scoped>
 .shortcuts-backdrop {
-  @apply fixed inset-0 z-[9999];
+  @apply fixed inset-0 z-modal;
   @apply flex items-center justify-center;
   @apply bg-black/50;
   backdrop-filter: blur(2px);

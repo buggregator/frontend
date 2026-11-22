@@ -443,7 +443,7 @@ const toggleOpen = () => {
 <style lang="scss">
 .frame-tooltip {
   position: fixed;
-  z-index: 9999;
+  z-index: var(--z-popover);
   transform: translateY(-100%);
   min-width: 180px;
   max-width: 420px;

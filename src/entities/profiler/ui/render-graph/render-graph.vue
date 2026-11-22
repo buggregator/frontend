@@ -381,7 +381,7 @@ defineExpose({
 }
 
 .render-graph__tooltip {
-  @apply bg-gray-800 absolute z-50 opacity-0 flex w-[500px] pointer-events-none transition-opacity duration-150;
+  @apply bg-gray-800 absolute z-popover opacity-0 flex w-[500px] pointer-events-none transition-opacity duration-150;
 }
 
 .render-graph__tooltip--active {

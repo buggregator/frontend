@@ -195,7 +195,7 @@ watch(
   @apply sr-only;
 
   &:focus {
-    @apply not-sr-only fixed top-2 left-2 z-[100] px-3 py-2 rounded-md;
+    @apply not-sr-only fixed top-2 left-2 z-skip px-3 py-2 rounded-md;
     @apply bg-blue-600 text-white text-sm font-medium;
     @apply outline-none ring-2 ring-blue-300;
   }
@@ -206,7 +206,7 @@ watch(
 }
 
 .layout-base__sidebar {
-  @apply flex-none border-r border-gray-200 dark:border-gray-700 z-50 w-full h-full sticky top-0 h-screen max-h-screen;
+  @apply flex-none border-r border-gray-200 dark:border-gray-700 z-sidebar w-full h-full sticky top-0 h-screen max-h-screen;
   @include mixins.layout-sidebar;
 }
 
@@ -214,7 +214,7 @@ watch(
    and the connection banner. The whole selector sits in :global() — in a
    scoped style `:global(html.x) &` drops the `&`. */
 :global(html.sidebar-overlay .layout-base__sidebar) {
-  z-index: 70;
+  z-index: var(--z-overlay);
 }
 
 .layout-base__header {
@@ -237,11 +237,11 @@ watch(
 /* First in the page, kept in view under the header while it scrolls. A
    <section>: the page's own root is the <div> styled below. */
 .layout-base__update-strip {
-  @apply sticky top-0 z-40 flex-none;
+  @apply sticky top-0 z-sticky flex-none;
 }
 
 .layout-base__connection-banner {
-  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-56 right-0 z-[60];
+  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-56 right-0 z-banner;
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;
@@ -322,7 +322,7 @@ watch(
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: var(--z-toast);
   padding: 8px 16px;
   border-radius: 8px;
   font-size: 13px;

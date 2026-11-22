@@ -142,7 +142,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onOutside))
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 40;
+  z-index: var(--z-header);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -228,7 +228,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onOutside))
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: var(--z-overlay);
     background: rgb(3 7 18 / 50%);
   }
 
@@ -238,7 +238,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onOutside))
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 61;
+    z-index: calc(var(--z-overlay) + 1);
     max-width: none;
     max-height: 75vh;
     padding: 12px 16px 16px;
