@@ -9,7 +9,7 @@ import { useEvents } from '@/shared/lib/use-events'
 import { isShortcutsOverlayOpen } from '@/shared/lib/use-global-shortcuts'
 import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useEventsStore, useSettingsStore } from '@/shared/stores'
-import { RouteName } from '@/shared/types'
+import { EventTypes, RouteName } from '@/shared/types'
 
 // Words people look for an event type by: not shown.
 const TYPE_KEYWORDS: Partial<Record<string, string[]>> = {
@@ -72,6 +72,18 @@ export const usePaletteCommands = () => {
       icon: 'pin',
       run: () => router.push({ name: RouteName.Favorites })
     },
+    ...(availableEvents.value.includes(EventTypes.Monolog)
+      ? [
+          {
+            id: 'page-logs',
+            group: 'pages',
+            label: 'Logs',
+            keywords: ['monolog', 'search', 'lines'],
+            icon: 'monolog',
+            run: () => router.push({ name: RouteName.Logs })
+          } satisfies Command
+        ]
+      : []),
     ...(isMockServerAvailable.value
       ? [
           <Command>{

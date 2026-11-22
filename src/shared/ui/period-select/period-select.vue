@@ -9,12 +9,21 @@ import { useEventsStore, PERIOD_OPTIONS } from '../../stores'
 // Without it the server returns everything stored for the project — tens of
 // megabytes of JSON in a single response on a busy instance — and finding an
 // event from a particular hour means scrolling an endless list.
+//
+// With v-model it is a plain control for a page that keeps its own period
+// (the Logs page keeps it in the URL); without, it is the feed's period.
+type Props = { modelValue?: string }
+
+const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
+const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+
 const eventsStore = useEventsStore()
 const { period } = storeToRefs(eventsStore)
 
 const selected = computed({
-  get: () => period.value,
-  set: (value: string) => eventsStore.setPeriod(value)
+  get: () => props.modelValue ?? period.value,
+  set: (value: string) =>
+    props.modelValue === undefined ? eventsStore.setPeriod(value) : emit('update:modelValue', value)
 })
 </script>
 

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useXdebugEnabled } from '@/entities/xdebug/lib'
 import { MENU_ITEMS, MENU_TOOL_IDS, type MenuItem } from '@/shared/constants'
 import { useSettingsStore } from '@/shared/stores'
+import { EventTypes } from '@/shared/types'
 
 export type MenuItemState = MenuItem & { shown: boolean; locked: boolean }
 
@@ -15,6 +16,8 @@ export const useMenuItems = () => {
 
   const available = computed(() =>
     MENU_ITEMS.filter((item) => {
+      // The Logs page reads Monolog records: there while the server takes them.
+      if (item.id === MENU_TOOL_IDS.logs) return availableEvents.value.includes(EventTypes.Monolog)
       if (item.id === MENU_TOOL_IDS.mockServer) return isMockServerAvailable.value
       if (item.id === MENU_TOOL_IDS.xdebug) return xdebugEnabled.value
       return availableEvents.value.includes(item.id)

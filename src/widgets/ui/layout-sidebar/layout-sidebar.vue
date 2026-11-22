@@ -13,7 +13,7 @@ import { useMenuKeys } from '@/shared/lib/use-menu-keys'
 import { useSeenEvents } from '@/shared/lib/use-seen-events'
 import { useSettingsStore, useProfileStore, useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
-import { type EventType, LocalStorageKeys, RouteName } from '@/shared/types'
+import { type EventType, EventTypes, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg, ProjectAvatar } from '@/shared/ui'
 import { navLinkLabel } from './nav-label'
 
@@ -253,6 +253,9 @@ const isMockServerShown = computed(
   () => isMockServerAvailable.value && isShown(MENU_TOOL_IDS.mockServer)
 )
 const isXdebugShown = computed(() => xdebugEnabled.value && isShown(MENU_TOOL_IDS.xdebug))
+const isLogsShown = computed(
+  () => availableEvents.value.includes(EventTypes.Monolog) && isShown(MENU_TOOL_IDS.logs)
+)
 const navTypesCount = computed(() => navGroups.value.reduce((n, g) => n + g.types.length, 0))
 
 
@@ -484,7 +487,7 @@ const linkLabel = (type: EventType) =>
         </div>
 
         <div
-          v-if="isMockServerShown || isXdebugShown"
+          v-if="isLogsShown || isMockServerShown || isXdebugShown"
           role="group"
           aria-labelledby="nav-group-tools"
           class="layout-sidebar__group"
@@ -495,6 +498,25 @@ const linkLabel = (type: EventType) =>
           >
             Tools
           </p>
+
+          <RouterLink
+            v-if="isLogsShown"
+            :to="{ name: RouteName.Logs }"
+            title="Logs"
+            aria-label="Logs"
+            class="layout-sidebar__link"
+            :class="{ 'layout-sidebar__link--active': isRouteActive(RouteName.Logs) }"
+            data-test="nav-logs"
+          >
+            <span class="layout-sidebar__link-icon-wrap">
+              <IconSvg
+                class="layout-sidebar__link-icon"
+                name="monolog"
+              />
+            </span>
+            <span class="layout-sidebar__link-label">Logs</span>
+            <span class="layout-sidebar__new">new</span>
+          </RouterLink>
 
           <RouterLink
             v-if="isMockServerShown"

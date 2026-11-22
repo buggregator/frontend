@@ -15,6 +15,7 @@ const ProfilerComparePage = () =>
   import('@/pages/profiler-compare').then((m) => m.ProfilerComparePage)
 const SettingsPage = () => import('@/pages/settings').then((m) => m.SettingsPage)
 const XdebugPage = () => import('@/pages/xdebug').then((m) => m.XdebugPage)
+const LogsPage = () => import('@/pages/logs').then((m) => m.LogsPage)
 const BroadcastPage = () => import('@/pages/broadcast').then((m) => m.BroadcastPage)
 const sentryPages = () => import('@/pages/sentry')
 const SentryLayoutPage = () => sentryPages().then((m) => m.SentryLayoutPage)
@@ -75,6 +76,15 @@ export const routes = [
     path: '/mock-server',
     name: RouteName.MockServer,
     component: MockServerPage,
+    meta: {
+      middleware: [auth]
+    }
+  },
+  // Monolog records as one stream with search, filters and a chart (#6701).
+  {
+    path: '/logs',
+    name: RouteName.Logs,
+    component: LogsPage,
     meta: {
       middleware: [auth]
     }

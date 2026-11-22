@@ -5,12 +5,12 @@ export default {
   title: 'Shared/HighlightText',
   component: HighlightText,
   parameters: {
-    layout: 'centered',
-  },
+    layout: 'centered'
+  }
 } as Meta<typeof HighlightText>
 
 export const Default: StoryObj<typeof HighlightText> = {
   args: {
-    text: 'App\\Http\\Controllers\\UserController::index',
-  },
+    text: 'App\\Http\\Controllers\\UserController::index'
+  }
 }

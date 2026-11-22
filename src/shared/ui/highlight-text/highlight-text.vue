@@ -2,42 +2,23 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useEventsStore } from '../../stores'
+import { markSegments } from './mark-segments'
 
 type Props = {
   text: string
   // What to mark; the event search when not given.
   query?: string
+  // Words to mark each on its own, wherever they are (a search that matches
+  // every word, not the phrase). Wins over `query`.
+  terms?: string[]
 }
 
-const props = withDefaults(defineProps<Props>(), { query: undefined })
+const props = withDefaults(defineProps<Props>(), { query: undefined, terms: undefined })
 const { searchQuery } = storeToRefs(useEventsStore())
 
-const segments = computed(() => {
-  const query = (props.query ?? searchQuery.value).trim().toLowerCase()
-  if (!query || !props.text) {
-    return [{ text: props.text, match: false }]
-  }
-
-  const result: { text: string; match: boolean }[] = []
-  const lower = props.text.toLowerCase()
-  let lastIndex = 0
-
-  let pos = lower.indexOf(query, lastIndex)
-  while (pos !== -1) {
-    if (pos > lastIndex) {
-      result.push({ text: props.text.slice(lastIndex, pos), match: false })
-    }
-    result.push({ text: props.text.slice(pos, pos + query.length), match: true })
-    lastIndex = pos + query.length
-    pos = lower.indexOf(query, lastIndex)
-  }
-
-  if (lastIndex < props.text.length) {
-    result.push({ text: props.text.slice(lastIndex), match: false })
-  }
-
-  return result
-})
+const segments = computed(() =>
+  markSegments(props.text, props.terms ?? [props.query ?? searchQuery.value])
+)
 </script>
 
 <template>
