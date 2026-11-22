@@ -3,7 +3,7 @@
 }
 
 @mixin layout-sidebar {
-  @apply w-10 md:w-14 lg:w-16 xl:w-56 fixed h-screen z-50;
+  @apply w-10 md:w-14 lg:w-16 xl:w-56 fixed h-screen z-sidebar;
   transition: width 0.2s ease;
 
   html.sidebar-collapsed & {
@@ -15,7 +15,7 @@
   @apply justify-between;
   @apply bg-white dark:bg-gray-800;
   @apply border-b border-gray-200 dark:border-gray-700;
-  @apply absolute left-0 right-0 z-50;
+  @apply absolute left-0 right-0 z-header;
   // Row 1 and the optional row 2 (--hdr-row, --hdr-bar: layout-base).
   height: calc(var(--hdr-row, 2.25rem) + var(--hdr-bar, 0px));
   @apply px-2 md:px-4;

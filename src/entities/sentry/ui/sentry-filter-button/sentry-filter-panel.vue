@@ -198,7 +198,7 @@ const reset = () => {
 }
 
 .sentry-filter__panel {
-  @apply absolute right-0 top-full mt-2 z-50 w-72 py-1;
+  @apply absolute right-0 top-full mt-2 z-popover w-72 py-1;
   @apply bg-white dark:bg-gray-800;
   @apply border border-gray-200 dark:border-gray-700 rounded-md;
   box-shadow: 0 8px 24px rgb(17 24 39 / 12%);
@@ -312,12 +312,12 @@ const reset = () => {
 // Phone: a bottom sheet over a scrim, 44 px rows.
 @media (max-width: 639px) {
   .sentry-filter__scrim {
-    @apply block fixed inset-0 z-[60];
+    @apply block fixed inset-0 z-overlay;
     background: rgb(3 7 18 / 50%);
   }
 
   .sentry-filter__panel {
-    @apply fixed inset-x-0 bottom-0 top-auto mt-0 w-auto z-[61];
+    @apply fixed inset-x-0 bottom-0 top-auto mt-0 w-auto z-[calc(var(--z-overlay)+1)];
     @apply rounded-b-none border-b-0 pb-4 overflow-auto;
     border-radius: 12px 12px 0 0;
     max-height: 80vh;

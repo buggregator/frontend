@@ -123,7 +123,7 @@ pre.sf-dump .sf-dump-search-bar {
 /* === CONTEXT MENU === */
 .sf-dump-ctx-menu {
   position: absolute;
-  z-index: 9999;
+  z-index: var(--z-popover);
   min-width: 180px;
   padding: 4px;
   background: #1a1e2a;

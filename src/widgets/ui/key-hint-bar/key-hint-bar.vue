@@ -29,7 +29,7 @@ const hints = computed(() => hintsOf(props.bar))
 // Floats in the corner, clear of the action toast (bottom centre). Not on
 // narrow screens: phones have no keyboard to hint at.
 .key-hint-bar {
-  @apply hidden md:block fixed bottom-3 right-4 z-40;
+  @apply hidden md:block fixed bottom-3 right-4 z-sticky;
   @apply px-3 py-1.5 rounded-lg;
   @apply bg-white/90 dark:bg-gray-900/90;
   @apply border border-gray-200 dark:border-gray-700;

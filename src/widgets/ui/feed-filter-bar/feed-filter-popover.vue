@@ -271,7 +271,7 @@ const formatCount = (n: number) => n.toLocaleString('en-US')
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 40;
+  z-index: var(--z-header);
   width: 340px;
   max-height: min(440px, 70vh);
   display: flex;
@@ -453,7 +453,7 @@ const formatCount = (n: number) => n.toLocaleString('en-US')
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: var(--z-overlay);
     background: rgb(3 7 18 / 50%);
   }
 
@@ -464,8 +464,8 @@ const formatCount = (n: number) => n.toLocaleString('en-US')
     bottom: 0;
     left: 0;
     width: auto;
-    /* Over the scrim and the fixed sidebar (z 50), like the Sentry filter sheet. */
-    z-index: 61;
+    /* Over its scrim and the sidebar, like the Sentry filter sheet. */
+    z-index: calc(var(--z-overlay) + 1);
     max-height: 75vh;
     border-radius: 12px 12px 0 0;
   }

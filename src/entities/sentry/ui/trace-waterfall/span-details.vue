@@ -476,7 +476,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 /* Phone: a full-screen sheet over the span list (A-6). */
 @media (max-width: 639px) {
   .span-details {
-    @apply fixed inset-0 z-50 overflow-y-auto rounded-none border-0;
+    @apply fixed inset-0 z-modal overflow-y-auto rounded-none border-0;
   }
 
   .span-details__head {

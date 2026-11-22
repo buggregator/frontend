@@ -1,5 +1,22 @@
 @import 'vendor.css';
 
+/* ---- Stacking (#6795) ----
+   One scale for everything that floats; tailwind classes z-sticky … z-skip.
+   Numbers 1–30 stay inside one component (a badge over a card, a sticky row
+   of a table). Popovers of the sidebar live in <body> (Teleport), so they
+   are above the header whatever the layout does. */
+:root {
+  --z-sticky: 20;   /* sticky strips inside the page */
+  --z-sidebar: 30;  /* the left menu */
+  --z-header: 40;   /* the page header (both rows) and its own popovers */
+  --z-banner: 45;   /* the connection banner at the top */
+  --z-overlay: 50;  /* the menu open over the page, side panels, phone sheets */
+  --z-popover: 60;  /* menus and tooltips put in <body>: also over an open menu */
+  --z-modal: 70;    /* command palette, shortcuts, full-screen views */
+  --z-toast: 80;    /* short notices */
+  --z-skip: 90;     /* «Skip to content» link */
+}
+
 /* ---- Base ---- */
 body {
   @apply bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-0;
