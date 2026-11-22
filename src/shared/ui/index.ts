@@ -21,6 +21,7 @@ export * from './period-select';
 export * from './address-flow';
 export * from './key-hints';
 export * from './project-avatar';
+export * from './user-avatar';
 export * from "./editor-link";
 export * from './tabs';
 export * from './segmented-control';
