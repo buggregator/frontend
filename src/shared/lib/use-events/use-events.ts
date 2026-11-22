@@ -5,6 +5,7 @@ import {
   useEventsStore,
 } from "../../stores";
 import type {ServerEvent, NormalizedEvent, EventId, EventType, PageEventTypes} from '../../types';
+import type { RpcReply } from "../io";
 import { isRequestOk } from "../io/request-result";
 import { useApiTransport } from "../use-api-transport";
 import { showToast } from "../use-keyboard-nav";
@@ -27,8 +28,8 @@ type TUseEvents = () => {
     remove: (id: EventId) => Promise<boolean>
   },
   rayExecution: {
-    continue: (contentName: string) => void
-    stop: (contentName: string) => void
+    continue: (contentName: string) => Promise<RpcReply>
+    stop: (contentName: string) => Promise<RpcReply>
   }
 }
 

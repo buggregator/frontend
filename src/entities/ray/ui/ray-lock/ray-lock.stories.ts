@@ -18,3 +18,11 @@ export const Default: StoryObj<typeof RayLock> = {
   }
 }
 
+
+export const Continued: StoryObj<typeof RayLock> = {
+  args: { ...Default.args, state: 'continued' }
+}
+
+export const Stopped: StoryObj<typeof RayLock> = {
+  args: { ...Default.args, state: 'stopped' }
+}

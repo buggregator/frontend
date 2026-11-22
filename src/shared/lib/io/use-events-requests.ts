@@ -13,6 +13,9 @@ export class EventsLoadError extends Error {
 // keepPinned: the server keeps every pinned event (buggregator/server #365).
 export type DeleteOptions = { keepPinned?: boolean }
 
+/** An HTTP reply as the WebSocket RPC bridge wraps it: status code and parsed body. */
+export type RpcReply = { code: number, data: unknown }
+
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
   hasAny: () => Promise<boolean>,
@@ -24,6 +27,7 @@ type TUseEventsRequests = () => {
   pinEvent: (id: EventId) => Promise<void | Response>,
   unpinEvent: (id: EventId) => Promise<void | Response>,
   replayHttpDump: (id: EventId) => Promise<void | Response>,
+  releaseRayLock: (name: string, stopExecution: boolean) => Promise<RpcReply>,
 }
 
 
@@ -136,6 +140,16 @@ export const useEventsRequests: TUseEventsRequests = () => {
     console.error('Pin Error', err)
   })
 
+  // Ray pause: release the lock. The reply's status and body as they came.
+  const releaseRayLock = async (name: string, stopExecution: boolean): Promise<RpcReply> => {
+    const res = await fetch(`${REST_API_URL}/api/ray/locks/${encodeURIComponent(name)}`, {
+      method: 'POST',
+      headers: { ...headers(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(stopExecution ? { stop_execution: true } : {}),
+    })
+    return { code: res.status, data: await res.json().catch(() => null) }
+  }
+
   const unpinEvent = (id: EventId) => fetch(`${REST_API_URL}/api/event/${id}/pin`, {
     method: 'DELETE',
     headers: headers(),
@@ -162,5 +176,6 @@ export const useEventsRequests: TUseEventsRequests = () => {
     pinEvent,
     unpinEvent,
     replayHttpDump,
+    releaseRayLock,
   }
 }

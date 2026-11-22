@@ -3,7 +3,7 @@ import {useEventsStore, useConnectionStore, useProfileStore, useSettingsStore} f
 import type { ServerEvent } from '../../types';
 import type { EventId, EventType } from '../../types';
 import { useDesktopNotify } from "../desktop-notify";
-import { type DeleteOptions, REST_API_URL, describeLoadError, useCentrifuge, useEventsRequests } from "../io";
+import { type DeleteOptions, type RpcReply, REST_API_URL, describeLoadError, useCentrifuge, useEventsRequests } from "../io";
 import { useAppBadge } from "../use-app-badge";
 import { useSettings } from "../use-settings";
 import { startEventsStream } from "./events-stream";
@@ -49,6 +49,7 @@ export const useApiTransport = () => {
     deleteByType,
     pinEvent: pinEventRest,
     unpinEvent: unpinEventRest,
+    releaseRayLock: releaseRayLockRest,
   } = useEventsRequests()
 
   const getWSConnection = () => connectionStore.isConnectedWS
@@ -182,15 +183,22 @@ export const useApiTransport = () => {
     return unpinEventRest(eventId)
   }
 
-  // NOTE: works only with ws
-  const rayStopExecution = (hash: string) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload({ stop_execution: true }))
+  // Ray pause: release the lock (Continue, or Stop with stop_execution).
+  // The reply is the server's status and body, over the WebSocket or REST.
+  const releaseRayLock = async (hash: string, stopExecution: boolean): Promise<RpcReply> => {
+    if (getWSConnection()) {
+      const res = await centrifuge.rpc(
+        `post:api/ray/locks/${hash}`,
+        createPayload(stopExecution ? { stop_execution: true } : undefined),
+      )
+      return res.data as RpcReply
+    }
+    return releaseRayLockRest(hash, stopExecution)
   }
 
-  // NOTE: works only with ws
-  const rayContinueExecution = (hash: string) => {
-    centrifuge.rpc(`post:api/ray/locks/${hash}`, createPayload())
-  }
+  const rayStopExecution = (hash: string) => releaseRayLock(hash, true)
+
+  const rayContinueExecution = (hash: string) => releaseRayLock(hash, false)
 
   return {
     getEventsAll: getAll,
