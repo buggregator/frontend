@@ -45,7 +45,7 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 const isLinkCopied = ref(false)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 const copyLink = async () => {
-  const link = new URL(router.currentRoute.value.href, window.location.origin).toString()
+  const link = new URL(router.resolve(router.currentRoute.value.fullPath).href, window.location.origin).toString()
   try {
     await copyTextToClipboard(link)
   } catch (e) {

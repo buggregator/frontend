@@ -113,6 +113,24 @@ export const useSettingsStore = defineStore("settingsStore", {
 
       return settings
     },
+    // Picks up preferences written to localStorage from elsewhere (settings
+    // synced from the server on sign-in, #6772).
+    reloadStoredPreferences() {
+      this.$patch({
+        codeEditor: getStoredPrimaryCodeEditor() || IDE_KEY_DEFAULT,
+        isCodeEditorChosen: getStoredIsCodeEditorChosen(),
+        isFixedHeader: getStoredFixedHeader(),
+        isVisibleEventCounts: getStoredEventsCountVisibility(),
+        isSingleKeyShortcutsEnabled: getStoredSingleKeyShortcuts(),
+        isKeyHintsEnabled: getStoredKeyHints(),
+        isDesktopNotificationsEnabled: getStoredDesktopNotifications(),
+        isMonologInlineContext: getStoredMonologInlineContext(),
+        isActiveFilePathMapping: getStoredIsActiveCustomFilePathMapping() || false,
+        customFilePathMapping: getStoredCustomFilePathMapping() || [],
+        hiddenMenuItems: getStoredHiddenMenuItems(),
+      })
+      this.setThemeMode(getStoredThemeMode())
+    },
     changeTheme() {
       this.setThemeMode(this.themeType === THEME_MODES.DARK ? THEME_MODES.LIGHT : THEME_MODES.DARK)
     },

@@ -384,7 +384,7 @@ describe('LayoutSidebar: logout', () => {
   })
 
   it('ends the session on the server before going to the login page', async () => {
-    const fetchMock = vi.fn(() => Promise.resolve(new Response(null, { status: 204 })))
+    const fetchMock = vi.fn((_url: string, _init?: RequestInit) => Promise.resolve(new Response(null, { status: 204 })))
     vi.stubGlobal('fetch', fetchMock)
     useSettingsStore().isAuthEnabled = true
     useProfileStore().setToken('tok')

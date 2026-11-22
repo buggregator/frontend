@@ -4,6 +4,7 @@ import {RouteAuthAccessError, RouteAvailabilityError} from "@/shared/lib/errors"
 import {safeReturnTo} from "@/shared/lib/return-to";
 import {useProfileStore, useSettingsStore} from "@/shared/stores";
 import {RouteName, EventTypes} from "@/shared/types";
+import {pullSyncedSettings} from "../lib/settings-sync";
 import { type TRouterMiddleware} from "./types";
 
 
@@ -43,6 +44,11 @@ export const auth: TRouterMiddleware = async ({ to, next }) => {
     } catch (_) {
       throw new RouteAuthAccessError(`Access denied`, to.path)
     }
+  }
+
+  // The person's saved preferences, once per sign-in, before the page shows.
+  if (isAuthenticated.value) {
+    await pullSyncedSettings(profileStore.token)
   }
 
   if (to.name !== RouteName.Login && !isAuthenticated.value) {
