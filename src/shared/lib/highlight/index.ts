@@ -1,1 +1,1 @@
-export * from './use-highlight-language'
+export * from './use-highlight'
