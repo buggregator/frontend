@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { RouteName } from '@/shared/types'
 import { ExpandableRow } from '@/shared/ui/expandable-row'
 import { SOURCE_LABEL, formatAttrValue, splitOtelAttributes } from '../../lib/otel'
+import { sentryLogTone } from '../../lib/request-timeline'
 import type { SentryLog } from '../../types'
 
 type Props = {
@@ -24,8 +25,8 @@ const expanded = ref(false)
 
 const levelClass = computed(() => {
   const l = props.log.level
-  if (l === 'error' || l === 'fatal') return 'log-level--error'
-  if (l === 'warn' || l === 'warning') return 'log-level--warning'
+  const tone = sentryLogTone(l)
+  if (tone) return `log-level--${tone}`
   if (l === 'info') return 'log-level--info'
   return 'log-level--debug'
 })
@@ -53,7 +54,7 @@ const hasDetails = computed(
   <ExpandableRow
     v-model:expanded="expanded"
     class="log-row"
-    :class="{ 'log-row--error': log.level === 'error' || log.level === 'fatal' }"
+    :class="{ 'log-row--error': sentryLogTone(log.level) === 'error' }"
   >
     <span
       class="log-row__level"

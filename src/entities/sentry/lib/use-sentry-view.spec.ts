@@ -70,9 +70,9 @@ describe('useSentryView (#6543)', () => {
 describe('useTraceView (#6543, trace page)', () => {
   beforeEach(() => window.localStorage.clear())
 
-  it('starts on the waterfall, then on the last graph view picked', async () => {
+  it('starts on the request view (#6715), then on the last graph view picked', async () => {
     const first = await withRouter(makeRouter(), '/sentry/traces/abc', () => useTraceView())
-    expect(first.view.value).toBe('waterfall')
+    expect(first.view.value).toBe('request')
     first.select('sequence')
     expect(window.localStorage.getItem(TRACE_VIEW_STORAGE)).toBe('sequence')
 

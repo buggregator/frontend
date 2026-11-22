@@ -124,3 +124,32 @@ describe('useEventsRequests: getSingle', () => {
     await expect(useEventsRequests().getSingle('a')).rejects.toMatchObject({ status: 500 })
   })
 })
+
+// The events of one request (#6715): previews filtered by the trace facet.
+describe('useEventsRequests: getByTrace', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    useEventsStore().setActiveProjectKey('default')
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('asks the previews for the trace and the project', async () => {
+    const fetchMock = vi.fn(() => Promise.resolve(new Response('{"data":[{"uuid":"m1"}]}')))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const events = await useEventsRequests().getByTrace('abc123')
+
+    const [url] = fetchMock.mock.calls[0] as unknown as [string]
+    expect(url).toBe(`${REST_API_URL}/api/events/preview?trace=abc123&project=default`)
+    expect(events).toEqual([{ uuid: 'm1' }])
+  })
+
+  it('throws on a failed answer instead of reading it as no events', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('', { status: 500 }))))
+
+    await expect(useEventsRequests().getByTrace('abc123')).rejects.toBeInstanceOf(EventsLoadError)
+  })
+})

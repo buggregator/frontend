@@ -11,6 +11,7 @@ import {
   spansWithRoot,
   useSentryTraces,
   useTraceView,
+  RequestTimeline,
   TraceCallGraph,
   TraceFlameGraph,
   TraceInsight,
@@ -22,6 +23,7 @@ import {
 import type { SentryTraceDetail } from '@/entities/sentry/types'
 import { logger } from '@/shared/lib/logger'
 import { RouteName } from '@/shared/types'
+import { useTraceMarkers } from '../../lib/use-trace-markers'
 
 const { params } = useRoute()
 const router = useRouter()
@@ -48,6 +50,7 @@ const showInWaterfall = (spanId: string) => {
   selectView('waterfall')
 }
 const viewTabs = computed<SentryViewTab[]>(() => [
+  { id: 'request', label: 'Request', icon: 'timeline' },
   { id: 'waterfall', label: 'Waterfall', icon: 'waterfall' },
   { id: 'flame', label: 'Flame graph', icon: 'flame' },
   { id: 'graph', label: 'Call graph', icon: 'graph' },
@@ -57,8 +60,10 @@ const viewTabs = computed<SentryViewTab[]>(() => [
     : []),
   ...(detail.value?.related_log_count ? [{ id: 'logs', label: 'Related logs', count: detail.value.related_log_count }] : [])
 ])
-// A related list the trace does not have (an old link): the waterfall.
-const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'waterfall'))
+// A related list the trace does not have (an old link): the request view.
+const activeTab = computed(() => (viewTabs.value.some((t) => t.id === view.value) ? view.value : 'request'))
+// Logs, mails and HTTP dumps with this trace id, Sentry errors and logs (#6715).
+const { markers, error: markersError } = useTraceMarkers(detail)
 const colors = computed(() => serviceColors(waterfallSpans.value))
 const spanIds = computed(() => new Set(waterfallSpans.value.map((s) => s.span_id)))
 // The graphs fill the page under the tabs (#6533 «fullheight»).
@@ -146,8 +151,15 @@ onMounted(async () => {
         role="tabpanel"
         :aria-labelledby="tabIdOf('trace-view-panel', activeTab)"
         class="trace-detail__content"
-        :class="{ 'trace-detail__content--graph': isGraphTab }"
+        :class="{ 'trace-detail__content--graph': isGraphTab, 'trace-detail__content--request': activeTab === 'request' }"
       >
+        <RequestTimeline
+          v-if="activeTab === 'request'"
+          :detail="detail"
+          :markers="markers"
+          :markers-error="markersError"
+        />
+
         <TraceWaterfall
           v-if="activeTab === 'waterfall'"
           :spans="waterfallSpans"
@@ -275,6 +287,11 @@ onMounted(async () => {
 .trace-detail__content {
   @apply flex-1 overflow-auto p-5;
   @apply bg-white dark:bg-gray-800;
+}
+
+// Edge to edge: the request view has its own padding and side panel.
+.trace-detail__content--request {
+  @apply p-0;
 }
 
 // Edge to edge, down to the bottom of the screen; the graph scrolls itself.

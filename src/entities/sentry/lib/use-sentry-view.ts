@@ -55,9 +55,10 @@ export const useSentryView = (tab: SentryViewTabName) => {
 
 // The trace page (#6543): the views of one trace and its related lists in the
 // same row. Graph views are remembered for the next trace; related lists not.
-export type TraceView = 'waterfall' | 'flame' | 'graph' | 'sequence' | 'errors' | 'logs'
-const TRACE_VIEWS: TraceView[] = ['waterfall', 'flame', 'graph', 'sequence', 'errors', 'logs']
-const REMEMBERED: TraceView[] = ['waterfall', 'flame', 'graph', 'sequence']
+// «request» (#6715): one request on one time scale, the first view.
+export type TraceView = 'request' | 'waterfall' | 'flame' | 'graph' | 'sequence' | 'errors' | 'logs'
+const TRACE_VIEWS: TraceView[] = ['request', 'waterfall', 'flame', 'graph', 'sequence', 'errors', 'logs']
+const REMEMBERED: TraceView[] = ['request', 'waterfall', 'flame', 'graph', 'sequence']
 export const TRACE_VIEW_STORAGE = 'sentry_trace_view_mode'
 
 const isTraceView = (v: unknown): v is TraceView => typeof v === 'string' && TRACE_VIEWS.includes(v as TraceView)
@@ -65,9 +66,9 @@ const isTraceView = (v: unknown): v is TraceView => typeof v === 'string' && TRA
 const storedTraceView = (): TraceView => {
   try {
     const v = window.localStorage.getItem(TRACE_VIEW_STORAGE)
-    return isTraceView(v) && REMEMBERED.includes(v) ? v : 'waterfall'
+    return isTraceView(v) && REMEMBERED.includes(v) ? v : 'request'
   } catch {
-    return 'waterfall'
+    return 'request'
   }
 }
 
