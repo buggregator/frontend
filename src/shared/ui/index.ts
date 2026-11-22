@@ -23,3 +23,4 @@ export * from './key-hints';
 export * from './project-avatar';
 export * from "./editor-link";
 export * from './tabs';
+export * from './segmented-control';
