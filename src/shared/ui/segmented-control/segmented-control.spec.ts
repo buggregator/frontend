@@ -55,6 +55,17 @@ describe('SegmentedControl', () => {
     expect(w.get('[role="group"]').classes()).toContain('ui-seg--icon-phone')
   })
 
+  it('icon-only on a phone: an option with a count says it in its name', () => {
+    const w = render({
+      iconOnlyOnPhone: true,
+      options: [
+        { value: 'timeline', label: 'Timeline' },
+        { value: 'grouped', label: 'Grouped', count: 12 }
+      ]
+    })
+    expect(w.findAll('button').map((b) => b.attributes('aria-label'))).toEqual(['Timeline', 'Grouped, 12'])
+  })
+
   it('values may be booleans; testPrefix names the options for tests', async () => {
     const w = mount(SegmentedControl, {
       props: {
