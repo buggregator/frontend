@@ -681,11 +681,6 @@
   resolved "https://registry.yarnpkg.com/@fontsource-variable/jetbrains-mono/-/jetbrains-mono-5.3.0.tgz#5738dedd3af40606b0d9b7626f4ba7c4586cb39b"
   integrity sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw==
 
-"@highlightjs/vue-plugin@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.npmjs.org/@highlightjs/vue-plugin/-/vue-plugin-2.1.2.tgz"
-  integrity sha512-P7s9DLBGpBsbltk3ZKuYUu9lwDCEfpttjJ5ErI6Wco6GQWIsjcSCJzCoMHgXhRUNkFDtZo7ZgeF8M10POPbDLw==
-
 "@humanfs/core@^0.19.2":
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.2.tgz#a8272ca03b2acf492670222b2320b6c421bfde60"

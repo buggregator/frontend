@@ -1,11 +1,10 @@
 <script lang="ts" setup generic="T">
-import download from 'downloadjs'
-import { toBlob, toPng } from 'html-to-image'
 import { ref, computed } from 'vue'
 import { cardLookOf } from '../../constants'
 import { copyBlobToClipboard } from '../../lib/clipboard'
 import { REST_API_URL } from '../../lib/io'
 import { logger } from '../../lib/logger'
+import { download, toBlob, toPng } from '../../lib/snapshot'
 import { useEvents } from '../../lib/use-events'
 import { screenshotingEventId } from '../../lib/use-keyboard-nav'
 import type { NormalizedEvent } from '../../types'
@@ -86,10 +85,8 @@ const downloadImage = () => {
   changeVisibleControls(false)
 
   if (eventRef.value) {
-    toPng(eventRef.value as HTMLInputElement)
-      .then((dataUrl) => {
-        download(dataUrl, `${props.event.type}-${props.event.id}.png`)
-      })
+    toPng(eventRef.value as HTMLElement)
+      .then((dataUrl) => download(dataUrl, `${props.event.type}-${props.event.id}.png`))
       .catch((e) => logger(['UI: Operation failed', e]))
       .finally(() => {
         changeVisibleControls(true)
@@ -102,7 +99,7 @@ const downloadFile = async () => {
     const event = await events?.getItem(props.event.id)
 
     if (event) {
-      download(
+      await download(
         JSON.stringify(event, null, 2),
         `${props.event.type}-${props.event.id}.json`,
         'application/json'

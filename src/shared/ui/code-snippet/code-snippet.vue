@@ -1,13 +1,10 @@
 <script lang="ts" setup>
-import highlightPlugin from '@highlightjs/vue-plugin'
 import isString from 'lodash.isstring'
 import { ref, computed, toRef } from 'vue'
 import { copyTextToClipboard } from '../../lib/clipboard'
-import { useHighlightLanguage } from '../../lib/highlight'
+import { useHighlight } from '../../lib/highlight'
 import { logger } from '../../lib/logger'
 import { IconSvg } from '../icon-svg'
-
-const CodeHighlight = highlightPlugin.component
 
 type Props = {
   code?: string | Record<string, unknown> | Array<unknown> | null
@@ -29,11 +26,12 @@ const codeStyle = computed(() => (props.maxHeight ? { maxHeight: props.maxHeight
 
 const isCopied = ref(false)
 
-const highlightLanguage = useHighlightLanguage(toRef(props, 'language'))
-
 const normalizedCode = computed(() =>
   !isString(props.code) ? JSON.stringify(props.code, null, ' ') : props.code
 )
+
+// highlight.js loads with the first snippet (#6841): plain text until then.
+const { html, className } = useHighlight(normalizedCode, toRef(props, 'language'))
 
 const copyCode = (): void => {
   isCopied.value = true
@@ -67,12 +65,13 @@ const copyCode = (): void => {
       <span class="code-snippet__copy-text">{{ isCopied ? 'Copied' : 'Copy' }}</span>
     </button>
 
-    <CodeHighlight
-      :style="codeStyle"
-      :language="highlightLanguage"
-      :autodetect="false"
-      :code="normalizedCode"
-    />
+    <!-- eslint-disable vue/no-v-html -- escaped or highlighted by highlight.js; the markup @highlightjs/vue-plugin rendered -->
+    <pre :style="codeStyle"><code
+      :class="className"
+      tabindex="0"
+      v-html="html"
+    /></pre>
+    <!-- eslint-enable vue/no-v-html -->
   </div>
 </template>
 
