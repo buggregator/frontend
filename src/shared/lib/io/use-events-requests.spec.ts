@@ -143,7 +143,7 @@ describe('useEventsRequests: getByTrace', () => {
     const events = await useEventsRequests().getByTrace('abc123')
 
     const [url] = fetchMock.mock.calls[0] as unknown as [string]
-    expect(url).toBe(`${REST_API_URL}/api/events/preview?trace=abc123&project=default`)
+    expect(url).toBe(`${REST_API_URL}/api/events/preview?trace=abc123&window=all&project=default`)
     expect(events).toEqual([{ uuid: 'm1' }])
   })
 

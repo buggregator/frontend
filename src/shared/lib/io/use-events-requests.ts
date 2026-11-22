@@ -117,7 +117,9 @@ export const useEventsRequests: TUseEventsRequests = () => {
   // records, mails and HTTP dumps that carry its trace id. Previews: the
   // timeline needs their headline only.
   const getByTrace = (traceId: string) => {
-    const params = new URLSearchParams({ trace: traceId })
+    // window=all: the server's default window (UI_DEFAULT_WINDOW) would
+    // hide the events of an older request.
+    const params = new URLSearchParams({ trace: traceId, window: 'all' })
     if (project.value) {
       params.set('project', project.value)
     }
