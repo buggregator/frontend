@@ -319,6 +319,7 @@ describe('FeedFilterBar', () => {
 // a chip 120 px, «+N» 40, «+ Add filter» 90, «Copy link · Clear» 130.
 describe('FeedFilterBar: chips that do not fit go under «+N»', () => {
   let barWidth = 400
+  let phone = false
   const observers: FakeObserver[] = []
   class FakeObserver {
     constructor(public cb: ResizeObserverCallback) {
@@ -335,8 +336,9 @@ describe('FeedFilterBar: chips that do not fit go under «+N»', () => {
   }
   const widthOf = (el: HTMLElement) => {
     if (el.classList.contains('ffb')) return barWidth
+    if (el.classList.contains('ffb__phone')) return phone ? 97 : 0
+    if (phone) return 0
     if (el.classList.contains('ffb__chip')) return 120
-    if (el.classList.contains('ffb__phone')) return 0
     if (el.classList.contains('ffb__actions')) return 130
     if (el.querySelector('.ffb__more')) return 40
     if (el.querySelector('.ffb__add')) return 90
@@ -348,6 +350,7 @@ describe('FeedFilterBar: chips that do not fit go under «+N»', () => {
     vi.stubGlobal('ResizeObserver', FakeObserver)
     observers.length = 0
     barWidth = 400
+    phone = false
     vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
       return widthOf(this)
     })
@@ -398,6 +401,21 @@ describe('FeedFilterBar: chips that do not fit go under «+N»', () => {
     await resize(1600)
     expect(visibleValues(bar)).toHaveLength(3)
     expect(bar.get('[data-test="feed-filter-more"]').text()).toBe('+1')
+    bar.unmount()
+  })
+
+  // A phone hides the row's chips and «+N»: their widths are 0, which must
+  // not flip «+N» on and off (a render loop on the stand at 390 px).
+  it('hidden row (phone): keeps the chips as they are, no «+N» flip-flop', async () => {
+    phone = true
+    useEventsStore().setFilters([
+      { key: 'host', value: 'anna-mbp', not: false },
+      { key: 'env', value: 'local', not: false },
+    ])
+    const bar = mountBar()
+    await resize(106)
+    expect(bar.findAll('.ffb__chip--out')).toHaveLength(0)
+    expect(bar.find('[data-test="feed-filter-more"]').exists()).toBe(false)
     bar.unmount()
   })
 

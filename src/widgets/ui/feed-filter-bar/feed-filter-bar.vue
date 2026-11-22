@@ -72,12 +72,18 @@ const measure = () => {
     if (el === list || !width(el)) continue
     others += width(el) + GAP
   }
-  const room = bar.clientWidth - others
   const sizes = Array.from(list.children).map(width)
+  // The row's chips are hidden (a phone: «Filters N» instead): nothing to fit.
+  if (sizes.every((w) => !w)) {
+    fit.value = props.max
+    return
+  }
+  const room = bar.clientWidth - others
   const total = sizes.reduce((sum, w, i) => sum + w + (i ? GAP : 0), 0)
+  // Without «+N» there is its room too (counted like the others: when shown).
   const more = moreButton.value?.parentElement
-  // Without «+N» there is its room too.
-  if (chips.value.length <= props.max && total <= room + (more ? width(more) + GAP : 0)) {
+  const moreRoom = more && width(more) ? width(more) + GAP : 0
+  if (chips.value.length <= props.max && total <= room + moreRoom) {
     fit.value = props.max
     return
   }
