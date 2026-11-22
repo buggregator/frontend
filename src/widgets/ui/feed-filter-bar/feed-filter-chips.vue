@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useDialogFocus } from '@/shared/lib/use-dialog-focus'
 import { FilterChip } from '@/shared/ui'
 import type { BarChip } from './types'
 
@@ -13,6 +14,8 @@ const props = defineProps<{
   anchor?: HTMLElement | null
   canAdd?: boolean
   canCopy?: boolean
+  // The phone sheet: a modal, Tab stays inside until it closes.
+  modal?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -24,6 +27,15 @@ const emit = defineEmits<{
 }>()
 
 const root = ref<HTMLElement | null>(null)
+
+// The sheet traps Tab and handles Escape itself; «+N» only closes on Escape.
+if (props.modal) useDialogFocus(root, () => emit('close'))
+const onEscape = (e: KeyboardEvent) => {
+  if (props.modal) return
+  e.stopPropagation()
+  e.preventDefault()
+  emit('close')
+}
 
 const onOutside = (e: PointerEvent) => {
   const target = e.target as Node
@@ -59,8 +71,9 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onOutside))
     class="ffc"
     role="dialog"
     :aria-label="title"
+    :aria-modal="modal ? 'true' : undefined"
     data-test="feed-filter-chips"
-    @keydown.esc.stop.prevent="emit('close')"
+    @keydown.esc="onEscape"
   >
     <div class="ffc__head">
       {{ title }}

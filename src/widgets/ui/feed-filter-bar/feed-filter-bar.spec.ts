@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useEventsStore } from '@/shared/stores'
 import { EventTypes, type PageEventTypes } from '@/shared/types'
 import FeedFilterBar from './feed-filter-bar.vue'
@@ -65,6 +65,36 @@ describe('FeedFilterBar', () => {
     bar.unmount()
   })
 
+  it('removes one filter with its ✕ and all with Clear', async () => {
+    const store = useEventsStore()
+    store.setFilters([
+      { key: 'host', value: 'anna-mbp', not: false },
+      { key: 'channel', value: 'doctrine', not: true },
+    ])
+    const bar = mountBar()
+
+    // One or two chips: «Copy link» and «Clear» are in the row, no «+N» needed.
+    expect(bar.find('[data-test="feed-filter-more"]').exists()).toBe(false)
+    expect(bar.findAll('.ffb__action').map((b) => b.text())).toEqual(['Copy link', 'Clear'])
+
+    await bar.get('[aria-label="Remove filter Host is anna-mbp"]').trigger('click')
+    expect(store.filters).toEqual([{ key: 'channel', value: 'doctrine', not: true }])
+
+    await bar.findAll('.ffb__action').find((b) => b.text() === 'Clear')!.trigger('click')
+    await flushPromises()
+    expect(store.filters).toEqual([])
+    expect(bar.find('.ffb__action').exists()).toBe(false)
+    // Clear is gone: the focus goes to «+ Add filter», not to <body>.
+    expect(document.activeElement).toBe(bar.get('.ffb__add').element)
+    bar.unmount()
+  })
+
+  it('a page\'s own chip without feed filters: Clear, no Copy link', () => {
+    const bar = mountBar({ facets: false, extra: [{ id: 'level', name: 'level', value: 'error' }] })
+    expect(bar.findAll('.ffb__action').map((b) => b.text())).toEqual(['Clear'])
+    bar.unmount()
+  })
+
   it('three chips in the row; the rest behind «+N», which lists them, removes and clears', async () => {
     const store = useEventsStore()
     store.setFilters(four)
@@ -86,13 +116,17 @@ describe('FeedFilterBar', () => {
     await flushPromises()
     expect(store.filters).toHaveLength(3)
     expect(bar.find('[data-test="feed-filter-more"]').exists()).toBe(false)
+    // «+N» went with its last chip: the focus is on «+ Add filter».
+    expect(document.activeElement).toBe(bar.get('.ffb__add').element)
 
     store.setFilters(four)
     await flushPromises()
     await bar.get('[data-test="feed-filter-more"]').trigger('click')
     await flushPromises()
     await bar.findAll('.ffc__btn').find((b) => b.text() === 'Clear all')!.trigger('click')
+    await flushPromises()
     expect(store.filters).toEqual([])
+    expect(document.activeElement).toBe(bar.get('.ffb__add').element)
     bar.unmount()
   })
 
@@ -140,6 +174,55 @@ describe('FeedFilterBar', () => {
     await own.get('[data-test="feed-filter-phone"]').trigger('click')
     await flushPromises()
     expect(own.get('[data-test="feed-filter-chips"]').find('.own').exists()).toBe(true)
+  })
+
+  it('without facets the last chip gone: focus on the page\'s own add, else on the bar', async () => {
+    const extra = [{ id: 'level', name: 'level', value: 'error' }]
+    const own = mountBar({
+      facets: false,
+      extra,
+      'onRemove-extra': () => own.setProps({ extra: [] }),
+    })
+    // no #add slot: the bar itself takes the focus
+    await own.get('[aria-label="Remove filter level is error"]').trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(own.get('[data-test="feed-filter-bar"]').element)
+    own.unmount()
+
+    const withAdd = mount(FeedFilterBar, {
+      props: { facets: false, extra, 'onRemove-extra': () => withAdd.setProps({ extra: [] }) },
+      slots: { add: '<button class="own">Level</button>' },
+      attachTo: document.body,
+    })
+    await withAdd.get('[aria-label="Remove filter level is error"]').trigger('click')
+    await flushPromises()
+    expect(document.activeElement).toBe(withAdd.get('.own').element)
+    withAdd.unmount()
+  })
+
+  it('phone sheet is modal: aria-modal, Tab stays inside', async () => {
+    useEventsStore().setFilters(four)
+    const bar = mountBar()
+    await bar.get('[data-test="feed-filter-phone"]').trigger('click')
+    await flushPromises()
+    const sheet = bar.get('[data-test="feed-filter-chips"]')
+    expect(sheet.attributes('aria-modal')).toBe('true')
+    const buttons = sheet.findAll('button')
+    buttons.at(-1)!.element.focus()
+    await buttons.at(-1)!.trigger('keydown', { key: 'Tab' })
+    expect(document.activeElement).toBe(buttons[0]!.element)
+    await buttons[0]!.trigger('keydown', { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(buttons.at(-1)!.element)
+    bar.unmount()
+  })
+
+  it('«+N» is not modal', async () => {
+    useEventsStore().setFilters(four)
+    const bar = mountBar()
+    await bar.get('[data-test="feed-filter-more"]').trigger('click')
+    await flushPromises()
+    expect(bar.get('[data-test="feed-filter-chips"]').attributes('aria-modal')).toBeUndefined()
+    bar.unmount()
   })
 
   it('phone: «Filters N» opens every chip as a sheet with «Add filter»', async () => {
@@ -228,6 +311,104 @@ describe('FeedFilterBar', () => {
     await flushPromises()
     expect(bar.find('.ffp').exists()).toBe(false)
     expect(document.activeElement).toBe(add.element)
+    bar.unmount()
+  })
+})
+
+// The row's layout through a fake ResizeObserver and fixed element widths:
+// a chip 120 px, «+N» 40, «+ Add filter» 90, «Copy link · Clear» 130.
+describe('FeedFilterBar: chips that do not fit go under «+N»', () => {
+  let barWidth = 400
+  const observers: FakeObserver[] = []
+  class FakeObserver {
+    constructor(public cb: ResizeObserverCallback) {
+      observers.push(this)
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  const resize = async (w: number) => {
+    barWidth = w
+    observers.forEach((o) => o.cb([], o as unknown as ResizeObserver))
+    await flushPromises()
+  }
+  const widthOf = (el: HTMLElement) => {
+    if (el.classList.contains('ffb')) return barWidth
+    if (el.classList.contains('ffb__chip')) return 120
+    if (el.classList.contains('ffb__phone')) return 0
+    if (el.classList.contains('ffb__actions')) return 130
+    if (el.querySelector('.ffb__more')) return 40
+    if (el.querySelector('.ffb__add')) return 90
+    return 0
+  }
+
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    vi.stubGlobal('ResizeObserver', FakeObserver)
+    observers.length = 0
+    barWidth = 400
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return widthOf(this)
+    })
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return widthOf(this)
+    })
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  const visibleValues = (bar: ReturnType<typeof mountBar>) =>
+    bar.findAll('.ffb__chip:not(.ffb__chip--out) .filter-chip__value').map((v) => v.text())
+
+  it('a narrow row keeps whole chips only, the rest under «+N»; a wide one shows up to three', async () => {
+    useEventsStore().setFilters([
+      { key: 'host', value: 'anna-mbp', not: false },
+      { key: 'env', value: 'local', not: false },
+      { key: 'level', value: 'error', not: false },
+    ])
+    const bar = mountBar()
+    await resize(400)
+
+    // 400 − Add 96 − actions 136 = 168: one chip, then «+N» takes 46 more.
+    expect(visibleValues(bar)).toEqual(['anna-mbp'])
+    expect(bar.get('[data-test="feed-filter-more"]').text()).toBe('+2')
+    // The hidden ones are out of the tab order and the a11y tree.
+    expect(bar.findAll('.ffb__chip--out')).toHaveLength(2)
+    // Copy link and Clear stay in the row.
+    expect(bar.findAll('.ffb__action').map((b) => b.text())).toEqual(['Copy link', 'Clear'])
+
+    await bar.get('[data-test="feed-filter-more"]').trigger('click')
+    await flushPromises()
+    expect(bar.get('[data-test="feed-filter-chips"]').findAll('.filter-chip__value').map((v) => v.text())).toEqual(['local', 'error'])
+
+    await resize(1200)
+    expect(visibleValues(bar)).toEqual(['anna-mbp', 'local', 'error'])
+    expect(bar.find('[data-test="feed-filter-more"]').exists()).toBe(false)
+    bar.unmount()
+  })
+
+  it('room for more than three still shows three, the rest under «+N»', async () => {
+    useEventsStore().setFilters(four)
+    const bar = mountBar()
+    await resize(1600)
+    expect(visibleValues(bar)).toHaveLength(3)
+    expect(bar.get('[data-test="feed-filter-more"]').text()).toBe('+1')
+    bar.unmount()
+  })
+
+  it('no room for a chip: all under «+N»', async () => {
+    useEventsStore().setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+    const bar = mountBar()
+    await resize(300)
+    expect(visibleValues(bar)).toEqual([])
+    expect(bar.get('[data-test="feed-filter-more"]').text()).toBe('+1')
+    await resize(400)
+    expect(visibleValues(bar)).toEqual(['anna-mbp'])
     bar.unmount()
   })
 })
