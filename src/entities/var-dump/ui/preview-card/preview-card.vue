@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard, ValueDump } from '@/shared/ui'
+import { EditorLink, PreviewCard, ValueDump } from '@/shared/ui'
 import { sourceLink as sourceLinkFor } from '../../lib/source-link'
 import type { VarDump } from '../../types'
 
@@ -42,12 +42,11 @@ const typeName = computed(() => {
           v-if="typeName"
           class="vd-body__type"
         >{{ typeName }}</span>
-        <a
+        <EditorLink
           v-if="source && sourceLink"
           :href="sourceLink"
           class="vd-body__source vd-body__source--link"
-          @click.stop
-        >{{ source }}</a>
+        >{{ source }}</EditorLink>
         <span
           v-else-if="source"
           class="vd-body__source"

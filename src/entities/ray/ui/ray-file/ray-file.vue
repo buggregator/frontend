@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
-import { IconSvg } from '@/shared/ui'
+import { EditorLink, IconSvg } from '@/shared/ui'
 import type { RayFrame } from '../../types'
 
 type Props = {
@@ -33,14 +33,13 @@ const hasSnippets = computed(() => (props.file.snippet ? props.file.snippet.leng
       >
         <span class="ray-file__fn">{{ file.class || 'null' }}:{{ file.method }}</span>
         <span class="ray-file__meta">at line {{ file.line_number }}</span>
-        <a
+        <EditorLink
           v-if="ideLink"
           :href="ideLink"
           class="ray-file__path ray-file__path--link"
-          @click.stop
         >{{
           file.file_name
-        }}</a>
+        }}</EditorLink>
         <span
           v-else
           class="ray-file__path"

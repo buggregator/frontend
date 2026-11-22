@@ -50,6 +50,20 @@ export default withVueTs(
         'PascalCase',
         { registeredComponentsOnly: true, ignores: [] }
       ],
+      // The rule's default list (pre, textarea and the inline HTML elements of
+      // eslint-plugin-vue 10) plus EditorLink: it renders an inline <a>, and a
+      // line break inside it would put spaces into the link text.
+      'vue/multiline-html-element-content-newline': [
+        'warn',
+        {
+          ignores: [
+            'pre', 'textarea', 'a', 'abbr', 'audio', 'b', 'bdi', 'bdo', 'canvas', 'cite', 'code',
+            'data', 'del', 'dfn', 'em', 'i', 'iframe', 'ins', 'kbd', 'label', 'map', 'mark',
+            'noscript', 'object', 'output', 'picture', 'q', 'ruby', 's', 'samp', 'small', 'span',
+            'strong', 'sub', 'sup', 'svg', 'time', 'u', 'var', 'video', 'EditorLink'
+          ]
+        }
+      ],
       'import-x/extensions': [
         'error',
         'ignorePackages',

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
 import type { NormalizedEvent } from '@/shared/types'
 import {
+  EditorLink,
   TableBase,
   TableBaseRow,
   ValueDump,
@@ -44,11 +45,11 @@ const label = computed(() => props.event.payload.payload.label)
           class="vd-box"
         >
           <span class="vd-box__label">File</span>
-          <a
+          <EditorLink
             v-if="sourceLink"
             :href="sourceLink"
             class="vd-box__value vd-box__value--link"
-          >{{ source.file }}:{{ source.line }}</a>
+          >{{ source.file }}:{{ source.line }}</EditorLink>
           <span
             v-else
             class="vd-box__value"
