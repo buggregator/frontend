@@ -4,9 +4,12 @@ import JsonTreeNode from './json-tree-node.vue'
 
 type Props = {
   value: unknown
+  // Levels open at first (0 = top level). -1 folds every top-level value:
+  // a big object then shows one line per key.
+  openDepth?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { openDepth: 1 })
 
 const isObject = computed(
   () => props.value !== null && typeof props.value === 'object' && !Array.isArray(props.value)
@@ -62,6 +65,7 @@ const emptyLabel = computed(() => (isArray.value ? '[]' : '{}'))
         :value="entry.value"
         :depth="0"
         :path="entry.path"
+        :open-depth="openDepth"
       />
     </template>
   </div>

@@ -1,9 +1,13 @@
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
+import { useEvents } from '@/shared/lib/use-events'
+import { useSettingsStore } from '@/shared/stores'
 import type { NormalizedEvent } from '@/shared/types'
-import { PreviewCard, CodeSnippet } from '@/shared/ui'
-import { hasEntries } from '../../lib'
+import { PreviewCard } from '@/shared/ui'
+import { useMonologInlineDetails } from '../../lib'
 import type { Monolog } from '../../types'
+import { MonologBody } from '../monolog-body'
 
 type Props = {
   event: NormalizedEvent<Monolog>
@@ -28,79 +32,27 @@ const toggleView = () => {
   isFullMessage.value = !isFullMessage.value
 }
 
-const hasContext = computed(() => {
-  const ctx = props.event.payload.context
-  if (!ctx) return false
-  const keys = Object.keys(ctx).filter((k) => k !== 'source')
-  return keys.length > 0
-})
-
-const hasExtra = computed(() => hasEntries(props.event.payload.extra))
+// Context and extra under the message, only with the setting on (frontend#283).
+const { isMonologInlineContext } = storeToRefs(useSettingsStore())
+const { events } = useEvents()
+const { context, extra, isShown, isContextBig, isExtraBig } = useMonologInlineDetails(
+  props.event.id,
+  props.event.payload,
+  isMonologInlineContext,
+  (id) => events.getItem(id),
+)
 </script>
 
 <template>
   <PreviewCard :event="event">
-    <div class="monolog-body">
-      <div class="monolog-block">
-        <CodeSnippet
-          :class="{ 'monolog-body__snippet--clickable': !isFullMessage }"
-          :code="isFullMessage ? message : shortMessage"
-          title="Click to show full message"
-          @click="toggleView"
-        />
-      </div>
-
-      <div
-        v-if="hasContext"
-        class="monolog-block"
-      >
-        <div class="monolog-block__header">
-          context
-        </div>
-        <CodeSnippet
-          language="json"
-          :code="event.payload.context"
-        />
-      </div>
-
-      <div
-        v-if="hasExtra"
-        class="monolog-block"
-      >
-        <div class="monolog-block__header">
-          extra
-        </div>
-        <CodeSnippet
-          language="json"
-          :code="event.payload.extra"
-        />
-      </div>
-    </div>
+    <MonologBody
+      :message="isFullMessage ? message : shortMessage"
+      :message-clickable="!isFullMessage"
+      :context="isShown ? context : null"
+      :extra="isShown ? extra : null"
+      :context-depth="isContextBig ? -1 : 1"
+      :extra-depth="isExtraBig ? -1 : 1"
+      @message-click="toggleView"
+    />
   </PreviewCard>
 </template>
-
-<style lang="scss" scoped>
-.monolog-body {
-  @apply flex flex-col gap-1.5 text-xs;
-}
-
-.monolog-block {
-  @apply rounded overflow-hidden;
-  @apply border border-gray-200 dark:border-gray-700;
-
-  :deep(.code-snippet) {
-    @apply rounded-none;
-  }
-}
-
-.monolog-block__header {
-  @apply flex items-center px-3 py-1.5;
-  @apply bg-gray-50 dark:bg-gray-900;
-  @apply border-b border-gray-200 dark:border-gray-700;
-  @apply text-2xs font-medium text-gray-500 dark:text-gray-400;
-}
-
-.monolog-body__snippet--clickable {
-  @apply cursor-pointer;
-}
-</style>

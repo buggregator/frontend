@@ -23,6 +23,7 @@ import {
   getStoredSingleKeyShortcuts, setStoredSingleKeyShortcuts,
   getStoredKeyHints, setStoredKeyHints,
   getStoredDesktopNotifications, setStoredDesktopNotifications,
+  getStoredMonologInlineContext, setStoredMonologInlineContext,
   getStoredHiddenMenuItems, setStoredHiddenMenuItems,
 } from "./local-storage-actions";
 import {toUpdateInfo, type UpdateInfo} from "./update-info";
@@ -53,6 +54,8 @@ export const useSettingsStore = defineStore("settingsStore", {
     isKeyHintsEnabled: getStoredKeyHints(),
     // A browser notification on a new error while the window is away (#6604).
     isDesktopNotificationsEnabled: getStoredDesktopNotifications(),
+    // Monolog context and extra under the message in the feed (frontend#283).
+    isMonologInlineContext: getStoredMonologInlineContext(),
     // The types the server says it has. A newer server can list one this UI
     // does not know: its events still show, with the default card.
     availableEvents: [] as string[],
@@ -141,6 +144,11 @@ export const useSettingsStore = defineStore("settingsStore", {
       this.isDesktopNotificationsEnabled = state;
 
       setStoredDesktopNotifications(state)
+    },
+    changeMonologInlineContext() {
+      this.isMonologInlineContext = !this.isMonologInlineContext;
+
+      setStoredMonologInlineContext(this.isMonologInlineContext)
     },
     changeKeyHints() {
       this.isKeyHintsEnabled = !this.isKeyHintsEnabled;

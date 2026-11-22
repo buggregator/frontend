@@ -85,6 +85,14 @@ export const setStoredSingleKeyShortcuts = (state: boolean) => {
 }
 
 // Off unless the person turned them on (the browser asks for permission then).
+// Off by default: the feed shows the message only (frontend#283).
+export const getStoredMonologInlineContext = (): boolean =>
+  window?.localStorage?.getItem(LocalStorageKeys.MonologInlineContext) === "true";
+
+export const setStoredMonologInlineContext = (state: boolean) => {
+  window?.localStorage?.setItem(LocalStorageKeys.MonologInlineContext, String(state));
+};
+
 export const getStoredDesktopNotifications = (): boolean =>
   window?.localStorage?.getItem(LocalStorageKeys.DesktopNotifications) === "true";
 
