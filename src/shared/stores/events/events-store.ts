@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { PAGE_TYPES} from "../../constants";
+import { type FeedFilter, filtersKey, matchesFilters } from "../../lib/feed-filters/feed-filters";
 import { logger } from "../../lib/logger";
 import {useSettings} from "../../lib/use-settings";
 import {
@@ -30,6 +31,7 @@ type TListLoad = {
   seq: number
   project: string | undefined
   period: string
+  filters: string
   added: EventId[]
   removed: EventId[]
   pins: Record<EventId, boolean>
@@ -102,6 +104,10 @@ export const useEventsStore = defineStore("eventsStore", {
     // states from it instead of the "waiting for events" welcome.
     listState: 'idle' as 'idle' | 'loading' | 'ready' | 'error',
     listError: '' as string,
+    // Feed filters (frontend#225): sent with every list load; live events
+    // that do not match are not added, only counted in hiddenNew.
+    filters: [] as FeedFilter[],
+    hiddenNew: 0,
   }),
   getters: {
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
@@ -164,6 +170,13 @@ export const useEventsStore = defineStore("eventsStore", {
 
       events
         .filter((el) => inFeed(el.type))
+        .filter((el) => {
+          if (existingIds.has(el.uuid) || matchesFilters(el.facets, this.filters)) {
+            return true;
+          }
+          this.hiddenNew += 1;
+          return false;
+        })
         .forEach((event) => {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
@@ -252,6 +265,7 @@ export const useEventsStore = defineStore("eventsStore", {
         seq: this.listLoadSeq,
         project: this.projects.activeKey,
         period: this.period,
+        filters: filtersKey(this.filters),
         added: [],
         removed: [],
         pins: {},
@@ -268,7 +282,7 @@ export const useEventsStore = defineStore("eventsStore", {
       }
       this.listLoad = null;
 
-      if (load.project !== this.projects.activeKey || load.period !== this.period) {
+      if (load.project !== this.projects.activeKey || load.period !== this.period || load.filters !== filtersKey(this.filters)) {
         return false;
       }
 
@@ -393,6 +407,14 @@ export const useEventsStore = defineStore("eventsStore", {
     setListState(state: 'idle' | 'loading' | 'ready' | 'error', error = '') {
       this.listState = state;
       this.listError = error;
+    },
+    // The list is fetched again by whoever watches the filters (layout-base).
+    setFilters(filters: FeedFilter[]) {
+      if (filtersKey(filters) === filtersKey(this.filters)) {
+        return;
+      }
+      this.filters = filters;
+      this.hiddenNew = 0;
     },
     setPeriod(period: string) {
       this.period = period;

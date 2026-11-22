@@ -219,4 +219,37 @@ describe('eventsStore', () => {
       expect(store.lockedIds).toEqual([])
     })
   })
+  describe('feed filters (frontend#225)', () => {
+    const anna = { facets: { host: ['anna-mbp'] } }
+    const max = { facets: { host: ['max-xps'] } }
+
+    it('adds live events that match, counts the others as hidden', () => {
+      const store = useEventsStore()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+      store.addList([event('a', 'sentry', anna), event('b', 'sentry', max), event('c', 'smtp')])
+
+      expect(ids(store.events)).toEqual(['a'])
+      expect(store.hiddenNew).toBe(2)
+    })
+
+    it('a new filter starts the hidden count again', () => {
+      const store = useEventsStore()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+      store.addList([event('b', 'sentry', max)])
+      store.setFilters([])
+
+      expect(store.hiddenNew).toBe(0)
+      store.addList([event('b', 'sentry', max)])
+      expect(ids(store.events)).toEqual(['b'])
+    })
+
+    it('drops a list reply asked for other filters', () => {
+      const store = useEventsStore()
+      const load = store.startListLoad()
+      store.setFilters([{ key: 'host', value: 'anna-mbp', not: false }])
+
+      expect(store.applyListLoad(load, [event('b', 'sentry', max)])).toBe(false)
+      expect(store.events).toEqual([])
+    })
+  })
 })

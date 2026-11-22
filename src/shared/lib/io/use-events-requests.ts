@@ -1,6 +1,7 @@
 import {storeToRefs} from "pinia";
 import {useEventsStore, useProfileStore} from "../../stores";
 import type { EventId, EventType, ServerEvent } from '../../types';
+import { filtersToParams } from "../feed-filters/feed-filters";
 import { REST_API_URL } from "./constants";
 
 export class EventsLoadError extends Error {
@@ -16,8 +17,13 @@ export type DeleteOptions = { keepPinned?: boolean }
 /** An HTTP reply as the WebSocket RPC bridge wraps it: status code and parsed body. */
 export type RpcReply = { code: number, data: unknown }
 
+// Values of each facet key with their event counts, under the feed's
+// project, period and filters (a key's own filter does not narrow its list).
+export type FacetCounts = Record<string, { value: string, count: number }[]>
+
 type TUseEventsRequests = () => {
   getAll: () => Promise<ServerEvent<unknown>[]>,
+  getFacets: () => Promise<FacetCounts>,
   hasAny: () => Promise<boolean>,
   getSingle: (id: EventId) => Promise<ServerEvent<unknown> | null>,
   deleteAll: (options?: DeleteOptions) => Promise<void | Response>,
@@ -34,7 +40,7 @@ type TUseEventsRequests = () => {
 export const useEventsRequests: TUseEventsRequests = () => {
   const { token } = storeToRefs(useProfileStore())
 
-  const { activeProjectKey: project, period } = storeToRefs(useEventsStore())
+  const { activeProjectKey: project, period, filters } = storeToRefs(useEventsStore())
 
   // Read at request time: the token is loaded (or changed by a login) after
   // this composable was created.
@@ -42,7 +48,9 @@ export const useEventsRequests: TUseEventsRequests = () => {
   const getEventRestUrl = (param: string): string => `${REST_API_URL}/api/event/${param}${project.value ? `?project=${project.value}` : ''}`
   // The period goes to the server as ?window=. Without it the backend returns
   // the whole project, which is tens of megabytes of JSON per project click.
-  const getEventsPreviewRestUrl = (): string => {
+  // The feed filters (frontend#225) go along: the server returns only what
+  // matches them.
+  const feedParams = (): URLSearchParams => {
     const params = new URLSearchParams()
     if (project.value) {
       params.set('project', project.value)
@@ -50,7 +58,11 @@ export const useEventsRequests: TUseEventsRequests = () => {
     if (period.value) {
       params.set('window', period.value)
     }
-    const qs = params.toString()
+    filtersToParams(filters.value).forEach(([key, value]) => params.append(key, value))
+    return params
+  }
+  const getEventsPreviewRestUrl = (): string => {
+    const qs = feedParams().toString()
     return `${REST_API_URL}/api/events/preview${qs ? `?${qs}` : ''}`
   }
   const getEventsRestUrl = (): string => `${REST_API_URL}/api/events`
@@ -70,6 +82,17 @@ export const useEventsRequests: TUseEventsRequests = () => {
       }
 
       return body.data as ServerEvent<unknown>[]
+    })
+
+  // About a second on 100k events: asked when the filter list opens, not on
+  // every event.
+  const getFacets = () => fetch(`${REST_API_URL}/api/events/facets?${feedParams()}`, { headers: headers() })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new EventsLoadError(response.status)
+      }
+      const body = await response.json()
+      return (body?.data ?? {}) as FacetCounts
     })
 
   // Whether the project has any event at all, whatever the period: the
@@ -167,6 +190,7 @@ export const useEventsRequests: TUseEventsRequests = () => {
 
   return {
     getAll,
+    getFacets,
     hasAny,
     getSingle,
     deleteAll,

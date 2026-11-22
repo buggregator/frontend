@@ -42,6 +42,8 @@ export interface ServerEvent<T> {
   timestamp: number, // unavailable for some ray dump events
   searchable_text?: string,
   is_pinned?: boolean,
+  // Values the feed can be filtered by: {"host": ["web-1"], "tag:feature": ["checkout"]}.
+  facets?: Record<string, string[]>,
 }
 
 // M: extra data one event type adds to its cards (Ray: color and size).
