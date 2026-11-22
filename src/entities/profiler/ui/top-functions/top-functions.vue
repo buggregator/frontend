@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { formatDuration } from '@/shared/lib/formats/format-duration'
 import { formatFileSize } from '@/shared/lib/formats/format-file-size'
 import { type EventId } from '@/shared/types'
-import { useProfiler } from '../../lib'
+import { nextSort, sortFunctions, type TopFunctionsSort, useProfiler } from '../../lib'
 import type { ProfilerTopFunctions } from '../../types'
 import { StatBoard } from '../../ui'
 
@@ -13,7 +13,7 @@ type Props = {
 
 const { getTopFunctions } = useProfiler()
 const props = defineProps<Props>()
-const metric = ref('excl_wt')
+const sort = ref<TopFunctionsSort>({ key: 'excl_wt', order: 'desc' })
 
 const data = ref<ProfilerTopFunctions>({
   functions: [],
@@ -27,11 +27,20 @@ const data = ref<ProfilerTopFunctions>({
   schema: []
 })
 
-const setMetric = (value: string | undefined) => {
-  if (value) {
-    metric.value = value
-  }
+// A click on the active column flips the order (frontend#280).
+const toggleSort = (key: string) => {
+  sort.value = nextSort(sort.value, key)
 }
+
+const ariaSort = (key: string) => {
+  if (sort.value.key !== key) {
+    return 'none'
+  }
+
+  return sort.value.order === 'asc' ? 'ascending' : 'descending'
+}
+
+const rows = computed(() => sortFunctions(data.value.functions, sort.value))
 
 const formatValue = (value: number, format: string) => {
   if (format === 'ms') {
@@ -53,8 +62,18 @@ const formatValue = (value: number, format: string) => {
   return value
 }
 
+// The server returns the top rows by the metric, biggest first; `order` is for
+// a server that can pick the lowest rows of the whole profile (#6695). Rows are
+// sorted here too, so the order shown is right either way. Only the newest
+// request lands: a fast double click must not show the older reply.
+let requestSeq = 0
 watchEffect(async () => {
-  data.value = await getTopFunctions(props.id, { metric: metric.value })
+  const seq = ++requestSeq
+  const reply = await getTopFunctions(props.id, { metric: sort.value.key, order: sort.value.order })
+
+  if (seq === requestSeq) {
+    data.value = reply
+  }
 })
 </script>
 
@@ -73,25 +92,38 @@ watchEffect(async () => {
       <table class="top-fn__table">
         <thead>
           <tr>
-            <td
+            <th
               v-for="col in data.schema"
               :key="col.key"
+              scope="col"
               class="top-fn__th"
-              :class="{
-                'top-fn__th--sortable': col.sortable,
-                'top-fn__th--active': metric === col.key
-              }"
+              :class="{ 'top-fn__th--active': sort.key === col.key }"
               :title="col.description"
-              @click="setMetric(col.sortable ? col.key : undefined)"
+              :aria-sort="col.sortable ? ariaSort(col.key) : undefined"
             >
-              {{ col.label }}
-            </td>
+              <button
+                v-if="col.sortable"
+                type="button"
+                class="top-fn__sort"
+                @click="toggleSort(col.key)"
+              >
+                {{ col.label }}
+                <span
+                  class="top-fn__sort-arrow"
+                  :class="{ 'top-fn__sort-arrow--shown': sort.key === col.key }"
+                  aria-hidden="true"
+                >{{ sort.key === col.key && sort.order === 'asc' ? '▲' : '▼' }}</span>
+              </button>
+              <template v-else>
+                {{ col.label }}
+              </template>
+            </th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            v-for="item in data.functions"
+            v-for="item in rows"
             :key="item.function"
             class="top-fn__row"
           >
@@ -100,7 +132,7 @@ watchEffect(async () => {
               :key="col.key"
               class="top-fn__td"
               :class="{
-                'top-fn__td--active': metric === col.key,
+                'top-fn__td--active': sort.key === col.key,
                 'top-fn__td--fn': col.key === 'function'
               }"
             >
@@ -148,8 +180,33 @@ thead {
   @apply px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 whitespace-nowrap;
 }
 
-.top-fn__th--sortable {
-  @apply cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 transition-colors;
+.top-fn__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.top-fn__sort:hover {
+  text-decoration: underline;
+}
+
+.top-fn__sort:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.top-fn__sort-arrow {
+  font-size: 9px;
+  visibility: hidden;
+}
+
+.top-fn__sort-arrow--shown {
+  visibility: visible;
 }
 
 .top-fn__th--active {
