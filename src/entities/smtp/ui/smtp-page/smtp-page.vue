@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moment from 'moment'
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useAttachments } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import type { NormalizedEvent, Attachment } from '@/shared/types'
@@ -14,10 +14,16 @@ import {
   EventTabs,
   type TabItem
 } from '@/shared/ui'
+import { listBadges, partTabId, partTabs } from '../../lib/smtp-parts'
 import { useSmtpAnalytics, type MimeNode } from '../../lib/use-smtp-analytics'
-import type { SMTP } from '../../types'
+import type { SMTP, SMTPPart } from '../../types'
 import { SmtpInsights } from '../smtp-insights'
 import { SmtpRelease } from '../smtp-release'
+
+// Only mails with other parts or an invite need these (#6829): their code and
+// CSS load then, not with the app (first-load budget).
+const SmtpInviteCard = defineAsyncComponent(() => import('../smtp-invite-card/smtp-invite-card.vue'))
+const SmtpPartView = defineAsyncComponent(() => import('../smtp-part-view/smtp-part-view.vue'))
 
 type Props = {
   event: NormalizedEvent<SMTP>
@@ -67,12 +73,18 @@ const isText = computed(
   () => props.event.payload?.text !== undefined && props.event.payload?.text !== ''
 )
 
+// Other versions of the body (Apple Watch, AMP, calendar…), #6829: a tab each.
+const parts = computed(() => (props.event.payload.parts ?? []) as SMTPPart[])
+const calendar = computed(() => props.event.payload.calendar)
+const badges = computed(() => listBadges(props.event.payload))
+
 // The views of the email body, in the header's row 2 (#6737 A); the HTML
-// preview first.
+// preview first, the other versions before Raw.
 const bodyTabs = computed<TabItem[]>(() => [
   ...(isHtml.value ? [{ id: 'html', label: 'HTML Preview' }] : []),
   ...(isText.value ? [{ id: 'text', label: 'Text' }] : []),
   ...(isHtml.value ? [{ id: 'source', label: 'HTML Source' }] : []),
+  ...partTabs(parts.value),
   { id: 'raw', label: 'Raw' }
 ])
 
@@ -137,6 +149,12 @@ onMounted(getAttachmentsRequest)
               v-else-if="isText"
               class="smtp-header__badge"
             >Text</span>
+            <span
+              v-for="badge in badges"
+              :key="badge"
+              class="smtp-header__badge smtp-header__badge--part"
+              data-test="smtp-part-badge"
+            >{{ badge }}</span>
             <span
               v-if="attachments.length"
               class="smtp-header__badge"
@@ -238,6 +256,13 @@ onMounted(getAttachmentsRequest)
                 }}
               </span>
             </div>
+            <div
+              v-if="parts.length"
+              class="smtp-info-row"
+            >
+              <span class="smtp-info-row__label">Other versions</span>
+              <span class="smtp-info-row__value">{{ parts.map((p) => p.label || p.type).join(', ') }}</span>
+            </div>
             <div class="smtp-info-row">
               <span class="smtp-info-row__label">Size</span>
               <span class="smtp-info-row__value">{{ formatSize(metrics.totalSize) }}</span>
@@ -322,6 +347,12 @@ onMounted(getAttachmentsRequest)
 
       <!-- Right: preview -->
       <div class="smtp-layout__preview">
+        <SmtpInviteCard
+          v-if="calendar"
+          class="smtp-layout__invite"
+          :calendar="calendar"
+        />
+
         <div class="smtp-preview-card">
           <EventTabs
             v-slot="{ tab }"
@@ -351,6 +382,17 @@ onMounted(getAttachmentsRequest)
               language="html"
               :code="event.payload.html"
             />
+
+            <!-- v-if: a part (up to 1 MB, maybe a frame) is built only when its tab is open. -->
+            <template
+              v-for="(part, index) in parts"
+              :key="partTabId(index)"
+            >
+              <SmtpPartView
+                v-if="tab === partTabId(index)"
+                :part="part"
+              />
+            </template>
 
             <CodeSnippet
               v-show="tab === 'raw'"
@@ -385,6 +427,10 @@ onMounted(getAttachmentsRequest)
 
 .smtp-header__badge--html {
   @apply bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400;
+}
+
+.smtp-header__badge--part {
+  @apply bg-violet-100 dark:bg-violet-500/15 text-violet-700 dark:text-violet-300;
 }
 
 .smtp-header__meta {
@@ -446,6 +492,10 @@ onMounted(getAttachmentsRequest)
 .smtp-layout__preview {
   @apply flex-1 min-w-0;
   @apply order-1 xl:order-2;
+}
+
+.smtp-layout__invite {
+  @apply mb-4;
 }
 
 /* Preview card */

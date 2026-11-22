@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useSmtp } from "../../lib";
-import { smtpOrderMock, smtpTextMock, smtpWelcomeMock } from '../../mocks';
+import {
+  smtpAmpMock,
+  smtpCancelMock,
+  smtpIcsAllDayMock,
+  smtpInviteMock,
+  smtpOrderMock,
+  smtpTextMock,
+  smtpWatchMock,
+  smtpWelcomeMock,
+} from '../../mocks';
 import SmtpPage from "./smtp-page.vue";
 
 const { normalizeSmtpEvent } = useSmtp();
@@ -46,4 +55,25 @@ export const HtmlWithScript: StoryObj<typeof SmtpPage> = {
       },
     })
   }
+};
+
+// #6829: other versions of the body and the invite card (real server events).
+export const Invite: StoryObj<typeof SmtpPage> = {
+  args: { event: normalizeSmtpEvent(smtpInviteMock) }
+};
+
+export const CancelledInvite: StoryObj<typeof SmtpPage> = {
+  args: { event: normalizeSmtpEvent(smtpCancelMock) }
+};
+
+export const AllDayIcsAttachment: StoryObj<typeof SmtpPage> = {
+  args: { event: normalizeSmtpEvent(smtpIcsAllDayMock) }
+};
+
+export const AppleWatch: StoryObj<typeof SmtpPage> = {
+  args: { event: normalizeSmtpEvent(smtpWatchMock) }
+};
+
+export const Amp: StoryObj<typeof SmtpPage> = {
+  args: { event: normalizeSmtpEvent(smtpAmpMock) }
 };

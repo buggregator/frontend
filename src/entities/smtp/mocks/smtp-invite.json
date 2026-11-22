@@ -1,0 +1,66 @@
+{
+  "uuid": "d5fbab5d-c613-4d2b-b03b-ac4a0e2efd4c",
+  "type": "smtp",
+  "payload": {
+    "id": null,
+    "subject": "Invitation: Release sync @ Tue Dec 1, 2026 9am - 9:30am (UTC)",
+    "from": [
+      {
+        "email": "ann@example.com",
+        "name": "Ann Lee"
+      }
+    ],
+    "to": [
+      {
+        "email": "bob@example.com",
+        "name": ""
+      }
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [],
+    "text": "You have been invited to Release sync.",
+    "html": "<p>You have been invited to <b>Release sync</b>.</p>",
+    "raw": "From: Ann Lee <ann@example.com>\r\nTo: bob@example.com\r\nSubject: Invitation: Release sync @ Tue Dec 1, 2026 9am - 9:30am (UTC)\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"mixed\"\r\n\r\n--mixed\r\nContent-Type: multipart/alternative; boundary=\"alt\"\r\n\r\n--alt\r\nContent-Type: text/plain; charset=\"UTF-8\"\r\n\r\nYou have been invited to Release sync.\r\n--alt\r\nContent-Type: text/html; charset=\"UTF-8\"\r\n\r\n<p>You have been invited to <b>Release sync</b>.</p>\r\n--alt\r\nContent-Type: text/calendar; charset=\"UTF-8\"; method=REQUEST\r\nContent-Transfer-Encoding: base64\r\n\r\nQkVHSU46VkNBTEVOREFSDQpQUk9ESUQ6LS8vR29vZ2xlIEluYy8vR29vZ2xlIENhbGVuZGFyIDcw\r\nLjkwNTQvL0VODQpWRVJTSU9OOjIuMA0KTUVUSE9EOlJFUVVFU1QNCkJFR0lOOlZFVkVOVA0KRFRT\r\nVEFSVDoyMDI2MTIwMVQwOTAwMDBaDQpEVEVORDoyMDI2MTIwMVQwOTMwMDBaDQpVSUQ6YWJjMTIz\r\nQGdvb2dsZS5jb20NCk9SR0FOSVpFUjtDTj1Bbm4gTGVlOm1haWx0bzphbm5AZXhhbXBsZS5jb20N\r\nCkFUVEVOREVFO0NVVFlQRT1JTkRJVklEVUFMO1JPTEU9UkVRLVBBUlRJQ0lQQU5UO1BBUlRTVEFU\r\nPU5FRURTLUFDVElPTjtSU1ZQPQ0KIFRSVUU7Q049Ym9iQGV4YW1wbGUuY29tO1gtTlVNLUdVRVNU\r\nUz0wOm1haWx0bzpib2JAZXhhbXBsZS5jb20NCkFUVEVOREVFO1JPTEU9UkVRLVBBUlRJQ0lQQU5U\r\nO1BBUlRTVEFUPUFDQ0VQVEVEO0NOPSJMZWUsIEFubiI6bWFpbHRvOmFubkBleGFtcGxlLmNvbQ0K\r\nREVTQ1JJUFRJT046QWdlbmRhOlxuMS4gUmVsZWFzZVwsIGRvY3NcbjIuIFEmQQ0KTE9DQVRJT046\r\nUm9vbSA0XDsgZmxvb3IgMg0KU0VRVUVOQ0U6MA0KU1RBVFVTOkNPTkZJUk1FRA0KU1VNTUFSWTpS\r\nZWxlYXNlIHN5bmMNCkJFR0lOOlZBTEFSTQ0KQUNUSU9OOkRJU1BMQVkNCkRFU0NSSVBUSU9OOlRo\r\naXMgaXMgYW4gZXZlbnQgcmVtaW5kZXINClRSSUdHRVI6LVAwRFQwSDEwTTBTDQpFTkQ6VkFMQVJN\r\nDQpFTkQ6VkVWRU5UDQpFTkQ6VkNBTEVOREFSDQ==\r\n--alt--\r\n--mixed\r\nContent-Type: application/ics; name=\"invite.ics\"\r\nContent-Disposition: attachment; filename=\"invite.ics\"\r\nContent-Transfer-Encoding: base64\r\n\r\nQkVHSU46VkNBTEVOREFSDQpQUk9ESUQ6LS8vR29vZ2xlIEluYy8vR29vZ2xlIENhbGVuZGFyIDcw\r\nLjkwNTQvL0VODQpWRVJTSU9OOjIuMA0KTUVUSE9EOlJFUVVFU1QNCkJFR0lOOlZFVkVOVA0KRFRT\r\nVEFSVDoyMDI2MTIwMVQwOTAwMDBaDQpEVEVORDoyMDI2MTIwMVQwOTMwMDBaDQpVSUQ6YWJjMTIz\r\nQGdvb2dsZS5jb20NCk9SR0FOSVpFUjtDTj1Bbm4gTGVlOm1haWx0bzphbm5AZXhhbXBsZS5jb20N\r\nCkFUVEVOREVFO0NVVFlQRT1JTkRJVklEVUFMO1JPTEU9UkVRLVBBUlRJQ0lQQU5UO1BBUlRTVEFU\r\nPU5FRURTLUFDVElPTjtSU1ZQPQ0KIFRSVUU7Q049Ym9iQGV4YW1wbGUuY29tO1gtTlVNLUdVRVNU\r\nUz0wOm1haWx0bzpib2JAZXhhbXBsZS5jb20NCkFUVEVOREVFO1JPTEU9UkVRLVBBUlRJQ0lQQU5U\r\nO1BBUlRTVEFUPUFDQ0VQVEVEO0NOPSJMZWUsIEFubiI6bWFpbHRvOmFubkBleGFtcGxlLmNvbQ0K\r\nREVTQ1JJUFRJT046QWdlbmRhOlxuMS4gUmVsZWFzZVwsIGRvY3NcbjIuIFEmQQ0KTE9DQVRJT046\r\nUm9vbSA0XDsgZmxvb3IgMg0KU0VRVUVOQ0U6MA0KU1RBVFVTOkNPTkZJUk1FRA0KU1VNTUFSWTpS\r\nZWxlYXNlIHN5bmMNCkJFR0lOOlZBTEFSTQ0KQUNUSU9OOkRJU1BMQVkNCkRFU0NSSVBUSU9OOlRo\r\naXMgaXMgYW4gZXZlbnQgcmVtaW5kZXINClRSSUdHRVI6LVAwRFQwSDEwTTBTDQpFTkQ6VkFMQVJN\r\nDQpFTkQ6VkVWRU5UDQpFTkQ6VkNBTEVOREFSDQ==\r\n--mixed--\r\n",
+    "parts": [
+      {
+        "type": "text/calendar",
+        "label": "Calendar",
+        "content": "BEGIN:VCALENDAR\r\nPRODID:-//Google Inc//Google Calendar 70.9054//EN\r\nVERSION:2.0\r\nMETHOD:REQUEST\r\nBEGIN:VEVENT\r\nDTSTART:20261201T090000Z\r\nDTEND:20261201T093000Z\r\nUID:abc123@google.com\r\nORGANIZER;CN=Ann Lee:mailto:ann@example.com\r\nATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=\r\n TRUE;CN=bob@example.com;X-NUM-GUESTS=0:mailto:bob@example.com\r\nATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=\"Lee, Ann\":mailto:ann@example.com\r\nDESCRIPTION:Agenda:\\n1. Release\\, docs\\n2. Q&A\r\nLOCATION:Room 4\\; floor 2\r\nSEQUENCE:0\r\nSTATUS:CONFIRMED\r\nSUMMARY:Release sync\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:This is an event reminder\r\nTRIGGER:-P0DT0H10M0S\r\nEND:VALARM\r\nEND:VEVENT\r\nEND:VCALENDAR\r",
+        "size": 712
+      }
+    ],
+    "calendar": {
+      "method": "REQUEST",
+      "summary": "Release sync",
+      "start": "2026-12-01T09:00:00Z",
+      "end": "2026-12-01T09:30:00Z",
+      "tz": "UTC",
+      "location": "Room 4; floor 2",
+      "description": "Agenda:\n1. Release, docs\n2. Q&A",
+      "status": "CONFIRMED",
+      "uid": "abc123@google.com",
+      "sequence": "0",
+      "organizer": {
+        "name": "Ann Lee",
+        "email": "ann@example.com"
+      },
+      "attendees": [
+        {
+          "name": "bob@example.com",
+          "email": "bob@example.com",
+          "status": "NEEDS-ACTION",
+          "role": "REQ-PARTICIPANT"
+        },
+        {
+          "name": "Lee, Ann",
+          "email": "ann@example.com",
+          "status": "ACCEPTED",
+          "role": "REQ-PARTICIPANT"
+        }
+      ]
+    }
+  },
+  "timestamp": 1795359726,
+  "project": null
+}

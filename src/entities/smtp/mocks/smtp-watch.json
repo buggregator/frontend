@@ -1,0 +1,36 @@
+{
+  "uuid": "7b1e1d83-a327-40f0-9f80-656605639c9a",
+  "type": "smtp",
+  "payload": {
+    "id": null,
+    "subject": "Your order shipped",
+    "from": [
+      {
+        "email": "shop@example.com",
+        "name": "Shop"
+      }
+    ],
+    "to": [
+      {
+        "email": "ann@example.com",
+        "name": ""
+      }
+    ],
+    "cc": [],
+    "bcc": [],
+    "reply_to": [],
+    "text": "Your order shipped.",
+    "html": "<html><body><h1>Your order shipped</h1></body></html>",
+    "raw": "From: Shop <shop@example.com>\r\nTo: ann@example.com\r\nSubject: Your order shipped\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=\"b1\"\r\n\r\n--b1\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nYour order shipped.\r\n--b1\r\nContent-Type: text/watch-html; charset=utf-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n<b>Shipped</b> =E2=9C=93\r\n--b1\r\nContent-Type: text/html; charset=utf-8\r\n\r\n<html><body><h1>Your order shipped</h1></body></html>\r\n--b1--\r\n",
+    "parts": [
+      {
+        "type": "text/watch-html",
+        "label": "Apple Watch",
+        "content": "<b>Shipped</b> ✓",
+        "size": 18
+      }
+    ]
+  },
+  "timestamp": 1795359726,
+  "project": null
+}
