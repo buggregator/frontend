@@ -27,6 +27,7 @@ const SOURCES: Record<string, string> = { '': 'All', sentry: 'Sentry SDK', otel:
       :current="current"
       :label="tab === 'traces' ? 'Traces view' : 'Exceptions view'"
       test-prefix="view-tab-"
+      activation="manual"
       @select="select"
     >
       <template #icon="{ tab: view }">

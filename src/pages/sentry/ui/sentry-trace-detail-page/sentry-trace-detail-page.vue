@@ -144,6 +144,7 @@ onMounted(async () => {
           label="Trace view"
           panel-id="trace-view-panel"
           test-prefix="view-tab-"
+          activation="manual"
           @select="selectView"
         >
           <template #icon="{ tab }">
