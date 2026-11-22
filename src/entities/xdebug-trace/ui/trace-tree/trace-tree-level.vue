@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
+import { EditorLink } from '@/shared/ui'
 import { formatMemoryDelta, formatSeconds } from '../../lib/trace-format'
 import { shortPath } from '../../lib/trace-path'
 import { ROOT, type TraceTreeState } from '../../lib/use-trace-tree'
@@ -95,12 +96,12 @@ const label = (node: XdebugTraceNode) => (props.tree.isExpanded(node.offset) ? '
         </div>
 
         <div class="trace-row__metrics">
-          <a
+          <EditorLink
             v-if="buildLink(node.file, node.line)"
             class="trace-row__file"
             :href="buildLink(node.file, node.line) as string"
             :title="`${node.file}:${node.line}`"
-          >{{ shortPath(node.file) }}:{{ node.line }}</a>
+          >{{ shortPath(node.file) }}:{{ node.line }}</EditorLink>
           <span
             v-else
             class="trace-row__file"

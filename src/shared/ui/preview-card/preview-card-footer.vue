@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { withDefaults, defineProps, computed, type ComputedRef } from 'vue'
 import { useIdeLink } from '../../lib/helpers/use-ide-link'
+import { EditorLink } from '../editor-link'
 import { HighlightText } from '../highlight-text'
 import { IconSvg } from '../icon-svg'
 
@@ -78,15 +79,14 @@ const isEditorLink = (key: string) => !!editorLink.value && (key === 'file' || k
           v-for="(value, key) in mappedOrigins"
           :key="key"
         >
-          <a
-            v-if="isEditorLink(String(key))"
+          <EditorLink
+            v-if="editorLink && isEditorLink(String(key))"
             :href="editorLink"
-            target="_blank"
             class="pc-footer__tag pc-footer__tag--link"
           >
             <span class="pc-footer__tag-key">{{ key }}</span>
             <span class="pc-footer__tag-value"><HighlightText :text="String(value)" /></span>
-          </a>
+          </EditorLink>
 
           <span
             v-else

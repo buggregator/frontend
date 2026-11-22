@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
+import { EditorLink } from '@/shared/ui'
 import type { RayFrame } from '../../types'
 
 type Props = {
@@ -16,13 +17,13 @@ const ideLink = computed(() => buildLink(props.frame.file_name, props.frame.line
 <template>
   <div class="ray-frame">
     <span class="ray-frame__label">Called from</span>
-    <a
+    <EditorLink
       v-if="ideLink"
       class="ray-frame__link"
       :href="ideLink"
     >
       <code class="ray-frame__code">{{ frame.class || 'null' }}:{{ frame.method }}</code>
-    </a>
+    </EditorLink>
     <code
       v-else
       class="ray-frame__code"

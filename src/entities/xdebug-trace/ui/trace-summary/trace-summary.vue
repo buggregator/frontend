@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
+import { EditorLink } from '@/shared/ui'
 import { formatMemoryDelta, formatSeconds } from '../../lib/trace-format'
 import { shortPath } from '../../lib/trace-path'
 import type { XdebugTraceSummary } from '../../types'
@@ -129,11 +130,11 @@ const { buildLink } = useIdeLink()
                 {{ call.func }}
               </td>
               <td class="trace-summary__file">
-                <a
+                <EditorLink
                   v-if="buildLink(call.file, call.line)"
                   :href="buildLink(call.file, call.line) as string"
                   :title="`${call.file}:${call.line}`"
-                >{{ shortPath(call.file) }}:{{ call.line }}</a>
+                >{{ shortPath(call.file) }}:{{ call.line }}</EditorLink>
                 <span
                   v-else
                   :title="`${call.file}:${call.line}`"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, reactive, useId } from 'vue'
 import { useIdeLink } from '@/shared/lib/helpers/use-ide-link'
-import { IconSvg } from '@/shared/ui'
+import { EditorLink, IconSvg } from '@/shared/ui'
 import type { SentryFrame } from '../../types'
 
 type Props = {
@@ -194,14 +194,13 @@ const toggleOpen = () => {
       @click="toggleOpen"
     >
       <div class="frame__title">
-        <a
+        <EditorLink
           v-if="ideLink"
           :href="ideLink"
           class="frame__fn frame__fn--link"
-          @click.stop
         >{{
           displayFilename
-        }}</a>
+        }}</EditorLink>
         <span
           v-else
           class="frame__fn"
