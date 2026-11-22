@@ -1,6 +1,6 @@
 import { storeToRefs } from 'pinia'
 import type { Monolog } from '@/entities/monolog'
-import { REST_API_URL } from '@/shared/lib/io'
+import { REST_API_URL, type FacetCounts } from '@/shared/lib/io'
 import { useEventsStore, useProfileStore } from '@/shared/stores'
 import type { ServerEvent } from '@/shared/types'
 import type { LogsHistogram } from './log-bars'
@@ -9,8 +9,7 @@ import { windowSeconds, type LogsFilters } from './logs-filters'
 // The server's log endpoints (buggregator/server: facets, q, histogram).
 // Every one takes the same filters: type=monolog, project, window, level,
 // channel, trace (repeatable) and q.
-export type FacetCount = { value: string; count: number }
-export type LogsFacets = Record<string, FacetCount[]>
+export type LogsFacets = FacetCounts
 
 export class LogsLoadError extends Error {
   constructor(readonly status: number) {
