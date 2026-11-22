@@ -47,7 +47,10 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
       Home
     </RouterLink>
 
-    <span class="nav__sep">/</span>
+    <span
+      class="nav__sep"
+      aria-hidden="true"
+    >/</span>
 
     <RouterLink
       :to="eventsListLink"
@@ -56,7 +59,10 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
       {{ title }}
     </RouterLink>
 
-    <span class="nav__sep">/</span>
+    <span
+      class="nav__sep"
+      aria-hidden="true"
+    >/</span>
 
     <span
       class="nav__id"
@@ -98,42 +104,7 @@ const eventUrl = computed(() => `${REST_API_URL}/api/event/${props.eventId}`)
 </template>
 
 <style lang="scss" scoped>
-/* Breadcrumbs */
-.nav__crumb {
-  @apply text-sm text-gray-500 dark:text-gray-400;
-  @apply hover:text-gray-800 dark:hover:text-gray-200;
-  @apply transition-colors;
-}
-
-.nav__sep {
-  @apply text-gray-300 dark:text-gray-700 mx-1.5 text-sm;
-}
-
 .nav__id {
   @apply text-sm font-mono text-gray-500 dark:text-gray-400;
-}
-
-/* Action buttons */
-.action-btn {
-  @apply h-7 flex items-center gap-1.5 px-2.5 rounded;
-  @apply text-xs font-medium;
-  @apply text-gray-600 dark:text-gray-300;
-  @apply bg-gray-100 dark:bg-gray-700;
-  @apply hover:text-gray-700 dark:hover:text-gray-200;
-  @apply hover:bg-gray-200 dark:hover:bg-gray-600;
-  @apply transition-colors cursor-pointer;
-}
-
-.action-btn--danger {
-  @apply hover:text-red-600 dark:hover:text-red-400;
-  @apply hover:bg-red-50 dark:hover:bg-red-500/10;
-}
-
-.action-btn__icon {
-  @apply w-3.5 h-3.5;
-}
-
-.action-btn__text {
-  @apply hidden sm:inline;
 }
 </style>
