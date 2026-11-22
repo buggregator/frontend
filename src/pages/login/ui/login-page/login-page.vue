@@ -7,13 +7,13 @@ import { safeReturnTo, withReturnTo } from '@/shared/lib/return-to'
 import { useProfileStore, useSettingsStore } from '@/shared/stores'
 import { RouteName } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
-import beetles1122 from '../../assets/login-beetles-1122.webp'
-import beetles640 from '../../assets/login-beetles-640.webp'
-import beetlesJpg from '../../assets/login-beetles-960.jpg'
-import beetles960 from '../../assets/login-beetles-960.webp'
+import beetle1122 from '../../assets/login-beetle-1122.webp'
+import beetle640 from '../../assets/login-beetle-640.webp'
+import beetleJpg from '../../assets/login-beetle-960.jpg'
+import beetle960 from '../../assets/login-beetle-960.webp'
 
 // The left column is 50% of the screen (55% from xl); it is hidden below lg.
-const heroSrcset = `${beetles640} 640w, ${beetles960} 960w, ${beetles1122} 1122w`
+const heroSrcset = `${beetle640} 640w, ${beetle960} 960w, ${beetle1122} 1122w`
 const heroSizes = '(min-width: 1280px) 55vw, 50vw'
 
 useTitle('Login | Buggregator')
@@ -56,8 +56,8 @@ onMounted(() => {
         >
         <img
           class="login-hero__img"
-          :src="beetlesJpg"
-          alt="Robotic beetles inside a glass chamber, lit in purple and teal"
+          :src="beetleJpg"
+          alt="A mechanical beetle opened up under a microscope, more beetles on a shelf behind"
           width="1122"
           height="1402"
           loading="lazy"
@@ -182,16 +182,14 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 45%;
+  object-position: 50% 35%;
 }
 
-/* Keeps the text readable on the top and bottom edges; the beetles stay clear */
+/* Keeps the text readable at the bottom; the lens and the open beetle stay clear */
 .login-hero__shade {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(10, 10, 15, 0.94) 0%, rgba(10, 10, 15, 0.75) 28%, transparent 48%),
-    linear-gradient(0deg, rgba(10, 10, 15, 0.9) 0%, transparent 16%);
+  background: linear-gradient(0deg, rgba(10, 10, 15, 0.96) 0%, rgba(10, 10, 15, 0.82) 30%, transparent 52%);
 }
 
 /* ── Hero content ─────────────────────────────────────────── */
@@ -201,14 +199,15 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  padding-bottom: 24px;
   max-width: 520px;
 }
 
 .login-hero__headline {
   font-family: 'DM Sans Variable', sans-serif;
   font-weight: 700;
-  font-size: 3.5rem;
+  font-size: 2.75rem;
   line-height: 1.08;
   letter-spacing: -0.035em;
   color: #fff;
@@ -236,7 +235,7 @@ onMounted(() => {
   font-family: 'JetBrains Mono Variable', monospace;
   font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.7);
-  margin-top: 24px;
+  margin-top: 16px;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
   opacity: 0;
   transform: translateY(12px);
@@ -256,7 +255,7 @@ onMounted(() => {
   font-size: 1rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
-  margin-top: 32px;
+  margin-top: 20px;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
   opacity: 0;
   transform: translateY(12px);
