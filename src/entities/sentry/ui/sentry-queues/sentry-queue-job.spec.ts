@@ -58,7 +58,7 @@ describe('SentryQueueJob', () => {
   it('the header: name, status in words, queue and connection', () => {
     const w = render()
     expect(w.get('h2').text()).toBe('SendInvoice')
-    expect(w.get('[data-test="queue-headline"]').text()).toBe('Failed after 3 attempts')
+    expect(w.get('[data-test="queue-headline"]').text()).toBe('✕Failed after 3 attempts')
     expect(w.get('.queue-job__meta').text()).toContain('emails · redis')
     expect(w.get('.queue-job__kpis').text()).toContain('3 · 3 failed')
   })
@@ -94,7 +94,7 @@ describe('SentryQueueJob', () => {
       })
     )
     expect(w.find('[data-test="queue-scale"]').exists()).toBe(false)
-    expect(w.get('[data-test="queue-headline"]').text()).toBe('Done')
+    expect(w.get('[data-test="queue-headline"]').text()).toBe('✓Done')
   })
 
   it('says what Buggregator does not do and what Sentry does not send', () => {

@@ -43,7 +43,7 @@ export const attemptsLabel = (j: Pick<QueueJob, 'attempts' | 'failed_attempts'>)
 })
 
 /** «340 ms», «8.4 s», «4 min 12 s»; «—» without a number. */
-export const formatMs = (ms: number | null | undefined): string =>
+export const formatJobMs = (ms: number | null | undefined): string =>
   ms === null || ms === undefined || ms < 0 ? '—' : formatDuration(ms, { unit: 'ms', style: 'compact' })
 
 /** The duration bar of a row: % of the slowest job shown, a sliver at least. */
@@ -100,7 +100,7 @@ export const attemptScale = (list: QueueAttempt[]) => {
       left,
       width: Math.max(MIN, Math.round((pos(end) - left) * 100) / 100),
       label: `#${a.attempt}`,
-      title: `Attempt #${a.attempt} · ${QUEUE_STATUS[status].label} · ${formatMs(a.duration_ms ?? end - start)}`
+      title: `Attempt #${a.attempt} · ${QUEUE_STATUS[status].label} · ${formatJobMs(a.duration_ms ?? end - start)}`
     }
   })
 
@@ -111,7 +111,7 @@ export const attemptScale = (list: QueueAttempt[]) => {
     const ms = cur.a.gap_ms ?? cur.start - prev.end
     if (ms <= 0) continue
     const left = pos(prev.end)
-    gaps.push({ key: `gap-${i}`, left, width: Math.max(0, Math.round((pos(cur.start) - left) * 100) / 100), label: formatMs(ms) })
+    gaps.push({ key: `gap-${i}`, left, width: Math.max(0, Math.round((pos(cur.start) - left) * 100) / 100), label: formatJobMs(ms) })
   }
   return { bars, gaps, span }
 }

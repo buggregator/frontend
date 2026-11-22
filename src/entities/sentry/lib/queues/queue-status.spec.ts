@@ -5,7 +5,7 @@ import {
   attemptsLabel,
   attemptStatus,
   durationShare,
-  formatMs,
+  formatJobMs,
   jobName,
   jobStatus,
   QUEUE_STATUS,
@@ -69,12 +69,12 @@ describe('attemptsLabel', () => {
   })
 })
 
-describe('formatMs and durationShare', () => {
+describe('formatJobMs and durationShare', () => {
   it('compact durations, a dash without one', () => {
-    expect(formatMs(340)).toBe('340 ms')
-    expect(formatMs(8400)).toBe('8.4 s')
-    expect(formatMs(null)).toBe('—')
-    expect(formatMs(-1)).toBe('—')
+    expect(formatJobMs(340)).toBe('340 ms')
+    expect(formatJobMs(8400)).toBe('8.4 s')
+    expect(formatJobMs(null)).toBe('—')
+    expect(formatJobMs(-1)).toBe('—')
   })
 
   it('a share of the slowest, a sliver at least, none without a duration', () => {

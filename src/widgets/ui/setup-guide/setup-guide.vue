@@ -136,6 +136,7 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
         </p>
       </div>
       <a
+        v-if="section.docs"
         class="setup-guide__docs"
         :href="section.docs"
         target="_blank"
@@ -307,7 +308,11 @@ defineExpose({ focusTabs: () => tabs.value?.focusSelected() })
       </p>
     </div>
 
-    <footer class="setup-guide__footer">
+    <!-- Crons and Queues have no docs page yet: no link to nowhere. -->
+    <footer
+      v-if="section.docs"
+      class="setup-guide__footer"
+    >
       Other stacks, Docker and troubleshooting:
       <a
         :href="section.docs"

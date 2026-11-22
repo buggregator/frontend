@@ -3,7 +3,7 @@ import { useTitle } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { SetupGuide } from '@/widgets/ui'
-import { formatMs, SentryQueueTable, useCronClock, useQueueJobs, useQueueSummary } from '@/entities/sentry'
+import { formatJobMs, SentryQueueTable, useCronClock, useQueueJobs, useQueueSummary } from '@/entities/sentry'
 import { PERIOD_OPTIONS, useEventsStore } from '@/shared/stores'
 import { SkeletonLoader, StatusPanel } from '@/shared/ui'
 
@@ -114,7 +114,7 @@ const showAllTime = () => eventsStore.setPeriod('all')
         </div>
         <div>
           <dt>average duration</dt>
-          <dd>{{ formatMs(summary.avg_duration_ms) }}</dd>
+          <dd>{{ formatJobMs(summary.avg_duration_ms) }}</dd>
         </div>
       </dl>
 

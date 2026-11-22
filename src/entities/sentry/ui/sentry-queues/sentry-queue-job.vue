@@ -7,7 +7,7 @@ import {
   attemptScale,
   attemptsLabel,
   attemptStatus,
-  formatMs,
+  formatJobMs,
   jobName,
   jobStatus,
   localTimeZone,
@@ -43,9 +43,9 @@ const attempts = computed(() =>
       status: s,
       meta: QUEUE_STATUS[s],
       when: clock(a.finished_at ?? a.started_at),
-      duration: formatMs(a.duration_ms),
-      waited: a.latency_ms === null ? '' : formatMs(a.latency_ms),
-      gap: a.gap_ms === null ? '' : formatMs(a.gap_ms)
+      duration: formatJobMs(a.duration_ms),
+      waited: a.latency_ms === null ? '' : formatJobMs(a.latency_ms),
+      gap: a.gap_ms === null ? '' : formatJobMs(a.gap_ms)
     }
   })
 )
@@ -81,15 +81,13 @@ const attempts = computed(() =>
         {{ j.job }}
       </p>
       <div class="queue-job__meta">
+        <!-- The status in a sentence: «✕ Failed after 3 attempts». -->
         <CronStatusBadge
-          :status="status"
-          :meta="meta"
-        />
-        <b
           class="queue-job__headline"
-          :class="`queue-job__headline--${meta.tone}`"
+          :status="status"
+          :meta="{ ...meta, label: headline }"
           data-test="queue-headline"
-        >{{ headline }}</b>
+        />
         <span>queue <b>{{ j.queue || 'default' }}</b><template v-if="j.connection"> · {{ j.connection }}</template></span>
         <span
           v-if="j.finished_at"
@@ -123,11 +121,11 @@ const attempts = computed(() =>
       </div>
       <div>
         <dt>last attempt took</dt>
-        <dd>{{ formatMs(j.duration_ms) }}</dd>
+        <dd>{{ formatJobMs(j.duration_ms) }}</dd>
       </div>
       <div>
         <dt>waited in the queue</dt>
-        <dd>{{ formatMs(j.latency_ms) }}</dd>
+        <dd>{{ formatJobMs(j.latency_ms) }}</dd>
       </div>
       <div>
         <dt>first started</dt>
@@ -164,7 +162,7 @@ const attempts = computed(() =>
           v-for="bar in scale.bars"
           :key="bar.key"
           class="queue-job__bar"
-          :class="`queue-job__bar--${bar.tone}`"
+          :class="[`queue-job__bar--${bar.tone}`, { 'queue-job__bar--end': bar.left + bar.width > 90 }]"
           :style="{ left: `${bar.left}%`, width: `${bar.width}%` }"
           :title="bar.title"
         ><span class="queue-job__bar-label">{{ bar.label }}</span></span>
@@ -364,11 +362,6 @@ const attempts = computed(() =>
 
 .queue-job__meta .queue-job__headline {
   font-size: 13px;
-  font-weight: 600;
-}
-
-.queue-job__meta .queue-job__headline--err {
-  color: var(--cr-err);
 }
 
 .queue-job__from {
@@ -436,6 +429,12 @@ const attempts = computed(() =>
 
 .queue-job__bar-label {
   @apply text-gray-700 dark:text-gray-300;
+}
+
+// The last bar's label sits under its right edge: no clipping at the end.
+.queue-job__bar--end .queue-job__bar-label {
+  left: auto;
+  right: 0;
 }
 
 .queue-job__gap {

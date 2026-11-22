@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
 import { RouteName } from '@/shared/types'
 import { formatClock, formatRelative } from '../../lib/crons'
-import { attemptsLabel, durationShare, formatMs, jobName, jobStatus, localTimeZone, QUEUE_STATUS } from '../../lib/queues'
+import { attemptsLabel, durationShare, formatJobMs, jobName, jobStatus, localTimeZone, QUEUE_STATUS } from '../../lib/queues'
 import { useRowLink } from '../../lib/use-row-link'
 import type { QueueJob } from '../../types'
 import CronStatusBadge from '../sentry-crons/cron-status-badge.vue'
@@ -26,7 +26,7 @@ const rows = computed(() => {
       status,
       name: jobName(j.job),
       attempts: attemptsLabel(j),
-      duration: formatMs(j.duration_ms),
+      duration: formatJobMs(j.duration_ms),
       share: durationShare(j.duration_ms, max),
       finished: formatRelative(j.finished_at, props.now) || '—',
       clock: formatClock(j.finished_at, tz, props.now, true)
