@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { defineAsyncComponent, ref, watch } from 'vue'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { isCommandPaletteOpen } from '@/shared/lib/command-palette'
+import { filtersKey } from '@/shared/lib/feed-filters'
 import { useEvents } from '@/shared/lib/use-events'
 import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
 import { toastMessage } from '@/shared/lib/use-keyboard-nav'
@@ -17,7 +18,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), { heading: '' })
 
-const { activeProjectKey, period } = storeToRefs(useEventsStore())
+const { activeProjectKey, period, filters } = storeToRefs(useEventsStore())
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
 // A self-update restarts the server: the socket drop is expected then, and the
@@ -66,15 +67,15 @@ watch(
   { immediate: true }
 )
 
-// The period is an input of the query just like the project: when either
-// changes, the feed is fetched again.
+// The period and the feed filters are inputs of the query just like the
+// project: when any of them changes, the feed is fetched again.
 //
 // The getter returns a string rather than an array: an array is a fresh object
 // every time and watch would compare it by reference, so re-setting the same
 // project (when the project list refreshes, say) would refetch the whole feed —
 // which is visible as a flicker.
 watch(
-  () => `${activeProjectKey.value ?? ''}|${period.value}`,
+  () => `${activeProjectKey.value ?? ''}|${period.value}|${filtersKey(filters.value)}`,
   () => {
     events.getAll()
   },

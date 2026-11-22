@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { PAGE_TYPES} from "../../constants";
+import { type FeedFilter, filtersKey, matchesFilters } from "../../lib/feed-filters/feed-filters";
 import { logger } from "../../lib/logger";
 import {useSettings} from "../../lib/use-settings";
 import {
@@ -30,6 +31,7 @@ type TListLoad = {
   seq: number
   project: string | undefined
   period: string
+  filters: string
   added: EventId[]
   removed: EventId[]
   pins: Record<EventId, boolean>
@@ -102,8 +104,18 @@ export const useEventsStore = defineStore("eventsStore", {
     // states from it instead of the "waiting for events" welcome.
     listState: 'idle' as 'idle' | 'loading' | 'ready' | 'error',
     listError: '' as string,
+    // Feed filters (frontend#225): sent with every list load; live events
+    // that do not match are not added, only remembered in hiddenNew
+    // (uuid → type): a re-broadcast of the same event counts once, and each
+    // page counts only its own type (hiddenCount).
+    filters: [] as FeedFilter[],
+    hiddenNew: {} as Record<EventId, string>,
   }),
   getters: {
+    hiddenCount: ({ hiddenNew }) => (type?: PageEventTypes): number => {
+      const types = Object.values(hiddenNew);
+      return !type || type === PAGE_TYPES.ALL_EVENT_TYPES ? types.length : types.filter((t) => t === type).length;
+    },
     eventsCounts: ({ countsMap, events }) => (eventType: EventTypes | undefined): number => {
       if (!eventType) {
         return events.length;
@@ -164,6 +176,14 @@ export const useEventsStore = defineStore("eventsStore", {
 
       events
         .filter((el) => inFeed(el.type))
+        .filter((el) => {
+          if (existingIds.has(el.uuid) || matchesFilters(el.facets, this.filters)) {
+            delete this.hiddenNew[el.uuid];
+            return true;
+          }
+          this.hiddenNew[el.uuid] = el.type;
+          return false;
+        })
         .forEach((event) => {
         if (!existingIds.has(event.uuid)) {
           this.events.unshift(event);
@@ -188,6 +208,8 @@ export const useEventsStore = defineStore("eventsStore", {
       this.listLoad?.removed.push(...this.events.filter(({ uuid }) => !lockedSet.has(uuid)).map(({ uuid }) => uuid));
       this.events = this.events.filter(({ uuid }) => lockedSet.has(uuid));
       this.rebuildCountsMap();
+      // The server cleared the hidden ones too.
+      this.hiddenNew = {};
 
       this.removeCachedAll();
     },
@@ -252,6 +274,7 @@ export const useEventsStore = defineStore("eventsStore", {
         seq: this.listLoadSeq,
         project: this.projects.activeKey,
         period: this.period,
+        filters: filtersKey(this.filters),
         added: [],
         removed: [],
         pins: {},
@@ -268,7 +291,7 @@ export const useEventsStore = defineStore("eventsStore", {
       }
       this.listLoad = null;
 
-      if (load.project !== this.projects.activeKey || load.period !== this.period) {
+      if (load.project !== this.projects.activeKey || load.period !== this.period || load.filters !== filtersKey(this.filters)) {
         return false;
       }
 
@@ -393,6 +416,14 @@ export const useEventsStore = defineStore("eventsStore", {
     setListState(state: 'idle' | 'loading' | 'ready' | 'error', error = '') {
       this.listState = state;
       this.listError = error;
+    },
+    // The list is fetched again by whoever watches the filters (layout-base).
+    setFilters(filters: FeedFilter[]) {
+      if (filtersKey(filters) === filtersKey(this.filters)) {
+        return;
+      }
+      this.filters = filters;
+      this.hiddenNew = {};
     },
     setPeriod(period: string) {
       this.period = period;

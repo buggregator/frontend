@@ -2,10 +2,11 @@
 import { useTitle, refDebounced } from '@vueuse/core'
 import { toBlob } from 'html-to-image'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PAGE_TYPES, PAGES_SETTINGS } from '@/shared/constants'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
+import { facetLabel, useFeedFiltersRoute } from '@/shared/lib/feed-filters'
 import { useKeyHints } from '@/shared/lib/shortcuts'
 import { useEvents } from '@/shared/lib/use-events'
 import { useKeyboardNav, showToast, screenshotingEventId } from '@/shared/lib/use-keyboard-nav'
@@ -17,6 +18,9 @@ import { EventCardMapper } from '../event-card-mapper'
 import { KeyHintBar } from '../key-hint-bar'
 import { PagePlaceholder } from '../page-placeholder'
 import { SetupGuide, hasSetupHelp } from '../setup-guide'
+
+// Its own chunk: the first load does not grow with it.
+const FeedFilterBar = defineAsyncComponent(() => import('../feed-filter-bar').then((m) => m.FeedFilterBar))
 
 type Props = {
   title?: string
@@ -59,7 +63,15 @@ const pauseFilteredEvents = computed(() => {
   )
 })
 
-const { searchQuery, listState, listError } = storeToRefs(useEventsStore())
+const eventsStore = useEventsStore()
+const { searchQuery, listState, listError, filters: feedFilters } = storeToRefs(eventsStore)
+
+// Feed filters (frontend#225) are mirrored in the page address.
+useFeedFiltersRoute()
+
+const feedFiltersText = computed(() =>
+  feedFilters.value.map((f) => `${facetLabel(f.key)} ${f.not ? '≠' : '='} ${f.value}`).join(' · ')
+)
 const debouncedSearch = refDebounced(searchQuery, 150)
 
 const visibleEvents = computed(() => {
@@ -202,6 +214,7 @@ const emptyView = computed(() => {
   if (listState.value === 'loading' && !events.items.value.length) return 'loading'
   if (debouncedSearch.value.trim()) return 'no-match'
   if (props.favoritesOnly) return 'no-favorites'
+  if (feedFilters.value.length) return 'no-feed-filter-match'
   // The page's own filter is on: events may exist, the guide would mislead.
   if (props.filter) return 'no-filter-match'
   return 'welcome'
@@ -214,6 +227,8 @@ const clearSearch = () => {
 
 <template>
   <div class="layout-preview-events">
+    <FeedFilterBar :type="type" />
+
     <!-- Above the cards: live events keep coming after a failed load. -->
     <StatusPanel
       v-if="listState === 'error'"
@@ -289,6 +304,15 @@ const clearSearch = () => {
         :title="`No events match “${debouncedSearch.trim()}”`"
         action-label="Clear search"
         @action="clearSearch"
+      />
+
+      <StatusPanel
+        v-else-if="emptyView === 'no-feed-filter-match'"
+        title="No events match these filters"
+        :text="`${feedFiltersText}. New events that match show up here.`"
+        action-label="Clear all filters"
+        data-test="feed-filters-empty"
+        @action="eventsStore.setFilters([])"
       />
 
       <StatusPanel
