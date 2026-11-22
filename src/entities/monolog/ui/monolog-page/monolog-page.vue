@@ -2,16 +2,15 @@
 import { computed } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import {
-  CodeSnippet,
   TableBase,
   TableBaseRow,
   EventDetailLayout,
   EventDetailSection
 } from '@/shared/ui'
-import { JsonTreeView } from '@/shared/ui/json-tree-view'
 import { hasEntries, jsonOpenDepth } from '../../lib'
 import { MonologLevel } from '../../types'
 import type { Monolog } from '../../types'
+import { MonologBody } from '../monolog-body'
 
 type Props = {
   event: NormalizedEvent<Monolog>
@@ -20,6 +19,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const hasExtra = computed(() => hasEntries(props.event.payload.extra))
+const hasContext = computed(() => hasEntries(props.event.payload.context))
 
 const levelBadgeClass = computed(() => {
   const level = props.event.payload.level
@@ -55,27 +55,14 @@ const levelBadgeClass = computed(() => {
       </div>
     </template>
 
+    <!-- One box, as in the feed: the message, then context and extra. -->
     <EventDetailSection title="Message">
-      <CodeSnippet :code="event.payload.message" />
-    </EventDetailSection>
-
-    <EventDetailSection
-      v-if="event.payload.context"
-      title="Context"
-    >
-      <JsonTreeView
-        :value="event.payload.context"
-        :open-depth="jsonOpenDepth(event.payload.context)"
-      />
-    </EventDetailSection>
-
-    <EventDetailSection
-      v-if="hasExtra"
-      title="Extra"
-    >
-      <JsonTreeView
-        :value="event.payload.extra"
-        :open-depth="jsonOpenDepth(event.payload.extra)"
+      <MonologBody
+        :message="event.payload.message"
+        :context="hasContext ? event.payload.context : null"
+        :extra="hasExtra ? event.payload.extra : null"
+        :context-depth="jsonOpenDepth(event.payload.context)"
+        :extra-depth="jsonOpenDepth(event.payload.extra)"
       />
     </EventDetailSection>
 
