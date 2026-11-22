@@ -1,0 +1,135 @@
+// Tokens and the «track» look shared by the kit's Tabs and SegmentedControl
+// (design #6737 A): a rounded track, the selected item filled, outlined in
+// blue and semibold, so it is never marked by colour alone.
+// Plain CSS with tokens: Tailwind dark variants would double every rule in
+// the first-load stylesheet (bundle budget).
+
+@mixin tokens {
+  --seg-bg: #f3f4f6;
+  --seg-line: #d1d5db;
+  --seg-text: #4b5563;
+  --seg-strong: #111827;
+  --seg-count: #4b5563;
+  --seg-hover: #e5e7eb;
+  --seg-on-bg: #dbeafe;
+  --seg-on-line: #2563eb;
+  --seg-on-text: #1d4ed8;
+  --seg-focus: #2563eb;
+
+  .dark & {
+    --seg-bg: #111827;
+    --seg-line: #374151;
+    --seg-text: #9ca3af;
+    --seg-strong: #f3f4f6;
+    --seg-count: #9ca3af;
+    --seg-hover: #1f2937;
+    --seg-on-bg: #172554;
+    --seg-on-line: #3b82f6;
+    --seg-on-text: #93c5fd;
+    --seg-focus: #60a5fa;
+  }
+}
+
+// The group: md items are 28 px, sm 24 px; on a phone 38 px in a 44 px strip.
+@mixin track {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 100%;
+  padding: 2px;
+  border: 1px solid var(--seg-line);
+  border-radius: 8px;
+  background: var(--seg-bg);
+}
+
+@mixin item {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--seg-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--seg-hover);
+    color: var(--seg-strong);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--seg-focus);
+    outline-offset: 1px;
+  }
+
+  &[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: not-allowed;
+
+    &:hover {
+      background: none;
+      color: var(--seg-text);
+    }
+  }
+
+  @media (max-width: 639px) {
+    height: 38px;
+    min-width: 44px;
+    padding: 0 12px;
+    font-size: 14px;
+
+    // The touch target reaches the strip's edges: 44 px tall.
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -3px -1px;
+    }
+  }
+}
+
+@mixin item-sm {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+
+  @media (max-width: 639px) {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+
+@mixin item-on {
+  border-color: var(--seg-on-line);
+  background: var(--seg-on-bg);
+  color: var(--seg-on-text);
+  font-weight: 600;
+
+  &:hover {
+    background: var(--seg-on-bg);
+    color: var(--seg-on-text);
+  }
+}
+
+@mixin icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+// The number of an item sits inside it: mono 11 px.
+@mixin count {
+  font: 400 11px 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--seg-count);
+}
