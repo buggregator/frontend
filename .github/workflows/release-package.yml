@@ -16,11 +16,19 @@ jobs:
           cache: 'yarn'
 
       - run: yarn install --frozen-lockfile
-      - run: yarn generate
 
       - name: Get release tag
         id: tag
         run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      # The About section of the settings shows the version of package.json,
+      # which stays 0.0.1 in the repository: the build takes the tag instead.
+      - name: Set the package version
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: npm pkg set version="${VERSION#v}"
+
+      - run: yarn generate
 
       # Upload artifacts to current repo release
       - name: Create release archive
