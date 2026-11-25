@@ -69,7 +69,12 @@ const time = (at: string) => {
       class="explain__hint"
       :title="status.reason"
     >
-      harnsy is not reachable yet: the button works once Buggregator connects.
+      <template v-if="status.status === 'stopped'">
+        Buggregator stopped connecting to harnsy. Check explain.url and explain.token, then restart.
+      </template>
+      <template v-else>
+        harnsy is not reachable yet: the button works once Buggregator connects.
+      </template>
     </p>
 
     <ol

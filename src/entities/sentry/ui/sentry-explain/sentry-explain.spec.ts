@@ -60,6 +60,18 @@ describe('SentryExplain', () => {
     expect(w.find('[data-test="sentry-explain"]').exists()).toBe(false)
   })
 
+  it('tells apart connecting (retries) and stopped (needs config)', async () => {
+    routes['GET /api/explain'] = () => json(200, { ...status, status: 'connecting', reason: 'dial 10.0.0.1' })
+    let w = await mountIt()
+    expect(w.find('.explain__hint').text()).toContain('once Buggregator connects')
+    expect(w.find('.explain__hint').text()).not.toContain('10.0.0.1')
+    expect(w.find('.explain__hint').attributes('title')).toBe('dial 10.0.0.1')
+    routes['GET /api/explain'] = () => json(200, { ...status, status: 'stopped', reason: 'bad token' })
+    w = await mountIt()
+    expect(w.find('.explain__hint').text()).toContain('Check explain.url and explain.token, then restart')
+    expect(w.find('[data-test="sentry-explain-start"]').attributes('disabled')).toBeDefined()
+  })
+
   it('sends the error and shows the answers as escaped text', async () => {
     routes['POST /api/explain/event/ev1'] = () => json(200, thread)
     const w = await mountIt()
