@@ -65,7 +65,10 @@ describe('SentryLayoutPage header (#6737 A)', () => {
 
     const row1 = header.get('.app-header__row')
     expect(row1.find('.tabs-stub').attributes('data-current')).toBe('exceptions')
-    expect(row1.get('.app-header__actions').findAll('button, select').map((e) => e.classes()[0])).toEqual(['help-stub'])
+    // «Ask agents» (every header, #7116), then the page's own «How to set up».
+    expect(
+      row1.get('.app-header__actions').findAll('button, select').map((e) => e.attributes('data-test') ?? e.classes()[0])
+    ).toEqual(['assist-toggle', 'help-stub'])
 
     const row2 = header.get('[data-test="app-header-toolbar"]')
     expect(row2.findAll('.views-stub, .bar-stub, .period-stub').map((e) => e.classes()[0])).toEqual([
