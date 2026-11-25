@@ -67,8 +67,9 @@ const time = (at: string) => {
     <p
       v-if="!thread && status.status !== 'connected'"
       class="explain__hint"
+      :title="status.reason"
     >
-      harnsy is {{ status.status }}{{ status.reason ? `: ${status.reason}` : '' }}.
+      harnsy is not reachable yet: the button works once Buggregator connects.
     </p>
 
     <ol

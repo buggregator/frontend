@@ -53,6 +53,13 @@ describe('SentryExplain', () => {
     expect(w.find('[data-test="sentry-explain"]').exists()).toBe(false)
   })
 
+  it('stays hidden when the server answers HTML (SPA fallback)', async () => {
+    routes['GET /api/explain'] = () =>
+      Promise.resolve({ ok: true, status: 200, json: () => Promise.reject(new SyntaxError('html')) } as Response)
+    const w = await mountIt()
+    expect(w.find('[data-test="sentry-explain"]').exists()).toBe(false)
+  })
+
   it('sends the error and shows the answers as escaped text', async () => {
     routes['POST /api/explain/event/ev1'] = () => json(200, thread)
     const w = await mountIt()

@@ -69,7 +69,11 @@ export const useExplain = (eventUuid: MaybeRefOrGetter<string>) => {
       ...init,
       headers: { 'X-Auth-Token': token.value, 'Content-Type': 'application/json' }
     })
-    const body = await res.json().catch(() => ({}))
+    // Feature off: the SPA fallback answers 200 with HTML. Not JSON = no API.
+    const body = await res.json().catch(() => null)
+    if (body === null) {
+      throw Object.assign(new Error(`Request failed: ${res.status}`), { status: 404 })
+    }
     if (!res.ok) {
       throw Object.assign(new Error(body.error || `Request failed: ${res.status}`), {
         status: res.status,
