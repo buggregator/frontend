@@ -83,7 +83,7 @@ const toggleCollapse = () => {
   applySidebarClass(isCollapsed.value)
 }
 
-const openOverlay = () => drawer.open()
+const openOverlay = () => drawer.open(expandBtn.value)
 
 // Opened from the rail or from the header's burger: the focus moves into the
 // drawer either way.

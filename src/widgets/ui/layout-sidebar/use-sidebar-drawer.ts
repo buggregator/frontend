@@ -12,8 +12,10 @@ const isShown = (el: HTMLElement | null): el is HTMLElement =>
   !!el && el.isConnected && el.checkVisibility?.() !== false
 
 export const useSidebarDrawer = () => {
-  const open = () => {
-    const active = document.activeElement
+  // `trigger`: the control that opens it. A tap does not focus a button on
+  // iOS Safari, so the focused element is only the fallback.
+  const open = (trigger?: EventTarget | null) => {
+    const active = trigger instanceof HTMLElement ? trigger : document.activeElement
     opener = active instanceof HTMLElement && active !== document.body ? active : null
     isOpen.value = true
   }

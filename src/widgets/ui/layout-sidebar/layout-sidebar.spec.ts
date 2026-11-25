@@ -230,6 +230,21 @@ describe('LayoutSidebar: menu and project switcher', () => {
     burger.remove()
   })
 
+  it('gives the focus back to the opener passed in, even when a tap did not focus it (iOS)', async () => {
+    narrowScreen(true)
+    const burger = document.createElement('button')
+    document.body.appendChild(burger)
+    const wrapper = render()
+    const aside = wrapper.get('aside')
+
+    useSidebarDrawer().open(burger)
+    await flushPromises()
+    press(aside.element, 'Escape')
+    await flushPromises()
+    expect(document.activeElement).toBe(burger)
+    burger.remove()
+  })
+
   it('closes the drawer on a tap on the backdrop', async () => {
     narrowScreen(true)
     const wrapper = render()

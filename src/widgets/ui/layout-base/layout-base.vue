@@ -121,7 +121,7 @@ watch(
         title="Open menu"
         aria-label="Open menu"
         :aria-expanded="drawer.isOpen.value"
-        @click="drawer.open()"
+        @click="drawer.open($event.currentTarget)"
       >
         <IconSvg
           class="layout-base__burger-icon"
