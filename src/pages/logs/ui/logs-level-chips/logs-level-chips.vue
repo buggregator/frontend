@@ -56,7 +56,6 @@ const fmt = (n = 0) => n.toLocaleString('en-US')
 .level-chips {
   @apply flex min-w-0 rounded overflow-x-auto;
   @apply border border-gray-200 dark:border-gray-700;
-  scrollbar-width: thin;
 }
 
 .level-chips__chip {

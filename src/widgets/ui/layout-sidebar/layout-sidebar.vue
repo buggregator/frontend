@@ -843,7 +843,6 @@ const linkLabel = (type: EventType) =>
 .layout-sidebar__scroll {
   @apply flex flex-col flex-1 min-h-0 pb-1;
   @apply overflow-y-auto overflow-x-hidden overscroll-contain;
-  scrollbar-width: thin;
 }
 
 .layout-sidebar__scroll--more {
