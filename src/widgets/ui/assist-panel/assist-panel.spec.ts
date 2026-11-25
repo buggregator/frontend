@@ -203,6 +203,13 @@ describe('AssistPanel', () => {
     routes['GET /api/assist'] = () => json(200, { ...connected, mcp: { on: false } })
     const w = await mountIt()
     expect(w.text()).toContain('read-only mode')
+    // The agent has this one event: no ready question about other events.
+    expect(w.findAll('.ap-talk__prompt').map((b) => b.text())).toEqual([
+      'Why does this fail?›',
+      'How do I fix it?›',
+      'Write a test that reproduces it›'
+    ])
+    expect(w.find('.ap-talk__abilities').text()).not.toMatch(/similar|when it started/i)
     w.unmount()
   })
 

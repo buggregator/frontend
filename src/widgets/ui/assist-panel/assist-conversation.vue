@@ -29,7 +29,8 @@ const messages = computed(() => props.thread?.messages ?? [])
 const hasTalk = computed(() => messages.value.length > 0 || !!props.pending)
 const project = computed(() => props.status?.project || 'your project')
 // Agents can look themselves only through Buggregator's MCP, on and read-only.
-const mcpOff = computed(() => props.state === 'connected' && !(props.status?.mcp?.on && props.status?.mcp?.read_only))
+const canLook = computed(() => !!(props.status?.mcp?.on && props.status?.mcp?.read_only))
+const mcpOff = computed(() => props.state === 'connected' && !canLook.value)
 
 // New words at the end: keep the end in view.
 const scroller = ref<HTMLElement | null>(null)
@@ -123,7 +124,7 @@ watch(
       </p>
       <ul class="ap-talk__abilities">
         <li
-          v-for="a in emptyAbilities(context)"
+          v-for="a in emptyAbilities(context, canLook)"
           :key="a"
         >
           {{ a }}
@@ -134,7 +135,7 @@ watch(
       </p>
       <div class="ap-talk__prompts">
         <button
-          v-for="q in suggestionsFor(context)"
+          v-for="q in suggestionsFor(context, canLook)"
           :key="q"
           type="button"
           class="ap-talk__prompt"

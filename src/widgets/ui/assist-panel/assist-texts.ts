@@ -16,23 +16,36 @@ export const emptyTitle = (ctx: PageContext | null): string => {
   return isError(ctx) ? 'Ask about this error' : 'Ask about this event'
 }
 
-export const emptyAbilities = (ctx: PageContext | null): string[] => {
+// What agents can do depends on what they can see. Without Buggregator's
+// MCP (on and read-only) they have only the text this panel sends: one event,
+// or the page's rows. With it they can look up other events themselves.
+export const emptyAbilities = (ctx: PageContext | null, canLook = false): string[] => {
   if (!ctx || ctx.kind === 'page') {
     return ['Sum up what the page shows', 'Spot events that look wrong', 'Tell you what to open first']
   }
-  return isError(ctx)
-    ? ['Explain why the error happened', 'Find similar events and when it started', 'Suggest a fix and a test that reproduces it']
-    : ['Explain what the event shows', 'Find similar events', 'Point out anything unusual in it']
+  if (isError(ctx)) {
+    return canLook
+      ? ['Explain why the error happened', 'Find similar events and when it started', 'Suggest a fix and a test that reproduces it']
+      : ['Explain why the error happened', 'Point to the code that fails', 'Suggest a fix and a test that reproduces it']
+  }
+  return canLook
+    ? ['Explain what the event shows', 'Find similar events', 'Point out anything unusual in it']
+    : ['Explain what the event shows', 'Point out anything unusual in it', 'Suggest what to check next']
 }
 
-export const suggestionsFor = (ctx: PageContext | null): string[] => {
+export const suggestionsFor = (ctx: PageContext | null, canLook = false): string[] => {
   if (ctx?.suggestions?.length) return ctx.suggestions.slice(0, 3)
   if (!ctx || ctx.kind === 'page') {
     return ['What is on this page?', 'Does anything here look wrong?', 'What should I look at first?']
   }
-  return isError(ctx)
-    ? ['Why does this fail?', 'When did this start, and how often?', 'Write a test that reproduces it']
-    : ['What does this event tell me?', 'Does anything here look wrong?', 'Find similar events']
+  if (isError(ctx)) {
+    return canLook
+      ? ['Why does this fail?', 'When did this start, and how often?', 'Write a test that reproduces it']
+      : ['Why does this fail?', 'How do I fix it?', 'Write a test that reproduces it']
+  }
+  return canLook
+    ? ['What does this event tell me?', 'Does anything here look wrong?', 'Find similar events']
+    : ['What does this event tell me?', 'Does anything here look wrong?', 'What should I check next?']
 }
 
 export const placeholderFor = (ctx: PageContext | null): string => {
