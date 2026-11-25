@@ -16,12 +16,15 @@ type Props = {
   scripts?: boolean
   // With scripts: the frame takes the page's height, no scrollbar inside.
   fit?: boolean
+  // With fit: the least height (CSS length), e.g. the room left on the page.
+  minHeight?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   title: 'Email HTML preview',
   scripts: false,
-  fit: false
+  fit: false,
+  minHeight: '0'
 })
 
 // Captured HTML is untrusted: the sandbox gives the frame an opaque origin with
@@ -54,7 +57,7 @@ onMounted(() => window.addEventListener('message', onMessage))
 onBeforeUnmount(() => window.removeEventListener('message', onMessage))
 
 const style = computed(() =>
-  fits.value ? { height: `${height.value ?? 150}px`, minHeight: '0' } : undefined
+  fits.value ? { height: `${height.value ?? 150}px`, minHeight: props.minHeight } : undefined
 )
 
 </script>

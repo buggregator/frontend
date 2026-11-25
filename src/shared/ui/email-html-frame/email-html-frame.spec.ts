@@ -59,4 +59,9 @@ describe('EmailHtmlFrame', () => {
     await w.vm.$nextTick()
     expect(frame.attributes('style')).toContain('height: 150px')
   })
+
+  it('fit: keeps the least height it is given', () => {
+    const style = mountFrame({ scripts: true, fit: true, minHeight: '70vh' }).find('iframe').attributes('style')
+    expect(style).toContain('min-height: 70vh')
+  })
 })

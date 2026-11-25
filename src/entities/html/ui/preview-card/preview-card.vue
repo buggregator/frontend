@@ -44,6 +44,11 @@ const thumb = computed(() => `<style>html,body{overflow:hidden}</style>${markup.
         />
       </span>
 
+      <span
+        v-if="markup"
+        class="html-card__open"
+      >Open the page</span>
+
       <!-- The server left the markup out of the feed (over 32 KB). -->
       <template v-else>
         <span
@@ -79,6 +84,14 @@ const thumb = computed(() => `<style>html,body{overflow:hidden}</style>${markup.
 .html-card__frame {
   // Beats the 60vh min-height the mail preview sets on every iframe.
   @apply block w-full h-full min-h-0 border-0;
+}
+
+.html-card__open {
+  @apply block mt-1.5 text-xs font-medium text-blue-600 dark:text-blue-400;
+}
+
+.html-card:hover .html-card__open {
+  @apply underline;
 }
 
 .html-card__text {

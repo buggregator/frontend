@@ -53,6 +53,7 @@ const tabs: TabItem[] = [
           :title="title"
           scripts
           fit
+          min-height="calc(100dvh - 14.5rem)"
         />
       </div>
 

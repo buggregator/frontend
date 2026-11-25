@@ -29,6 +29,7 @@ describe('html PreviewCard', () => {
     expect(frame.attributes('srcdoc')).toContain('<h1')
     expect(frame.attributes('tabindex')).toBe('-1')
     expect(w.findComponent(RouterLinkStub).props('to')).toBe(`/html/${htmlReportMock.uuid}`)
+    expect(w.find('.html-card__open').text()).toBe('Open the page')
   })
 
   it('links the text to the event when the feed left the markup out', async () => {
