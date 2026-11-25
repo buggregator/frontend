@@ -9,7 +9,9 @@ import { useGlobalShortcuts } from '@/shared/lib/use-global-shortcuts'
 import { toastMessage } from '@/shared/lib/use-keyboard-nav'
 import { useEventsStore } from '@/shared/stores'
 import { useConnectionStore } from '@/shared/stores/connections'
+import { IconSvg } from '@/shared/ui'
 import { KeyboardShortcutsOverlay } from '../keyboard-shortcuts-overlay'
+import { useSidebarDrawer } from '../layout-sidebar'
 
 type Props = {
   // The page's h1. Pages with a visible h1 of their own leave it out.
@@ -41,6 +43,9 @@ const CommandPalette = defineAsyncComponent(() =>
 // #main-content in the URL (and in the history).
 const mainRef = ref<HTMLElement | null>(null)
 const skipToContent = () => mainRef.value?.focus()
+
+// Phone: the rail is hidden, the burger opens the main menu as a drawer.
+const drawer = useSidebarDrawer()
 
 const isDismissed = ref(false)
 const showBanner = ref(false)
@@ -108,6 +113,21 @@ watch(
       v-if="$slots.header"
       class="layout-base__header"
     >
+      <button
+        v-if="$slots.sidebar"
+        type="button"
+        class="layout-base__burger"
+        data-test="sidebar-burger"
+        title="Open menu"
+        aria-label="Open menu"
+        :aria-expanded="drawer.isOpen.value"
+        @click="drawer.open()"
+      >
+        <IconSvg
+          class="layout-base__burger-icon"
+          name="menu"
+        />
+      </button>
       <div class="layout-base__header-slot">
         <slot name="header" />
       </div>
@@ -208,6 +228,11 @@ watch(
 .layout-base__sidebar {
   @apply flex-none border-r border-gray-200 dark:border-gray-700 z-sidebar w-full h-full sticky top-0 h-screen max-h-screen;
   @include mixins.layout-sidebar;
+
+  /* Phone: no rail (layout-sidebar hides it); only the drawer shows. */
+  @media (max-width: 767px) {
+    @apply border-r-0;
+  }
 }
 
 /* The sidebar's menu is open over the page (below 1280 px): above the header
@@ -226,6 +251,22 @@ watch(
   }
 }
 
+/* Phone only (below md): the rail is hidden there. 44 px target. */
+.layout-base__burger {
+  @apply hidden flex-none items-center justify-center w-11 h-11 -ml-1 mr-1 rounded-md;
+  @apply text-gray-600 dark:text-gray-300;
+  @apply hover:bg-gray-100 dark:hover:bg-white/5;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
+
+  @media (max-width: 767px) {
+    @apply flex;
+  }
+}
+
+.layout-base__burger-icon {
+  @apply w-5 h-5;
+}
+
 .layout-base__header-slot {
   @apply flex-1 min-w-0 h-full;
 }
@@ -241,7 +282,7 @@ watch(
 }
 
 .layout-base__connection-banner {
-  @apply fixed top-0 left-10 md:left-14 lg:left-16 xl:left-56 right-0 z-banner;
+  @apply fixed top-0 left-0 md:left-14 lg:left-16 xl:left-56 right-0 z-banner;
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;

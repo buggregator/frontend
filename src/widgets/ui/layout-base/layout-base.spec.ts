@@ -6,6 +6,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
 import { downloadingStatus, restartingStatus } from '@/entities/server-update/mocks'
 import { showToast } from '@/shared/lib/use-keyboard-nav'
+import { useSidebarDrawer } from '../layout-sidebar'
 import LayoutBase from './layout-base.vue'
 
 vi.mock('@/shared/lib/use-events', () => ({ useEvents: () => ({ events: { getAll: vi.fn() } }) }))
@@ -66,6 +67,28 @@ describe('LayoutBase', () => {
     await wrapper.get('a').trigger('click')
     expect(document.activeElement).toBe(wrapper.get('main').element)
     expect(window.location.href).toBe(before)
+    wrapper.unmount()
+  })
+
+  it('has a burger in the header that opens the main menu (shown on phones only, by CSS)', async () => {
+    const wrapper = render()
+    const burger = wrapper.get('[data-test="sidebar-burger"]')
+    expect(burger.attributes('aria-label')).toBe('Open menu')
+    expect(burger.attributes('aria-expanded')).toBe('false')
+
+    await burger.trigger('click')
+    expect(useSidebarDrawer().isOpen.value).toBe(true)
+    expect(burger.attributes('aria-expanded')).toBe('true')
+    useSidebarDrawer().close()
+    wrapper.unmount()
+  })
+
+  it('has no burger on a page without the main menu', () => {
+    const wrapper = mount(LayoutBase, {
+      slots: { header: '<header>head</header>', default: '<div>page</div>' },
+      global: { plugins: [router] },
+    })
+    expect(wrapper.find('[data-test="sidebar-burger"]').exists()).toBe(false)
     wrapper.unmount()
   })
 

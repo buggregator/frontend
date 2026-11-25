@@ -8,6 +8,7 @@ import { availableStatus, restartingStatus, upToDateStatus } from '@/entities/se
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
 import { LocalStorageKeys, RouteName } from '@/shared/types'
 import LayoutSidebar from './layout-sidebar.vue'
+import { useSidebarDrawer } from './use-sidebar-drawer'
 
 const totals = ref<Record<string, number>>({})
 const fresh = ref<Record<string, number>>({})
@@ -56,9 +57,11 @@ const render = () => {
 }
 const inPage = () => new DOMWrapper(document.body)
 
-// Nothing of one test is left on the page for the next.
+// Nothing of one test is left on the page for the next (the drawer's state
+// is app-wide).
 afterEach(() => {
   mounted.splice(0).forEach((w) => w.unmount())
+  useSidebarDrawer().close()
 })
 const settingsLink = (wrapper: ReturnType<typeof render>) => wrapper.get('a[title="Settings"]')
 
@@ -204,6 +207,38 @@ describe('LayoutSidebar: menu and project switcher', () => {
     expect(aside.classes()).not.toContain('layout-sidebar--overlay')
     expect(document.activeElement?.getAttribute('aria-label')).toBe('Expand sidebar')
     wrapper.unmount()
+  })
+
+  it('opens as a drawer from the header burger (phone) and gives the focus back to it on Esc', async () => {
+    narrowScreen(true)
+    const burger = document.createElement('button')
+    burger.setAttribute('aria-label', 'Open menu')
+    document.body.appendChild(burger)
+    const wrapper = render()
+    const aside = wrapper.get('aside')
+
+    burger.focus()
+    useSidebarDrawer().open()
+    await flushPromises()
+    expect(aside.classes()).toContain('layout-sidebar--overlay')
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Close menu')
+
+    press(aside.element, 'Escape')
+    await flushPromises()
+    expect(aside.classes()).not.toContain('layout-sidebar--overlay')
+    expect(document.activeElement).toBe(burger)
+    burger.remove()
+  })
+
+  it('closes the drawer on a tap on the backdrop', async () => {
+    narrowScreen(true)
+    const wrapper = render()
+    useSidebarDrawer().open()
+    await flushPromises()
+
+    await inPage().get('[data-test="sidebar-backdrop"]').trigger('click')
+    expect(wrapper.get('aside').classes()).not.toContain('layout-sidebar--overlay')
+    expect(useSidebarDrawer().isOpen.value).toBe(false)
   })
 
   it('closes the overlay menu when a page is picked', async () => {
