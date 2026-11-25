@@ -1,0 +1,831 @@
+// The agents panel (#7113 A tokens). Plain CSS with tokens, in the panel's
+// own chunk: nothing of it lands in the first load. Classes start with ap.
+
+.ap {
+  --ap-bg: #fff;
+  --ap-line: #e5e7eb;
+  --ap-line2: #d1d5db;
+  --ap-text: #111827;
+  --ap-muted: #4b5563;
+  --ap-faint: #6b7280;
+  --ap-user: #f3f4f6;
+  --ap-user-line: #e5e7eb;
+  --ap-code: #f9fafb;
+  --ap-seg: #f3f4f6;
+  --ap-hover: #e5e7eb;
+  --ap-on-bg: #dbeafe;
+  --ap-on-line: #2563eb;
+  --ap-on-text: #1d4ed8;
+  --ap-ok: #15803d;
+  --ap-warn: #b45309;
+  --ap-err: #b91c1c;
+  --ap-err-bg: #fef2f2;
+  --ap-pri: #2563eb;
+  --ap-pri-h: #1d4ed8;
+  --ap-pri-a: #1e40af;
+  --ap-focus: #2563eb;
+  --ap-input-line: #6b7280;
+  --ap-shadow: -12px 0 32px rgb(17 24 39 / 0.12);
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  width: var(--ap-w, 420px);
+  max-width: 100vw;
+  border-left: 1px solid var(--ap-line);
+  background: var(--ap-bg);
+  color: var(--ap-text);
+  font-size: 14px;
+}
+
+.dark .ap {
+  --ap-bg: #1f2937;
+  --ap-line: #374151;
+  --ap-line2: #4b5563;
+  --ap-text: #f3f4f6;
+  --ap-muted: #9ca3af;
+  --ap-faint: #9ca3af;
+  --ap-user: #111827;
+  --ap-user-line: #374151;
+  --ap-code: #111827;
+  --ap-seg: #111827;
+  --ap-hover: #374151;
+  --ap-on-bg: #172554;
+  --ap-on-line: #3b82f6;
+  --ap-on-text: #93c5fd;
+  --ap-ok: #4ade80;
+  --ap-warn: #fbbf24;
+  --ap-err: #f87171;
+  --ap-err-bg: rgb(127 29 29 / 0.25);
+  --ap-focus: #60a5fa;
+  --ap-input-line: #6b7280;
+  --ap-shadow: -12px 0 32px rgb(3 7 18 / 0.5);
+}
+
+.ap--over {
+  box-shadow: var(--ap-shadow);
+  border-left-color: var(--ap-line2);
+}
+
+.ap--phone {
+  z-index: var(--z-modal);
+  left: 0;
+  width: 100vw;
+  border-left: 0;
+}
+
+.ap--drag {
+  user-select: none;
+}
+
+.ap :focus-visible {
+  outline: 2px solid var(--ap-focus);
+  outline-offset: 2px;
+}
+
+.ap code {
+  padding: 1px 4px;
+  border: 1px solid var(--ap-line);
+  border-radius: 3px;
+  background: var(--ap-seg);
+  font-size: 12px;
+}
+
+// The left edge: drag or ← → to resize.
+.ap__grip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  cursor: col-resize;
+  touch-action: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 4px;
+    height: 32px;
+    margin-top: -16px;
+    border-radius: 2px;
+    background: var(--ap-line2);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    background: var(--ap-focus);
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: linear-gradient(to right, transparent 3px, var(--ap-focus) 3px, var(--ap-focus) 5px, transparent 5px);
+  }
+}
+
+.ap__head {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 6px 6px 6px 16px;
+  border-bottom: 1px solid var(--ap-line);
+}
+
+.ap__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.ap__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ap__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ap-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  svg {
+    flex: none;
+    width: 13px;
+    height: 13px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  strong {
+    color: var(--ap-text);
+    font-weight: 600;
+  }
+}
+
+.ap__status--connected svg {
+  color: var(--ap-ok);
+}
+
+.ap__status--connecting {
+  color: var(--ap-warn);
+}
+
+.ap__status--stopped {
+  color: var(--ap-err);
+
+  svg {
+    fill: currentColor;
+    stroke: none;
+  }
+}
+
+.ap__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--ap-muted);
+  cursor: pointer;
+
+  svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--ap-hover);
+    color: var(--ap-text);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.ap__icon--on {
+  border-color: var(--ap-on-line);
+  background: var(--ap-on-bg);
+  color: var(--ap-on-text);
+}
+
+.ap__ctx {
+  flex: none;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--ap-line);
+}
+
+.ap__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  margin: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--ap-line2);
+  border-radius: 3px;
+  background: var(--ap-seg);
+  font-size: 12px;
+}
+
+.ap__chip-icon,
+.ap__chip-kind {
+  flex: none;
+  color: var(--ap-muted);
+}
+
+.ap__chip-subject {
+  overflow: hidden;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ap__ctx-note {
+  margin: 4px 0 0;
+  color: var(--ap-muted);
+  font-size: 12px;
+}
+
+.ap__note {
+  flex: none;
+  margin: 0 16px 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--ap-line2);
+  border-radius: 6px;
+  color: var(--ap-muted);
+  font-size: 13px;
+}
+
+.ap__note--err {
+  border-color: color-mix(in srgb, var(--ap-err) 45%, transparent);
+  background: var(--ap-err-bg);
+  color: var(--ap-text);
+}
+
+// Conversation.
+.ap-talk {
+  flex: 1;
+  min-height: 0;
+  padding: 14px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ap-talk__loading {
+  color: var(--ap-muted);
+  font-size: 13px;
+}
+
+.ap-talk__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ap-talk__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--ap-line2);
+  border-radius: 8px;
+  color: var(--ap-muted);
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+.ap-talk__title {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ap-talk__text,
+.ap-talk__hint {
+  margin: 0;
+  color: var(--ap-muted);
+  font-size: 13px;
+  line-height: 1.5;
+
+  strong {
+    color: var(--ap-text);
+  }
+
+  a {
+    color: var(--ap-on-text);
+    text-decoration: underline;
+  }
+}
+
+.ap-talk__hint {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ap-line);
+}
+
+.ap-talk__note {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--ap-warn) 45%, transparent);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.ap-talk__keys {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 10px;
+  margin: 0;
+  color: var(--ap-muted);
+  font-size: 12px;
+
+  dd {
+    margin: 0;
+  }
+}
+
+.ap-talk__guide {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--ap-pri);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--ap-pri-h);
+  }
+}
+
+.ap-talk__label {
+  margin: 8px 0 0;
+  color: var(--ap-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ap-talk__abilities {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+
+  li {
+    position: relative;
+    padding: 2px 0 2px 22px;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 2px;
+      color: var(--ap-ok);
+    }
+  }
+}
+
+.ap-talk__prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ap-talk__prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--ap-line2);
+  border-radius: 6px;
+  background: none;
+  color: var(--ap-text);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--ap-hover);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.ap-talk__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ap-msg__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.ap-msg__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: var(--ap-on-bg);
+  color: var(--ap-on-text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ap-msg__avatar--you {
+  background: var(--ap-seg);
+  color: var(--ap-muted);
+}
+
+.ap-msg__who {
+  font-weight: 600;
+}
+
+.ap-msg__time {
+  margin-left: auto;
+  color: var(--ap-faint);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ap-msg__you {
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--ap-user-line);
+  border-radius: 6px;
+  background: var(--ap-user);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ap-msg__context {
+  border: 1px solid var(--ap-line);
+  border-radius: 6px;
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    color: var(--ap-muted);
+    font-size: 12px;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: '›';
+      display: inline-block;
+      transition: transform 0.15s;
+    }
+
+    strong {
+      color: var(--ap-text);
+    }
+  }
+
+  &[open] summary::before {
+    transform: rotate(90deg);
+  }
+}
+
+.ap-msg__context-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ap-msg__context-text {
+  max-height: 280px;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  border-top: 1px solid var(--ap-line);
+  background: var(--ap-code);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ap-msg--waiting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ap-muted);
+  font-size: 13px;
+}
+
+.ap-msg__error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--ap-err) 45%, transparent);
+  border-radius: 6px;
+  background: var(--ap-err-bg);
+  font-size: 13px;
+}
+
+.ap-msg__retry {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ap-on-text);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Composer.
+.ap-compose {
+  flex: none;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--ap-line);
+}
+
+.ap-compose__box {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 4px 4px 4px 10px;
+  border: 1px solid var(--ap-input-line);
+  border-radius: 8px;
+  background: var(--ap-user);
+
+  &:focus-within {
+    outline: 2px solid var(--ap-focus);
+    outline-offset: 1px;
+  }
+}
+
+.ap-compose__box--off .ap-compose__input {
+  opacity: 0.7;
+}
+
+.ap-compose__input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  max-height: 160px;
+  padding: 9px 0;
+  border: 0;
+  background: none;
+  color: var(--ap-text);
+  font: inherit;
+  line-height: 20px;
+  resize: none;
+
+  &::placeholder {
+    color: var(--ap-faint);
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.ap-compose__send {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ap-pri);
+  color: #fff;
+  cursor: pointer;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--ap-pri-h);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--ap-pri-a);
+  }
+
+  &:disabled {
+    background: var(--ap-seg);
+    color: var(--ap-faint);
+    cursor: not-allowed;
+  }
+}
+
+.ap--phone .ap-compose__send,
+.ap--phone .ap__icon {
+  width: 44px;
+  height: 44px;
+}
+
+.ap-compose__keys {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0 0;
+  color: var(--ap-faint);
+  font-size: 11px;
+
+  kbd {
+    padding: 0 4px;
+    border: 1px solid var(--ap-line2);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 10px;
+  }
+}
+
+// Recent.
+.ap-recent {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 8px;
+  left: 8px;
+  z-index: 2;
+  max-height: min(420px, 70vh);
+  overflow-y: auto;
+  border: 1px solid var(--ap-line2);
+  border-radius: 8px;
+  background: var(--ap-bg);
+  box-shadow: var(--ap-shadow);
+}
+
+.ap-recent__head {
+  margin: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ap-line);
+  color: var(--ap-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ap-recent__empty {
+  margin: 0;
+  padding: 12px;
+  color: var(--ap-muted);
+  font-size: 13px;
+}
+
+.ap-recent__list {
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+}
+
+.ap-recent__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--ap-text);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ap-hover);
+  }
+
+  &[aria-current='true'] {
+    border-color: var(--ap-on-line);
+    background: var(--ap-on-bg);
+    color: var(--ap-on-text);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.ap-recent__title {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ap-recent__meta {
+  grid-column: 1;
+  color: var(--ap-muted);
+  font-size: 11px;
+}
+
+.ap-recent__ago {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  color: var(--ap-faint);
+  font-size: 11px;
+}
+
+// Spinner.
+.ap-spin {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ap-spin 0.8s linear infinite;
+}
+
+.ap-spin--light {
+  color: #fff;
+}
+
+@keyframes ap-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-spin {
+    animation-duration: 2.4s;
+  }
+}

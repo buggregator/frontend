@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { defineAsyncComponent, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { pageKey, pageText, providePageContext } from '@/shared/lib/assist'
 import { isCommandPaletteOpen } from '@/shared/lib/command-palette'
 import { filtersKey } from '@/shared/lib/feed-filters'
 import { useEvents } from '@/shared/lib/use-events'
@@ -21,6 +23,26 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), { heading: '' })
 
 const { activeProjectKey, period, filters } = storeToRefs(useEventsStore())
+
+// The agents panel's context for any page (#7116): where it is, the project,
+// period and filters. Lists and event pages give a richer one of their own.
+const route = useRoute()
+providePageContext(() => {
+  const title = props.heading || document.title.replace(/\s*\|\s*Buggregator$/, '') || route.path
+  return {
+    kind: 'page',
+    key: pageKey(route.path, activeProjectKey.value),
+    title,
+    project: activeProjectKey.value || undefined,
+    text: pageText({
+      title,
+      path: route.fullPath,
+      project: activeProjectKey.value,
+      period: period.value,
+      filters: filters.value
+    })
+  }
+}, { fallback: true })
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { events } = useEvents()
 // A self-update restarts the server: the socket drop is expected then, and the
@@ -283,6 +305,7 @@ watch(
 
 .layout-base__connection-banner {
   @apply fixed top-0 left-0 md:left-14 lg:left-16 xl:left-56 right-0 z-banner;
+  right: var(--ap-push, 0px);
   @apply bg-red-600 text-white text-xs md:text-sm px-4 py-2;
   @apply flex items-center justify-between;
   transition: left 0.2s ease;

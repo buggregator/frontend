@@ -2,6 +2,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
+import { isAssistOpen } from '../../lib/assist'
 import AppHeader from './app-header.vue'
 import HeaderToolbarPortal from './header-toolbar-portal.vue'
 import { APP_HEADER_TOOLBAR_ID, provideHeaderToolbar } from './toolbar'
@@ -14,7 +15,7 @@ describe('AppHeader', () => {
   it('one row without #toolbar', () => {
     const w = mount(AppHeader, { slots: { default: 'Home', controls: '<button>Clear</button>' } })
     expect(w.get('nav[aria-label="Breadcrumb"]').text()).toBe('Home')
-    expect(w.get('.app-header__actions').text()).toBe('Clear')
+    expect(w.get('.app-header__actions > :last-child').text()).toBe('Clear')
     expect(w.find('[data-test="app-header-toolbar"]').exists()).toBe(false)
     expect(w.classes()).not.toContain('app-header--two-rows')
   })
@@ -65,5 +66,20 @@ describe('HeaderToolbarPortal', () => {
   it('without a header row 2 the content stays in place', () => {
     const w = mount(defineComponent({ render: () => h('main', [h(HeaderToolbarPortal, null, () => h('b', 'Raw'))]) }))
     expect(w.get('main b').text()).toBe('Raw')
+  })
+
+  it('«Ask agents» comes first in the actions and opens or closes the agents panel', async () => {
+    isAssistOpen.value = false
+    const w = mount(AppHeader, { slots: { controls: '<button>Clear</button>' }, attachTo: document.body })
+    const btn = w.get('.app-header__actions > :first-child')
+    expect(btn.attributes('data-test')).toBe('assist-toggle')
+    expect(btn.attributes('aria-keyshortcuts')).toBe('a')
+    expect(btn.attributes('aria-expanded')).toBe('false')
+    await btn.trigger('click')
+    expect(isAssistOpen.value).toBe(true)
+    expect(btn.attributes('aria-expanded')).toBe('true')
+    await btn.trigger('click')
+    expect(isAssistOpen.value).toBe(false)
+    w.unmount()
   })
 })

@@ -50,6 +50,7 @@ export const SHORTCUTS: Shortcut[] = [
   { id: 'palette', group: 'everywhere', keys: [], caps: ['Ctrl/⌘ K'], label: 'Go to a page, project, setting or action', singleKey: false },
   { id: 'go-home', group: 'everywhere', keys: ['0'], label: 'All events', singleKey: true },
   { id: 'go-favorites', group: 'everywhere', keys: ['f'], label: 'Favorites', singleKey: true },
+  { id: 'assist', group: 'everywhere', keys: ['a'], label: 'Open or close the agents panel', singleKey: true },
   ...navShortcuts,
 
   { id: 'list-next', group: 'event-list', keys: ['j', 'ArrowDown'], caps: ['j', '↓'], label: 'Next event', singleKey: true },

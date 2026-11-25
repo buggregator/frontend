@@ -2,8 +2,9 @@
 import { useTitle, refDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, defineAsyncComponent, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { PAGE_TYPES, PAGES_SETTINGS } from '@/shared/constants'
+import { pageKey, pageText, providePageContext } from '@/shared/lib/assist'
 import { copyTextToClipboard, copyBlobToClipboard } from '@/shared/lib/clipboard'
 import { facetLabel, useFeedFiltersRoute } from '@/shared/lib/feed-filters'
 import { useKeyHints } from '@/shared/lib/shortcuts'
@@ -101,6 +102,29 @@ const visibleEvents = computed(() => {
     }
     return JSON.stringify(event.payload).toLowerCase().includes(query)
   })
+})
+
+// The agents panel talks about this list (#7116): its filters, count and
+// first rows.
+const route = useRoute()
+const { activeProjectKey, period } = storeToRefs(eventsStore)
+providePageContext(() => {
+  const title = props.favoritesOnly ? 'Favorites' : props.title || 'All events'
+  return {
+    kind: 'page',
+    key: pageKey(route.path, activeProjectKey.value),
+    title: `${title} list`,
+    project: activeProjectKey.value || undefined,
+    text: pageText({
+      title: `${title} list`,
+      path: route.fullPath,
+      project: activeProjectKey.value,
+      period: period.value,
+      filters: feedFilters.value,
+      count: visibleEvents.value.length,
+      rows: visibleEvents.value
+    })
+  }
 })
 
 const { showHintBar } = useKeyHints()

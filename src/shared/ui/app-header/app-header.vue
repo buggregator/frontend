@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isAssistOpen, toggleAssist } from '../../lib/assist'
 import { APP_HEADER_TOOLBAR_ID } from './toolbar'
 
 // The page header (design #6737 A): row 1 «where I am» — crumbs, section
@@ -37,6 +38,30 @@ defineProps<{ keepTitle?: boolean }>()
       </div>
 
       <div class="app-header__actions">
+        <!-- The agents panel (#7116): first of the actions, on every page. -->
+        <button
+          type="button"
+          class="action-btn app-header__assist"
+          :class="{ 'app-header__assist--on': isAssistOpen }"
+          :aria-expanded="isAssistOpen ? 'true' : 'false'"
+          aria-controls="assist-panel"
+          aria-keyshortcuts="a"
+          title="Ask agents about this page (A)"
+          data-test="assist-toggle"
+          @click="toggleAssist($event.currentTarget as HTMLElement)"
+        >
+          <svg
+            class="action-btn__icon"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden="true"
+          ><path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6Z" /></svg>
+          <span class="action-btn__text">Ask agents</span>
+          <kbd
+            class="app-header__assist-key"
+            aria-hidden="true"
+          >A</kbd>
+        </button>
         <slot name="controls" />
       </div>
     </div>
@@ -145,6 +170,17 @@ defineProps<{ keepTitle?: boolean }>()
     @apply hover:text-gray-700 dark:hover:text-gray-200;
     @apply hover:bg-gray-200 dark:hover:bg-gray-600;
     @apply transition-colors cursor-pointer;
+  }
+
+  // Open: the tab track's «selected» look, not colour alone (outline).
+  .app-header__assist--on {
+    @apply text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950;
+    box-shadow: inset 0 0 0 1px theme('colors.blue.600');
+  }
+
+  .app-header__assist-key {
+    @apply hidden md:inline-flex items-center px-1 rounded-sm font-sans text-2xs leading-4;
+    @apply border border-gray-300 dark:border-gray-500;
   }
 
   .action-btn--danger {

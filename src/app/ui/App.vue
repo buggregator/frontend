@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, watch } from 'vue'
-import { RouterView, useRouter } from 'vue-router'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useServerUpdateStore } from '@/entities/server-update/lib'
+import { isAssistOpen } from '@/shared/lib/assist'
 import { useDesktopNotify } from '@/shared/lib/desktop-notify'
 import { useAppBadge } from '@/shared/lib/use-app-badge'
 import { useEventsStore, useProfileStore, useSettingsStore } from '@/shared/stores'
+import { RouteName } from '@/shared/types'
 import { StatusPanel } from '@/shared/ui'
 import { useSettingsSync } from '../lib/settings-sync'
 
@@ -59,6 +61,21 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => stopAppBadge())
+
+// The agents panel (#7116): one for the whole app, so it stays open with its
+// thread and draft across pages. Loaded on first open (its own chunk); kept
+// mounted after that. Not on the sign-in page.
+const AssistPanel = defineAsyncComponent(() => import('@/widgets/ui/assist-panel').then((m) => m.AssistPanel))
+const route = useRoute()
+const assistAllowed = computed(() => !settingsError.value && route.name !== RouteName.Login)
+const assistMounted = ref(false)
+watch(
+  () => isAssistOpen.value && assistAllowed.value,
+  (show) => {
+    if (show) assistMounted.value = true
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -76,6 +93,11 @@ onBeforeUnmount(() => stopAppBadge())
   </main>
 
   <RouterView v-else />
+
+  <AssistPanel
+    v-if="assistMounted"
+    v-show="isAssistOpen && assistAllowed"
+  />
 </template>
 
 <style lang="scss" scoped>

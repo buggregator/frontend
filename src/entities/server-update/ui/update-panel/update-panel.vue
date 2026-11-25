@@ -2,8 +2,8 @@
 import { computed, ref, useId, watch } from 'vue'
 import { copyTextToClipboard } from '@/shared/lib/clipboard'
 import { IconSvg } from '@/shared/ui'
+import { MdText } from '@/shared/ui/md-text'
 import { reasonParts } from '../../lib/reason-text'
-import { renderReleaseNotes } from '../../lib/release-notes'
 import { toUpdateView } from '../../lib/update-view'
 import type { UpdateStatus } from '../../types'
 import { UpdateCommands } from '../update-commands'
@@ -68,7 +68,10 @@ const requestCheck = () => {
   if (checkWait.value === 0) emit('check')
 }
 
-const notesHtml = computed(() => renderReleaseNotes(props.status.notes))
+// The release body is Markdown from GitHub: the shared MdText renders it
+// (raw HTML off, http(s) links only). MdText is async: markdown-it stays out
+// of the settings page until the notes are opened.
+const hasNotes = computed(() => !!props.status.notes?.trim())
 
 // «What's new» stays folded until asked for; a new title folds it again.
 const notesOpen = ref(false)
@@ -539,14 +542,11 @@ const hasMiddle = computed(() => {
         class="upd__notes-content"
         data-test="update-notes-body"
       >
-        <!-- Built from escaped text by renderReleaseNotes: no markup of the release body survives. -->
-        <!-- eslint-disable vue/no-v-html -->
-        <div
-          v-if="notesHtml"
+        <MdText
+          v-if="hasNotes"
           class="upd__notes-body"
-          v-html="notesHtml"
+          :text="status.notes ?? ''"
         />
-        <!-- eslint-enable vue/no-v-html -->
         <p
           v-if="status.url"
           class="upd__notes-link"
@@ -862,12 +862,8 @@ const hasMiddle = computed(() => {
 .upd__notes-body {
   @apply text-[13px] leading-normal text-gray-700 dark:text-gray-300;
 
-  :deep(h4) {
+  :deep(:is(h1, h2, h3, h4, h5, h6)) {
     @apply mt-3 mb-1 text-2xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400;
-  }
-
-  :deep(h4:first-child) {
-    @apply mt-0;
   }
 
   :deep(ul) {
@@ -882,7 +878,7 @@ const hasMiddle = computed(() => {
     @apply my-1.5;
   }
 
-  :deep(b) {
+  :deep(:is(b, strong)) {
     @apply font-medium text-gray-900 dark:text-gray-100;
   }
 
