@@ -36,7 +36,10 @@ defineProps<{ keepTitle?: boolean }>()
         <slot name="tabs" />
       </div>
 
-      <div class="app-header__actions">
+      <div
+        class="app-header__actions"
+        :class="{ 'app-header__actions--fill': !$slots.tabs && !keepTitle }"
+      >
         <slot name="controls" />
       </div>
     </div>
@@ -65,6 +68,8 @@ defineProps<{ keepTitle?: boolean }>()
   @apply flex items-center justify-between gap-2 px-1 min-w-0;
   flex: 1 0 auto;
   height: var(--hdr-row, auto);
+  // Room for a control the layout puts over row 1 (the phone's burger).
+  padding-left: calc(0.25rem + var(--hdr-lead, 0px));
 }
 
 .app-header__nav {
@@ -88,6 +93,14 @@ defineProps<{ keepTitle?: boolean }>()
   // Shrinks (the search box first) when something sits next to the header,
   // such as the update pill on a phone.
   @apply flex items-center gap-1.5 min-w-0 ml-auto;
+}
+
+// Phones: the crumbs are hidden, so the controls (the search box first)
+// take row 1's whole width instead of leaving a gap after the burger.
+@media (max-width: 639px) {
+  .app-header__actions--fill {
+    @apply flex-1;
+  }
 }
 
 // The line between the rows runs the header's full width: the toolbar
