@@ -202,8 +202,10 @@ export const useAssistThread = (context: Ref<PageContext | null>, active: Ref<bo
     }, POLL_STEPS[Math.min(step, POLL_STEPS.length - 1)])
   }
   // Anything new starts the back-off over.
+  // Sources, not one array getter: a fresh array would fire on every thread
+  // load (a new object each poll) and keep the back-off at its first step.
   watch(
-    () => [active.value, waiting.value, state.value, thread.value?.messages.length ?? 0],
+    [active, waiting, state, () => thread.value?.messages.length ?? 0],
     () => {
       step = 0
       schedule()

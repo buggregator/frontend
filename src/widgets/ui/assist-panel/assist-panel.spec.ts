@@ -286,12 +286,24 @@ describe('AssistPanel polling', () => {
 
   it('waiting for an answer: checks the thread while open, never while closed', async () => {
     const waitingThread = { ...thread, messages: [...thread.messages, { from: 'you', text: 'And?', at: '2026-11-25T10:01:00Z' }] }
-    routes['GET /api/assist/threads?kind=event&key=ev1'] = () => json(200, waitingThread)
+    // A fresh object per answer, as a real fetch gives.
+    routes['GET /api/assist/threads?kind=event&key=ev1'] = () => json(200, structuredClone(waitingThread))
     const key = 'GET /api/assist/threads?kind=event&key=ev1'
     const w = await mountIt()
+    // Back-off for the thread too: checks at 5, 15, 35, 65 s.
     const first = calls(key)
     await tick(5000)
     expect(calls(key)).toBe(first + 1)
+    await tick(9000)
+    expect(calls(key)).toBe(first + 1)
+    await tick(1000)
+    expect(calls(key)).toBe(first + 2)
+    await tick(19000)
+    expect(calls(key)).toBe(first + 2)
+    await tick(1000)
+    expect(calls(key)).toBe(first + 3)
+    await tick(30000)
+    expect(calls(key)).toBe(first + 4)
 
     isAssistOpen.value = false
     await flushPromises()
