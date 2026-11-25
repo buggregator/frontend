@@ -72,11 +72,13 @@ describe('SentryExplain', () => {
     expect(w.find('[data-test="sentry-explain-start"]').attributes('disabled')).toBeDefined()
   })
 
-  it('sends the error and shows the answers as escaped text', async () => {
+  it('sends the error and shows the answers as Markdown, raw HTML as text', async () => {
     routes['POST /api/explain/event/ev1'] = () => json(200, thread)
     const w = await mountIt()
     await w.find('input').setValue('why?')
     await w.find('form').trigger('submit')
+    await flushPromises()
+    await vi.dynamicImportSettled()
     await flushPromises()
 
     const post = fetchMock.mock.calls.find(([, i]) => i?.method === 'POST')!

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { EventDetailSection } from '@/shared/ui'
+import { EventDetailSection, MdText } from '@/shared/ui'
 import { useExplain } from '../../lib/use-explain'
 
 // «Explain this error» (concept): a button under the error, the agents'
@@ -10,7 +10,9 @@ type Props = { eventUuid: string }
 
 const props = defineProps<Props>()
 
-const { status, thread, sending, error, waiting, explain, followUp } = useExplain(() => props.eventUuid)
+const { status, thread, sending, error, waiting, explain, followUp } = useExplain(
+  () => props.eventUuid
+)
 
 const question = ref('')
 const draft = ref('')
@@ -100,7 +102,11 @@ const time = (at: string) => {
           </summary>
           <pre class="explain__text">{{ m.text }}</pre>
         </details>
-        <!-- Agent text comes from outside: plain text, escaped. -->
+        <!-- Agent text comes from outside: Markdown with raw HTML off. -->
+        <MdText
+          v-else-if="m.from === 'agent'"
+          :text="m.text"
+        />
         <pre
           v-else
           class="explain__text"
@@ -176,7 +182,7 @@ const time = (at: string) => {
 }
 
 .explain__message {
-  @apply p-2 rounded text-sm;
+  @apply p-2 rounded text-sm min-w-0;
 }
 
 .explain__message--you {
@@ -196,7 +202,8 @@ const time = (at: string) => {
 }
 
 .explain__text {
-  @apply whitespace-pre-wrap break-words font-sans m-0;
+  @apply whitespace-pre-wrap font-sans m-0;
+  overflow-wrap: anywhere;
 }
 
 .explain__summary {
