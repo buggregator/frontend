@@ -14,8 +14,6 @@ type Props = {
   urlFragment?: boolean
 }
 
-defineOptions({ inheritAttrs: false })
-
 const props = withDefaults(defineProps<Props>(), { label: 'Event sections', urlFragment: false })
 const emit = defineEmits<{ change: [id: string] }>()
 
@@ -30,7 +28,9 @@ const fromHash = () => {
 const picked = ref(fromHash())
 // A tab that went away (or none picked yet): the first one.
 const active = computed(() =>
-  props.tabs.some((t) => t.id === picked.value && !t.disabled) ? picked.value : (props.tabs[0]?.id ?? '')
+  props.tabs.some((t) => t.id === picked.value && !t.disabled)
+    ? picked.value
+    : (props.tabs[0]?.id ?? '')
 )
 
 const select = (id: string) => {
@@ -46,31 +46,45 @@ watch(active, (id) => emit('change', id), { immediate: true })
 </script>
 
 <template>
-  <HeaderToolbarPortal>
-    <Tabs
-      class="event-tabs__bar"
-      :tabs="tabs"
-      :current="active"
-      :label="label"
-      :panel-id="panelId"
-      test-prefix="event-tab-"
-      @select="select"
-    />
-  </HeaderToolbarPortal>
+  <!-- One root: the page's class (margins, flex sizing) and its scoped styles
+       land here. With the portal beside the panel the root was a fragment, and
+       a scoped page class never matched (frontend#391). -->
+  <div class="event-tabs">
+    <HeaderToolbarPortal>
+      <Tabs
+        class="event-tabs__bar"
+        :tabs="tabs"
+        :current="active"
+        :label="label"
+        :panel-id="panelId"
+        test-prefix="event-tab-"
+        @select="select"
+      />
+    </HeaderToolbarPortal>
 
-  <div
-    :id="panelId"
-    role="tabpanel"
-    :aria-labelledby="tabIdOf(panelId, active)"
-    class="event-tabs__panel"
-    data-test="event-tabs-panel"
-    v-bind="$attrs"
-  >
-    <slot :tab="active" />
+    <div
+      :id="panelId"
+      role="tabpanel"
+      :aria-labelledby="tabIdOf(panelId, active)"
+      class="event-tabs__panel"
+      data-test="event-tabs-panel"
+    >
+      <slot :tab="active" />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.event-tabs {
+  @apply flex flex-col;
+}
+
+/* Fills the root, so a page that bounds the root's height (the profiler)
+   bounds the panel too. */
+.event-tabs__panel {
+  @apply flex-1 min-h-0;
+}
+
 .event-tabs__bar {
   @apply min-w-0;
 }

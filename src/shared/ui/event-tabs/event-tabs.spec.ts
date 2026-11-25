@@ -84,4 +84,17 @@ describe('EventTabs', () => {
     expect(document.querySelector(`#${APP_HEADER_TOOLBAR_ID} [role="tablist"]`)).not.toBeNull()
     expect(document.querySelector('main [role="tabpanel"]')?.textContent).toBe('response')
   })
+
+  // A page sizes the tabs with a class from its scoped styles (the profiler's
+  // panel fills the page). Scoped styles reach only a single root (frontend#391).
+  it("the page's class and scoped styles land on one root that holds the panel", () => {
+    const Page = defineComponent({
+      __scopeId: 'data-v-page',
+      render: () => h(EventTabs, { tabs, class: 'page-panel' }, { default: () => h('p', 'x') })
+    })
+    const w = mount(Page, { attachTo: document.body })
+    const root = w.get('.page-panel')
+    expect(root.attributes()).toHaveProperty('data-v-page')
+    expect(root.find('[role="tabpanel"]').exists()).toBe(true)
+  })
 })

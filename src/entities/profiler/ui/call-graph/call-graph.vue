@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, watchEffect } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import { ref, computed, watchEffect } from 'vue'
 import { useFormats } from '@/shared/lib/formats'
 import { type EventId, GraphTypes } from '@/shared/types'
 import { IconSvg } from '@/shared/ui'
@@ -22,7 +23,6 @@ const metric = ref(GraphTypes.WALL_TIME as GraphTypes)
 const threshold = ref(1)
 const percent = ref(10)
 
-const isReadyGraph = ref(false)
 const container = ref<HTMLElement>()
 
 const serverData = ref<ProfilerCallGraph | undefined>()
@@ -62,9 +62,10 @@ const toggleFullScreen = () => {
   isFullscreen.value = !isFullscreen.value
 }
 
-const graphHeight = computed(() =>
-  isFullscreen.value ? window.innerHeight : (container.value as HTMLElement).offsetHeight
-)
+// The graph needs a pixel height. Track the container's size: it is 0 while
+// the tab panel is laid out and changes on resize and fullscreen (#391).
+const { height: containerHeight } = useElementSize(container)
+const graphHeight = computed(() => Math.floor(containerHeight.value))
 
 watchEffect(async () => {
   const data = await getCallGraph(props.id, {
@@ -78,10 +79,6 @@ watchEffect(async () => {
   serverData.value = data
   toolbar.value = tools
   graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`
-})
-
-onMounted(() => {
-  isReadyGraph.value = true
 })
 
 const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
@@ -178,7 +175,7 @@ const currentMetricKey = computed(() => {
     :class="{ 'call-graph--fullscreen': isFullscreen }"
   >
     <RenderGraph
-      v-if="isReadyGraph && graphKey && serverData"
+      v-if="graphHeight > 0 && graphKey && serverData"
       ref="graphRef"
       :key="graphKey"
       class="call-graph__graph"
