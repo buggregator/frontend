@@ -1,6 +1,6 @@
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { EMAIL_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
+import { PAGE_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
 import { normalizeHtmlEvent } from '../../lib'
 import { htmlReportMock, htmlTruncatedMock } from '../../mocks'
 import PreviewCard from './preview-card.vue'
@@ -15,32 +15,24 @@ const mountCard = async (mock: Parameters<typeof normalizeHtmlEvent>[0]) => {
 }
 
 describe('html PreviewCard', () => {
-  it('links to the event and shows the title and size', async () => {
+  it('shows the page itself, with no title bar around it', async () => {
     const w = await mountCard(htmlReportMock)
-    expect(w.findComponent(RouterLinkStub).props('to')).toBe(`/html/${htmlReportMock.uuid}`)
-    expect(w.find('.html-card__title').text()).toBe('Nightly report')
-    expect(w.find('.html-card__size').text()).toMatch(/b$/i)
+    expect(w.find('[data-test="html-card"] iframe').exists()).toBe(true)
+    expect(w.text()).not.toContain('Nightly report')
   })
 
-  it('draws the markup in the sandboxed frame that takes no focus', async () => {
+  it('runs the page scripts in the sandbox and fits its height', async () => {
     const frame = (await mountCard(htmlReportMock)).find('iframe')
-    expect(frame.attributes('sandbox')).toBe(EMAIL_FRAME_SANDBOX)
-    expect(frame.attributes('sandbox')).not.toContain('allow-scripts')
+    expect(frame.attributes('sandbox')).toBe(PAGE_FRAME_SANDBOX)
     expect(frame.attributes('srcdoc')).toContain('<h1')
-    expect(frame.attributes('tabindex')).toBe('-1')
+    expect(frame.attributes('scrolling')).toBe('no')
   })
 
-  it('shows the text and a note when the markup was too big for the feed', async () => {
+  it('links the text to the event when the feed left the markup out', async () => {
     const w = await mountCard(htmlTruncatedMock)
     expect(w.find('iframe').exists()).toBe(false)
-    expect(w.find('.html-card__title').text()).toBe('HTML page')
+    expect(w.findComponent(RouterLinkStub).props('to')).toBe(`/html/${htmlTruncatedMock.uuid}`)
     expect(w.find('.html-card__text').text()).toContain('Coverage report')
-    expect(w.find('[data-test="html-card-truncated"]').exists()).toBe(true)
-  })
-
-  it('leaves a page over 32 KB to the event page', async () => {
-    const w = await mountCard({ ...htmlReportMock, payload: { title: 'Coverage', html: '<p>x</p>'.repeat(5000), size: 40000 } })
-    expect(w.find('iframe').exists()).toBe(false)
     expect(w.find('[data-test="html-card-truncated"]').exists()).toBe(true)
   })
 })

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { EMAIL_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
+import { PAGE_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
 import { normalizeHtmlEvent } from '../../lib'
 import { htmlReportMock } from '../../mocks'
 import HtmlPage from './html-page.vue'
@@ -20,9 +20,9 @@ describe('HtmlPage', () => {
     expect(w.find('iframe').isVisible()).toBe(true)
   })
 
-  it('shows the page in the mail sandbox: scripts do not run', () => {
+  it('runs the page in the sandbox: its scripts, not the app origin', () => {
     const frame = mountPage().find('iframe')
-    expect(frame.attributes('sandbox')).toBe(EMAIL_FRAME_SANDBOX)
+    expect(frame.attributes('sandbox')).toBe(PAGE_FRAME_SANDBOX)
     expect(frame.attributes('srcdoc')).toContain('Open build #42')
   })
 

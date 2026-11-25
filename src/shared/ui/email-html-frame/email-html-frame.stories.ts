@@ -38,3 +38,15 @@ export const WithLinks: StoryObj<typeof EmailHtmlFrame> = {
 <p><a href="https://example.com" target="_blank">Link with target="_blank"</a></p>`,
   }
 };
+
+// A sender's own page (html events, Ray html()): its scripts run, still in an
+// opaque origin; `fit` makes the frame as tall as the page.
+export const PageWithScripts: StoryObj<typeof EmailHtmlFrame> = {
+  args: {
+    scripts: true,
+    fit: true,
+    html: `<!doctype html><style>body{font-family:sans-serif}</style>
+<h1>Built by a script</h1><ul id="l"></ul>
+<script>for (let i = 1; i <= 8; i++) l.insertAdjacentHTML('beforeend', '<li>row ' + i + '</li>')</script>`,
+  }
+};
