@@ -16,7 +16,7 @@ export const MENU_EVENT_GROUPS: { id: string; title: string; types: EventTypes[]
   {
     id: 'dumps',
     title: 'Dumps',
-    types: [EventTypes.RayDump, EventTypes.HttpDump, EventTypes.VarDump, EventTypes.XdebugTrace]
+    types: [EventTypes.RayDump, EventTypes.HttpDump, EventTypes.VarDump, EventTypes.XdebugTrace, EventTypes.Html]
   },
   {
     id: 'mail-logs',

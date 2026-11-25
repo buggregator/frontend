@@ -13,16 +13,25 @@ type Props = {
   copyable?: boolean
   // CSS length; long code scrolls inside the snippet instead of growing the page.
   maxHeight?: string
+  // Long lines wrap instead of scrolling sideways, e.g. minified markup.
+  wrap?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   language: 'plaintext',
   code: '',
   copyable: true,
-  maxHeight: undefined
+  maxHeight: undefined,
+  wrap: false
 })
 
-const codeStyle = computed(() => (props.maxHeight ? { maxHeight: props.maxHeight, overflow: 'auto' } : undefined))
+// Inline styles: no new rules in the first-load CSS.
+const codeStyle = computed(() => {
+  const style: Record<string, string> = {}
+  if (props.maxHeight) Object.assign(style, { maxHeight: props.maxHeight, overflow: 'auto' })
+  if (props.wrap) Object.assign(style, { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' })
+  return Object.keys(style).length ? style : undefined
+})
 
 const isCopied = ref(false)
 

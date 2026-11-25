@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import { useRay } from "../../lib";
-import { rayTextMock } from '../../mocks';
+import { rayHtmlMock, rayTextMock } from '../../mocks';
 import type { RayContentCustom } from '../../types';
 import RayCustom from './ray-custom.vue';
 
@@ -18,3 +18,10 @@ export const Default: StoryObj<typeof RayCustom> = {
   }
 }
 
+
+// ray()->html(): the markup as a page in the mail sandbox.
+export const Html: StoryObj<typeof RayCustom> = {
+  args: {
+    content: (normalizeRayEvent(rayHtmlMock).payload.payloads[0].content as RayContentCustom)
+  }
+}

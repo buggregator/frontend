@@ -70,6 +70,7 @@ const createInitialCachedIds = (): TEventsCachedIdsMap => ({
   [PAGE_TYPES.SentryLog]: [] as EventId[],
   [PAGE_TYPES.XdebugTrace]: [] as EventId[],
   [PAGE_TYPES.Csp]: [] as EventId[],
+  [PAGE_TYPES.Html]: [] as EventId[],
   [PAGE_TYPES.ALL_EVENT_TYPES]: [] as EventId[],
 });
 

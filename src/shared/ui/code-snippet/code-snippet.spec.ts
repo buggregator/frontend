@@ -23,4 +23,10 @@ describe('CodeSnippet', () => {
     expect(style).toContain('max-height: 420px')
     expect(style).toContain('overflow: auto')
   })
+
+  it('wraps long lines only when asked', () => {
+    expect(mount(CodeSnippet, { props: { code: 'x' } }).find('pre').attributes('style')).toBeUndefined()
+    const style = mount(CodeSnippet, { props: { code: 'x', wrap: true } }).find('pre').attributes('style') ?? ''
+    expect(style).toContain('white-space: pre-wrap')
+  })
 })

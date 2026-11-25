@@ -52,6 +52,7 @@ const ADDRESS: Record<string, string> = {
   [EventTypes.Sms]: 'http://{host}:{http_port}/sms/{project}',
   [EventTypes.Broadcast]: 'http://{host}:{http_port}/apps/…/events',
   [EventTypes.Csp]: 'report-uri http://{host}:{http_port}/csp/{project}',
+  [EventTypes.Html]: 'http://html:{project}@{host}:{http_port}',
   [EventTypes.Monolog]: 'tcp://{host}:{monolog_port}',
   'http-proxy': 'http://{host}:{proxy_port}',
   [MENU_TOOL_IDS.mockServer]: 'http://mock:{project}@{host}:{http_port}/mock/…',
