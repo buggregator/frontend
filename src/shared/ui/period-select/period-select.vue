@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useEventsStore, PERIOD_OPTIONS } from '../../stores'
+import { IconSvg } from '../icon-svg'
 
 // Period selector.
 //
@@ -43,12 +44,17 @@ const selected = computed({
         {{ option.label }}
       </option>
     </select>
+    <!-- Phone: the select draws no arrow of its own there. -->
+    <IconSvg
+      class="period-select__chevron"
+      name="collapsed"
+    />
   </label>
 </template>
 
 <style lang="scss" scoped>
 .period-select {
-  @apply flex items-center gap-1.5;
+  @apply relative flex flex-none items-center gap-1.5;
 }
 
 .period-select__label {
@@ -65,10 +71,36 @@ const selected = computed({
   @apply hover:bg-gray-200 dark:hover:bg-gray-600;
   @apply transition-colors;
 
-  // Phones: a 44 px tall control painted 38 px, as the other controls of
-  // the header's row 2 (the padding stays outside the painted background).
+  // Phones: drawn as the row's «Filters» button (38 px, outlined, 6 px
+  // corners) with its own arrow; the native one looked out of the kit.
+  // 38 px + the row's 3 px above and below give the 44 px tap height.
   @media (max-width: 639px) {
-    @apply h-11 py-[3px] bg-clip-content;
+    @apply appearance-none bg-transparent dark:bg-transparent;
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800;
+    height: 38px;
+    padding: 0 30px 0 12px;
+    border: 1px solid #6b7280;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    @apply text-gray-800 dark:text-gray-100;
+
+    &:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 1px;
+    }
+  }
+}
+
+.period-select__chevron {
+  @apply hidden;
+
+  @media (max-width: 639px) {
+    @apply block absolute w-3.5 h-3.5 pointer-events-none;
+    @apply text-gray-500 dark:text-gray-400;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 </style>

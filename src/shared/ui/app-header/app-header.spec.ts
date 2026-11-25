@@ -34,6 +34,13 @@ describe('AppHeader', () => {
     expect(w.find('[data-test="app-header-toolbar"]').exists()).toBe(true)
   })
 
+  it('on phones the actions fill row 1, unless tabs or a kept title share it', () => {
+    const fill = (w: ReturnType<typeof mount>) => w.get('.app-header__actions').classes().includes('app-header__actions--fill')
+    expect(fill(mount(AppHeader, { slots: { default: 'Home', controls: '<input>' } }))).toBe(true)
+    expect(fill(mount(AppHeader, { slots: { tabs: '<nav>x</nav>', controls: '<input>' } }))).toBe(false)
+    expect(fill(mount(AppHeader, { props: { keepTitle: true }, slots: { default: 'Logs' } }))).toBe(false)
+  })
+
   it('#tabs: the section tabs between the crumbs and the actions, apart from the crumbs', () => {
     const w = mount(AppHeader, { slots: { default: 'Home', tabs: '<nav aria-label="Sentry">x</nav>' } })
     expect(w.get('.app-header__tabs-sep').attributes('aria-hidden')).toBe('true')
