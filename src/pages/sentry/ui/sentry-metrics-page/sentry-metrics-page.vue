@@ -38,12 +38,12 @@ const applyFilters = () => {
 watch(() => sentryFilters.metricsType, applyFilters)
 watchDebounced(() => sentryFilters.metricsName, applyFilters, { debounce: 300 })
 
-// The period is mixed into the request in use-sentry-requests and does not
-// trigger reactivity on its own, so refetch the list explicitly. The project
-// is not: the server keeps no project for traces, logs and metrics.
-const { period } = storeToRefs(useEventsStore())
+// Refetch on a project or period change: both are mixed into the request in
+// use-sentry-requests (`withProject`), but neither triggers reactivity on its
+// own. The server keeps traces, logs and metrics per project (frontend#383).
+const { activeProjectKey, period } = storeToRefs(useEventsStore())
 
-watch(period, () => {
+watch([activeProjectKey, period], () => {
   page.value = 1
   hasLoaded.value = false // a filter change is a user action: show the loading state
   fetchList()
