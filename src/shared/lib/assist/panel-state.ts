@@ -8,7 +8,7 @@ import { LocalStorageKeys } from '../../types'
 
 export const ASSIST_WIDTH = { min: 360, max: 640, initial: 420, step: 20 } as const
 
-type Stored = { open?: boolean; width?: number }
+type Stored = { open?: boolean; width?: number; to?: string }
 
 const read = (): Stored => {
   try {
@@ -26,10 +26,12 @@ const stored = read()
 
 export const isAssistOpen = ref(stored.open === true)
 export const assistWidth = ref(clampAssistWidth(stored.width ?? ASSIST_WIDTH.initial))
+// The last recipient picked for a new thread (an h2a address; '' = default).
+export const assistRecipient = ref(typeof stored.to === 'string' ? stored.to : '')
 
-watch([isAssistOpen, assistWidth], ([open, width]) => {
+watch([isAssistOpen, assistWidth, assistRecipient], ([open, width, to]) => {
   try {
-    window.localStorage.setItem(LocalStorageKeys.AssistPanel, JSON.stringify({ open, width }))
+    window.localStorage.setItem(LocalStorageKeys.AssistPanel, JSON.stringify({ open, width, to }))
   } catch {
     // Private window or blocked storage: the panel still works, it just forgets.
   }

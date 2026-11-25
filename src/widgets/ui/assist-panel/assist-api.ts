@@ -21,6 +21,8 @@ export type AssistThread = {
   conversation: string
   created_at?: string
   updated_at?: string
+  // The address the thread was started with ("" for older threads).
+  to?: string
   messages: AssistMessage[]
 }
 
@@ -32,7 +34,11 @@ export type AssistSummary = {
   project?: string
   updated_at?: string
   last_from?: 'you' | 'agent'
+  to?: string
 }
+
+// Who a question may go to (the pass's h2a list).
+export type AssistRecipient = { address: string; name: string; about?: string }
 
 export type AssistStatus = {
   enabled: boolean
@@ -40,6 +46,9 @@ export type AssistStatus = {
   reason?: string
   project?: string
   to: string
+  // When connected: who may get a new thread's question, and the default.
+  recipients?: AssistRecipient[]
+  default?: string
   limits?: { text_bytes?: number; frames_per_minute?: number; messages_per_day?: number; queue?: number }
   mcp?: { on?: boolean; read_only?: boolean; transport?: 'socket' | 'http' }
 }
@@ -48,6 +57,7 @@ export type AssistStartBody = {
   context: { kind: 'event' | 'page'; key: string; title?: string; text?: string; project?: string }
   text?: string
   new?: boolean
+  to?: string
 }
 
 export type AssistError = Error & { status: number; code?: string; thread?: AssistThread }
@@ -101,6 +111,8 @@ export const assistErrorText = (e: unknown, project = ''): string => {
       return 'Write a question first.'
     case 'text_too_long':
       return 'Not sent: the question is too long. Make it shorter.'
+    case 'bad_recipient':
+      return 'Not sent: that recipient is not available now. Pick another one.'
     case 'event_not_found':
       return 'Not sent: this event is gone (deleted or cleared).'
     case 'bad_context':

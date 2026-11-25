@@ -34,7 +34,12 @@ export const assistStateOf = (s: AssistStatus | null | undefined, loaded: boolea
 
 const contextId = (ctx: PageContext | null) => (ctx ? `${ctx.kind}:${ctx.key}` : '')
 
-export const useAssistThread = (context: Ref<PageContext | null>, active: Ref<boolean> = ref(true)) => {
+export const useAssistThread = (
+  context: Ref<PageContext | null>,
+  active: Ref<boolean> = ref(true),
+  // The recipient a NEW thread goes to; '' = the server's default.
+  recipient: Ref<string> = ref('')
+) => {
   const { token } = storeToRefs(useProfileStore())
   const call = <T>(path: string, init?: RequestInit) => assistRequest<T>(token.value, path, init)
 
@@ -100,6 +105,7 @@ export const useAssistThread = (context: Ref<PageContext | null>, active: Ref<bo
           ...(ctx.kind === 'page' ? { text: ctx.text ?? '', project: ctx.project || undefined } : {})
         },
         text,
+        ...(recipient.value ? { to: recipient.value } : {}),
         ...(fresh ? { new: true } : {})
       })
     })

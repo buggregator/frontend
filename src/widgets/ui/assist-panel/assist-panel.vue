@@ -8,6 +8,7 @@ import {
   clampAssistWidth,
   closeAssist,
   currentPageContext,
+  assistRecipient,
   isAssistOpen
 } from '@/shared/lib/assist'
 import { useEvents } from '@/shared/lib/use-events'
@@ -38,7 +39,7 @@ const {
   retry,
   loadRecent,
   checkAgain
-} = useAssistThread(context, isAssistOpen)
+} = useAssistThread(context, isAssistOpen, computed(() => chosenTo.value))
 
 const isPhone = useMediaQuery('(max-width: 639px)')
 const isWide = useMediaQuery('(min-width: 1280px)')
@@ -83,7 +84,26 @@ const onSend = (text: string) => {
 const chip = computed(() => splitTitle(context.value?.title ?? ''))
 const threadOf = computed(() => (context.value?.kind === 'event' ? 'Thread of this event' : 'Thread of this page'))
 const projectLine = computed(() => status.value?.project ?? '')
-const toLine = computed(() => (status.value?.to ?? '').replace(/^role:/, ''))
+// Who gets the question (#7122). A new thread goes to the pick (the last
+// one remembered, if still on the list, else the server's default); a
+// thread keeps the recipient it was started with.
+const recipients = computed(() => status.value?.recipients ?? [])
+const nameOf = (address: string) =>
+  recipients.value.find((r) => r.address === address)?.name ?? address.replace(/^role:/, '')
+const chosenTo = computed(() => {
+  const list = recipients.value
+  if (list.some((r) => r.address === assistRecipient.value)) return assistRecipient.value
+  return status.value?.default ?? list[0]?.address ?? ''
+})
+const canPick = computed(() => !thread.value && recipients.value.length > 1)
+const toLine = computed(() => {
+  if (thread.value?.to) return nameOf(thread.value.to)
+  if (thread.value) return nameOf(status.value?.to ?? '')
+  return nameOf(chosenTo.value || status.value?.to || '')
+})
+const onPick = (e: Event) => {
+  assistRecipient.value = (e.target as HTMLSelectElement).value
+}
 
 // Width: drag the left edge, or ← → on it.
 const dragging = ref(false)
@@ -236,9 +256,29 @@ const placeholder = computed(() => placeholderFor(context.value))
               aria-hidden="true"
             ><path d="M3.5 8.5l3 3 6-7" /></svg>
             <span class="sr-only">Connected:</span>
-            <strong>{{ projectLine }}</strong><template v-if="toLine">
-              · {{ toLine }}
-            </template>
+            <strong>{{ projectLine }}</strong>{{ ' ·' }}
+            <label
+              v-if="canPick"
+              class="ap__to-pick"
+            >
+              <span class="sr-only">Ask</span>
+              <select
+                class="ap__to-select"
+                :value="chosenTo"
+                title="Who gets the question"
+                @change="onPick"
+              >
+                <option
+                  v-for="r in recipients"
+                  :key="r.address"
+                  :value="r.address"
+                >{{ r.about ? `${r.name} — ${r.about}` : r.name }}</option>
+              </select>
+            </label>
+            <span
+              v-else-if="toLine"
+              class="ap__to"
+            >{{ toLine }}</span>
           </template>
           <template v-else-if="state === 'connecting'">
             <span

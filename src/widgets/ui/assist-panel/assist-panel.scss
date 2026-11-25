@@ -185,6 +185,34 @@
   }
 }
 
+.ap__to {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ap__to-pick {
+  min-width: 0;
+}
+
+.ap__to-select {
+  max-width: 220px;
+  height: 22px;
+  padding: 0 20px 0 6px;
+  border: 1px solid var(--ap-line2);
+  border-radius: 4px;
+  background-color: var(--ap-seg);
+  color: var(--ap-text);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.ap--phone .ap__to-select {
+  height: 32px;
+  max-width: 100%;
+  font-size: 14px;
+}
+
 .ap__status--connected svg {
   color: var(--ap-ok);
 }

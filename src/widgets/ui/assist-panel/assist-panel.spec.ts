@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h } from 'vue'
 import {
+  assistRecipient,
   assistWidth,
   closeAssist,
   isAssistOpen,
@@ -244,6 +245,57 @@ describe('AssistPanel', () => {
     await item.trigger('click')
     await flushPromises()
     expect(push).toHaveBeenCalledWith('/sentry/exceptions?project=shop')
+    w.unmount()
+  })
+})
+
+describe('AssistPanel recipient', () => {
+  const many = {
+    ...connected,
+    to: 'lead',
+    default: 'lead',
+    recipients: [
+      { address: 'lead', name: 'server-lid' },
+      { address: 'role:42', name: 'Go developer', about: 'server code' }
+    ]
+  }
+
+  beforeEach(() => {
+    assistRecipient.value = ''
+  })
+
+  it('one recipient: no picker', async () => {
+    routes['GET /api/assist'] = () => json(200, { ...connected, recipients: [{ address: 'lead', name: 'server-lid' }], default: 'lead' })
+    const w = await mountIt()
+    expect(w.find('select.ap__to-select').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('several: a picker on the server default; a new thread goes to the pick, which is remembered', async () => {
+    routes['GET /api/assist'] = () => json(200, many)
+    routes['POST /api/assist/threads'] = () => json(200, { ...thread, to: 'role:42' })
+    const w = await mountIt()
+    const select = w.get('select.ap__to-select')
+    expect((select.element as HTMLSelectElement).value).toBe('lead')
+    expect(select.findAll('option').map((o) => o.text())).toEqual(['server-lid', 'Go developer — server code'])
+
+    await select.setValue('role:42')
+    expect(assistRecipient.value).toBe('role:42')
+    await w.find('textarea').setValue('Why?')
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(posted('/api/assist/threads')[0].to).toBe('role:42')
+    // In a thread the recipient is fixed: text, no picker.
+    expect(w.find('select.ap__to-select').exists()).toBe(false)
+    expect(w.find('.ap__to').text()).toContain('Go developer')
+    w.unmount()
+  })
+
+  it('a remembered pick that is gone falls back to the default', async () => {
+    assistRecipient.value = 'role:99'
+    routes['GET /api/assist'] = () => json(200, many)
+    const w = await mountIt()
+    expect((w.get('select.ap__to-select').element as HTMLSelectElement).value).toBe('lead')
     w.unmount()
   })
 })
