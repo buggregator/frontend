@@ -681,6 +681,41 @@
       ]
     },
     {
+      "id": "html",
+      "title": "Show your own HTML page",
+      "lead": "Send any markup with one request: a report, a link to your tool's page, a new kind of event you are trying out. It shows here in a safe frame: scripts do not run, links open in a new tab.",
+      "docs": "https://docs.buggregator.dev/config/html.html",
+      "steps": [
+        "POST the markup to http://html:{project}@{host}:{http_port} with Content-Type text/html. The page's <title> becomes the card's title.",
+        "To set the title yourself, send JSON {\"title\": \"…\", \"html\": \"…\"} with the header X-Buggregator-Event: html.",
+        "Without the html@ address, POST to http://{host}:{http_port}/html/{project}.",
+        "Up to 1 MB per event. Scripts in the markup do not run.",
+        "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
+      ],
+      "stacks": [
+        {
+          "id": "curl-html",
+          "label": "curl (HTML)",
+          "file": "terminal",
+          "lang": "bash",
+          "code": "curl -X POST http://html:{project}@{host}:{http_port} \\\n  -H 'Content-Type: text/html' \\\n  --data '<h1>Nightly report</h1><a href=\"https://example.com\">tech page</a>'",
+          "hint": null,
+          "checked": true,
+          "note": null
+        },
+        {
+          "id": "curl-json",
+          "label": "curl (JSON)",
+          "file": "terminal",
+          "lang": "bash",
+          "code": "curl -X POST http://{host}:{http_port}/html/{project} \\\n  -H 'X-Buggregator-Event: html' \\\n  -H 'Content-Type: application/json' \\\n  --data '{\"title\":\"Nightly report\",\"html\":\"<h1>All green</h1>\"}'",
+          "hint": null,
+          "checked": true,
+          "note": null
+        }
+      ]
+    },
+    {
       "id": "mock-server",
       "title": "Mock your first API call",
       "lead": "Describe a response once, and your app calls Buggregator instead of the real API. Every call is captured too.",

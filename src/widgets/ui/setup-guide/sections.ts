@@ -15,6 +15,7 @@ export const SETUP_SECTION_IDS = [
   'broadcast',
   'csp',
   'xdebug-trace',
+  'html',
   'mock-server',
   'xdebug',
   'http-proxy'

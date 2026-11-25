@@ -1,6 +1,7 @@
 <script lang="ts" setup generic="T">
 import { computed, defineProps } from 'vue'
 import { normalizeCspEvent, CspPage } from '@/entities/csp'
+import { normalizeHtmlEvent, HtmlPage } from '@/entities/html'
 import { useHttpDump, HttpDumpPage } from '@/entities/http-dump'
 import { useInspector, InspectorPage } from '@/entities/inspector'
 import { useMonolog, MonologPage } from '@/entities/monolog'
@@ -76,6 +77,10 @@ const EVENT_TYPE_COMPONENTS_MAP: Record<EventTypes, MappedEventsProps<unknown>> 
   [EventTypes.Csp]: {
     view: CspPage,
     normalize: normalizeCspEvent
+  },
+  [EventTypes.Html]: {
+    view: HtmlPage,
+    normalize: normalizeHtmlEvent
   }
 } as Record<EventTypes, MappedEventsProps<unknown>>
 

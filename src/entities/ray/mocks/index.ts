@@ -8,6 +8,7 @@ import rayDumpMock from './ray-dump.json';
 import rayEmptyStringMock from './ray-empty-string.json';
 import rayExceptionMock from './ray-exception.json';
 import rayHideMock from './ray-hide.json';
+import rayHtmlMock from './ray-html.json';
 import rayImageMock from './ray-image.json';
 import rayIntegerMock from './ray-integer.json';
 import rayJsonMock from './ray-json.json';
@@ -23,6 +24,7 @@ import rayTraceMock from './ray-trace.json';
 import rayZeroMock from './ray-zero.json';
 
 export {
+  rayHtmlMock,
   rayCallerMock,
   rayCarbonMock,
   rayColorMock,

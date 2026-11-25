@@ -69,6 +69,12 @@ export const PAGES_SETTINGS: { [key in OneOfValues<typeof PAGE_TYPES> ]: { title
     iconName: 'shield',
     eventType: EventTypes.Csp,
   },
+  [PAGE_TYPES.Html]: {
+    title: 'HTML pages',
+    sidebarTitle: 'HTML pages',
+    iconName: 'screen',
+    eventType: EventTypes.Html,
+  },
   [PAGE_TYPES.Sms]: {
     title: 'SMS',
     sidebarTitle: 'SMS',

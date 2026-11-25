@@ -15,6 +15,7 @@ export enum EventTypes {
   SentryLog = "sentry-log",
   XdebugTrace = "xdebug-trace",
   Csp = "csp",
+  Html = "html",
 }
 
 // TODO: add T prefix to all types

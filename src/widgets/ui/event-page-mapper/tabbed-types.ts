@@ -7,7 +7,8 @@ const TABBED: string[] = [
   EventTypes.Smtp,
   EventTypes.HttpDump,
   EventTypes.Profiler,
-  EventTypes.XdebugTrace
+  EventTypes.XdebugTrace,
+  EventTypes.Html
 ]
 
 export const hasEventTabs = (type?: PageEventTypes | string) => !!type && TABBED.includes(type)

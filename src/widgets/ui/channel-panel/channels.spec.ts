@@ -30,7 +30,7 @@ describe('buildChannelGroups', () => {
   it('follows the menu groups and order, tools last', () => {
     expect(ids(buildChannelGroups(input()))).toEqual([
       ['Errors & performance', ['sentry', 'profiler', 'inspector', 'csp']],
-      ['Dumps', ['ray', 'http-dump', 'var-dump', 'xdebug-trace']],
+      ['Dumps', ['ray', 'http-dump', 'var-dump', 'xdebug-trace', 'html']],
       ['Mail & logs', ['smtp', 'sms', 'broadcast', 'monolog']],
       ['Tools', ['http-proxy', 'mock-server', 'xdebug']]
     ])
@@ -45,6 +45,7 @@ describe('buildChannelGroups', () => {
     expect(addr.ray).toBe('ray:shop@localhost:8000')
     expect(addr['http-proxy']).toBe('http://localhost:8080')
     expect(addr.broadcast).toBe('http://localhost:8000/apps/…/events')
+    expect(addr.html).toBe('http://html:shop@localhost:8000')
   })
 
   it('leaves out sections hidden in Settings › Menu and types the server does not have', () => {
@@ -117,6 +118,6 @@ describe('buildChannelGroups', () => {
     expect(to.smtp).toEqual({ name: 'event-list', params: { type: 'smtp' } })
     expect(to['mock-server']).toEqual({ name: 'mock-server' })
     expect(to['http-proxy']).toBeNull()
-    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(12)
+    expect(all.filter((c) => c.eventType).map((c) => c.id)).toHaveLength(13)
   })
 })
