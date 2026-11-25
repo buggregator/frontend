@@ -16,6 +16,7 @@ import { useConnectionStore } from '@/shared/stores/connections'
 import { type EventType, EventTypes, LocalStorageKeys, RouteName } from '@/shared/types'
 import { IconSvg, ProjectAvatar, UserAvatar } from '@/shared/ui'
 import { navLinkLabel } from './nav-label'
+import { useSidebarDrawer } from './use-sidebar-drawer'
 
 const { isConnectedWS } = storeToRefs(useConnectionStore())
 const { isVisibleEventCounts, isAuthEnabled } = storeToRefs(useSettingsStore())
@@ -45,8 +46,10 @@ const isCollapsed = ref(storedCollapsed === null ? true : storedCollapsed === 't
 
 // Below xl the page keeps the narrow rail; expanding opens the full menu over
 // the page instead (not remembered, closes on Esc, outside click or navigation).
+// Below md the rail is hidden: the header's burger opens the same drawer.
 const isBelowXl = useMediaQuery('(max-width: 1279px)')
-const isOverlayOpen = ref(false)
+const drawer = useSidebarDrawer()
+const isOverlayOpen = drawer.isOpen
 const isOverlay = computed(() => isBelowXl.value && isOverlayOpen.value)
 const isVisuallyCollapsed = computed(() =>
   isBelowXl.value ? !isOverlayOpen.value : isCollapsed.value
@@ -80,18 +83,22 @@ const toggleCollapse = () => {
   applySidebarClass(isCollapsed.value)
 }
 
-const openOverlay = async () => {
-  isOverlayOpen.value = true
+const openOverlay = () => drawer.open()
+
+// Opened from the rail or from the header's burger: the focus moves into the
+// drawer either way.
+watch(isOverlay, async (open) => {
+  if (!open) return
   await nextTick()
   closeBtn.value?.focus()
-}
+})
 
 const closeOverlay = async (returnFocus = true) => {
   if (!isOverlayOpen.value) return
-  isOverlayOpen.value = false
+  const opener = drawer.close()
   if (returnFocus) {
     await nextTick()
-    expandBtn.value?.focus()
+    ;(opener ?? expandBtn.value)?.focus()
   }
 }
 
@@ -108,7 +115,7 @@ const onAsideKeydown = (e: KeyboardEvent) => {
 // The overlay lifts the sidebar above the page header (see layout-base).
 watch(isOverlay, (open) => document?.documentElement?.classList?.toggle('sidebar-overlay', open))
 watch(isBelowXl, (below) => {
-  if (!below) isOverlayOpen.value = false
+  if (!below) drawer.close()
 })
 watch(
   () => route.fullPath,
@@ -819,6 +826,14 @@ const linkLabel = (type: EventType) =>
   @apply flex flex-col h-full;
   @apply border-r border-gray-200 dark:border-gray-800;
   @apply relative;
+
+  /* Phone: no rail, the page gets the full width; the header's burger opens
+     the menu as a drawer (layout-base). */
+  @media (max-width: 767px) {
+    &:not(.layout-sidebar--overlay) {
+      @apply hidden;
+    }
+  }
 }
 
 /* Below 1280 px the expanded menu lies over the page; layout-base lifts its
@@ -916,7 +931,10 @@ const linkLabel = (type: EventType) =>
 /* ---- Expand button (collapsed mode, in bottom section) ---- */
 .layout-sidebar__expand-btn {
   @apply flex items-center justify-center;
-  @apply w-9 h-9 mx-auto rounded-md;
+  @apply w-9 h-9 rounded-md;
+  /* Centred on the rail: the rail's padded box (56 px rail, 32 px box) is
+     narrower than the button, so mx-auto would pin it to the left edge. */
+  margin-left: calc(50% - 1.125rem);
   @apply text-gray-500 dark:text-gray-400;
   @apply hover:text-gray-600 dark:hover:text-gray-300;
   @apply hover:bg-gray-200/60 dark:hover:bg-white/5;
