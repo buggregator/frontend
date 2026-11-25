@@ -291,6 +291,23 @@ describe('AssistPanel recipient', () => {
     w.unmount()
   })
 
+  it('bad_recipient: says so and reloads the list, so the gone one leaves the picker', async () => {
+    let list = many
+    routes['GET /api/assist'] = () => json(200, list)
+    routes['POST /api/assist/threads'] = () => json(400, { code: 'bad_recipient', error: 'gone' })
+    const w = await mountIt()
+    await w.get('select.ap__to-select').setValue('role:42')
+    list = { ...many, recipients: [many.recipients[0], { address: 'role:7', name: 'reviewer' }] }
+    await w.find('textarea').setValue('Why?')
+    await w.find('form').trigger('submit')
+    await flushPromises()
+    expect(w.find('.ap-msg__error').text()).toContain('that recipient is not available now')
+    const select = w.get('select.ap__to-select')
+    expect(select.findAll('option').map((o) => o.text())).toEqual(['server-lid', 'reviewer'])
+    expect((select.element as HTMLSelectElement).value).toBe('lead')
+    w.unmount()
+  })
+
   it('a remembered pick that is gone falls back to the default', async () => {
     assistRecipient.value = 'role:99'
     routes['GET /api/assist'] = () => json(200, many)

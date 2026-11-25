@@ -151,6 +151,9 @@ export const useAssistThread = (
       return true
     } catch (e) {
       if (id === contextId(context.value)) error.value = assistErrorText(e, status.value?.project)
+      // The recipient left the list: ask for the list again, so the picker
+      // drops it.
+      if ((e as AssistError).code === 'bad_recipient') loadStatus()
       return false
     } finally {
       sending.value = false
