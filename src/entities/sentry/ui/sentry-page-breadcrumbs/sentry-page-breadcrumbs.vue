@@ -68,8 +68,12 @@ watch(
   }
 )
 
-const formatDate = (timestamp?: number): string =>
-  timestamp ? moment.unix(timestamp).fromNow() : ''
+// Unix seconds in most SDKs, an RFC 3339 string in sentry-go (#7098).
+const formatDate = (timestamp?: number | string): string => {
+  if (!timestamp) return ''
+  const time = typeof timestamp === 'number' ? moment.unix(timestamp) : moment(timestamp)
+  return time.isValid() ? time.fromNow() : ''
+}
 </script>
 
 <template>

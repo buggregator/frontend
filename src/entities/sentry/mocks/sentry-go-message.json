@@ -1,0 +1,90 @@
+{
+  "uuid": "648208eb-f876-4951-8efe-a6259e2d8e5b",
+  "type": "sentry",
+  "payload": {
+    "environment": "staging",
+    "event_id": "648208ebf87649518efea6259e2d8e5b",
+    "level": "info",
+    "message": "Payment gateway slow",
+    "platform": "go",
+    "release": "shop@1.2.3",
+    "sdk": {
+      "name": "sentry.go",
+      "version": "0.50.0",
+      "integrations": [
+        "Environment",
+        "GlobalTags",
+        "IgnoreErrors",
+        "IgnoreTransactions",
+        "Modules"
+      ],
+      "packages": [
+        {
+          "name": "sentry-go",
+          "version": "0.50.0"
+        }
+      ]
+    },
+    "server_name": "go-01",
+    "threads": [
+      {
+        "stacktrace": {
+          "frames": [
+            {
+              "function": "main",
+              "module": "main",
+              "abs_path": "/app/main.go",
+              "lineno": 39,
+              "in_app": true
+            }
+          ]
+        },
+        "current": true
+      }
+    ],
+    "timestamp": "2026-11-09T20:34:57.04306491+04:00",
+    "modules": {
+      "github.com/getsentry/sentry-go": "v0.50.0",
+      "golang.org/x/sys": "v0.47.0",
+      "golang.org/x/text": "v0.41.0",
+      "rig/sdkgo": "(devel)"
+    },
+    "tags": {
+      "feature": "checkout"
+    },
+    "contexts": {
+      "device": {
+        "arch": "amd64",
+        "num_cpu": 22
+      },
+      "os": {
+        "name": "linux"
+      },
+      "runtime": {
+        "go_maxprocs": 22,
+        "go_numcgocalls": 1,
+        "go_numroutines": 4,
+        "name": "go",
+        "version": "go1.27.3"
+      },
+      "trace": {
+        "span_id": "0fe5683ac6d0e11e",
+        "trace_id": "5659f01d3aa342875a925404d072494c"
+      }
+    },
+    "breadcrumbs": [
+      {
+        "category": "cart",
+        "message": "added item 5",
+        "level": "info",
+        "timestamp": "2026-11-09T20:34:57.042708465+04:00"
+      }
+    ],
+    "user": {
+      "id": "7",
+      "email": "dev@example.com"
+    }
+  },
+  "timestamp": 1794245697,
+  "project": "default"
+}

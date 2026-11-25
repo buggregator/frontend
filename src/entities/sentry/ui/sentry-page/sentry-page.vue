@@ -3,9 +3,9 @@ import moment from 'moment'
 import { computed, ref, watch } from 'vue'
 import type { NormalizedEvent } from '@/shared/types'
 import { EventDetailLayout, EventTabs, type TabItem } from '@/shared/ui'
-import { resolveExceptionValues, sentryMessageText } from '../../lib/resolve-exceptions'
+import { resolveExceptionValues, sentryList, sentryMessageText } from '../../lib/resolve-exceptions'
 import { useSentryRequests } from '../../lib/use-sentry-requests'
-import type { Sentry, SentryTraceSummary } from '../../types'
+import type { Sentry, SentryBreadcrumb, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
 import { SentryEventFeedback } from '../sentry-feedback'
 import { SentryPageApp } from '../sentry-page-app'
@@ -53,9 +53,9 @@ const feedbackEventId = computed(() => props.event.payload.event_id || props.eve
 
 // Tab visibility
 const hasException = computed(() => exceptionValues.value.length > 0)
-const hasBreadcrumbs = computed(
-  () => props.event.payload.breadcrumbs?.values && props.event.payload.breadcrumbs.values.length > 0
-)
+// {values: [...]} or a bare list (sentry-go, #7098).
+const breadcrumbs = computed(() => sentryList<SentryBreadcrumb>(props.event.payload.breadcrumbs))
+const hasBreadcrumbs = computed(() => breadcrumbs.value.length > 0)
 const hasRequest = computed(() => !!props.event.payload.request)
 const hasModules = computed(
   () => props.event.payload.modules && Object.keys(props.event.payload.modules).length > 0
@@ -78,11 +78,7 @@ const hasSdk = computed(() => !!props.event.payload.sdk)
 const tabs = computed<TabItem[]>(() => {
   const list: (TabItem | false)[] = [
     hasException.value && { id: 'exceptions', label: 'Exceptions', count: exceptionsLength.value },
-    !!hasBreadcrumbs.value && {
-      id: 'breadcrumbs',
-      label: 'Breadcrumbs',
-      count: props.event.payload.breadcrumbs!.values.length
-    },
+    hasBreadcrumbs.value && { id: 'breadcrumbs', label: 'Breadcrumbs', count: breadcrumbs.value.length },
     hasRequest.value && { id: 'request', label: 'Request' },
     !!hasContextTab.value && { id: 'context', label: 'Context' },
     hasSdk.value && { id: 'sdk', label: 'SDK' },
@@ -323,7 +319,7 @@ watch(
         v-show="tab === 'breadcrumbs'"
         class="sentry-tab-content"
       >
-        <SentryPageBreadcrumbs :breadcrumbs="event.payload.breadcrumbs!.values" />
+        <SentryPageBreadcrumbs :breadcrumbs="breadcrumbs" />
       </div>
 
       <div
