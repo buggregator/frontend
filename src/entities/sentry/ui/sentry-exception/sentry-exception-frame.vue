@@ -19,14 +19,17 @@ const props = defineProps<Props>()
 const isFrameOpen = ref(props.isOpen)
 const { buildLink } = useIdeLink()
 
-const ideLink = computed(() => buildLink(props.frame.filename ?? 'unknown', props.frame.lineno))
+// sentry-go sends only `abs_path`; most SDKs send `filename` (#7098).
+const framePath = computed(() => props.frame.filename || props.frame.abs_path || '')
+
+const ideLink = computed(() => buildLink(framePath.value || 'unknown', props.frame.lineno))
 
 // Sentry's node/RewriteFrames integration normalizes server paths to the
 // `app://` scheme with an empty authority, which renders as a confusing
 // "app:///+page.server.js". Show the clean app-relative path instead. URLs and
 // node: builtins are left as-is.
 const displayFilename = computed(() => {
-  const f = props.frame.filename
+  const f = framePath.value
   if (!f) return 'unknown'
   const appScheme = f.match(/^app:\/\/+(.*)$/)
   if (appScheme) return appScheme[1]

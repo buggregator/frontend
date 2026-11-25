@@ -4,6 +4,16 @@ type Stacktrace = { frames?: SentryFrame[] }
 
 const hasFrames = (st?: Stacktrace): boolean => Boolean(st?.frames && st.frames.length > 0)
 
+// The items of a Sentry list field (`exception`, `threads`, `breadcrumbs`):
+// {values: [...]} in most SDKs, a bare list in sentry-go and the protocol's
+// short form. Never read `.values` of a bare list: that is
+// Array.prototype.values, a function (#7098).
+export const sentryList = <T>(field: unknown): T[] => {
+  if (Array.isArray(field)) return field as T[]
+  const values = (field as { values?: unknown } | null | undefined)?.values
+  return Array.isArray(values) ? (values as T[]) : []
+}
+
 // The text of a message event: `message` is a string in the store API and
 // {formatted, message, params} in envelopes; older SDKs send `logentry`.
 export const sentryMessageText = (payload?: Sentry): string => {
@@ -20,9 +30,8 @@ const topLevelStacktrace = (payload?: Sentry): Stacktrace | undefined => {
   const top = (payload as { stacktrace?: Stacktrace } | undefined)?.stacktrace
   if (hasFrames(top)) return top
 
-  const threads = (payload as { threads?: { values?: Array<{ stacktrace?: Stacktrace }> } } | undefined)
-    ?.threads
-  for (const thread of threads?.values ?? []) {
+  const threads = sentryList<{ stacktrace?: Stacktrace }>((payload as { threads?: unknown } | undefined)?.threads)
+  for (const thread of threads) {
     if (hasFrames(thread.stacktrace)) return thread.stacktrace
   }
   return undefined
@@ -33,8 +42,8 @@ const topLevelStacktrace = (payload?: Sentry): Stacktrace | undefined => {
 // captureMessage with attach_stacktrace, some JS SDKs) — a single synthesized
 // exception so the trace renders like any other.
 export const resolveExceptionValues = (payload?: Sentry): SentryException[] => {
-  const values = payload?.exception?.values
-  if (values && values.length > 0) return values
+  const values = sentryList<SentryException>(payload?.exception)
+  if (values.length > 0) return values
 
   const stacktrace = topLevelStacktrace(payload)
   if (stacktrace) {
