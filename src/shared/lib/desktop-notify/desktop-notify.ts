@@ -1,4 +1,5 @@
 import type { ServerEvent } from '../../types'
+import { sentryList } from '../helpers/sentry-list'
 
 // Desktop notifications for new errors (#6604): a browser notification while
 // the person works in another window. Off until they turn it on in Settings.
@@ -39,7 +40,8 @@ const clip = (text: string) => (text.length > BODY_MAX ? `${text.slice(0, BODY_M
 
 type SentryLike = {
   level?: string
-  exception?: { values?: Array<{ type?: string; value?: string }> }
+  // {values: [...]} or a bare list (sentry-go).
+  exception?: unknown
   message?: string | { formatted?: string; message?: string }
   logentry?: { formatted?: string; message?: string }
 }
@@ -57,7 +59,7 @@ const messageOf = (p: SentryLike): string => {
 export const errorNotice = (event: ServerEvent<unknown>): ErrorNotice | null => {
   if (event.type !== 'sentry') return null
   const p = (event.payload ?? {}) as SentryLike
-  const values = p.exception?.values ?? []
+  const values = sentryList<{ type?: string; value?: string }>(p.exception)
   // Sentry lists the chain oldest first: the last one is what was thrown.
   const main = values[values.length - 1]
   const level = (p.level || '').toLowerCase()
