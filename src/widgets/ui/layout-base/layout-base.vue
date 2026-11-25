@@ -251,7 +251,6 @@ watch(
   }
 }
 
-/* Phone only (below md): the rail is hidden there. 44 px target. */
 /* Phone only (below md): the rail is hidden there. A 44 px target in row 1,
    out of the flow: row 2 (the toolbar) keeps the header's full width, and
    the icon lines up with row 2's first control. Row 1 makes room for it
@@ -260,7 +259,8 @@ watch(
   @apply hidden items-center justify-center w-11 h-11 rounded-md;
   @apply absolute z-10;
   left: calc(var(--hdr-pad, 0.5rem) + 0.25rem - 0.75rem);
-  top: calc((var(--hdr-row, 2.25rem) - 2.75rem) / 2);
+  // A one-row header (36/40 px) is lower than the button: keep it on screen.
+  top: max(0px, calc((var(--hdr-row, 2.25rem) - 2.75rem) / 2));
   @apply text-gray-600 dark:text-gray-300;
   @apply hover:bg-gray-100 dark:hover:bg-white/5;
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500;
