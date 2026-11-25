@@ -95,7 +95,12 @@ const chosenTo = computed(() => {
   if (list.some((r) => r.address === assistRecipient.value)) return assistRecipient.value
   return status.value?.default ?? list[0]?.address ?? ''
 })
-const canPick = computed(() => !thread.value && recipients.value.length > 1)
+// A new thread always shows the picker, so the person sees where the
+// choice lives; with one recipient it is disabled and says where others
+// come from.
+const showPicker = computed(() => !thread.value && recipients.value.length > 0)
+const canPick = computed(() => recipients.value.length > 1)
+const pickHint = 'Other recipients are added in harnsy'
 const toLine = computed(() => {
   if (thread.value?.to) return nameOf(thread.value.to)
   if (thread.value) return nameOf(status.value?.to ?? '')
@@ -258,14 +263,17 @@ const placeholder = computed(() => placeholderFor(context.value))
             <span class="sr-only">Connected:</span>
             <strong>{{ projectLine }}</strong>{{ ' ·' }}
             <label
-              v-if="canPick"
+              v-if="showPicker"
               class="ap__to-pick"
+              :title="canPick ? undefined : pickHint"
             >
               <span class="sr-only">Ask</span>
               <select
                 class="ap__to-select"
                 :value="chosenTo"
-                title="Who gets the question"
+                :disabled="!canPick"
+                :aria-describedby="canPick ? undefined : 'ap-to-hint'"
+                :title="canPick ? 'Who gets the question' : undefined"
                 @change="onPick"
               >
                 <option
@@ -274,6 +282,11 @@ const placeholder = computed(() => placeholderFor(context.value))
                   :value="r.address"
                 >{{ r.about ? `${r.name} — ${r.about}` : r.name }}</option>
               </select>
+              <span
+                v-if="!canPick"
+                id="ap-to-hint"
+                class="sr-only"
+              >{{ pickHint }}</span>
             </label>
             <span
               v-else-if="toLine"

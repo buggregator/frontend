@@ -213,6 +213,16 @@
   cursor: pointer;
 }
 
+.ap__to-pick:has(:disabled) {
+  // The hint is the label's title: a disabled select gets no hover.
+  cursor: help;
+}
+
+.ap__to-select:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .ap--phone .ap__to-select {
   height: 32px;
   max-width: 100%;

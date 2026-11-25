@@ -264,10 +264,16 @@ describe('AssistPanel recipient', () => {
     assistRecipient.value = ''
   })
 
-  it('one recipient: no picker', async () => {
+  it('one recipient: the picker shows it, disabled, with a hint where others come from', async () => {
     routes['GET /api/assist'] = () => json(200, { ...connected, recipients: [{ address: 'lead', name: 'server-lid' }], default: 'lead' })
     const w = await mountIt()
-    expect(w.find('select.ap__to-select').exists()).toBe(false)
+    const select = w.get('select.ap__to-select')
+    expect(select.attributes('disabled')).toBeDefined()
+    expect((select.element as HTMLSelectElement).value).toBe('lead')
+    const hintId = select.attributes('aria-describedby')
+    expect(hintId).toBeTruthy()
+    expect(w.get(`#${hintId}`).text()).toBe('Other recipients are added in harnsy')
+    expect(w.get('.ap__to-pick').attributes('title')).toBe('Other recipients are added in harnsy')
     w.unmount()
   })
 
