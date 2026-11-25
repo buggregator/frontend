@@ -41,22 +41,44 @@ body a[disabled='true'] {
   @apply bg-blue-500/30;
 }
 
-/* ---- Scrollbar ---- */
+/* ---- Scrollbar (frontend#392) ----
+   One thin, themed scrollbar everywhere. The standard properties serve
+   Firefox and Chromium 121+ (once they are set, Chromium ignores the
+   ::-webkit-scrollbar rules: a bare `scrollbar-width: thin` used to give the
+   light system scrollbar on the dark theme). Safari reads only the
+   pseudo-elements, so they stay, on the same colours. */
+:root {
+  --scrollbar-thumb: theme('colors.gray.300');
+  --scrollbar-thumb-hover: theme('colors.gray.400');
+}
+
+:root.dark {
+  --scrollbar-thumb: theme('colors.gray.700');
+  --scrollbar-thumb-hover: theme('colors.gray.600');
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-600;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* ---- Focus ---- */
