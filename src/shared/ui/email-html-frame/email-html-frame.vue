@@ -12,7 +12,7 @@ import {
 type Props = {
   html: string
   title?: string
-  // The sender's own scripts run (still an opaque origin, no app access).
+  // The sender's own scripts run (opaque origin: no app page, login or storage).
   scripts?: boolean
   // With scripts: the frame takes the page's height, no scrollbar inside.
   fit?: boolean
@@ -26,8 +26,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Captured HTML is untrusted: the sandbox gives the frame an opaque origin with
 // forms and top navigation blocked (scripts too, unless `scripts`), so it
-// cannot reach the app's localStorage (JWT) or API. Links open in a new tab
-// via <base target>.
+// cannot read the app's page or localStorage (JWT). With `scripts` and login
+// off it can still call the API, as any page can (see PAGE_FRAME_SANDBOX).
+// Links open in a new tab via <base target>.
 const fits = computed(() => props.scripts && props.fit)
 const sandbox = computed(() => (props.scripts ? PAGE_FRAME_SANDBOX : EMAIL_FRAME_SANDBOX))
 const srcdoc = computed(() => {

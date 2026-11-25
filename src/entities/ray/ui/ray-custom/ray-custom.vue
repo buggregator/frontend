@@ -11,7 +11,7 @@ const props = defineProps<Props>()
 
 // ray()->html() sends a custom payload labelled «HTML»: the sender's own
 // markup, shown as a page (its CSS and scripts run in the sandbox: opaque
-// origin, no app access), not as tags.
+// origin: no app page, login or storage), not as tags.
 const isHtml = computed(() => props.content.label === 'HTML')
 </script>
 

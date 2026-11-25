@@ -19,8 +19,8 @@ const markup = computed(() => props.event.payload.html ?? '')
 <template>
   <PreviewCard :event="event">
     <!-- The sender's page as it is: no title bar around it, its own CSS and
-         scripts run in the sandbox (opaque origin, no app access). The card
-         header opens the event. -->
+         scripts run in the sandbox (opaque origin: no app page, login or
+         storage). The card header opens the event. -->
     <div
       v-if="markup"
       class="html-card"

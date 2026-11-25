@@ -683,13 +683,13 @@
     {
       "id": "html",
       "title": "Show your own HTML page",
-      "lead": "Send any markup with one request: a report, a link to your tool's page, a new kind of event you are trying out. It shows here as it is: your CSS and scripts run in a sandbox with no access to Buggregator, links open in a new tab.",
+      "lead": "Send any markup with one request: a report, a link to your tool's page, a new kind of event you are trying out. It shows here as it is: your CSS and scripts run in a sandbox, they cannot read Buggregator's page, login or storage. Links open in a new tab.",
       "docs": "https://docs.buggregator.dev/config/html.html",
       "steps": [
         "POST the markup to http://html:{project}@{host}:{http_port} with Content-Type text/html. The page's <title> becomes the card's title.",
         "To set the title yourself, send JSON {\"title\": \"…\", \"html\": \"…\"} with Content-Type: application/json.",
         "Without the html@ address, POST to http://{host}:{http_port}/html/{project}.",
-        "Up to 1 MB per event. Scripts in the markup run in a sandboxed frame: they cannot reach Buggregator, its cookies or its API.",
+        "Up to 1 MB per event. Scripts run in a sandboxed frame without access to the Buggregator page, its login or browser storage (localStorage and cookies throw). With login off, like any page in your browser, they can call Buggregator's API.",
         "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
       ],
       "stacks": [

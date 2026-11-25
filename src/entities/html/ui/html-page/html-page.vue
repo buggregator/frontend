@@ -41,7 +41,7 @@ const tabs: TabItem[] = [
     >
       <!-- v-show: the page keeps its state on a tab switch. The sender's
            page as it is: its CSS and scripts run in the sandbox (opaque
-           origin, no app access); the frame takes the page's height, so
+           origin: no app page, login or storage); the frame takes the page's height, so
            only the app scrolls. -->
       <div
         v-show="tab === 'preview'"
