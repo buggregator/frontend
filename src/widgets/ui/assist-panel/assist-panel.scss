@@ -303,6 +303,17 @@
   font-size: 13px;
 }
 
+.ap__note-action {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ap-on-text);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .ap__note--err {
   border-color: color-mix(in srgb, var(--ap-err) 45%, transparent);
   background: var(--ap-err-bg);

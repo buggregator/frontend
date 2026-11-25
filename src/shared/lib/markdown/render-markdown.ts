@@ -28,11 +28,24 @@ export const appRouteOf = (url: string, origin = currentOrigin()): string | null
     path = path.slice(origin.length)
   }
   if (!/^\/(?!\/)/.test(path) || /[\s"'<>\\]/.test(path)) return null
-  const section = path.slice(1).split(/[/?#]/)[0]
+  // No dot segments, plain or encoded (/sentry/../api/x would leave the
+  // app's pages once the router resolves it).
+  const pathname = path.split(/[?#]/)[0]
+  if (pathname.split('/').some((seg) => /^(\.|%2e){1,2}$/i.test(seg))) return null
+  const section = pathname.slice(1).split('/')[0]
   return APP_SECTIONS.has(section) ? path : null
 }
 
-md.validateLink = (url: string) => /^https?:\/\//i.test(url.trim()) || appRouteOf(url) !== null
+// An address on this origin is a link only when it is one of the app's
+// pages; other sites' http(s) addresses open in a new tab.
+const isOwnOrigin = (url: string, origin = currentOrigin()) =>
+  !!origin && (url.toLowerCase() === origin.toLowerCase() || url.toLowerCase().startsWith(`${origin.toLowerCase()}/`))
+
+md.validateLink = (url: string) => {
+  const u = url.trim()
+  if (appRouteOf(u) !== null) return true
+  return /^https?:\/\//i.test(u) && !isOwnOrigin(u)
+}
 
 const escape = md.utils.escapeHtml
 

@@ -71,4 +71,12 @@ describe('MdText', () => {
     expect(w.find('b').exists()).toBe(false)
     expect(w.findAll('a')).toHaveLength(1)
   })
+
+  it('a path with dot segments or outside the app pages stays plain text', async () => {
+    const w = await render(
+      '[a](/sentry/../api/x) [b](/sentry/./event/1) [c](/sentry/%2e%2e/api) [d](/api/events) [e](http://localhost:3000/sentry/../api)'
+    )
+    expect(w.findAll('a')).toHaveLength(0)
+    expect(w.text()).toContain('[a](/sentry/../api/x)')
+  })
 })

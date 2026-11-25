@@ -36,8 +36,9 @@ const {
   recent,
   send,
   retry,
-  loadRecent
-} = useAssistThread(context)
+  loadRecent,
+  checkAgain
+} = useAssistThread(context, isAssistOpen)
 
 const isPhone = useMediaQuery('(max-width: 639px)')
 const isWide = useMediaQuery('(min-width: 1280px)')
@@ -366,6 +367,13 @@ const placeholder = computed(() => placeholderFor(context.value))
       role="alert"
     >
       {{ STATUS_TEXT.stopped }}
+      <button
+        type="button"
+        class="ap__note-action"
+        @click="checkAgain"
+      >
+        Check again
+      </button>
     </p>
 
     <AssistComposer

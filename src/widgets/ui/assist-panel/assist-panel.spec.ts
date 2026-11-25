@@ -248,4 +248,65 @@ describe('AssistPanel', () => {
   })
 })
 
+describe('AssistPanel polling', () => {
+  const calls = (key: string) => fetchMock.mock.calls.filter(([u, i]) => `${i?.method ?? 'GET'} ${u}` === key).length
+  const tick = async (ms: number) => {
+    await vi.advanceTimersByTimeAsync(ms)
+    await flushPromises()
+  }
+
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it('stopped: never asks again by itself; «Check again» does', async () => {
+    routes['GET /api/assist'] = () => json(200, { enabled: true, status: 'stopped', reason: 'x', to: 'lead' })
+    const w = await mountIt()
+    expect(calls('GET /api/assist')).toBe(1)
+    await tick(120000)
+    expect(calls('GET /api/assist')).toBe(1)
+    await w.find('.ap__note-action').trigger('click')
+    await flushPromises()
+    expect(calls('GET /api/assist')).toBe(2)
+    w.unmount()
+  })
+
+  it('connecting: asks again with growing pauses (5, 10, 20, 30 s)', async () => {
+    routes['GET /api/assist'] = () => json(200, { enabled: true, status: 'connecting', to: 'lead' })
+    const w = await mountIt()
+    await tick(5000)
+    expect(calls('GET /api/assist')).toBe(2)
+    await tick(5000)
+    expect(calls('GET /api/assist')).toBe(2)
+    await tick(5000)
+    expect(calls('GET /api/assist')).toBe(3)
+    await tick(20000 + 30000)
+    expect(calls('GET /api/assist')).toBe(5)
+    w.unmount()
+  })
+
+  it('waiting for an answer: checks the thread while open, never while closed', async () => {
+    const waitingThread = { ...thread, messages: [...thread.messages, { from: 'you', text: 'And?', at: '2026-11-25T10:01:00Z' }] }
+    routes['GET /api/assist/threads?kind=event&key=ev1'] = () => json(200, waitingThread)
+    const key = 'GET /api/assist/threads?kind=event&key=ev1'
+    const w = await mountIt()
+    const first = calls(key)
+    await tick(5000)
+    expect(calls(key)).toBe(first + 1)
+
+    isAssistOpen.value = false
+    await flushPromises()
+    const closed = calls(key)
+    await tick(120000)
+    expect(calls(key)).toBe(closed)
+
+    // Reopened: one look at once, then the checks go on.
+    isAssistOpen.value = true
+    await flushPromises()
+    expect(calls(key)).toBe(closed + 1)
+    await tick(5000)
+    expect(calls(key)).toBe(closed + 2)
+    w.unmount()
+  })
+})
+
 afterEach(() => closeAssist())

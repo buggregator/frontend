@@ -19,9 +19,10 @@ import {
 // every few seconds, since the push may come on a channel this tab does not
 // follow (a page thread lives on the default project's channel).
 
-const POLL_MS = 5000
-// While not connected, the state is asked again now and then.
-const STATUS_MS = 10000
+// Checks back off while nothing changes: 5 s, 10 s, 20 s, then every 30 s.
+// Only while the panel is open; «stopped» is final until the person asks
+// again (Check again) or reopens the panel.
+export const POLL_STEPS = [5000, 10000, 20000, 30000]
 
 export type AssistState = 'loading' | 'off' | 'connecting' | 'connected' | 'stopped'
 
@@ -33,7 +34,7 @@ export const assistStateOf = (s: AssistStatus | null | undefined, loaded: boolea
 
 const contextId = (ctx: PageContext | null) => (ctx ? `${ctx.kind}:${ctx.key}` : '')
 
-export const useAssistThread = (context: Ref<PageContext | null>) => {
+export const useAssistThread = (context: Ref<PageContext | null>, active: Ref<boolean> = ref(true)) => {
   const { token } = storeToRefs(useProfileStore())
   const call = <T>(path: string, init?: RequestInit) => assistRequest<T>(token.value, path, init)
 
@@ -179,14 +180,47 @@ export const useAssistThread = (context: Ref<PageContext | null>) => {
   const { centrifuge } = useCentrifuge()
   centrifuge.on('publication', onPublication)
 
-  const timer = setInterval(() => {
-    if (waiting.value) loadThread()
-    if (state.value === 'connecting' || state.value === 'stopped') loadStatus()
-  }, Math.min(POLL_MS, STATUS_MS))
+  // Checks while open: the thread while our word is the last, the state
+  // while connecting.
+  let timer: ReturnType<typeof setTimeout> | null = null
+  let step = 0
+  const stop = () => {
+    if (timer) clearTimeout(timer)
+    timer = null
+  }
+  const schedule = () => {
+    stop()
+    const wantThread = active.value && waiting.value
+    const wantStatus = active.value && state.value === 'connecting'
+    if (!wantThread && !wantStatus) return
+    timer = setTimeout(async () => {
+      timer = null
+      if (wantThread) await loadThread()
+      if (wantStatus) await loadStatus()
+      step++
+      schedule()
+    }, POLL_STEPS[Math.min(step, POLL_STEPS.length - 1)])
+  }
+  // Anything new starts the back-off over.
+  watch(
+    () => [active.value, waiting.value, state.value, thread.value?.messages.length ?? 0],
+    () => {
+      step = 0
+      schedule()
+    }
+  )
+  // Opening the panel looks again once: a state or an answer may have come
+  // while it was closed.
+  watch(active, (open) => {
+    if (open) {
+      loadStatus()
+      loadThread()
+    }
+  })
 
   onBeforeUnmount(() => {
     centrifuge.removeListener('publication', onPublication)
-    clearInterval(timer)
+    stop()
   })
 
   watch(
@@ -215,6 +249,7 @@ export const useAssistThread = (context: Ref<PageContext | null>) => {
     retry,
     loadRecent,
     loadStatus,
+    checkAgain: loadStatus,
     reload: loadThread
   }
 }
