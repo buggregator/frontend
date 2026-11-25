@@ -10,8 +10,9 @@ type Props = {
 const props = defineProps<Props>()
 
 // ray()->html() sends a custom payload labelled «HTML»: the sender's own
-// markup, shown as a page (its CSS and scripts run in the sandbox: opaque
-// origin: no app page, login or storage), not as tags.
+// markup, shown as a page with its CSS, not as tags. Its scripts do not run:
+// Ray cards stand in the feed, where a script that sends events would start
+// a new one with every card (as html event cards, #7091).
 const isHtml = computed(() => props.content.label === 'HTML')
 </script>
 
@@ -26,8 +27,6 @@ const isHtml = computed(() => props.content.label === 'HTML')
         class="ray-custom__frame"
         :html="String(content.content ?? '')"
         title="Ray HTML"
-        scripts
-        fit
       />
     </div>
     <ValueDump
@@ -39,11 +38,14 @@ const isHtml = computed(() => props.content.label === 'HTML')
 
 <style lang="scss" scoped>
 .ray-custom__html {
-  // White as in mail previews; the frame takes the page's height.
-  @apply rounded bg-white overflow-hidden;
+  // White as in mail previews; drag the corner for a taller page.
+  @apply h-60 min-h-24 overflow-hidden rounded bg-white;
+  @apply border border-gray-200 dark:border-gray-700;
+  resize: vertical;
 }
 
 .ray-custom__frame {
-  @apply block w-full border-0;
+  // Beats the 60vh min-height the mail preview sets on every iframe.
+  @apply block w-full h-full min-h-0 border-0;
 }
 </style>

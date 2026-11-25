@@ -689,7 +689,7 @@
         "POST the markup to http://html:{project}@{host}:{http_port} with Content-Type text/html. The page's <title> becomes the card's title.",
         "To set the title yourself, send JSON {\"title\": \"…\", \"html\": \"…\"} with Content-Type: application/json.",
         "Without the html@ address, POST to http://{host}:{http_port}/html/{project}.",
-        "Up to 1 MB per event. Scripts run in a sandboxed frame: they cannot reach the Buggregator page, its login, storage or API.",
+        "Up to 1 MB per event. Scripts run on the event's page, in a sandboxed frame: they cannot reach the Buggregator page, its login, storage or API. The feed shows the page without running them.",
         "{host} is the address of this page. If your app runs in Docker Compose next to Buggregator, use the service name instead, e.g. buggregator."
       ],
       "stacks": [

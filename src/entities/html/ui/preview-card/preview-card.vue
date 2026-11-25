@@ -14,62 +14,71 @@ const props = defineProps<Props>()
 const eventLink = computed(() => `/html/${props.event.id}`)
 const title = computed(() => htmlTitle(props.event.payload))
 const markup = computed(() => props.event.payload.html ?? '')
+// A thumbnail: no scrollbar inside the frame.
+const thumb = computed(() => `<style>html,body{overflow:hidden}</style>${markup.value}`)
 </script>
 
 <template>
   <PreviewCard :event="event">
-    <!-- The sender's page as it is: no title bar around it, its own CSS and
-         scripts run in the sandbox (opaque origin: no app page, login or
-         storage). The card header opens the event. -->
-    <div
-      v-if="markup"
-      class="html-card"
-      data-test="html-card"
-    >
-      <EmailHtmlFrame
-        class="html-card__frame"
-        :html="markup"
-        :title="title"
-        scripts
-        fit
-      />
-    </div>
-
-    <!-- The server left the markup out of the feed (over 32 KB). -->
+    <!-- A picture of the sender's page, no title bar around it. Its CSS
+         applies, its scripts do not run here: a page that sends events from
+         a script would start a new one with every card. They run on the
+         event page. The card is the link; the frame takes no clicks. -->
     <RouterLink
-      v-else
       :to="eventLink"
-      class="html-card html-card--text"
+      class="html-card"
+      :class="{ 'html-card--text': !markup }"
       data-test="html-card"
     >
       <span
-        v-if="event.payload.text"
-        class="html-card__text"
-      >{{ event.payload.text }}</span>
-      <span
-        class="html-card__note"
-        data-test="html-card-truncated"
-      >Large page: open it to see it</span>
+        v-if="markup"
+        class="html-card__thumb"
+        aria-hidden="true"
+      >
+        <EmailHtmlFrame
+          class="html-card__frame"
+          :html="thumb"
+          :title="title"
+          tabindex="-1"
+          loading="lazy"
+        />
+      </span>
+
+      <!-- The server left the markup out of the feed (over 32 KB). -->
+      <template v-else>
+        <span
+          v-if="event.payload.text"
+          class="html-card__text"
+        >{{ event.payload.text }}</span>
+        <span
+          class="html-card__note"
+          data-test="html-card-truncated"
+        >Large page: open it to see it</span>
+      </template>
     </RouterLink>
   </PreviewCard>
 </template>
 
 <style lang="scss" scoped>
 .html-card {
-  // Pages are drawn for a white background, as in mail previews. A very long
-  // page scrolls here, in the card; the frame itself never scrolls.
-  @apply block rounded overflow-y-auto max-h-[36rem] bg-white;
+  @apply block rounded cursor-pointer;
 }
 
 .html-card--text {
-  @apply p-3 cursor-pointer;
+  @apply p-3;
   @apply bg-gray-50 dark:bg-gray-900;
   @apply border border-gray-200 dark:border-gray-700;
   @apply hover:border-gray-300 dark:hover:border-gray-600 transition-colors;
 }
 
+.html-card__thumb {
+  // Pages are drawn for a white background, as in mail previews.
+  @apply block h-64 overflow-hidden rounded bg-white pointer-events-none;
+}
+
 .html-card__frame {
-  @apply block w-full border-0;
+  // Beats the 60vh min-height the mail preview sets on every iframe.
+  @apply block w-full h-full min-h-0 border-0;
 }
 
 .html-card__text {

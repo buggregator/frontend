@@ -1,6 +1,6 @@
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { PAGE_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
+import { EMAIL_FRAME_SANDBOX } from '@/shared/ui/email-html-frame'
 import { normalizeHtmlEvent } from '../../lib'
 import { htmlReportMock, htmlTruncatedMock } from '../../mocks'
 import PreviewCard from './preview-card.vue'
@@ -21,11 +21,14 @@ describe('html PreviewCard', () => {
     expect(w.text()).not.toContain('Nightly report')
   })
 
-  it('runs the page scripts in the sandbox and fits its height', async () => {
-    const frame = (await mountCard(htmlReportMock)).find('iframe')
-    expect(frame.attributes('sandbox')).toBe(PAGE_FRAME_SANDBOX)
+  it('runs no scripts in the feed: a picture of the page that opens the event', async () => {
+    const w = await mountCard(htmlReportMock)
+    const frame = w.find('iframe')
+    expect(frame.attributes('sandbox')).toBe(EMAIL_FRAME_SANDBOX)
+    expect(frame.attributes('sandbox')).not.toContain('allow-scripts')
     expect(frame.attributes('srcdoc')).toContain('<h1')
-    expect(frame.attributes('scrolling')).toBe('no')
+    expect(frame.attributes('tabindex')).toBe('-1')
+    expect(w.findComponent(RouterLinkStub).props('to')).toBe(`/html/${htmlReportMock.uuid}`)
   })
 
   it('links the text to the event when the feed left the markup out', async () => {
