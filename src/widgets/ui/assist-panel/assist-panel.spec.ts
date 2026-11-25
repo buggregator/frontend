@@ -314,6 +314,32 @@ describe('AssistPanel recipient', () => {
     w.unmount()
   })
 
+  it('WS assist.status replaces the list live: the pick stays while listed, else the default', async () => {
+    routes['GET /api/assist'] = () => json(200, many)
+    const w = await mountIt()
+    const publish = (data: unknown) => {
+      const handler = centrifuge.on.mock.calls.filter(([name]) => name === 'publication').at(-1)?.[1]
+      handler({ channel: 'assist', data })
+    }
+    await w.get('select.ap__to-select').setValue('role:42')
+    const gets = fetchMock.mock.calls.length
+
+    publish({ event: 'assist.status', data: { recipients: [...many.recipients, { address: 'role:7', name: 'reviewer' }], default: 'lead' } })
+    await flushPromises()
+    let select = w.get('select.ap__to-select')
+    expect(select.findAll('option').map((o) => o.text())).toEqual(['server-lid', 'Go developer — server code', 'reviewer'])
+    expect((select.element as HTMLSelectElement).value).toBe('role:42')
+
+    publish({ event: 'assist.status', data: { recipients: [many.recipients[0], { address: 'role:7', name: 'reviewer' }], default: 'role:7' } })
+    await flushPromises()
+    select = w.get('select.ap__to-select')
+    expect(select.findAll('option').map((o) => o.text())).toEqual(['server-lid', 'reviewer'])
+    expect((select.element as HTMLSelectElement).value).toBe('role:7')
+    // The event carries the list: no extra request.
+    expect(fetchMock.mock.calls.length).toBe(gets)
+    w.unmount()
+  })
+
   it('a remembered pick that is gone falls back to the default', async () => {
     assistRecipient.value = 'role:99'
     routes['GET /api/assist'] = () => json(200, many)

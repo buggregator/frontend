@@ -179,7 +179,16 @@ export const useAssistThread = (
   }
 
   // An answer (or our follow-up from another tab).
+  // The address list changed in harnsy (#7128): take it from the event; the
+  // pick stays while listed, else the panel falls back to the default.
   const onPublication = guardHandler('publication', (ctx: PublicationContext) => {
+    if (ctx.data?.event === 'assist.status') {
+      const d = ctx.data?.data ?? {}
+      if (status.value && Array.isArray(d.recipients)) {
+        status.value = { ...status.value, recipients: d.recipients, default: d.default ?? status.value.default }
+      }
+      return
+    }
     if (ctx.data?.event !== 'assist.message') return
     const d = ctx.data?.data ?? {}
     const th = thread.value
