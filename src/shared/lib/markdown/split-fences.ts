@@ -5,7 +5,25 @@ export type MarkdownSegment =
   | { kind: 'prose'; text: string }
   | { kind: 'code'; language: string; code: string }
 
-const OPEN = /^ {0,3}(`{3,}|~{3,})\s*([\w+#.-]*)[^\n]*$/
+// Any indent: a fence inside a list item sits deeper than 3 spaces. A
+// backtick fence's info string has no backticks (```js``` is inline code).
+const OPEN = /^([ \t]*)(`{3,}|~{3,})(.*)$/
+
+const opener = (line: string) => {
+  const m = OPEN.exec(line)
+  if (!m) return null
+  const [, indent, fence, rest] = m
+  if (fence[0] === '`' && rest.includes('`')) return null
+  const language = /^\s*([\w+#.-]*)/.exec(rest)?.[1] ?? ''
+  return { indent: indent.length, fence, language }
+}
+
+// A code line loses at most the opener's indent (the list item's).
+const unindent = (line: string, n: number) => {
+  let i = 0
+  while (i < n && (line[i] === ' ' || line[i] === '\t')) i++
+  return line.slice(i)
+}
 
 export const splitFences = (text: string): MarkdownSegment[] => {
   const out: MarkdownSegment[] = []
@@ -13,6 +31,7 @@ export const splitFences = (text: string): MarkdownSegment[] => {
   let code: string[] | null = null
   let fence = ''
   let language = ''
+  let indent = 0
 
   const flushProse = () => {
     const t = prose.join('\n')
@@ -22,12 +41,13 @@ export const splitFences = (text: string): MarkdownSegment[] => {
 
   for (const line of text.replace(/\r\n?/g, '\n').split('\n')) {
     if (code === null) {
-      const m = OPEN.exec(line)
+      const m = opener(line)
       if (m) {
         flushProse()
         code = []
-        fence = m[1]
-        language = m[2].toLowerCase()
+        fence = m.fence
+        language = m.language.toLowerCase()
+        indent = m.indent
       } else {
         prose.push(line)
       }
@@ -38,7 +58,7 @@ export const splitFences = (text: string): MarkdownSegment[] => {
       out.push({ kind: 'code', language, code: code.join('\n') })
       code = null
     } else {
-      code.push(line)
+      code.push(unindent(line, indent))
     }
   }
   if (code !== null) out.push({ kind: 'code', language, code: code.join('\n') })

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { renderMarkdown, splitFences } from '../../lib/markdown'
 import { CodeSnippet } from '../code-snippet'
 
@@ -10,6 +11,18 @@ type Props = { text: string }
 
 const props = defineProps<Props>()
 
+// A chip to one of the app's pages opens inside the app; a click with a
+// modifier keeps the browser's own behaviour (new tab).
+const router = useRouter()
+const onClick = (e: MouseEvent) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+  const a = (e.target as HTMLElement | null)?.closest?.('a[data-app-route]')
+  const href = a?.getAttribute('href')
+  if (!href || !router) return
+  e.preventDefault()
+  router.push(href)
+}
+
 const parts = computed(() =>
   splitFences(props.text).map((p) =>
     p.kind === 'prose' ? { ...p, html: renderMarkdown(p.text) } : p
@@ -18,7 +31,11 @@ const parts = computed(() =>
 </script>
 
 <template>
-  <div class="md-text">
+  <!-- Clicks of the app links inside are routed here; the links keep Enter. -->
+  <div
+    class="md-text"
+    @click="onClick"
+  >
     <template
       v-for="(p, i) in parts"
       :key="i"
@@ -129,6 +146,33 @@ const parts = computed(() =>
 
   :deep(hr) {
     @apply my-3 border-gray-200 dark:border-gray-700;
+  }
+
+  // A <pre> of an indented code block: scrolls in its own box.
+  :deep(pre) {
+    @apply overflow-x-auto max-w-full whitespace-pre;
+    overflow-wrap: normal;
+  }
+
+  // A link to one of the app's pages (an event): a chip, no underline.
+  :deep(.md-text__chip) {
+    @apply inline-flex items-center max-w-full px-1.5 rounded-sm text-xs no-underline align-baseline;
+    @apply border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-900;
+    @apply text-blue-700 dark:text-blue-300;
+
+    &::before {
+      content: '↗';
+      @apply mr-1 text-gray-500 dark:text-gray-400;
+    }
+
+    &:hover {
+      @apply bg-gray-200 dark:bg-gray-800;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
   }
 
   :deep(.md-text__image) {

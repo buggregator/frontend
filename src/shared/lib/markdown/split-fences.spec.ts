@@ -25,4 +25,17 @@ describe('splitFences', () => {
       { kind: 'code', language: 'py', code: 'x = 1' }
     ])
   })
+
+  it('does not open a fence on ```js``` (a backtick info string is inline code)', () => {
+    expect(splitFences('Run ```js``` here\nnext')).toEqual([{ kind: 'prose', text: 'Run ```js``` here\nnext' }])
+  })
+
+  it('takes a fence out of a list item and strips the item indent from its lines', () => {
+    const t = '1. Fix it:\n\n    ```php\n    if ($a) {\n        b();\n    }\n    ```\n2. Test'
+    expect(splitFences(t)).toEqual([
+      { kind: 'prose', text: '1. Fix it:\n' },
+      { kind: 'code', language: 'php', code: 'if ($a) {\n    b();\n}' },
+      { kind: 'prose', text: '2. Test' }
+    ])
+  })
 })

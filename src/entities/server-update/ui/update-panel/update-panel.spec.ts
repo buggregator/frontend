@@ -104,7 +104,9 @@ describe('UpdatePanel', () => {
     expect(toggle.attributes('aria-expanded')).toBe('true')
     const body = wrapper.get('[data-test="update-notes-body"]')
     expect(toggle.attributes('aria-controls')).toBe(body.attributes('id'))
-    expect(body.html()).toContain('<h4>Added</h4>')
+    await vi.dynamicImportSettled()
+    await flushPromises()
+    expect(body.findAll('h1, h2, h3, h4, h5, h6').map((h) => h.text())).toContain('Added')
 
     await toggle.trigger('click')
     expect(toggle.attributes('aria-expanded')).toBe('false')

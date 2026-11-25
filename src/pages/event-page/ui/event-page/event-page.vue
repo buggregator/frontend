@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { KeyHintBar, LayoutBase, LayoutSidebar, PageEventHeader } from '@/widgets/ui'
 import { EventPageMapper, hasEventTabs } from '@/widgets/ui/event-page-mapper'
 import { PAGES_SETTINGS } from '@/shared/constants'
+import { eventContextTitle, providePageContext } from '@/shared/lib/assist'
 import { describeLoadError } from '@/shared/lib/io'
 import { logger } from '@/shared/lib/logger'
 import { useKeyHints } from '@/shared/lib/shortcuts'
@@ -78,6 +79,14 @@ const getEvent = async () => {
     if (id === eventId.value) isLoading.value = false
   }
 }
+
+// The agents panel talks about this event (#7116); the server builds the
+// text from the stored event. While it loads, the page's own context stands.
+providePageContext(() => {
+  const ev = serverEvent.value
+  if (!ev || ev.uuid !== eventId.value) return null
+  return { kind: 'event', key: ev.uuid, title: eventContextTitle(ev), project: ev.project ?? undefined }
+})
 
 // Another id: drop the old event, so its page does not show under the new title.
 watch(

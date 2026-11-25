@@ -5,6 +5,7 @@ import { defineComponent, h } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useSettingsStore } from '../../stores'
 import { EventTypes, RouteName } from '../../types'
+import { isAssistOpen } from '../assist'
 import { isCommandPaletteOpen } from '../command-palette'
 import { isShortcutsOverlayOpen, useGlobalShortcuts } from './use-global-shortcuts'
 
@@ -118,6 +119,23 @@ describe('useGlobalShortcuts', () => {
     press('k')
     expect(isCommandPaletteOpen.value).toBe(false)
 
+    wrapper.unmount()
+  })
+
+  it('a opens and closes the agents panel, not while typing', async () => {
+    isAssistOpen.value = false
+    const { wrapper } = await setup()
+    press('a')
+    expect(isAssistOpen.value).toBe(true)
+    press('a')
+    expect(isAssistOpen.value).toBe(false)
+
+    const input = document.createElement('input')
+    document.body.appendChild(input)
+    input.focus()
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true }))
+    expect(isAssistOpen.value).toBe(false)
+    input.remove()
     wrapper.unmount()
   })
 })

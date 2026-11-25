@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { routerKey } from 'vue-router'
 import MdText from './md-text.vue'
 
 const render = async (text: string) => {
@@ -49,5 +50,33 @@ describe('MdText', () => {
     const w = await render('![diagram](https://example.com/x.png)')
     expect(w.find('img').exists()).toBe(false)
     expect(w.find('.md-text__image').text()).toBe('[diagram]')
+  })
+
+  it('shows a link to an app page as a chip that opens in the app', async () => {
+    const push = vi.fn()
+    const w = mount(MdText, {
+      props: { text: 'See [Order 14 not found](/sentry/event/0b7e91c2-aaaa) and [it](http://localhost:3000/profiler/abc-1).' },
+      global: { mocks: { $router: { push } }, provide: { [routerKey as symbol]: { push } } }
+    })
+    await flushPromises()
+    const chips = w.findAll('a.md-text__chip')
+    expect(chips.map((a) => a.attributes('href'))).toEqual(['/sentry/event/0b7e91c2-aaaa', '/profiler/abc-1'])
+    expect(chips[0].attributes('target')).toBeUndefined()
+    await chips[0].trigger('click')
+    expect(push).toHaveBeenCalledWith('/sentry/event/0b7e91c2-aaaa')
+  })
+
+  it('keeps raw HTML off around app links', async () => {
+    const w = await render('[<b>x</b>](/sentry/event/1) <a href="/sentry/event/2">y</a>')
+    expect(w.find('b').exists()).toBe(false)
+    expect(w.findAll('a')).toHaveLength(1)
+  })
+
+  it('a path with dot segments or outside the app pages stays plain text', async () => {
+    const w = await render(
+      '[a](/sentry/../api/x) [b](/sentry/./event/1) [c](/sentry/%2e%2e/api) [d](/api/events) [e](http://localhost:3000/sentry/../api)'
+    )
+    expect(w.findAll('a')).toHaveLength(0)
+    expect(w.text()).toContain('[a](/sentry/../api/x)')
   })
 })

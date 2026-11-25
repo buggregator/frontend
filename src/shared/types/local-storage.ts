@@ -17,6 +17,8 @@ export enum LocalStorageKeys {
   MonologInlineContext = "monolog_inline_context",
   // Whose synced settings this browser holds (user id from /api/me, #6772).
   SettingsOwner = "settings_owner",
+  // The agents panel: open or closed and its width (#7116).
+  AssistPanel = "assist_panel",
 }
 
 export enum SessionStorageKeys {
