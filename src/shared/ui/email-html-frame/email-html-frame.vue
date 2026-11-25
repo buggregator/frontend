@@ -26,8 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Captured HTML is untrusted: the sandbox gives the frame an opaque origin with
 // forms and top navigation blocked (scripts too, unless `scripts`), so it
-// cannot read the app's page or localStorage (JWT). With `scripts` and login
-// off it can still call the API, as any page can (see PAGE_FRAME_SANDBOX).
+// cannot read the app's page or localStorage (JWT); the API refuses its
+// Origin: null (see PAGE_FRAME_SANDBOX).
 // Links open in a new tab via <base target>.
 const fits = computed(() => props.scripts && props.fit)
 const sandbox = computed(() => (props.scripts ? PAGE_FRAME_SANDBOX : EMAIL_FRAME_SANDBOX))

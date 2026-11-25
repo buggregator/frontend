@@ -4,9 +4,8 @@ export const EMAIL_FRAME_SANDBOX = 'allow-popups allow-popups-to-escape-sandbox'
 
 // A sender's own page (html events, Ray html(), frontend#132): its scripts
 // run, but still without allow-same-origin, so the frame has an opaque origin
-// and cannot read the app's page, localStorage (JWT) or cookies. With login
-// off the API answers any origin (CORS *), so its scripts can call it, as any
-// page in the browser can.
+// and cannot read the app's page, localStorage (JWT) or cookies. Its requests
+// carry Origin: null, which the server's UI API refuses (CORS, #7103).
 export const PAGE_FRAME_SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox'
 
 // Comes before the captured HTML so that links without a target open in a new
