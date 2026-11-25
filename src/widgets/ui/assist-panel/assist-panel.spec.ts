@@ -192,6 +192,13 @@ describe('AssistPanel', () => {
     w.unmount()
   })
 
+  it('a context without a thread may also come as 200 {thread: null}', async () => {
+    routes['GET /api/assist/threads?kind=event&key=ev1'] = () => json(200, { thread: null })
+    const w = await mountIt()
+    expect(w.findAll('.ap-talk__prompt')).toHaveLength(3)
+    w.unmount()
+  })
+
   it('MCP off: a note says agents see only what is sent', async () => {
     routes['GET /api/assist'] = () => json(200, { ...connected, mcp: { on: false } })
     const w = await mountIt()

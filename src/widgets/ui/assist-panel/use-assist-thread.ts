@@ -67,7 +67,10 @@ export const useAssistThread = (context: Ref<PageContext | null>) => {
     threadLoading.value = !cache.has(id)
     try {
       const q = new URLSearchParams({ kind: ctx.kind, key: ctx.key })
-      const th = await call<AssistThread>(`/threads?${q}`)
+      // A context without a thread: 404 assist_none, or 200 {thread: null}
+      // (quiet in the browser console).
+      const body = await call<AssistThread | { thread: AssistThread | null }>(`/threads?${q}`)
+      const th = 'messages' in body ? body : body.thread
       cache.set(id, th)
       if (id === contextId(context.value)) thread.value = th
     } catch (e) {

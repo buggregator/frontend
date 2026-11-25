@@ -179,7 +179,9 @@ watch(
       return
     }
     await nextTick()
-    composer.value?.focus()
+    // A phone: focus into the dialog, but no keyboard popping up over it.
+    if (isPhone.value) root.value?.focus()
+    else composer.value?.focus()
   },
   { immediate: true }
 )
@@ -197,6 +199,7 @@ const placeholder = computed(() => placeholderFor(context.value))
     :role="isPhone ? 'dialog' : 'complementary'"
     :aria-modal="isPhone ? 'true' : undefined"
     aria-labelledby="ap-heading"
+    tabindex="-1"
     @keydown="onKeydown"
   >
     <div
@@ -311,10 +314,20 @@ const placeholder = computed(() => placeholderFor(context.value))
       class="ap__ctx"
     >
       <p class="ap__chip">
-        <span
+        <svg
           class="ap__chip-icon"
+          viewBox="0 0 16 16"
           aria-hidden="true"
-        >{{ context.kind === 'event' ? '⚠' : '▤' }}</span>
+        >
+          <path
+            v-if="context.kind === 'event'"
+            d="M8 2.5 14 13H2Z M8 6.5v3 M8 11.2v.1"
+          />
+          <path
+            v-else
+            d="M2.5 3.5h11v9h-11Z M2.5 6.5h11 M5.5 6.5v6"
+          />
+        </svg>
         <span
           v-if="chip.kind"
           class="ap__chip-kind"
