@@ -7,6 +7,7 @@ import { resolveExceptionValues, sentryList, sentryMessageText } from '../../lib
 import { useSentryRequests } from '../../lib/use-sentry-requests'
 import type { Sentry, SentryBreadcrumb, SentryTraceSummary } from '../../types'
 import { SentryException } from '../sentry-exception'
+import { SentryExplain } from '../sentry-explain'
 import { SentryEventFeedback } from '../sentry-feedback'
 import { SentryPageApp } from '../sentry-page-app'
 import { SentryPageBreadcrumbs } from '../sentry-page-breadcrumbs'
@@ -240,6 +241,9 @@ watch(
 
     <!-- What users wrote about this error (#6604); nothing when there is none. -->
     <SentryEventFeedback :event-id="feedbackEventId" />
+
+    <!-- «Explain this error» through harnsy (concept); hidden when off on the server. -->
+    <SentryExplain :event-uuid="event.id" />
 
     <!-- Tabbed content -->
     <EventTabs
