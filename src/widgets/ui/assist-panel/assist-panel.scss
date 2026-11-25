@@ -185,6 +185,12 @@
   }
 }
 
+.ap__status:has(.ap__to-pick) {
+  // The picker's focus ring must not be cut.
+  overflow: visible;
+  padding: 3px 0;
+}
+
 .ap__to {
   overflow: hidden;
   text-overflow: ellipsis;
