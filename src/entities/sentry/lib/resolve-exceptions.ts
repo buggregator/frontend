@@ -1,18 +1,12 @@
+import { sentryList } from '@/shared/lib/helpers'
 import type { Sentry, SentryException, SentryFrame } from '../types'
 
 type Stacktrace = { frames?: SentryFrame[] }
 
 const hasFrames = (st?: Stacktrace): boolean => Boolean(st?.frames && st.frames.length > 0)
 
-// The items of a Sentry list field (`exception`, `threads`, `breadcrumbs`):
-// {values: [...]} in most SDKs, a bare list in sentry-go and the protocol's
-// short form. Never read `.values` of a bare list: that is
-// Array.prototype.values, a function (#7098).
-export const sentryList = <T>(field: unknown): T[] => {
-  if (Array.isArray(field)) return field as T[]
-  const values = (field as { values?: unknown } | null | undefined)?.values
-  return Array.isArray(values) ? (values as T[]) : []
-}
+// Lives in shared: the desktop notice reads it too. Re-exported for this slice.
+export { sentryList } from '@/shared/lib/helpers'
 
 // The text of a message event: `message` is a string in the store API and
 // {formatted, message, params} in envelopes; older SDKs send `logentry`.

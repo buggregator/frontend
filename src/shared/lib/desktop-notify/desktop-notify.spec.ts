@@ -64,6 +64,13 @@ describe('errorNotice', () => {
     expect(errorNotice(event)).toBeNull()
   })
 
+  // sentry-go sends `exception` as a bare list (#7098).
+  it('names the exception of a bare exception list', () => {
+    expect(errorNotice(sentry({ exception: [{ type: 'errors.errorString', value: 'db down' }] }))?.body).toBe(
+      'errors.errorString: db down'
+    )
+  })
+
   it('leaves the project out when there is none and clips long text', () => {
     const notice = errorNotice(sentry({ exception: { values: [{ type: 'E', value: 'x'.repeat(400) }] } }, null))
     expect(notice?.title).toBe('New error')
