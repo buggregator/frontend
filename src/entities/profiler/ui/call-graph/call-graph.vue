@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useElementSize } from '@vueuse/core'
+import { useElementSize, useLocalStorage } from '@vueuse/core'
 import { ref, computed, watchEffect } from 'vue'
 import { useFormats } from '@/shared/lib/formats'
 import { type EventId, GraphTypes } from '@/shared/types'
@@ -22,6 +22,8 @@ const isFullscreen = ref(false)
 const metric = ref(GraphTypes.WALL_TIME as GraphTypes)
 const threshold = ref(1)
 const percent = ref(10)
+// Remembered across profiles: a choice of how to read graphs, not of one profile
+const collapseRecursion = useLocalStorage('call-graph-collapse-recursion', false)
 
 const container = ref<HTMLElement>()
 
@@ -62,6 +64,13 @@ const toggleFullScreen = () => {
   isFullscreen.value = !isFullscreen.value
 }
 
+const toggleRecursion = () => {
+  collapseRecursion.value = !collapseRecursion.value
+}
+
+// A server that can't collapse recursion doesn't tell how it shows it
+const canCollapseRecursion = computed(() => serverData.value?.recursion !== undefined)
+
 // The graph needs a pixel height. Track the container's size: it is 0 while
 // the tab panel is laid out and changes on resize and fullscreen (#391).
 const { height: containerHeight } = useElementSize(container)
@@ -71,14 +80,15 @@ watchEffect(async () => {
   const data = await getCallGraph(props.id, {
     threshold: String(threshold.value),
     percentage: String(percent.value),
-    metric: String(metric.value)
+    metric: String(metric.value),
+    recursion: collapseRecursion.value ? 'collapsed' : 'levels'
   })
 
   const { toolbar: tools } = data
 
   serverData.value = data
   toolbar.value = tools
-  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}`
+  graphKey.value = `${metric.value}-${threshold.value}-${percent.value}-${data.recursion ?? ''}`
 })
 
 const percentLabel = computed(() => (metric.value === GraphTypes.CALLS ? 'Min calls' : 'Percent'))
@@ -300,6 +310,17 @@ const currentMetricKey = computed(() => {
       >
         Search
       </button>
+
+      <button
+        v-if="canCollapseRecursion"
+        class="call-graph__toolbar-btn call-graph__toolbar-btn--recursion"
+        :class="{ 'call-graph__toolbar-btn--active': collapseRecursion }"
+        :aria-pressed="collapseRecursion"
+        title="Show a recursive function as one node calling itself, not a node per recursion level"
+        @click="toggleRecursion"
+      >
+        Collapse recursion
+      </button>
     </div>
 
     <!-- Search dropdown -->
@@ -420,6 +441,10 @@ const currentMetricKey = computed(() => {
 
 .call-graph__toolbar-btn--hot {
   @apply text-orange-600 dark:text-orange-400 font-semibold;
+}
+
+.call-graph__toolbar-btn--active {
+  @apply bg-gray-200 dark:bg-gray-700 font-semibold text-blue-600 dark:text-blue-400;
 }
 
 .call-graph__toolbar-input-wr {

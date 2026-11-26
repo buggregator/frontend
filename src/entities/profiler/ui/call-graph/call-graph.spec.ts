@@ -57,3 +57,47 @@ describe('CallGraph: graph height follows the container (frontend#391)', () => {
     expect(w.get('.render-graph-stub').attributes('data-height')).toBe('900')
   })
 })
+
+describe('CallGraph: collapsing recursion', () => {
+  const toggle = '.call-graph__toolbar-btn--recursion'
+
+  beforeEach(() => {
+    localStorage.clear()
+    vi.stubGlobal('ResizeObserver', FakeResizeObserver)
+    getCallGraph.mockReset()
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('offers no toggle when the server does not tell how it shows recursion', async () => {
+    getCallGraph.mockResolvedValue(callGraphMock)
+
+    const w = mount(CallGraph, { props: { id: 'p1' } })
+    await flushPromises()
+
+    expect(w.find(toggle).exists()).toBe(false)
+  })
+
+  it('asks for the collapsed graph and remembers the choice', async () => {
+    getCallGraph.mockImplementation(async (_id: string, params: Record<string, string>) => ({
+      ...callGraphMock,
+      recursion: params.recursion,
+    }))
+
+    const w = mount(CallGraph, { props: { id: 'p1' } })
+    await flushPromises()
+    expect(getCallGraph).toHaveBeenLastCalledWith('p1', expect.objectContaining({ recursion: 'levels' }))
+    expect(w.get(toggle).attributes('aria-pressed')).toBe('false')
+
+    await w.get(toggle).trigger('click')
+    await flushPromises()
+
+    expect(getCallGraph).toHaveBeenLastCalledWith('p1', expect.objectContaining({ recursion: 'collapsed' }))
+    expect(w.get(toggle).attributes('aria-pressed')).toBe('true')
+
+    // Another profile opens collapsed too
+    getCallGraph.mockClear()
+    mount(CallGraph, { props: { id: 'p2' } })
+    await flushPromises()
+    expect(getCallGraph).toHaveBeenLastCalledWith('p2', expect.objectContaining({ recursion: 'collapsed' }))
+  })
+})

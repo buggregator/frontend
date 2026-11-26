@@ -6,6 +6,7 @@ import '@vue-flow/core/dist/theme-default.css'
 import { mapToVueFlow } from '../../lib/vue-flow'
 import type { ProfilerCallGraph, CallStackHoverData } from '../../types'
 import CallGraphNodeComponent from './call-graph-node.vue'
+import LoopEdge from './loop-edge.vue'
 
 export type PathStep = {
   id: string
@@ -355,6 +356,12 @@ defineExpose({
           :data="nodeProps.data"
           :selected="nodeProps.selected"
         />
+      </template>
+      <template #edge-selfLoop="edgeProps">
+        <LoopEdge v-bind="edgeProps" />
+      </template>
+      <template #edge-backEdge="edgeProps">
+        <LoopEdge v-bind="edgeProps" />
       </template>
     </VueFlow>
 
