@@ -119,6 +119,16 @@ describe('useMockPreview', () => {
     expect(p.problemField.value).toBe('')
   })
 
+  it('names a rejected condition by its number, not its key', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      json({ message: 'validation failed', errors: { 'conditions.1': 'name is required' } }, 422)
+    )
+    const p = useMockPreview(ref({ ...emptyDraft(), path: '/a' }))
+    await p.run()
+
+    expect(p.problem.value).toBe('Condition 2: name is required')
+  })
+
   // The person must know the sample path is wrong, not the rule.
   it('names the sample path field when the server rejects it', async () => {
     fetchMock.mockImplementationOnce(() =>

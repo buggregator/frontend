@@ -40,6 +40,14 @@ describe('MockTemplatePreview', () => {
     expect(w.find('.mock-preview__warn').text()).toContain('the condition body card.token equals fails')
   })
 
+  it('blames the method or path, not the condition, when they differ too', async () => {
+    const w = await run(
+      answer({ status: 200, headers: {}, body: '', matched: false, error: null, failed_condition: 'body card.token equals' }),
+    )
+    await w.find('[aria-label="Sample request path with query"]').setValue('/orders/1')
+    expect(w.find('.mock-preview__warn').text()).toContain('method or path differ')
+  })
+
   it('shows the parse error of a rejected template', async () => {
     const w = await run(answer({ message: 'validation failed', errors: { body: 'template: body:1: unexpected EOF' } }, 422))
     expect(w.find('.mock-preview__error').text()).toContain('unexpected EOF')
