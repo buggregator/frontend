@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { barGeometry, waterfallScale } from '../../lib/mini-waterfall'
 import type { SentrySpanPreview } from '../../types'
 
 type Props = {
@@ -14,13 +15,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const displaySpans = computed(() => props.spans.slice(0, props.maxSpans))
 
+const scale = computed(() => waterfallScale(props.spans, props.totalMs))
+
 const barStyle = (span: SentrySpanPreview) => {
-  if (!props.totalMs || props.totalMs <= 0) return {}
-  const left = Math.max(0, (span.start_offset_ms / props.totalMs) * 100)
-  const width = Math.max(1, (span.duration_ms / props.totalMs) * 100)
+  const bar = barGeometry(span, scale.value)
+  if (!bar) return {}
   return {
-    left: `${left}%`,
-    width: `${Math.min(width, 100 - left)}%`,
+    left: `${bar.left}%`,
+    width: `${bar.width}%`,
     backgroundColor: opColor(span.peer_type, span.op)
   }
 }
@@ -73,8 +75,9 @@ const truncate = (text: string, max: number) => {
   @apply text-[10px] text-gray-500 dark:text-gray-400 truncate w-28 flex-shrink-0 text-right font-mono;
 }
 
+// overflow-hidden: no bar may widen the list around the card (frontend#390)
 .mini-wf__track {
-  @apply flex-1 h-3 relative rounded-sm;
+  @apply flex-1 h-3 relative rounded-sm overflow-hidden;
   @apply bg-gray-100 dark:bg-gray-700;
 }
 
@@ -85,6 +88,8 @@ const truncate = (text: string, max: number) => {
 
 .mini-wf__bar--error {
   outline: 1.5px solid #e24b4a;
+  // inside the bar: the track clips anything outside it
+  outline-offset: -1.5px;
 }
 
 .mini-wf__dur {
