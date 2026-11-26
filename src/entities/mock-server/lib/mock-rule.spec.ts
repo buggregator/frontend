@@ -135,3 +135,22 @@ describe('response templates', () => {
     expect(validateRule({ ...emptyDraft(), path: '/a', seed: Number.NaN })).toEqual({})
   })
 })
+
+describe('request conditions', () => {
+  it('a new rule has none', () => {
+    expect(emptyDraft().conditions).toEqual([])
+    expect(draftFromRequest('GET', '/mock/users/42', '').conditions).toEqual([])
+  })
+
+  it('reports a bad condition under its index', () => {
+    const rule = {
+      ...emptyDraft(),
+      path: '/a',
+      conditions: [
+        { in: 'header' as const, name: 'Authorization', op: 'equals' as const, value: 'x' },
+        { in: 'body' as const, name: '', op: 'exists' as const },
+      ],
+    }
+    expect(validateRule(rule)).toEqual({ 'conditions.1': 'Name is required.' })
+  })
+})

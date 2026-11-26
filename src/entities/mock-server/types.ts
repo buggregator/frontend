@@ -4,6 +4,19 @@ export type MockMethod = 'ANY' | 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | '
 
 export const MOCK_METHODS: MockMethod[] = ['ANY', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']
 
+// A request condition (#512): a header or a JSON body field the request must
+// have, besides method, path and project. A missing field never equals.
+export type MockConditionIn = 'header' | 'body'
+export type MockConditionOp = 'equals' | 'not_equals' | 'exists' | 'not_exists'
+
+export interface MockCondition {
+  in: MockConditionIn
+  name: string
+  op: MockConditionOp
+  // absent / ignored for exists and not_exists
+  value?: string
+}
+
 // A rule as the server returns it (`GET /api/mocks`). `source: "config"` rules
 // come from buggregator.yaml and are read-only.
 export interface MockRule {
@@ -27,6 +40,8 @@ export interface MockRule {
   // The OpenAPI import that made the rule ("" = none). A re-import of the
   // group replaces its stored rules.
   group?: string
+  // All must hold; always a list on the server (older servers: absent).
+  conditions?: MockCondition[]
   created_at?: string
   updated_at?: string
 }
@@ -38,14 +53,17 @@ export type MockRuleInput = Pick<
 > & {
   template: boolean
   seed: number
+  conditions: MockCondition[]
 }
 
-export type MockNearReason = 'disabled' | 'method' | 'project'
+export type MockNearReason = 'disabled' | 'method' | 'project' | 'conditions'
 
 export interface MockNear {
   rule_id: string
   rule_name: string
   reason: MockNearReason
+  // For "conditions": the first condition that failed ("header Authorization equals").
+  detail?: string
 }
 
 // The response the mock sent, stored on the captured HTTP dump (`payload.mock`).
@@ -80,8 +98,10 @@ export interface MockHttpDump {
 
 export type MockRequestEvent = ServerEvent<MockHttpDump>
 
-// Field → message, as in the server's 422 `errors`.
-export type MockRuleErrors = Partial<Record<keyof MockRuleInput, string>>
+// Field → message, as in the server's 422 `errors`; a condition's own error is
+// keyed `conditions.N` (N from 0), the list's as `conditions`.
+export type MockRuleErrorKey = keyof MockRuleInput | `conditions.${number}`
+export type MockRuleErrors = Partial<Record<MockRuleErrorKey, string>>
 
 // GET /api/mocks/helpers: template functions and fake-data generators.
 export type MockHelperGroup = 'request' | 'data' | 'output' | 'fake'
@@ -130,6 +150,8 @@ export interface MockPreviewResult {
   headers: Record<string, string>
   body: string
   matched: boolean
+  // The first rule condition the sample request fails ("body a.b equals").
+  failed_condition?: string | null
   // A template that failed while rendering: "mock template: …", status 500.
   error: string | null
 }

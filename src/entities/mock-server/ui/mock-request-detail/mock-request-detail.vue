@@ -149,6 +149,10 @@ const copyCurl = async () => {
           </template>
           <span v-else>{{ n.rule_name || n.rule_id }}</span>
           <span class="mock-request-detail__why">— {{ n.text }}</span>
+          <code
+            v-if="n.reason === 'conditions' && n.detail"
+            class="mock-request-detail__detail"
+          >{{ n.detail }}</code>
         </li>
       </ul>
       <div class="mock-request-detail__actions">
@@ -325,6 +329,10 @@ const copyCurl = async () => {
     @apply flex flex-wrap items-center gap-2 px-3 py-2 text-xs;
     @apply border-b last:border-b-0 border-gray-200 dark:border-gray-700;
   }
+}
+
+.mock-request-detail__detail {
+  @apply font-mono text-2xs px-1 rounded bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100 break-all;
 }
 
 .mock-request-detail__x {

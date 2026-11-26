@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { MockRule } from '../types'
-import { useMockRules } from './use-mock-rules'
+import { toInput, useMockRules } from './use-mock-rules'
 
 const rule = (id: string, readOnly = false): MockRule => ({
   id, project: '', name: id, method: 'GET', path: `/${id}`, status: 200, headers: {}, body: '',
@@ -64,5 +64,31 @@ describe('useMockRules', () => {
     expect(url).toMatch(/\/api\/mocks\/a$/)
     expect(JSON.parse(String(init.body))).toMatchObject({ path: '/a', enabled: false })
     expect(r.rules.value[1].enabled).toBe(false)
+  })
+
+  it('keeps conditions on toggle and sends no value for presence checks', async () => {
+    const withConditions: MockRule = {
+      ...rule('a'),
+      conditions: [{ in: 'header', name: 'X-Key', op: 'equals', value: 'k' }],
+    }
+    expect(toInput(withConditions).conditions).toEqual(withConditions.conditions)
+    expect(toInput(withConditions).conditions).not.toBe(withConditions.conditions)
+    expect(toInput(rule('b')).conditions).toEqual([])
+
+    const r = useMockRules()
+    await r.load()
+    await r.save('a', {
+      ...toInput(rule('a')),
+      conditions: [
+        { in: 'body', name: ' card.token ', op: 'exists', value: 'left over' },
+        { in: 'header', name: 'X-Key', op: 'not_equals', value: 'k' },
+      ],
+    })
+
+    const [, init] = fetchMock.mock.calls[1] as unknown as [string, RequestInit]
+    expect(JSON.parse(String(init.body)).conditions).toEqual([
+      { in: 'body', name: 'card.token', op: 'exists' },
+      { in: 'header', name: 'X-Key', op: 'not_equals', value: 'k' },
+    ])
   })
 })
