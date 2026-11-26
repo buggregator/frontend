@@ -30,13 +30,14 @@ describe('barGeometry', () => {
   })
 
   it('never leaves the track', () => {
-    expect(barGeometry(span(520, 8), 200)).toEqual({ left: 100, width: 0 })
+    expect(barGeometry(span(520, 8), 200)).toEqual({ left: 99, width: 1 })
     expect(barGeometry(span(-10, 500), 200)).toEqual({ left: 0, width: 100 })
     expect(barGeometry(span(190, 50), 200)).toEqual({ left: 95, width: 5 })
   })
 
-  it('keeps a tiny span visible', () => {
+  it('keeps a tiny span visible, also at the very end', () => {
     expect(barGeometry(span(0, 0), 1000)).toEqual({ left: 0, width: 1 })
+    expect(barGeometry(span(1000, 0), 1000)).toEqual({ left: 99, width: 1 })
   })
 
   it('has no geometry without a scale or with broken numbers', () => {
