@@ -58,6 +58,13 @@ const RULE_FIELDS: Record<string, string> = {
   'request.path': 'Sample path',
 }
 
+const fieldLabel = (key: string): string => {
+  const condition = /^conditions\.(\d+)$/.exec(key)
+  if (condition) return `Condition ${Number(condition[1]) + 1}:`
+  if (key === 'conditions') return 'Conditions:'
+  return RULE_FIELDS[key] || key
+}
+
 // A rejected preview in words: template errors (body, headers) name
 // themselves; other fields get the editor's label in front.
 const problemText = (e: unknown): string => {
@@ -65,7 +72,7 @@ const problemText = (e: unknown): string => {
   const rule = fields.body || fields.headers
   if (rule) return rule
   const [key, text] = Object.entries(fields)[0] || []
-  if (key && text) return `${RULE_FIELDS[key] || key} ${text}`
+  if (key && text) return `${fieldLabel(key)} ${text}`
   return e instanceof Error ? e.message : 'Preview failed.'
 }
 

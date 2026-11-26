@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, toRef } from 'vue'
 import { formatJson } from '../../lib/mock-format'
+import { matchPath } from '../../lib/mock-rule'
 import { useMockPreview } from '../../lib/use-mock-template'
 import { MOCK_METHODS, type MockRuleInput } from '../../types'
 import MockBadge from '../mock-badge/mock-badge.vue'
@@ -9,6 +10,14 @@ type Props = { rule: MockRuleInput }
 const props = defineProps<Props>()
 
 const { sample, result, problem, problemField, pending, run } = useMockPreview(toRef(props, 'rule'))
+
+// The server names a failed condition even when the method or path differ
+// too; name the condition only when it is the one reason.
+const routeFits = computed(
+  () =>
+    (props.rule.method === 'ANY' || props.rule.method === sample.value.method.toUpperCase()) &&
+    matchPath(props.rule.path, sample.value.path)
+)
 
 const methods = MOCK_METHODS.filter((m) => m !== 'ANY')
 const shownBody = computed(() => (result.value ? formatJson(result.value.body) || result.value.body : ''))
@@ -118,7 +127,7 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
             v-if="!result.matched"
             class="mock-preview__warn"
           >
-            <template v-if="result.failed_condition">This request would not hit the rule: the condition
+            <template v-if="result.failed_condition && routeFits">This request would not hit the rule: the condition
               <code>{{ result.failed_condition }}</code> fails</template>
             <template v-else>This request would not hit the rule (method or path differ)</template>
           </span>

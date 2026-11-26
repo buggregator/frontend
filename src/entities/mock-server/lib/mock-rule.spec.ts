@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   bodyBytes,
+  matchPath,
   withQuery,
   draftFromRequest,
   emptyDraft,
@@ -152,5 +153,19 @@ describe('request conditions', () => {
       ],
     }
     expect(validateRule(rule)).toEqual({ 'conditions.1': 'Name is required.' })
+  })
+})
+
+describe('matchPath', () => {
+  it('matches like the server', () => {
+    expect(matchPath('/users/{id}', '/users/42')).toBe(true)
+    expect(matchPath('/users/{id}', '/users/42/')).toBe(true)
+    expect(matchPath('/users/{id}', '/users/42?x=1')).toBe(true)
+    expect(matchPath('/users/{id}', '/users')).toBe(false)
+    expect(matchPath('/users/{id}', '/users/42/posts')).toBe(false)
+    expect(matchPath('/files/*', '/files')).toBe(true)
+    expect(matchPath('/files/*', '/files/a/b.png')).toBe(true)
+    expect(matchPath('/', '/')).toBe(true)
+    expect(matchPath('/health', '/healthz')).toBe(false)
   })
 })

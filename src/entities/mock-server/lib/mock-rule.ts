@@ -50,6 +50,26 @@ export const withQuery = (path: string, query: Record<string, unknown> | undefin
   return `${path}?${qs}`
 }
 
+const segments = (p: string): string[] => {
+  const trimmed = p.replace(/^\/+|\/+$/g, '')
+  return trimmed ? trimmed.split('/') : []
+}
+
+// Mirrors the server's matchMockPath: exact segments, {param} for one, a
+// trailing * for the rest (zero or more); trailing slashes and the query ignored.
+export const matchPath = (pattern: string, path: string): boolean => {
+  const ps = segments(pattern)
+  const xs = segments(path.split('?')[0])
+  for (let i = 0; i < ps.length; i++) {
+    const p = ps[i]
+    if (p === '*') return true
+    if (i >= xs.length) return false
+    if (p.startsWith('{') && p.endsWith('}')) continue
+    if (p !== xs[i]) return false
+  }
+  return ps.length === xs.length
+}
+
 export const bodyBytes = (body: string): number => new TextEncoder().encode(body).length
 
 const pathError = (path: string): string | undefined => {
