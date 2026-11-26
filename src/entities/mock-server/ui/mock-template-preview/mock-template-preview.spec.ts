@@ -33,6 +33,13 @@ describe('MockTemplatePreview', () => {
     expect(w.find('.mock-preview__warn').exists()).toBe(true)
   })
 
+  it('names the condition the sample request fails', async () => {
+    const w = await run(
+      answer({ status: 200, headers: {}, body: '', matched: false, error: null, failed_condition: 'body card.token equals' }),
+    )
+    expect(w.find('.mock-preview__warn').text()).toContain('the condition body card.token equals fails')
+  })
+
   it('shows the parse error of a rejected template', async () => {
     const w = await run(answer({ message: 'validation failed', errors: { body: 'template: body:1: unexpected EOF' } }, 422))
     expect(w.find('.mock-preview__error').text()).toContain('unexpected EOF')

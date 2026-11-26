@@ -117,7 +117,11 @@ const headerList = computed(() => Object.entries(result.value?.headers || {}))
           <span
             v-if="!result.matched"
             class="mock-preview__warn"
-          >This request would not hit the rule (method or path differ)</span>
+          >
+            <template v-if="result.failed_condition">This request would not hit the rule: the condition
+              <code>{{ result.failed_condition }}</code> fails</template>
+            <template v-else>This request would not hit the rule (method or path differ)</template>
+          </span>
         </div>
         <p
           v-if="result.error"

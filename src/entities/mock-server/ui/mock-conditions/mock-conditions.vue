@@ -237,6 +237,13 @@ const nameLabel = (c: MockCondition, i: number) =>
 .mock-conditions__row {
   @apply grid gap-x-2 gap-y-1 items-start;
   grid-template-columns: minmax(0, 1fr) auto;
+
+  // stacked rows: a line between conditions keeps them apart
+  @container (max-width: 25.99rem) {
+    & + & {
+      @apply pt-2 border-t border-gray-200 dark:border-gray-700;
+    }
+  }
 }
 
 // Where / name / comparison / value: one line when the pane has room, two on

@@ -150,6 +150,8 @@ export interface MockPreviewResult {
   headers: Record<string, string>
   body: string
   matched: boolean
+  // The first rule condition the sample request fails ("body a.b equals").
+  failed_condition?: string | null
   // A template that failed while rendering: "mock template: …", status 500.
   error: string | null
 }
