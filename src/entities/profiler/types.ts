@@ -52,6 +52,11 @@ export interface ProfilerCallGraph {
   }>
   nodes: Array<{ data: Record<string, unknown> }>
   edges: Array<{ data: Record<string, unknown> }>
+  /**
+   * How the graph shows recursion: a node per recursion level, or a node per function calling itself.
+   * Sent only by servers that take the `recursion` query parameter.
+   */
+  recursion?: 'levels' | 'collapsed'
 }
 
 export interface ProfileFlameChart {

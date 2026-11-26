@@ -1,2 +1,2 @@
-export { mapToVueFlow } from './map-to-vue-flow'
-export type { CallGraphNode, CallGraphEdge, CallGraphNodeData } from './map-to-vue-flow'
+export { mapToVueFlow, selfLoopPath, backEdgePath, SELF_LOOP_EDGE, BACK_EDGE } from './map-to-vue-flow'
+export type { CallGraphNode, CallGraphEdge, CallGraphNodeData, EdgePath } from './map-to-vue-flow'
