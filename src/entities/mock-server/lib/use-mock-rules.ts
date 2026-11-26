@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue'
 import type { MockOpenAPIImport, MockOpenAPIResult, MockRule, MockRuleInput } from '../types'
+import { cleanConditions } from './mock-conditions'
 import { useMockRequests } from './use-mock-requests'
 import type { LoadState } from './use-mock-traffic'
 
@@ -15,6 +16,7 @@ export const toInput = (rule: MockRule): MockRuleInput => ({
   enabled: rule.enabled,
   template: rule.template ?? false,
   seed: rule.seed ?? 0,
+  conditions: (rule.conditions ?? []).map((c) => ({ ...c })),
 })
 
 // Rules in match order (yaml rules first, read-only). Writes go to the server
@@ -43,7 +45,8 @@ export const useMockRules = () => {
   }
 
   const save = async (id: string | null, input: MockRuleInput): Promise<MockRule> => {
-    const rule = id ? await api.updateRule(id, input) : await api.createRule(input)
+    const body = { ...input, conditions: cleanConditions(input.conditions) }
+    const rule = id ? await api.updateRule(id, body) : await api.createRule(body)
     await refresh()
     return rule
   }

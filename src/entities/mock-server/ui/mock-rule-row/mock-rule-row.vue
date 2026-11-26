@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { conditionsCountText, conditionText } from '../../lib/mock-conditions'
 import { delayText } from '../../lib/mock-format'
 import type { MockRule } from '../../types'
 import { MockBadge } from '../mock-badge'
@@ -26,6 +27,9 @@ const emit = defineEmits<{
 }>()
 
 const label = computed(() => props.rule.name || `${props.rule.method} ${props.rule.path}`)
+
+const conditions = computed(() => props.rule.conditions ?? [])
+const conditionsTitle = computed(() => conditions.value.map(conditionText).join('\n'))
 </script>
 
 <template>
@@ -89,6 +93,11 @@ const label = computed(() => props.rule.name || `${props.rule.method} ${props.ru
           v-if="rule.delay_ms"
           class="mock-rule-row__tag"
         >{{ delayText(rule.delay_ms) }}</span>
+        <span
+          v-if="conditions.length"
+          class="mock-rule-row__tag mock-rule-row__tag--conditions"
+          :title="conditionsTitle"
+        >{{ conditionsCountText(conditions.length) }}</span>
         <span
           v-if="answered"
           class="mock-rule-row__flag mock-rule-row__flag--ok"
@@ -217,6 +226,10 @@ const label = computed(() => props.rule.name || `${props.rule.method} ${props.ru
 
 .mock-rule-row__tag--yaml {
   @apply bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400;
+}
+
+.mock-rule-row__tag--conditions {
+  @apply bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400;
 }
 
 .mock-rule-row__flag {

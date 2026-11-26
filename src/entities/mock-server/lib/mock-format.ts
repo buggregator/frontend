@@ -30,6 +30,7 @@ export const NEAR_REASON_TEXT: Record<MockNearReason, string> = {
   disabled: 'path fits, but the rule is disabled',
   method: 'path fits, the method differs',
   project: 'path fits, the rule is for another project',
+  conditions: 'path fits, a condition failed',
 }
 
 export const delayText = (ms: number): string => (ms >= 1000 ? `${ms / 1000} s` : `${ms} ms`)

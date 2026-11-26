@@ -43,6 +43,16 @@ describe('MockRequestDetail', () => {
     expect(from).toBe('DELETE /mock/users/7')
   })
 
+  it('names the condition that failed', () => {
+    const w = mountDetail(
+      event({ near: [{ rule_id: 'a', rule_name: '', reason: 'conditions', detail: 'header Authorization equals' }] }),
+      [rule('a', 'DELETE')]
+    )
+    const li = w.find('.mock-request-detail__near li')
+    expect(li.text()).toContain('a condition failed')
+    expect(li.find('code').text()).toBe('header Authorization equals')
+  })
+
   it('names the rule that answered and its place in the match order', () => {
     const rules = [rule('a', 'GET'), rule('b', 'DELETE')]
     const w = mountDetail(event({ matched: true, rule_id: 'b', status: 204 }), rules)

@@ -4,6 +4,7 @@ import { formatJson } from '../../lib/mock-format'
 import { bodyBytes, MAX_BODY_BYTES } from '../../lib/mock-rule'
 import { insertAt } from '../../lib/mock-template'
 import { MOCK_METHODS, type MockRuleErrors, type MockRuleInput } from '../../types'
+import MockConditions from '../mock-conditions/mock-conditions.vue'
 import MockTemplateHelpers from '../mock-template-helpers/mock-template-helpers.vue'
 import MockTemplatePreview from '../mock-template-preview/mock-template-preview.vue'
 
@@ -241,6 +242,12 @@ const bodyKind = computed(() => {
           <code>http://mock:project@host</code>
         </p>
       </div>
+      <MockConditions
+        :model-value="modelValue.conditions"
+        :errors="errors"
+        :read-only="readOnly"
+        @update:model-value="patch({ conditions: $event })"
+      />
     </fieldset>
 
     <fieldset class="mock-rule-form__section">

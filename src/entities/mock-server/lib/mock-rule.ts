@@ -1,4 +1,5 @@
 import type { MockMethod, MockRuleErrors, MockRuleInput } from '../types'
+import { validateConditions } from './mock-conditions'
 
 // Mirrors the server's limits and checks (modules/httpdumps/mock.go), so the
 // form can show the error before a round trip; the server's 422 still wins.
@@ -94,7 +95,7 @@ export const validateRule = (rule: MockRuleInput): MockRuleErrors => {
     errors.headers = `Header “${twice}” is set twice.`
   }
 
-  return errors
+  return { ...errors, ...validateConditions(rule.conditions ?? []) }
 }
 
 export const emptyDraft = (): MockRuleInput => ({
@@ -109,6 +110,7 @@ export const emptyDraft = (): MockRuleInput => ({
   enabled: true,
   template: false,
   seed: 0,
+  conditions: [],
 })
 
 const ID_SEGMENT = /^(\d+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i
